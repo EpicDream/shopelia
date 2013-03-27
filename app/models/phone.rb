@@ -1,5 +1,6 @@
 class Phone < ActiveRecord::Base
   belongs_to :user
+  belongs_to :address
 
   LAND = 0
   MOBILE = 1

@@ -8,6 +8,7 @@ gem 'rails', '3.1.4'
 gem 'sqlite3'
 gem 'devise'
 gem 'apipie-rails'
+gem "active_model_serializers", "~> 0.7.0"
 
 # Gems used only for assets and not required
 # in production environments by default.

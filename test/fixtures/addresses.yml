@@ -1,0 +1,9 @@
+elarch_neuilly:
+  user: elarch
+  code_name: Chateau
+  address1: 14 bd du Chateau
+  zip: 92200
+  city: Neuilly
+  country: france
+  default: true
+
