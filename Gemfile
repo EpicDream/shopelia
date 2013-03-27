@@ -6,7 +6,7 @@ gem 'rails', '3.1.4'
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 gem 'sqlite3'
-gem 'devise'
+gem 'devise', '~> 2.0'
 gem 'apipie-rails'
 gem "active_model_serializers", "~> 0.7.0"
 
@@ -37,6 +37,5 @@ gem 'jquery-rails'
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
 group :test do
-  # Pretty printed test output
-  gem 'turn', '~> 0.8.3', :require => false
+  #gem "turn", "~> 0.8.3"
 end

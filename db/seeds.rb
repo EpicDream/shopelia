@@ -1,5 +1,5 @@
+# -*- encoding : utf-8 -*-
 Country.delete_all
-connection.execute("ALTER TABLE countries AUTO_INCREMENT = 1")
 Country.create(:id=>1,:iso=>"AD",:name=>"Andorra")
 Country.create(:id=>2,:iso=>"AE",:name=>"United Arab Emirates")
 Country.create(:id=>3,:iso=>"AF",:name=>"Afghanistan")
@@ -253,7 +253,6 @@ Country.create(:id=>250,:iso=>"CS",:name=>"Serbia and Montenegro")
 Country.create(:id=>251,:iso=>"AN",:name=>"Netherlands Antilles")
 
 State.delete_all
-connection.execute("ALTER TABLE states AUTO_INCREMENT=1")
 State.create(:id=>1,:iso=>"06",:name=>"Parròquia de Sant Julià de Lòria",:country_id=>1)
 State.create(:id=>2,:iso=>"05",:name=>"Parròquia d'Ordino",:country_id=>1)
 State.create(:id=>3,:iso=>"04",:name=>"Parròquia de la Massana",:country_id=>1)

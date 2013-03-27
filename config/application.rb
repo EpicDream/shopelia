@@ -12,6 +12,8 @@ end
 module Shopelia
   class Application < Rails::Application
   
+    config.autoload_paths += %W(#{config.root}/lib )
+    
     config.action_mailer.default_url_options = { :host => 'www.shopelia.fr' }
   
     # Settings in config/environments/* take precedence over those specified here.

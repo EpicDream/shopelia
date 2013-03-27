@@ -1,7 +1,8 @@
 class Api::V1::RegistrationsController < Api::V1::BaseController
   skip_before_filter :authenticate_user!
   
-  api :POST, "/users", "Create an user"
+  api :POST, "/users", "Register a new user"
+  param_group :user, Api::V1::UsersController
   def create
     @user = User.new(params[:user])
 

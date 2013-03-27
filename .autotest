@@ -1,0 +1,6 @@
+class Autotest
+ def def rerun_all_tests
+   false
+ end
+end
+

@@ -1,7 +1,7 @@
 class AuthFailure < Devise::FailureApp
 
   def respond
-    if request.content_type =~ /json/
+    if request.format.eql?('application/json')
       json_failure
     else
       super

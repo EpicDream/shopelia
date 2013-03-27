@@ -6,23 +6,22 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
 
   setup do
     @user = users(:elarch)
-    @user.confirm!
     sign_in @user
   end
 
-  test "should show user" do
-    get :show, id: @user
+  test "it should show user" do
+    get :show, id: @user, format: :json
     assert_response :success
   end
 
-  test "should update user" do
-    put :update, id: @user, user: { first_name: "Peter" }
+  test "it should update user" do
+    put :update, id: @user, user: { first_name: "Peter" }, format: :json
     assert_response 204
   end
 
-  test "should destroy user" do
+  test "it should destroy user" do
     assert_difference('User.count', -1) do
-      delete :destroy, id: @user
+      delete :destroy, id: @user, format: :json
     end
 
     assert_response 204

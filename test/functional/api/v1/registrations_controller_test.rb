@@ -10,7 +10,7 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
         password: "password", 
         password_confirmation: "password",
         first_name: "John",
-        last_name: "Doe" }
+        last_name: "Doe" }, format: :json
     end
 
     assert_response 201
