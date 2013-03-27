@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class AddressSerializerTest < ActiveSupport::TestCase
-  fixtures :addresses, :users, :states, :countries
+  fixtures :addresses, :users, :states, :countries, :phones
   
   setup do
     @address = addresses(:elarch_neuilly)
@@ -11,7 +11,7 @@ class AddressSerializerTest < ActiveSupport::TestCase
   test "it should correctly serialize address" do
     address_serializer = AddressSerializer.new(@address)
     hash = address_serializer.as_json
-      
+    
     assert_equal @address.id, hash[:address][:id]
     assert_equal @address.code_name, hash[:address][:code_name]
     assert_equal @address.address1, hash[:address][:address1]

@@ -27,10 +27,18 @@ class Api::V1::SessionsControllerTest < ActionController::TestCase
 
   test "it should fail login when bad email or password" do
     post :create, email: @user.email, password: "invalid", format: :json
-    assert_response :forbidden
+    assert_response :unauthorized
 
     assert_equal I18n.t('devise.failure.invalid'), json_response["error"]
   end
 
+  test "it should fail logout with incorrect email address" do
+    sign_in @user
+    token = @user.reload.authentication_token
+    post :destroy, email: "invalid", format: :json
+    
+    assert_response :unauthorized
+  end
+  
 end
 

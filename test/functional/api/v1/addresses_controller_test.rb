@@ -48,5 +48,21 @@ class Api::V1::AddressesControllerTest < ActionController::TestCase
 
     assert_response 204
   end
+
+  test "it shouldn't retrieve non existing address" do
+    get :show, id: 123456, format: :json
+    assert_response 404
+  end
+
+  
+  test "it should fail bad address creation" do
+    post :create, address:{}, format: :json
+    assert_response 422
+  end
+  
+  test "it should fail bad address update" do
+    put :update, id: @address, address: { address1: "" }, format: :json
+    assert_response 422
+  end  
 end
 

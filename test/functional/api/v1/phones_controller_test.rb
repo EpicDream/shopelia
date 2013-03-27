@@ -45,5 +45,15 @@ class Api::V1::PhonesControllerTest < ActionController::TestCase
 
     assert_response 204
   end
+  
+  test "it should fail bad phone creation" do
+    post :create, phone:{}, format: :json
+    assert_response 422
+  end
+  
+  test "it should fail bad phone update" do
+    put :update, id: @phone, phone: { number: "" }, format: :json
+    assert_response 422
+  end
 end
 

@@ -3,7 +3,7 @@ require 'test_helper'
 class Api::V1::RegistrationsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
-  test "should create user" do
+  test "it should register new user" do
     assert_difference('User.count') do
       post :create, user: { 
         email: "user@gmail.com", 
@@ -14,6 +14,11 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
     end
 
     assert_response 201
+  end
+
+  test "it should fail bad user registration" do
+    post :create, user:{}, format: :json
+    assert_response 422
   end
 
 end

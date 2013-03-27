@@ -10,7 +10,7 @@ class Api::V1::AddressesController < Api::V1::BaseController
       param :zip, String, "Zip code", :required => true
       param :country_id, String, "Country", :required => true
       param :state_id, String, "State", :required => false
-      param :default, [1, 0], "1 if this is the default address (override previous default address if any)", :required => false
+      param :is_default, [1, 0], "1 if this is the default address (override previous default address if any)", :required => false
     end
   end
     

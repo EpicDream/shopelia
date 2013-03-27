@@ -38,4 +38,5 @@ gem 'jquery-rails'
 
 group :test do
   #gem "turn", "~> 0.8.3"
+  gem "simplecov", :require => false
 end

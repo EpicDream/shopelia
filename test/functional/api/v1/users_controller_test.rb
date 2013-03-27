@@ -26,5 +26,33 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
 
     assert_response 204
   end
+  
+  test "it should fail bad user update" do
+    put :update, id: @user, user: { email: "toto" }, format: :json
+    assert_response 422
+  end
+  
+  test "it should fail request if not logged in (json format)" do
+    sign_out @user
+    get :show, id: @user, format: :json
+    assert_response :unauthorized
+  end
+
+  test "it should fail request if not logged in (html format)" do
+    sign_out @user
+    get :show, id: @user
+    assert_response 302
+  end  
+  
+  test "it should restrict access to api key" do
+    ENV["API_KEY"] = nil
+    get :show, id: @user, format: :json
+    assert_response :unauthorized
+    get :show, id: @user, api_key: "invalid", format: :json
+    assert_response :unauthorized
+    get :show, id: @user, api_key: developers(:prixing).api_key, format: :json
+    assert_response :success
+  end  
+    
 end
 

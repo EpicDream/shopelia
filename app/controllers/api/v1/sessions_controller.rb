@@ -21,17 +21,15 @@ class Api::V1::SessionsController < Api::V1::BaseController
   param :email, String, "Email of the user", :required => true
   def destroy
     user = User.find_for_database_authentication(:email => params[:email])
-    user.authentication_token =  nil
-    if user.save
-      render json: {}
-    else
-      render json: { error:user.errors.join(",") }, status: :unprocessable_entity
-    end
+    return invalid_login_attempt unless user
+    user.authentication_token = nil
+    user.save
+    render json: {}
   end
  
   protected
  
   def invalid_login_attempt
-    render json: { error:I18n.t('devise.failure.invalid') }, status: :forbidden
+    render json: { error:I18n.t('devise.failure.invalid') }, status: :unauthorized
   end
 end
