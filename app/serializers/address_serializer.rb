@@ -15,4 +15,8 @@ class AddressSerializer < ActiveModel::Serializer
     object.state ? object.state.name : nil
   end
   
+  def phones
+    object.phones ? ActiveModel::ArraySerializer.new(object.phones, scope: { :address_context => true }).as_json : nil
+  end
+  
 end
