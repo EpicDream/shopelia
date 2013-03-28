@@ -2,6 +2,7 @@ require 'test_helper'
 
 class Api::V1::RegistrationsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
+  fixtures :countries
 
   test "it should register new user" do
     assert_difference('User.count') do
@@ -10,7 +11,10 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
         password: "password", 
         password_confirmation: "password",
         first_name: "John",
-        last_name: "Doe" }, format: :json
+        last_name: "Doe",
+        civility: User::CIVILITY_MR,
+        nationality_id: countries(:france).id,
+        birthdate: '1973-01-01' }, format: :json
     end
 
     assert_response 201

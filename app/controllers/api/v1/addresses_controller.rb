@@ -4,6 +4,7 @@ class Api::V1::AddressesController < Api::V1::BaseController
   def_param_group :address do
     param :address, Hash, :required => true, :action_aware => true do
       param :code_name, String, "Address memo name", :required => false
+      param :company, String, "Company name", :required => false
       param :address1, String, "First line of address", :required => true
       param :address2, String, "Second line of address", :required => false
       param :city, String, "City of address", :required => true

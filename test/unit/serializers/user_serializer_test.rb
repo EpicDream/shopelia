@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class UserSerializerTest < ActiveSupport::TestCase
-  fixtures :users
+  fixtures :users, :addresses, :phones
   
   setup do
     @user = users(:elarch)
@@ -17,6 +17,8 @@ class UserSerializerTest < ActiveSupport::TestCase
     assert_equal @user.last_name, hash[:user][:last_name]
     assert_equal @user.email, hash[:user][:email]
     assert_equal @user.authentication_token, hash[:user][:auth_token]
+    assert hash[:user][:addresses].count > 0
+    assert hash[:user][:phones].count > 0
   end
 
 end

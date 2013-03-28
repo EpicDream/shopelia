@@ -8,6 +8,10 @@ class Api::V1::UsersController < Api::V1::BaseController
       param :password_confirmation, String, "Password confirmation", :required => true
       param :first_name, String, "First name of the user", :required => true
       param :last_name, String, "Last name of the user", :required => true
+      param :birthdate, Date, "Birthdate of the user, format YYYY-MM-DD", :required => true
+      param :civility, [User::CIVILITY_MR, User::CIVILITY_MME, User::CIVILITY_MLLE], "Civility of the user (#{User::CIVILITY_MR}=Monsieur, #{User::CIVILITY_MME}=Madame, #{User::CIVILITY_MLLE}=Mademoiselle"
+      param :addresses, Array, "Addresses of user", :required => false
+      param :phones, Array, "Mobile phones of user", :required => false
     end
   end
 

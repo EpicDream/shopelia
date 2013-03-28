@@ -8,7 +8,12 @@ class Phone < ActiveRecord::Base
   validates :user, :presence => true
   validates :number, :presence => true, :uniqueness => true
   validates :line_type, :presence => true, :inclusion => { :in => [ LAND, MOBILE ] }
+  validate :land_type_must_have_address
   
   attr_accessible :user_id, :address_id, :number, :line_type
+  
+  def land_type_must_have_address
+    self.errors.add(:base, I18n.t('phones.land_line_must_have_address')) if self.line_type == LAND && self.address_id.nil?
+  end
   
 end

@@ -13,8 +13,8 @@ class Api::V1::PhonesControllerTest < ActionController::TestCase
   test "it should create phone" do
     assert_difference('Phone.count', 1) do
       post :create, phone: {
-        number: "0140381383",
-        line_type: Phone::LAND }, format: :json
+        number: "0640381383",
+        line_type: Phone::MOBILE }, format: :json
     end
     
     assert_response :success

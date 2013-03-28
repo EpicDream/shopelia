@@ -20,5 +20,12 @@ class AddressTest < ActiveSupport::TestCase
     assert address.is_default?, "New address must default"
     assert !@address.reload.is_default?, "Old address musn't be default"
   end
+  
+  test "it should destroy dependent objects" do
+    address_id = @address.id
+    assert_equal 1, Phone.find_all_by_address_id(address_id).count
+    @address.destroy
+    assert_equal 0, Phone.find_all_by_address_id(address_id).count   
+  end
 
 end

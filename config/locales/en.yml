@@ -1,3 +1,11 @@
 en:
-  developer:
+
+  developers:
     unauthorized: Invalid api key
+    
+  phones:
+    land_line_must_have_address: A land line must be associated to an address
+  
+  users:
+    invalid_birthdate: You must be at least 16 years old to register
+

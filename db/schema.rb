@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130327222633) do
+ActiveRecord::Schema.define(:version => 20130328150620) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(:version => 20130327222633) do
     t.boolean  "is_default"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "company"
   end
 
   create_table "countries", :force => true do |t|
@@ -37,6 +38,17 @@ ActiveRecord::Schema.define(:version => 20130327222633) do
   create_table "developers", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "payment_cards", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "name"
+    t.string   "number"
+    t.string   "exp_month"
+    t.string   "exp_year"
+    t.string   "cvv"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -80,6 +92,9 @@ ActiveRecord::Schema.define(:version => 20130327222633) do
     t.datetime "updated_at"
     t.string   "first_name"
     t.string   "last_name"
+    t.integer  "civility"
+    t.datetime "birthdate"
+    t.integer  "nationality_id"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

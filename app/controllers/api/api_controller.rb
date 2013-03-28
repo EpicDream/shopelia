@@ -11,7 +11,7 @@ class Api::ApiController < ActionController::Base
   def authenticate_developer!
     dev = Developer.find_by_api_key(params[:api_key] || ENV['API_KEY'])
     if dev.nil?
-      render json: { error:I18n.t('developer.unauthorized') }, status: :unauthorized
+      render json: { error:I18n.t('developers.unauthorized') }, status: :unauthorized
     end
   end
 

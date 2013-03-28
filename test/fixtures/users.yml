@@ -4,3 +4,6 @@ elarch:
   first_name: Eric
   last_name: Larcheveque
   confirmation_sent_at: <%= 1.day.ago %>
+  birthdate: '1973-09-30'
+  civility: 0
+  nationality: france

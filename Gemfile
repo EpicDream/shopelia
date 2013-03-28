@@ -9,6 +9,7 @@ gem 'sqlite3'
 gem 'devise', '~> 2.0'
 gem 'apipie-rails'
 gem "active_model_serializers", "~> 0.7.0"
+gem "leetchi-wallet-services", "~> 1.0.0"
 
 # Gems used only for assets and not required
 # in production environments by default.

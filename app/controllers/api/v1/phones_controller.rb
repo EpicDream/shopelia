@@ -4,7 +4,8 @@ class Api::V1::PhonesController < Api::V1::BaseController
   def_param_group :phone do
     param :phone, Hash, :required => true, :action_aware => true do
       param :number, String, "Phone number", :required => true
-      param :line_type, String, "Type of the line: #{Phone::LAND} for land line, #{Phone::MOBILE} for mobile line", :required => true
+      param :line_type, [Phone::LAND, Phone::MOBILE], "Type of the line: #{Phone::LAND} for land line, #{Phone::MOBILE} for mobile line", :required => true
+      param :address_id, Integer, "Reference to address required only for land lines", :required => false
     end
   end
 
