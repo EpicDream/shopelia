@@ -7,6 +7,7 @@ class User < ActiveRecord::Base
   has_many :addresses, :dependent => :destroy
   has_many :phones, :dependent => :destroy
   has_many :payment_cards, :dependent => :destroy
+  has_many :psp_users, :dependent => :destroy
   belongs_to :nationality, :class_name => "Country"
 
   CIVILITY_MR = 0
