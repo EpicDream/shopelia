@@ -19,10 +19,11 @@ class User < ActiveRecord::Base
   validates :birthdate, :presence => true
   validates :nationality, :presence => true
   validates :civility, :presence => true, :inclusion => { :in => [ CIVILITY_MR, CIVILITY_MME, CIVILITY_MLLE ] }
+  validates :ip_address, :presence => true
   validate :user_must_be_16_yo
 
   attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name
-  attr_accessible :birthdate, :civility, :nationality_id
+  attr_accessible :birthdate, :civility, :nationality_id, :ip_address
   attr_accessible :addresses_attributes, :phones_attributes
   attr_accessor :addresses_attributes, :phones_attributes
 

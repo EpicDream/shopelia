@@ -17,6 +17,7 @@ class UserTest < ActiveSupport::TestCase
       :civility => User::CIVILITY_MR,
       :birthdate => '1973-01-01',
       :nationality_id => countries(:france).id,
+      :ip_address => '127.0.0.1',
       :addresses_attributes => [ {
         :code_name => "Office",
         :address1 => "21 rue d'Aboukir",
@@ -59,6 +60,7 @@ class UserTest < ActiveSupport::TestCase
       :last_name => "Doe",
       :civility => User::CIVILITY_MR,
       :nationality_id => countries(:france).id,
+      :ip_address => '127.0.0.1',
       :birthdate => 10.years.ago)
     assert !user.save
     assert_equal I18n.t('users.invalid_birthdate'), user.errors.full_messages.first

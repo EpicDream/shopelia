@@ -4,7 +4,7 @@ class Api::V1::RegistrationsController < Api::V1::BaseController
   api :POST, "/users", "Register a new user"
   param_group :user, Api::V1::UsersController
   def create
-    @user = User.new(params[:user])
+    @user = User.new(params[:user].merge({:ip_address => request.remote_ip}))
 
     if @user.save
       render json: @user, status: :created
