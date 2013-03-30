@@ -1,6 +1,6 @@
 class PaymentCard < ActiveRecord::Base
   belongs_to :user
-  has_many :psp_payment_cards
+  has_many :psp_payment_cards, :dependent => :destroy
   
   validates :user, :presence => true
   validates :number, :presence => true, :length => { :is => 16 }

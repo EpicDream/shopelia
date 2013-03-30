@@ -2,13 +2,13 @@
 http_interactions: 
 - request: 
     method: post
-    uri: https://api-preprod.leetchi.com/v1/partner/example/cards?ts=1364684986
+    uri: https://api-preprod.leetchi.com/v1/partner/example/cards?ts=1364686314
     body: 
       encoding: US-ASCII
       string: "{\"Tag\":\"727572249\",\"OwnerID\":237026,\"ReturnURL\":\"http://www.leetchi.com\"}"
     headers: 
       X-Leetchi-Signature: 
-      - iy2/7JfQf2U49pRI9HXaYMAK6DiNok+OQfq7NdJkeaSxhBhMKfTPGXooyV2MhMrDHcy03wLw+0OA4Mu9xk0JYA4ua9rE2UHfhvHVyFo7Zo6xYpCWvBAQY5HFbFd9VFYunrtnQCV6mZXvFYgTvxUFMhOMRaxSTl/zs3agtGfFczZbnfB1LGHUIedqobeJ6VQ3sr4BJ84/5cKqKWFpaLeCUImttBZ1ltQjDx2YMNseFePC9+fxxMP1iJIQPnxFxePCxmZ1fq3KEa3s9blZqyrHbA3gEMExgPrAePN6HHQk6ptDldd06ZxCKEf16pzdZcOpuTY3GjArm6qGgm54GdVfOQ==
+      - PbpAbMGyrr8vBIChKRSazbt9hMt/Wk3eetM7UcEkXjC6tadBD7sjlE6EZnBzRmfy6qQtKlnLdibSdbAmZG1S9uH+jLcuhN8PoN0AtzWV927OrZZ8v67ib6tnv8KkHxZ+dKj7ECK8GLR0HYloM2zwb49EYSV2+NWlzueD+QJnvFz+rQtWSsIcyxznUDCdvcO/unZbbO/csGAJp9LmK4jCQqF4T6/RF7dUk1Lvw/AVqjBEMdnZW+BW+6n8cNpZklU26S1Cxj8r1SGHmsUD7lzf/kNXB8aQMSl9W+qNjUTjG65/BRsaiz2NlAmiPGEESyj/KsJGi/diRFqh7IsduOz8RQ==
       Content-Type: 
       - application/json
       Accept: 
@@ -33,23 +33,23 @@ http_interactions:
       X-Powered-By: 
       - ASP.NET
       Date: 
-      - Sat, 30 Mar 2013 23:09:47 GMT
+      - Sat, 30 Mar 2013 23:31:55 GMT
       Content-Length: 
       - "337"
     body: 
       encoding: US-ASCII
-      string: "{\"OwnerID\":237026,\"CardNumber\":null,\"RedirectURL\":\"https://homologation-secure-p.payline.com/webpayment/step1.do?reqCode=prepareStep1&token=1GjgGtmCXdUj8E61OZ6C1364684986756\",\"TemplateURL\":null,\"ReturnURL\":\"http://www.leetchi.com/?PaymentCardID=237087\",\"ID\":237087,\"Tag\":\"727572249\",\"CreationDate\":-62135596800,\"UpdateDate\":-62135596800}"
+      string: "{\"OwnerID\":237026,\"CardNumber\":null,\"RedirectURL\":\"https://homologation-secure-p.payline.com/webpayment/step1.do?reqCode=prepareStep1&token=13C6rpfkqGJGcHWjTpDV1364686315054\",\"TemplateURL\":null,\"ReturnURL\":\"http://www.leetchi.com/?PaymentCardID=237092\",\"ID\":237092,\"Tag\":\"727572249\",\"CreationDate\":-62135596800,\"UpdateDate\":-62135596800}"
     http_version: 
-  recorded_at: Sat, 30 Mar 2013 23:09:47 GMT
+  recorded_at: Sat, 30 Mar 2013 23:31:55 GMT
 - request: 
     method: get
-    uri: https://api-preprod.leetchi.com/v1/partner/example/cards/237087?ts=1364685005
+    uri: https://api-preprod.leetchi.com/v1/partner/example/cards/237092?ts=1364686332
     body: 
       encoding: US-ASCII
       string: ""
     headers: 
       X-Leetchi-Signature: 
-      - X9lGH6XII5PsEfh58m0vBxUA2KLeoMt4tDF6fc7fRZLjdeqrAgAYcfzuuy/Zcr3kr+OdQDbOtnmrBeZqDdTiExsqg+jE7n0AfWCNP2Nx60WBtwL3RT3j27wDgYPT8dTh41d7vaWYYyG6RX45q43lTDJwBVUmU4DTlARMNwOXOqBUT/4dpVQRWOmEJmO22nA11RWd6e6lzzQ4binU7ZgoluefRanRnM55wB9+r4QXCacS8nxJHz1BFeNrqlvRY1iKBBxnBpiRJ+hF2mTQMlXs1VjOSiWAPOtUO5POH6WtD4U7FUHNjG+gQGOKTgXxVXW2QLt+03L/9dtqDpRUrsMThw==
+      - o6pvOJg9RP6NqAoP9cTGqqQPLN3CQdBJoBkaf9Sj93d5pnmmzKm0MwvnBvVADazdb6n4DqQEDuac3bxTzpQ7zeFgVbmt2CiQuv3zg5pFEJbU3SgBpyOUBJ2h5IH3H4cXe9FSCRDT2RHMXep/93DXD7BRG3tuw4OAKud5USr6uJDGJa2TLN0NJcy5JFtv+f9nlLiLIvNmfXmoo6tIATsMhMc45S6KnoTFgI4oQYxtE/DfmmV/2gtteQPvq6Q3jsUbGpD9NhAEmAFe6CSGxpniRDZHdvoDmu/yEQ6Av8i2kifW0IRJYDf/dFYHB/0bv9tnCuxTHHc/7vg/d0Y86W8Jwg==
       Content-Type: 
       - application/json
       Accept: 
@@ -74,12 +74,53 @@ http_interactions:
       X-Powered-By: 
       - ASP.NET
       Date: 
-      - Sat, 30 Mar 2013 23:10:06 GMT
+      - Sat, 30 Mar 2013 23:32:13 GMT
       Content-Length: 
       - "351"
     body: 
       encoding: US-ASCII
-      string: "{\"OwnerID\":237026,\"CardNumber\":\"497010XXXXXX0154\",\"RedirectURL\":\"https://homologation-secure-p.payline.com/webpayment/step1.do?reqCode=prepareStep1&token=1GjgGtmCXdUj8E61OZ6C1364684986756\",\"TemplateURL\":null,\"ReturnURL\":\"http://www.leetchi.com/?PaymentCardID=237087\",\"ID\":237087,\"Tag\":\"727572249\",\"CreationDate\":-62135596800,\"UpdateDate\":-62135596800}"
+      string: "{\"OwnerID\":237026,\"CardNumber\":\"497010XXXXXX0154\",\"RedirectURL\":\"https://homologation-secure-p.payline.com/webpayment/step1.do?reqCode=prepareStep1&token=13C6rpfkqGJGcHWjTpDV1364686315054\",\"TemplateURL\":null,\"ReturnURL\":\"http://www.leetchi.com/?PaymentCardID=237092\",\"ID\":237092,\"Tag\":\"727572249\",\"CreationDate\":-62135596800,\"UpdateDate\":-62135596800}"
     http_version: 
-  recorded_at: Sat, 30 Mar 2013 23:10:05 GMT
+  recorded_at: Sat, 30 Mar 2013 23:32:13 GMT
+- request: 
+    method: delete
+    uri: https://api-preprod.leetchi.com/v1/partner/example/cards/237092?ts=1364686333
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      X-Leetchi-Signature: 
+      - DgqatMclINgWLnOYHTQICtB6awy3/muAXsslTtoO8G657FqA0LBENldV45BrjFrKEX8wYzu0lPzayF0zzdX0xqvEGvLidUqBBeSYesRoipZKchRyRKVzRmOBXKNnLjfh3vkjjqucisVkdO9v/vPKAPJUTOFuBx5t1qZNkP+5RJqYWy9To1zORc6kxfu5NQXzK5OmA14nkTaUu3grRZ22lO+g1lvhNXH+pFW1Chb4DahDhKk4ZXwesIfnCYzVUWcHa0FBgQbXGIHnVjkkM2Wrfxc4s/gaA1fMqBtRtAx1K68W/0zXotspg2tAk3NsziJI4IjBzrPHCF56W2d7W17U9g==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 23:32:13 GMT
+      Content-Length: 
+      - "4"
+    body: 
+      encoding: US-ASCII
+      string: "\"OK\""
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 23:32:13 GMT
 recorded_with: VCR 2.4.0

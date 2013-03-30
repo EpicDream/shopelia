@@ -50,7 +50,7 @@ class Psp::LeetchiPaymentCard < Psp::LeetchiWrapper
 
   def destroy card
     remote_card = Leetchi::Card.delete(card.leetchi.remote_payment_card_id)
-    if remote_card.eql?("OK")
+    if remote_card.eql?("\"OK\"")
       true
     else
       remote_error remote_card
