@@ -27,15 +27,9 @@ class User < ActiveRecord::Base
   attr_accessible :addresses_attributes, :phones_attributes
   attr_accessor :addresses_attributes, :phones_attributes
 
-  after_save do |record|
-    record.addresses = record.addresses_attributes
-    record.phones = record.phones_attributes
-    create_psp_users unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"].nil?
-  end
-  
-  before_update do |record|
-    update_psp_users if first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?
-  end
+  after_save :process_nested_attributes
+  after_save :create_psp_users
+  before_update :update_psp_users 
 
   def addresses= params
     (params || []).each do |address|
@@ -67,25 +61,36 @@ class User < ActiveRecord::Base
     self.psp_users.leetchi.first
   end
   
+  private
+  
+  def process_nested_attributes
+    self.addresses = self.addresses_attributes
+    self.phones = self.phones_attributes
+  end
+  
   def create_psp_users
-    if self.leetchi.nil?
-      wrapper = Psp::LeetchiUser.new
-      if !wrapper.create(self)
-        self.destroy
-        self.errors.add(:base, I18n.t('leetchi.users.creation_failure', :error => wrapper.errors))
-        false
+    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"].nil?  
+      if self.leetchi.nil?
+        wrapper = Psp::LeetchiUser.new
+        if !wrapper.create(self)
+          self.destroy
+          self.errors.add(:base, I18n.t('leetchi.users.creation_failure', :error => wrapper.errors))
+          false
+        end
       end
     end
   end
   
   def update_psp_users
-    if self.leetchi.present?
-      wrapper = Psp::LeetchiUser.new
-      if !wrapper.update(self)
-        self.errors.add(:base, I18n.t('leetchi.users.update_failure', :error => wrapper.errors))
-        false
+    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"].nil?
+      if self.leetchi.present? && (first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?)
+        wrapper = Psp::LeetchiUser.new
+        if !wrapper.update(self)
+          self.errors.add(:base, I18n.t('leetchi.users.update_failure', :error => wrapper.errors))
+          false
+        end
       end
-    end        
+    end
   end
 
 end
