@@ -2,10 +2,10 @@ elarch:
   email: elarch@gmail.com
   encrypted_password: <%= User.new.send(:password_digest, 'tototo') %>
   first_name: Eric
-  last_name: Larcheveque
+  last_name: Larchevêque
   confirmation_sent_at: <%= 1.day.ago %>
   birthdate: '1973-09-30'
-  civility: 0
+  civility: <%= User::CIVILITY_MR %>
   nationality: france
   ip_address: '127.0.0.1'
   
@@ -16,7 +16,7 @@ manu:
   last_name: Le Malin
   confirmation_sent_at: <%= 1.day.ago %>
   birthdate: '1973-09-30'
-  civility: 0
+  civility: <%= User::CIVILITY_MR %>
   nationality: france
   ip_address: '127.0.0.1'
   

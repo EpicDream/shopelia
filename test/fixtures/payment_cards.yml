@@ -1,7 +1,15 @@
 elarch_hsbc:
   user: elarch
   name: HSBC
-  number: 4XXXXXXXXXXX1234
+  number: 4970100000000154
+  exp_month: 02
+  exp_year: 2015
+  cvv: 123
+
+manu_hsbc:
+  user: manu
+  name: HSBC
+  number: 4970100000000154
   exp_month: 02
   exp_year: 2015
   cvv: 123

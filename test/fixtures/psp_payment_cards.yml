@@ -1,0 +1,5 @@
+elarch_leetchi_hsbc:
+  payment_card: elarch_hsbc
+  psp: leetchi
+  remote_payment_card_id: 1247
+

@@ -1,11 +1,19 @@
 en:
 
   developers:
-    unauthorized: Invalid api key
+    unauthorized: "Invalid api key"
     
   phones:
-    land_line_must_have_address: A land line must be associated to an address
+    land_line_must_have_address: "A land line must be associated to an address"
   
   users:
-    invalid_birthdate: You must be at least 16 years old to register
+    invalid_birthdate: "You must be at least 16 years old to register"
 
+  leetchi:
+    users:
+      creation_failure: "Impossible to create user on Leetchi API. Error: %{error}"
+      update_failure: "Impossible to update user on Leetchi API. Error: %{error}"
+    payment_cards:
+      creation_failure: "Impossible to create payment card on Leetchi API. Error: %{error}"
+      destroy_failure: "Impossible to destroy payment card on Leetchi API. Error: %{error}"
+      

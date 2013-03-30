@@ -1,0 +1,85 @@
+--- 
+http_interactions: 
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/example/cards?ts=1364684329
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"727572249\",\"OwnerID\":237026,\"ReturnURL\":\"http://www.leetchi.com\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - auhmpBcwQAoOjccO++3W+f8QFX6AOhPuhuEUDmYMvZbbvh8nKg3eJpIbI6LNIRULLvnQ4Ct7y9TORBwAM/JkbckJftsraE+r5iogv6Jmv8dKUkQBJE37GkHPJakHpGtGOukHp8BcGqDOgnJKKDd+pnkotFE7UVHg7wrtUwrhbL6iTZcTsYHw7pbb9tdvBw2dn9EQuT55uJ08M5nae99+cLUrqFjNVsKQ/N4ySj0pG8KlHPOF0GQB6+19GwvtJKvDS8UuMhSYLfpc8KhqWwdhTg8vVic3runtSuUj3RFs4POX6lZfI1ZD7yWhpvca9GI2RuhH52Sp423l/vD6Nswl8Q==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 22:58:51 GMT
+      Content-Length: 
+      - "337"
+    body: 
+      encoding: US-ASCII
+      string: "{\"OwnerID\":237026,\"CardNumber\":null,\"RedirectURL\":\"https://homologation-secure-p.payline.com/webpayment/step1.do?reqCode=prepareStep1&token=1wGDHHoybBUwrbyYp5Mo1364684330315\",\"TemplateURL\":null,\"ReturnURL\":\"http://www.leetchi.com/?PaymentCardID=237075\",\"ID\":237075,\"Tag\":\"727572249\",\"CreationDate\":-62135596800,\"UpdateDate\":-62135596800}"
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 22:58:50 GMT
+- request: 
+    method: get
+    uri: https://api-preprod.leetchi.com/v1/partner/example/cards/237075?ts=1364684347
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      X-Leetchi-Signature: 
+      - fzxCG50gPLia4d9LH/yzDUsSTlfyNmsTO1i1JhdVzPL4WCtFMuos6/lBdB/0duso5uKySpqWOe3nQ//3Q0wdz7mH+A2vEjwaAWDNwX6yUyZaxvv+JeRm+fODECm4Cju955Ua+BVNiifFbqPdm6UfHp3jykbQ8cRJSx2otDG/ivpP/ZNLQ2UCpv4FDzHUsF44iLqJvU/+tA6DtSPK6H1+kR9/TxhcFLvfVYdeJMhXuhwdJXPfr0gp9S+a+g5BHQuLO4n2tMQnGVPUFlcvfAs4vZM9W3QKqaIWEcwxHrqltJnCCpIYwzAKigydBZ6K4gkq264Zo5u7RhLGjpfUF9Su8A==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 22:59:08 GMT
+      Content-Length: 
+      - "351"
+    body: 
+      encoding: US-ASCII
+      string: "{\"OwnerID\":237026,\"CardNumber\":\"497010XXXXXX0154\",\"RedirectURL\":\"https://homologation-secure-p.payline.com/webpayment/step1.do?reqCode=prepareStep1&token=1wGDHHoybBUwrbyYp5Mo1364684330315\",\"TemplateURL\":null,\"ReturnURL\":\"http://www.leetchi.com/?PaymentCardID=237075\",\"ID\":237075,\"Tag\":\"727572249\",\"CreationDate\":-62135596800,\"UpdateDate\":-62135596800}"
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 22:59:08 GMT
+recorded_with: VCR 2.4.0

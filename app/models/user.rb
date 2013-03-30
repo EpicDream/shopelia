@@ -30,6 +30,11 @@ class User < ActiveRecord::Base
   after_save do |record|
     record.addresses = record.addresses_attributes
     record.phones = record.phones_attributes
+    create_psp_users unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"].nil?
+  end
+  
+  before_update do |record|
+    update_psp_users if first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?
   end
 
   def addresses= params
@@ -56,6 +61,31 @@ class User < ActiveRecord::Base
   
   def female?
     !self.male?
+  end
+  
+  def leetchi
+    self.psp_users.leetchi.first
+  end
+  
+  def create_psp_users
+    if self.leetchi.nil?
+      wrapper = Psp::LeetchiUser.new
+      if !wrapper.create(self)
+        self.destroy
+        self.errors.add(:base, I18n.t('leetchi.users.creation_failure', :error => wrapper.errors))
+        false
+      end
+    end
+  end
+  
+  def update_psp_users
+    if self.leetchi.present?
+      wrapper = Psp::LeetchiUser.new
+      if !wrapper.update(self)
+        self.errors.add(:base, I18n.t('leetchi.users.update_failure', :error => wrapper.errors))
+        false
+      end
+    end        
   end
 
 end

@@ -1,0 +1,290 @@
+--- 
+http_interactions: 
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/users?ts=1364659318
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"973902417\",\"Email\":\"willfail@gmail.com\",\"FirstName\":\"Joe\",\"LastName\":\"Fail\",\"Nationality\":\"FR\",\"Birthday\":118195200,\"PersonType\":\"NATURAL_PERSON\",\"CanRegisterMeanOfPayment\":true,\"IP\":\"127.0.0.1\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - TjbCSM9pbhfv2COhql/O64ePS04pg7nHySZZKo39po9XISGCgQH5SwifQUuJ4JH5bsukSIH12R161bSNT66pvkx/4fRnCFT4P+u2++9Tmq8oJHCeQ7Hs+HKKcifrQ2X9mX7qdr90GDEvtiDwHlZ/I8E953TeQ+jr1x8cvgJ9tvk69wy8T0w0ONJkYnEWenHpAAcTyYuxIqoTSJ9XGn4LYJhww9DmZmA+W8q6OFOlV6mWE8TqmOnxPUC2W1YUKS62R08dZfnbQ4RMDFuyU/EbuTX+P3H0EIVnQa5kDoU2BwsLjWkZyuHb2n/tWyyw3Vt+/Je2koJoH4tPeX18kbaNmw==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 16:01:58 GMT
+      Content-Length: 
+      - "98"
+    body: 
+      encoding: US-ASCII
+      string: "{\"ErrorCode\":0,\"TechnicalMessage\":\"Api failure\",\"UserMessage\":\"Api failure\",\"Type\":\"SystemError\"}"
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 16:01:58 GMT
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/users?ts=1364659349
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"973902417\",\"Email\":\"willfail_later@gmail.com\",\"FirstName\":\"Joe\",\"LastName\":\"Fail\",\"Nationality\":\"FR\",\"Birthday\":118195200,\"PersonType\":\"NATURAL_PERSON\",\"CanRegisterMeanOfPayment\":true,\"IP\":\"127.0.0.1\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - Zs629i+j/JCq9IKp7adxU+4350qfMwLiZybPQZ8BYsOiSQfE8jh5uI68/9OQWjIucizy74tXjqgCLuWO7AlxCMxK4XERhXd7wqNG/TmVKfJtjQ3uLFwYwGGx1WxiWpQJRZ0Q8uPwRm82c8PQJWZOA8apnCawLLPrSYeczQElLKR8NdESvjKOrAIh3MTxSak4WCdAEGYD36xOVy3c/FyQpzvWMfeTw4Qqae+a7QySNTEDxBu+StDGO2B6TRjBsFejjF1mXp8CoJwBFb2V7P67tlJZDnXA7H7p82hHn3fUj8kahS7DcZTYoC44y2WmkSRNEwm/9qY9xydzPknjJjilBQ==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 16:02:29 GMT
+      Content-Length: 
+      - "406"
+    body: 
+      encoding: US-ASCII
+      string: "{\"Email\":\"willfail_later@gmail.com\",\"FirstName\":\"Joe\",\"LastName\":\"Fail\",\"CanRegisterMeanOfPayment\":true,\"HasRegisteredMeansOfPayment\":false,\"IP\":\"127.0.0.1\",\"Birthday\":118195200,\"Password\":\"7uNYFHuxwiJaph8umzoL24aQwifkcA\",\"PersonalWalletAmount\":0,\"IsStrongAuthenticated\":false,\"Nationality\":\"FR\",\"PersonType\":\"NATURAL_PERSON\",\"ID\":236979,\"Tag\":\"973902417\",\"CreationDate\":1364659349,\"UpdateDate\":1364659349}"
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 16:02:29 GMT
+- request: 
+    method: put
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/users/236979?ts=1364659349
+    body: 
+      encoding: US-ASCII
+      string: "{\"Email\":\"willfail_later@gmail.com\",\"FirstName\":\"Joe\",\"LastName\":\"Fail\",\"Nationality\":\"FR\",\"Birthday\":23500800}"
+    headers: 
+      X-Leetchi-Signature: 
+      - MmTuoB0JfmY8ty70SYWV3/1JhNxCGjL5dpgckyJSgVWSyOl1IbLJvHdGhOJDj8YOU1olElKE7+W34kyM2mMPLZAMOEpu7y3qD0m4n5FVmq9D4jvvDl4C1u5YHpXD3rDzVOgGriTu3osDSkLKpN/4FsP6aGIDbN+seRBtmJ/93PPMuu/ucVK7tyWiPx95x/loe8Pv7CkblNuVRmSWMCHbAJJYUaM6bxvPD+IAocHNo9qe/6LyU6kcW0ZK2Zeh6mfRVq7gltkUVBs/zK2k1sDu4+AcunZy/bHy7Z++j6qzU4Qv1Pri8moaxKp0g0BYZDrdeUtihhtYVMmxNCQTRsDPGg==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 16:02:29 GMT
+      Content-Length: 
+      - "98"
+    body: 
+      encoding: US-ASCII
+      string: "{\"ErrorCode\":0,\"TechnicalMessage\":\"Api failure\",\"UserMessage\":\"Api failure\",\"Type\":\"SystemError\"}"
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 16:02:29 GMT
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/example/users?ts=1364663882
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"973902417\",\"Email\":\"willfail@gmail.com\",\"FirstName\":\"Joe\",\"LastName\":\"Fail\",\"Nationality\":\"FR\",\"Birthday\":118195200,\"PersonType\":\"NATURAL_PERSON\",\"CanRegisterMeanOfPayment\":true,\"IP\":\"127.0.0.1\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - hpyKJ7bdqceCr9Mx9hcnCk3+H61n3sRcefc0mj5BumarebHnYU92vxfebDpIyHeFh3XKyjGwp4BgeCWN5qvFPqf9PahyqfkDQXJPzY+8Iq9ZffLbr2kdCjclLEUjLZETDtA3eVZkk1XMMDoSpuc7sFaFT/94EoWcfXkCrjIx5FtjEYpXR0/quCdZY/FncZxzqWnDMGVLYXOecFsXfMTEUYilpbULcZ3jwpeLCVbnSDzvQqN351aR/aKN/A5/2fv008qox+PMviXfuky+mUotB4tKTMU/j7DK0ieUGPEh0HYiNMr8gdtpDC1EYLgGB8AG96l5L21VNma25ifAkM092w==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 17:18:03 GMT
+      Content-Length: 
+      - "98"
+    body: 
+      encoding: US-ASCII
+      string: "{\"ErrorCode\":0,\"TechnicalMessage\":\"Api failure\",\"UserMessage\":\"Api failure\",\"Type\":\"SystemError\"}"
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 17:18:02 GMT
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/example/users?ts=1364663887
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"973902417\",\"Email\":\"willfail_later@gmail.com\",\"FirstName\":\"Joe\",\"LastName\":\"Fail\",\"Nationality\":\"FR\",\"Birthday\":118195200,\"PersonType\":\"NATURAL_PERSON\",\"CanRegisterMeanOfPayment\":true,\"IP\":\"127.0.0.1\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - mHx42+RhtULm2Gmig5ue790/4MRv4iPgF2biP1RM6X+gJGD1u3bRbT6MuGcVwz2yVs+46zQ2o10AATUJzAw4CUAnik4Y2ySUibJDyuU6XBcCHyiZv3oszspn4spO3Wt0WrYrDUFLMcaVACt8nroEQOaziZ/uSQm1WLJXBYNOXsoNMxImEx7RTc/8XUXFOT4wwUkBDXyrb7enOX+vE3SISGmqTvfQAzszDhMJILZDDHQdmCpK0dqTKYeARspC+mTZdiPPqUnN7FurhuzeJ4fy+E4I+wzKj4lqrkn19uviDWEsi8mRBYq0Y2mk3vNiONVyCLRkjOKvSTXeZF0FokHaRQ==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 17:18:08 GMT
+      Content-Length: 
+      - "406"
+    body: 
+      encoding: US-ASCII
+      string: "{\"Email\":\"willfail_later@gmail.com\",\"FirstName\":\"Joe\",\"LastName\":\"Fail\",\"CanRegisterMeanOfPayment\":true,\"HasRegisteredMeansOfPayment\":false,\"IP\":\"127.0.0.1\",\"Birthday\":118195200,\"Password\":\"qradnb5VPBAiFbuyrfmR4aOxyLPCeu\",\"PersonalWalletAmount\":0,\"IsStrongAuthenticated\":false,\"Nationality\":\"FR\",\"PersonType\":\"NATURAL_PERSON\",\"ID\":237025,\"Tag\":\"973902417\",\"CreationDate\":1364663888,\"UpdateDate\":1364663888}"
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 17:18:08 GMT
+- request: 
+    method: put
+    uri: https://api-preprod.leetchi.com/v1/partner/example/users/237025?ts=1364663888
+    body: 
+      encoding: US-ASCII
+      string: "{\"Email\":\"willfail_later@gmail.com\",\"FirstName\":\"Joe\",\"LastName\":\"Fail\",\"Nationality\":\"FR\",\"Birthday\":23500800}"
+    headers: 
+      X-Leetchi-Signature: 
+      - e2zNVoOvqDdEnINkZm2PBNu/s1GP1vbJoq/k26OgOi5Io6Po0cUlGxSHuuxSA8NII1Z4Zo4QdSXAo3niCfKVAV6QZEBhtK0qBw8RViHRnbKRmLAf/mUqrIS5ihE9g26+FJm/tUXldkncEt1JZ+KVTM+Ut/pw7JhJhabUxhMZYvytLdKERpwuOhs3FErmOUqdPjUdL7hVkXhiG9efB7SGFXK2pmkJYr5GL5shfijjvuIGc4vaPS10HCG4UkusJd7cpVwB6vMsiE9lMlqF9oUuYLK4q8z6YIG/krtbvQsZMKE0yzrctD0BB4IjrzACfDrNy0bmq3ZkIR3WVJaHGYhgaA==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 17:18:08 GMT
+      Content-Length: 
+      - "98"
+    body: 
+      encoding: US-ASCII
+      string: "{\"ErrorCode\":0,\"TechnicalMessage\":\"Api failure\",\"UserMessage\":\"Api failure\",\"Type\":\"SystemError\"}"
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 17:18:08 GMT
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/example/users?ts=1364664566
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"973902417\",\"Email\":\"willfail@gmail.com\",\"FirstName\":\"Joe\",\"LastName\":\"Fail\",\"Nationality\":\"FR\",\"Birthday\":118195200,\"PersonType\":\"NATURAL_PERSON\",\"CanRegisterMeanOfPayment\":true,\"IP\":\"0.0.0.0\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - e+9mK2fOXVK2jiY+gMB2WJrGX2ijWgAl/PgE/sJ4t/aU29SXflmUZhP2i8UfPG2Ew/5ssQHpJJt1+RDrhQpiYKRK39DxW+G0DE1g3saR4kNiyjvukjZLx+SbTdjfRtait8TXtdS9vVbk+gEG6YSuSqlY1pXLoR5d5lYkZI8IZGZ/U2mV5gmxMT/yeAuT3QYO+7e1gcciEjUeb3JSeW5s7hdHYNzx1GxTGD8de5f9cgHhI02hsKTfD8tqCzSh6YA3oOWb5FiY/R/D2Cx+rYyuaOycJ2KxcDwIkcJY1vZNYbsSAUzZeMY7bjBlyFNJbrDogiQCxvIcg/bPLnhEdLdJsw==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "2.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sat, 30 Mar 2013 17:29:27 GMT
+      Content-Length: 
+      - "98"
+    body: 
+      encoding: US-ASCII
+      string: "{\"ErrorCode\":0,\"TechnicalMessage\":\"Api failure\",\"UserMessage\":\"Api failure\",\"Type\":\"SystemError\"}"
+    http_version: 
+  recorded_at: Sat, 30 Mar 2013 17:29:27 GMT
+recorded_with: VCR 2.4.0

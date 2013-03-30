@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+Psp.delete_all
+Psp.create(:id=>1,:name=>Psp::LEETCHI)
 Country.delete_all
 Country.create(:id=>1,:iso=>"AD",:name=>"Andorra")
 Country.create(:id=>2,:iso=>"AE",:name=>"United Arab Emirates")

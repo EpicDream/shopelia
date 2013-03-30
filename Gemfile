@@ -10,6 +10,8 @@ gem 'devise', '~> 2.0'
 gem 'apipie-rails'
 gem "active_model_serializers", "~> 0.7.0"
 gem "leetchi-wallet-services", "~> 1.0.0"
+gem 'selenium-webdriver'
+gem 'headless'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -38,6 +40,8 @@ gem 'jquery-rails'
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
 group :test do
-  #gem "turn", "~> 0.8.3"
+  gem "turn", "~> 0.8.3"
+  gem 'vcr'
+  gem 'webmock'
   gem "simplecov", :require => false
 end

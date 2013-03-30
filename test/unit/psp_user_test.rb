@@ -7,7 +7,7 @@ class PspUserTest < ActiveSupport::TestCase
     user = PspUser.new(
       :user_id => users(:elarch).id,
       :psp_id => psps(:tunz).id,
-      :remote_user_id => 2)
+      :remote_user_id => 123)
     assert user.save
   end
   
@@ -15,7 +15,7 @@ class PspUserTest < ActiveSupport::TestCase
     user = PspUser.new(
       :user_id => users(:elarch).id,
       :psp_id => psps(:leetchi).id,
-      :remote_user_id => 2)
+      :remote_user_id => 123)
     assert !user.save
   end
 
@@ -23,7 +23,7 @@ class PspUserTest < ActiveSupport::TestCase
     user = PspUser.new(
       :user_id => users(:manu).id,
       :psp_id => psps(:leetchi).id,
-      :remote_user_id => 1)
+      :remote_user_id => psp_users(:elarch_leetchi).remote_user_id)
     assert !user.save
   end
 

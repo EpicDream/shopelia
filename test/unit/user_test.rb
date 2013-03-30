@@ -1,7 +1,8 @@
+# -*- encoding : utf-8 -*-
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  fixtures :users, :countries
+  fixtures :users, :countries, :psps
   
   setup do
     @user = users(:elarch)
@@ -33,7 +34,7 @@ class UserTest < ActiveSupport::TestCase
           :number => "0640404040",
           :line_type => Phone::MOBILE
           } ] )
-          
+  
     assert user.save, user.errors.full_messages.join(",")
     assert_equal "John", user.first_name
     assert_equal "Doe", user.last_name
@@ -78,6 +79,99 @@ class UserTest < ActiveSupport::TestCase
     @user.destroy
     assert_equal 0, Address.find_all_by_user_id(user_id).count
     assert_equal 0, Phone.find_all_by_user_id(user_id).count    
+  end
+  
+  test "it should create and update leetchi user" do
+    @user.destroy # cleanup
+    allow_remote_api_calls
+    VCR.use_cassette('user') do
+      user = User.new(
+        :email => "elarch@gmail.com", 
+        :password => "tototo", 
+        :password_confirmation => "tototo",
+        :first_name => "Eric",
+        :last_name => "Larchevêque",
+        :civility => User::CIVILITY_MR,
+        :nationality_id => countries(:france).id,
+        :ip_address => '127.0.0.1',
+        :birthdate => '1973-09-30')
+      assert user.save, user.errors.full_messages.join(",")
+      
+      assert user.leetchi, "Leetchi user not created"
+
+      # Request leetchi user to check data integrity
+      leetchi_user = Leetchi::User.details(user.leetchi.remote_user_id)
+      assert_equal user.email, leetchi_user['Email']
+      assert_equal user.first_name, leetchi_user['FirstName']
+      assert_equal user.last_name, leetchi_user['LastName']
+      assert_equal user.nationality.iso, leetchi_user['Nationality']
+      assert_equal user.birthdate.to_i, leetchi_user['Birthday']
+      assert_equal "NATURAL_PERSON", leetchi_user['PersonType']
+      assert !leetchi_user['IsStrongAuthenticated']
+      assert leetchi_user['CanRegisterMeanOfPayment']
+
+      # Update
+      user.update_attributes(:birthdate => '1970-09-30')
+      
+      # Request leetchi user to verify bithdate has been updated
+      leetchi_user = Leetchi::User.details(user.leetchi.remote_user_id)
+      assert_equal user.birthdate.to_i, leetchi_user['Birthday'].to_i
+    end
+  end
+
+  test "it should manage leetchi api failure at user creation" do
+    allow_remote_api_calls
+    VCR.use_cassette('user_fail') do
+      assert_difference('User.count', 0) do
+        @user = User.new(
+          :email => "willfail@gmail.com", 
+          :password => "tototo", 
+          :password_confirmation => "tototo",
+          :first_name => "Joe",
+          :last_name => "Fail",
+          :civility => User::CIVILITY_MR,
+          :nationality_id => countries(:france).id,
+          :ip_address => '127.0.0.1',
+          :birthdate => '1973-09-30')
+        @user.save
+      end
+      
+      assert @user.errors.present?
+      errors = Psp::LeetchiWrapper.extract_errors @user
+      assert_equal "remote", errors["origin"]
+      assert_equal 0, errors["error_code"]
+      assert_equal "Api failure", errors["user_message"]
+      assert_equal "Api failure", errors["message"]
+      assert_equal "SystemError", errors["type"]
+    end
+  end
+
+  test "it should manage leetchi api failure at user update" do
+    allow_remote_api_calls
+    VCR.use_cassette('user_fail') do
+      user = User.new(
+        :email => "willfail_later@gmail.com", 
+        :password => "tototo", 
+        :password_confirmation => "tototo",
+        :first_name => "Joe",
+        :last_name => "Fail",
+        :civility => User::CIVILITY_MR,
+        :nationality_id => countries(:france).id,
+        :ip_address => '127.0.0.1',
+        :birthdate => '1973-09-30')
+      assert user.save
+
+      user.update_attributes(:birthdate => '1970-09-30')
+      assert user.errors.present?
+      assert_equal DateTime.parse('1973-09-30'), user.reload.birthdate
+      
+      errors = Psp::LeetchiWrapper.extract_errors user
+      assert_equal "remote", errors["origin"]
+      assert_equal 0, errors["error_code"]
+      assert_equal "Api failure", errors["user_message"]
+      assert_equal "Api failure", errors["message"]
+      assert_equal "SystemError", errors["type"]
+    end
   end
   
 end
