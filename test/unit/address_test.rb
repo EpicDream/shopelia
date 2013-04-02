@@ -7,7 +7,7 @@ class AddressTest < ActiveSupport::TestCase
     @address = addresses(:elarch_neuilly)
   end
 
-  test "it should create address" do
+  test "it should create address and manage default property attribution" do
     address = Address.new(
       :user_id => users(:elarch).id,
       :address1 => "21 rue d'Aboukir",
@@ -17,8 +17,11 @@ class AddressTest < ActiveSupport::TestCase
       :country_id => countries(:france).id)
     
     assert address.save, address.errors.full_messages.join(",")
-    assert address.is_default?, "New address must default"
+    assert address.is_default?, "New address must be default"
     assert !@address.reload.is_default?, "Old address musn't be default"
+
+    address.destroy
+    assert @address.reload.is_default, "Last standing address should be default"    
   end
 
   test "a new address must not be default if not specified" do

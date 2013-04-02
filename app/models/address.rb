@@ -13,6 +13,19 @@ class Address < ActiveRecord::Base
   attr_accessible :user_id, :code_name, :address1, :address2, :zip, :city, :state_id, :country_id, :is_default, :company, :phones_attributes
   attr_accessor :phones_attributes
 
+  before_validation do |record|
+    if Address.where(:user_id => record.user_id).count == 0
+      record.is_default = true 
+    end
+  end
+
+  before_destroy do |record|
+    if record.user.addresses.where("is_default='t' and id<>?", record.id).count == 0
+      default_address = record.user.addresses.where("id<>?", record.id).first
+      default_address.update_attribute :is_default, true unless default_address.nil?
+    end
+  end
+
   before_save do |record|
     if record.is_default?
       record.user.addresses.where("id<>?", record.id || 0).update_all "is_default='f'"

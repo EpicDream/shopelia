@@ -1,6 +1,6 @@
 Leetchi.configure do |c|
   c.preproduction = !Rails.env.production?
-  c.partner_id = 'example'
-  c.key_path = "#{Rails.root}/keys/example.pem"
+  c.partner_id = 'prixing'
+  c.key_path = "#{Rails.root}/keys/development_rsa"
   c.key_password = ''
 end

@@ -123,7 +123,7 @@ class UserTest < ActiveSupport::TestCase
     allow_remote_api_calls
     VCR.use_cassette('user_fail') do
       assert_difference('User.count', 0) do
-        @user = User.new(
+        @user = User.create(
           :email => "willfail@gmail.com", 
           :password => "tototo", 
           :password_confirmation => "tototo",
@@ -133,7 +133,7 @@ class UserTest < ActiveSupport::TestCase
           :nationality_id => countries(:france).id,
           :ip_address => '127.0.0.1',
           :birthdate => '1973-09-30')
-        @user.save
+        assert !@user.persisted?, "User creation should have failed"
       end
       
       assert @user.errors.present?

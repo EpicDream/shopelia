@@ -33,13 +33,16 @@ class Psp::LeetchiPaymentCard < Psp::LeetchiWrapper
             return true
           else
             local_error psp_card
+            Leetchi::Card.delete remote_card["ID"]
           end
         else
           time_out_error
+          Leetchi::Card.delete remote_card["ID"]
         end
         
       rescue PaylineDriver::DriverError => e
         card_injection_error e.error
+        Leetchi::Card.delete remote_card["ID"]
       end
 
     else

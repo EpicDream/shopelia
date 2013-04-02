@@ -1,6 +1,6 @@
 class PaymentCard < ActiveRecord::Base
   belongs_to :user
-  has_many :psp_payment_cards, :dependent => :destroy
+  has_many :psp_payment_cards
   
   validates :user, :presence => true
   validates :number, :presence => true, :length => { :is => 16 }
@@ -22,7 +22,6 @@ class PaymentCard < ActiveRecord::Base
       if self.leetchi.nil?
         wrapper = Psp::LeetchiPaymentCard.new
         if !wrapper.create(self)
-          puts "FAILURE ! destroying"
           self.destroy
           self.errors.add(:base, I18n.t('leetchi.payment_cards.creation_failure', :error => wrapper.errors))
           false
@@ -38,6 +37,8 @@ class PaymentCard < ActiveRecord::Base
         if !wrapper.destroy(self)
           self.errors.add(:base, I18n.t('leetchi.payment_cards.destroy_failure', :error => wrapper.errors))
           false
+        else
+          self.leetchi.destroy
         end
       end
     end
