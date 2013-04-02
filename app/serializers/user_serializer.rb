@@ -6,10 +6,10 @@ class UserSerializer < ActiveModel::Serializer
   end
 
   def addresses
-    object.addresses ? ActiveModel::ArraySerializer.new(object.addresses).as_json : nil
+    ActiveModel::ArraySerializer.new(object.addresses).as_json
   end
   
   def phones
-    object.phones ? ActiveModel::ArraySerializer.new(object.phones).as_json : nil
+    ActiveModel::ArraySerializer.new(object.phones.without_addresses).as_json
   end
 end

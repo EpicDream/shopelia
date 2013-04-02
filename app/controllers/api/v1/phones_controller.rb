@@ -9,7 +9,7 @@ class Api::V1::PhonesController < Api::V1::BaseController
     end
   end
 
-  api :GET, "/addresses/:id", "Show a phone"
+  api :GET, "/phones/:id", "Show a phone"
   def show
     render json: @phone
   end
