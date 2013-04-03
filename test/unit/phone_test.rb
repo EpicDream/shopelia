@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class PhoneTest < ActiveSupport::TestCase
-  fixtures :users, :addresses
+  fixtures :users, :addresses, :phones
   
   test "it should create a phone for a user" do
     phone = Phone.new(
