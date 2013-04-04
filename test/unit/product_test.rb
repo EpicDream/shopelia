@@ -11,5 +11,17 @@ class ProductTest < ActiveSupport::TestCase
       :image_url => 'http://www.rueducommerce.fr/image')
     assert product.save, product.errors.full_messages.join(",")
   end
+  
+  test "it should create product from url" do
+    product = Product.new(:url => 'http://www.rueducommerce.fr/product')
+    assert product.save, product.errors.full_messages.join(",")
+    assert_equal merchants(:rueducommerce).id, product.merchant_id
+  end
+  
+  test "it should prevent product creation from unsupported merchant" do
+    product = Product.new(:url => 'http://www.bla.fr/product')
+    assert !product.save
+    assert_equal I18n.t('products.merchant_not_supported'), product.errors.full_messages.first
+  end
 
 end

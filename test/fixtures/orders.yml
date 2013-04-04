@@ -1,0 +1,6 @@
+elarch_usbkey:
+  user: elarch
+  merchant: rueducommerce
+  product: usbkey
+  state_name: "pending"
+

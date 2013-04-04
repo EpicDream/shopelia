@@ -6,6 +6,9 @@ en:
   phones:
     land_line_must_have_address: "A land line must be associated to an address"
   
+  products:
+    merchant_not_supported: "This product cannot be ordered through Shopelia. Unsupported merchant"
+  
   users:
     invalid_birthdate: "You must be at least 16 years old to register"
 
