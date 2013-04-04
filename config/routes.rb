@@ -14,7 +14,9 @@ Shopelia::Application.routes.draw do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
       resources :payment_cards, :only => [:index, :create, :show, :destroy]
-      resources :phones, :only => [:index, :create, :show, :update, :destroy]
+      resources :phones, :only => [:index, :create, :show, :update, :destroy] do
+        resources :lookup, :only => :index, :controller => "phones/lookup"
+      end
       resources :users, :only => [:show, :update, :destroy]
     end
   end

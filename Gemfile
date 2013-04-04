@@ -12,6 +12,7 @@ gem "active_model_serializers", "~> 0.7.0"
 gem "leetchi-wallet-services", "~> 1.0.0"
 gem 'selenium-webdriver'
 gem 'headless'
+gem 'mechanize'
 
 # Gems used only for assets and not required
 # in production environments by default.
