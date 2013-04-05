@@ -3,7 +3,7 @@ module Vulcain
   class Order < Vulcain::Ressource
 
     def self.create data
-      #post_request("order", data)
+      post_request("orders", data)
     end
     
   end

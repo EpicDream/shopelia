@@ -41,7 +41,7 @@ gem 'jquery-rails'
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
 group :test do
-  gem "turn", "~> 0.8.3"
+  #gem "turn", "~> 0.8.3"
   gem 'vcr'
   gem 'webmock'
   gem "simplecov", :require => false

@@ -1,4 +1,5 @@
 elarch_usbkey:
+  uuid: abcdef
   user: elarch
   merchant: rueducommerce
   product: usbkey

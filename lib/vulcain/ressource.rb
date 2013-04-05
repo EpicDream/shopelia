@@ -1,32 +1,5 @@
 module Vulcain
 
-  require 'json'
-  require 'base64'
-  require 'openssl'
-  require 'net/http'
-
-  class Configuration
-    attr_accessor :base_url, :api_key, :preproduction
-
-    def preproduction
-      @preproduction || false
-    end
-
-    def base_url
-      @base_url || (@preproduction == true  ? "http://vulcain-staging.shopelia.fr" : "http://vulcain.shopelia.fr")
-    end
-    
-  end
-
-  class << self
-    attr_accessor :configuration
-  end
-
-  def self.configure
-    self.configuration ||= Configuration.new
-    yield configuration
-  end
-
   class Ressource
 
   protected
@@ -50,10 +23,10 @@ module Vulcain
   private
 
     def self.request(method, route, data=nil, options=nil)
+      return {} if Rails.env.test?
       path = path_for(route, options)
       uri = uri_for(path)
       method = method.upcase
-      data = data.to_json unless data.nil?
       headers = prepare_headers
       res = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
         case method
@@ -64,13 +37,17 @@ module Vulcain
         else
           return {}
         end
-        request.body = data unless data.nil?
+        request.set_form_data({ :context => data.to_json }) unless data.nil?
         http.request request
       end
-      begin
-        JSON.parse(res.body)
-      rescue JSON::ParserError => e
-        res.body.is_a?(String) ? res.body : {'Error' => 'invalid json response' }
+      if res.code.to_i == 200
+        begin
+          JSON.parse(res.body)
+        rescue JSON::ParserError => e
+          res.body.is_a?(String) ? {} : {'Error' => 'invalid json response' }
+        end
+      else
+        {'Error' => 'invalid parameters'}
       end
     end
 
@@ -83,7 +60,7 @@ module Vulcain
     end
     
     def self.prepare_headers
-      { 'X-Vulcain-Api-Key' => Vulcain.confirugration.api_key, 'Content-Type' => 'application/json' }
+      { 'X-Vulcain-Api-Key' => Vulcain.configuration.api_key, 'Content-Type' => 'application/json' }
     end
 
   end

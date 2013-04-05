@@ -22,13 +22,48 @@ class Order < ActiveRecord::Base
       case self.state
       when :pending
         self.state = :ordering
-        Vulcain::Order.create({:context => context, :data => { :product_url => self.product.url}})
+        context = {
+          "user" => {
+            "email" => "elarch+3@gmail.com"
+          },
+          "order" => {
+            "account_password" => "toto",
+            "product_url" => self.product.url
+          },
+          "session" => {
+            "uuid" => self.uuid,
+            "callback_url" => callback_url,
+            "state" => self.state_name
+          }
+        }
+        result = Vulcain::Order.create(context)
+        puts result.inspect
+        self.state = :error if result.has_key?("Error")
       when :ordering
         self.state = :pending_confirmation
+        self.price_product = parse_price(payload["price"])
+        self.price_delivery = parse_price(payload["shipping_price"])
+        self.price_total = parse_price(payload["total_ttc"])
       when :pending_confirmation
         if payload["response"].eql?("ok")
           self.state = :paying
-          Vulcain::Payment.create({:context => context})
+          payment_card = self.user.payment_cards.first
+          context = {
+            "response" => "ok",
+            "credentials" => {
+              "card_number" => payment_card.number,
+              "card_crypto" => payment_card.cvv,
+              "expire_month" => payment_card.exp_month,
+              "expire_year" => payment_card.exp_year
+            },
+            "session" => {
+              "uuid" => self.uuid,
+              "callback_url" => callback_url,
+              "state" => self.state_name
+            }
+          }
+          result = Vulcain::Payment.create(context)
+          self.state = :error if result.has_key?("Error")
         else
           self.state = :canceled
         end
@@ -47,6 +82,14 @@ class Order < ActiveRecord::Base
   end
   
   private
+
+  def parse_price str=""
+    if str =~ /^(\d+)[,\.](\d+)/
+      $1.to_f + $2.to_f/100
+    else
+      0
+    end
+  end
   
   def context
     { :uuid => uuid, :callback_url => callback_url, :state => state }
@@ -57,7 +100,8 @@ class Order < ActiveRecord::Base
   end
   
   def callback_url
-    "http://api.shopelia.fr/api/orders/#{self.uuid}"
+    #"http://api.shopelia.fr/api/callbacks/orders/#{self.uuid}"
+    "http://zola.epicdream.fr:4444/api/callback/orders/#{self.uuid}"
   end
   
   def initialize_uuid

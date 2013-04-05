@@ -1,7 +1,7 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
-  apipie
+  #apipie
 
   devise_for :users
 
@@ -10,14 +10,18 @@ Shopelia::Application.routes.draw do
   root :to => "home#index"
   
   namespace :api do
-    scope :module => :v1, constraints: ApiConstraints.new(version: 1, default: :true)  do
+    scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
       resources :payment_cards, :only => [:index, :create, :show, :destroy]
       resources :phones, :only => [:index, :create, :show, :update, :destroy] do
         resources :lookup, :only => :index, :controller => "phones/lookup"
       end
+      resources :orders, :only => [:create, :show]
       resources :users, :only => [:show, :update, :destroy]
+      namespace :callback do
+        resources :orders, :only => :update
+      end
     end
   end
   

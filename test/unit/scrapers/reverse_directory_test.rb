@@ -22,7 +22,7 @@ class Scrapers::ReverseDirectoryTest < ActiveSupport::TestCase
     VCR.use_cassette('scrapers/reverse_directory') do  
       result = Scrapers::ReverseDirectory.lookup "0959497434"
       assert_equal 5, result.size
-    do
+    end
   end
 
 end

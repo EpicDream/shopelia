@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
-  fixtures :users, :products, :merchants, :orders
+  fixtures :users, :products, :merchants, :orders, :payment_cards
   
   setup do
     @user = users(:elarch)
@@ -31,9 +31,9 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :pending, @order.state
     @order.advance
     assert_equal :ordering, @order.state
-    @order.advance
+    @order.advance({"price" => "7,79", "shipping_price" => "5,00", "total_ttc" => "12,79"})
     assert_equal :pending_confirmation, @order.state
-    @order.advance({ "response" => "ok" })
+    @order.advance({"response" => "ok"})
     assert_equal :paying, @order.state
     @order.advance
     assert_equal :success, @order.state
@@ -43,9 +43,9 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :pending, @order.state
     @order.advance
     assert_equal :ordering, @order.state
-    @order.advance
+    @order.advance({"price" => "7,79", "shipping_price" => "5,00", "total_ttc" => "12,79"})
     assert_equal :pending_confirmation, @order.state
-    @order.advance({ "response" => "niet" })
+    @order.advance({"response" => "no" })
     assert_equal :canceled, @order.state
   end
 
@@ -53,7 +53,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :pending, @order.state
     @order.advance
     assert_equal :ordering, @order.state
-    @order.advance({ "status" => "error" })
+    @order.advance({"status" => "error" })
     assert_equal :error, @order.state
   end
   

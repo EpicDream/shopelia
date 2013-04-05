@@ -2,7 +2,9 @@
 Psp.delete_all
 Psp.create(:id=>1,:name=>Psp::LEETCHI)
 Merchant.delete_all
-Merchant.create(:id=>1,:name=>'Rue du Commerce',:url=>'http://www.rueducommerce.com',:tc_url=>'http://www.rueducommerce.fr/home/index.cfm/aide/cgv.htm',:logo=>'http://www.prixing.fr/images/logos/rueducommerce.png')
+Merchant.create(:id=>1,:name=>'Rue du Commerce',:url=>'http://www.rueducommerce.fr',:tc_url=>'http://www.rueducommerce.fr/home/index.cfm/aide/cgv.htm',:logo=>'http://www.prixing.fr/images/logos/rueducommerce.png')
+Developer.delete_all
+Developer.create(:name=>'Prixing')
 Country.delete_all
 Country.create(:id=>1,:iso=>"AD",:name=>"Andorra")
 Country.create(:id=>2,:iso=>"AE",:name=>"United Arab Emirates")

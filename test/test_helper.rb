@@ -21,11 +21,13 @@ class ActiveSupport::TestCase
     c.allow_http_connections_when_no_cassette = true
   end
 
+=begin
   Turn.config do |c|
    c.format  = :cue
    c.natural = true
    c.verbose = true
   end
+=end
   
   setup do
     ENV["API_KEY"] = developers(:prixing).api_key
