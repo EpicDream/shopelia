@@ -54,7 +54,7 @@ class Order < ActiveRecord::Base
               "card_number" => payment_card.number,
               "card_crypto" => payment_card.cvv,
               "expire_month" => payment_card.exp_month,
-              "expire_year" => payment_card.exp_year
+              "expire_year" => payment_card.exp_year[2..3]
             },
             "session" => {
               "uuid" => self.uuid,
