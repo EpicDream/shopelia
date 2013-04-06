@@ -1,8 +1,8 @@
 class UserSerializer < ActiveModel::Serializer
-  attributes :id, :email, :first_name, :last_name, :auth_token, :phones, :addresses
+  attributes :id, :email, :first_name, :last_name, :phones, :addresses, :payment_cards
   
-  def auth_token
-    object.authentication_token
+  def payment_cards
+    ActiveModel::ArraySerializer.new(object.payment_cards).as_json
   end
 
   def addresses

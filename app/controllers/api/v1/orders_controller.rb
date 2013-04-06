@@ -13,7 +13,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
     @order = Order.new(params[:order].merge({ user_id: current_user.id }))
 
     if @order.save
-      render json: @order, status: :created
+      render json: OrderSerializer.new(@order).as_json, status: :created
     else
       render json: @order.errors, status: :unprocessable_entity
     end
@@ -21,7 +21,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
 
   api :GET, "/orders/:uuid", "Show an order"
   def show
-    render json: @order
+    render json: OrderSerializer.new(@order).as_json
   end
 
   private

@@ -14,6 +14,7 @@ class Address < ActiveRecord::Base
   attr_accessor :phones_attributes
 
   before_validation do |record|
+    self.country_id = Country.find_by_name("France").id if self.country_id.nil?
     if Address.where(:user_id => record.user_id).count == 0
       record.is_default = true 
     end
@@ -39,7 +40,10 @@ class Address < ActiveRecord::Base
   def phones= params
     (params || []).each do |phone|
       phone = Phone.new(phone.merge({:user_id => self.user_id, :address_id => self.id}))
-      self.errors.add(:base, phone.errors.full_messages.join(",")) if !phone.save
+      if !phone.save
+        self.errors.add(:base, phone.errors.full_messages.join(","))
+        self.destroy
+      end
     end
   end
   

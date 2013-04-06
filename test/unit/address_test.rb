@@ -14,14 +14,33 @@ class AddressTest < ActiveSupport::TestCase
       :zip => "75002",
       :city => "Paris",
       :is_default => true,
-      :country_id => countries(:france).id)
+      :country_id => countries(:france).id,
+      :phones_attributes => [ {
+        :number => "0140404040",
+        :line_type => Phone::LAND 
+        } ] )
     
     assert address.save, address.errors.full_messages.join(",")
     assert address.is_default?, "New address must be default"
     assert !@address.reload.is_default?, "Old address musn't be default"
+    assert_equal 1, address.phones.count
 
     address.destroy
     assert @address.reload.is_default, "Last standing address should be default"    
+  end
+
+  test "it should fail address creation with an incorrect phone" do
+    address = Address.create(
+      :user_id => users(:elarch).id,
+      :address1 => "21 rue d'Aboukir",
+      :zip => "75002",
+      :city => "Paris",
+      :phones_attributes => [ {
+        :line_type => Phone::LAND
+        } ] )
+    
+    assert !address.persisted?
+    assert_equal "Number can't be blank", address.errors.full_messages.join(",")
   end
 
   test "a new address must not be default if not specified" do

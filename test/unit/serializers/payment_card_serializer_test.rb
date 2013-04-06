@@ -15,7 +15,7 @@ class PaymentCardSerializerTest < ActiveSupport::TestCase
     assert_equal 5, hash[:payment_card].count
     assert_equal @card.id, hash[:payment_card][:id]
     assert_equal @card.name, hash[:payment_card][:name]
-    assert_equal @card.number, hash[:payment_card][:number]
+    assert_equal "4970XXXXXXXXXX54", hash[:payment_card][:number]
     assert_equal @card.exp_month, hash[:payment_card][:exp_month]
     assert_equal @card.exp_year, hash[:payment_card][:exp_year]
   end

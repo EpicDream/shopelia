@@ -11,13 +11,8 @@ class UserTest < ActiveSupport::TestCase
   test "it should create user and send confirmation email" do
     user = User.new(
       :email => "user@gmail.com", 
-      :password => "password", 
-      :password_confirmation => "password",
       :first_name => "John",
       :last_name => "Doe",
-      :civility => User::CIVILITY_MR,
-      :birthdate => '1973-01-01',
-      :nationality_id => countries(:france).id,
       :ip_address => '127.0.0.1',
       :addresses_attributes => [ {
         :code_name => "Office",
@@ -33,7 +28,8 @@ class UserTest < ActiveSupport::TestCase
       :phones_attributes => [ {
           :number => "0640404040",
           :line_type => Phone::MOBILE
-          } ] )
+        } 
+      ] )
   
     assert user.save, user.errors.full_messages.join(",")
     assert_equal "John", user.first_name
@@ -51,6 +47,55 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 1, user.addresses.first.phones.count
     assert_equal 2, user.phones.count
   end
+
+  test "it should fail user creation with a bad address" do
+    user = User.create(
+      :email => "user@gmail.com", 
+      :first_name => "John",
+      :last_name => "Doe",
+      :ip_address => '127.0.0.1',
+      :addresses_attributes => [ {
+        :code_name => "Office",
+        :address1 => "21 rue d'Aboukir"
+      } ] )
+  
+    assert !user.persisted?
+    assert_equal "Zip can't be blank,City can't be blank", user.errors.full_messages.join(",")
+  end
+
+  test "it should fail user creation with a bad phone" do
+    user = User.create(
+      :email => "user@gmail.com", 
+      :first_name => "John",
+      :last_name => "Doe",
+      :ip_address => '127.0.0.1',
+      :phones_attributes => [ {
+        :line_type => Phone::MOBILE
+      } ] )
+  
+    assert !user.persisted?
+    assert_equal "Number can't be blank", user.errors.full_messages.join(",")
+  end
+
+  test "it should fail user creation with a bad phone in an address" do
+    user = User.create(
+      :email => "user@gmail.com", 
+      :first_name => "John",
+      :last_name => "Doe",
+      :ip_address => '127.0.0.1',
+      :addresses_attributes => [ {
+        :code_name => "Office",
+        :address1 => "21 rue d'Aboukir",
+        :zip => "75002",
+        :city => "Paris",
+        :phones_attributes => [ {
+          :line_type => Phone::LAND
+        } ]        
+      } ] )
+  
+    assert !user.persisted?
+    assert_equal "Number can't be blank", user.errors.full_messages.join(",")
+  end  
   
   test "it should check user age" do
     user = User.new(

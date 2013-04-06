@@ -37,7 +37,6 @@ class Order < ActiveRecord::Base
           }
         }
         result = Vulcain::Order.create(context)
-        puts result.inspect
         self.state = :error if result.has_key?("Error")
       when :ordering
         self.state = :pending_confirmation

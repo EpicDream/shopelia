@@ -28,21 +28,28 @@ class User < ActiveRecord::Base
   attr_accessible :addresses_attributes, :phones_attributes
   attr_accessor :addresses_attributes, :phones_attributes
 
+  before_validation :set_default_values
   after_save :process_nested_attributes
   after_save :create_psp_users
   before_update :update_psp_users 
 
   def addresses= params
     (params || []).each do |address|
-      address = Address.new(address.merge({:user_id => self.id}))
-      self.errors.add(:base, address.errors.full_messages.join(",")) if !address.save
+      address = Address.create(address.merge({:user_id => self.id}))
+      if !address.persisted?
+        self.errors.add(:base, address.errors.full_messages.join(","))
+        self.destroy
+      end
     end
   end
 
   def phones= params
     (params || []).each do |phone|
       phone = Phone.new(phone.merge({:user_id => self.id}))
-      self.errors.add(:base, phone.errors.full_messages.join(",")) if !phone.save
+      if !phone.save
+        self.errors.add(:base, phone.errors.full_messages.join(","))
+        self.destroy
+      end
     end
   end
   
@@ -63,6 +70,13 @@ class User < ActiveRecord::Base
   end
   
   private
+  
+  def set_default_values
+    self.civility = CIVILITY_MR if self.civility.nil?
+    self.birthdate = "1980-01-01" if self.birthdate.nil?
+    self.password = SecureRandom.hex(4) if self.password.nil?
+    self.nationality_id = Country.find_by_name("France").id if self.nationality_id.nil?
+  end
   
   def process_nested_attributes
     self.addresses = self.addresses_attributes

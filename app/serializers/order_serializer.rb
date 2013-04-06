@@ -6,4 +6,13 @@ class OrderSerializer < ActiveModel::Serializer
   def state
     object.state_name
   end
+  
+  def product
+    ProductSerializer.new(object.product).as_json[:product]
+  end
+
+  def merchant
+    MerchantSerializer.new(object.merchant).as_json[:merchant]
+  end
+
 end

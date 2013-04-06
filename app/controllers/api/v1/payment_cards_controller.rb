@@ -13,7 +13,7 @@ class Api::V1::PaymentCardsController < Api::V1::BaseController
 
   api :GET, "/payment_cards/:id", "Show a payment card"
   def show
-    render json: @payment_card
+    render json: PaymentCardSerializer.new(@payment_card).as_json
   end
   
   api :GET, "/payment_cards", "Get all payment cards for current user"
@@ -27,7 +27,7 @@ class Api::V1::PaymentCardsController < Api::V1::BaseController
     @payment_card = PaymentCard.new(params[:payment_card].merge({ user_id: current_user.id }))
 
     if @payment_card.save
-      render json: @payment_card, status: :created
+      render json: PaymentCardSerializer.new(@payment_card).as_json, status: :created
     else
       render json: @payment_card.errors, status: :unprocessable_entity
     end

@@ -22,7 +22,6 @@ class AddressSerializerTest < ActiveSupport::TestCase
     assert_equal 1, hash[:address][:is_default]
     assert hash[:address][:address2].nil?, "Nil elements shouldn't have key"
     assert_equal 1, hash[:address][:phones].count
-    assert hash[:address][:phones][0][:address_id].nil?, "No need for address_id"
   end
 
 end

@@ -18,12 +18,5 @@ class PhoneSerializerTest < ActiveSupport::TestCase
     assert_equal @phone.address_id, hash[:phone][:address_id]
   end
 
-  test "it shouldn't send address_id in address context" do
-    phone_serializer = PhoneSerializer.new(@phone, scope: { :address_context => true })
-    hash = phone_serializer.as_json
-      
-    assert hash[:phone][:address_id].nil?
-  end
-
 end
 

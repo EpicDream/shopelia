@@ -11,7 +11,7 @@ class Api::V1::PhonesController < Api::V1::BaseController
 
   api :GET, "/phones/:id", "Show a phone"
   def show
-    render json: @phone
+    render json: PhoneSerializer.new(@phone).as_json
   end
   
   api :GET, "/phones", "Get all phones for current user"
@@ -25,7 +25,7 @@ class Api::V1::PhonesController < Api::V1::BaseController
     @phone = Phone.new(params[:phone].merge({ user_id: current_user.id }))
 
     if @phone.save
-      render json: @phone, status: :created
+      render json: PhoneSerializer.new(@phone).as_json, status: :created
     else
       render json: @phone.errors, status: :unprocessable_entity
     end

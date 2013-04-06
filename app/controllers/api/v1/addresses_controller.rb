@@ -17,7 +17,7 @@ class Api::V1::AddressesController < Api::V1::BaseController
     
   api :GET, "/addresses/:id", "Show an address"
   def show
-    render json: @address
+    render json: AddressSerializer.new(@address).as_json
   end
 
   api :GET, "/addresses", "Get all addresses from user"
@@ -31,7 +31,7 @@ class Api::V1::AddressesController < Api::V1::BaseController
     @address = Address.new(params[:address].merge({ user_id: current_user.id }))
 
     if @address.save
-      render json: @address, status: :created
+      render json: AddressSerializer.new(@address).as_json, status: :created
     else
       render json: @address.errors, status: :unprocessable_entity
     end

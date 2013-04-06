@@ -17,7 +17,7 @@ class Api::V1::UsersController < Api::V1::BaseController
 
   api :GET, "/users/:id", "Get an user"
   def show
-    render json: @user
+    render json: UserSerializer.new(@user).as_json
   end
 
   api :PUT, "/users/:id", "Update an user"

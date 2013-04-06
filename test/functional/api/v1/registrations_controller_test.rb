@@ -5,23 +5,35 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
   fixtures :countries, :psps
 
   test "it should register new user" do
-    assert_difference('User.count') do
+    assert_difference(['User.count','Address.count']) do
       post :create, user: { 
         email: "user@gmail.com", 
-        password: "password", 
-        password_confirmation: "password",
         first_name: "John",
         last_name: "Doe",
-        civility: User::CIVILITY_MR,
-        nationality_id: countries(:france).id,
-        birthdate: '1973-01-01' }, format: :json
+        addresses_attributes: [ {
+          address1: "21 rue d'Aboukir",
+          zip: "75002",
+          city: "Paris",
+          phones_attributes: [ {
+            number: "0140404040",
+            line_type: Phone::LAND 
+          } ] 
+        } ],
+        phones_attributes: [ {
+          number: "0640404040",
+          line_type: Phone::MOBILE
+        } ]
+      }.to_json, format: :json
     end
 
     assert_response 201
+    assert json_response["auth_token"].present?
+    assert json_response["user"].present?
+    assert_equal 1, json_response["user"]["addresses"].count
   end
 
   test "it should fail bad user registration" do
-    post :create, user:{}, format: :json
+    post :create, user:{}.to_json, format: :json
     assert_response 422
   end
   
@@ -37,7 +49,7 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
           last_name: "Fail",
           civility: User::CIVILITY_MR,
           nationality_id: countries(:france).id,
-          birthdate: '1973-09-30' }, format: :json
+          birthdate: '1973-09-30' }.to_json, format: :json
       end
       assert_response 422
     end
