@@ -28,7 +28,7 @@ class Api::V1::AddressesController < Api::V1::BaseController
   api :POST, "/addresses", "Create a new address"
   param_group :address
   def create
-    @address = Address.new(params[:address].merge({ user_id: current_user.id }))
+    @address = Address.new(JSON.parse(params[:address]).merge({ user_id: current_user.id }))
 
     if @address.save
       render json: AddressSerializer.new(@address).as_json, status: :created
@@ -40,7 +40,7 @@ class Api::V1::AddressesController < Api::V1::BaseController
   api :PUT, "/address/:id", "Update an address"
   param_group :address
   def update
-    if @address.update_attributes(params[:address])
+    if @address.update_attributes(JSON.parse(params[:address]))
       head :no_content
     else
       render json: @address.errors, status: :unprocessable_entity

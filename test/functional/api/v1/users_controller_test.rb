@@ -15,7 +15,7 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
   end
 
   test "it should update user" do
-    put :update, id: @user, user: { first_name: "Peter" }, format: :json
+    put :update, id: @user, user: { first_name: "Peter" }.to_json, format: :json
     assert_response 204
   end
 
@@ -28,7 +28,7 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
   end
   
   test "it should fail bad user update" do
-    put :update, id: @user, user: { email: "toto" }, format: :json
+    put :update, id: @user, user: { email: "toto" }.to_json, format: :json
     assert_response 422
   end
   

@@ -74,7 +74,7 @@ class User < ActiveRecord::Base
   def set_default_values
     self.civility = CIVILITY_MR if self.civility.nil?
     self.birthdate = "1980-01-01" if self.birthdate.nil?
-    self.password = SecureRandom.hex(4) if self.password.nil?
+    self.password = SecureRandom.hex(4) if self.password.nil? # 
     self.nationality_id = Country.find_by_name("France").id if self.nationality_id.nil?
   end
   

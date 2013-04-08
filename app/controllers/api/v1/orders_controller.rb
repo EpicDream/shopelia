@@ -10,9 +10,10 @@ class Api::V1::OrdersController < Api::V1::BaseController
   api :POST, "/orders", "Create a new order"
   param_group :order
   def create
-    @order = Order.new(params[:order].merge({ user_id: current_user.id }))
+    @order = Order.new(JSON.parse(params[:order]).merge({ user_id: current_user.id }))
 
     if @order.save
+      @order.advance
       render json: OrderSerializer.new(@order).as_json, status: :created
     else
       render json: @order.errors, status: :unprocessable_entity

@@ -24,7 +24,7 @@ class Api::V1::PaymentCardsController < Api::V1::BaseController
   api :POST, "/payment_cards", "Create a payment card for current user"
   param_group :payment_card
   def create
-    @payment_card = PaymentCard.new(params[:payment_card].merge({ user_id: current_user.id }))
+    @payment_card = PaymentCard.new(JSON.parse(params[:payment_card]).merge({ user_id: current_user.id }))
 
     if @payment_card.save
       render json: PaymentCardSerializer.new(@payment_card).as_json, status: :created

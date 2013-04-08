@@ -11,7 +11,7 @@ class Api::V1::Callback::OrdersController < Api::V1::BaseController
     end
   end
   
-  api :PUT, "/orders/:uuid", "Callback an order"
+  api :PUT, "/callback/orders/:uuid", "Callback an order"
   param_group :context
   def update
     if @order.state_name.eql?(@state)

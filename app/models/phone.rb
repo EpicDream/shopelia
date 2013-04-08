@@ -5,8 +5,8 @@ class Phone < ActiveRecord::Base
   LAND = 0
   MOBILE = 1
   
+  validates :number, :presence => true
   validates :user, :presence => true
-  validates :number, :presence => true, :uniqueness => true
   validates :line_type, :presence => true, :inclusion => { :in => [ LAND, MOBILE ] }
   validate :land_type_must_have_address
   
