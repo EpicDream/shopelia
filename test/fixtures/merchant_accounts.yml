@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  user_id: 1
+  merchant_id: 1
+  login: MyString
+  password: MyString
+  default: false
+
+two:
+  user_id: 1
+  merchant_id: 1
+  login: MyString
+  password: MyString
+  default: false

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130409132419) do
+ActiveRecord::Schema.define(:version => 20130409153549) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -39,6 +39,16 @@ ActiveRecord::Schema.define(:version => 20130409132419) do
   create_table "developers", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "merchant_accounts", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "merchant_id"
+    t.string   "login"
+    t.string   "password"
+    t.boolean  "is_default"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
