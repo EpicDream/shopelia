@@ -15,12 +15,13 @@ class AddressSerializerTest < ActiveSupport::TestCase
     assert_equal @address.id, hash[:address][:id]
     assert_equal @address.code_name, hash[:address][:code_name]
     assert_equal @address.address1, hash[:address][:address1]
+    assert_equal @address.address2, hash[:address][:address2]
     assert_equal @address.zip, hash[:address][:zip]
     assert_equal @address.city, hash[:address][:city]
-    assert_equal @address.country.name, hash[:address][:country]
+    assert_equal @address.country.iso, hash[:address][:country]
     assert_equal @address.state.name, hash[:address][:state]
+    assert_equal @address.access_info, hash[:address][:access_info]
     assert_equal 1, hash[:address][:is_default]
-    assert hash[:address][:address2].nil?, "Nil elements shouldn't have key"
     assert_equal 1, hash[:address][:phones].count
   end
 

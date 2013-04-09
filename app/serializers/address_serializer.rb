@@ -1,14 +1,14 @@
 class AddressSerializer < ActiveModel::Serializer
   include ActiveModelSerializerExtension::JsonWithoutNilKeys
 
-  attributes :id, :code_name, :address1, :address2, :zip, :city, :country, :state, :is_default, :phones
+  attributes :id, :code_name, :address1, :address2, :zip, :city, :country, :access_info, :state, :is_default, :phones
   
   def is_default
     object.is_default? ? 1 : nil
   end
   
   def country
-    object.country.name
+    object.country.iso
   end
   
   def state

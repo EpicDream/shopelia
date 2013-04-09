@@ -17,7 +17,7 @@ class Api::V1::AddressesControllerTest < ActionController::TestCase
         address1: "21 rue d'Aboukir",
         zip: "75002",
         city: "Paris",
-        country_id: countries(:france).id }.to_json, format: :json
+        country_id: countries(:france).id }, format: :json
     end
     
     assert_response :success
@@ -37,7 +37,7 @@ class Api::V1::AddressesControllerTest < ActionController::TestCase
   end
 
   test "it should update address" do
-    put :update, id: @address, address: { address2: "RDC porte gauche" }.to_json, format: :json
+    put :update, id: @address, address: { address2: "RDC porte gauche" }, format: :json
     assert_response 204
   end
 
@@ -56,12 +56,12 @@ class Api::V1::AddressesControllerTest < ActionController::TestCase
 
   
   test "it should fail bad address creation" do
-    post :create, address:{}.to_json, format: :json
+    post :create, address:{}, format: :json
     assert_response 422
   end
   
   test "it should fail bad address update" do
-    put :update, id: @address, address: { address1: "" }.to_json, format: :json
+    put :update, id: @address, address: { address1: "" }, format: :json
     assert_response 422
   end  
 end

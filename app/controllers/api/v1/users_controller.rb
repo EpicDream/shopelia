@@ -23,7 +23,7 @@ class Api::V1::UsersController < Api::V1::BaseController
   api :PUT, "/users/:id", "Update an user"
   param_group :user
   def update
-    if @user.update_attributes(JSON.parse(params[:user]))
+    if @user.update_attributes(params[:user])
       head :no_content
     else
       render json: @user.errors, status: :unprocessable_entity

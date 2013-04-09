@@ -35,7 +35,7 @@ class Api::V1::Callback::OrdersController < Api::V1::BaseController
   end
   
   def prepare_params
-    data = JSON.parse(params[:data])
+    data = params[:data]
     @state = data["session"]["state"]
     case data["verb"]
     when "message"

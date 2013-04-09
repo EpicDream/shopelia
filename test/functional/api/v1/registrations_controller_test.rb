@@ -23,7 +23,7 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
           number: "0640404040",
           line_type: Phone::MOBILE
         } ]
-      }.to_json, format: :json
+      }, format: :json
     end
 
     assert_response 201
@@ -33,7 +33,7 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
   end
 
   test "it should fail bad user registration" do
-    post :create, user:{}.to_json, format: :json
+    post :create, user:{}, format: :json
     assert_response 422
   end
   
@@ -49,7 +49,7 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
           last_name: "Fail",
           civility: User::CIVILITY_MR,
           nationality_id: countries(:france).id,
-          birthdate: '1973-09-30' }.to_json, format: :json
+          birthdate: '1973-09-30' }, format: :json
       end
       assert_response 422
     end

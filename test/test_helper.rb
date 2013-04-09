@@ -28,7 +28,7 @@ class ActiveSupport::TestCase
    c.verbose = true
   end
 =end
-  
+
   setup do
     ENV["API_KEY"] = developers(:prixing).api_key
   end

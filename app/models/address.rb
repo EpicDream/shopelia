@@ -10,7 +10,7 @@ class Address < ActiveRecord::Base
   validates :zip, :presence => true
   validates :city, :presence => true
   
-  attr_accessible :user_id, :code_name, :address1, :address2, :zip, :city, :state_id, :country_id, :is_default, :company, :phones_attributes
+  attr_accessible :user_id, :code_name, :address1, :address2, :zip, :city, :access_info, :state_id, :country_id, :is_default, :company, :phones_attributes
   attr_accessor :phones_attributes
 
   before_validation do |record|

@@ -10,7 +10,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
   api :POST, "/orders", "Create a new order"
   param_group :order
   def create
-    @order = Order.new(JSON.parse(params[:order]).merge({ user_id: current_user.id }))
+    @order = Order.new(params[:order].merge({ user_id: current_user.id }))
 
     if @order.save
       @order.advance

@@ -1,7 +1,7 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
-  #apipie
+  apipie
 
   devise_for :users
 

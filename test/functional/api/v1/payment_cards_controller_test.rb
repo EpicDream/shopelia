@@ -17,7 +17,7 @@ class Api::V1::PaymentCardsControllerTest < ActionController::TestCase
         :number => "1234123412341234",
         :exp_month => "02",
         :exp_year => "2015",
-        :cvv => "123" }.to_json, format: :json
+        :cvv => "123" }, format: :json
     end
     
     assert_response :success
@@ -45,7 +45,7 @@ class Api::V1::PaymentCardsControllerTest < ActionController::TestCase
   end
   
   test "it should fail bad card creation" do
-    post :create, payment_card:{}.to_json, format: :json
+    post :create, payment_card:{}, format: :json
     assert_response 422
   end
   

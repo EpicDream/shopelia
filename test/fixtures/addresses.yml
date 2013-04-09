@@ -2,9 +2,11 @@ elarch_neuilly:
   user: elarch
   code_name: Chateau
   address1: 14 bd du Chateau
+  address2: BP 212
   zip: 92200
   city: Neuilly
   country: france
   state: idf
+  access_info: Code porte 1234
   is_default: true
 

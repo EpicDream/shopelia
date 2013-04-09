@@ -14,7 +14,7 @@ class Api::V1::PhonesControllerTest < ActionController::TestCase
     assert_difference('Phone.count', 1) do
       post :create, phone: {
         number: "0640381383",
-        line_type: Phone::MOBILE }.to_json, format: :json
+        line_type: Phone::MOBILE }, format: :json
     end
     
     assert_response :success
@@ -34,7 +34,7 @@ class Api::V1::PhonesControllerTest < ActionController::TestCase
   end
 
   test "it should update phone" do
-    put :update, id: @phone, phone: { number: "0646403610" }.to_json, format: :json
+    put :update, id: @phone, phone: { number: "0646403610" }, format: :json
     assert_response 204
   end
 
@@ -47,12 +47,12 @@ class Api::V1::PhonesControllerTest < ActionController::TestCase
   end
   
   test "it should fail bad phone creation" do
-    post :create, phone:{}.to_json, format: :json
+    post :create, phone:{}, format: :json
     assert_response 422
   end
   
   test "it should fail bad phone update" do
-    put :update, id: @phone, phone: { number: "" }.to_json, format: :json
+    put :update, id: @phone, phone: { number: "" }, format: :json
     assert_response 422
   end
 end

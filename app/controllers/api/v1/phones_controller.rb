@@ -22,7 +22,7 @@ class Api::V1::PhonesController < Api::V1::BaseController
   api :POST, "/phones", "Create a phone for current user"
   param_group :phone
   def create
-    @phone = Phone.new(JSON.parse(params[:phone]).merge({ user_id: current_user.id }))
+    @phone = Phone.new(params[:phone].merge({ user_id: current_user.id }))
 
     if @phone.save
       render json: PhoneSerializer.new(@phone).as_json, status: :created
@@ -34,7 +34,7 @@ class Api::V1::PhonesController < Api::V1::BaseController
   api :PUT, "/phones/:id", "Update a phone"
   param_group :phone
   def update
-    if @phone.update_attributes(JSON.parse(params[:phone]))
+    if @phone.update_attributes(params[:phone])
       head :no_content
     else
       render json: @phone.errors, status: :unprocessable_entity
