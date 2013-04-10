@@ -3,4 +3,5 @@ rueducommerce:
   logo: "http://www.prixing.fr/images/logos/rueducommerce.png"
   url: "http://www.rueducommerce.fr"
   tc_url: "http://www.rueducommerce.fr/home/index.cfm/aide/cgv.htm"
+  vendor: "RueDuCommerce"
 
