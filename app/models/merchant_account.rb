@@ -1,4 +1,7 @@
 class MerchantAccount < ActiveRecord::Base
+
+  EMAIL_DOMAIN = "accounts.shopelia.fr"
+
   belongs_to :user
   belongs_to :merchant
   
@@ -7,7 +10,10 @@ class MerchantAccount < ActiveRecord::Base
   validates :login, :presence => true, :uniqueness => { :scope => :merchant_id }
   validates :password, :presence => true
   
-  attr_accessible :user_id, :merchant_id, :login, :password, :is_default
+  before_validation :attribute_login
+  before_validation :attribute_password
+  
+  attr_accessible :user_id, :merchant_id, :login, :is_default
 
   before_validation do |record|
     record.is_default = true  if MerchantAccount.where(:user_id => record.user_id, :merchant_id => record.merchant_id).count == 0
@@ -22,6 +28,22 @@ class MerchantAccount < ActiveRecord::Base
   
   after_save do |record|
     MerchantAccount.where("user_id=? and merchant_id=? and id<>? and is_default='t'", record.user_id, record.merchant_id, record.id).update_all "is_default='f'" if record.is_default?
+  end
+  
+  private
+  
+  def attribute_login
+    if self.login.nil?
+      base_login = self.user.email.downcase.gsub("@", ".")
+      login = "#{base_login}@#{EMAIL_DOMAIN}"
+      i = 2
+      login = "#{base_login}-#{i}@#{EMAIL_DOMAIN}" and i += 1 until MerchantAccount.where(:merchant_id => self.merchant_id, :login => login).count == 0
+      self.login = login
+    end    
+  end
+  
+  def attribute_password
+    self.password = SecureRandom.hex(4) if self.password.nil?
   end
     
 end
