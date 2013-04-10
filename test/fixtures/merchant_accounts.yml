@@ -3,5 +3,6 @@ manu_rueducommerce:
   merchant: rueducommerce
   login: manu@gmail.com
   password: toto
-  is_default: false
+  is_default: true
+  merchant_created: false
 

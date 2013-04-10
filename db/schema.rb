@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130410201941) do
+ActiveRecord::Schema.define(:version => 20130410213156) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -51,6 +51,7 @@ ActiveRecord::Schema.define(:version => 20130410201941) do
     t.boolean  "is_default"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "merchant_created", :default => false
   end
 
   create_table "merchants", :force => true do |t|

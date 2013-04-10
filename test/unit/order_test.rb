@@ -27,34 +27,9 @@ class OrderTest < ActiveSupport::TestCase
     assert order.save, order.errors.full_messages.join(",")
   end
   
-  test "it should execute all ordering steps until success" do
-    assert_equal :pending, @order.state
-    @order.advance
+  test "it should start order" do
+    @order.start
     assert_equal :ordering, @order.state
-    @order.advance({"price" => "7,79", "shipping_price" => "5,00", "total_ttc" => "12,79"})
-    assert_equal :pending_confirmation, @order.state
-    @order.advance({"response" => "ok"})
-    assert_equal :paying, @order.state
-    @order.advance
-    assert_equal :success, @order.state
   end
-  
-  test "it should cancel order if user doesn't confirm" do
-    assert_equal :pending, @order.state
-    @order.advance
-    assert_equal :ordering, @order.state
-    @order.advance({"price" => "7,79", "shipping_price" => "5,00", "total_ttc" => "12,79"})
-    assert_equal :pending_confirmation, @order.state
-    @order.advance({"response" => "no" })
-    assert_equal :canceled, @order.state
-  end
-
-  test "it should stop at first error" do
-    assert_equal :pending, @order.state
-    @order.advance
-    assert_equal :ordering, @order.state
-    @order.advance({"status" => "error" })
-    assert_equal :error, @order.state
-  end
-  
+    
 end

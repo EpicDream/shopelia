@@ -15,69 +15,18 @@ class Order < ActiveRecord::Base
   before_validation :initialize_state
   before_validation :prepare_product
   
-  def advance payload={}
-    if payload["status"].eql?("error")
-      self.state = :error
-    else
-      case self.state
-      when :pending
-        self.state = :ordering
-        context = {
-          "user" => {
-            "email" => "elarch+3@gmail.com"
-          },
-          "order" => {
-            "account_password" => "toto",
-            "product_url" => self.product.url
-          },
-          "session" => {
-            "uuid" => self.uuid,
-            "callback_url" => callback_url,
-            "state" => self.state_name
-          }
-        }
-        result = Vulcain::Order.create(context)
-        self.state = :error if result.has_key?("Error")
-      when :ordering
-        self.state = :pending_confirmation
-        self.price_product = parse_price(payload["price"])
-        self.price_delivery = parse_price(payload["shipping_price"])
-        self.price_total = parse_price(payload["total_ttc"])
-      when :pending_confirmation
-        if payload["response"].eql?("ok")
-          self.state = :paying
-          payment_card = self.user.payment_cards.first
-          context = {
-            "response" => "ok",
-            "credentials" => {
-              "card_number" => payment_card.number,
-              "card_crypto" => payment_card.cvv,
-              "expire_month" => payment_card.exp_month,
-              "expire_year" => payment_card.exp_year[2..3]
-            },
-            "session" => {
-              "uuid" => self.uuid,
-              "callback_url" => callback_url,
-              "state" => self.state_name
-            }
-          }
-          result = Vulcain::Payment.create(context)
-          self.state = :error if result.has_key?("Error")
-        else
-          self.state = :canceled
-        end
-      when :paying
-        self.state = :success
-      when :canceled
-      when :success
-      when :error
-      end
-    end
-    self.save     
+  def start
+    result = Vulcain::Order.create(context)
+    self.state = result.has_key?("Error") ? :error : :ordering
   end
 
   def state
     self.state_name.to_sym
+  end
+
+  def callback_url
+    #"http://api.shopelia.fr/api/callbacks/orders/#{self.uuid}"
+    "http://zola.epicdream.fr:4444/api/callback/orders/#{self.uuid}"
   end
   
   private
@@ -96,11 +45,6 @@ class Order < ActiveRecord::Base
   
   def state= state_sym
     self.state_name = state_sym.to_s
-  end
-  
-  def callback_url
-    #"http://api.shopelia.fr/api/callbacks/orders/#{self.uuid}"
-    "http://zola.epicdream.fr:4444/api/callback/orders/#{self.uuid}"
   end
   
   def initialize_uuid

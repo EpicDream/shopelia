@@ -13,6 +13,7 @@ class Phone < ActiveRecord::Base
   attr_accessible :user_id, :address_id, :number, :line_type
   
   scope :without_addresses, where("address_id is null")
+  scope :mobile, where(:line_type => MOBILE)
   
   def land_type_must_have_address
     self.errors.add(:base, I18n.t('phones.land_line_must_have_address')) if self.line_type == LAND && self.address_id.nil?

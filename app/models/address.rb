@@ -9,6 +9,8 @@ class Address < ActiveRecord::Base
   validates :address1, :presence => true
   validates :zip, :presence => true
   validates :city, :presence => true
+
+  scope :default, where(:is_default => true)
   
   attr_accessible :user_id, :code_name, :address1, :address2, :zip, :city, :access_info, :state_id, :country_id, :is_default, :company, :phones_attributes
   attr_accessor :phones_attributes

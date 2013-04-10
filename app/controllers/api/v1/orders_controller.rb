@@ -13,7 +13,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
     @order = Order.new(params[:order].merge({ user_id: current_user.id }))
 
     if @order.save
-      @order.advance
+      @order.start
       render json: OrderSerializer.new(@order).as_json, status: :created
     else
       render json: @order.errors, status: :unprocessable_entity

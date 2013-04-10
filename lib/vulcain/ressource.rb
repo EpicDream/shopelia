@@ -37,7 +37,7 @@ module Vulcain
         else
           return {}
         end
-        request.set_form_data({ :context => data.to_json }) unless data.nil?
+        request.body = data.to_json unless data.nil?
         http.request request
       end
       if res.code.to_i == 200
@@ -60,7 +60,7 @@ module Vulcain
     end
     
     def self.prepare_headers
-      { 'X-Vulcain-Api-Key' => Vulcain.configuration.api_key, 'Content-Type' => 'application/json' }
+      { 'X-Vulcain-ApiKey' => Vulcain.configuration.api_key, 'Content-Type' => 'application/json', 'Accept' => 'application/json' }
     end
 
   end

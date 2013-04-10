@@ -41,4 +41,9 @@ class MerchantAccountTest < ActiveSupport::TestCase
     assert account.reload.is_default?
   end
   
+  test "it should find or create a new merchant account" do
+    assert_equal @account.id, MerchantAccount.find_or_create(@user, @merchant).id
+    assert MerchantAccount.find_or_create(users(:manu), @merchant).present?
+  end
+  
 end
