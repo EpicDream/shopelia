@@ -37,6 +37,7 @@ module Vulcain
         else
           return {}
         end
+        puts data.to_json.inspect
         request.body = data.to_json unless data.nil?
         http.request request
       end

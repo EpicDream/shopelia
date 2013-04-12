@@ -29,7 +29,18 @@ class OrderTest < ActiveSupport::TestCase
   
   test "it should start order" do
     @order.start
-    assert_equal :ordering, @order.state
+    assert_equal :ordering, @order.reload.state
+  end
+  
+  test "it should fail order" do
+    @order.process "failure", "yop"
+    assert_equal :error, @order.reload.state
+    assert_equal "yop", @order.message
+  end
+  
+  test "it should set message" do
+    @order.process "message", "bla"
+    assert_equal "bla", @order.message    
   end
     
 end

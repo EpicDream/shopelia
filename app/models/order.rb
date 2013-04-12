@@ -16,8 +16,18 @@ class Order < ActiveRecord::Base
   before_validation :prepare_product
   
   def start
-    result = Vulcain::Order.create(context)
-    self.state = result.has_key?("Error") ? :error : :ordering
+    result = Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
+    self.state = result.has_key?("Error") ? fail(result['Error']) : :ordering
+    self.save
+  end
+
+  def process verb, content
+    if verb.eql?("message")
+      self.message = content
+    elsif verb.eql?("failure")
+      fail(content)
+    end
+    self.save
   end
 
   def state
@@ -31,16 +41,17 @@ class Order < ActiveRecord::Base
   
   private
 
+  def fail content
+    self.message = content
+    self.state = :error
+  end
+
   def parse_price str=""
     if str =~ /^(\d+)[,\.](\d+)/
       $1.to_f + $2.to_f/100
     else
       0
     end
-  end
-  
-  def context
-    { :uuid => uuid, :callback_url => callback_url, :state => state }
   end
   
   def state= state_sym

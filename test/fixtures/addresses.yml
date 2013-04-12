@@ -10,3 +10,10 @@ elarch_neuilly:
   access_info: Code porte 1234
   is_default: true
 
+manu_chateaufort:
+  user: manu
+  address1: 10 rue du Pont
+  zip: 78800
+  city: Chateaufort
+  country: france
+  is_default: true

@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   has_many :phones, :dependent => :destroy
   has_many :payment_cards, :dependent => :destroy
   has_many :psp_users, :dependent => :destroy
+  has_many :merchant_accounts, :dependent => :destroy
   has_many :orders
   belongs_to :nationality, :class_name => "Country"
 

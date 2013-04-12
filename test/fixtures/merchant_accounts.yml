@@ -1,8 +1,9 @@
 manu_rueducommerce:
   user: manu
   merchant: rueducommerce
-  login: manu@gmail.com
+  login: manu.gmail.com@shopelia.fr
   password: toto
   is_default: true
   merchant_created: false
+  address: manu_chateaufort
 

@@ -20,3 +20,13 @@ manu:
   nationality: france
   ip_address: '127.0.0.1'
   
+thomas:
+  email: thomas@gmail.com
+  encrypted_password: <%= User.new.send(:password_digest, 'tototo') %>
+  first_name: Thomas
+  last_name: France
+  confirmation_sent_at: <%= 1.day.ago %>
+  birthdate: '1973-09-30'
+  civility: <%= User::CIVILITY_MR %>
+  nationality: france
+  ip_address: '127.0.0.1'  

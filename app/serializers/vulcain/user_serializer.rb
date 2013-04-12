@@ -1,4 +1,6 @@
 class Vulcain::UserSerializer < ActiveModel::Serializer
+  include ActiveModelSerializerExtension::JsonWithoutNilKeys
+  
   attributes :first_name, :last_name, :birthdate, :gender, :mobile_phone, :land_phone, :address
 
   def birthdate
@@ -10,11 +12,11 @@ class Vulcain::UserSerializer < ActiveModel::Serializer
   end
   
   def mobile_phone
-    object.phones.mobile.first.number
+    object.phones.mobile.first.try(:number)
   end
   
   def land_phone
-    object.addresses.default.first.phones.first.number
+    object.addresses.default.first.phones.first.try(:number)
   end
   
   def address

@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class MerchantAccountTest < ActiveSupport::TestCase
-  fixtures :users, :merchants, :merchant_accounts
+  fixtures :users, :merchants, :merchant_accounts, :addresses
   
   setup do
     @user = users(:elarch)
@@ -13,7 +13,8 @@ class MerchantAccountTest < ActiveSupport::TestCase
     assert @account.persisted?
     assert @account.is_default?, "Account should be default"
     assert_equal 8, @account.password.size
-    assert_equal "elarch.gmail.com@accounts.shopelia.fr", @account.login
+    assert_equal "elarch.gmail.com@shopelia.fr", @account.login
+    assert_equal addresses(:elarch_neuilly).id, @account.address_id
   end
 
   test "it should be impossible to create two accounts with same login for same merchant" do

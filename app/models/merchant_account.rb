@@ -1,19 +1,22 @@
 class MerchantAccount < ActiveRecord::Base
 
-  EMAIL_DOMAIN = "accounts.shopelia.fr"
+  EMAIL_DOMAIN = "shopelia.fr"
 
   belongs_to :user
   belongs_to :merchant
+  belongs_to :address
   
   validates :user, :presence => true
   validates :merchant, :presence => true
   validates :login, :presence => true, :uniqueness => { :scope => :merchant_id }
   validates :password, :presence => true
+  validates :address, :presence => true
   
   before_validation :attribute_login
   before_validation :attribute_password
+  before_validation :attribute_address
   
-  attr_accessible :user_id, :merchant_id, :login, :is_default
+  attr_accessible :user_id, :merchant_id, :address_id, :login, :is_default
 
   before_validation do |record|
     record.is_default = true  if MerchantAccount.where(:user_id => record.user_id, :merchant_id => record.merchant_id).count == 0
@@ -48,6 +51,10 @@ class MerchantAccount < ActiveRecord::Base
   
   def attribute_password
     self.password = SecureRandom.hex(4) if self.password.nil?
+  end
+  
+  def attribute_address
+    self.address_id = self.user.addresses.default.first.try(:id)
   end
     
 end

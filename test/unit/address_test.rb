@@ -58,7 +58,7 @@ class AddressTest < ActiveSupport::TestCase
 
   test "a first address must be default" do
     address = Address.new(
-      :user_id => users(:manu).id,
+      :user_id => users(:thomas).id,
       :address1 => "21 rue d'Aboukir",
       :zip => "75002",
       :city => "Paris",
