@@ -8,7 +8,7 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   end
 
   def order
-    { :products_urls => [ object.product.url ] }
+    { :products_urls => object.order_items.map{|item| item.product.url} }
   end
   
   def account

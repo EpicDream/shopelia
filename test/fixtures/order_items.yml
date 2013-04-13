@@ -1,0 +1,10 @@
+item1:
+  order: elarch_rueducommerce
+  product: usbkey
+  quantity: 1
+
+item2:
+  order: elarch_rueducommerce
+  product: headphones
+  quantity: 1
+

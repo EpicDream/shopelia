@@ -2,10 +2,10 @@
 require 'test_helper'
 
 class OrderSerializerTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :merchants
+  fixtures :orders, :products, :merchants, :order_items
   
   setup do
-    @order = orders(:elarch_usbkey)
+    @order = orders(:elarch_rueducommerce)
     @order.message = "message"
     @order.price_product = 100
     @order.price_delivery= 10
@@ -23,7 +23,7 @@ class OrderSerializerTest < ActiveSupport::TestCase
     assert_equal @order.price_delivery, hash[:order][:price_delivery]
     assert_equal @order.price_total, hash[:order][:price_total]
     assert_equal @order.merchant.name, hash[:order][:merchant][:name]
-    assert_equal @order.product.name, hash[:order][:product][:name]
+    assert hash[:order][:products].present?
   end
 
 end

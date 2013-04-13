@@ -1,19 +1,20 @@
 class Order < ActiveRecord::Base
   belongs_to :user
   belongs_to :merchant
-  belongs_to :product
+  has_many :order_items
   
   validates :user, :presence => true
-  validates :product, :presence => true
   validates :state_name, :presence => true
   validates :uuid, :presence => true, :uniqueness => true
 
-  attr_accessible :user_id, :merchant_id, :product_id, :message, :price_product, :price_delivery, :price_total, :url
-  attr_accessor :url
+  attr_accessible :user_id, :merchant_id, :message, :price_product, :price_delivery, :price_total, :urls
+  attr_accessor :urls, :answer
   
   before_validation :initialize_uuid
   before_validation :initialize_state
-  before_validation :prepare_product
+  before_save :serialize_questions
+  after_initialize :deserialize_questions
+  after_create :prepare_order_items
   
   def start
     result = Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
@@ -26,6 +27,12 @@ class Order < ActiveRecord::Base
       self.message = content
     elsif verb.eql?("failure")
       fail(content)
+    elsif verb.eql?("ask")
+      @questions = content["questions"]
+      self.state = :pending_answer
+      (content["products"] || []).each do |product|
+        self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
+      end
     end
     self.save
   end
@@ -39,19 +46,15 @@ class Order < ActiveRecord::Base
     "http://zola.epicdream.fr:4444/api/callback/orders/#{self.uuid}"
   end
   
+  def questions
+    @questions
+  end
+  
   private
 
   def fail content
     self.message = content
     self.state = :error
-  end
-
-  def parse_price str=""
-    if str =~ /^(\d+)[,\.](\d+)/
-      $1.to_f + $2.to_f/100
-    else
-      0
-    end
   end
   
   def state= state_sym
@@ -66,19 +69,21 @@ class Order < ActiveRecord::Base
     self.state = :pending if self.state_name.nil?
   end
   
-  def prepare_product
-    if self.url
-      product = Product.find_by_url(self.url)
-      if product.nil?
-        product = Product.new(:url => self.url)
-        if !product.save
-          self.errors.add(:base, I18n.t('products.merchant_not_supported'))
-          return false
-        end
-      end
-      self.product_id = product.id
+  def prepare_order_items
+    (self.urls || []).each do |url|
+      product = Product.find_or_create_by_url(url)
+      next if product.nil? || self.merchant_id && self.merchant_id != product.merchant_id
       self.merchant_id = product.merchant_id
+      OrderItem.create(order:self, product:product)
     end
+  end
+  
+  def serialize_questions
+    self.questions_json = (@questions || []).to_json
+  end
+  
+  def deserialize_questions
+    @questions = JSON.parse(self.questions_json || "[]")
   end
   
 end

@@ -1,14 +1,14 @@
 class OrderSerializer < ActiveModel::Serializer
   include ActiveModelSerializerExtension::JsonWithoutNilKeys
   
-  attributes :uuid, :state, :product, :merchant, :message, :price_product, :price_delivery, :price_total
+  attributes :uuid, :state, :products, :merchant, :message, :price_product, :price_delivery, :price_total
   
   def state
     object.state_name
   end
   
-  def product
-    ProductSerializer.new(object.product).as_json[:product]
+  def products
+    ActiveModel::ArraySerializer.new(object.order_items).as_json
   end
 
   def merchant

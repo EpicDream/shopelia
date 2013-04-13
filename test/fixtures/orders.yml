@@ -1,7 +1,6 @@
-elarch_usbkey:
-  uuid: abcdef
+elarch_rueducommerce:
+  uuid: uuid
   user: elarch
   merchant: rueducommerce
-  product: usbkey
   state_name: "pending"
 

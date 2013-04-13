@@ -1,5 +1,11 @@
 usbkey:
   name: "Clé USB"
   merchant: rueducommerce
-  url: http://www.rueducommerce.fr/Composants/Cle-USB/Cles-USB/LEXAR/4867507-Cle-USB-3-0-Lexar-JumpDrive-S73-16Go.htm
+  url: http://www.rueducommerce.fr/productA
+  image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
+  
+headphones:
+  name: "Ecouteurs"
+  merchant: rueducommerce
+  url: http://www.rueducommerce.fr/productB
   image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg

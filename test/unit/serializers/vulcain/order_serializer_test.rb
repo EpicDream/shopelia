@@ -2,10 +2,10 @@
 require 'test_helper'
 
 class Vulcain::OrderSerializerTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :merchants, :users, :payment_cards, :merchant_accounts
+  fixtures :orders, :products, :merchants, :users, :payment_cards, :merchant_accounts, :order_items
   
   setup do
-    @order = orders(:elarch_usbkey)
+    @order = orders(:elarch_rueducommerce)
   end
   
   test "it should correctly serialize order" do

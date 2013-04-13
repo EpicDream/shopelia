@@ -5,7 +5,7 @@ class Api::V1::Callback::OrdersControllerTest < ActionController::TestCase
   fixtures :users, :orders, :merchants, :products
 
   setup do
-    @order = orders(:elarch_usbkey)
+    @order = orders(:elarch_rueducommerce)
   end
 
   test "it should callback order" do

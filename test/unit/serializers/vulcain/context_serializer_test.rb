@@ -2,10 +2,10 @@
 require 'test_helper'
 
 class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :merchants, :users, :payment_cards, :merchant_accounts
+  fixtures :orders, :products, :merchants, :users, :payment_cards, :merchant_accounts, :order_items
   
   setup do
-    @order = orders(:elarch_usbkey)
+    @order = orders(:elarch_rueducommerce)
   end
   
   test "it should correctly serialize context" do
@@ -22,7 +22,7 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     assert_equal @order.callback_url, session[:callback_url]
     
     order = context[:order]
-    assert_equal @order.product.url, order[:products_urls][0]
+    assert_equal 2, order[:products_urls].count
   end
 
 end
