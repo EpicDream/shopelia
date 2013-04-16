@@ -50,15 +50,15 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "bla", @order.message    
   end
 
-  test "it should process question" do
+  test "it should process confirmation request" do
     content = { 
       "questions" => [
-        { "text" => "Valider le paiement ?", 
-          "id" => "3", 
+        { "id" => "3",
+          "text" => "Confirm?",
           "options" => [
             { "yes" => "Oui" },
-            { "no" => "Non" } 
-          ] 
+            { "no" => "Non" }
+          ]
         }
       ],
       "products" => [
@@ -78,7 +78,37 @@ class OrderTest < ActiveSupport::TestCase
           "price_delivery" => 0, 
           "price_product" => 5 
         }
-      ] 
+      ],
+      "billing" => {
+        "price" => 14,
+        "shipping" => 2
+      }
+    }
+    @order.process "assess", content
+    assert_equal :pending_confirmation, @order.reload.state
+    assert_equal 14, @order.price_total
+    assert_equal 2, @order.price_delivery
+    
+    item = @order.order_items.where(:product_id => products(:usbkey).id).first
+    assert_equal "Shipping", item.delivery_text
+    assert_equal "Price text", item.price_text
+    assert_equal "Usbkey", item.product_title
+    assert_equal "image.jpg", item.product_image_url
+    assert_equal 2, item.price_delivery
+    assert_equal 9, item.price_product
+  end
+
+  test "it should process question and answers" do
+    content = { 
+      "questions" => [
+        { "id" => "1",
+          "text" => "Color?",
+          "options" => [
+            { "blue" => "Bleu" },
+            { "red" => "Rouge" }
+          ]
+        }
+      ]
     }
     @order.process "ask", content
     assert_equal :pending_answer, @order.reload.state
@@ -88,17 +118,14 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 1, questions.size
     
     question = questions.first
-    assert_equal "Valider le paiement ?", question["text"]
-    assert_equal "3", question["id"]
+    assert_equal "Color?", question["text"]
+    assert_equal "1", question["id"]
     assert_equal 2, question["options"].size
     
-    item = @order.order_items.where(:product_id => products(:usbkey).id).first
-    assert_equal "Shipping", item.delivery_text
-    assert_equal "Price text", item.price_text
-    assert_equal "Usbkey", item.product_title
-    assert_equal "image.jpg", item.product_image_url
-    assert_equal 2, item.price_delivery
-    assert_equal 9, item.price_product
+    @order.process("answer", {"1" => "blue"})
+    hash = @order.send(:prepare_answers_hash).first
+    assert_equal "1", hash[:question_id]
+    assert_equal "blue", hash[:answer]
   end
     
 end

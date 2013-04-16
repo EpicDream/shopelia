@@ -18,25 +18,38 @@ class Order < ActiveRecord::Base
   
   def start
     result = Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
-    self.state = result.has_key?("Error") ? fail(result['Error']) : :ordering
-    self.save
+    assess(result, :ordering)
   end
 
   def process verb, content
-    if verb.eql?("message")
-      self.message = content
-    elsif verb.eql?("failure")
-      fail(content)
-    elsif verb.eql?("ask")
-      @questions = content["questions"]
-      self.state = :pending_answer
-      (content["products"] || []).each do |product|
-        self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
+    begin
+      if verb.eql?("message")
+        self.message = content
+      elsif verb.eql?("failure")
+        fail(content)
+      elsif verb.eql?("assess")
+        self.state = :pending_confirmation
+        self.price_total = content["billing"]["price"]
+        self.price_delivery = content["billing"]["shipping"]
+        (content["products"] || []).each do |product|
+          self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
+        end
+      elsif verb.eql?("ask")
+        @questions = content["questions"]
+        self.state = :pending_answer
+      elsif verb.eql?("answer")
+        @questions.each do |question|
+          question["answer"] = content[question["id"]]
+        end
+        result = Vulcain::Answer.create({:answers => prepare_answers_hash})
+        assess(result, :ordering)        
       end
+    rescue Exception => e
+      fail("Error parsing callback data\n#{e.inspect}")
     end
     self.save
   end
-
+  
   def state
     self.state_name.to_sym
   end
@@ -51,6 +64,15 @@ class Order < ActiveRecord::Base
   end
   
   private
+ 
+  def assess result, state
+    if result.has_key?("Error")
+      fail(result['Error'])
+    else
+      self.state = state
+    end
+    self.save
+  end
 
   def fail content
     self.message = content
@@ -76,6 +98,10 @@ class Order < ActiveRecord::Base
       self.merchant_id = product.merchant_id
       OrderItem.create(order:self, product:product)
     end
+  end
+  
+  def prepare_answers_hash
+    @questions.map { |e| { :question_id => e["id"], :answer => e["answer"] } }
   end
   
   def serialize_questions
