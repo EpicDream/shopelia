@@ -1,7 +1,7 @@
 class OrderSerializer < ActiveModel::Serializer
   include ActiveModelSerializerExtension::JsonWithoutNilKeys
   
-  attributes :uuid, :state, :products, :merchant, :message, :price_product, :price_delivery, :price_total
+  attributes :uuid, :state, :products, :merchant, :message, :price_product, :price_delivery, :price_total, :questions
   
   def state
     object.state_name
@@ -13,6 +13,10 @@ class OrderSerializer < ActiveModel::Serializer
 
   def merchant
     MerchantSerializer.new(object.merchant).as_json[:merchant]
+  end
+  
+  def include_questions?
+    object.state == :pending_answer
   end
 
 end

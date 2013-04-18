@@ -24,9 +24,9 @@ class Order < ActiveRecord::Base
   def process verb, content
     begin
       if verb.eql?("message")
-        self.message = content
+        self.message = content["message"]
       elsif verb.eql?("failure")
-        fail(content)
+        fail(content["message"])
       elsif verb.eql?("assess")
         self.state = :pending_confirmation
         self.price_total = content["billing"]["price"]
@@ -38,11 +38,22 @@ class Order < ActiveRecord::Base
         @questions = content["questions"]
         self.state = :pending_answer
       elsif verb.eql?("answer")
-        @questions.each do |question|
-          question["answer"] = content[question["id"]]
-        end
+        @questions.each { |question| question["answer"] = content[question["id"]] }
         result = Vulcain::Answer.create({:answers => prepare_answers_hash})
-        assess(result, :ordering)        
+        assess(result, :ordering)
+      elsif verb.eql?("confirm")
+        card = self.user.payment_cards.where(:id => content["payment_card_id"]).first
+        @questions.each { |question| question["answer"] = card.present? ? "yes" : "no" }
+        result = Vulcain::Answer.create({:answers => prepare_answers_hash, :credentials => card})
+        if card.present?
+          assess(result, :finalizing)
+        else
+          fail("Cannot process payment, no credit card found for user")
+        end
+      elsif verb.eql?("cancel")
+        @questions.each { |question| question["answer"] = "no" }
+        result = Vulcain::Answer.create({:answers => prepare_answers_hash})
+        assess(result, :canceled)
       end
     rescue Exception => e
       fail("Error parsing callback data\n#{e.inspect}")
@@ -61,6 +72,10 @@ class Order < ActiveRecord::Base
   
   def questions
     @questions
+  end
+  
+  def questions= questions
+    @questions = questions
   end
   
   private

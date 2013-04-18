@@ -8,6 +8,34 @@ class OrderTest < ActiveSupport::TestCase
     @product = products(:usbkey)
     @merchant = merchants(:rueducommerce)
     @order = orders(:elarch_rueducommerce)
+    @card = payment_cards(:elarch_hsbc)
+    @content = { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "url" => products(:usbkey).url,
+          "delivery_text" => "Shipping", 
+          "price_text" => "Price text", 
+          "product_title" => "Usbkey", 
+          "product_image_url" => "image.jpg", 
+          "price_delivery" => 2, 
+          "price_product" => 9 
+        },
+        { "url" => products(:headphones).url,
+          "delivery_text" => "Shipping", 
+          "price_text" => "Price text", 
+          "product_title" => "Headphones", 
+          "product_image_url" => "image.jpg", 
+          "price_delivery" => 0, 
+          "price_product" => 5 
+        }
+      ],
+      "billing" => {
+        "price" => 14,
+        "shipping" => 2
+      }
+    }    
   end
   
   test "it should create order" do
@@ -40,51 +68,18 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should fail order" do
-    @order.process "failure", "yop"
+    @order.process "failure", { "message" => "yop" }
     assert_equal :error, @order.reload.state
     assert_equal "yop", @order.message
   end
   
   test "it should set message" do
-    @order.process "message", "bla"
+    @order.process "message", { "message" => "bla" }
     assert_equal "bla", @order.message    
   end
 
   test "it should process confirmation request" do
-    content = { 
-      "questions" => [
-        { "id" => "3",
-          "text" => "Confirm?",
-          "options" => [
-            { "yes" => "Oui" },
-            { "no" => "Non" }
-          ]
-        }
-      ],
-      "products" => [
-        { "url" => products(:usbkey).url,
-          "delivery_text" => "Shipping", 
-          "price_text" => "Price text", 
-          "product_title" => "Usbkey", 
-          "product_image_url" => "image.jpg", 
-          "price_delivery" => 2, 
-          "price_product" => 9 
-        },
-        { "url" => products(:headphones).url,
-          "delivery_text" => "Shipping", 
-          "price_text" => "Price text", 
-          "product_title" => "Headphones", 
-          "product_image_url" => "image.jpg", 
-          "price_delivery" => 0, 
-          "price_product" => 5 
-        }
-      ],
-      "billing" => {
-        "price" => 14,
-        "shipping" => 2
-      }
-    }
-    @order.process "assess", content
+    @order.process "assess", @content
     assert_equal :pending_confirmation, @order.reload.state
     assert_equal 14, @order.price_total
     assert_equal 2, @order.price_delivery
@@ -127,5 +122,26 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "1", hash[:question_id]
     assert_equal "blue", hash[:answer]
   end
-    
+  
+  test "it should confirm order" do
+    @order.process "assess", @content
+    assert_equal :pending_confirmation, @order.reload.state
+    @order.process "confirm", { "payment_card_id" => @card.id }
+    assert_equal :finalizing, @order.reload.state
+  end
+
+  test "it should cancel order" do
+    @order.process "assess", @content
+    assert_equal :pending_confirmation, @order.reload.state
+    @order.process "cancel", {}
+    assert_equal :canceled, @order.reload.state
+  end
+
+  test "it should fail order if no card present" do
+    @order.process "assess", @content
+    assert_equal :pending_confirmation, @order.reload.state
+    @order.process "confirm", {}
+    assert_equal :error, @order.reload.state
+  end
+  
 end
