@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130413145059) do
+ActiveRecord::Schema.define(:version => 20130418135108) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -184,6 +184,7 @@ ActiveRecord::Schema.define(:version => 20130413145059) do
     t.datetime "birthdate"
     t.integer  "nationality_id"
     t.string   "ip_address"
+    t.string   "pincode"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

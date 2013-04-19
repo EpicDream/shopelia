@@ -8,6 +8,7 @@ elarch:
   civility: <%= User::CIVILITY_MR %>
   nationality: france
   ip_address: '127.0.0.1'
+  pincode: '1234'
   
 manu:
   email: manu@gmail.com
@@ -19,6 +20,7 @@ manu:
   civility: <%= User::CIVILITY_MR %>
   nationality: france
   ip_address: '127.0.0.1'
+  pincode: '1234'
   
 thomas:
   email: thomas@gmail.com
@@ -29,4 +31,6 @@ thomas:
   birthdate: '1973-09-30'
   civility: <%= User::CIVILITY_MR %>
   nationality: france
-  ip_address: '127.0.0.1'  
+  ip_address: '127.0.0.1'
+  pincode: '1234'
+  

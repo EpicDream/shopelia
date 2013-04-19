@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
 
   attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name
   attr_accessible :birthdate, :civility, :nationality_id, :ip_address
-  attr_accessible :addresses_attributes, :phones_attributes
+  attr_accessible :addresses_attributes, :phones_attributes, :pincode
   attr_accessor :addresses_attributes, :phones_attributes
 
   before_validation :set_default_values
