@@ -52,7 +52,8 @@ class OrderTest < ActiveSupport::TestCase
       :user_id => @user.id,
       :urls => ["http://www.rueducommerce.fr/productA", "http://www.rueducommerce.fr/productB"])
     assert order.save, order.errors.full_messages.join(",")
-    assert_equal 2, order.order_items.count
+    assert_equal 2, order.reload.order_items.count
+    assert_equal @merchant.id, order.merchant_id
   end
 
   test "it shouldn't accept urls from different merchants" do
@@ -83,6 +84,8 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :pending_confirmation, @order.reload.state
     assert_equal 14, @order.price_total
     assert_equal 2, @order.price_delivery
+    assert_equal 1, @order.questions.count
+    assert_equal "3", @order.questions.first["id"]
     
     item = @order.order_items.where(:product_id => products(:usbkey).id).first
     assert_equal "Shipping", item.delivery_text
@@ -116,11 +119,6 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "Color?", question["text"]
     assert_equal "1", question["id"]
     assert_equal 2, question["options"].size
-    
-    @order.process("answer", {"1" => "blue"})
-    hash = @order.send(:prepare_answers_hash).first
-    assert_equal "1", hash[:question_id]
-    assert_equal "blue", hash[:answer]
   end
   
   test "it should confirm order" do
@@ -128,6 +126,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :pending_confirmation, @order.reload.state
     @order.process "confirm", { "payment_card_id" => @card.id }
     assert_equal :finalizing, @order.reload.state
+    assert_equal true, @order.questions.first["answer"]
   end
 
   test "it should cancel order" do
@@ -135,6 +134,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :pending_confirmation, @order.reload.state
     @order.process "cancel", {}
     assert_equal :canceled, @order.reload.state
+    assert_equal false, @order.questions.first["answer"]
   end
 
   test "it should fail order if no card present" do

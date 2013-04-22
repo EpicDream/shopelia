@@ -7,8 +7,8 @@ class Order < ActiveRecord::Base
   validates :state_name, :presence => true
   validates :uuid, :presence => true, :uniqueness => true
 
-  attr_accessible :user_id, :merchant_id, :message, :price_product, :price_delivery, :price_total, :urls
-  attr_accessor :urls, :answer
+  attr_accessible :user_id, :merchant_id, :message, :price_product, :price_delivery, :price_total, :urls, :payment_card
+  attr_accessor :urls, :payment_card
   
   before_validation :initialize_uuid
   before_validation :initialize_state
@@ -25,35 +25,43 @@ class Order < ActiveRecord::Base
     begin
       if verb.eql?("message")
         self.message = content["message"]
+
       elsif verb.eql?("failure")
         fail(content["message"])
+
       elsif verb.eql?("assess")
+        @questions = content["questions"]
         self.state = :pending_confirmation
         self.price_total = content["billing"]["price"]
         self.price_delivery = content["billing"]["shipping"]
         (content["products"] || []).each do |product|
           self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
         end
+
       elsif verb.eql?("ask")
         @questions = content["questions"]
         self.state = :pending_answer
+
       elsif verb.eql?("answer")
         @questions.each { |question| question["answer"] = content[question["id"]] }
-        result = Vulcain::Answer.create({:answers => prepare_answers_hash})
+        result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
         assess(result, :ordering)
+
       elsif verb.eql?("confirm")
-        card = self.user.payment_cards.where(:id => content["payment_card_id"]).first
-        @questions.each { |question| question["answer"] = card.present? ? "yes" : "no" }
-        result = Vulcain::Answer.create({:answers => prepare_answers_hash, :credentials => card})
-        if card.present?
+        self.payment_card = self.user.payment_cards.where(:id => content["payment_card_id"]).first
+        if self.payment_card.present?
+          @questions.each { |question| question["answer"] = self.payment_card.present? ? true : false }
+          result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
           assess(result, :finalizing)
         else
           fail("Cannot process payment, no credit card found for user")
         end
+
       elsif verb.eql?("cancel")
-        @questions.each { |question| question["answer"] = "no" }
-        result = Vulcain::Answer.create({:answers => prepare_answers_hash})
+        @questions.each { |question| question["answer"] = false }
+        result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
         assess(result, :canceled)
+
       end
     rescue Exception => e
       fail("Error parsing callback data\n#{e.inspect}")
@@ -111,12 +119,9 @@ class Order < ActiveRecord::Base
       product = Product.find_or_create_by_url(url)
       next if product.nil? || self.merchant_id && self.merchant_id != product.merchant_id
       self.merchant_id = product.merchant_id
+      self.save
       OrderItem.create(order:self, product:product)
     end
-  end
-  
-  def prepare_answers_hash
-    @questions.map { |e| { :question_id => e["id"], :answer => e["answer"] } }
   end
   
   def serialize_questions

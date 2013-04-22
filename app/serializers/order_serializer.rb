@@ -14,9 +14,13 @@ class OrderSerializer < ActiveModel::Serializer
   def merchant
     MerchantSerializer.new(object.merchant).as_json[:merchant]
   end
-  
+    
   def include_questions?
     object.state == :pending_answer
+  end
+  
+  def include_payment_card?
+    object.payment_card.present?
   end
 
 end
