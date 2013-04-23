@@ -19,9 +19,14 @@ Shopelia::Application.routes.draw do
       end
       resources :orders, :only => [:create, :show]
       resources :users, :only => [:show, :update, :destroy]
+
       namespace :callback do
         resources :orders, :only => :update
       end
+      namespace :places do
+        resources :autocomplete, :only => :index
+        resources :details, :only => :show
+      end      
     end
   end
   
