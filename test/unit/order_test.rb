@@ -68,12 +68,27 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :ordering, @order.reload.state
   end
   
-  test "it should fail order" do
-    @order.process "failure", { "message" => "yop" }
+  test "it should fail order with exception" do
+    @order.process "failure", { "message" => "yop", "status" => "exception" }
     assert_equal :error, @order.reload.state
     assert_equal "yop", @order.message
+    assert_equal "vulcain_exception", @order.error_code
+  end
+
+  test "it should fail order with error" do
+    @order.process "failure", { "message" => "yop", "status" => "error" }
+    assert_equal :error, @order.reload.state
+    assert_equal "yop", @order.message
+    assert_equal "vulcain_error", @order.error_code
   end
   
+  test "it should fail order with lack of vulcains" do
+    @order.process "failure", { "message" => "yop", "status" => "no_idle" }
+    assert_equal :error, @order.reload.state
+    assert_equal "yop", @order.message
+    assert_equal "vulcain_full", @order.error_code
+  end
+
   test "it should set message" do
     @order.process "message", { "message" => "bla" }
     assert_equal "bla", @order.message    
@@ -142,6 +157,11 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :pending_confirmation, @order.reload.state
     @order.process "confirm", {}
     assert_equal :error, @order.reload.state
+  end
+  
+  test "it should succeed order" do
+    @order.process "success", {}
+    assert_equal :success, @order.reload.state
   end
   
 end

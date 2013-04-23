@@ -27,7 +27,11 @@ class Order < ActiveRecord::Base
         self.message = content["message"]
 
       elsif verb.eql?("failure")
-        fail(content["message"])
+        case content["status"]
+        when "exception" then fail(content["message"], :vulcain_exception)
+        when "no_idle" then fail(content["message"], :vulcain_full)
+        when "error" then fail(content["message"], :vulcain_error)
+        end
 
       elsif verb.eql?("assess")
         @questions = content["questions"]
@@ -54,7 +58,7 @@ class Order < ActiveRecord::Base
           result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
           assess(result, :finalizing)
         else
-          fail("Cannot process payment, no credit card found for user")
+          fail("Cannot process payment, no credit card found for user", :user_error)
         end
 
       elsif verb.eql?("cancel")
@@ -62,9 +66,12 @@ class Order < ActiveRecord::Base
         result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
         assess(result, :canceled)
 
+      elsif verb.eql?("success")
+        self.state = :success
+
       end
     rescue Exception => e
-      fail("Error parsing callback data\n#{e.inspect}")
+      fail("Error parsing callback data\n#{e.inspect}", :vulcain_api)
     end
     self.save
   end
@@ -90,18 +97,19 @@ class Order < ActiveRecord::Base
  
   def assess result, state
     if result.has_key?("Error")
-      fail(result['Error'])
+      fail(result['Error'], :vulcain_api)
     else
       self.state = state
     end
     self.save
   end
 
-  def fail content
+  def fail content, error_sym
     self.message = content
+    self.error_code = error_sym.to_s
     self.state = :error
   end
-  
+
   def state= state_sym
     self.state_name = state_sym.to_s
   end
