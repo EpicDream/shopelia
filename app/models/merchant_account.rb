@@ -44,7 +44,7 @@ class MerchantAccount < ActiveRecord::Base
       base_login = self.user.email.downcase.gsub("@", ".")
       login = "#{base_login}@#{EMAIL_DOMAIN}"
       i = 2
-      login = "#{base_login}-#{i}@#{EMAIL_DOMAIN}" and i += 1 until MerchantAccount.where(:merchant_id => self.merchant_id, :login => login).count == 0
+      login = "#{base_login}.#{i}@#{EMAIL_DOMAIN}" and i += 1 until MerchantAccount.where(:merchant_id => self.merchant_id, :login => login).count == 0
       self.login = login
     end    
   end

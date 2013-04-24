@@ -16,6 +16,12 @@ class MerchantAccountTest < ActiveSupport::TestCase
     assert_equal "elarch.gmail.com@shopelia.fr", @account.login
     assert_equal addresses(:elarch_neuilly).id, @account.address_id
   end
+  
+  test "it should create second merchant account" do
+    account2 = MerchantAccount.new(user_id:@user.id, merchant_id:@merchant.id)
+    assert account2.save
+    assert_equal "elarch.gmail.com.2@shopelia.fr", account2.login
+  end
 
   test "it should be impossible to create two accounts with same login for same merchant" do
     account = MerchantAccount.new(
