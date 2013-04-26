@@ -5,3 +5,9 @@ rueducommerce:
   tc_url: "http://www.rueducommerce.fr/home/index.cfm/aide/cgv.htm"
   vendor: "RueDuCommerce"
 
+amazon:
+  name: "Amazon"
+  logo: "http://www.prixing.fr/images/logos/amazon.png"
+  url: "http://www.amazon.fr"
+  tc_url: "http://www.amazon.fr/terms"
+  vendor: "AmazonFrance"

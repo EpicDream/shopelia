@@ -127,9 +127,9 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test "it should create and update leetchi user" do
-    @user.destroy # cleanup
     allow_remote_api_calls
     VCR.use_cassette('user') do
+      @user.destroy # cleanup
       user = User.new(
         :email => "elarch@gmail.com", 
         :password => "tototo", 

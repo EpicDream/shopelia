@@ -17,17 +17,17 @@ class EmailRedirectionTest < ActiveSupport::TestCase
   end
   
   test "email redirections should be created and destroyed relative to merchant accounts" do
-    account1 = MerchantAccount.create!(user_id:users(:manu).id, merchant_id:merchants(:rueducommerce).id)
-    assert_equal 1, EmailRedirection.where(:user_name => "manu.gmail.com", :destination => "manu@gmail.com").count
+    account1 = MerchantAccount.create!(user_id:users(:elarch).id, merchant_id:merchants(:rueducommerce).id)
+    assert_equal 1, EmailRedirection.where(:user_name => "elarch.gmail.com", :destination => "elarch@gmail.com").count
 
-    account2 = MerchantAccount.create!(user_id:users(:manu).id, merchant_id:merchants(:amazon).id)
-    assert_equal 1, EmailRedirection.where(:user_name => "manu.gmail.com", :destination => "manu@gmail.com").count
+    account2 = MerchantAccount.create!(user_id:users(:elarch).id, merchant_id:merchants(:amazon).id)
+    assert_equal 1, EmailRedirection.where(:user_name => "elarch.gmail.com", :destination => "elarch@gmail.com").count
 
-    account2.destroy!
-    assert_equal 1, EmailRedirection.where(:user_name => "manu.gmail.com", :destination => "manu@gmail.com").count
+    account2.destroy
+    assert_equal 1, EmailRedirection.where(:user_name => "elarch.gmail.com", :destination => "elarch@gmail.com").count
     
-    account1.destroy!
-    assert_equal 0, EmailRedirection.where(:user_name => "manu.gmail.com", :destination => "manu@gmail.com").count    
+    account1.destroy
+    assert_equal 0, EmailRedirection.where(:user_name => "elarch.gmail.com", :destination => "elarch@gmail.com").count    
   end
   
 end

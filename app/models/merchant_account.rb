@@ -15,6 +15,8 @@ class MerchantAccount < ActiveRecord::Base
   before_validation :attribute_login
   before_validation :attribute_password
   before_validation :attribute_address
+  after_create :create_email_redirection
+  after_destroy :destroy_email_redirection
   
   attr_accessible :user_id, :merchant_id, :address_id, :login, :is_default
 
@@ -38,6 +40,18 @@ class MerchantAccount < ActiveRecord::Base
   end
   
   private
+  
+  def create_email_redirection
+    user_name = self.login.gsub(/\@.*$/, "")
+    EmailRedirection.find_or_create_by_user_name_and_destination(:user_name => user_name, :destination => self.user.email)
+  end
+  
+  def destroy_email_redirection
+    if MerchantAccount.where(:login => self.login).count == 0
+      user_name = self.login.gsub(/\@.*$/, "")
+      EmailRedirection.where(:user_name => user_name).destroy_all
+    end
+  end
   
   def attribute_login
     if self.login.nil?

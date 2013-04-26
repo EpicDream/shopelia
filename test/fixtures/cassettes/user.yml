@@ -369,4 +369,45 @@ http_interactions:
       string: "{\"Email\":\"elarch@gmail.com\",\"FirstName\":\"Eric\",\"LastName\":\"Larchev\xC3\xAAque\",\"CanRegisterMeanOfPayment\":true,\"HasRegisteredMeansOfPayment\":false,\"IP\":\"127.0.0.1\",\"Birthday\":23500800,\"Password\":\"dO2uucQuwgwvQuq7FmTnw3hC5qNOQN\",\"PersonalWalletAmount\":0,\"IsStrongAuthenticated\":false,\"Nationality\":\"FR\",\"PersonType\":\"NATURAL_PERSON\",\"ID\":237026,\"Tag\":\"973902417\",\"CreationDate\":1364664050,\"UpdateDate\":1364664051}"
     http_version: 
   recorded_at: Sat, 30 Mar 2013 17:20:51 GMT
+- request: 
+    method: delete
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/cards/1247?ts=1367003946
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      X-Leetchi-Signature: 
+      - cOkKkI0nlf92MaojLjiasDq6rPgf8plxNhP4r+aWpnvfM9PE/u58NFvgPwj1uKmBAjoVddbopVe+VGlGZsHZP/xMxRA8HReahqge/ff4MwRFev+rlLKQ3iMVLKpVK17+SzeLETaSpCWlarr0UiE7LtbIA8Ogx3DFMv915McpgDt6wLX59zsl+nkAACuROe2bPkF9PggPVBjE8WoWI6v6FwVuTlpUkp9zZzzQrt6NFNRs08X3MxUz/mtgbcsN8+Dj4CtosgxA1YWhUCT1ehYQItE3aM8t+MvJJpu4l5TtygQDUc1EUfKkqcdpCGAsS5CZIt+511x0q5h1nsHoPRo26g==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 400
+      message: Bad Request
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Fri, 26 Apr 2013 19:18:55 GMT
+      Content-Length: 
+      - "203"
+    body: 
+      encoding: US-ASCII
+      string: "{\"ErrorCode\":0,\"TechnicalMessage\":\"The PaymentMediumAccount #1247 of partner 'prixing' is not found.\",\"UserMessage\":\"The PaymentMediumAccount #1247 of partner 'prixing' is not found.\",\"Type\":\"UserError\"}"
+    http_version: 
+  recorded_at: Fri, 26 Apr 2013 19:19:12 GMT
 recorded_with: VCR 2.4.0
