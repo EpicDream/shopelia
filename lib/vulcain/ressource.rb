@@ -50,6 +50,8 @@ module Vulcain
       else
         {'Error' => 'invalid parameters'}
       end
+    rescue
+      {'Error' => 'connexion refused'}
     end
 
     def self.path_for(route, options)

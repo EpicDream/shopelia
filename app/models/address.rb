@@ -12,13 +12,23 @@ class Address < ActiveRecord::Base
 
   scope :default, where(:is_default => true)
   
-  attr_accessible :user_id, :code_name, :address1, :address2, :zip, :city, :access_info, :state_id, :country_id, :is_default, :company, :phones_attributes
-  attr_accessor :phones_attributes
+  attr_accessible :user_id, :code_name, :address1, :address2, :zip, :city, :access_info, :state_id, :country_id
+  attr_accessible :is_default, :company, :phones_attributes, :country_iso, :token
+  attr_accessor :phones_attributes, :country_iso, :token
 
   before_validation do |record|
-    self.country_id = Country.find_by_name("France").id if self.country_id.nil?
     if Address.where(:user_id => record.user_id).count == 0
       record.is_default = true 
+    end
+    if record.token.present?
+      address = Google::PlacesApi.details record.token
+      record.address1 = address["address1"]
+      record.zip = address["zip"]
+      record.city = address["city"]
+      record.country_id = Country.find_by_iso(address["country"].upcase).id
+    else
+      record.country_id = Country.find_by_iso(record.country_iso.upcase).id unless record.country_iso.blank?
+      record.country_id = Country.find_by_name("France").id if record.country_id.nil?
     end
   end
 
