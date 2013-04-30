@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
   attr_accessible :addresses_attributes, :phones_attributes, :pincode
   attr_accessor :addresses_attributes, :phones_attributes
 
+  before_validation :reset_test_account
   before_validation :set_default_values
   after_save :process_nested_attributes
   after_save :create_psp_users
@@ -106,6 +107,13 @@ class User < ActiveRecord::Base
           false
         end
       end
+    end
+  end
+
+  def reset_test_account
+    if self.email.eql?("test@shopelia.fr")
+      user = User.find_by_email("test@shopelia.fr")
+      user.destroy unless user.nil?
     end
   end
 

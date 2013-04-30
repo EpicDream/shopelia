@@ -63,6 +63,20 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "Zip can't be blank,City can't be blank", user.errors.full_messages.join(",")
   end
 
+  test "it should create infinitely user with email test@shopelia.fr" do
+    User.create(
+      :email => "test@shopelia.fr", 
+      :first_name => "John",
+      :last_name => "Doe",
+      :ip_address => '127.0.0.1')
+    user = User.new(
+      :email => "test@shopelia.fr", 
+      :first_name => "John",
+      :last_name => "Doe",
+      :ip_address => '127.0.0.1')
+    assert user.save
+  end
+
   test "it should fail user creation with a bad phone" do
     user = User.create(
       :email => "user@gmail.com", 
