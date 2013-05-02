@@ -86,7 +86,7 @@ class User < ActiveRecord::Base
   end
   
   def create_psp_users
-    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"].nil?  
+    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
       if self.leetchi.nil?
         wrapper = Psp::LeetchiUser.new
         if !wrapper.create(self)
@@ -99,7 +99,7 @@ class User < ActiveRecord::Base
   end
   
   def update_psp_users
-    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"].nil?
+    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
       if self.leetchi.present? && (first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?)
         wrapper = Psp::LeetchiUser.new
         if !wrapper.update(self)

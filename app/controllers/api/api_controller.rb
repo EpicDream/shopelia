@@ -10,7 +10,7 @@ class Api::ApiController < ActionController::Base
   private
   
   def get_auth_token
-    params[:auth_token] = request.headers["X-Shopelia-AuthToken"]
+    params[:auth_token] = request.headers["X-Shopelia-AuthToken"] if params[:auth_token].blank?
   end
   
   def authenticate_developer!

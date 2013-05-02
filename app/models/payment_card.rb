@@ -18,7 +18,7 @@ class PaymentCard < ActiveRecord::Base
   private
   
   def create_psp_payment_cards
-    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"].nil?
+    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
       if self.leetchi.nil?
         wrapper = Psp::LeetchiPaymentCard.new
         if !wrapper.create(self)
@@ -31,7 +31,7 @@ class PaymentCard < ActiveRecord::Base
   end
   
   def destroy_psp_payment_cards
-    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"].nil?
+    unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
       if self.leetchi.present?
         wrapper = Psp::LeetchiPaymentCard.new
         if !wrapper.destroy(self)

@@ -1,0 +1,208 @@
+--- 
+http_interactions: 
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/users?ts=1367338377
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"973902417\",\"Email\":\"test@shopelia.fr\",\"FirstName\":\"John\",\"LastName\":\"Doe\",\"Nationality\":\"FR\",\"Birthday\":315532800,\"PersonType\":\"NATURAL_PERSON\",\"CanRegisterMeanOfPayment\":true,\"IP\":\"127.0.0.1\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - VogoalxRMGc+y79VYzbPGWzS8aCVXgSYN2Gd75nlO0qLP/OQjigoRaEmN7oW8F9EB4gbAUOXAlIlpqY/Jhy8sXOmVozKGgtXboHiJk8ZLrqlLARpkJQUPJSIDjMnmL0UoofndPvsYlej/O9TKO/fpe2eFBQStX+n7lomaAxZ3UjKcDlu1bi167Nf1JY+L2srMknzl2vCu51VRt/Tp5kmqFMPsfeaDXhQpIBD8z1ah4ncO4uiw5t/D3AHzUFHlclVV86YVEpBUO2VLnMeA3Dr9DvAfV/xhcH+lmc/1in5QwQXSJRnVlp7aZb5VGt/T9oTmbQbaxNHyxntf8TtZRRS/Q==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Tue, 30 Apr 2013 16:12:58 GMT
+      Content-Length: 
+      - "398"
+    body: 
+      encoding: US-ASCII
+      string: "{\"Email\":\"test@shopelia.fr\",\"FirstName\":\"John\",\"LastName\":\"Doe\",\"CanRegisterMeanOfPayment\":true,\"HasRegisteredMeansOfPayment\":false,\"IP\":\"127.0.0.1\",\"Birthday\":315532800,\"Password\":\"n5aCjwh0SZAOLvM4o29KtFngZRCxng\",\"PersonalWalletAmount\":0,\"IsStrongAuthenticated\":false,\"Nationality\":\"FR\",\"PersonType\":\"NATURAL_PERSON\",\"ID\":253458,\"Tag\":\"973902417\",\"CreationDate\":1367338378,\"UpdateDate\":1367338378}"
+    http_version: 
+  recorded_at: Tue, 30 Apr 2013 16:12:57 GMT
+- request: 
+    method: post
+    uri: http://vulcain.shopelia.fr:3000/orders
+    body: 
+      encoding: US-ASCII
+      string: "{\"vendor\":\"AmazonFrance\",\"context\":{\"session\":{\"uuid\":\"61b7b4969e888078fdb4e4c6c8dbf2f5\",\"callback_url\":\"http://zola.epicdream.fr:4444/api/callback/orders/61b7b4969e888078fdb4e4c6c8dbf2f5\"},\"account\":{\"login\":\"test.shopelia.fr@shopelia.fr\",\"password\":\"b88c5d92\",\"new_account\":true},\"order\":{\"products_urls\":[\"http://www.amazon.fr/La-Belle-Clochard-Peggy-Lee/dp/B0065HDMNO\"],\"credentials\":null},\"user\":{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birthdate\":{\"day\":1,\"month\":1,\"year\":1980},\"gender\":0,\"mobile_phone\":\"0640404040\",\"land_phone\":\"0140404040\",\"address\":{\"address_1\":\"21 rue d'Aboukir\",\"zip\":\"75002\",\"city\":\"Paris\",\"country\":\"FR\"}}}}"
+    headers: 
+      X-Vulcain-Apikey: 
+      - none
+      Content-Type: 
+      - application/json
+      Accept: 
+      - application/json
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: "OK "
+    headers: 
+      Content-Type: 
+      - text/html; charset=utf-8
+      Cache-Control: 
+      - no-cache
+      X-Request-Id: 
+      - d4f8c0dade1e25bcf0fe18b98a91188e
+      X-Runtime: 
+      - "1.006310"
+      Server: 
+      - WEBrick/1.3.1 (Ruby/1.9.3/2013-02-22)
+      Date: 
+      - Tue, 30 Apr 2013 17:13:30 GMT
+      Content-Length: 
+      - "0"
+      Connection: 
+      - Keep-Alive
+    body: 
+      encoding: US-ASCII
+      string: ""
+    http_version: 
+  recorded_at: Tue, 30 Apr 2013 17:13:30 GMT
+- request: 
+    method: post
+    uri: http://vulcain.shopelia.fr:3000/orders
+    body: 
+      encoding: US-ASCII
+      string: "{\"vendor\":\"AmazonFrance\",\"context\":{\"session\":{\"uuid\":\"a969ff4a76f3914127a3b8aeeed6f757\",\"callback_url\":\"http://zola.epicdream.fr:4444/api/callback/orders/a969ff4a76f3914127a3b8aeeed6f757\"},\"account\":{\"login\":\"test.shopelia.fr@shopelia.fr\",\"password\":\"10d768a8\",\"new_account\":true},\"order\":{\"products_urls\":[\"http://www.amazon.fr/La-Belle-Clochard-Peggy-Lee/dp/B0065HDMNO\"],\"credentials\":null},\"user\":{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birthdate\":{\"day\":1,\"month\":1,\"year\":1980},\"gender\":0,\"mobile_phone\":\"0640404040\",\"land_phone\":\"0140404040\",\"address\":{\"address_1\":\"21 rue d'Aboukir\",\"zip\":\"75002\",\"city\":\"Paris\",\"country\":\"FR\"}}}}"
+    headers: 
+      X-Vulcain-Apikey: 
+      - none
+      Content-Type: 
+      - application/json
+      Accept: 
+      - application/json
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: "OK "
+    headers: 
+      Content-Type: 
+      - text/html; charset=utf-8
+      Cache-Control: 
+      - no-cache
+      X-Request-Id: 
+      - 6025b8b899d52db9b6122152ead80ea7
+      X-Runtime: 
+      - "1.006049"
+      Server: 
+      - WEBrick/1.3.1 (Ruby/1.9.3/2013-02-22)
+      Date: 
+      - Tue, 30 Apr 2013 17:13:44 GMT
+      Content-Length: 
+      - "0"
+      Connection: 
+      - Keep-Alive
+    body: 
+      encoding: US-ASCII
+      string: ""
+    http_version: 
+  recorded_at: Tue, 30 Apr 2013 17:13:44 GMT
+- request: 
+    method: post
+    uri: http://vulcain.shopelia.fr:3000/orders
+    body: 
+      encoding: US-ASCII
+      string: "{\"vendor\":\"AmazonFrance\",\"context\":{\"session\":{\"uuid\":\"6e9572f4dd0743f54e61db4e01a8e375\",\"callback_url\":\"http://zola.epicdream.fr:4444/api/callback/orders/6e9572f4dd0743f54e61db4e01a8e375\"},\"account\":{\"login\":\"test.shopelia.fr@shopelia.fr\",\"password\":\"443974cd\",\"new_account\":true},\"order\":{\"products_urls\":[\"http://www.amazon.fr/La-Belle-Clochard-Peggy-Lee/dp/B0065HDMNO\"],\"credentials\":null},\"user\":{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birthdate\":{\"day\":1,\"month\":1,\"year\":1980},\"gender\":0,\"mobile_phone\":\"0640404040\",\"land_phone\":\"0140404040\",\"address\":{\"address_1\":\"21 rue d'Aboukir\",\"zip\":\"75002\",\"city\":\"Paris\",\"country\":\"FR\"}}}}"
+    headers: 
+      X-Vulcain-Apikey: 
+      - none
+      Content-Type: 
+      - application/json
+      Accept: 
+      - application/json
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: "OK "
+    headers: 
+      Content-Type: 
+      - text/html; charset=utf-8
+      Cache-Control: 
+      - no-cache
+      X-Request-Id: 
+      - 93a1ea3eec826da3838477e14d72e43a
+      X-Runtime: 
+      - "1.006219"
+      Server: 
+      - WEBrick/1.3.1 (Ruby/1.9.3/2013-02-22)
+      Date: 
+      - Tue, 30 Apr 2013 17:17:05 GMT
+      Content-Length: 
+      - "0"
+      Connection: 
+      - Keep-Alive
+    body: 
+      encoding: US-ASCII
+      string: ""
+    http_version: 
+  recorded_at: Tue, 30 Apr 2013 17:17:05 GMT
+- request: 
+    method: post
+    uri: http://vulcain.shopelia.fr:3000/orders
+    body: 
+      encoding: US-ASCII
+      string: "{\"vendor\":\"AmazonFrance\",\"context\":{\"session\":{\"uuid\":\"d2ec0b376d7d4a91b23da6a2e61c3bfe\",\"callback_url\":\"http://zola.epicdream.fr:4444/api/callback/orders/d2ec0b376d7d4a91b23da6a2e61c3bfe\"},\"account\":{\"login\":\"test.shopelia.fr@shopelia.fr\",\"password\":\"463d6dda\",\"new_account\":true},\"order\":{\"products_urls\":[\"http://www.amazon.fr/La-Belle-Clochard-Peggy-Lee/dp/B0065HDMNO\"],\"credentials\":null},\"user\":{\"first_name\":\"John\",\"last_name\":\"Doe\",\"birthdate\":{\"day\":1,\"month\":1,\"year\":1980},\"gender\":0,\"mobile_phone\":\"0640404040\",\"land_phone\":\"0140404040\",\"address\":{\"address_1\":\"21 rue d'Aboukir\",\"zip\":\"75002\",\"city\":\"Paris\",\"country\":\"FR\"}}}}"
+    headers: 
+      X-Vulcain-Apikey: 
+      - none
+      Content-Type: 
+      - application/json
+      Accept: 
+      - application/json
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: "OK "
+    headers: 
+      Content-Type: 
+      - text/html; charset=utf-8
+      Cache-Control: 
+      - no-cache
+      X-Request-Id: 
+      - 59c3f0fb28538bb8bbed559a252186be
+      X-Runtime: 
+      - "1.006508"
+      Server: 
+      - WEBrick/1.3.1 (Ruby/1.9.3/2013-02-22)
+      Date: 
+      - Tue, 30 Apr 2013 17:19:36 GMT
+      Content-Length: 
+      - "0"
+      Connection: 
+      - Keep-Alive
+    body: 
+      encoding: US-ASCII
+      string: ""
+    http_version: 
+  recorded_at: Tue, 30 Apr 2013 17:19:36 GMT
+recorded_with: VCR 2.4.0

@@ -23,7 +23,7 @@ module Vulcain
   private
 
     def self.request(method, route, data=nil, options=nil)
-      return {} if Rails.env.test?
+      return {} if Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
       path = path_for(route, options)
       uri = uri_for(path)
       method = method.upcase
@@ -37,7 +37,6 @@ module Vulcain
         else
           return {}
         end
-        puts data.to_json.inspect
         request.body = data.to_json unless data.nil?
         http.request request
       end
@@ -45,13 +44,13 @@ module Vulcain
         begin
           JSON.parse(res.body)
         rescue JSON::ParserError => e
-          res.body.is_a?(String) ? {} : {'Error' => 'invalid json response' }
+          res.body.is_a?(String) ? {} : {"Error" => "invalid json response" }
         end
       else
-        {'Error' => 'invalid parameters'}
+        {"Error" => "invalid parameters"}
       end
     rescue
-      {'Error' => 'connexion refused'}
+      {"Error" => "connexion refused"}
     end
 
     def self.path_for(route, options)

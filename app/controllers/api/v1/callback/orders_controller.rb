@@ -20,7 +20,7 @@ class Api::V1::Callback::OrdersController < Api::V1::BaseController
   
   def prepare_params
     @verb = params[:verb]
-    @content = params[:content]
+    @content = params[:content] || {}
   end
   
 end
