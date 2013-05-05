@@ -13,7 +13,7 @@ class Address < ActiveRecord::Base
   scope :default, where(:is_default => true)
   
   attr_accessible :user_id, :code_name, :address1, :address2, :zip, :city, :access_info, :state_id, :country_id
-  attr_accessible :is_default, :company, :phones_attributes, :country_iso, :token
+  attr_accessible :is_default, :company, :phones_attributes, :country_iso, :token, :pincode
   attr_accessor :phones_attributes, :country_iso, :token
 
   before_validation do |record|
