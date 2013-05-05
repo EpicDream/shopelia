@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130505152757) do
+ActiveRecord::Schema.define(:version => 20130505170226) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -100,6 +100,7 @@ ActiveRecord::Schema.define(:version => 20130505152757) do
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
+    t.integer  "retry_count"
   end
 
   create_table "payment_cards", :force => true do |t|

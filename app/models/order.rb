@@ -25,8 +25,13 @@ class Order < ActiveRecord::Base
   end
 
   def restart
-    MerchantAccount.create(user_id:self.user_id, merchant_id:self.merchant_id, address_id:self.address_id)
-    start
+    if self.retry_count.to_i < Rails.configuration.max_retry
+      MerchantAccount.create(user_id:self.user_id, merchant_id:self.merchant_id, address_id:self.address_id)
+      self.retry_count = self.retry_count.to_i + 1
+      start
+    else
+      fail(I18n.t("orders.failure.account"), :account_error)
+    end
   end
 
   def process verb, content

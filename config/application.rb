@@ -15,6 +15,9 @@ module Shopelia
     # Base host
     config.host = 'http://zola.epicdream.fr:4444'
   
+    # Maximum number of times the order is allowed to retry a new account creation
+    config.max_retry = 3
+  
     config.autoload_paths += %W(#{config.root}/lib )
     
     config.action_mailer.default_url_options = { :host => 'www.shopelia.fr' }

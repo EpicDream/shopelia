@@ -191,7 +191,8 @@ class OrderTest < ActiveSupport::TestCase
    assert_difference('MerchantAccount.count', 1) do
      @order.process "failure", { "message" => "xxx", "status" => "login_failed" }
    end
-   assert_equal :ordering, @order.reload.state
+   assert_equal 1, @order.reload.retry_count
+   assert_equal :ordering, @order.state
   end
  
   test "it should process order validation failure" do
@@ -199,6 +200,16 @@ class OrderTest < ActiveSupport::TestCase
    assert_equal :error, @order.reload.state
    assert_equal "payment_error", @order.error_code
    assert_equal I18n.t("orders.failure.payment"), @order.message
+  end
+  
+  test "it shouldn't restart order if maximum number of retried has been reached" do
+   @order.retry_count = Rails.configuration.max_retry
+   assert_difference('MerchantAccount.count', 0) do
+     @order.process "failure", { "message" => "xxx", "status" => "account_creation_failed" }
+   end
+   assert_equal :error, @order.reload.state
+   assert_equal "account_error", @order.error_code
+   assert_equal I18n.t("orders.failure.account"), @order.message    
   end
  
 end
