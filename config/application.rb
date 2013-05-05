@@ -12,6 +12,9 @@ end
 module Shopelia
   class Application < Rails::Application
   
+    # Base host
+    config.host = 'http://zola.epicdream.fr:4444'
+  
     config.autoload_paths += %W(#{config.root}/lib )
     
     config.action_mailer.default_url_options = { :host => 'www.shopelia.fr' }
@@ -42,7 +45,7 @@ module Shopelia
     config.encoding = "utf-8"
 
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password]
+    config.filter_parameters += [:password, :pincode, :number, :cvv]
 
     # Enable the asset pipeline
     config.assets.enabled = true

@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
-  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items
+  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :addresses
   
   setup do
     @user = users(:elarch)
@@ -43,6 +43,7 @@ class OrderTest < ActiveSupport::TestCase
       :user_id => @user.id,
       :merchant_id => @merchant.id)
     assert order.save, order.errors.full_messages.join(",")
+    assert_equal addresses(:elarch_neuilly).id, order.address_id
     assert_equal :pending, order.state
     assert order.uuid.present?
   end
@@ -54,6 +55,21 @@ class OrderTest < ActiveSupport::TestCase
     assert order.save, order.errors.full_messages.join(",")
     assert_equal 2, order.reload.order_items.count
     assert_equal @merchant.id, order.merchant_id
+  end
+
+  test "it should create order with specific address" do
+    order = Order.new(
+      :user_id => @user.id,
+      :urls => ["http://www.rueducommerce.fr/productA"],
+      :address_id => addresses(:elarch_vignoux).id)
+    assert order.save, order.errors.full_messages.join(",")
+  end
+
+  test "it shouldn't create order if user doesn't have any address" do
+    @user.addresses.destroy_all
+    order = Order.new(:user_id => @user.id, :merchant_id => @merchant.id)
+    assert !order.save, "Order shouldn't have saved"
+    assert_equal I18n.t('orders.no_address'), order.errors.full_messages.first
   end
 
   test "it shouldn't accept urls from different merchants" do
@@ -86,7 +102,7 @@ class OrderTest < ActiveSupport::TestCase
     @order.process "failure", { "message" => "yop", "status" => "no_idle" }
     assert_equal :error, @order.reload.state
     assert_equal "yop", @order.message
-    assert_equal "vulcain_full", @order.error_code
+    assert_equal "vulcain_error", @order.error_code
   end
 
   test "it should set message" do
@@ -164,4 +180,25 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :success, @order.reload.state
   end
   
+  test "it should restart order with new account if account creation failed" do
+   assert_difference('MerchantAccount.count', 1) do
+     @order.process "failure", { "message" => "xxx", "status" => "account_creation_failed" }
+   end
+   assert_equal :ordering, @order.reload.state
+  end
+  
+  test "it should restart order with new account if login failed" do
+   assert_difference('MerchantAccount.count', 1) do
+     @order.process "failure", { "message" => "xxx", "status" => "login_failed" }
+   end
+   assert_equal :ordering, @order.reload.state
+  end
+ 
+  test "it should process order validation failure" do
+   @order.process "failure", { "message" => "xxx", "status" => "order_validation_failed" }
+   assert_equal :error, @order.reload.state
+   assert_equal "payment_error", @order.error_code
+   assert_equal I18n.t("orders.failure.payment"), @order.message
+  end
+ 
 end

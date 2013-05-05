@@ -1,17 +1,20 @@
 class Order < ActiveRecord::Base
   belongs_to :user
   belongs_to :merchant
+  belongs_to :address
   has_many :order_items
   
   validates :user, :presence => true
   validates :state_name, :presence => true
   validates :uuid, :presence => true, :uniqueness => true
+  validates :address, :presence => true
 
-  attr_accessible :user_id, :merchant_id, :message, :price_product, :price_delivery, :price_total, :urls, :payment_card
+  attr_accessible :user_id, :merchant_id, :address_id, :message, :price_product, :price_delivery, :price_total, :urls, :payment_card
   attr_accessor :urls, :payment_card
   
   before_validation :initialize_uuid
   before_validation :initialize_state
+  before_validation :initialize_address
   before_save :serialize_questions
   after_initialize :deserialize_questions
   after_create :prepare_order_items
@@ -19,6 +22,11 @@ class Order < ActiveRecord::Base
   def start
     result = Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
     assess(result, :ordering)
+  end
+
+  def restart
+    MerchantAccount.create(user_id:self.user_id, merchant_id:self.merchant_id, address_id:self.address_id)
+    start
   end
 
   def process verb, content
@@ -29,8 +37,11 @@ class Order < ActiveRecord::Base
       elsif verb.eql?("failure")
         case content["status"]
         when "exception" then fail(content["message"], :vulcain_exception)
-        when "no_idle" then fail(content["message"], :vulcain_full)
+        when "no_idle" then fail(content["message"], :vulcain_error)
         when "error" then fail(content["message"], :vulcain_error)
+        when "order_validation_failed" then fail(I18n.t("orders.failure.payment"), :payment_error)
+        when "account_creation_failed" then restart
+        when "login_failed" then restart
         end
 
       elsif verb.eql?("assess")
@@ -81,8 +92,7 @@ class Order < ActiveRecord::Base
   end
 
   def callback_url
-    #"http://api.shopelia.fr/api/callbacks/orders/#{self.uuid}"
-    "http://zola.epicdream.fr:4444/api/callback/orders/#{self.uuid}"
+    "#{Rails.configuration.host}/api/callback/orders/#{self.uuid}"
   end
   
   def questions
@@ -120,6 +130,14 @@ class Order < ActiveRecord::Base
   
   def initialize_state
     self.state = :pending if self.state_name.nil?
+  end
+  
+  def initialize_address
+    if self.user.addresses.default.count > 0
+      self.address_id = self.user.addresses.default.first.id if self.address_id.nil?
+    else
+      self.errors.add(:base, I18n.t('orders.no_address'))
+    end
   end
   
   def prepare_order_items

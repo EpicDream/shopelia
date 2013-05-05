@@ -35,8 +35,8 @@ class MerchantAccount < ActiveRecord::Base
     MerchantAccount.where("user_id=? and merchant_id=? and id<>? and is_default='t'", record.user_id, record.merchant_id, record.id).update_all "is_default='f'" if record.is_default?
   end
   
-  def self.find_or_create user, merchant
-    MerchantAccount.where("user_id=? and merchant_id=? and is_default='t'", user.id, merchant.id).first || MerchantAccount.create(user_id:user.id, merchant_id:merchant.id)
+  def self.find_or_create user, merchant, address
+    MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and is_default='t'", user.id, merchant.id, address.id).first || MerchantAccount.create(user_id:user.id, merchant_id:merchant.id, address_id:address.id)
   end
   
   private
@@ -68,7 +68,7 @@ class MerchantAccount < ActiveRecord::Base
   end
   
   def attribute_address
-    self.address_id = self.user.addresses.default.first.try(:id)
+    self.address_id = self.user.addresses.default.first.try(:id) if self.address_id.nil?
   end
     
 end

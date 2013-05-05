@@ -1,6 +1,7 @@
 elarch_rueducommerce:
   uuid: uuid
   user: elarch
+  address: elarch_neuilly
   merchant: rueducommerce
   state_name: "pending"
 

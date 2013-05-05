@@ -133,7 +133,7 @@ class UserTest < ActiveSupport::TestCase
   
   test "it should destroy dependent objects" do
     user_id = @user.id
-    assert_equal 1, Address.find_all_by_user_id(user_id).count
+    assert_equal 2, Address.find_all_by_user_id(user_id).count
     assert_equal 2, Phone.find_all_by_user_id(user_id).count
     @user.destroy
     assert_equal 0, Address.find_all_by_user_id(user_id).count

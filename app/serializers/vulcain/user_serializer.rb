@@ -20,7 +20,7 @@ class Vulcain::UserSerializer < ActiveModel::Serializer
   end
   
   def address
-    Vulcain::AddressSerializer.new(object.addresses.default.first).as_json[:address]
+    Vulcain::AddressSerializer.new(Address.find(scope[:address_id])).as_json[:address]
   end
   
 end

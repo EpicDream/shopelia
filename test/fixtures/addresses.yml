@@ -9,6 +9,16 @@ elarch_neuilly:
   state: idf
   access_info: Code porte 1234
   is_default: true
+  
+elarch_vignoux:
+  user: elarch
+  code_name: Campagne
+  address1: 17bis route de Saint Laurent
+  zip: 18500
+  city: Vignoux sur Barangeon
+  country: france
+  state: idf
+  is_default: false
 
 manu_chateaufort:
   user: manu

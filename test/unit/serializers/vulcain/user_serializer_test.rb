@@ -9,7 +9,7 @@ class Vulcain::UserSerializerTest < ActiveSupport::TestCase
   end
   
   test "it should correctly serialize user" do
-    user_serializer = Vulcain::UserSerializer.new(@user)
+    user_serializer = Vulcain::UserSerializer.new(@user, scope:{address_id:@user.addresses.first.id})
     hash = user_serializer.as_json
       
     assert_equal @user.first_name, hash[:user][:first_name]

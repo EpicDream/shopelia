@@ -6,6 +6,7 @@ class MerchantAccountTest < ActiveSupport::TestCase
   setup do
     @user = users(:elarch)
     @merchant = merchants(:rueducommerce)
+    @address = addresses(:elarch_neuilly)
     @account = MerchantAccount.create!(user_id:@user.id, merchant_id:@merchant.id)
   end
 
@@ -49,8 +50,8 @@ class MerchantAccountTest < ActiveSupport::TestCase
   end
   
   test "it should find or create a new merchant account" do
-    assert_equal @account.id, MerchantAccount.find_or_create(@user, @merchant).id
-    assert MerchantAccount.find_or_create(users(:manu), @merchant).present?
+    assert_equal @account.id, MerchantAccount.find_or_create(@user, @merchant, @address).id
+    assert MerchantAccount.find_or_create(users(:manu), @merchant, @address).present?
   end
   
 end

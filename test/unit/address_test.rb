@@ -4,12 +4,13 @@ class AddressTest < ActiveSupport::TestCase
   fixtures :users, :phones, :countries, :addresses
 
   setup do
+    @user = users(:elarch)
     @address = addresses(:elarch_neuilly)
   end
 
   test "it should create address and manage default property attribution" do
     address = Address.new(
-      :user_id => users(:elarch).id,
+      :user_id => @user.id,
       :address1 => "21 rue d'Aboukir",
       :zip => "75002",
       :city => "Paris",
@@ -26,6 +27,7 @@ class AddressTest < ActiveSupport::TestCase
     assert_equal 1, address.phones.count
 
     address.destroy
+    addresses(:elarch_vignoux).destroy
     assert @address.reload.is_default, "Last standing address should be default"    
   end
 

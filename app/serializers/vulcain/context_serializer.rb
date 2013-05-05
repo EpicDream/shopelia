@@ -17,7 +17,7 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   end
   
   def user
-    Vulcain::UserSerializer.new(object.user).as_json[:user]
+    Vulcain::UserSerializer.new(object.user, scope:{address_id:object.address_id}).as_json[:user]
   end
   
   def answers

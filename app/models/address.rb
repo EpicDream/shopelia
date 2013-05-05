@@ -2,6 +2,7 @@ class Address < ActiveRecord::Base
   belongs_to :user
   belongs_to :country
   belongs_to :state
+  belongs_to :order
   has_many :phones, :dependent => :destroy
   
   validates :user, :presence => true
