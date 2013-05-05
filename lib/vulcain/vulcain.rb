@@ -7,11 +7,6 @@ module Vulcain
 
   class Configuration
     attr_accessor :base_url, :api_key
-
-    def base_url
-      "http://vulcain.shopelia.fr:3000"
-    end
-    
   end
 
   class << self
