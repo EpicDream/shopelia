@@ -7,10 +7,15 @@
       - v1
     - query: 
     - request_data:
-        address: ! '{"code_name":"Office","address1":"21 rue d''Aboukir","zip":"75002","city":"Paris","country_id":514205109}'
+        address:
+          code_name: Office
+          address1: 21 rue d'Aboukir
+          zip: '75002'
+          city: Paris
+          country_id: '514205109'
     - response_data:
         address:
-          id: 480832712
+          id: 498085478
           code_name: Office
           address1: 21 rue d'Aboukir
           zip: '75002'
@@ -27,7 +32,7 @@
       - v1
     - query: 
     - request_data:
-        address: ! '{}'
+        address: {}
     - response_data:
         address1:
         - can't be blank
@@ -103,7 +108,7 @@
     - query: ''
     - request_data: 
     - response_data:
-        error: ActiveRecord::RecordNotFound
+        error: Object not found
     - code: '404'
     - show_in_doc: 0
     - recorded: true
@@ -115,7 +120,8 @@
       - v1
     - query: 
     - request_data:
-        address: ! '{"address1":""}'
+        address:
+          address1: ''
     - response_data:
         address1:
         - can't be blank
@@ -129,10 +135,50 @@
       - v1
     - query: 
     - request_data:
-        address: ! '{"address2":"RDC porte gauche"}'
+        address:
+          address2: RDC porte gauche
     - response_data: 
     - code: '204'
     - show_in_doc: 0
+    - recorded: true
+- autocomplete#index:
+  - !omap
+    - verb: :GET
+    - path: /api/places/autocomplete.json
+    - versions:
+      - v1
+    - query: lat=48.82&lng=2.24&query=21+rue+Abou
+    - request_data: 
+    - response_data:
+      - description: 21 Rue d'Aboukir, Paris, France
+        reference: ClRNAAAARPx65czImwxXWVFv9kcUpUdfLHI-3PvJGW5Brb89uptgJlpMAJ83mhGjruqvAzZcm_WxeJC7L-mFwrVXQqQvc79bMxhmoVa8RAGIBPFl5AkSEGSWDQzOmCz2IBDpjIMyo-gaFPbdXsYxeC3mXR7xSAM5qHU6HrFq
+      - description: 21 Rue d'Aboukir, Courbevoie, France
+        reference: CmRSAAAAPFxgOGUHltbqQXF-Ex-F2DUKa7X7fkKXCHm3qc_GHB6Yd2stpv-OWSKDUPi64MErPFBRpxhhHvdQ43kAULdMZgMCNzx92Ps9ZfFSnzGtk9DP6MQeAIvFT9WxLS8_UwynEhC0AxPwShgcy8usXH_LEnEdGhQCH6WE9tFBbRDkmTWxB5taaMuzEQ
+      - description: 21 Rue Abou Inane, Rabat, Rabat-Sale-Zemmour-Zaer, Morocco
+        reference: CnRoAAAAf9qJtNWcEAjN21ThGN_r_MqGBpSJ0o1LpJYRf5woCmiKDznYzl6KsQpyvWBWDPpnjifQjJC-t9wJMUpxT2m7VxLYS_BtOxM4fHk2WexFbcm3RDIKIKe5CANVP1tJusarKKUm6ZI6kIxeLJY1IMwhTRIQPT1ymO_sVIHxknycRvL4gxoUTcnaCjXiLhzO3EBgaSt501XopCs
+      - description: 21 Rue Abou Bakr Seddiq, Marrakesh, Marrakesh-Tensift-Al Haouz,
+          Morocco
+        reference: CoQBdQAAAKADQ2asT0GDmri04BJvlYMASvi1l2CVuGeLUmsi5UQwCtTZ-xE_vapSkZb8Ia4IxyG6yxjcs4j4-MfS-LIf1vqgY43uhxwpvvmBZTWl2ARqUsjuSw3tMCpSDntxedUBAzZv0d26LHNBZqdJGLwgWOZJoFJBoh4z4G3xe-86sENAEhD_AMhxab9D-PCooN89J2giGhQ0du2bQosGgjykMmfJS2srOOPU5w
+      - description: 21 Rue Abou Abellah Nafii, Casablanca, Grand Casablanca, Morocco
+        reference: CnRuAAAA5geYHbbrBvIAIpyWrtD7Oj8WvtTgYwcCspWKPNW_9f1xLDX9wEHlw6TfxHIIj7sAZLd3cAPpFYe2WoBk-0qB0vTwI5ZNUUUR9w_qPG9ceOHpfY02SNvXBfWsnnX_CrE25df-ZgdSyvJlS7sW47yOBxIQ1ZRj1QKg_nf-czgRlqIbFRoUx-mzTBGagtX4Jj_E1Z5UXTpXaGE
+    - code: '200'
+    - show_in_doc: 1
+    - recorded: true
+- details#show:
+  - !omap
+    - verb: :GET
+    - path: /api/places/details/ClRNAAAAu2vgwlaOOP9j92SUZSmS6c3XQppD_H3-g-LForQzhQAihTD0uTNT234nHwpnaVeWvCdntvOmrwouNIcBQwO4cOPR3bmdimEO0pP-9DwKQFoSEPa_CqCJIjc3H-w5hoxAQ60aFBJxKAF7cHWMdYe2A4bzJmCScypn.json
+    - versions:
+      - v1
+    - query: ''
+    - request_data: 
+    - response_data:
+        address1: 21 Rue d'Aboukir
+        zip: '75002'
+        city: Paris
+        country: FR
+    - code: '200'
+    - show_in_doc: 1
     - recorded: true
 - home#index:
   - !omap
@@ -169,17 +215,24 @@
     - versions: []
     - query: 
     - request_data:
-        order: ! '{"url":"http://www.rueducommerce.fr/productA"}'
+        order:
+          urls:
+          - http://www.rueducommerce.fr/productA
     - response_data:
         order:
-          uuid: 85cfcc4acd60b5c96c0996622ec35183
+          uuid: 2906bbc86a9563e94a23d983485b72e3
           state: ordering
-          product:
-            id: 815917824
-            url: http://www.rueducommerce.fr/productA
-            merchant:
-              id: 878265302
-              name: Rue du Commerce
+          products:
+          - product:
+              id: 815917823
+              image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
+              name: Clé USB
+              url: http://www.rueducommerce.fr/productA
+              merchant:
+                id: 878265302
+                name: Rue du Commerce
+            quantity: 1
+            price_product: 0.0
           merchant:
             id: 878265302
             name: Rue du Commerce
@@ -189,22 +242,35 @@
 - orders#show:
   - !omap
     - verb: :GET
-    - path: /api/orders/abcdef.json
+    - path: /api/orders/uuid.json
     - versions: []
     - query: ''
     - request_data: 
     - response_data:
         order:
-          uuid: abcdef
+          uuid: uuid
           state: pending
-          product:
-            id: 815917823
-            image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
-            name: Clé USB
-            url: http://www.rueducommerce.fr/Composants/Cle-USB/Cles-USB/LEXAR/4867507-Cle-USB-3-0-Lexar-JumpDrive-S73-16Go.htm
-            merchant:
-              id: 878265302
-              name: Rue du Commerce
+          products:
+          - product:
+              id: 102543260
+              image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
+              name: Ecouteurs
+              url: http://www.rueducommerce.fr/productB
+              merchant:
+                id: 878265302
+                name: Rue du Commerce
+            quantity: 1
+            price_product: 0.0
+          - product:
+              id: 815917823
+              image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
+              name: Clé USB
+              url: http://www.rueducommerce.fr/productA
+              merchant:
+                id: 878265302
+                name: Rue du Commerce
+            quantity: 1
+            price_product: 0.0
           merchant:
             id: 878265302
             name: Rue du Commerce
@@ -214,12 +280,14 @@
 - orders#update:
   - !omap
     - verb: :PUT
-    - path: /api/callback/orders/abcdef.json
+    - path: /api/callback/orders/uuid.json
     - versions:
       - v1
     - query: 
     - request_data:
-        data: ! '{"verb":"message","content":"Test","session":{"state":"pending"}}'
+        verb: message
+        content:
+          message: Test
     - response_data: 
     - code: '204'
     - show_in_doc: 1
@@ -232,7 +300,12 @@
       - v1
     - query: 
     - request_data:
-        payment_card: ! '{"user_id":745494609,"number":"1234123412341234","exp_month":"02","exp_year":"2015","cvv":"123"}'
+        payment_card:
+          user_id: '745494609'
+          number: '1234123412341234'
+          exp_month: '02'
+          exp_year: '2015'
+          cvv: '123'
     - response_data:
         payment_card:
           id: 727572249
@@ -250,7 +323,7 @@
       - v1
     - query: 
     - request_data:
-        payment_card: ! '{}'
+        payment_card: {}
     - response_data:
         number:
         - can't be blank
@@ -322,13 +395,14 @@
       - v1
     - query: 
     - request_data:
-        phone: ! '{"number":"0640381383","line_type":1}'
+        phone:
+          number: 0640381383
+          line_type: '1'
     - response_data:
         phone:
           id: 752488299
           number: 0640381383
           line_type: 1
-          address_id: 
     - code: '201'
     - show_in_doc: 1
     - recorded: true
@@ -339,7 +413,7 @@
       - v1
     - query: 
     - request_data:
-        phone: ! '{}'
+        phone: {}
     - response_data:
         number:
         - can't be blank
@@ -377,7 +451,6 @@
       - id: 752488298
         number: 0646403619
         line_type: 1
-        address_id: 
     - code: '200'
     - show_in_doc: 1
     - recorded: true
@@ -406,7 +479,8 @@
       - v1
     - query: 
     - request_data:
-        phone: ! '{"number":""}'
+        phone:
+          number: ''
     - response_data:
         number:
         - can't be blank
@@ -420,7 +494,8 @@
       - v1
     - query: 
     - request_data:
-        phone: ! '{"number":"0646403610"}'
+        phone:
+          number: '0646403610'
     - response_data: 
     - code: '204'
     - show_in_doc: 0
@@ -433,7 +508,7 @@
       - v1
     - query: 
     - request_data:
-        user: ! '{}'
+        user: {}
     - response_data:
         email:
         - can't be blank
@@ -451,7 +526,15 @@
       - v1
     - query: 
     - request_data:
-        user: ! '{"email":"willfail@gmail.com","password":"tototo","password_confirmation":"tototo","first_name":"Joe","last_name":"Fail","civility":0,"nationality_id":514205109,"birthdate":"1973-09-30"}'
+        user:
+          email: willfail@gmail.com
+          password: tototo
+          password_confirmation: tototo
+          first_name: Joe
+          last_name: Fail
+          civility: '0'
+          nationality_id: '514205109'
+          birthdate: '1973-09-30'
     - response_data:
         base:
         - ! 'Impossible to create user on Leetchi API. Error: {"origin":"remote","message":"Api
@@ -466,8 +549,20 @@
       - v1
     - query: 
     - request_data:
-        user: ! '{"email":"user@gmail.com","first_name":"John","last_name":"Doe","addresses_attributes":[{"address1":"21
-          rue d''Aboukir","zip":"75002","city":"Paris","phones_attributes":[{"number":"0140404040","line_type":0}]}],"phones_attributes":[{"number":"0640404040","line_type":1}]}'
+        user:
+          email: user@gmail.com
+          first_name: John
+          last_name: Doe
+          addresses_attributes:
+          - address1: 21 rue d'Aboukir
+            zip: '75002'
+            city: Paris
+            phones_attributes:
+            - number: '0140404040'
+              line_type: '0'
+          phones_attributes:
+          - number: '0640404040'
+            line_type: '1'
     - response_data:
         user:
           id: 973902417
@@ -478,9 +573,8 @@
           - id: 752488300
             number: '0640404040'
             line_type: 1
-            address_id: 
           addresses:
-          - id: 480832712
+          - id: 498085478
             address1: 21 rue d'Aboukir
             zip: '75002'
             city: Paris
@@ -490,9 +584,10 @@
             - id: 752488299
               number: '0140404040'
               line_type: 0
-              address_id: 480832712
+              address_id: 498085478
           payment_cards: []
-        auth_token: zLfKxzsdLir4LsxEbpfx
+          pincode: 
+        auth_token: xz5B6isnYxCgwzUzuBrG
     - code: '201'
     - show_in_doc: 0
     - recorded: true
@@ -530,7 +625,6 @@
           - id: 752488298
             number: 0646403619
             line_type: 1
-            address_id: 
           addresses:
           - id: 480832711
             code_name: Chateau
@@ -552,7 +646,8 @@
             name: HSBC
             exp_month: '2'
             exp_year: '2015'
-        auth_token: JucC3NXdgLHb6v8xe1TX
+          pincode: '1234'
+        auth_token: MCB9Yt5SwwWwtunfU9ay
     - code: '200'
     - show_in_doc: 0
     - recorded: true
@@ -625,30 +720,6 @@
     - query: ''
     - request_data: 
     - response_data:
-        error: Invalid api key
-    - code: '401'
-    - show_in_doc: 0
-    - recorded: true
-  - !omap
-    - verb: :GET
-    - path: /api/users/745494609.json
-    - versions:
-      - v1
-    - query: ''
-    - request_data: 
-    - response_data:
-        error: Invalid api key
-    - code: '401'
-    - show_in_doc: 0
-    - recorded: true
-  - !omap
-    - verb: :GET
-    - path: /api/users/745494609.json
-    - versions:
-      - v1
-    - query: ''
-    - request_data: 
-    - response_data:
         user:
           id: 745494609
           email: elarch@gmail.com
@@ -658,7 +729,6 @@
           - id: 752488298
             number: 0646403619
             line_type: 1
-            address_id: 
           addresses:
           - id: 480832711
             code_name: Chateau
@@ -680,48 +750,7 @@
             name: HSBC
             exp_month: '2'
             exp_year: '2015'
-    - code: '200'
-    - show_in_doc: 0
-    - recorded: true
-  - !omap
-    - verb: :GET
-    - path: /api/users/745494609.json
-    - versions:
-      - v1
-    - query: ''
-    - request_data: 
-    - response_data:
-        user:
-          id: 745494609
-          email: elarch@gmail.com
-          first_name: Eric
-          last_name: Larchevêque
-          phones:
-          - id: 752488298
-            number: 0646403619
-            line_type: 1
-            address_id: 
-          addresses:
-          - id: 480832711
-            code_name: Chateau
-            address1: 14 bd du Chateau
-            address2: BP 212
-            zip: '92200'
-            city: Neuilly
-            country: FR
-            access_info: Code porte 1234
-            is_default: 1
-            phones:
-            - id: 417264221
-              number: 0940404040
-              line_type: 0
-              address_id: 480832711
-          payment_cards:
-          - id: 727572248
-            number: 4970XXXXXXXXXX54
-            name: HSBC
-            exp_month: '2'
-            exp_year: '2015'
+          pincode: '1234'
     - code: '200'
     - show_in_doc: 0
     - recorded: true
@@ -733,7 +762,8 @@
       - v1
     - query: 
     - request_data:
-        user: ! '{"email":"toto"}'
+        user:
+          email: toto
     - response_data:
         email:
         - is invalid
@@ -747,7 +777,8 @@
       - v1
     - query: 
     - request_data:
-        user: ! '{"first_name":"Peter"}'
+        user:
+          first_name: Peter
     - response_data: 
     - code: '204'
     - show_in_doc: 0
