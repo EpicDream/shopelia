@@ -77,11 +77,11 @@ class AddressTest < ActiveSupport::TestCase
     assert_equal 0, Phone.find_all_by_address_id(address_id).count   
   end
   
-  test "it should create address from token" do
+  test "it should create address from reference" do
     VCR.use_cassette('places_api') do  
       address = Address.new(
         :user_id => users(:elarch).id,
-        :token => "CjQjAAAAPtgCbee5jsEkoWoc6apT3qFBYmWlxcVOPrwUBoQ5Pqv8ExTxyh-M--tsL8QAT8xCEhBo2z7K3wdT4K6S7smh--ZIGhTCBtyjxjD5fBNcR15jutp7SZA2Fw")
+        :reference => "CjQjAAAAPtgCbee5jsEkoWoc6apT3qFBYmWlxcVOPrwUBoQ5Pqv8ExTxyh-M--tsL8QAT8xCEhBo2z7K3wdT4K6S7smh--ZIGhTCBtyjxjD5fBNcR15jutp7SZA2Fw")
 
       assert address.save
       assert_equal "21 Rue d'Aboukir", address.address1

@@ -33,7 +33,7 @@ class Api::V1::AddressesControllerTest < ActionController::TestCase
     assert_response :success
     
     assert json_response.kind_of?(Array), "Should get an array of addresses"
-    assert_equal 1, json_response.count
+    assert_equal 2, json_response.count
   end
 
   test "it should update address" do
