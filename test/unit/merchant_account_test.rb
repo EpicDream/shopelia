@@ -1,13 +1,13 @@
 require 'test_helper'
 
 class MerchantAccountTest < ActiveSupport::TestCase
-  fixtures :users, :merchants, :merchant_accounts, :addresses
+  fixtures :users, :merchants, :merchant_accounts, :addresses, :orders
   
   setup do
     @user = users(:elarch)
     @merchant = merchants(:rueducommerce)
-    @address = addresses(:elarch_neuilly)
-    @account = MerchantAccount.create!(user_id:@user.id, merchant_id:@merchant.id)
+    @address = addresses(:elarch_vignoux)
+    @account = MerchantAccount.create!(user_id:@user.id, merchant_id:@merchant.id, address_id:@address.id)
   end
 
   test "it should create a merchant account" do
@@ -15,7 +15,7 @@ class MerchantAccountTest < ActiveSupport::TestCase
     assert @account.is_default?, "Account should be default"
     assert_equal 8, @account.password.size
     assert_equal "elarch.gmail.com@shopelia.fr", @account.login
-    assert_equal addresses(:elarch_neuilly).id, @account.address_id
+    assert_equal addresses(:elarch_vignoux).id, @account.address_id
   end
   
   test "it should create second merchant account" do
@@ -32,26 +32,21 @@ class MerchantAccountTest < ActiveSupport::TestCase
     assert !account.save
   end
   
-  test "a new account specified as default should set previous one as non default" do
-    account = MerchantAccount.create!(user_id:@user.id, merchant_id:@merchant.id, is_default:true)
+  test "a new account should set previous one as non default" do
+    account = MerchantAccount.create!(user_id:@user.id, merchant_id:@merchant.id, address_id:@address.id)
     assert account.is_default?
     assert !@account.reload.is_default?
-  end
-  
-  test "a second account shouldn't be default" do
-    account = MerchantAccount.create!(user_id:@user.id, merchant_id:@merchant.id)
-    assert !account.is_default?
   end
   
   test "when a default account is destroyed, last one standing should be default" do
     account = MerchantAccount.create!(user_id:@user.id, merchant_id:@merchant.id)
     @account.destroy
+    merchant_accounts(:elarch_neuilly_rueducommerce).destroy
     assert account.reload.is_default?
   end
   
-  test "it should find or create a new merchant account" do
-    assert_equal @account.id, MerchantAccount.find_or_create(@user, @merchant, @address).id
-    assert MerchantAccount.find_or_create(users(:manu), @merchant, @address).present?
+  test "it should find or create a new merchant account for order" do
+    assert MerchantAccount.find_or_create_for_order(orders(:elarch_rueducommerce)).present?
   end
   
 end

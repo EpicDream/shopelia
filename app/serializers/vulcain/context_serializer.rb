@@ -13,7 +13,7 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   end
   
   def account
-    Vulcain::MerchantAccountSerializer.new(MerchantAccount.find_or_create_by_user_id_and_merchant_id(object.user_id, object.merchant_id)).as_json[:merchant_account]
+    Vulcain::MerchantAccountSerializer.new(object.merchant_account).as_json[:merchant_account]
   end
   
   def user

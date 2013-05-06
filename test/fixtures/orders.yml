@@ -3,5 +3,6 @@ elarch_rueducommerce:
   user: elarch
   address: elarch_neuilly
   merchant: rueducommerce
+  merchant_account: elarch_neuilly_rueducommerce
   state_name: "pending"
 
