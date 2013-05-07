@@ -53,6 +53,7 @@ class Order < ActiveRecord::Base
         when "order_validation_failed" then fail(I18n.t("orders.failure.payment"), :payment_error)
         when "account_creation_failed" then restart
         when "login_failed" then restart
+        when "order_canceled" then fail("order_canceled", :user_error)
         end
 
       elsif verb.eql?("assess")
@@ -86,7 +87,7 @@ class Order < ActiveRecord::Base
       elsif verb.eql?("cancel")
         @questions.each { |question| question["answer"] = false }
         result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
-        assess(result, :canceled)
+        assess(result, :canceling)
 
       elsif verb.eql?("success")
         self.state = :success

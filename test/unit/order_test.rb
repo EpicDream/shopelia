@@ -167,8 +167,12 @@ class OrderTest < ActiveSupport::TestCase
     @order.process "assess", @content
     assert_equal :pending_confirmation, @order.reload.state
     @order.process "cancel", {}
-    assert_equal :canceled, @order.reload.state
+    assert_equal :canceling, @order.reload.state
     assert_equal false, @order.questions.first["answer"]
+    @order.process "failure", { "message" => "xxx", "status" => "order_canceled" }
+    assert_equal :error, @order.reload.state
+    assert_equal "order_canceled", @order.message
+    assert_equal "user_error", @order.error_code
   end
 
   test "it should fail order if no card present" do

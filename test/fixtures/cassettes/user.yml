@@ -410,4 +410,168 @@ http_interactions:
       string: "{\"ErrorCode\":0,\"TechnicalMessage\":\"The PaymentMediumAccount #1247 of partner 'prixing' is not found.\",\"UserMessage\":\"The PaymentMediumAccount #1247 of partner 'prixing' is not found.\",\"Type\":\"UserError\"}"
     http_version: 
   recorded_at: Fri, 26 Apr 2013 19:19:12 GMT
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/users?ts=1367923655
+    body: 
+      encoding: UTF-8
+      string: "{\"Tag\":\"973902417\",\"Email\":\"elarch@gmail.com\",\"FirstName\":\"Eric\",\"LastName\":\"Larchev\xC3\xAAque\",\"Nationality\":\"FR\",\"Birthday\":118195200,\"PersonType\":\"NATURAL_PERSON\",\"CanRegisterMeanOfPayment\":true,\"IP\":\"127.0.0.1\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - UegrTxx+ndkvwE+EbG6Olh+T+VEQO/xxPRj8rz7gJfSjqEYvpCwy7k3aBoryn17NapjrBhNVw/YTzIozk/tN6VvI7/8LKn5FtPI7au6SI/x5zgwQ5BoiKhwc/4LFlwNpSvMIQWCmOSmuHvT2cL/YpzAyltcM+E9dQ//3iIcOpTH4yWZAYNXdAXX3QT3teQNPDUmf4OpS9ks4DOZFYPFtBVEP6a+kyyP4TdB8ITC4Nezvc+4LvrP9NeiHuaU3cIQus7bt8rnB1tlplWUGv65P+u5i9CuEI2xMudJjlmA+5jzt8uGEIJdjpIWe7uhCgqHXwfzDZb1QeiUYZjdwX3mEjA==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Tue, 07 May 2013 10:47:35 GMT
+      Content-Length: 
+      - "407"
+    body: 
+      encoding: ASCII-8BIT
+      string: "{\"Email\":\"elarch@gmail.com\",\"FirstName\":\"Eric\",\"LastName\":\"Larchev\xC3\xAAque\",\"CanRegisterMeanOfPayment\":true,\"HasRegisteredMeansOfPayment\":false,\"IP\":\"127.0.0.1\",\"Birthday\":118195200,\"Password\":\"Ezip3sihiDaJiR6te5TfDKdtkHi5cQ\",\"PersonalWalletAmount\":0,\"IsStrongAuthenticated\":false,\"Nationality\":\"FR\",\"PersonType\":\"NATURAL_PERSON\",\"ID\":265839,\"Tag\":\"973902417\",\"CreationDate\":1367923655,\"UpdateDate\":1367923655}"
+    http_version: 
+  recorded_at: Tue, 07 May 2013 10:47:35 GMT
+- request: 
+    method: get
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/users/265839?ts=1367923655
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      X-Leetchi-Signature: 
+      - FmLCpOtQuGip7214cDuFBVXBAR4Yqs056pN+ayr521NCe3s0tBaNs+j/N7RG6VO04fXsjct9UaHCrejXstdFIW+DYgM2RdNqoy7Hyw8Ld/jplLCmBbO/eYbcuEredhxC/D1yeNslPMZPb0Me3OH9FR+BgT4AX2UU+G+PqgpHoc8femH9OTFfIC4Yum+9FtZNjHBF9DY9hATmLydHWzP/gTUDZMjWqO0F1RRSagc0JGmYosBQjjB5QHdz955SpzGnRKhd8QHUAyoTkEAaNH6F04ZZvTQZ+SIEkQqP/fnIPiECMqjiApqfhyPVKlKH90gpre5ZQs3uSDiEfocMdb4nJQ==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Tue, 07 May 2013 10:47:35 GMT
+      Content-Length: 
+      - "407"
+    body: 
+      encoding: ASCII-8BIT
+      string: "{\"Email\":\"elarch@gmail.com\",\"FirstName\":\"Eric\",\"LastName\":\"Larchev\xC3\xAAque\",\"CanRegisterMeanOfPayment\":true,\"HasRegisteredMeansOfPayment\":false,\"IP\":\"127.0.0.1\",\"Birthday\":118195200,\"Password\":\"Ezip3sihiDaJiR6te5TfDKdtkHi5cQ\",\"PersonalWalletAmount\":0,\"IsStrongAuthenticated\":false,\"Nationality\":\"FR\",\"PersonType\":\"NATURAL_PERSON\",\"ID\":265839,\"Tag\":\"973902417\",\"CreationDate\":1367923655,\"UpdateDate\":1367923655}"
+    http_version: 
+  recorded_at: Tue, 07 May 2013 10:47:35 GMT
+- request: 
+    method: put
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/users/265839?ts=1367923655
+    body: 
+      encoding: UTF-8
+      string: "{\"Email\":\"elarch@gmail.com\",\"FirstName\":\"Eric\",\"LastName\":\"Larchev\xC3\xAAque\",\"Nationality\":\"FR\",\"Birthday\":23500800}"
+    headers: 
+      X-Leetchi-Signature: 
+      - GYczCJCMWf0V5NS0ku/mrl/lLTHm4L6ubLWuop3VCaLwLmyGMNTT6EoCsr6LzaTp98o7dPp91u3TW6FhtwgkKjOa66ujZS8C34mFClPNwzUa8szLLfyJ+bV0S4BBQobobxhm2q4jDMYbiF0pk5MYrjYHm7qxIuj3XbUU3JCIV2KF7XaOdRdqGe11SFXmibV6Q4hfSxIXCcaGfqCT/Dx2jNdjV7jkEaAvh8mK7pdSYDUyK6bd+YZUymA0ENqNut8uJNYun/ZQYFO0gw4Ok5VOY93wQswBHxrWgEbw+K5/NvM+KRkAQO7DHkQ6R/LTfgHPF0rjJZRW/ZY/ILJLF0OPCA==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Tue, 07 May 2013 10:47:36 GMT
+      Content-Length: 
+      - "406"
+    body: 
+      encoding: ASCII-8BIT
+      string: "{\"Email\":\"elarch@gmail.com\",\"FirstName\":\"Eric\",\"LastName\":\"Larchev\xC3\xAAque\",\"CanRegisterMeanOfPayment\":true,\"HasRegisteredMeansOfPayment\":false,\"IP\":\"127.0.0.1\",\"Birthday\":23500800,\"Password\":\"Ezip3sihiDaJiR6te5TfDKdtkHi5cQ\",\"PersonalWalletAmount\":0,\"IsStrongAuthenticated\":false,\"Nationality\":\"FR\",\"PersonType\":\"NATURAL_PERSON\",\"ID\":265839,\"Tag\":\"973902417\",\"CreationDate\":1367923655,\"UpdateDate\":1367923656}"
+    http_version: 
+  recorded_at: Tue, 07 May 2013 10:47:35 GMT
+- request: 
+    method: get
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/users/265839?ts=1367923655
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      X-Leetchi-Signature: 
+      - FmLCpOtQuGip7214cDuFBVXBAR4Yqs056pN+ayr521NCe3s0tBaNs+j/N7RG6VO04fXsjct9UaHCrejXstdFIW+DYgM2RdNqoy7Hyw8Ld/jplLCmBbO/eYbcuEredhxC/D1yeNslPMZPb0Me3OH9FR+BgT4AX2UU+G+PqgpHoc8femH9OTFfIC4Yum+9FtZNjHBF9DY9hATmLydHWzP/gTUDZMjWqO0F1RRSagc0JGmYosBQjjB5QHdz955SpzGnRKhd8QHUAyoTkEAaNH6F04ZZvTQZ+SIEkQqP/fnIPiECMqjiApqfhyPVKlKH90gpre5ZQs3uSDiEfocMdb4nJQ==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Tue, 07 May 2013 10:47:36 GMT
+      Content-Length: 
+      - "406"
+    body: 
+      encoding: ASCII-8BIT
+      string: "{\"Email\":\"elarch@gmail.com\",\"FirstName\":\"Eric\",\"LastName\":\"Larchev\xC3\xAAque\",\"CanRegisterMeanOfPayment\":true,\"HasRegisteredMeansOfPayment\":false,\"IP\":\"127.0.0.1\",\"Birthday\":23500800,\"Password\":\"Ezip3sihiDaJiR6te5TfDKdtkHi5cQ\",\"PersonalWalletAmount\":0,\"IsStrongAuthenticated\":false,\"Nationality\":\"FR\",\"PersonType\":\"NATURAL_PERSON\",\"ID\":265839,\"Tag\":\"973902417\",\"CreationDate\":1367923655,\"UpdateDate\":1367923656}"
+    http_version: 
+  recorded_at: Tue, 07 May 2013 10:47:36 GMT
 recorded_with: VCR 2.4.0
