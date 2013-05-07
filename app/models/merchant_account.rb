@@ -5,6 +5,7 @@ class MerchantAccount < ActiveRecord::Base
   belongs_to :user
   belongs_to :merchant
   belongs_to :address
+  has_many :orders
   
   validates :user, :presence => true
   validates :merchant, :presence => true
@@ -21,7 +22,7 @@ class MerchantAccount < ActiveRecord::Base
   attr_accessible :user_id, :merchant_id, :address_id, :login, :is_default
 
   before_validation do |record|
-    record.is_default = true  if MerchantAccount.where(:user_id => record.user_id, :merchant_id => record.merchant_id).count == 0
+    record.is_default = true if record.is_default.nil?
   end
 
   before_destroy do |record|
@@ -32,11 +33,11 @@ class MerchantAccount < ActiveRecord::Base
   end
   
   after_save do |record|
-    MerchantAccount.where("user_id=? and merchant_id=? and id<>? and is_default='t'", record.user_id, record.merchant_id, record.id).update_all "is_default='f'" if record.is_default?
+    MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and id<>? and is_default='t'", record.user_id, record.merchant_id, record.address_id, record.id).update_all "is_default='f'" if record.is_default?
   end
   
-  def self.find_or_create user, merchant, address
-    MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and is_default='t'", user.id, merchant.id, address.id).first || MerchantAccount.create(user_id:user.id, merchant_id:merchant.id, address_id:address.id)
+  def self.find_or_create_for_order order
+    MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and is_default='t'", order.user_id, order.merchant_id, order.address_id).first || MerchantAccount.create(user_id:order.user_id, merchant_id:order.merchant_id, address_id:order.address_id)
   end
   
   private

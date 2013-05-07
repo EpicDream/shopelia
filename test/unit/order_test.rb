@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
-  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :addresses
+  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :addresses, :merchant_accounts
   
   setup do
     @user = users(:elarch)
@@ -45,6 +45,7 @@ class OrderTest < ActiveSupport::TestCase
     assert order.save, order.errors.full_messages.join(",")
     assert_equal addresses(:elarch_neuilly).id, order.address_id
     assert_equal :pending, order.state
+    assert order.merchant_account.present?
     assert order.uuid.present?
   end
   
@@ -58,11 +59,13 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it should create order with specific address" do
-    order = Order.new(
-      :user_id => @user.id,
-      :urls => ["http://www.rueducommerce.fr/productA"],
-      :address_id => addresses(:elarch_vignoux).id)
-    assert order.save, order.errors.full_messages.join(",")
+    assert_difference('MerchantAccount.count', 1) do
+      order = Order.new(
+        :user_id => @user.id,
+        :urls => ["http://www.rueducommerce.fr/productA"],
+        :address_id => addresses(:elarch_vignoux).id)
+      assert order.save, order.errors.full_messages.join(",")
+    end
   end
 
   test "it shouldn't create order if user doesn't have any address" do
@@ -106,8 +109,8 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it should set message" do
-    @order.process "message", { "message" => "bla" }
-    assert_equal "bla", @order.message    
+    @order.process "message", { "message" => "bla", "status" => "account_created" }
+    assert_equal "account_created", @order.message
   end
 
   test "it should process confirmation request" do
@@ -188,10 +191,12 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should restart order with new account if login failed" do
+   old_id = @order.merchant_account.id
    assert_difference('MerchantAccount.count', 1) do
      @order.process "failure", { "message" => "xxx", "status" => "login_failed" }
    end
    assert_equal 1, @order.reload.retry_count
+   assert_not_equal old_id, @order.merchant_account.id
    assert_equal :ordering, @order.state
   end
  
@@ -202,7 +207,7 @@ class OrderTest < ActiveSupport::TestCase
    assert_equal I18n.t("orders.failure.payment"), @order.message
   end
   
-  test "it shouldn't restart order if maximum number of retried has been reached" do
+  test "it shouldn't restart order if maximum number of retries has been reached" do
    @order.retry_count = Rails.configuration.max_retry
    assert_difference('MerchantAccount.count', 0) do
      @order.process "failure", { "message" => "xxx", "status" => "account_creation_failed" }
@@ -210,6 +215,13 @@ class OrderTest < ActiveSupport::TestCase
    assert_equal :error, @order.reload.state
    assert_equal "account_error", @order.error_code
    assert_equal I18n.t("orders.failure.account"), @order.message    
+  end
+ 
+  test "it should set merchant account as created when message account_created received" do
+    order = Order.create(:user_id => @user.id, :merchant_id => @merchant.id)
+    assert_equal false, order.merchant_account.merchant_created
+    @order.process "message", { "message" => "bla", "status" => "account_created" }
+    assert_equal true, order.merchant_account.reload.merchant_created    
   end
  
 end

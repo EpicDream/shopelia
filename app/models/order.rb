@@ -2,6 +2,7 @@ class Order < ActiveRecord::Base
   belongs_to :user
   belongs_to :merchant
   belongs_to :address
+  belongs_to :merchant_account
   has_many :order_items
   
   validates :user, :presence => true
@@ -9,12 +10,14 @@ class Order < ActiveRecord::Base
   validates :uuid, :presence => true, :uniqueness => true
   validates :address, :presence => true
 
-  attr_accessible :user_id, :merchant_id, :address_id, :message, :price_product, :price_delivery, :price_total, :urls, :payment_card
+  attr_accessible :user_id, :merchant_id, :address_id, :merchant_account_id
+  attr_accessible :message, :price_product, :price_delivery, :price_total, :urls, :payment_card
   attr_accessor :urls, :payment_card
   
   before_validation :initialize_uuid
   before_validation :initialize_state
   before_validation :initialize_address
+  before_validation :initialize_merchant_account
   before_save :serialize_questions
   after_initialize :deserialize_questions
   after_create :prepare_order_items
@@ -26,7 +29,7 @@ class Order < ActiveRecord::Base
 
   def restart
     if self.retry_count.to_i < Rails.configuration.max_retry
-      MerchantAccount.create(user_id:self.user_id, merchant_id:self.merchant_id, address_id:self.address_id)
+      self.merchant_account_id = MerchantAccount.create(user_id:self.user_id, merchant_id:self.merchant_id, address_id:self.address_id).id
       self.retry_count = self.retry_count.to_i + 1
       start
     else
@@ -37,7 +40,10 @@ class Order < ActiveRecord::Base
   def process verb, content
     begin
       if verb.eql?("message")
-        self.message = content["message"]
+        self.message = content["status"]
+        if self.message.eql?("account_created")
+          self.merchant_account.update_attribute :merchant_created, true
+        end
 
       elsif verb.eql?("failure")
         case content["status"]
@@ -143,6 +149,10 @@ class Order < ActiveRecord::Base
     else
       self.errors.add(:base, I18n.t('orders.no_address'))
     end
+  end
+
+  def initialize_merchant_account
+    self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
   end
   
   def prepare_order_items
