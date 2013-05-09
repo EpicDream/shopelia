@@ -9,7 +9,7 @@ class Api::V1::Callback::OrdersControllerTest < ActionController::TestCase
   end
 
   test "it should callback order" do
-    put :update, id:@order.uuid, verb:"message", content:{status:"Test"}, format: :json
+    put :update, id:@order.uuid, verb:"message", content:{message:"Test"}, format: :json
 
     assert_response :success
     assert_equal "Test", @order.reload.message
