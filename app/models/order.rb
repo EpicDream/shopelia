@@ -50,10 +50,11 @@ class Order < ActiveRecord::Base
         when "exception" then fail(content["message"], :vulcain_exception)
         when "no_idle" then fail(content["message"], :vulcain_error)
         when "error" then fail(content["message"], :vulcain_error)
+        when "driver_failed" then fail(content["message"], :vulcain_error)
+        when "order_canceled" then fail("order_canceled", :user_error)
         when "order_validation_failed" then fail(I18n.t("orders.failure.payment"), :payment_error)
         when "account_creation_failed" then restart
         when "login_failed" then restart
-        when "order_canceled" then fail("order_canceled", :user_error)
         end
 
       elsif verb.eql?("assess")
@@ -69,12 +70,12 @@ class Order < ActiveRecord::Base
         @questions = content["questions"]
         self.state = :pending_answer
 
-      elsif verb.eql?("answer")
+      elsif verb.eql?("answer") && @questions.size > 0
         @questions.each { |question| question["answer"] = content[question["id"]] }
         result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
         assess(result, :ordering)
 
-      elsif verb.eql?("confirm")
+      elsif verb.eql?("confirm") && @questions.size > 0
         self.payment_card = self.user.payment_cards.where(:id => content["payment_card_id"]).first
         if self.payment_card.present?
           @questions.each { |question| question["answer"] = self.payment_card.present? ? true : false }
@@ -84,7 +85,7 @@ class Order < ActiveRecord::Base
           fail("Cannot process payment, no credit card found for user", :user_error)
         end
 
-      elsif verb.eql?("cancel")
+      elsif verb.eql?("cancel") && @questions.size > 0
         @questions.each { |question| question["answer"] = false }
         result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
         assess(result, :canceling)

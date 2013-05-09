@@ -108,6 +108,13 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "vulcain_error", @order.error_code
   end
 
+  test "it should fail order with driver problem" do
+    @order.process "failure", { "message" => "yop", "status" => "driver_failed" }
+    assert_equal :error, @order.reload.state
+    assert_equal "yop", @order.message
+    assert_equal "vulcain_error", @order.error_code
+  end
+
   test "it should set message" do
     @order.process "message", { "message" => "bla", "status" => "account_created" }
     assert_equal "account_created", @order.message
@@ -173,6 +180,14 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :error, @order.reload.state
     assert_equal "order_canceled", @order.message
     assert_equal "user_error", @order.error_code
+  end
+  
+  test "it should ignore confirm or cancel if status is not pending_confirmation" do
+    @order.start
+    @order.process "cancel", {}
+    assert_equal :ordering, @order.reload.state
+    @order.process "confirm", {}
+    assert_equal :ordering, @order.reload.state
   end
 
   test "it should fail order if no card present" do
