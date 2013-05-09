@@ -88,23 +88,20 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should fail order with exception" do
-    @order.process "failure", { "message" => "yop", "status" => "exception" }
+    @order.process "failure", { "message" => "exception" }
     assert_equal :error, @order.reload.state
-    assert_equal "yop", @order.message
     assert_equal "vulcain_exception", @order.error_code
   end
 
   test "it should fail order with error" do
-    @order.process "failure", { "message" => "yop", "status" => "error" }
+    @order.process "failure", { "message" => "error" }
     assert_equal :error, @order.reload.state
-    assert_equal "yop", @order.message
     assert_equal "vulcain_error", @order.error_code
   end
   
   test "it should fail order with lack of vulcains" do
-    @order.process "failure", { "message" => "yop", "status" => "no_idle" }
+    @order.process "failure", { "message" => "no_idle" }
     assert_equal :error, @order.reload.state
-    assert_equal "yop", @order.message
     assert_equal "vulcain_error", @order.error_code
   end
 
@@ -116,8 +113,8 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it should set message" do
-    @order.process "message", { "message" => "bla", "status" => "account_created" }
-    assert_equal "account_created", @order.message
+    @order.process "message", { "message" => "bla" }
+    assert_equal "bla", @order.message
   end
 
   test "it should process confirmation request" do
@@ -176,7 +173,7 @@ class OrderTest < ActiveSupport::TestCase
     @order.process "cancel", {}
     assert_equal :canceling, @order.reload.state
     assert_equal false, @order.questions.first["answer"]
-    @order.process "failure", { "message" => "xxx", "status" => "order_canceled" }
+    @order.process "failure", { "message" => "order_canceled" }
     assert_equal :error, @order.reload.state
     assert_equal "order_canceled", @order.message
     assert_equal "user_error", @order.error_code
@@ -204,7 +201,7 @@ class OrderTest < ActiveSupport::TestCase
   
   test "it should restart order with new account if account creation failed" do
    assert_difference('MerchantAccount.count', 1) do
-     @order.process "failure", { "message" => "xxx", "status" => "account_creation_failed" }
+     @order.process "failure", { "message" => "account_creation_failed" }
    end
    assert_equal :ordering, @order.reload.state
   end
@@ -212,7 +209,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should restart order with new account if login failed" do
    old_id = @order.merchant_account.id
    assert_difference('MerchantAccount.count', 1) do
-     @order.process "failure", { "message" => "xxx", "status" => "login_failed" }
+     @order.process "failure", { "message" => "login_failed" }
    end
    assert_equal 1, @order.reload.retry_count
    assert_not_equal old_id, @order.merchant_account.id
@@ -220,7 +217,7 @@ class OrderTest < ActiveSupport::TestCase
   end
  
   test "it should process order validation failure" do
-   @order.process "failure", { "message" => "xxx", "status" => "order_validation_failed" }
+   @order.process "failure", { "message" => "order_validation_failed" }
    assert_equal :error, @order.reload.state
    assert_equal "payment_error", @order.error_code
    assert_equal I18n.t("orders.failure.payment"), @order.message
@@ -229,7 +226,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't restart order if maximum number of retries has been reached" do
    @order.retry_count = Rails.configuration.max_retry
    assert_difference('MerchantAccount.count', 0) do
-     @order.process "failure", { "message" => "xxx", "status" => "account_creation_failed" }
+     @order.process "failure", { "message" => "account_creation_failed" }
    end
    assert_equal :error, @order.reload.state
    assert_equal "account_error", @order.error_code
@@ -239,7 +236,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should set merchant account as created when message account_created received" do
     order = Order.create(:user_id => @user.id, :merchant_id => @merchant.id)
     assert_equal false, order.merchant_account.merchant_created
-    @order.process "message", { "message" => "bla", "status" => "account_created" }
+    @order.process "message", { "message" => "account_created" }
     assert_equal true, order.merchant_account.reload.merchant_created    
   end
  

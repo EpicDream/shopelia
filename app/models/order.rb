@@ -40,13 +40,13 @@ class Order < ActiveRecord::Base
   def process verb, content
     begin
       if verb.eql?("message")
-        self.message = content["status"]
+        self.message = content["message"]
         if self.message.eql?("account_created")
           self.merchant_account.update_attribute :merchant_created, true
         end
 
       elsif verb.eql?("failure")
-        case content["status"]
+        case content["message"]
         when "exception" then fail(content["message"], :vulcain_exception)
         when "no_idle" then fail(content["message"], :vulcain_error)
         when "error" then fail(content["message"], :vulcain_error)
