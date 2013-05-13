@@ -1,7 +1,7 @@
 class Vulcain::ContextSerializer < ActiveModel::Serializer
   include ActiveModelSerializerExtension::JsonWithoutNilKeys
   
-  attributes :session, :account, :order, :user, :answers
+  attributes :session, :account, :order, :user, :answers, :address
   
   def session
     { :uuid => object.uuid, :callback_url => object.callback_url }
@@ -18,6 +18,10 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   
   def user
     Vulcain::UserSerializer.new(object.user, scope:{address_id:object.address_id}).as_json[:user]
+  end
+  
+  def address
+    AddressSerializer.new(object.address).as_json[:address]
   end
   
   def answers
@@ -39,5 +43,9 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   def include_answers?
     object.questions.size > 0
   end  
+  
+  def include_address?
+    object.state == :pending_confirmation || object.state == :success
+  end
   
 end

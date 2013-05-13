@@ -106,9 +106,8 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it should fail order with driver problem" do
-    @order.process "failure", { "message" => "yop", "status" => "driver_failed" }
+    @order.process "failure", { "message" => "driver_failed" }
     assert_equal :error, @order.reload.state
-    assert_equal "yop", @order.message
     assert_equal "vulcain_error", @order.error_code
   end
 

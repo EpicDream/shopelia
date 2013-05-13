@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :merchants, :users, :payment_cards, :merchant_accounts, :order_items
+  fixtures :orders, :products, :merchants, :users, :payment_cards, :merchant_accounts, :order_items, :addresses
   
   setup do
     @order = orders(:elarch_rueducommerce)
@@ -16,6 +16,7 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     assert context[:session].present?
     assert context[:order].present?
     assert context[:user].present?
+    assert !context[:address].present?
 
     session = context[:session]
     assert_equal @order.uuid, session[:uuid]
@@ -52,6 +53,14 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     
     assert_equal "red", context[:answers][0][:answer]
     assert_equal "1", context[:answers][0][:question_id]
+  end
+  
+  test "it should send address when pending confirmation" do
+    @order.send("state=", :pending_confirmation)
+    order_serializer = Vulcain::ContextSerializer.new(@order)
+    context = order_serializer.as_json[:context]
+    
+    assert context[:address].present?
   end
 
 end

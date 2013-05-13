@@ -50,7 +50,7 @@ class Order < ActiveRecord::Base
         when "exception" then fail(content["message"], :vulcain_exception)
         when "no_idle" then fail(content["message"], :vulcain_error)
         when "error" then fail(content["message"], :vulcain_error)
-        when "driver_failed" then fail(content["message"], :vulcain_error)
+        when "driver_failed" then fail("driver_failure", :vulcain_error)
         when "order_canceled" then fail("order_canceled", :user_error)
         when "order_validation_failed" then fail(I18n.t("orders.failure.payment"), :payment_error)
         when "account_creation_failed" then restart
