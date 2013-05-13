@@ -5,3 +5,4 @@ chromedriver.log
 /tmp
 Gemfile.lock
 /coverage
+config/database.yml
