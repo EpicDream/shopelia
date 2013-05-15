@@ -8,8 +8,8 @@ class PaymentCard < ActiveRecord::Base
   validates :exp_year, :presence => true, :length => { :is => 4 }
   validates :cvv, :presence => true, :length => { :is => 3 }
   
-  after_save :create_psp_payment_cards
-  before_destroy :destroy_psp_payment_cards
+  #after_save :create_psp_payment_cards
+  #before_destroy :destroy_psp_payment_cards
   
   def leetchi
     self.psp_payment_cards.leetchi.first

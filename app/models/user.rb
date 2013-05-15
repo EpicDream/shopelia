@@ -32,8 +32,8 @@ class User < ActiveRecord::Base
   before_validation :reset_test_account
   before_validation :set_default_values
   after_save :process_nested_attributes
-  after_save :create_psp_users
-  before_update :update_psp_users 
+  #after_save :create_psp_users
+  #before_update :update_psp_users 
 
   def addresses= params
     (params || []).each do |address|
