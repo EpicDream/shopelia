@@ -13,7 +13,7 @@ module Shopelia
   class Application < Rails::Application
   
     # Base host
-    config.host = 'http://zola.epicdream.fr:4444'
+    config.host = 'https://www.shopelia.fr'
   
     # Maximum number of times the order is allowed to retry a new account creation
     config.max_retry = 3
