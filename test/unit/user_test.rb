@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  fixtures :users, :countries, :psps
+  fixtures :users, :countries, :psps, :payment_cards
   
   setup do
     @user = users(:elarch)
@@ -138,6 +138,24 @@ class UserTest < ActiveSupport::TestCase
     @user.destroy
     assert_equal 0, Address.find_all_by_user_id(user_id).count
     assert_equal 0, Phone.find_all_by_user_id(user_id).count    
+  end
+  
+  test "it should check validity of pincode" do
+    assert @user.has_pincode?
+    @user.pincode = nil
+    assert !@user.has_pincode?
+  end
+  
+  test "it should verify user by pincode" do
+    assert !@user.verify({ "pincode" => "4567" })
+    assert @user.verify({ "pincode" => "1234" })
+    @user.pincode = ""
+    assert !@user.verify({ "pincode" => "" })
+  end
+  
+  test "it should verify user by cc number" do
+    assert @user.verify({ "cc_num" => "0154", "cc_month" => "02", "cc_year" => "15" })
+    assert !@user.verify({ "cc_num" => "0154", "cc_month" => "05", "cc_year" => "15" })
   end
   
   test "it should create and update leetchi user" do

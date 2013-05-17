@@ -16,7 +16,8 @@ class UserSerializerTest < ActiveSupport::TestCase
     assert_equal @user.first_name, hash[:user][:first_name]
     assert_equal @user.last_name, hash[:user][:last_name]
     assert_equal @user.email, hash[:user][:email]
-    assert_equal @user.pincode, hash[:user][:pincode]
+    assert_equal 1, hash[:user][:has_pincode]
+    assert hash[:user][:pincode].nil?
     assert hash[:user][:addresses].count > 0
     assert hash[:user][:phones].count > 0
     assert hash[:user][:payment_cards].count > 0

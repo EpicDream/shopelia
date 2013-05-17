@@ -67,6 +67,21 @@ class User < ActiveRecord::Base
     !self.male?
   end
   
+  def has_pincode?
+    self.pincode.present? && self.pincode.length == 4
+  end
+  
+  def verify data
+    if data["pincode"].present?
+      return data["pincode"].eql?(self.pincode) && self.pincode.present?
+    elsif data["cc_num"].present? && data["cc_month"].present? && data["cc_year"].present?
+      self.payment_cards.each do |card|
+        return true if card.number.last(4).eql?(data["cc_num"]) && card.exp_month.to_i == data["cc_month"].to_i && card.exp_year.last(2).eql?(data["cc_year"])
+      end
+    end
+    false
+  end
+  
   def leetchi
     self.psp_users.leetchi.first
   end

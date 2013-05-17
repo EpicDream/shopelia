@@ -1,5 +1,5 @@
 class UserSerializer < ActiveModel::Serializer
-  attributes :id, :email, :first_name, :last_name, :phones, :addresses, :payment_cards, :pincode
+  attributes :id, :email, :first_name, :last_name, :phones, :addresses, :payment_cards, :has_pincode
   
   def payment_cards
     ActiveModel::ArraySerializer.new(object.payment_cards).as_json
@@ -11,5 +11,9 @@ class UserSerializer < ActiveModel::Serializer
   
   def phones
     ActiveModel::ArraySerializer.new(object.phones.without_addresses).as_json
+  end
+  
+  def has_pincode
+    object.has_pincode? ? 1 : 0
   end
 end
