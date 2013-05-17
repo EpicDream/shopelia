@@ -13,7 +13,7 @@ class Api::V1::OrdersControllerTest < ActionController::TestCase
 
   test "it should create order" do
     assert_difference('Order.count', 1) do
-      post :create, order: { price_target:100, payment_card_id:@card.id, urls: ["http://www.rueducommerce.fr/productA"] }, format: :json
+      post :create, order: { expected_price_total:100, payment_card_id:@card.id, urls: ["http://www.rueducommerce.fr/productA"] }, format: :json
     end
     
     assert_response :success

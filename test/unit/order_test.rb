@@ -32,8 +32,9 @@ class OrderTest < ActiveSupport::TestCase
         }
       ],
       "billing" => {
-        "price" => 14,
-        "shipping" => 2
+        "product" => 14,
+        "shipping" => 2,
+        "total" => 16
       }
     }    
   end
@@ -43,7 +44,7 @@ class OrderTest < ActiveSupport::TestCase
       :user_id => @user.id,
       :merchant_id => @merchant.id,
       :payment_card_id => @card.id,
-      :price_target => 100)
+      :expected_price_total => 100)
     assert order.save, order.errors.full_messages.join(",")
     assert_equal addresses(:elarch_neuilly).id, order.address_id
     assert_equal :processing, order.state
@@ -54,7 +55,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should create order from urls" do
     order = Order.new(
       :user_id => @user.id,
-      :price_target => 100,
+      :expected_price_total => 100,
       :payment_card_id => @card.id,
       :urls => ["http://www.rueducommerce.fr/productA", "http://www.rueducommerce.fr/productB"])
     assert order.save, order.errors.full_messages.join(",")
@@ -66,7 +67,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_difference('MerchantAccount.count', 1) do
       order = Order.new(
         :user_id => @user.id,
-        :price_target => 100,
+        :expected_price_total => 100,
         :payment_card_id => @card.id,
         :urls => ["http://www.rueducommerce.fr/productA"],
         :address_id => addresses(:elarch_vignoux).id)
@@ -78,7 +79,7 @@ class OrderTest < ActiveSupport::TestCase
     @user.addresses.destroy_all
     order = Order.new(
       :user_id => @user.id, 
-      :price_target => 100,
+      :expected_price_total => 100,
       :merchant_id => @merchant.id, 
       :payment_card_id => @card.id)
     assert !order.save, "Order shouldn't have saved"
@@ -89,7 +90,7 @@ class OrderTest < ActiveSupport::TestCase
     order = Order.create(
       :user_id => @user.id,
       :payment_card_id => @card.id,
-      :price_target => 100,
+      :expected_price_total => 100,
       :urls => ["http://www.rueducommerce.fr/productA", "http://www.amazon.fr/productB"])
     assert order.save, order.errors.full_messages.join(",")
     assert_equal 1, order.order_items.count
@@ -132,8 +133,9 @@ class OrderTest < ActiveSupport::TestCase
   test "it should process confirmation request" do
     @order.process "assess", @content
     assert_equal :processing, @order.reload.state
-    assert_equal 14, @order.price_total
-    assert_equal 2, @order.price_delivery
+    assert_equal 16, @order.prepared_price_total
+    assert_equal 14, @order.prepared_price_product
+    assert_equal 2, @order.prepared_price_shipping
     assert_equal 1, @order.questions.count
     assert_equal "3", @order.questions.first["id"]
     
@@ -153,7 +155,7 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it should cancel order if target price it outside range" do
-    @order.price_target = 10
+    @order.expected_price_total = 10
     @order.process "assess", @content
     assert_equal :aborted, @order.reload.state
     assert_equal false, @order.questions.first["answer"]
@@ -161,8 +163,19 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it should succeed order" do
-    @order.process "success", {}
+    @order.process "success", {
+      "billing" => {
+        "product" => 14,
+        "shipping" => 2,
+        "total" => 16,
+        "shipping_info" => "info"
+      }
+    }
     assert_equal :completed, @order.reload.state
+    assert_equal "info", @order.shipping_information
+    assert_equal 16, @order.billed_price_total
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
   end
   
   test "it should restart order with new account if account creation failed" do

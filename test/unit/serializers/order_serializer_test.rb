@@ -7,9 +7,16 @@ class OrderSerializerTest < ActiveSupport::TestCase
   setup do
     @order = orders(:elarch_rueducommerce)
     @order.message = "message"
-    @order.price_product = 100
-    @order.price_delivery= 10
-    @order.price_total = 110
+    @order.expected_price_product = 100
+    @order.expected_price_shipping = 10
+    @order.expected_price_total = 110
+    @order.prepared_price_product = 100
+    @order.prepared_price_shipping = 10
+    @order.prepared_price_total = 110
+    @order.billed_price_product = 100
+    @order.billed_price_shipping = 10
+    @order.billed_price_total = 110
+    @order.shipping_information = "Shipping information"
     @order.questions = [
       { "id" => "1",
         "text" => "Color?",
@@ -28,9 +35,16 @@ class OrderSerializerTest < ActiveSupport::TestCase
       
     assert_equal @order.uuid, hash[:order][:uuid]
     assert_equal @order.state_name, hash[:order][:state]
-    assert_equal @order.price_product, hash[:order][:price_product]
-    assert_equal @order.price_delivery, hash[:order][:price_delivery]
-    assert_equal @order.price_total, hash[:order][:price_total]
+    assert_equal 100, hash[:order][:expected_price_product]
+    assert_equal 10, hash[:order][:expected_price_shipping]
+    assert_equal 110, hash[:order][:expected_price_total]
+    assert_equal 100, hash[:order][:prepared_price_product]
+    assert_equal 10, hash[:order][:prepared_price_shipping]
+    assert_equal 110, hash[:order][:prepared_price_total]
+    assert_equal 100, hash[:order][:billed_price_product]
+    assert_equal 10, hash[:order][:billed_price_shipping]
+    assert_equal 110, hash[:order][:billed_price_total]
+    assert_equal "Shipping information", hash[:order][:shipping_information]
     assert_equal @order.merchant.name, hash[:order][:merchant][:name]
     assert hash[:order][:products].present?
     assert !hash[:order][:questions].present?

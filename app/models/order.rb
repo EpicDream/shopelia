@@ -12,11 +12,14 @@ class Order < ActiveRecord::Base
   validates :state_name, :presence => true, :inclusion => { :in => STATES }
   validates :uuid, :presence => true, :uniqueness => true
   validates :address, :presence => true
-  validates :price_target, :presence => true
+  validates :expected_price_total, :presence => true
   validates :payment_card, :presence => true
 
-  attr_accessible :user_id, :merchant_id, :address_id, :merchant_account_id, :price_target
-  attr_accessible :message, :price_product, :price_delivery, :price_total, :urls, :payment_card_id
+  attr_accessible :user_id, :merchant_id, :address_id, :merchant_account_id, :payment_card_id
+  attr_accessible :message, :urls, :shipping_information
+  attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
+  attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
+  attr_accessible :billed_price_product, :billed_price_shipping, :billed_price_total
   attr_accessor :urls
   
   before_validation :initialize_uuid
@@ -69,21 +72,27 @@ class Order < ActiveRecord::Base
 
       elsif verb.eql?("assess")
         @questions = content["questions"]
-        self.price_total = content["billing"]["price"]
-        self.price_delivery = content["billing"]["shipping"]
+        self.prepared_price_total = content["billing"]["total"]
+        self.prepared_price_product = content["billing"]["product"]
+        self.prepared_price_shipping = content["billing"]["shipping"]
         (content["products"] || []).each do |product|
           self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
         end
-        confirmed = self.price_target == self.price_total + self.price_delivery
+        confirmed = self.expected_price_total == self.prepared_price_total
         @questions.each { |question| question["answer"] = confirmed }
         assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
         abort(:price_range) unless confirmed
 
       elsif verb.eql?("success")
+        self.billed_price_total = content["billing"]["total"]
+        self.billed_price_product = content["billing"]["product"]
+        self.billed_price_shipping = content["billing"]["shipping"]
+        self.shipping_information = content["billing"]["shipping_info"]
         self.state = :completed
 
       end
     rescue Exception => e
+      puts e.inspect
       fail("Error parsing callback data\n#{e.inspect}", :vulcain_api)
     end
     self.save!
