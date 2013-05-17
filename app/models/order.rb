@@ -1,18 +1,23 @@
 class Order < ActiveRecord::Base
+  STATES = ["initialized", "processing", "pending", "completed", "aborted"]
+
   belongs_to :user
   belongs_to :merchant
   belongs_to :address
   belongs_to :merchant_account
+  belongs_to :payment_card
   has_many :order_items
   
   validates :user, :presence => true
-  validates :state_name, :presence => true
+  validates :state_name, :presence => true, :inclusion => { :in => STATES }
   validates :uuid, :presence => true, :uniqueness => true
   validates :address, :presence => true
+  validates :price_target, :presence => true
+  validates :payment_card, :presence => true
 
-  attr_accessible :user_id, :merchant_id, :address_id, :merchant_account_id
-  attr_accessible :message, :price_product, :price_delivery, :price_total, :urls, :payment_card
-  attr_accessor :urls, :payment_card
+  attr_accessible :user_id, :merchant_id, :address_id, :merchant_account_id, :price_target
+  attr_accessible :message, :price_product, :price_delivery, :price_total, :urls, :payment_card_id
+  attr_accessor :urls
   
   before_validation :initialize_uuid
   before_validation :initialize_state
@@ -21,10 +26,14 @@ class Order < ActiveRecord::Base
   before_save :serialize_questions
   after_initialize :deserialize_questions
   after_create :prepare_order_items
+  after_create :start
   
   def start
-    result = Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
-    assess(result, :ordering)
+    @questions = []
+    error_code = message = nil
+    self.state = :processing
+    assess Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
+    self.save!
   end
 
   def restart
@@ -35,6 +44,7 @@ class Order < ActiveRecord::Base
     else
       fail(I18n.t("orders.failure.account"), :account_error)
     end
+    self.save!
   end
 
   def process verb, content
@@ -52,52 +62,31 @@ class Order < ActiveRecord::Base
         when "error" then fail(content["message"], :vulcain_error)
         when "driver_failed" then fail("driver_failure", :vulcain_error)
         when "order_canceled" then fail("order_canceled", :user_error)
-        when "order_validation_failed" then fail(I18n.t("orders.failure.payment"), :payment_error)
+        when "order_validation_failed" then abort(:payment_refused)
         when "account_creation_failed" then restart
         when "login_failed" then restart
         end
 
       elsif verb.eql?("assess")
         @questions = content["questions"]
-        self.state = :pending_confirmation
         self.price_total = content["billing"]["price"]
         self.price_delivery = content["billing"]["shipping"]
         (content["products"] || []).each do |product|
           self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
         end
-
-      elsif verb.eql?("ask")
-        @questions = content["questions"]
-        self.state = :pending_answer
-
-      elsif verb.eql?("answer") && @questions.size > 0
-        @questions.each { |question| question["answer"] = content[question["id"]] }
-        result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
-        assess(result, :ordering)
-
-      elsif verb.eql?("confirm") && @questions.size > 0
-        self.payment_card = self.user.payment_cards.where(:id => content["payment_card_id"]).first
-        if self.payment_card.present?
-          @questions.each { |question| question["answer"] = self.payment_card.present? ? true : false }
-          result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
-          assess(result, :finalizing)
-        else
-          fail("Cannot process payment, no credit card found for user", :user_error)
-        end
-
-      elsif verb.eql?("cancel") && @questions.size > 0
-        @questions.each { |question| question["answer"] = false }
-        result = Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
-        assess(result, :canceling)
+        confirmed = self.price_target == self.price_total + self.price_delivery
+        @questions.each { |question| question["answer"] = confirmed }
+        assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
+        abort(:price_range) unless confirmed
 
       elsif verb.eql?("success")
-        self.state = :success
+        self.state = :completed
 
       end
     rescue Exception => e
       fail("Error parsing callback data\n#{e.inspect}", :vulcain_api)
     end
-    self.save
+    self.save!
   end
   
   def state
@@ -118,20 +107,20 @@ class Order < ActiveRecord::Base
   
   private
  
-  def assess result, state
-    if result.has_key?("Error")
-      fail(result['Error'], :vulcain_api)
-    else
-      self.state = state
-    end
-    self.save
+  def assess result
+    fail(result['Error'], :vulcain_api) if result.has_key?("Error")
   end
 
   def fail content, error_sym
     self.message = content
     self.error_code = error_sym.to_s
-    self.state = :error
+    self.state = :pending
   end
+
+  def abort error_sym
+    self.error_code = error_sym.to_s
+    self.state = :aborted
+  end    
 
   def state= state_sym
     self.state_name = state_sym.to_s
@@ -142,7 +131,7 @@ class Order < ActiveRecord::Base
   end
   
   def initialize_state
-    self.state = :pending if self.state_name.nil?
+    self.state = :initialized if self.state_name.nil?
   end
   
   def initialize_address
@@ -162,8 +151,8 @@ class Order < ActiveRecord::Base
       product = Product.find_or_create_by_url(url)
       next if product.nil? || self.merchant_id && self.merchant_id != product.merchant_id
       self.merchant_id = product.merchant_id
-      self.save
-      OrderItem.create(order:self, product:product)
+      self.save!
+      OrderItem.create!(order:self, product:product)
     end
   end
   

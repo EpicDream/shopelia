@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130506173115) do
+ActiveRecord::Schema.define(:version => 20130517085929) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -102,6 +102,8 @@ ActiveRecord::Schema.define(:version => 20130506173115) do
     t.integer  "address_id"
     t.integer  "retry_count"
     t.integer  "merchant_account_id"
+    t.float    "price_target"
+    t.integer  "payment_card_id"
   end
 
   create_table "payment_cards", :force => true do |t|

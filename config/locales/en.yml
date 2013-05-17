@@ -5,8 +5,6 @@ en:
     
   orders:
     no_address: "Impossible to create an order for a user without an address"
-    failure:
-      payment: "Payment refused. Order couldn't be completed"
     
   phones:
     land_line_must_have_address: "A land line must be associated to an address"

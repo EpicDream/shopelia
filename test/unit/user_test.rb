@@ -141,6 +141,7 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test "it should create and update leetchi user" do
+    skip
     allow_remote_api_calls
     VCR.use_cassette('user') do
       @user.destroy # cleanup
@@ -179,6 +180,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "it should manage leetchi api failure at user creation" do
+    skip
     allow_remote_api_calls
     VCR.use_cassette('user_fail') do
       assert_difference('User.count', 0) do
@@ -206,6 +208,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "it should manage leetchi api failure at user update" do
+    skip
     allow_remote_api_calls
     VCR.use_cassette('user_fail') do
       user = User.new(

@@ -11,7 +11,4 @@ class Vulcain::OrderSerializer < ActiveModel::Serializer
     Vulcain::ContextSerializer.new(object).as_json[:context]
   end
 
-  def include_vendor?
-    object.state == :pending
-  end
 end

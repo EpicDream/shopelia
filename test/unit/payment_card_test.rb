@@ -4,6 +4,7 @@ class PaymentCardTest < ActiveSupport::TestCase
   fixtures :users, :psps, :psp_users
 
   test "it should create payment card localy and remotely, then destroy it" do
+    skip
     allow_remote_api_calls
     VCR.use_cassette('card') do    
       card = PaymentCard.create(
@@ -24,6 +25,7 @@ class PaymentCardTest < ActiveSupport::TestCase
   end
   
   test "it should manage leetchi API failure when creating payment card" do
+    skip
     allow_remote_api_calls
     VCR.use_cassette('card_fail') do
       assert_difference(['PaymentCard.count', 'PspPaymentCard.count'], 0) do    

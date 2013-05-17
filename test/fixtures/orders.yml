@@ -2,7 +2,8 @@ elarch_rueducommerce:
   uuid: uuid
   user: elarch
   address: elarch_neuilly
+  payment_card: elarch_hsbc
   merchant: rueducommerce
   merchant_account: elarch_neuilly_rueducommerce
-  state_name: "pending"
-
+  state_name: "processing"
+  price_target: 16.0

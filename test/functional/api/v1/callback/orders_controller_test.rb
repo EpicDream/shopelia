@@ -13,7 +13,7 @@ class Api::V1::Callback::OrdersControllerTest < ActionController::TestCase
 
     assert_response :success
     assert_equal "Test", @order.reload.message
-    assert_equal "pending", @order.state_name
+    assert_equal "processing", @order.state_name
   end
 
 end

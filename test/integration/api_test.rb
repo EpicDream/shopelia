@@ -4,6 +4,8 @@ require 'test_helper'
 class ApiTest < ActionDispatch::IntegrationTest
   
   test "user account creation and ordering process" do
+    skip
+    
     allow_remote_api_calls
     VCR.use_cassette('integration') do
 
