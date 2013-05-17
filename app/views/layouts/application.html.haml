@@ -1,0 +1,16 @@
+!!!
+%html
+  %head
+    %title Shopelia
+    = stylesheet_link_tag    "application"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+
+  %body
+    .container
+      - flash.each do |name, msg|
+        .alert{:class => "alert-#{name == :notice ? "success" : "error"}"}
+          %a{:class =>"close", :'data-dismiss' => "alert"} &#215;
+          = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
+      = yield
+
