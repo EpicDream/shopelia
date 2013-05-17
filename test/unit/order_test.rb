@@ -208,7 +208,6 @@ class OrderTest < ActiveSupport::TestCase
    end
    assert_equal :pending, @order.reload.state
    assert_equal "account_error", @order.error_code
-   assert_equal I18n.t("orders.failure.account"), @order.message    
   end
  
   test "it should set merchant account as created when message account_created received" do
@@ -216,6 +215,12 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal false, order.merchant_account.merchant_created
     @order.process "message", { "message" => "account_created" }
     assert_equal true, order.merchant_account.reload.merchant_created    
+  end
+  
+  test "it should clear message when state is not processing" do
+    @order.process "message", { "message" => "bla" }
+    @order.reload.process "success", {"billing" => {}}
+    assert @order.reload.message.nil?
   end
  
 end

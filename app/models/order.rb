@@ -26,6 +26,7 @@ class Order < ActiveRecord::Base
   before_validation :initialize_state
   before_validation :initialize_address
   before_validation :initialize_merchant_account
+  before_validation :clear_message
   before_save :serialize_questions
   after_initialize :deserialize_questions
   after_create :prepare_order_items
@@ -141,6 +142,10 @@ class Order < ActiveRecord::Base
   
   def initialize_state
     self.state = :initialized if self.state_name.nil?
+  end
+  
+  def clear_message
+    self.message = nil if self.state != :processing && self.state != :pending
   end
   
   def initialize_address
