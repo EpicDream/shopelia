@@ -5,7 +5,7 @@ class OrderSerializer < ActiveModel::Serializer
   attributes :expected_price_product, :expected_price_shipping, :expected_price_total
   attributes :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attributes :billed_price_product, :billed_price_shipping, :billed_price_total
-  attributes :shipping_information
+  attributes :shipping_info
   
   def state
     object.state_name

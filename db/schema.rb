@@ -107,7 +107,7 @@ ActiveRecord::Schema.define(:version => 20130517144650) do
     t.float    "prepared_price_shipping"
     t.float    "prepared_price_total"
     t.float    "billed_price_total"
-    t.string   "shipping_information"
+    t.string   "shipping_info"
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
   end

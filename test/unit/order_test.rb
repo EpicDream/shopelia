@@ -172,7 +172,7 @@ class OrderTest < ActiveSupport::TestCase
       }
     }
     assert_equal :completed, @order.reload.state
-    assert_equal "info", @order.shipping_information
+    assert_equal "info", @order.shipping_info
     assert_equal 16, @order.billed_price_total
     assert_equal 14, @order.billed_price_product
     assert_equal 2, @order.billed_price_shipping

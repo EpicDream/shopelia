@@ -16,7 +16,7 @@ class OrderSerializerTest < ActiveSupport::TestCase
     @order.billed_price_product = 100
     @order.billed_price_shipping = 10
     @order.billed_price_total = 110
-    @order.shipping_information = "Shipping information"
+    @order.shipping_info = "Shipping information"
     @order.questions = [
       { "id" => "1",
         "text" => "Color?",
@@ -44,7 +44,7 @@ class OrderSerializerTest < ActiveSupport::TestCase
     assert_equal 100, hash[:order][:billed_price_product]
     assert_equal 10, hash[:order][:billed_price_shipping]
     assert_equal 110, hash[:order][:billed_price_total]
-    assert_equal "Shipping information", hash[:order][:shipping_information]
+    assert_equal "Shipping information", hash[:order][:shipping_info]
     assert_equal @order.merchant.name, hash[:order][:merchant][:name]
     assert hash[:order][:products].present?
     assert !hash[:order][:questions].present?

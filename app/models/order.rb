@@ -16,7 +16,7 @@ class Order < ActiveRecord::Base
   validates :payment_card, :presence => true
 
   attr_accessible :user_id, :merchant_id, :address_id, :merchant_account_id, :payment_card_id
-  attr_accessible :message, :urls, :shipping_information
+  attr_accessible :message, :urls, :shipping_info
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :billed_price_product, :billed_price_shipping, :billed_price_total
@@ -87,7 +87,7 @@ class Order < ActiveRecord::Base
         self.billed_price_total = content["billing"]["total"]
         self.billed_price_product = content["billing"]["product"]
         self.billed_price_shipping = content["billing"]["shipping"]
-        self.shipping_information = content["billing"]["shipping_info"]
+        self.shipping_info = content["billing"]["shipping_info"]
         self.state = :completed
 
       end
