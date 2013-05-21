@@ -1,0 +1,39 @@
+.btn {
+  color: white;
+  text-shadow: none;
+  &:hover {
+    color: $lightGrey;
+  }
+  white-space: pre-wrap;
+}
+
+.btn-xlarge {
+  padding: 18px 28px;
+  font-size: 22px;
+  line-height: normal;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+}
+
+input, textarea, .uneditable-input {
+  width: 95%;
+}
+
+.no-left-margin {
+  margin: 0;
+}
+
+
+
+@media screen and (max-width: 480px) {
+  h2 {
+    font-size: $mediumSizeFont;
+  }
+
+  .btn {
+    font-size: $smallSizeFont;
+    font-weight: bold;
+  }
+}
+
