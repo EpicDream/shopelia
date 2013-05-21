@@ -21,6 +21,7 @@ gem 'bourbon'
 gem 'bootstrap-sass', '~> 2.3.1.0'
 gem "simple_form"
 gem 'devise-i18n-views'
+gem 'rails-i18n'
 
 # Gems used only for assets and not required
 # in production environments by default.
