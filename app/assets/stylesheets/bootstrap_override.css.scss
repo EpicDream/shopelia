@@ -7,26 +7,30 @@
   white-space: pre-wrap;
 }
 
-.btn-xlarge {
-  padding: 18px 28px;
-  font-size: 22px;
-  line-height: normal;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
-}
-
-input, textarea, .uneditable-input {
-  width: 95%;
-}
-
-.no-left-margin {
-  margin: 0;
-}
-
-
 
 @media screen and (max-width: 480px) {
+
+  input, textarea, .uneditable-input {
+    width: 95%;
+  }
+
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"], input[type="month"],
+  input[type="time"], input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="color"]{
+    height: 30px;
+  }
+
+
+
   h2 {
     font-size: $mediumSizeFont;
   }
