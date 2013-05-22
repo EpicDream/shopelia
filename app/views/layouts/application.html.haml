@@ -13,5 +13,7 @@
         .alert{:class => "alert-#{name == :notice ? "success" : "error"}"}
           %a{:class =>"close", :'data-dismiss' => "alert"} &#215;
           = content_tag :div, msg, :id => "flash_#{name}" if msg.is_a?(String)
+      .visible-phone.phone-margin
+        = image_tag("logo_shopelia.png")
       = yield
 
