@@ -7,8 +7,8 @@
   = f.full_error :reset_password_token
 
   .form-inputs
-    = f.input :password, :label => t('.new_password', :default => 'New password'), :required => true, :autofocus => true
-    = f.input :password_confirmation, :label => t('.confirm_new_password', :default => 'Confirm new password') , :required => true
+    = f.input :password, :label => false, :required => true, :autofocus => true, :placeholder => t('.new_password', :default => 'New password')
+    = f.input :password_confirmation, :label => false, :required => true, :placeholder => t('.confirm_new_password', :default => 'Confirm new password')
     = f.button :submit, t('.change_my_password', :default => 'Change my password')
 
 = render "devise/shared/links"
