@@ -21,6 +21,7 @@ Shopelia::Application.routes.draw do
       resources :users, :only => [:show, :update, :destroy]
       namespace :users do
         resources :verify, :only => :create
+        resources :exists, :only => :create
       end
       namespace :callback do
         resources :orders, :only => :update
