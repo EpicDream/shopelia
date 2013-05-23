@@ -1,0 +1,49 @@
+fr:
+
+  activerecord:
+    models:
+      user: "Utilisateur"
+      address: "Adresse"
+      phone: "Téléphone"
+    attributes:
+      address:
+        zip: "Le code postal"
+        city: "La ville"
+      phone:
+        number: "Le numéro de téléphone"
+    errors:
+      models:
+        address:
+          attributes:
+            zip:
+              blank: "doit être renseigné"
+            city:
+              blank: "doit être renseignée"
+        phone:
+          attributes:
+             number:
+               blank: "doit être renseigné"
+
+  developers:
+    unauthorized: "Clé API invalide"
+    
+  orders:
+    no_address: "Impossible de créer une commande sans adresse de livraison"
+    
+  phones:
+    land_line_must_have_address: "Un téléphone fixe doit être associé avec une adresse"
+  
+  products:
+    merchant_not_supported: "Ce produit ne peut pas être commandé par Shopelia"
+  
+  users:
+    invalid_birthdate: "Vous devez avoir au minimum 16 ans pour vous enregistrer"
+
+  leetchi:
+    users:
+      creation_failure: "Impossible to create user on Leetchi API. Error: %{error}"
+      update_failure: "Impossible to update user on Leetchi API. Error: %{error}"
+    payment_cards:
+      creation_failure: "Impossible to create payment card on Leetchi API. Error: %{error}"
+      destroy_failure: "Impossible to destroy payment card on Leetchi API. Error: %{error}"
+      

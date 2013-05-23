@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'test_helper'
 
 class AddressTest < ActiveSupport::TestCase
@@ -42,7 +43,7 @@ class AddressTest < ActiveSupport::TestCase
         } ] )
     
     assert !address.persisted?
-    assert_equal "Number can't be blank", address.errors.full_messages.join(",")
+    assert_equal "Le numéro de téléphone doit être renseigné", address.errors.full_messages.join(",")
   end
 
   test "a new address must not be default if not specified" do

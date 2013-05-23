@@ -1,0 +1,14 @@
+<p>Bienvenue <%= @resource.first_name %> !</p>
+
+<p>Votre compte Shopelia a été créé. Nous vous remercions de bien 
+vouloir confirmer votre email en cliquant sur le lien ci-dessous :</p>
+
+<p><%= link_to "Confirmer mon compte", confirmation_url(@resource, :confirmation_token => @resource.confirmation_token) %></p>
+
+<p>Vous pourrez alors créer un mot de passe afin de protéger
+l'accès à votre compte, et compléter votre profil si vous le
+souhaitez.</p>
+
+<p>N'hésitez pas à nous contacter pour toute question.</p>
+
+<p>Shopelia</p>

@@ -60,7 +60,7 @@ class UserTest < ActiveSupport::TestCase
       } ] )
   
     assert !user.persisted?
-    assert_equal "Zip can't be blank,City can't be blank", user.errors.full_messages.join(",")
+    assert_equal "Le code postal doit être renseigné,La ville doit être renseignée", user.errors.full_messages.join(",")
   end
 
   test "it should create infinitely user with email test@shopelia.fr" do
@@ -88,7 +88,7 @@ class UserTest < ActiveSupport::TestCase
       } ] )
   
     assert !user.persisted?
-    assert_equal "Number can't be blank", user.errors.full_messages.join(",")
+    assert_equal "Le numéro de téléphone doit être renseigné", user.errors.full_messages.join(",")
   end
 
   test "it should fail user creation with a bad phone in an address" do
@@ -108,7 +108,7 @@ class UserTest < ActiveSupport::TestCase
       } ] )
   
     assert !user.persisted?
-    assert_equal "Number can't be blank", user.errors.full_messages.join(",")
+    assert_equal "Le numéro de téléphone doit être renseigné", user.errors.full_messages.join(",")
   end  
   
   test "it should check user age" do
