@@ -19,3 +19,4 @@ window.shopeliaFastClick = (buttonArray) ->
 
 $ ->
   shopeliaFastClick($('.btn'))
+  shopeliaFastClick($('.close'))

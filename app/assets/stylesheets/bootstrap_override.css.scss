@@ -10,6 +10,8 @@
 
 @media screen and (max-width: 480px) {
 
+  body { min-height: 480px; }
+
   input, textarea, .uneditable-input {
     width: 95%;
   }
