@@ -24,7 +24,6 @@ class Order < ActiveRecord::Base
   
   before_validation :initialize_uuid
   before_validation :initialize_state
-  before_validation :initialize_address
   before_validation :initialize_merchant_account
   before_validation :clear_message
   before_save :serialize_questions
@@ -148,14 +147,6 @@ class Order < ActiveRecord::Base
     self.message = nil if self.state != :processing && self.state != :pending
   end
   
-  def initialize_address
-    if self.user.addresses.default.count > 0
-      self.address_id = self.user.addresses.default.first.id if self.address_id.nil?
-    else
-      self.errors.add(:base, I18n.t('orders.no_address'))
-    end
-  end
-
   def initialize_merchant_account
     self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
   end

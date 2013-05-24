@@ -9,11 +9,17 @@ class Api::V1::OrdersControllerTest < ActionController::TestCase
     sign_in @user
     @order = orders(:elarch_rueducommerce)
     @card = payment_cards(:elarch_hsbc)
+    @address = addresses(:elarch_neuilly)
   end
 
   test "it should create order" do
     assert_difference('Order.count', 1) do
-      post :create, order: { expected_price_total:100, payment_card_id:@card.id, urls: ["http://www.rueducommerce.fr/productA"] }, format: :json
+      post :create, order: { 
+        expected_price_total:100, 
+        payment_card_id:@card.id,
+        address_id:@address.id,
+        urls: ["http://www.rueducommerce.fr/productA"] 
+      }, format: :json
     end
     
     assert_response :success

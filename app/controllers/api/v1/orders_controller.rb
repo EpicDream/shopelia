@@ -3,7 +3,10 @@ class Api::V1::OrdersController < Api::V1::BaseController
   
   def_param_group :order do
     param :order, Hash, :required => true, :action_aware => true do
-      param :url, String, "URL of the product to buy", :required => true
+      param :urls, Array, "Array of URL of the products to buy", :required => true
+      param :address_id, Integer, "Reference to the delivery address", :required => true
+      param :payment_card_id, Integer, "Reference to the payment card to be billed", :required => true
+      param :expected_price_total, Float, "Expected total order price. Order will be fullfilled only if checkout price will match", :required => true
     end
   end  
   
