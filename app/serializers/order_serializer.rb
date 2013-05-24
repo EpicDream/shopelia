@@ -5,7 +5,7 @@ class OrderSerializer < ActiveModel::Serializer
   attributes :expected_price_product, :expected_price_shipping, :expected_price_total
   attributes :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attributes :billed_price_product, :billed_price_shipping, :billed_price_total
-  attributes :shipping_info
+  attributes :shipping_info, :address, :payment_card
   
   def state
     object.state_name
@@ -18,13 +18,17 @@ class OrderSerializer < ActiveModel::Serializer
   def merchant
     MerchantSerializer.new(object.merchant).as_json[:merchant]
   end
+
+  def address
+    AddressSerializer.new(object.address).as_json[:address]
+  end
+
+  def payment_card
+    PaymentCardSerializer.new(object.payment_card).as_json[:payment_card]
+  end
     
   def include_questions?
     object.state == :pending_answer
-  end
-  
-  def include_payment_card?
-    object.payment_card.present?
   end
 
 end

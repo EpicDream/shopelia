@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class OrderSerializerTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :merchants, :order_items
+  fixtures :orders, :products, :merchants, :order_items, :addresses, :payment_cards
   
   setup do
     @order = orders(:elarch_rueducommerce)
@@ -47,6 +47,8 @@ class OrderSerializerTest < ActiveSupport::TestCase
     assert_equal "Shipping information", hash[:order][:shipping_info]
     assert_equal @order.merchant.name, hash[:order][:merchant][:name]
     assert hash[:order][:products].present?
+    assert hash[:order][:address].present?
+    assert hash[:order][:payment_card].present?
     assert !hash[:order][:questions].present?
     
     @order.state_name = "pending_answer"

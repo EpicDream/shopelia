@@ -8,7 +8,7 @@ class UserTest < ActiveSupport::TestCase
     @user = users(:elarch)
   end
 
-  test "it should create user and send confirmation email" do
+  test "it should create user" do
     user = User.new(
       :email => "user@gmail.com", 
       :first_name => "John",
@@ -28,8 +28,14 @@ class UserTest < ActiveSupport::TestCase
       :phones_attributes => [ {
           :number => "0640404040",
           :line_type => Phone::MOBILE
-        } 
-      ] )
+        } ],
+      :payment_cards_attributes => [ {
+          :number => "4970100000000154",
+          :exp_month => "02",
+          :exp_year => "2017",
+          :cvv => "123"
+        } ]
+      )
   
     assert user.save, user.errors.full_messages.join(",")
     assert_equal "John", user.first_name
@@ -46,6 +52,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 1, user.addresses.count
     assert_equal 1, user.addresses.first.phones.count
     assert_equal 2, user.phones.count
+    assert_equal 1, user.payment_cards.count
   end
 
   test "it should fail user creation with a bad address" do

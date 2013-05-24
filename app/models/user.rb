@@ -25,13 +25,15 @@ class User < ActiveRecord::Base
   validate :user_must_be_16_yo
 
   attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name
-  attr_accessible :birthdate, :civility, :nationality_id, :ip_address
-  attr_accessible :addresses_attributes, :phones_attributes, :pincode
-  attr_accessor :addresses_attributes, :phones_attributes
+  attr_accessible :birthdate, :civility, :nationality_id, :ip_address, :pincode
+  attr_accessible :addresses_attributes, :phones_attributes, :payment_cards_attributes
+  attr_accessor :addresses_attributes, :phones_attributes, :payment_cards_attributes
 
   before_validation :reset_test_account
   before_validation :set_default_values
+
   after_save :process_nested_attributes
+
   #after_save :create_psp_users
   #before_update :update_psp_users 
 
@@ -50,6 +52,16 @@ class User < ActiveRecord::Base
       phone = Phone.new(phone.merge({:user_id => self.id}))
       if !phone.save
         self.errors.add(:base, phone.errors.full_messages.join(","))
+        self.destroy
+      end
+    end
+  end
+
+  def payment_cards= params
+    (params || []).each do |card|
+      card = PaymentCard.new(card.merge({:user_id => self.id}))
+      if !card.save
+        self.errors.add(:base, card.errors.full_messages.join(","))
         self.destroy
       end
     end
@@ -98,6 +110,7 @@ class User < ActiveRecord::Base
   def process_nested_attributes
     self.addresses = self.addresses_attributes
     self.phones = self.phones_attributes
+    self.payment_cards = self.payment_cards_attributes
   end
   
   def create_psp_users
