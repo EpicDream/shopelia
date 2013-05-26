@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
@@ -9,6 +10,7 @@ class OrderTest < ActiveSupport::TestCase
     @merchant = merchants(:rueducommerce)
     @order = orders(:elarch_rueducommerce)
     @card = payment_cards(:elarch_hsbc)
+    @address = addresses(:elarch_neuilly)
     @content = { 
       "questions" => [
         { "id" => "3" }
@@ -44,9 +46,9 @@ class OrderTest < ActiveSupport::TestCase
       :user_id => @user.id,
       :merchant_id => @merchant.id,
       :payment_card_id => @card.id,
+      :address_id => @address.id,
       :expected_price_total => 100)
     assert order.save, order.errors.full_messages.join(",")
-    assert_equal addresses(:elarch_neuilly).id, order.address_id
     assert_equal :processing, order.state
     assert order.merchant_account.present?
     assert order.uuid.present?
@@ -56,6 +58,7 @@ class OrderTest < ActiveSupport::TestCase
     order = Order.new(
       :user_id => @user.id,
       :expected_price_total => 100,
+      :address_id => @address.id,
       :payment_card_id => @card.id,
       :urls => ["http://www.rueducommerce.fr/productA", "http://www.rueducommerce.fr/productB"])
     assert order.save, order.errors.full_messages.join(",")
@@ -75,21 +78,31 @@ class OrderTest < ActiveSupport::TestCase
     end
   end
 
-  test "it shouldn't create order if user doesn't have any address" do
-    @user.addresses.destroy_all
+  test "it shouldn't create order without address specified" do
     order = Order.new(
       :user_id => @user.id, 
       :expected_price_total => 100,
       :merchant_id => @merchant.id, 
       :payment_card_id => @card.id)
     assert !order.save, "Order shouldn't have saved"
-    assert_equal I18n.t('orders.no_address'), order.errors.full_messages.first
+    assert_equal "L'adresse doit être renseignée", order.errors.full_messages.first
+  end
+
+  test "it shouldn't create order without payment_card specified" do
+    order = Order.new(
+      :user_id => @user.id, 
+      :expected_price_total => 100,
+      :merchant_id => @merchant.id, 
+      :address_id => @address.id)
+    assert !order.save, "Order shouldn't have saved"
+    assert_equal "Le moyen de paiement doit être renseigné", order.errors.full_messages.first
   end
 
   test "it shouldn't accept urls from different merchants" do
     order = Order.create(
       :user_id => @user.id,
       :payment_card_id => @card.id,
+      :address_id => @address.id,
       :expected_price_total => 100,
       :urls => ["http://www.rueducommerce.fr/productA", "http://www.amazon.fr/productB"])
     assert order.save, order.errors.full_messages.join(",")
@@ -211,9 +224,14 @@ class OrderTest < ActiveSupport::TestCase
   end
  
   test "it should set merchant account as created when message account_created received" do
-    order = Order.create(:user_id => @user.id, :merchant_id => @merchant.id)
+    order = Order.create(
+      :user_id => @user.id, 
+      :merchant_id => @merchant.id, 
+      :address_id => @address.id,
+      :payment_card_id => @card.id,
+      :expected_price_total => 100,)
     assert_equal false, order.merchant_account.merchant_created
-    @order.process "message", { "message" => "account_created" }
+    order.process "message", { "message" => "account_created" }
     assert_equal true, order.merchant_account.reload.merchant_created    
   end
   

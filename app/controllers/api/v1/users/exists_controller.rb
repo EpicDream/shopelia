@@ -3,7 +3,7 @@ class Api::V1::Users::ExistsController < Api::V1::BaseController
   before_filter :process_params
 
   api :POST, "/users/exists", "Check if user exists"
-  param :data, Hash, "email key", :required => true
+  param :email, String, "Email to check", :required => true
   def create
     if User.find_by_email(@email)
       head :no_content
@@ -15,7 +15,7 @@ class Api::V1::Users::ExistsController < Api::V1::BaseController
   private
   
   def process_params
-    @email = params[:data][:email] unless params[:data].nil?
+    @email = params[:email]
     head :unprocessable_entity and return unless @email
   end
 

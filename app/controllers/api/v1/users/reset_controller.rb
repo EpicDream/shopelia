@@ -3,7 +3,7 @@ class Api::V1::Users::ResetController < Api::V1::BaseController
   before_filter :retrieve_user
 
   api :POST, "/users/reset", "Sent email instruction to reset password"
-  param :data, Hash, "email key", :required => true
+  param :email, Hash, "Email to send instructions to", :required => true
   def create
     if @user
       @user.send_reset_password_instructions
@@ -16,7 +16,7 @@ class Api::V1::Users::ResetController < Api::V1::BaseController
   private
   
   def retrieve_user
-    email = params[:data][:email] unless params[:data].nil?
+    email = params[:email]
     head :unprocessable_entity and return unless email
     @user = User.find_by_email(email)
   end
