@@ -3,7 +3,7 @@ class Api::V1::Users::ResetController < Api::V1::BaseController
   before_filter :retrieve_user
 
   api :POST, "/users/reset", "Sent email instruction to reset password"
-  param :email, Hash, "Email to send instructions to", :required => true
+  param :email, String, "Email to send instructions to", :required => true
   def create
     if @user
       @user.send_reset_password_instructions
