@@ -12,7 +12,7 @@
           address1: 21 rue d'Aboukir
           zip: '75002'
           city: Paris
-          country_id: '514205109'
+          country_id: 514205109
     - response_data:
         address:
           id: 498085478
@@ -35,11 +35,11 @@
         address: {}
     - response_data:
         address1:
-        - can't be blank
+        - doit être rempli(e)
         zip:
-        - can't be blank
+        - doit être renseigné
         city:
-        - can't be blank
+        - doit être renseignée
     - code: '422'
     - show_in_doc: 0
     - recorded: true
@@ -64,6 +64,13 @@
     - query: ''
     - request_data: 
     - response_data:
+      - id: 384640408
+        code_name: Campagne
+        address1: 17bis route de Saint Laurent
+        zip: '18500'
+        city: Vignoux sur Barangeon
+        country: FR
+        phones: []
       - id: 480832711
         code_name: Chateau
         address1: 14 bd du Chateau
@@ -124,7 +131,7 @@
           address1: ''
     - response_data:
         address1:
-        - can't be blank
+        - doit être rempli(e)
     - code: '422'
     - show_in_doc: 1
     - recorded: true
@@ -139,6 +146,42 @@
           address2: RDC porte gauche
     - response_data: 
     - code: '204'
+    - show_in_doc: 0
+    - recorded: true
+- autocomplete#create:
+  - !omap
+    - verb: :POST
+    - path: /api/users/autocomplete.json
+    - versions: []
+    - query: 
+    - request_data:
+        toto: ''
+    - response_data: 
+    - code: '422'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/autocomplete.json
+    - versions: []
+    - query: 
+    - request_data:
+        email: elarch
+    - response_data:
+        emails:
+        - elarch@gmail.com
+    - code: '200'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/autocomplete.json
+    - versions: []
+    - query: 
+    - request_data:
+        email: elarc
+    - response_data: 
+    - code: '404'
     - show_in_doc: 0
     - recorded: true
 - autocomplete#index:
@@ -180,6 +223,43 @@
     - code: '200'
     - show_in_doc: 1
     - recorded: true
+- exists#create:
+  - !omap
+    - verb: :POST
+    - path: /api/users/exists.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        toto: ''
+    - response_data: 
+    - code: '422'
+    - show_in_doc: 1
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/exists.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        email: nope@nope.nope
+    - response_data: 
+    - code: '404'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/exists.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        email: elarch@gmail.com
+    - response_data: 
+    - code: '204'
+    - show_in_doc: 0
+    - recorded: true
 - home#index:
   - !omap
     - verb: :GET
@@ -216,12 +296,15 @@
     - query: 
     - request_data:
         order:
+          expected_price_total: 100
+          payment_card_id: 727572248
+          address_id: 480832711
           urls:
           - http://www.rueducommerce.fr/productA
     - response_data:
         order:
-          uuid: 2906bbc86a9563e94a23d983485b72e3
-          state: ordering
+          uuid: 1161805eceddf6df5dd3868ccbe044dc
+          state: processing
           products:
           - product:
               id: 815917823
@@ -236,6 +319,24 @@
           merchant:
             id: 878265302
             name: Rue du Commerce
+          expected_price_total: 100.0
+          address:
+            id: 480832711
+            code_name: Chateau
+            address1: 14 bd du Chateau
+            address2: BP 212
+            zip: '92200'
+            city: Neuilly
+            country: FR
+            access_info: Code porte 1234
+            is_default: 1
+            phones: []
+          payment_card:
+            id: 727572248
+            number: 49XXXXXXXXXX0154
+            name: HSBC
+            exp_month: '2'
+            exp_year: '2015'
     - code: '201'
     - show_in_doc: 0
     - recorded: true
@@ -249,7 +350,7 @@
     - response_data:
         order:
           uuid: uuid
-          state: pending
+          state: processing
           products:
           - product:
               id: 102543260
@@ -274,6 +375,26 @@
           merchant:
             id: 878265302
             name: Rue du Commerce
+          expected_price_product: 14.0
+          expected_price_shipping: 2.0
+          expected_price_total: 16.0
+          address:
+            id: 480832711
+            code_name: Chateau
+            address1: 14 bd du Chateau
+            address2: BP 212
+            zip: '92200'
+            city: Neuilly
+            country: FR
+            access_info: Code porte 1234
+            is_default: 1
+            phones: []
+          payment_card:
+            id: 727572248
+            number: 49XXXXXXXXXX0154
+            name: HSBC
+            exp_month: '2'
+            exp_year: '2015'
     - code: '200'
     - show_in_doc: 0
     - recorded: true
@@ -301,7 +422,7 @@
     - query: 
     - request_data:
         payment_card:
-          user_id: '745494609'
+          user_id: 745494609
           number: '1234123412341234'
           exp_month: '02'
           exp_year: '2015'
@@ -309,7 +430,7 @@
     - response_data:
         payment_card:
           id: 727572249
-          number: 1234XXXXXXXXXX34
+          number: 12XXXXXXXXXX1234
           name: 
           exp_month: '02'
           exp_year: '2015'
@@ -326,17 +447,17 @@
         payment_card: {}
     - response_data:
         number:
-        - can't be blank
-        - is the wrong length (should be 16 characters)
+        - doit être rempli(e)
+        - ne fait pas la bonne longueur (doit comporter 16 caractères)
         exp_month:
-        - can't be blank
-        - is the wrong length (should be 2 characters)
+        - doit être rempli(e)
+        - ne fait pas la bonne longueur (doit comporter 2 caractères)
         exp_year:
-        - can't be blank
-        - is the wrong length (should be 4 characters)
+        - doit être rempli(e)
+        - ne fait pas la bonne longueur (doit comporter 4 caractères)
         cvv:
-        - can't be blank
-        - is the wrong length (should be 3 characters)
+        - doit être rempli(e)
+        - ne fait pas la bonne longueur (doit comporter 3 caractères)
     - code: '422'
     - show_in_doc: 0
     - recorded: true
@@ -362,7 +483,7 @@
     - request_data: 
     - response_data:
       - id: 727572248
-        number: 4970XXXXXXXXXX54
+        number: 49XXXXXXXXXX0154
         name: HSBC
         exp_month: '2'
         exp_year: '2015'
@@ -380,7 +501,7 @@
     - response_data:
         payment_card:
           id: 727572248
-          number: 4970XXXXXXXXXX54
+          number: 49XXXXXXXXXX0154
           name: HSBC
           exp_month: '2'
           exp_year: '2015'
@@ -397,7 +518,7 @@
     - request_data:
         phone:
           number: 0640381383
-          line_type: '1'
+          line_type: 1
     - response_data:
         phone:
           id: 752488299
@@ -416,10 +537,10 @@
         phone: {}
     - response_data:
         number:
-        - can't be blank
+        - doit être renseigné
         line_type:
-        - can't be blank
-        - is not included in the list
+        - doit être rempli(e)
+        - n'est pas inclus(e) dans la liste
     - code: '422'
     - show_in_doc: 0
     - recorded: true
@@ -483,7 +604,7 @@
           number: ''
     - response_data:
         number:
-        - can't be blank
+        - doit être renseigné
     - code: '422'
     - show_in_doc: 1
     - recorded: true
@@ -511,36 +632,13 @@
         user: {}
     - response_data:
         email:
-        - can't be blank
+        - doit être rempli(e)
         first_name:
-        - can't be blank
+        - doit être rempli(e)
         last_name:
-        - can't be blank
+        - doit être rempli(e)
     - code: '422'
     - show_in_doc: 1
-    - recorded: true
-  - !omap
-    - verb: :POST
-    - path: /api/users.json
-    - versions:
-      - v1
-    - query: 
-    - request_data:
-        user:
-          email: willfail@gmail.com
-          password: tototo
-          password_confirmation: tototo
-          first_name: Joe
-          last_name: Fail
-          civility: '0'
-          nationality_id: '514205109'
-          birthdate: '1973-09-30'
-    - response_data:
-        base:
-        - ! 'Impossible to create user on Leetchi API. Error: {"origin":"remote","message":"Api
-          failure","error_code":0,"user_message":"Api failure","type":"SystemError"}'
-    - code: '422'
-    - show_in_doc: 0
     - recorded: true
   - !omap
     - verb: :POST
@@ -559,10 +657,10 @@
             city: Paris
             phones_attributes:
             - number: '0140404040'
-              line_type: '0'
+              line_type: 0
           phones_attributes:
           - number: '0640404040'
-            line_type: '1'
+            line_type: 1
     - response_data:
         user:
           id: 973902417
@@ -586,9 +684,46 @@
               line_type: 0
               address_id: 498085478
           payment_cards: []
-          pincode: 
-        auth_token: xz5B6isnYxCgwzUzuBrG
+          has_pincode: 0
+        auth_token: TKR86cpgcf7MakHgVjU6
     - code: '201'
+    - show_in_doc: 0
+    - recorded: true
+- reset#create:
+  - !omap
+    - verb: :POST
+    - path: /api/users/reset.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        toto: ''
+    - response_data: 
+    - code: '422'
+    - show_in_doc: 1
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/reset.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        email: toto@toto.fr
+    - response_data: 
+    - code: '404'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/reset.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        email: elarch@gmail.com
+    - response_data: 
+    - code: '204'
     - show_in_doc: 0
     - recorded: true
 - sessions#create:
@@ -602,7 +737,7 @@
         email: elarch@gmail.com
         password: invalid
     - response_data:
-        error: Invalid email or password.
+        error: Email ou mot de passe incorrect.
     - code: '401'
     - show_in_doc: 1
     - recorded: true
@@ -626,6 +761,13 @@
             number: 0646403619
             line_type: 1
           addresses:
+          - id: 384640408
+            code_name: Campagne
+            address1: 17bis route de Saint Laurent
+            zip: '18500'
+            city: Vignoux sur Barangeon
+            country: FR
+            phones: []
           - id: 480832711
             code_name: Chateau
             address1: 14 bd du Chateau
@@ -642,12 +784,12 @@
               address_id: 480832711
           payment_cards:
           - id: 727572248
-            number: 4970XXXXXXXXXX54
+            number: 49XXXXXXXXXX0154
             name: HSBC
             exp_month: '2'
             exp_year: '2015'
-          pincode: '1234'
-        auth_token: MCB9Yt5SwwWwtunfU9ay
+          has_pincode: 1
+        auth_token: yTqbszvqWYNe5eqP4mGP
     - code: '200'
     - show_in_doc: 0
     - recorded: true
@@ -661,7 +803,7 @@
     - request_data:
         email: invalid
     - response_data:
-        error: Invalid email or password.
+        error: Email ou mot de passe incorrect.
     - code: '401'
     - show_in_doc: 1
     - recorded: true
@@ -730,6 +872,13 @@
             number: 0646403619
             line_type: 1
           addresses:
+          - id: 384640408
+            code_name: Campagne
+            address1: 17bis route de Saint Laurent
+            zip: '18500'
+            city: Vignoux sur Barangeon
+            country: FR
+            phones: []
           - id: 480832711
             code_name: Chateau
             address1: 14 bd du Chateau
@@ -746,11 +895,11 @@
               address_id: 480832711
           payment_cards:
           - id: 727572248
-            number: 4970XXXXXXXXXX54
+            number: 49XXXXXXXXXX0154
             name: HSBC
             exp_month: '2'
             exp_year: '2015'
-          pincode: '1234'
+          has_pincode: 1
     - code: '200'
     - show_in_doc: 0
     - recorded: true
@@ -766,7 +915,7 @@
           email: toto
     - response_data:
         email:
-        - is invalid
+        - n'est pas valide
     - code: '422'
     - show_in_doc: 1
     - recorded: true
@@ -779,6 +928,45 @@
     - request_data:
         user:
           first_name: Peter
+    - response_data: 
+    - code: '204'
+    - show_in_doc: 0
+    - recorded: true
+- verify#create:
+  - !omap
+    - verb: :POST
+    - path: /api/users/verify.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        pincode: '4567'
+    - response_data: 
+    - code: '401'
+    - show_in_doc: 1
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/verify.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        pincode: '1234'
+    - response_data: 
+    - code: '204'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/verify.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        cc_num: '0154'
+        cc_month: '02'
+        cc_year: '15'
     - response_data: 
     - code: '204'
     - show_in_doc: 0
