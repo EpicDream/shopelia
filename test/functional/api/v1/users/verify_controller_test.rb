@@ -10,12 +10,17 @@ class Api::V1::Users::VerifyControllerTest < ActionController::TestCase
   end
 
   test "it should verify user" do
-    post :create, data:{pincode:"1234"}, format: :json
+    post :create, pincode:"1234", format: :json
+    assert_response :success
+  end
+
+  test "it should verify user with cc info" do
+    post :create, cc_num:"0154", cc_month:"02", cc_year:"15", format: :json
     assert_response :success
   end
 
   test "it should fail user verification" do
-    post :create, data:{pincode:"4567"}, format: :json
+    post :create, pincode:"4567", format: :json
     assert_response :unauthorized
   end
 
