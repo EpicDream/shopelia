@@ -6,3 +6,4 @@ chromedriver.log
 Gemfile.lock
 /coverage
 config/database.yml
+public/assets/
