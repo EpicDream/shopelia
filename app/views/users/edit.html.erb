@@ -4,7 +4,7 @@
     <%= f.input :password, :required => true %>
     <%= f.input :password_confirmation, :required => true%>
 
-    <%= f.input :civility,label: "Civilit?",collection: [["Mademoiselle",User::CIVILITY_MLLE],["Madame",User::CIVILITY_MME],["Monsieur",User::CIVILITY_MR]], include_blank: true %>
+    <%= f.input :civility,label: "Civilité",collection: [["Mademoiselle",User::CIVILITY_MLLE],["Madame",User::CIVILITY_MME],["Monsieur",User::CIVILITY_MR]], include_blank: true %>
 
     <%= f.input :birthdate, as: :date, start_year: Date.today.year - 16,
                 end_year:Date.today.year - 90 ,
@@ -22,7 +22,7 @@
 
 
         if ($("#user_civility").val() == "") {
-            alert("Veuillez indiquer votre civilit?");
+            alert("Veuillez indiquer votre civilité");
             return false;
         }
 
