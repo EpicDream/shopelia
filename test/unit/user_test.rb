@@ -165,6 +165,19 @@ class UserTest < ActiveSupport::TestCase
     assert !@user.verify({ "cc_num" => "0154", "cc_month" => "05", "cc_year" => "15" })
   end
   
+  test "verification failure should create a log" do
+    assert_difference('UserVerificationFailure.count', 1) do
+      @user.verify({ "pincode" => "4567" })
+    end
+  end
+  
+  test "verification success should clear log" do
+    @user.verify({ "pincode" => "4567" })
+    assert_difference('UserVerificationFailure.count', -1) do
+      @user.verify({ "pincode" => "1234" })
+    end
+  end
+  
   test "it should create and update leetchi user" do
     skip
     allow_remote_api_calls

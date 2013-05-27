@@ -6,7 +6,10 @@ class Api::V1::Users::VerifyController < Api::V1::BaseController
   param :cc_month, String, "expiration month of credit card (MM)", :required => false
   param :cc_year, String, "expiration year of credit card (YY)", :required => false  
   def create
-    if current_user.verify(params)
+    delay = UserVerificationFailure.delay(current_user)
+    if delay > 0
+      render :json => { :delay => delay }, :status => 503
+    elsif current_user.verify(params)
       head :no_content
     else
       head :unauthorized

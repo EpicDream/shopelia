@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_many :payment_cards, :dependent => :destroy
   has_many :psp_users, :dependent => :destroy
   has_many :merchant_accounts, :dependent => :destroy
+  has_many :user_verification_failures, :dependent => :destroy
   has_many :orders
   belongs_to :nationality, :class_name => "Country"
 
@@ -85,12 +86,19 @@ class User < ActiveRecord::Base
   
   def verify data
     if data["pincode"].present?
-      return data["pincode"].eql?(self.pincode) && self.pincode.present?
+      if data["pincode"].eql?(self.pincode) && self.pincode.present?
+        self.user_verification_failures.destroy_all
+        return true
+      end      
     elsif data["cc_num"].present? && data["cc_month"].present? && data["cc_year"].present?
       self.payment_cards.each do |card|
-        return true if card.number.last(4).eql?(data["cc_num"]) && card.exp_month.to_i == data["cc_month"].to_i && card.exp_year.last(2).eql?(data["cc_year"])
+        if card.number.last(4).eql?(data["cc_num"]) && card.exp_month.to_i == data["cc_month"].to_i && card.exp_year.last(2).eql?(data["cc_year"])
+          self.user_verification_failures.destroy_all
+          return true
+        end
       end
     end
+    UserVerificationFailure.create!(user_id:self.id)
     false
   end
   
