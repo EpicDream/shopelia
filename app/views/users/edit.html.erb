@@ -1,0 +1,41 @@
+<h3>Nous vous remercions d'en profiter pour compléter votre profil</h3>
+<%= simple_form_for(current_user, :url => user_path(current_user), :html => { :method => :put }) do |f| %>
+    <%= f.error_notification %>
+    <%= f.input :password, :required => true %>
+    <%= f.input :password_confirmation, :required => true%>
+
+    <%= f.input :civility,label: "Civilit?",collection: [["Mademoiselle",User::CIVILITY_MLLE],["Madame",User::CIVILITY_MME],["Monsieur",User::CIVILITY_MR]], include_blank: true %>
+
+    <%= f.input :birthdate, as: :date, start_year: Date.today.year - 16,
+                end_year:Date.today.year - 90 ,
+                order: [:day,:month, :year] %>
+    <%= f.input :nationality_id, collection: Country.all %>
+
+    <%= f.submit "MISE A JOUR DU PROFIL", :onclick => "return validate()", :class => "btn" %>
+
+<% end %>
+
+
+<script language="javascript">
+
+    function validate() {
+
+
+        if ($("#user_civility").val() == "") {
+            alert("Veuillez indiquer votre civilit?");
+            return false;
+        }
+
+        if($("#user_password").val()==""){
+            alert("Veuillez rentrer un mot de passe");
+            return false;
+        }
+
+        if($("#user_password_confirmation").val()==""){
+            alert("Veuillez confirmer votre mot de passe");
+            return false;
+        }
+
+        return true;
+    }
+</script>

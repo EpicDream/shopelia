@@ -3,7 +3,10 @@ require 'api_constraints'
 Shopelia::Application.routes.draw do
   apipie
 
-  devise_for :users
+
+  devise_for :users, controllers: { confirmations: 'devise_override/confirmations' }
+
+  resources :users, :only => [:edit, :update]
 
   get "home/index"
 
@@ -34,5 +37,8 @@ Shopelia::Application.routes.draw do
       end      
     end
   end
-  
+
+
+
+
 end
