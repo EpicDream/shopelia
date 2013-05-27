@@ -30,6 +30,8 @@ class ApiTest < ActionDispatch::IntegrationTest
     }
 
     post "/api/users", user:user, format: :json
+    assert_response :success
+    
     assert json_response["user"]
     assert json_response["auth_token"]
     

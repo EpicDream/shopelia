@@ -42,3 +42,4 @@ class ActiveSupport::TestCase
    ENV["ALLOW_REMOTE_API_CALLS"] = "1"
   end
 end
+
