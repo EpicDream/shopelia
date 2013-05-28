@@ -16,6 +16,13 @@ class Api::V1::SessionsControllerTest < ActionController::TestCase
     assert_equal @user.reload.authentication_token, json_response["auth_token"]
   end
   
+  test "it shouldn't login a user with blank password" do
+    user = User.create!(email:"toto@toto.fr", first_name:"Eric", last_name:"Larch", ip_address:"192.168.1.1")
+    post :create, email: @user.email, password: "", format: :json
+    
+    assert_response :unauthorized
+  end
+  
   test "it should logout user" do
     sign_in @user
     token = @user.reload.authentication_token

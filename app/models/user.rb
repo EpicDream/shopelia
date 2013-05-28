@@ -23,9 +23,11 @@ class User < ActiveRecord::Base
   validates :nationality, :presence => true
   validates :civility, :presence => true, :inclusion => { :in => [ CIVILITY_MR, CIVILITY_MME, CIVILITY_MLLE ] }
   validates :ip_address, :presence => true
+  validates_confirmation_of :password
   validate :user_must_be_16_yo
 
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :first_name, :last_name
+  attr_accessible :password, :password_confirmation, :current_password
+  attr_accessible :email, :remember_me, :first_name, :last_name
   attr_accessible :birthdate, :civility, :nationality_id, :ip_address, :pincode
   attr_accessible :addresses_attributes, :phones_attributes, :payment_cards_attributes
   attr_accessor :addresses_attributes, :phones_attributes, :payment_cards_attributes
@@ -84,6 +86,10 @@ class User < ActiveRecord::Base
     self.pincode.present? && self.pincode.length == 4
   end
   
+  def has_password?
+    !self.encrypted_password.blank?
+  end
+  
   def verify data
     if data["pincode"].present?
       if data["pincode"].eql?(self.pincode) && self.pincode.present?
@@ -111,8 +117,8 @@ class User < ActiveRecord::Base
   def set_default_values
     self.civility = CIVILITY_MR if self.civility.nil?
     self.birthdate = "1980-01-01" if self.birthdate.nil?
-    self.password = SecureRandom.hex(4) if self.password.nil?
     self.nationality_id = Country.find_by_name("France").id if self.nationality_id.nil?
+    #self.password = SecureRandom.hex(4) if self.encrypted_password.blank?
   end
   
   def process_nested_attributes
@@ -152,5 +158,11 @@ class User < ActiveRecord::Base
       user.destroy unless user.nil?
     end
   end
+    
+  protected 
+  
+  def password_required? 
+    false 
+  end 
 
 end

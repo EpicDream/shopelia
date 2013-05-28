@@ -53,6 +53,8 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 1, user.addresses.first.phones.count
     assert_equal 2, user.phones.count
     assert_equal 1, user.payment_cards.count
+    
+    assert !user.has_password?
   end
 
   test "it should fail user creation with a bad address" do
@@ -145,6 +147,10 @@ class UserTest < ActiveSupport::TestCase
     @user.destroy
     assert_equal 0, Address.find_all_by_user_id(user_id).count
     assert_equal 0, Phone.find_all_by_user_id(user_id).count    
+  end
+  
+  test "it should have password" do
+    assert @user.has_password?
   end
   
   test "it should check validity of pincode" do
