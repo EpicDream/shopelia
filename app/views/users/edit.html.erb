@@ -6,9 +6,7 @@
 
     <%= f.input :civility,label: "Civilité",collection: [["Mademoiselle",User::CIVILITY_MLLE],["Madame",User::CIVILITY_MME],["Monsieur",User::CIVILITY_MR]], include_blank: true %>
 
-    <%= f.input :birthdate, as: :date, start_year: Date.today.year - 16,
-                end_year:Date.today.year - 90 ,
-                order: [:day,:month, :year] %>
+    <%= f.input :birthdate, :as => :string, input_html: {value: current_user.birthdate.strftime("%d/%m/%Y")} %>
     <%= f.input :nationality_id, collection: Country.all %>
 
     <%= f.submit "MISE A JOUR DU PROFIL", :onclick => "return validate()", :class => "btn" %>
@@ -17,6 +15,18 @@
 
 
 <script language="javascript">
+    $(function() {
+        var dp = $("#user_birthdate");
+        dp.datepicker({
+            dateFormat : "dd/mm/yy",
+            changeMonth: true,
+            changeYear: true,
+            onSelect: function(dateText, inst) {
+                dp.attr("value",dp.val());
+            }
+        });
+
+    });
 
     function validate() {
 
