@@ -3,14 +3,10 @@ require 'api_constraints'
 Shopelia::Application.routes.draw do
   apipie
 
-
   devise_for :users, controllers: { confirmations: 'devise_override/confirmations' }
 
+  resources :contact, :only => :create  
   resources :users, :only => [:edit, :update]
-
-  get "home/index"
-
-  root :to => "home#index"
   
   namespace :api do
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
@@ -37,8 +33,5 @@ Shopelia::Application.routes.draw do
       end      
     end
   end
-
-
-
 
 end
