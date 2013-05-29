@@ -4,10 +4,12 @@ Shopelia::Application.routes.draw do
   apipie
 
   devise_for :users, controllers: { confirmations: 'devise_override/confirmations' }
+  devise_scope :user do
+    put "/confirm" => "devise_override/confirmations#confirm"
+  end
 
-  resources :contact, :only => :create  
-  resources :users, :only => [:edit, :update]
-  
+  resources :contact, :only => :create
+
   namespace :api do
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
       devise_for :users

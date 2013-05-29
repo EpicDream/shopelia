@@ -102,6 +102,18 @@ class User < ActiveRecord::Base
   def leetchi
     self.psp_users.leetchi.first
   end
+
+
+  def password_required?
+    super if confirmed?
+  end
+
+  def password_match?
+    self.errors[:password] << "can't be blank" if password.blank?
+    self.errors[:password_confirmation] << "can't be blank" if password_confirmation.blank?
+    self.errors[:password_confirmation] << "does not match password" if password != password_confirmation
+    password == password_confirmation && !password.blank?
+  end
   
   private
   
@@ -158,11 +170,5 @@ class User < ActiveRecord::Base
       user.destroy unless user.nil?
     end
   end
-    
-  protected 
-  
-  def password_required? 
-    false 
-  end 
 
 end
