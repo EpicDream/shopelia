@@ -46,27 +46,19 @@ class OrderTest < ActiveSupport::TestCase
       :user_id => @user.id,
       :merchant_id => @merchant.id,
       :payment_card_id => @card.id,
+      :urls => ["http://www.rueducommerce.fr/productA", "http://www.rueducommerce.fr/productB"],
       :address_id => @address.id,
       :expected_price_total => 100)
     assert order.save, order.errors.full_messages.join(",")
     assert_equal :processing, order.state
     assert order.merchant_account.present?
     assert order.uuid.present?
+    assert_equal 2, order.reload.order_items.count
+    assert_equal @merchant.id, order.merchant_id    
     
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
-  end
-  
-  test "it should create order from urls" do
-    order = Order.new(
-      :user_id => @user.id,
-      :expected_price_total => 100,
-      :address_id => @address.id,
-      :payment_card_id => @card.id,
-      :urls => ["http://www.rueducommerce.fr/productA", "http://www.rueducommerce.fr/productB"])
-    assert order.save, order.errors.full_messages.join(",")
-    assert_equal 2, order.reload.order_items.count
-    assert_equal @merchant.id, order.merchant_id
+    assert_match /Rue du Commerce/, mail.encoded
   end
 
   test "it should create order with specific address" do

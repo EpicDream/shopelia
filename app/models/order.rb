@@ -171,7 +171,7 @@ class Order < ActiveRecord::Base
   end
   
   def notify_user
-    Emailer.notify_order_creation(self).deliver
+    Emailer.notify_order_creation(self).deliver unless self.order_items.count == 0
   end
   
 end

@@ -10,8 +10,10 @@ class Emailer < ActionMailer::Base
   
   def notify_order_creation order
     @order = order
+    @vendor = @order.merchant.name
+    @product = @order.order_items.first.product
     mail( :to => @order.user.email,
-          :subject => "Votre commande chez #{@order.merchant.vendor} a bien été prise en compte !",
+          :subject => "Votre commande chez #{@vendor} a bien été prise en compte !",
           :from => "Shopelia <contact@shopelia.fr>")
   end
   

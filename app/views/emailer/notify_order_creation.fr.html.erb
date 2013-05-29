@@ -141,7 +141,7 @@
   <tr>
     <td width="45" class="eraseForMobile"></td>
     <td mc:edit="text1Top" width="502" bgcolor="#333333" style="font-size: 16px; color: #a3a4a8; text-align: center; font-weight: light; font-family: Helvetica, Arial, sans-serif; line-height: 26px;" class="TopText">
-      Votre commande chez <b><%= @order.merchant.vendor %></b><br> a bien été prise en compte !
+      Votre commande chez <b><%= @vendor %></b><br> a bien été prise en compte !
       <br/><br/>
     </td>
     <td width="45" class="eraseForMobile"></td>
@@ -177,7 +177,7 @@
           <tr>
             <td width="40"></td>
             <td mc:edit="footerText" width="510" style="font-size: 14px; color: #333333; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; line-height: 24px; vertical-align: top;" class="fontSmaller2">
-              Nous vous confirmons la bonne réception de votre commande du produit <b><%= @order.product.name %></b> chez <b><%= @order.merchant.vendor %></b>. Votre commande est en cours de traitement par notre service, et vous serez notifié par email dès son acceptation par le marchand.
+              Nous vous confirmons la bonne réception de votre commande du produit <b><%= @product.name %></b> chez <b><%= @vendor %></b>. Votre commande est en cours de traitement par notre service, et vous serez notifié par email dès son acceptation par le marchand.
               <br/>
               Vous pouvez si vous le souhaitez voir l'état de votre commande à tout moment en pressant le bouton ci-dessous :
             </td>
