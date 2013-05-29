@@ -10,7 +10,7 @@ class UserTest < ActiveSupport::TestCase
 
   test "it should create user" do
     user = User.new(
-      :email => "user@gmail.com", 
+      :email => "user@gmail.com",
       :first_name => "John",
       :last_name => "Doe",
       :ip_address => '127.0.0.1',
@@ -258,6 +258,53 @@ class UserTest < ActiveSupport::TestCase
       assert_equal "Api failure", errors["message"]
       assert_equal "SystemError", errors["type"]
     end
+  end
+
+  test "it should return false when password or password confirmation are blanks" do
+    user = User.create(
+        :email => "willfail@gmail.com",
+        :password => "",
+        :password_confirmation => "",
+        :first_name => "Joe",
+        :last_name => "Fail",
+        :civility => User::CIVILITY_MR,
+        :nationality_id => countries(:france).id,
+        :ip_address => '127.0.0.1',
+        :birthdate => '1973-09-30')
+    assert !user.password_match?
+    errors = user.errors
+    assert_equal ["can't be blank"],  errors[:password]
+    assert_equal ["can't be blank"],  errors[:password_confirmation]
+  end
+
+  test "it should return false when password confirmation doesn't match" do
+    user = User.create(
+        :email => "willfail@gmail.com",
+        :password => "toto",
+        :password_confirmation => "merguez",
+        :first_name => "Joe",
+        :last_name => "Fail",
+        :civility => User::CIVILITY_MR,
+        :nationality_id => countries(:france).id,
+        :ip_address => '127.0.0.1',
+        :birthdate => '1973-09-30')
+    assert !user.password_match?
+    errors = user.errors
+    assert_equal ["does not match password"],  errors[:password_confirmation]
+  end
+
+  test "it should return true password and password confiramtion are the same" do
+    user = User.create(
+        :email => "willpass@gmail.com",
+        :password => "merguez",
+        :password_confirmation => "merguez",
+        :first_name => "Joe",
+        :last_name => "Fail",
+        :civility => User::CIVILITY_MR,
+        :nationality_id => countries(:france).id,
+        :ip_address => '127.0.0.1',
+        :birthdate => '1973-09-30')
+    assert user.password_match?
   end
   
 end

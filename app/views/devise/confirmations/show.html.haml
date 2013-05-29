@@ -1,0 +1,44 @@
+%h2 Compléter mon profil
+= simple_form_for resource, :as => resource_name, :url => confirm_path do |f|
+  = f.error_notification
+  = f.input :password, :input_html => {:autofocus => true}
+  = f.input :password_confirmation
+  = f.input :civility,label: "Civilité",collection: [["Mademoiselle",User::CIVILITY_MLLE],["Madame",User::CIVILITY_MME],["Monsieur",User::CIVILITY_MR]], include_blank: true
+  = f.input :birthdate, :as => :string, input_html: {value: resource.birthdate.strftime("%d/%m/%Y")}
+  = f.input :nationality_id, collection: Country.all
+  = f.input :confirmation_token, :as => :hidden
+  = f.submit "MISE A JOUR DU PROFIL", :onclick => "return validate()", :class => "btn"
+
+:javascript
+
+  $(function() {
+    var dp = $("#user_birthdate");
+    dp.datepicker({
+      dateFormat : "dd/mm/yy",
+      changeMonth: true,
+      changeYear: true,
+      onSelect: function(dateText, inst) {
+        dp.attr("value",dp.val());
+      }
+    });
+
+  });
+
+  function validate() {
+    if ($("#user_civility").val() == "") {
+      alert("Veuillez indiquer votre civilit?");
+      return false;
+    }
+
+    if($("#user_password").val()==""){
+      alert("Veuillez rentrer un mot de passe");
+      return false;
+    }
+
+    if($("#user_password_confirmation").val()==""){
+      alert("Veuillez confirmer votre mot de passe");
+      return false;
+    }
+
+    return true;
+  }

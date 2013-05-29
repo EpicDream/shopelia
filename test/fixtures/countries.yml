@@ -1,3 +1,7 @@
 france:
   iso: FR
   name: France
+
+morocco:
+  iso: MA
+  name: Morocco
