@@ -21,7 +21,7 @@ module Shopelia
     config.autoload_paths += %W(#{config.root}/lib )
     
     config.action_mailer.default_url_options = { :host => 'www.shopelia.fr', :protocol => 'https' }
-    config.action_mailer.asset_host = "www.shopelia.fr"
+    config.action_mailer.asset_host = "http://www.shopelia.fr"
 
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
