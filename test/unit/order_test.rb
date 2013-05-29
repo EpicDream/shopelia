@@ -52,6 +52,9 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :processing, order.state
     assert order.merchant_account.present?
     assert order.uuid.present?
+    
+    mail = ActionMailer::Base.deliveries.last
+    assert mail.present?, "a notification email should have been sent"
   end
   
   test "it should create order from urls" do

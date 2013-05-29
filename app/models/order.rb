@@ -29,6 +29,7 @@ class Order < ActiveRecord::Base
   before_save :serialize_questions
   after_initialize :deserialize_questions
   after_create :prepare_order_items
+  after_create :notify_user
   after_create :start
   
   def start
@@ -55,7 +56,7 @@ class Order < ActiveRecord::Base
       if verb.eql?("message")
         self.message = content["message"]
         if self.message.eql?("account_created")
-          self.merchant_account.update_attribute :merchant_created, true
+          self.merchant_account.confirm_creation!
         end
 
       elsif verb.eql?("failure")
@@ -167,6 +168,10 @@ class Order < ActiveRecord::Base
   
   def deserialize_questions
     @questions = JSON.parse(self.questions_json || "[]")
+  end
+  
+  def notify_user
+    Emailer.notify_order_creation(self).deliver
   end
   
 end

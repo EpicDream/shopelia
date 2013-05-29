@@ -17,6 +17,15 @@ class MerchantAccountTest < ActiveSupport::TestCase
     assert_equal "elarch.gmail.com@shopelia.fr", @account.login
     assert_equal addresses(:elarch_vignoux).id, @account.address_id
   end
+
+  test "it shouldn't be marked as created by default" do
+    assert !@account.merchant_created?
+  end
+  
+  test "it should confirm creation" do
+    @account.confirm_creation!
+    assert @account.merchant_created?
+  end
   
   test "it should create second merchant account" do
     account2 = MerchantAccount.new(user_id:@user.id, merchant_id:@merchant.id)

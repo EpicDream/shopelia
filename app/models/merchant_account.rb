@@ -35,13 +35,17 @@ class MerchantAccount < ActiveRecord::Base
   after_save do |record|
     MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and id<>? and is_default='t'", record.user_id, record.merchant_id, record.address_id, record.id).update_all "is_default='f'" if record.is_default?
   end
-  
+
   def self.find_or_create_for_order order
     MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and is_default='t'", order.user_id, order.merchant_id, order.address_id).first || MerchantAccount.create(user_id:order.user_id, merchant_id:order.merchant_id, address_id:order.address_id)
   end
   
-  private
+  def confirm_creation!
+    self.update_attribute :merchant_created, true
+  end
   
+  private
+
   def create_email_redirection
     user_name = self.login.gsub(/\@.*$/, "")
     EmailRedirection.find_or_create_by_user_name_and_destination(:user_name => user_name, :destination => self.user.email)
