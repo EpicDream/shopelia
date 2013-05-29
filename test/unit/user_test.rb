@@ -57,6 +57,14 @@ class UserTest < ActiveSupport::TestCase
     assert !user.has_password?
   end
 
+  test "it should fail user creation with missing info" do
+    user = User.new(:email => "user@gmail.com")
+    assert !user.save
+
+    mail = ActionMailer::Base.deliveries.last
+    assert !mail.present?, "a confirmation email shouldn't have been sent"
+  end
+
   test "it should fail user creation with a bad address" do
     user = User.create(
       :email => "user@gmail.com", 
@@ -70,6 +78,9 @@ class UserTest < ActiveSupport::TestCase
   
     assert !user.persisted?
     assert_equal "Le code postal doit être renseigné,La ville doit être renseignée", user.errors.full_messages.join(",")
+
+    mail = ActionMailer::Base.deliveries.last
+    assert !mail.present?, "a confirmation email shouldn't have been sent"
   end
 
   test "it should create infinitely user with email test@shopelia.fr" do

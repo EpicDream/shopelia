@@ -35,7 +35,9 @@ class User < ActiveRecord::Base
   before_validation :reset_test_account
   before_validation :set_default_values
 
+  before_create :skip_confirmation_email
   after_save :process_nested_attributes
+  after_save :send_confirmation_email
 
   #after_save :create_psp_users
   #before_update :update_psp_users 
@@ -118,13 +120,23 @@ class User < ActiveRecord::Base
     self.civility = CIVILITY_MR if self.civility.nil?
     self.birthdate = "1980-01-01" if self.birthdate.nil?
     self.nationality_id = Country.find_by_name("France").id if self.nationality_id.nil?
-    #self.password = SecureRandom.hex(4) if self.encrypted_password.blank?
+  end
+  
+  def skip_confirmation_email
+    self.skip_confirmation_notification!
   end
   
   def process_nested_attributes
+    return unless self.persisted?
     self.addresses = self.addresses_attributes
     self.phones = self.phones_attributes
     self.payment_cards = self.payment_cards_attributes
+  end
+  
+  def send_confirmation_email
+    return unless self.errors.count == 0
+    generate_confirmation_token! if self.confirmation_token.nil?
+    self.send_confirmation_instructions
   end
   
   def create_psp_users

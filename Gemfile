@@ -7,7 +7,7 @@ gem 'rails', '3.2.13'
 
 gem 'pg'
 gem 'sqlite3'
-gem 'devise', '~> 2.0'
+gem 'devise', '~> 2.2'
 gem 'apipie-rails'
 gem "active_model_serializers", "~> 0.7.0"
 gem "leetchi-wallet-services", "~> 1.0.0"
