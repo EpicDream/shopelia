@@ -9,6 +9,7 @@
     - request_data:
         address:
           code_name: Office
+          phone: 0646403619
           address1: 21 rue d'Aboukir
           zip: '75002'
           city: Paris
@@ -21,7 +22,7 @@
           zip: '75002'
           city: Paris
           country: FR
-          phones: []
+          phone: 0646403619
     - code: '201'
     - show_in_doc: 1
     - recorded: true
@@ -40,6 +41,8 @@
         - doit être renseigné
         city:
         - doit être renseignée
+        phone:
+        - doit être rempli(e)
     - code: '422'
     - show_in_doc: 0
     - recorded: true
@@ -70,7 +73,7 @@
         zip: '18500'
         city: Vignoux sur Barangeon
         country: FR
-        phones: []
+        phone: 0646403619
       - id: 480832711
         code_name: Chateau
         address1: 14 bd du Chateau
@@ -80,7 +83,7 @@
         country: FR
         access_info: Code porte 1234
         is_default: 1
-        phones: []
+        phone: 0646403619
     - code: '200'
     - show_in_doc: 1
     - recorded: true
@@ -103,7 +106,7 @@
           country: FR
           access_info: Code porte 1234
           is_default: 1
-          phones: []
+          phone: 0646403619
     - code: '200'
     - show_in_doc: 1
     - recorded: true
@@ -207,6 +210,21 @@
     - code: '200'
     - show_in_doc: 1
     - recorded: true
+- contact#create:
+  - !omap
+    - verb: :POST
+    - path: /contact.json
+    - versions: []
+    - query: 
+    - request_data:
+        email: test@test.fr
+        name: Name
+        message: Message
+    - response_data:
+      - success
+    - code: '200'
+    - show_in_doc: 0
+    - recorded: true
 - details#show:
   - !omap
     - verb: :GET
@@ -288,6 +306,56 @@
     - code: '200'
     - show_in_doc: 1
     - recorded: true
+- merchants#create:
+  - !omap
+    - verb: :POST
+    - path: /api/merchants.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        url: http://www.rueducommerce.fr/bla
+    - response_data:
+        merchant:
+          id: 878265302
+          name: Rue du Commerce
+          logo: http://www.prixing.fr/images/logos/rueducommerce.png
+          url: http://www.rueducommerce.fr
+    - code: '200'
+    - show_in_doc: 1
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/merchants.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        url: http://www.toto.fr/bla
+    - response_data: 
+    - code: '404'
+    - show_in_doc: 0
+    - recorded: true
+- merchants#index:
+  - !omap
+    - verb: :GET
+    - path: /api/merchants.json
+    - versions:
+      - v1
+    - query: ''
+    - request_data: 
+    - response_data:
+      - id: 22775929
+        name: Amazon
+        logo: http://www.prixing.fr/images/logos/amazon.png
+        url: http://www.amazon.fr
+      - id: 878265302
+        name: Rue du Commerce
+        logo: http://www.prixing.fr/images/logos/rueducommerce.png
+        url: http://www.rueducommerce.fr
+    - code: '200'
+    - show_in_doc: 1
+    - recorded: true
 - orders#create:
   - !omap
     - verb: :POST
@@ -303,7 +371,7 @@
           - http://www.rueducommerce.fr/productA
     - response_data:
         order:
-          uuid: 1161805eceddf6df5dd3868ccbe044dc
+          uuid: ec68d3b8d98107428bc98b9f51d037e7
           state: processing
           products:
           - product:
@@ -314,11 +382,15 @@
               merchant:
                 id: 878265302
                 name: Rue du Commerce
+                logo: http://www.prixing.fr/images/logos/rueducommerce.png
+                url: http://www.rueducommerce.fr
             quantity: 1
             price_product: 0.0
           merchant:
             id: 878265302
             name: Rue du Commerce
+            logo: http://www.prixing.fr/images/logos/rueducommerce.png
+            url: http://www.rueducommerce.fr
           expected_price_total: 100.0
           address:
             id: 480832711
@@ -330,7 +402,7 @@
             country: FR
             access_info: Code porte 1234
             is_default: 1
-            phones: []
+            phone: 0646403619
           payment_card:
             id: 727572248
             number: 49XXXXXXXXXX0154
@@ -360,6 +432,8 @@
               merchant:
                 id: 878265302
                 name: Rue du Commerce
+                logo: http://www.prixing.fr/images/logos/rueducommerce.png
+                url: http://www.rueducommerce.fr
             quantity: 1
             price_product: 0.0
           - product:
@@ -370,11 +444,15 @@
               merchant:
                 id: 878265302
                 name: Rue du Commerce
+                logo: http://www.prixing.fr/images/logos/rueducommerce.png
+                url: http://www.rueducommerce.fr
             quantity: 1
             price_product: 0.0
           merchant:
             id: 878265302
             name: Rue du Commerce
+            logo: http://www.prixing.fr/images/logos/rueducommerce.png
+            url: http://www.rueducommerce.fr
           expected_price_product: 14.0
           expected_price_shipping: 2.0
           expected_price_total: 16.0
@@ -388,7 +466,7 @@
             country: FR
             access_info: Code porte 1234
             is_default: 1
-            phones: []
+            phone: 0646403619
           payment_card:
             id: 727572248
             number: 49XXXXXXXXXX0154
@@ -505,6 +583,23 @@
           name: HSBC
           exp_month: '2'
           exp_year: '2015'
+    - code: '200'
+    - show_in_doc: 1
+    - recorded: true
+- phone_lookup#show:
+  - !omap
+    - verb: :GET
+    - path: /api/phone_lookup/0959497434.json
+    - versions:
+      - v1
+    - query: ''
+    - request_data: 
+    - response_data:
+        last_name: Larchevêque
+        first_name: Eric
+        address1: 14 boulevard du chateau
+        zip: '92200'
+        city: Neuilly-sur-seine
     - code: '200'
     - show_in_doc: 1
     - recorded: true
@@ -655,22 +750,13 @@
           - address1: 21 rue d'Aboukir
             zip: '75002'
             city: Paris
-            phones_attributes:
-            - number: '0140404040'
-              line_type: 0
-          phones_attributes:
-          - number: '0640404040'
-            line_type: 1
+            phone: 0646403619
     - response_data:
         user:
           id: 973902417
           email: user@gmail.com
           first_name: John
           last_name: Doe
-          phones:
-          - id: 752488300
-            number: '0640404040'
-            line_type: 1
           addresses:
           - id: 498085478
             address1: 21 rue d'Aboukir
@@ -678,14 +764,11 @@
             city: Paris
             country: FR
             is_default: 1
-            phones:
-            - id: 752488299
-              number: '0140404040'
-              line_type: 0
-              address_id: 498085478
+            phone: 0646403619
           payment_cards: []
           has_pincode: 0
-        auth_token: TKR86cpgcf7MakHgVjU6
+          has_password: 0
+        auth_token: xS8ufBPBNW9uLKMMCC8h
     - code: '201'
     - show_in_doc: 0
     - recorded: true
@@ -756,10 +839,6 @@
           email: elarch@gmail.com
           first_name: Eric
           last_name: Larchevêque
-          phones:
-          - id: 752488298
-            number: 0646403619
-            line_type: 1
           addresses:
           - id: 384640408
             code_name: Campagne
@@ -767,7 +846,7 @@
             zip: '18500'
             city: Vignoux sur Barangeon
             country: FR
-            phones: []
+            phone: 0646403619
           - id: 480832711
             code_name: Chateau
             address1: 14 bd du Chateau
@@ -777,11 +856,7 @@
             country: FR
             access_info: Code porte 1234
             is_default: 1
-            phones:
-            - id: 417264221
-              number: 0940404040
-              line_type: 0
-              address_id: 480832711
+            phone: 0646403619
           payment_cards:
           - id: 727572248
             number: 49XXXXXXXXXX0154
@@ -789,8 +864,23 @@
             exp_month: '2'
             exp_year: '2015'
           has_pincode: 1
-        auth_token: yTqbszvqWYNe5eqP4mGP
+          has_password: 1
+        auth_token: R4nypqhG3hksxxrob9Uc
     - code: '200'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/sign_in.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        email: elarch@gmail.com
+        password: ''
+    - response_data:
+        error: Email ou mot de passe incorrect.
+    - code: '401'
     - show_in_doc: 0
     - recorded: true
 - sessions#destroy:
@@ -825,11 +915,104 @@
     - path: /api/users/745494609.json
     - versions:
       - v1
-    - query: ''
+    - query: password=tototo
     - request_data: 
     - response_data: 
     - code: '204'
     - show_in_doc: 1
+    - recorded: true
+- users#edit:
+  - !omap
+    - verb: :GET
+    - path: /users/745494609/edit.json
+    - versions: []
+    - query: ''
+    - request_data: 
+    - response_data:
+        user:
+          id: 745494609
+          email: elarch@gmail.com
+          first_name: Eric
+          last_name: Larchevêque
+          addresses:
+          - id: 384640408
+            code_name: Campagne
+            address1: 17bis route de Saint Laurent
+            zip: '18500'
+            city: Vignoux sur Barangeon
+            country: FR
+            phone: 0646403619
+          - id: 480832711
+            code_name: Chateau
+            address1: 14 bd du Chateau
+            address2: BP 212
+            zip: '92200'
+            city: Neuilly
+            country: FR
+            access_info: Code porte 1234
+            is_default: 1
+            phone: 0646403619
+          payment_cards:
+          - id: 727572248
+            number: 49XXXXXXXXXX0154
+            name: HSBC
+            exp_month: '2'
+            exp_year: '2015'
+          has_pincode: 1
+          has_password: 1
+    - code: '200'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :GET
+    - path: /users/745494609/edit.json
+    - versions: []
+    - query: ''
+    - request_data: 
+    - response_data:
+        user:
+          id: 745494609
+          email: elarch@gmail.com
+          first_name: Eric
+          last_name: Larchevêque
+          addresses:
+          - id: 384640408
+            code_name: Campagne
+            address1: 17bis route de Saint Laurent
+            zip: '18500'
+            city: Vignoux sur Barangeon
+            country: FR
+            phone: 0646403619
+          - id: 480832711
+            code_name: Chateau
+            address1: 14 bd du Chateau
+            address2: BP 212
+            zip: '92200'
+            city: Neuilly
+            country: FR
+            access_info: Code porte 1234
+            is_default: 1
+            phone: 0646403619
+          payment_cards:
+          - id: 727572248
+            number: 49XXXXXXXXXX0154
+            name: HSBC
+            exp_month: '2'
+            exp_year: '2015'
+          has_pincode: 1
+          has_password: 1
+    - code: '200'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: 
+    - path: 
+    - versions: []
+    - query: 
+    - request_data: 
+    - response_data: 
+    - code: 
+    - show_in_doc: 0
     - recorded: true
 - users#show:
   - !omap
@@ -867,10 +1050,6 @@
           email: elarch@gmail.com
           first_name: Eric
           last_name: Larchevêque
-          phones:
-          - id: 752488298
-            number: 0646403619
-            line_type: 1
           addresses:
           - id: 384640408
             code_name: Campagne
@@ -878,7 +1057,7 @@
             zip: '18500'
             city: Vignoux sur Barangeon
             country: FR
-            phones: []
+            phone: 0646403619
           - id: 480832711
             code_name: Chateau
             address1: 14 bd du Chateau
@@ -888,11 +1067,7 @@
             country: FR
             access_info: Code porte 1234
             is_default: 1
-            phones:
-            - id: 417264221
-              number: 0940404040
-              line_type: 0
-              address_id: 480832711
+            phone: 0646403619
           payment_cards:
           - id: 727572248
             number: 49XXXXXXXXXX0154
@@ -900,6 +1075,7 @@
             exp_month: '2'
             exp_year: '2015'
           has_pincode: 1
+          has_password: 1
     - code: '200'
     - show_in_doc: 0
     - recorded: true
@@ -921,6 +1097,20 @@
     - recorded: true
   - !omap
     - verb: :PUT
+    - path: /api/users/973902417.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        user:
+          password: tititi
+          password_confirmation: tititi
+    - response_data: 
+    - code: '204'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :PUT
     - path: /api/users/745494609.json
     - versions:
       - v1
@@ -928,6 +1118,77 @@
     - request_data:
         user:
           first_name: Peter
+    - response_data: 
+    - code: '204'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :PUT
+    - path: /api/users/745494609.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        user:
+          password: tititi
+          password_confirmation: tititi
+    - response_data: 
+    - code: '204'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :PUT
+    - path: /api/users/745494609.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        user:
+          password: tititi
+          password_confirmation: tititi
+    - response_data:
+        current_password:
+        - n'est pas valide
+    - code: '422'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :PUT
+    - path: /users/973902417.html
+    - versions: []
+    - query: 
+    - request_data:
+        user:
+          password: tititi
+          password_confirmation: merguez
+    - response_data: 
+    - code: '200'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :PUT
+    - path: /users/973902417.json
+    - versions: []
+    - query: 
+    - request_data:
+        user:
+          password: tititi
+          password_confirmation: merguez
+    - response_data:
+        password:
+        - ne concorde pas avec la confirmation
+    - code: '422'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :PUT
+    - path: /users/973902417.json
+    - versions: []
+    - query: 
+    - request_data:
+        user:
+          password: tititi
+          password_confirmation: tititi
     - response_data: 
     - code: '204'
     - show_in_doc: 0
@@ -944,6 +1205,55 @@
     - response_data: 
     - code: '401'
     - show_in_doc: 1
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/verify.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        pincode: '4567'
+    - response_data: 
+    - code: '401'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/verify.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        pincode: '4567'
+    - response_data: 
+    - code: '401'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/verify.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        pincode: '4567'
+    - response_data: 
+    - code: '401'
+    - show_in_doc: 0
+    - recorded: true
+  - !omap
+    - verb: :POST
+    - path: /api/users/verify.json
+    - versions:
+      - v1
+    - query: 
+    - request_data:
+        pincode: '1234'
+    - response_data:
+        delay: 60
+    - code: '503'
+    - show_in_doc: 0
     - recorded: true
   - !omap
     - verb: :POST

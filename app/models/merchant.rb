@@ -10,6 +10,12 @@ class Merchant < ActiveRecord::Base
   
   before_destroy :check_presence_of_orders
   
+  def self.from_url url
+    Merchant.where("url like ?", "http://#{URI.parse(url).host}%").first
+    rescue
+      nil
+  end
+  
   private
   
   def check_presence_of_orders

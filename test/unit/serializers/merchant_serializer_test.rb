@@ -14,6 +14,8 @@ class MerchantSerializerTest < ActiveSupport::TestCase
       
     assert_equal @merchant.id, hash[:merchant][:id]
     assert_equal @merchant.name, hash[:merchant][:name]
+    assert_equal @merchant.logo, hash[:merchant][:logo]
+    assert_equal @merchant.url, hash[:merchant][:url]
   end
 
 end
