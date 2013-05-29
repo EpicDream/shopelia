@@ -16,11 +16,11 @@ class Order < ActiveRecord::Base
   validates :payment_card, :presence => true
 
   attr_accessible :user_id, :merchant_id, :address_id, :merchant_account_id, :payment_card_id
-  attr_accessible :message, :urls, :shipping_info
+  attr_accessible :message, :products, :shipping_info
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :billed_price_product, :billed_price_shipping, :billed_price_total
-  attr_accessor :urls
+  attr_accessor :products
   
   before_validation :initialize_uuid
   before_validation :initialize_state
@@ -153,9 +153,10 @@ class Order < ActiveRecord::Base
   end
   
   def prepare_order_items
-    (self.urls || []).each do |url|
-      product = Product.find_or_create_by_url(url)
+    (self.products || []).each do |p|
+      product = Product.find_or_create_by_url(p[:url])
       next if product.nil? || self.merchant_id && self.merchant_id != product.merchant_id
+      product.update_attributes p
       self.merchant_id = product.merchant_id
       self.save!
       OrderItem.create!(order:self, product:product)

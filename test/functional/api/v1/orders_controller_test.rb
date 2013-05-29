@@ -18,7 +18,11 @@ class Api::V1::OrdersControllerTest < ActionController::TestCase
         expected_price_total:100, 
         payment_card_id:@card.id,
         address_id:@address.id,
-        urls: ["http://www.rueducommerce.fr/productA"] 
+        products: [ {
+          url:"http://www.rueducommerce.fr/productA",
+          name:"Product A",
+          image_url:"http://www.rueducommerce.fr/logo.jpg"
+        } ]
       }, format: :json
     end
     

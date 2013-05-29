@@ -32,7 +32,11 @@ class ApiTest < ActionDispatch::IntegrationTest
     auth_token = json_response["auth_token"]
 
     post "/api/orders", auth_token:auth_token, order: { 
-      urls: ["http://www.amazon.fr/La-Belle-Clochard-Peggy-Lee/dp/B0065HDMNO"], 
+      products: [ {
+        url:"http://www.rueducommerce.fr/productA",
+        name:"Product A",
+        image_url:"http://www.rueducommerce.fr/logo.jpg"
+      } ], 
       expected_price_total:100,
       address_id:user.addresses.first.id,
       payment_card_id:user.payment_cards.first.id }, format: :json

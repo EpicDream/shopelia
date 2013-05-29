@@ -46,14 +46,17 @@ class OrderTest < ActiveSupport::TestCase
       :user_id => @user.id,
       :merchant_id => @merchant.id,
       :payment_card_id => @card.id,
-      :urls => ["http://www.rueducommerce.fr/productA", "http://www.rueducommerce.fr/productB"],
+      :products => [ {
+        :url => "http://www.rueducommerce.fr/productA",
+        :name => "Product A",
+        :image_url => "http://www.rueducommerce.fr/logo.jpg" } ],
       :address_id => @address.id,
       :expected_price_total => 100)
     assert order.save, order.errors.full_messages.join(",")
     assert_equal :processing, order.state
     assert order.merchant_account.present?
     assert order.uuid.present?
-    assert_equal 2, order.reload.order_items.count
+    assert_equal 1, order.reload.order_items.count
     assert_equal @merchant.id, order.merchant_id    
     
     mail = ActionMailer::Base.deliveries.last
@@ -67,7 +70,10 @@ class OrderTest < ActiveSupport::TestCase
         :user_id => @user.id,
         :expected_price_total => 100,
         :payment_card_id => @card.id,
-        :urls => ["http://www.rueducommerce.fr/productA"],
+        :products => [ {
+          :url => "http://www.rueducommerce.fr/productA",
+          :name => "Product A",
+          :image_url => "http://www.rueducommerce.fr/logo.jpg" } ],        
         :address_id => addresses(:elarch_vignoux).id)
       assert order.save, order.errors.full_messages.join(",")
     end
@@ -78,6 +84,10 @@ class OrderTest < ActiveSupport::TestCase
       :user_id => @user.id, 
       :expected_price_total => 100,
       :merchant_id => @merchant.id, 
+      :products => [ {
+        :url => "http://www.rueducommerce.fr/productA",
+        :name => "Product A",
+        :image_url => "http://www.rueducommerce.fr/logo.jpg" } ],        
       :payment_card_id => @card.id)
     assert !order.save, "Order shouldn't have saved"
     assert_equal "L'adresse doit être renseignée", order.errors.full_messages.first
@@ -87,6 +97,10 @@ class OrderTest < ActiveSupport::TestCase
     order = Order.new(
       :user_id => @user.id, 
       :expected_price_total => 100,
+      :products => [ {
+        :url => "http://www.rueducommerce.fr/productA",
+        :name => "Product A",
+        :image_url => "http://www.rueducommerce.fr/logo.jpg" } ],        
       :merchant_id => @merchant.id, 
       :address_id => @address.id)
     assert !order.save, "Order shouldn't have saved"
@@ -99,7 +113,15 @@ class OrderTest < ActiveSupport::TestCase
       :payment_card_id => @card.id,
       :address_id => @address.id,
       :expected_price_total => 100,
-      :urls => ["http://www.rueducommerce.fr/productA", "http://www.amazon.fr/productB"])
+      :products => [ 
+        { :url => "http://www.rueducommerce.fr/productA",
+          :name => "Product A",
+          :image_url => "http://www.rueducommerce.fr/logo.jpg" },
+        { :url => "http://www.amazon.fr/productA",
+          :name => "Product B",
+          :image_url => "http://www.amazon.fr/logo.jpg" }        
+        ]
+      )
     assert order.save, order.errors.full_messages.join(",")
     assert_equal 1, order.order_items.count
   end
@@ -222,6 +244,10 @@ class OrderTest < ActiveSupport::TestCase
     order = Order.create(
       :user_id => @user.id, 
       :merchant_id => @merchant.id, 
+      :products => [ {
+        :url => "http://www.rueducommerce.fr/productA",
+        :name => "Product A",
+        :image_url => "http://www.rueducommerce.fr/logo.jpg" } ],        
       :address_id => @address.id,
       :payment_card_id => @card.id,
       :expected_price_total => 100,)
