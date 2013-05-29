@@ -3,7 +3,7 @@ class Api::V1::PhoneLookupController < Api::V1::BaseController
   before_filter :retrieve_number
 
   api :GET, "/phone_lookup/:number", "Lookup a phone number in reverse directory"
-  def index
+  def show
     render json: Scrapers::ReverseDirectory.lookup(@number)
   end
 
