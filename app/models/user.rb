@@ -5,7 +5,6 @@ class User < ActiveRecord::Base
   before_save :ensure_authentication_token
 
   has_many :addresses, :dependent => :destroy
-  has_many :phones, :dependent => :destroy
   has_many :payment_cards, :dependent => :destroy
   has_many :psp_users, :dependent => :destroy
   has_many :merchant_accounts, :dependent => :destroy
@@ -29,8 +28,8 @@ class User < ActiveRecord::Base
   attr_accessible :password, :password_confirmation, :current_password
   attr_accessible :email, :remember_me, :first_name, :last_name
   attr_accessible :birthdate, :civility, :nationality_id, :ip_address, :pincode
-  attr_accessible :addresses_attributes, :phones_attributes, :payment_cards_attributes
-  attr_accessor :addresses_attributes, :phones_attributes, :payment_cards_attributes
+  attr_accessible :addresses_attributes, :payment_cards_attributes
+  attr_accessor :addresses_attributes, :payment_cards_attributes
 
   before_validation :reset_test_account
   before_validation :set_default_values
@@ -47,16 +46,6 @@ class User < ActiveRecord::Base
       address = Address.create(address.merge({:user_id => self.id}))
       if !address.persisted?
         self.errors.add(:base, address.errors.full_messages.join(","))
-        self.destroy
-      end
-    end
-  end
-
-  def phones= params
-    (params || []).each do |phone|
-      phone = Phone.new(phone.merge({:user_id => self.id}))
-      if !phone.save
-        self.errors.add(:base, phone.errors.full_messages.join(","))
         self.destroy
       end
     end
@@ -123,20 +112,19 @@ class User < ActiveRecord::Base
   end
   
   def skip_confirmation_email
+    @confirmation_delayed = true
     self.skip_confirmation_notification!
   end
   
   def process_nested_attributes
-    return unless self.persisted?
-    self.addresses = self.addresses_attributes
-    self.phones = self.phones_attributes
-    self.payment_cards = self.payment_cards_attributes
+    if self.persisted?
+      self.addresses = self.addresses_attributes
+      self.payment_cards = self.payment_cards_attributes
+    end
   end
   
   def send_confirmation_email
-    return unless self.errors.count == 0
-    generate_confirmation_token! if self.confirmation_token.nil?
-    self.send_confirmation_instructions
+    self.send_confirmation_instructions if self.errors.count == 0 && @confirmation_delayed
   end
   
   def create_psp_users

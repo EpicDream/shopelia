@@ -1,7 +1,7 @@
 class Vulcain::UserSerializer < ActiveModel::Serializer
   include ActiveModelSerializerExtension::JsonWithoutNilKeys
   
-  attributes :first_name, :last_name, :birthdate, :gender, :mobile_phone, :land_phone, :address
+  attributes :birthdate, :gender, :address
 
   def birthdate
     { :day => object.birthdate.day, :month => object.birthdate.month, :year => object.birthdate.year }
@@ -9,14 +9,6 @@ class Vulcain::UserSerializer < ActiveModel::Serializer
   
   def gender
     object.civility
-  end
-  
-  def mobile_phone
-    object.phones.mobile.first.try(:number)
-  end
-  
-  def land_phone
-    object.addresses.default.first.phones.first.try(:number)
   end
   
   def address

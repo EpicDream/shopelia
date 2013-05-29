@@ -9,17 +9,10 @@ class ApiTest < ActionDispatch::IntegrationTest
       first_name: "John",
       last_name: "Doe",
       addresses_attributes: [ {
+        phone: "0646403619",
         address1: "21 rue d'Aboukir",
         zip: "75002",
-        city: "Paris",
-        phones_attributes: [ {
-          number: "0140404040",
-          line_type: Phone::LAND 
-        } ] 
-      } ],
-      phones_attributes: [ {
-        number: "0640404040",
-        line_type: Phone::MOBILE
+        city: "Paris"
       } ],
       payment_cards_attributes: [ {
         number: "4970100000000154",

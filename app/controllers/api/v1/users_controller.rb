@@ -12,7 +12,6 @@ class Api::V1::UsersController < Api::V1::BaseController
       param :civility, [User::CIVILITY_MR, User::CIVILITY_MME, User::CIVILITY_MLLE], "Civility of the user (#{User::CIVILITY_MR}=Monsieur, #{User::CIVILITY_MME}=Madame, #{User::CIVILITY_MLLE}=Mademoiselle"
       param :pincode, String, "Pin code of the user, to unlock usage", :required => false
       param :addresses_attributes, Array, "Addresses of user", :required => false
-      param :phones_attributes, Array, "Mobile phones of user", :required => false
       param :payment_cards_attributes, Array, "Payment cards of user", :required => false
     end
   end

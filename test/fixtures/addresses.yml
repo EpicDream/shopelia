@@ -8,6 +8,7 @@ elarch_neuilly:
   country: france
   state: idf
   access_info: Code porte 1234
+  phone: 0646403619
   is_default: true
   
 elarch_vignoux:
@@ -18,6 +19,7 @@ elarch_vignoux:
   city: Vignoux sur Barangeon
   country: france
   state: idf
+  phone: 0646403619
   is_default: false
 
 manu_chateaufort:
@@ -26,4 +28,5 @@ manu_chateaufort:
   zip: 78800
   city: Chateaufort
   country: france
+  phone: 0646403619
   is_default: true

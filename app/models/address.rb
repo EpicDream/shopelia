@@ -3,19 +3,21 @@ class Address < ActiveRecord::Base
   belongs_to :country
   belongs_to :state
   belongs_to :order
-  has_many :phones, :dependent => :destroy
   
   validates :user, :presence => true
   validates :country, :presence => true
   validates :address1, :presence => true
   validates :zip, :presence => true
   validates :city, :presence => true
+  validates :first_name, :presence => true
+  validates :last_name, :presence => true
+  validates :phone, :presence => true
 
   scope :default, where(:is_default => true)
   
   attr_accessible :user_id, :code_name, :address1, :address2, :zip, :city, :access_info, :state_id, :country_id
-  attr_accessible :is_default, :company, :phones_attributes, :country_iso, :reference
-  attr_accessor :phones_attributes, :country_iso, :reference
+  attr_accessible :is_default, :company, :country_iso, :reference, :first_name, :last_name, :phone
+  attr_accessor :country_iso, :reference
 
   before_validation do |record|
     if Address.where(:user_id => record.user_id).count == 0
@@ -31,6 +33,8 @@ class Address < ActiveRecord::Base
       record.country_id = Country.find_by_iso(record.country_iso.upcase).id unless record.country_iso.blank?
       record.country_id = Country.find_by_name("France").id if record.country_id.nil?
     end
+    record.first_name = record.user.first_name if record.first_name.blank?
+    record.last_name = record.user.last_name if record.last_name.blank?
   end
 
   before_destroy do |record|
@@ -43,20 +47,6 @@ class Address < ActiveRecord::Base
   before_save do |record|
     if record.is_default?
       record.user.addresses.where("id<>?", record.id || 0).update_all "is_default='f'"
-    end
-  end
-
-  after_save do |record|
-    record.phones = record.phones_attributes
-  end
-    
-  def phones= params
-    (params || []).each do |phone|
-      phone = Phone.new(phone.merge({:user_id => self.user_id, :address_id => self.id}))
-      if !phone.save
-        self.errors.add(:base, phone.errors.full_messages.join(","))
-        self.destroy
-      end
     end
   end
   

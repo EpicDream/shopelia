@@ -14,14 +14,7 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
           address1: "21 rue d'Aboukir",
           zip: "75002",
           city: "Paris",
-          phones_attributes: [ {
-            number: "0140404040",
-            line_type: Phone::LAND 
-          } ] 
-        } ],
-        phones_attributes: [ {
-          number: "0640404040",
-          line_type: Phone::MOBILE
+          phone: "0646403619"
         } ]
       }, format: :json
     end

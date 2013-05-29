@@ -1,16 +1,11 @@
 fr:
 
   activerecord:
-    models:
-      user: "Utilisateur"
-      address: "Adresse"
-      phone: "Téléphone"
     attributes:
       address:
         zip: "Le code postal"
         city: "La ville"
-      phone:
-        number: "Le numéro de téléphone"
+        phone: "Le numéro de téléphone"
       order:
         address: "L'adresse"
         payment_card: "Le moyen de paiement"
@@ -36,9 +31,6 @@ fr:
   developers:
     unauthorized: "Clé API invalide"
     
-  phones:
-    land_line_must_have_address: "Un téléphone fixe doit être associé avec une adresse"
-  
   products:
     merchant_not_supported: "Ce produit ne peut pas être commandé par Shopelia"
   

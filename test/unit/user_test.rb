@@ -16,18 +16,11 @@ class UserTest < ActiveSupport::TestCase
       :ip_address => '127.0.0.1',
       :addresses_attributes => [ {
         :code_name => "Office",
+        :phone => "0646403619",
         :address1 => "21 rue d'Aboukir",
         :zip => "75002",
         :city => "Paris",
         :country_id => countries(:france).id,
-        :phones_attributes => [ {
-          :number => "0140404040",
-          :line_type => Phone::LAND 
-          } ] 
-        } ],
-      :phones_attributes => [ {
-          :number => "0640404040",
-          :line_type => Phone::MOBILE
         } ],
       :payment_cards_attributes => [ {
           :number => "4970100000000154",
@@ -40,7 +33,7 @@ class UserTest < ActiveSupport::TestCase
     assert user.save, user.errors.full_messages.join(",")
     assert_equal "John", user.first_name
     assert_equal "Doe", user.last_name
-    
+  
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a confirmation email should have been sent"
     assert_equal "user@gmail.com", mail.to[0]
@@ -50,8 +43,6 @@ class UserTest < ActiveSupport::TestCase
     assert !user.confirmed?, "user shouldn't be confirmed"
     
     assert_equal 1, user.addresses.count
-    assert_equal 1, user.addresses.first.phones.count
-    assert_equal 2, user.phones.count
     assert_equal 1, user.payment_cards.count
     
     assert !user.has_password?
@@ -73,6 +64,7 @@ class UserTest < ActiveSupport::TestCase
       :ip_address => '127.0.0.1',
       :addresses_attributes => [ {
         :code_name => "Office",
+        :phone => "0646403619",        
         :address1 => "21 rue d'Aboukir"
       } ] )
   
@@ -96,40 +88,6 @@ class UserTest < ActiveSupport::TestCase
       :ip_address => '127.0.0.1')
     assert user.save
   end
-
-  test "it should fail user creation with a bad phone" do
-    user = User.create(
-      :email => "user@gmail.com", 
-      :first_name => "John",
-      :last_name => "Doe",
-      :ip_address => '127.0.0.1',
-      :phones_attributes => [ {
-        :line_type => Phone::MOBILE
-      } ] )
-  
-    assert !user.persisted?
-    assert_equal "Le numéro de téléphone doit être renseigné", user.errors.full_messages.join(",")
-  end
-
-  test "it should fail user creation with a bad phone in an address" do
-    user = User.create(
-      :email => "user@gmail.com", 
-      :first_name => "John",
-      :last_name => "Doe",
-      :ip_address => '127.0.0.1',
-      :addresses_attributes => [ {
-        :code_name => "Office",
-        :address1 => "21 rue d'Aboukir",
-        :zip => "75002",
-        :city => "Paris",
-        :phones_attributes => [ {
-          :line_type => Phone::LAND
-        } ]        
-      } ] )
-  
-    assert !user.persisted?
-    assert_equal "Le numéro de téléphone doit être renseigné", user.errors.full_messages.join(",")
-  end  
   
   test "it should check user age" do
     user = User.new(
@@ -154,10 +112,8 @@ class UserTest < ActiveSupport::TestCase
   test "it should destroy dependent objects" do
     user_id = @user.id
     assert_equal 2, Address.find_all_by_user_id(user_id).count
-    assert_equal 2, Phone.find_all_by_user_id(user_id).count
     @user.destroy
     assert_equal 0, Address.find_all_by_user_id(user_id).count
-    assert_equal 0, Phone.find_all_by_user_id(user_id).count    
   end
   
   test "it should have password" do
@@ -193,6 +149,19 @@ class UserTest < ActiveSupport::TestCase
     assert_difference('UserVerificationFailure.count', -1) do
       @user.verify({ "pincode" => "1234" })
     end
+  end
+  
+  test "it shouldn't resend confirmation when user is updated" do
+    @user.update_attribute :pincode, "4567"
+    mail = ActionMailer::Base.deliveries.last
+    assert !mail.present?, "a confirmation email shouldn't have been sent"
+  end
+  
+  test "it should mark user as unconfirmed and resend confirmation email when email is changed" do
+    @user.update_attribute :email, "elarch2@gmail.com"
+    assert !@user.confirmed?
+    mail = ActionMailer::Base.deliveries.last
+    assert mail.present?, "a confirmation email should have been sent"
   end
   
   test "it should create and update leetchi user" do

@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class AddressTest < ActiveSupport::TestCase
-  fixtures :users, :phones, :countries, :addresses
+  fixtures :users, :countries, :addresses
 
   setup do
     @user = users(:elarch)
@@ -12,43 +12,28 @@ class AddressTest < ActiveSupport::TestCase
   test "it should create address and manage default property attribution" do
     address = Address.new(
       :user_id => @user.id,
+      :phone => "0646403619",
       :address1 => "21 rue d'Aboukir",
       :zip => "75002",
       :city => "Paris",
       :is_default => true,
-      :country_iso => "fr",
-      :phones_attributes => [ {
-        :number => "0140404040",
-        :line_type => Phone::LAND 
-        } ] )
+      :country_iso => "fr")
     
     assert address.save, address.errors.full_messages.join(",")
+    assert_equal "Eric", address.first_name
+    assert_equal "Larchevêque", address.last_name    
     assert address.is_default?, "New address must be default"
     assert !@address.reload.is_default?, "Old address musn't be default"
-    assert_equal 1, address.phones.count
 
     address.destroy
     addresses(:elarch_vignoux).destroy
     assert @address.reload.is_default, "Last standing address should be default"    
   end
 
-  test "it should fail address creation with an incorrect phone" do
-    address = Address.create(
-      :user_id => users(:elarch).id,
-      :address1 => "21 rue d'Aboukir",
-      :zip => "75002",
-      :city => "Paris",
-      :phones_attributes => [ {
-        :line_type => Phone::LAND
-        } ] )
-    
-    assert !address.persisted?
-    assert_equal "Le numéro de téléphone doit être renseigné", address.errors.full_messages.join(",")
-  end
-
   test "a new address must not be default if not specified" do
     address = Address.new(
       :user_id => users(:elarch).id,
+      :phone => "0646403619",
       :address1 => "21 rue d'Aboukir",
       :zip => "75002",
       :city => "Paris",
@@ -62,6 +47,7 @@ class AddressTest < ActiveSupport::TestCase
   test "a first address must be default" do
     address = Address.new(
       :user_id => users(:thomas).id,
+      :phone => "0646403619",
       :address1 => "21 rue d'Aboukir",
       :zip => "75002",
       :city => "Paris",
@@ -71,17 +57,11 @@ class AddressTest < ActiveSupport::TestCase
     assert address.is_default?, "New address must default"
   end
   
-  test "it should destroy dependent objects" do
-    address_id = @address.id
-    assert_equal 1, Phone.find_all_by_address_id(address_id).count
-    @address.destroy
-    assert_equal 0, Phone.find_all_by_address_id(address_id).count   
-  end
-  
   test "it should create address from reference" do
     VCR.use_cassette('places_api') do  
       address = Address.new(
         :user_id => users(:elarch).id,
+        :phone => "0646403619",        
         :reference => "CjQjAAAAPtgCbee5jsEkoWoc6apT3qFBYmWlxcVOPrwUBoQ5Pqv8ExTxyh-M--tsL8QAT8xCEhBo2z7K3wdT4K6S7smh--ZIGhTCBtyjxjD5fBNcR15jutp7SZA2Fw")
 
       assert address.save

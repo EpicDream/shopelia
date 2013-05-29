@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class Vulcain::AddressSerializerTest < ActiveSupport::TestCase
-  fixtures :addresses, :users, :states, :countries, :phones
+  fixtures :addresses, :users, :states, :countries
   
   setup do
     @address = addresses(:elarch_neuilly)
@@ -11,7 +11,10 @@ class Vulcain::AddressSerializerTest < ActiveSupport::TestCase
   test "it should correctly serialize address" do
     address_serializer = Vulcain::AddressSerializer.new(@address)
     hash = address_serializer.as_json
-    
+
+    assert_equal @address.first_name, hash[:address][:first_name]
+    assert_equal @address.last_name, hash[:address][:last_name]
+    assert_equal "0646403619", hash[:address][:mobile_phone]
     assert_equal @address.address1, hash[:address][:address_1]
     assert_equal @address.address2, hash[:address][:address_2]
     assert_equal @address.zip, hash[:address][:zip]

@@ -14,6 +14,7 @@ class Api::V1::AddressesControllerTest < ActionController::TestCase
     assert_difference('Address.count', 1) do
       post :create, address: {
         code_name: "Office",
+        phone: "0646403619",
         address1: "21 rue d'Aboukir",
         zip: "75002",
         city: "Paris",
