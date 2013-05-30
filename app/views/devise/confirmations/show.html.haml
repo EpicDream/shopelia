@@ -1,44 +1,41 @@
 %h2 Compléter mon profil
-= simple_form_for resource, :as => resource_name, :url => confirm_path do |f|
+= simple_form_for resource, :as => resource_name, :url => confirm_path,:validate => true do |f|
   = f.error_notification
   = f.input :password, :input_html => {:autofocus => true}
-  = f.input :password_confirmation
+  = f.input :password_confirmation, label: "Confirmation mot de passe"
   = f.input :civility,label: "Civilité",collection: [["Mademoiselle",User::CIVILITY_MLLE],["Madame",User::CIVILITY_MME],["Monsieur",User::CIVILITY_MR]], include_blank: true
-  = f.input :birthdate, :as => :string, input_html: {value: resource.birthdate.strftime("%d/%m/%Y")}
-  = f.input :nationality_id, collection: Country.all
+  = f.input :birthdate, :as => :string, label: "Date de naissance", input_html: {value: resource.birthdate.strftime("%d/%m/%Y")}, :validate => false
+  = f.input :nationality_id, label:"Pays de résidence",collection: Country.all
   = f.input :confirmation_token, :as => :hidden
-  = f.submit "MISE A JOUR DU PROFIL", :onclick => "return validate()", :class => "btn"
+  = f.submit "MISE A JOUR DU PROFIL", :class => "btn", id:"confirm_submit_btn"
 
 :javascript
+  $(document).ready(function() {
 
-  $(function() {
-    var dp = $("#user_birthdate");
-    dp.datepicker({
-      dateFormat : "dd/mm/yy",
-      changeMonth: true,
-      changeYear: true,
-      onSelect: function(dateText, inst) {
-        dp.attr("value",dp.val());
-      }
-    });
+     var dp = $("#user_birthdate");
+     dp.datepicker({
+       dateFormat : "dd/mm/yy",
+       changeMonth: true,
+       changeYear: true,
+       onSelect: function(dateText, inst) {
+         dp.attr("value",dp.val());
+       }
+     });
 
+
+     $("#confirm_submit_btn").click(function(){
+       if($("#user_password").val() == undefined || $("#user_password").val() == "") {
+         alert('Veuillez saisir un mot de passe');
+         $("#user_password").focus()
+         return false;
+       }
+
+       if($("#user_birthdate").val() == undefined || $("#user_birthdate").val() == "") {
+         alert('Veuillez saisir une date de naissance valide');
+         $("#user_birthdate").focus()
+         return false;
+       }
+
+     })
   });
 
-  function validate() {
-    if ($("#user_civility").val() == "") {
-      alert("Veuillez indiquer votre civilit?");
-      return false;
-    }
-
-    if($("#user_password").val()==""){
-      alert("Veuillez rentrer un mot de passe");
-      return false;
-    }
-
-    if($("#user_password_confirmation").val()==""){
-      alert("Veuillez confirmer votre mot de passe");
-      return false;
-    }
-
-    return true;
-  }
