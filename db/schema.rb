@@ -23,8 +23,8 @@ ActiveRecord::Schema.define(:version => 20130529144106) do
     t.integer  "state_id"
     t.integer  "country_id"
     t.boolean  "is_default"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
     t.string   "company"
     t.string   "access_info"
     t.string   "phone"
@@ -35,22 +35,22 @@ ActiveRecord::Schema.define(:version => 20130529144106) do
   create_table "countries", :force => true do |t|
     t.string   "iso"
     t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "developers", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "email_redirections", :force => true do |t|
     t.string   "user_name"
     t.string   "destination"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "merchant_accounts", :force => true do |t|
@@ -59,8 +59,8 @@ ActiveRecord::Schema.define(:version => 20130529144106) do
     t.string   "login"
     t.string   "password"
     t.boolean  "is_default"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
     t.boolean  "merchant_created", :default => false
     t.integer  "address_id"
   end
@@ -70,8 +70,8 @@ ActiveRecord::Schema.define(:version => 20130529144106) do
     t.string   "logo"
     t.string   "url"
     t.string   "tc_url"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
     t.string   "vendor"
   end
 
@@ -84,8 +84,8 @@ ActiveRecord::Schema.define(:version => 20130529144106) do
     t.string   "product_image_url"
     t.string   "price_text"
     t.string   "delivery_text"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.float    "price_delivery"
   end
 
@@ -95,8 +95,8 @@ ActiveRecord::Schema.define(:version => 20130529144106) do
     t.string   "uuid"
     t.string   "state_name"
     t.string   "message"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -122,8 +122,8 @@ ActiveRecord::Schema.define(:version => 20130529144106) do
     t.string   "exp_month"
     t.string   "exp_year"
     t.string   "cvv"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "products", :force => true do |t|
@@ -131,44 +131,44 @@ ActiveRecord::Schema.define(:version => 20130529144106) do
     t.integer  "merchant_id"
     t.string   "url"
     t.string   "image_url"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "psp_payment_cards", :force => true do |t|
     t.integer  "payment_card_id"
     t.integer  "psp_id"
     t.integer  "remote_payment_card_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",             :null => false
+    t.datetime "updated_at",             :null => false
   end
 
   create_table "psp_users", :force => true do |t|
     t.integer  "user_id"
     t.integer  "psp_id"
     t.integer  "remote_user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
   create_table "psps", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "states", :force => true do |t|
     t.string   "iso"
     t.string   "name"
     t.integer  "country_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "statuses", :force => true do |t|
     t.integer  "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "user_verification_failures", :force => true do |t|
@@ -195,8 +195,8 @@ ActiveRecord::Schema.define(:version => 20130529144106) do
     t.integer  "failed_attempts",        :default => 0
     t.datetime "locked_at"
     t.string   "authentication_token"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.string   "first_name"
     t.string   "last_name"
     t.integer  "civility"
