@@ -273,8 +273,8 @@ class UserTest < ActiveSupport::TestCase
         :birthdate => '1973-09-30')
     assert !user.password_match?
     errors = user.errors
-    assert_equal ["can't be blank"],  errors[:password]
-    assert_equal ["can't be blank"],  errors[:password_confirmation]
+    assert_equal ["doit être rempli(e)"],  errors[:password]
+    assert_equal ["doit être rempli(e)"],  errors[:password_confirmation]
   end
 
   test "it should return false when password confirmation doesn't match" do
@@ -290,7 +290,7 @@ class UserTest < ActiveSupport::TestCase
         :birthdate => '1973-09-30')
     assert !user.password_match?
     errors = user.errors
-    assert_equal ["does not match password"],  errors[:password_confirmation]
+    assert_equal ["ne concorde pas avec le mot de passe"],  errors[:password_confirmation]
   end
 
   test "it should return true password and password confiramtion are the same" do
