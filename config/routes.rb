@@ -9,6 +9,7 @@ Shopelia::Application.routes.draw do
   end
 
   resources :contact, :only => :create
+  resources :orders, :only => :show
 
   namespace :api do
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
@@ -35,4 +36,7 @@ Shopelia::Application.routes.draw do
     end
   end
 
+  match '*not_found', to: 'errors#error_404'
+  get "errors/error_404"
+  get "errors/error_500"
 end

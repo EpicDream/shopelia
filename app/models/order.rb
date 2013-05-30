@@ -32,6 +32,10 @@ class Order < ActiveRecord::Base
   after_create :notify_user
   after_create :start
   
+  def to_param
+    self.uuid
+  end
+  
   def start
     @questions = []
     error_code = message = nil

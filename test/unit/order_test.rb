@@ -261,5 +261,9 @@ class OrderTest < ActiveSupport::TestCase
     @order.reload.process "success", {"billing" => {}}
     assert @order.reload.message.nil?
   end
+  
+  test "it should parametrize order with uuid" do
+    assert_equal @order.uuid, @order.to_param
+  end
  
 end

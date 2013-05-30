@@ -1,0 +1,16 @@
+%h1 Commande 
+%h3= @order.uuid
+%h1 Adresse de livraison
+%h3= @order.address.inspect
+%h1 Produit
+%h3= @order.products.inspect
+%h1 Prix
+%h3= @order.expected_price_total
+%h1 Marchand
+%h3= @order.merchant.inspect
+%h1 Status
+%h3= @order.state
+%h3= @order.error_code
+%h3= @order.message
+
+
