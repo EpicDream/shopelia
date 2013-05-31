@@ -11,6 +11,11 @@ Shopelia::Application.routes.draw do
   resources :contact, :only => :create
   resources :orders, :only => :show
 
+  namespace :admin do
+    resources :orders, :only => [:index, :show]
+    resources :users, :only => [:index, :show]
+  end
+
   namespace :api do
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
       devise_for :users

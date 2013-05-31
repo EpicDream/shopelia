@@ -19,6 +19,7 @@ gem 'haml'
 gem 'haml-rails'
 gem 'bourbon'
 gem 'bootstrap-sass', '~> 2.3.1.0'
+gem 'bootstrap-will_paginate'
 gem "simple_form"
 gem 'devise-i18n-views'
 gem 'rails-i18n'

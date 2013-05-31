@@ -1,0 +1,20 @@
+<h1>Orders list</h1>
+<table class="table table-striped">
+  <tr>
+    <td>UUID</td>
+    <td>User</td>
+    <td>Creation date</td>
+    <td>State</td>
+    <td>Error code</td>
+  </tr>
+<% @orders.each do |order| %>
+  <tr>
+    <td><%= link_to order.uuid, admin_order_path(order.uuid) %></td>
+    <td><%= order.user.first_name %> <%= order.user.last_name %></td>
+    <td><%= l order.created_at %></td>
+    <td><%= order.state %></td>
+    <td><%= order.error_code %></td>
+  </tr>
+<% end %>
+</table>
+<%= will_paginate(@orders) %>
