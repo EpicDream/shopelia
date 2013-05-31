@@ -27,10 +27,11 @@ class Order < ActiveRecord::Base
   before_validation :initialize_merchant_account
   before_validation :clear_message
   before_save :serialize_questions
+  before_create :validates_products
   after_initialize :deserialize_questions
   after_create :prepare_order_items
-  after_create :notify_user
   after_create :start
+  after_create :notify_user
   
   def to_param
     self.uuid
@@ -154,6 +155,20 @@ class Order < ActiveRecord::Base
   
   def initialize_merchant_account
     self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
+  end
+  
+  def validates_products
+    if self.products.nil? || self.products.count == 0
+      self.errors.add(:base, I18n.t('orders.errors.no_product'))
+    else
+      self.products.each do |p|
+        product = Product.find_or_create_by_url(p[:url])
+        if !product.persisted?
+          self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => product.errors.full_messages.join(",")))
+        end
+      end
+    end
+    self.errors.count == 0
   end
   
   def prepare_order_items

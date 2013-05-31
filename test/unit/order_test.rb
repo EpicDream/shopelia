@@ -91,6 +91,8 @@ class OrderTest < ActiveSupport::TestCase
       :payment_card_id => @card.id)
     assert !order.save, "Order shouldn't have saved"
     assert_equal "L'adresse doit être renseignée", order.errors.full_messages.first
+    mail = ActionMailer::Base.deliveries.last
+    assert !mail.present?, "a notification email shouldn't have been sent"
   end
 
   test "it shouldn't create order without payment_card specified" do
@@ -124,6 +126,29 @@ class OrderTest < ActiveSupport::TestCase
       )
     assert order.save, order.errors.full_messages.join(",")
     assert_equal 1, order.order_items.count
+  end
+  
+  test "it shouldn't create order without products" do
+    order = Order.new(
+      :user_id => @user.id, 
+      :expected_price_total => 100,
+      :merchant_id => @merchant.id, 
+      :address_id => @address.id,
+      :payment_card_id => @card.id)
+    assert !order.save, "Order shouldn't have saved"
+    assert_equal I18n.t('orders.errors.no_product'), order.errors.full_messages.first
+  end
+
+  test "it shouldn't create order with invalid product" do
+    order = Order.new(
+      :user_id => @user.id, 
+      :expected_price_total => 100,
+      :merchant_id => @merchant.id, 
+      :address_id => @address.id,
+      :products => [ { :invalid => "http://www.rueducommerce.fr/productA" } ],              
+      :payment_card_id => @card.id)
+    assert !order.save, "Order shouldn't have saved"
+    assert_equal I18n.t('orders.errors.invalid_product'), order.errors.full_messages.first
   end
   
   test "it should start order" do

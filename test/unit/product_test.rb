@@ -21,7 +21,7 @@ class ProductTest < ActiveSupport::TestCase
   test "it should prevent product creation from unsupported merchant" do
     product = Product.new(:url => 'http://www.bla.fr/product')
     assert !product.save
-    assert_equal I18n.t('products.merchant_not_supported'), product.errors.full_messages.first
+    assert_equal I18n.t('products.errors.unsupported_merchant'), product.errors.full_messages.first
   end
 
 end

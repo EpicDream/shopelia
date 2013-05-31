@@ -31,8 +31,15 @@ fr:
   developers:
     unauthorized: "Clé API invalide"
     
+  orders:
+    errors:
+      no_product: "Impossible de créer une commande sans produit spécifié"
+      invalid_product: "Produit invalide"
+  
   products:
-    merchant_not_supported: "Ce produit ne peut pas être commandé par Shopelia"
+    errors:
+      unsupported_merchant: "Ce produit ne peut pas être commandé par Shopelia"
+      invalid_url: "L'URL du produit est invalide"
   
   users:
     invalid_birthdate: "Vous devez avoir au minimum 16 ans pour vous enregistrer"
