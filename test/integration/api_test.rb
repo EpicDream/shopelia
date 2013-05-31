@@ -3,8 +3,8 @@ require 'test_helper'
 
 class ApiTest < ActionDispatch::IntegrationTest
   
-  test "user account creation and ordering process" do
-    user = { 
+  setup do
+    @user = { 
       email: "test@shopelia.fr",
       first_name: "John",
       last_name: "Doe",
@@ -21,8 +21,10 @@ class ApiTest < ActionDispatch::IntegrationTest
         cvv: "123"
       } ]        
     }
-
-    post "/api/users", user:user, format: :json
+  end
+  
+  test "user account creation and ordering process" do
+    post "/api/users", user:@user, format: :json
     assert_response :success
     
     assert json_response["user"]
@@ -42,6 +44,23 @@ class ApiTest < ActionDispatch::IntegrationTest
       payment_card_id:user.payment_cards.first.id }, format: :json
 
     assert json_response["order"]
+  end
+
+  test "it shouldn't process order after a logout" do
+    post "/api/users", user:@user, format: :json
+    user = User.find_by_id(json_response["user"]["id"])
+
+    post "/api/orders", order: { 
+      products: [ {
+        url:"http://www.rueducommerce.fr/productA",
+        name:"Product A",
+        image_url:"http://www.rueducommerce.fr/logo.jpg"
+      } ], 
+      expected_price_total:100,
+      address_id:user.addresses.first.id,
+      payment_card_id:user.payment_cards.first.id }, format: :json
+
+    assert_response :unauthorized
   end
 
 end
