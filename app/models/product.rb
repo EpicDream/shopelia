@@ -6,6 +6,7 @@ class Product < ActiveRecord::Base
   validates :url, :presence => true, :uniqueness => true
   
   before_validation :extract_merchant_from_url
+  before_create :set_shopelia_affiliate_id_for_amazon
   
   private
   
@@ -23,5 +24,9 @@ class Product < ActiveRecord::Base
         self.errors.add(:base, I18n.t('products.errors.invalid_url'))
       end
     end
+  end
+  
+  def set_shopelia_affiliate_id_for_amazon
+    self.url = self.url.gsub(/tag=[a-z0-9\-]+/, "tag=shopelia-21")
   end
 end

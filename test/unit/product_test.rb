@@ -23,5 +23,10 @@ class ProductTest < ActiveSupport::TestCase
     assert !product.save
     assert_equal I18n.t('products.errors.unsupported_merchant'), product.errors.full_messages.first
   end
+  
+  test "it should replace amazon affiliate id by shopelia-21" do
+    product = Product.create(:url => 'http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY')
+    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY", product.url
+  end
 
 end
