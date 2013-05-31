@@ -7,7 +7,6 @@ class OrderTest < ActiveSupport::TestCase
   setup do
     @user = users(:elarch)
     @product = products(:usbkey)
-    @merchant = merchants(:rueducommerce)
     @order = orders(:elarch_rueducommerce)
     @card = payment_cards(:elarch_hsbc)
     @address = addresses(:elarch_neuilly)
@@ -44,7 +43,6 @@ class OrderTest < ActiveSupport::TestCase
   test "it should create order" do
     order = Order.new(
       :user_id => @user.id,
-      :merchant_id => @merchant.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.rueducommerce.fr/productA",
@@ -57,7 +55,6 @@ class OrderTest < ActiveSupport::TestCase
     assert order.merchant_account.present?
     assert order.uuid.present?
     assert_equal 1, order.reload.order_items.count
-    assert_equal @merchant.id, order.merchant_id    
     
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
@@ -83,7 +80,6 @@ class OrderTest < ActiveSupport::TestCase
     order = Order.new(
       :user_id => @user.id, 
       :expected_price_total => 100,
-      :merchant_id => @merchant.id, 
       :products => [ {
         :url => "http://www.rueducommerce.fr/productA",
         :name => "Product A",
@@ -103,7 +99,6 @@ class OrderTest < ActiveSupport::TestCase
         :url => "http://www.rueducommerce.fr/productA",
         :name => "Product A",
         :image_url => "http://www.rueducommerce.fr/logo.jpg" } ],        
-      :merchant_id => @merchant.id, 
       :address_id => @address.id)
     assert !order.save, "Order shouldn't have saved"
     assert_equal "Le moyen de paiement doit être renseigné", order.errors.full_messages.first
@@ -124,15 +119,15 @@ class OrderTest < ActiveSupport::TestCase
           :image_url => "http://www.amazon.fr/logo.jpg" }        
         ]
       )
-    assert order.save, order.errors.full_messages.join(",")
-    assert_equal 1, order.order_items.count
+    assert !order.persisted?, "Order should have been destroyed"
+    mail = ActionMailer::Base.deliveries.last
+    assert !mail.present?, "a notification email shouldn't have been sent"
   end
   
   test "it shouldn't create order without products" do
     order = Order.new(
       :user_id => @user.id, 
       :expected_price_total => 100,
-      :merchant_id => @merchant.id, 
       :address_id => @address.id,
       :payment_card_id => @card.id)
     assert !order.save, "Order shouldn't have saved"
@@ -143,12 +138,26 @@ class OrderTest < ActiveSupport::TestCase
     order = Order.new(
       :user_id => @user.id, 
       :expected_price_total => 100,
-      :merchant_id => @merchant.id, 
       :address_id => @address.id,
       :products => [ { :invalid => "http://www.rueducommerce.fr/productA" } ],              
       :payment_card_id => @card.id)
     assert !order.save, "Order shouldn't have saved"
     assert_equal I18n.t('orders.errors.invalid_product'), order.errors.full_messages.first
+  end
+  
+  test "it should monetize urls" do
+    order = Order.new(
+      :user_id => @user.id,
+      :payment_card_id => @card.id,
+      :products => [ {
+        :url => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY",
+        :name => "Aladdin",
+        :image_url => "http://www.amazon.fr/logo.jpg" } ],
+      :address_id => @address.id,
+      :expected_price_total => 100)
+    assert order.save
+    assert_equal 1, order.reload.order_items.count
+    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY", order.order_items.first.product.url
   end
   
   test "it should start order" do
@@ -268,7 +277,6 @@ class OrderTest < ActiveSupport::TestCase
   test "it should set merchant account as created when message account_created received" do
     order = Order.create(
       :user_id => @user.id, 
-      :merchant_id => @merchant.id, 
       :products => [ {
         :url => "http://www.rueducommerce.fr/productA",
         :name => "Product A",

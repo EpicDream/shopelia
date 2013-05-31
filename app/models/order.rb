@@ -15,7 +15,7 @@ class Order < ActiveRecord::Base
   validates :expected_price_total, :presence => true
   validates :payment_card, :presence => true
 
-  attr_accessible :user_id, :merchant_id, :address_id, :merchant_account_id, :payment_card_id
+  attr_accessible :user_id, :address_id, :merchant_account_id, :payment_card_id
   attr_accessible :message, :products, :shipping_info
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
@@ -30,8 +30,8 @@ class Order < ActiveRecord::Base
   before_create :validates_products
   after_initialize :deserialize_questions
   after_create :prepare_order_items
-  after_create :start
-  after_create :notify_user
+  after_create :start, :if => Proc.new { |order| !order.destroyed? }
+  after_create :notify_user, :if => Proc.new { |order| !order.destroyed? && order.order_items.count > 0 }
   
   def to_param
     self.uuid
@@ -157,14 +157,16 @@ class Order < ActiveRecord::Base
     self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
   end
   
-  def validates_products
+  def validates_products  
     if self.products.nil? || self.products.count == 0
       self.errors.add(:base, I18n.t('orders.errors.no_product'))
     else
       self.products.each do |p|
-        product = Product.find_or_create_by_url(p[:url])
+        product = Product.find_or_create_by_url(Linker.monetize(p[:url]))
         if !product.persisted?
           self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => product.errors.full_messages.join(",")))
+        else
+          product.update_attributes p
         end
       end
     end
@@ -172,12 +174,13 @@ class Order < ActiveRecord::Base
   end
   
   def prepare_order_items
-    (self.products || []).each do |p|
-      product = Product.find_or_create_by_url(p[:url])
-      next if product.nil? || self.merchant_id && self.merchant_id != product.merchant_id
-      product.update_attributes p
+    self.products.each do |p|
+      product = Product.find_or_create_by_url(Linker.monetize(p[:url]))
+      if product.nil? || self.merchant_id && self.merchant_id != product.merchant_id
+        self.destroy and return
+      end
       self.merchant_id = product.merchant_id
-      self.save!
+      self.save
       OrderItem.create!(order:self, product:product)
     end
   end
@@ -191,7 +194,7 @@ class Order < ActiveRecord::Base
   end
   
   def notify_user
-    Emailer.notify_order_creation(self).deliver unless self.order_items.count == 0
+    Emailer.notify_order_creation(self).deliver
   end
   
 end

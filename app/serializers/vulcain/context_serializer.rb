@@ -21,7 +21,7 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   end
   
   def address
-    AddressSerializer.new(object.address).as_json[:address]
+    Vulcain::AddressSerializer.new(object.address).as_json[:address]
   end
   
   def answers
