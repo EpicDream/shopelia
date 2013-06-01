@@ -44,6 +44,11 @@ class ApiTest < ActionDispatch::IntegrationTest
       payment_card_id:user.payment_cards.first.id }, format: :json
 
     assert json_response["order"]
+    uuid = json_response["order"]["uuid"]
+    assert uuid.present?
+    
+    order = Order.find_by_uuid(uuid)
+    assert_equal "Product A", order.order_items.first.product.name
   end
 
   test "it shouldn't process order after a logout" do

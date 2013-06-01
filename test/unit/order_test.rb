@@ -56,6 +56,11 @@ class OrderTest < ActiveSupport::TestCase
     assert order.uuid.present?
     assert_equal 1, order.reload.order_items.count
     
+    product = order.order_items.first.product
+    assert_equal "http://www.rueducommerce.fr/productA", product.url
+    assert_equal "Product A", product.name
+    assert_equal "http://www.rueducommerce.fr/logo.jpg", product.image_url
+    
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
     assert_match /Rue du Commerce/, mail.encoded

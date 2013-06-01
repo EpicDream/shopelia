@@ -163,11 +163,9 @@ class Order < ActiveRecord::Base
     else
       self.products.each do |p|
         product = Product.find_or_create_by_url(Linker.monetize(p[:url]))
-        if !product.persisted?
-          self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => product.errors.full_messages.join(",")))
-        else
-          product.update_attributes p
-        end
+        product.name = p[:name] unless p[:name].blank?
+        product.image_url = p[:image_url] unless p[:image_url].blank?
+        self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => product.errors.full_messages.join(","))) if !product.save
       end
     end
     self.errors.count == 0
