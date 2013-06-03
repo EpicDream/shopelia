@@ -28,7 +28,7 @@
 
     .row-fluid
       .span6
-        = link_to(image_tag(@order.order_items.first.product.image_url),@order.order_items.first.product.url)
+        = link_to(image_tag(@order.order_items.first.product.image_url, class:"product_image"),@order.order_items.first.product.url)
       .span6
         .spacer20.visible-phone
         .row
