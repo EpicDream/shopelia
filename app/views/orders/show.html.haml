@@ -31,24 +31,33 @@
         = link_to(image_tag(@order.order_items.first.product.image_url),@order.order_items.first.product.url)
       .span6
         .spacer20.visible-phone
-        %h4 Détails de votre commande :
-        %p
-          Vous avez commandé
-          %b= link_to(@order.order_items.first.product.name,@order.order_items.first.product.url)
-          chez
-          %b= link_to(@order.merchant.name,@order.merchant.url)
-          via le service
-          %b=link_to "Shopelia", "https://shopelia.com"
-        -#%h4.pull-left Chez
-        -#.span4=link_to(image_tag(@order.merchant.logo),)
+        .row
+          %h4 Détails de votre commande :
+          %p
+            Vous avez commandé
+            %b= link_to(@order.order_items.first.product.name,@order.order_items.first.product.url)
+            chez
+            %b= link_to(@order.merchant.name,@order.merchant.url)
+            via le service
+            %b=link_to "Shopelia", "https://shopelia.com"
+          %p Vous serez livré à l'adresse de livraison suivante :
+          %b.span10
+            %ul.unstyled
+              %li #{@order.address.first_name} #{@order.address.last_name}
+              %li= "#{@order.address.address1} #{@order.address.address2}"
+              %li= " #{@order.address.city}, #{@order.address.zip}  #{@order.address.state} "
+              %li= @order.address.country.name
+        .row
+          %h4
+            Pour suivre votre commande chez votre marchand
+            =link_to(@order.merchant.name,@order.merchant.url)
+            Veuillez vous connecter avec les identifiants suivants :
+          %dl.dl-horizontal
+            %dt Votre Compte:
+            %dd= @order.merchant_account.login
+            %dt Votre Mot de passe:
+            %dd= @order.merchant_account.password
 
-        %p Vous serez livré à l'adresse de livraison suivante :
-        %b.span10
-          %ul.unstyled
-            %li #{@order.address.first_name} #{@order.address.last_name}
-            %li= "#{@order.address.address1} #{@order.address.address2}"
-            %li= " #{@order.address.city}, #{@order.address.zip}  #{@order.address.state} "
-            %li= @order.address.country.name
 
 .spacer50
 
