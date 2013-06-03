@@ -84,7 +84,7 @@ class Order < ActiveRecord::Base
         (content["products"] || []).each do |product|
           self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
         end
-        confirmed = self.expected_price_total == self.prepared_price_total
+        confirmed = self.expected_price_total >= self.prepared_price_total
         @questions.each { |question| question["answer"] = confirmed }
         assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
         abort(:price_range) unless confirmed
