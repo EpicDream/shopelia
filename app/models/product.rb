@@ -11,16 +11,11 @@ class Product < ActiveRecord::Base
   
   def extract_merchant_from_url
     if self.merchant_id.nil?
-      begin
-        merchant = Merchant.where("url like ?", "http://#{URI.parse(url).host}%").first
-        if merchant.nil?
-          self.errors.add(:base, I18n.t('products.errors.unsupported_merchant'))
-          false
-        else
-          self.merchant_id = merchant.id
-        end
-      rescue
-        self.errors.add(:base, I18n.t('products.errors.invalid_url'))
+      merchant = Merchant.from_url(url)
+      if merchant.nil?
+        self.errors.add(:base, I18n.t('products.errors.unsupported_merchant'))
+      else
+        self.merchant_id = merchant.id
       end
     end
   end

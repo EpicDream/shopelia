@@ -11,9 +11,17 @@ class Merchant < ActiveRecord::Base
   before_destroy :check_presence_of_orders
   
   def self.from_url url
-    Merchant.where("url like ?", "http://#{URI.parse(url).host}%").first
+    return nil if url.blank?
+    begin
+      merchant = Merchant.where("url like ?", "http://#{URI.parse(url.gsub(/[^0-9a-z\-\.\/\:]/, "")).host}%").first
+      return merchant unless merchant.nil?
     rescue
-      nil
+    end
+    Merchant.all.each do |merchant|
+      host = URI.parse(merchant.url).host.gsub("www.", "")
+      return merchant if url.include? host
+    end
+    nil
   end
   
   private

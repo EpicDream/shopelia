@@ -6,7 +6,7 @@ class Order < ActiveRecord::Base
   belongs_to :address
   belongs_to :merchant_account
   belongs_to :payment_card
-  has_many :order_items
+  has_many :order_items, :dependent => :destroy
   
   validates :user, :presence => true
   validates :state_name, :presence => true, :inclusion => { :in => STATES }

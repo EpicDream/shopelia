@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'test_helper'
 
 class MerchantTest < ActiveSupport::TestCase
@@ -23,6 +24,18 @@ class MerchantTest < ActiveSupport::TestCase
   
   test "it shouldn't find merchant from a non supported product url" do
     assert Merchant.from_url("http://www.bla.com").nil?
+  end
+  
+  test "it should match url with accents" do
+    assert_equal merchants(:rueducommerce).id, Merchant.from_url("http://www.rueducommerce.fr/bla-accent-é").id
+  end
+
+  test "it should match url hostname in the url" do
+    assert_equal merchants(:rueducommerce).id, Merchant.from_url("http://www.tracker.fr/bla-rueducommerce.fr-yo").id
+  end
+
+  test "it should match url hostname at the end of url" do
+    assert_equal merchants(:rueducommerce).id, Merchant.from_url("http://www.tracker.fr/bla#rueducommerce.fr").id
   end
   
   private
