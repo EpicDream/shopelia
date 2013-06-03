@@ -1,7 +1,7 @@
 class Vulcain::ContextSerializer < ActiveModel::Serializer
   include ActiveModelSerializerExtension::JsonWithoutNilKeys
   
-  attributes :session, :account, :order, :user, :answers, :address
+  attributes :session, :account, :order, :user, :answers
   
   def session
     { :uuid => object.uuid, :callback_url => object.callback_url }
@@ -18,10 +18,6 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   
   def user
     Vulcain::UserSerializer.new(object.user, scope:{address_id:object.address_id}).as_json[:user]
-  end
-  
-  def address
-    Vulcain::AddressSerializer.new(object.address).as_json[:address]
   end
   
   def answers

@@ -17,7 +17,6 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     assert context[:order].present?
     assert context[:order][:credentials].present?
     assert context[:user].present?
-    assert context[:address].present?
 
     session = context[:session]
     assert_equal @order.uuid, session[:uuid]
