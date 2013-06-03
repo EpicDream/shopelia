@@ -1,6 +1,6 @@
 %h2= t('.change_your_password', :default => 'Change your password')
 
-= simple_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f|
+= simple_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put },:validate => true) do |f|
   = f.error_notification
 
   = f.input :reset_password_token, :as => :hidden
@@ -9,6 +9,17 @@
   .form-inputs
     = f.input :password, :label => false, :required => true, :autofocus => true, :placeholder => t('.new_password', :default => 'New password')
     = f.input :password_confirmation, :label => false, :required => true, :placeholder => t('.confirm_new_password', :default => 'Confirm new password')
-    = f.button :submit, t('.change_my_password', :default => 'Change my password')
+    = f.button :submit, t('.change_my_password', :default => 'Change my password') , id:"reset_password_submit_btn"
 
 = render "devise/shared/links"
+:javascript
+  $(document).ready(function() {
+     $("#reset_password_submit_btn").click(function(){
+       if($("#user_password").val() == undefined || $("#user_password").val() == "") {
+         alert('Veuillez saisir un mot de passe');
+         $("#user_password").focus()
+         return false;
+       }
+     })
+  });
+
