@@ -5,9 +5,14 @@ class Product < ActiveRecord::Base
   validates :merchant, :presence => true
   validates :url, :presence => true, :uniqueness => true
   
+  before_validation :unaccent_url
   before_validation :extract_merchant_from_url
   
   private
+  
+  def unaccent_url
+    self.url = self.url.unaccent unless self.url.nil?
+  end
   
   def extract_merchant_from_url
     if self.merchant_id.nil?

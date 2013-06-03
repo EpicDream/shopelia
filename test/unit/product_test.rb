@@ -25,4 +25,10 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal I18n.t('products.errors.unsupported_merchant'), product.errors.full_messages.first
   end
 
+  test "it should unaccent url" do
+    product = Product.new(:url => 'http://www.rueducommerce.fr/product-é')
+    assert product.save, product.errors.full_messages.join(",")
+    assert_equal "http://www.rueducommerce.fr/product-e", product.url
+  end
+
 end
