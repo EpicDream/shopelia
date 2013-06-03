@@ -47,16 +47,17 @@
               %li= "#{@order.address.address1} #{@order.address.address2}"
               %li= " #{@order.address.city}, #{@order.address.zip}  #{@order.address.state} "
               %li= @order.address.country.name
-        .row
-          %h4
-            Pour suivre votre commande chez votre marchand
-            =link_to(@order.merchant.name,@order.merchant.url)
-            Veuillez vous connecter avec les identifiants suivants :
-          %dl.dl-horizontal
-            %dt Votre Compte:
-            %dd= @order.merchant_account.login
-            %dt Votre Mot de passe:
-            %dd= @order.merchant_account.password
+        - if order_completed?
+          .row
+            %h4
+              Pour suivre votre commande chez votre marchand
+              =link_to(@order.merchant.name,@order.merchant.url)
+              Veuillez vous connecter avec les identifiants suivants :
+            %dl.dl-horizontal
+              %dt Votre Compte:
+              %dd= @order.merchant_account.login
+              %dt Votre Mot de passe:
+              %dd= @order.merchant_account.password
 
 
 .spacer50
