@@ -34,6 +34,9 @@ Shopelia::Application.routes.draw do
       namespace :callback do
         resources :orders, :only => :update
       end
+      namespace :limonetik do
+        resources :orders, :only => :update
+      end
       namespace :places do
         resources :autocomplete, :only => :index
         resources :details, :only => :show
