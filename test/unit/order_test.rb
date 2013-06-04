@@ -171,25 +171,25 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should fail order with exception" do
-    @order.process "failure", { "message" => "exception" }
+    @order.process "failure", { "status" => "exception" }
     assert_equal :pending, @order.reload.state
     assert_equal "vulcain_exception", @order.error_code
   end
 
   test "it should fail order with error" do
-    @order.process "failure", { "message" => "error" }
+    @order.process "failure", { "status" => "error" }
     assert_equal :pending, @order.reload.state
     assert_equal "vulcain_error", @order.error_code
   end
   
   test "it should fail order with lack of vulcains" do
-    @order.process "failure", { "message" => "no_idle" }
+    @order.process "failure", { "status" => "no_idle" }
     assert_equal :pending, @order.reload.state
     assert_equal "vulcain_error", @order.error_code
   end
 
   test "it should fail order with driver problem" do
-    @order.process "failure", { "message" => "driver_failed" }
+    @order.process "failure", { "status" => "driver_failed" }
     assert_equal :pending, @order.reload.state
     assert_equal "vulcain_error", @order.error_code
   end
@@ -249,7 +249,7 @@ class OrderTest < ActiveSupport::TestCase
   
   test "it should restart order with new account if account creation failed" do
    assert_difference('MerchantAccount.count', 1) do
-     @order.process "failure", { "message" => "account_creation_failed" }
+     @order.process "failure", { "status" => "account_creation_failed" }
    end
    assert_equal :processing, @order.reload.state
   end
@@ -257,7 +257,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should restart order with new account if login failed" do
    old_id = @order.merchant_account.id
    assert_difference('MerchantAccount.count', 1) do
-     @order.process "failure", { "message" => "login_failed" }
+     @order.process "failure", { "status" => "login_failed" }
    end
    assert_equal 1, @order.reload.retry_count
    assert_not_equal old_id, @order.merchant_account.id
@@ -265,7 +265,7 @@ class OrderTest < ActiveSupport::TestCase
   end
  
   test "it should process order validation failure" do
-   @order.process "failure", { "message" => "order_validation_failed" }
+   @order.process "failure", { "status" => "order_validation_failed" }
    assert_equal :aborted, @order.reload.state
    assert_equal "payment_refused", @order.error_code
   end
@@ -273,7 +273,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't restart order if maximum number of retries has been reached" do
    @order.retry_count = Rails.configuration.max_retry
    assert_difference('MerchantAccount.count', 0) do
-     @order.process "failure", { "message" => "account_creation_failed" }
+     @order.process "failure", { "status" => "account_creation_failed" }
    end
    assert_equal :pending, @order.reload.state
    assert_equal "account_error", @order.error_code

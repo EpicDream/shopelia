@@ -65,12 +65,11 @@ class Order < ActiveRecord::Base
         end
 
       elsif verb.eql?("failure")
-        case content["message"]
+        case content["status"]
         when "exception" then fail(content["message"], :vulcain_exception)
         when "no_idle" then fail(content["message"], :vulcain_error)
         when "error" then fail(content["message"], :vulcain_error)
         when "driver_failed" then fail("driver_failure", :vulcain_error)
-        when "order_canceled" then fail("order_canceled", :user_error)
         when "order_validation_failed" then abort(:payment_refused)
         when "account_creation_failed" then restart
         when "login_failed" then restart
