@@ -5,13 +5,17 @@ class Product < ActiveRecord::Base
   validates :merchant, :presence => true
   validates :url, :presence => true, :uniqueness => true
   
-  before_validation :unaccent_url
+  before_validation :monetize_url
   before_validation :extract_merchant_from_url
+  
+  def self.fetch url
+    Product.find_or_create_by_url(Linker.monetize(url)) unless url.nil?
+  end
   
   private
   
-  def unaccent_url
-    self.url = self.url.unaccent unless self.url.nil?
+  def monetize_url
+    self.url = Linker.monetize(self.url) unless self.url.nil?
   end
   
   def extract_merchant_from_url

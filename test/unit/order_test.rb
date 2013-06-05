@@ -41,29 +41,29 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should create order" do
-    order = Order.new(
+    order = Order.create(
       :user_id => @user.id,
       :payment_card_id => @card.id,
       :products => [ {
-        :url => "http://www.rueducommerce.fr/productA",
-        :name => "Product A",
-        :image_url => "http://www.rueducommerce.fr/logo.jpg" } ],
+        :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
+        :name => "Papier normal Fax T102 Brother FAXT102G1",
+        :image_url => "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg" } ],
       :address_id => @address.id,
       :expected_price_total => 100)
-    assert order.save, order.errors.full_messages.join(",")
+    assert order.persisted?, order.errors.full_messages.join(",")
     assert_equal :processing, order.state
     assert order.merchant_account.present?
     assert order.uuid.present?
     assert_equal 1, order.reload.order_items.count
     
     product = order.order_items.first.product
-    assert_equal "http://www.rueducommerce.fr/productA", product.url
-    assert_equal "Product A", product.name
-    assert_equal "http://www.rueducommerce.fr/logo.jpg", product.image_url
+    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
+    assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
+    assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
     
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
-    assert_match /Rue du Commerce/, mail.encoded
+    assert_match /Amazon/, mail.encoded
   end
 
   test "it should create order with specific address" do
@@ -140,13 +140,13 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it shouldn't create order with invalid product" do
-    order = Order.new(
+    order = Order.create(
       :user_id => @user.id, 
       :expected_price_total => 100,
       :address_id => @address.id,
       :products => [ { :invalid => "http://www.rueducommerce.fr/productA" } ],              
       :payment_card_id => @card.id)
-    assert !order.save, "Order shouldn't have saved"
+    assert !order.persisted?, "Order shouldn't have saved"
     assert_equal I18n.t('orders.errors.invalid_product'), order.errors.full_messages.first
   end
   

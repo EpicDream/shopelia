@@ -1,6 +1,7 @@
 class Linker
 
   def self.monetize url
+    url = url.unaccent unless url.nil?
     if url.blank?
       nil
     elsif url.match(/amazon/)

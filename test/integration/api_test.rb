@@ -35,11 +35,11 @@ class ApiTest < ActionDispatch::IntegrationTest
 
     post "/api/orders", auth_token:auth_token, order: { 
       products: [ {
-        url:"http://www.rueducommerce.fr/productA",
-        name:"Product A",
-        image_url:"http://www.rueducommerce.fr/logo.jpg"
+        url:"http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
+        name:"Papier normal Fax T102 Brother FAXT102G1",
+        image_url:"http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg"
       } ], 
-      expected_price_total:100,
+      expected_price_total:60.13,
       address_id:user.addresses.first.id,
       payment_card_id:user.payment_cards.first.id }, format: :json
 
@@ -48,7 +48,12 @@ class ApiTest < ActionDispatch::IntegrationTest
     assert uuid.present?
     
     order = Order.find_by_uuid(uuid)
-    assert_equal "Product A", order.order_items.first.product.name
+    assert_equal :processing, order.state
+    
+    product = order.order_items.first.product
+    assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
+    assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
+    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url   
   end
 
   test "it shouldn't process order after a logout" do
@@ -67,6 +72,6 @@ class ApiTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
   end
-
+  
 end
 

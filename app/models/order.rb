@@ -168,7 +168,12 @@ class Order < ActiveRecord::Base
       self.errors.add(:base, I18n.t('orders.errors.no_product'))
     else
       self.products.each do |p|
-        product = Product.find_or_create_by_url(Linker.monetize(p[:url]))
+        product = Product.fetch(p[:url])
+
+        self.errors.add(
+          :base, I18n.t('orders.errors.invalid_product', 
+          :error => product.nil? ? "" : product.errors.full_messages.join(","))) and next if product.nil? || !product.persisted?
+
         product.name = p[:name] unless p[:name].blank?
         product.image_url = p[:image_url] unless p[:image_url].blank?
         self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => product.errors.full_messages.join(","))) if !product.save
@@ -179,13 +184,13 @@ class Order < ActiveRecord::Base
   
   def prepare_order_items
     self.products.each do |p|
-      product = Product.find_or_create_by_url(Linker.monetize(p[:url]))
-      if product.nil? || self.merchant_id && self.merchant_id != product.merchant_id
+      product = Product.fetch(p[:url])
+      if product.nil? || !product.persisted? || self.merchant_id && self.merchant_id != product.merchant_id
         self.destroy and return
       end
       self.merchant_id = product.merchant_id
       self.save
-      OrderItem.create!(order:self, product:product)
+      order = OrderItem.create!(order:self, product:product)
     end
   end
   
