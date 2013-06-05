@@ -63,6 +63,10 @@ class User < ActiveRecord::Base
     self.errors.add(:base, I18n.t('users.invalid_birthdate')) if self.birthdate.present? && Time.now - self.birthdate < 16.years
   end
   
+  def name
+    "#{self.first_name} #{self.last_name}"
+  end
+  
   def male?
     self.civility == CIVILITY_MR
   end

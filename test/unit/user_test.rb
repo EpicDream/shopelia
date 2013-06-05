@@ -308,4 +308,8 @@ class UserTest < ActiveSupport::TestCase
     assert user.password_match?
   end
   
+  test "it should set name" do
+    assert_equal "Eric Larchevêque", @user.name
+  end
+  
 end
