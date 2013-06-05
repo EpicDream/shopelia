@@ -1,5 +1,6 @@
 class Order < ActiveRecord::Base
   STATES = ["initialized", "processing", "pending", "completed", "aborted"]
+  ERRORS = ["vulcain_api", "vulcain", "user", "payment", "price", "account"]
 
   belongs_to :user
   belongs_to :merchant
@@ -51,7 +52,7 @@ class Order < ActiveRecord::Base
       self.retry_count = self.retry_count.to_i + 1
       start
     else
-      fail(I18n.t("orders.failure.account"), :account_error)
+      fail(I18n.t("orders.failure.account"), :account)
     end
     self.save!
   end
@@ -66,11 +67,12 @@ class Order < ActiveRecord::Base
 
       elsif verb.eql?("failure")
         case content["status"]
-        when "exception" then fail(content["message"], :vulcain_exception)
-        when "no_idle" then fail(content["message"], :vulcain_error)
-        when "error" then fail(content["message"], :vulcain_error)
-        when "driver_failed" then fail("driver_failure", :vulcain_error)
-        when "order_validation_failed" then abort(:payment_refused)
+        when "exception" then fail("exception", :vulcain)
+        when "no_idle" then fail("no_idle", :vulcain)
+        when "error" then fail("error", :vulcain)
+        when "driver_failed" then fail("driver_failed", :vulcain)
+        when "order_timeout" then fail("order_timeout", :vulcain)
+        when "order_validation_failed" then abort(:payment)
         when "account_creation_failed" then restart
         when "login_failed" then restart
         end
@@ -86,13 +88,14 @@ class Order < ActiveRecord::Base
         confirmed = self.expected_price_total >= self.prepared_price_total
         @questions.each { |question| question["answer"] = confirmed }
         assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
-        abort(:price_range) unless confirmed
+        abort(:price) unless confirmed
 
       elsif verb.eql?("success")
         self.billed_price_total = content["billing"]["total"]
         self.billed_price_product = content["billing"]["product"]
         self.billed_price_shipping = content["billing"]["shipping"]
         self.shipping_info = content["billing"]["shipping_info"]
+        self.error_code = nil
         self.state = :completed
 
       end
@@ -127,14 +130,18 @@ class Order < ActiveRecord::Base
 
   def fail content, error_sym
     self.message = content
-    self.error_code = error_sym.to_s
+    self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending
   end
 
   def abort error_sym
-    self.error_code = error_sym.to_s
+    self.error_code = check_error_validity(error_sym.to_s)
     self.state = :aborted
   end    
+
+  def check_error_validity error
+    ERRORS.include?(error) ? error : "INVALID_ERROR"
+  end
 
   def state= state_sym
     self.state_name = state_sym.to_s

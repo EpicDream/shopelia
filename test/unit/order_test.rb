@@ -173,25 +173,36 @@ class OrderTest < ActiveSupport::TestCase
   test "it should fail order with exception" do
     @order.process "failure", { "status" => "exception" }
     assert_equal :pending, @order.reload.state
-    assert_equal "vulcain_exception", @order.error_code
+    assert_equal "vulcain", @order.error_code
+    assert_equal "exception", @order.message
   end
 
   test "it should fail order with error" do
     @order.process "failure", { "status" => "error" }
     assert_equal :pending, @order.reload.state
-    assert_equal "vulcain_error", @order.error_code
+    assert_equal "vulcain", @order.error_code
+    assert_equal "error", @order.message    
   end
   
   test "it should fail order with lack of vulcains" do
     @order.process "failure", { "status" => "no_idle" }
     assert_equal :pending, @order.reload.state
-    assert_equal "vulcain_error", @order.error_code
+    assert_equal "vulcain", @order.error_code
+    assert_equal "no_idle", @order.message
   end
 
   test "it should fail order with driver problem" do
     @order.process "failure", { "status" => "driver_failed" }
     assert_equal :pending, @order.reload.state
-    assert_equal "vulcain_error", @order.error_code
+    assert_equal "vulcain", @order.error_code
+    assert_equal "driver_failed", @order.message
+  end
+
+  test "it should time our order" do
+    @order.process "failure", { "status" => "order_timeout" }
+    assert_equal :pending, @order.reload.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "order_timeout", @order.message
   end
 
   test "it should set message" do
@@ -228,7 +239,7 @@ class OrderTest < ActiveSupport::TestCase
     @order.process "assess", @content
     assert_equal :aborted, @order.reload.state
     assert_equal false, @order.questions.first["answer"]
-    assert_equal "price_range", @order.error_code
+    assert_equal "price", @order.error_code
   end
 
   test "it should succeed order" do
@@ -267,7 +278,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should process order validation failure" do
    @order.process "failure", { "status" => "order_validation_failed" }
    assert_equal :aborted, @order.reload.state
-   assert_equal "payment_refused", @order.error_code
+   assert_equal "payment", @order.error_code
   end
   
   test "it shouldn't restart order if maximum number of retries has been reached" do
@@ -276,7 +287,7 @@ class OrderTest < ActiveSupport::TestCase
      @order.process "failure", { "status" => "account_creation_failed" }
    end
    assert_equal :pending, @order.reload.state
-   assert_equal "account_error", @order.error_code
+   assert_equal "account", @order.error_code
   end
  
   test "it should set merchant account as created when message account_created received" do
@@ -303,5 +314,12 @@ class OrderTest < ActiveSupport::TestCase
   test "it should parametrize order with uuid" do
     assert_equal @order.uuid, @order.to_param
   end
- 
+  
+  test "it should clear error_code when state becomes completed" do
+    @order.process "failure", { "status" => "error" }
+    assert @order.reload.error_code.present?
+    @order.reload.process "success", {"billing" => {}}    
+    assert @order.reload.error_code.nil?
+  end
+   
 end
