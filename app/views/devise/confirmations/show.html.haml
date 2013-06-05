@@ -4,7 +4,7 @@
   = f.input :password, :input_html => {:autofocus => true}
   = f.input :password_confirmation, label: "Confirmation mot de passe"
   = f.input :civility,label: "Civilité",collection: [["Mademoiselle",User::CIVILITY_MLLE],["Madame",User::CIVILITY_MME],["Monsieur",User::CIVILITY_MR]], include_blank: true
-  = f.input :birthdate, :as => :string, label: "Date de naissance", input_html: {value: resource.birthdate.strftime("%d/%m/%Y")}, :validate => false
+  = f.input :birthdate, :as => :string, label: "Date de naissance", input_html: { value: "#{resource.birthdate.strftime("%d/%m/%Y") unless resource.birthdate.nil?}"}, :validate => false
   = f.input :nationality_id, label:"Pays de résidence",collection: Country.all
   = f.input :confirmation_token, :as => :hidden
   = f.submit "MISE A JOUR DU PROFIL", :class => "btn", id:"confirm_submit_btn"
