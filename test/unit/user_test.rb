@@ -105,6 +105,7 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test "user should be male or female" do
+    @user.civility = User::CIVILITY_MR
     assert @user.male?
     assert !@user.female? 
   end
@@ -293,7 +294,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal ["ne concorde pas avec le mot de passe"],  errors[:password_confirmation]
   end
 
-  test "it should return true password and password confiramtion are the same" do
+  test "it should return true password and password confirmation are the same" do
     user = User.create(
         :email => "willpass@gmail.com",
         :password => "merguez",

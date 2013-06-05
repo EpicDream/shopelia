@@ -19,9 +19,7 @@ class User < ActiveRecord::Base
 
   validates :first_name, :presence => true
   validates :last_name, :presence => true
-  validates :birthdate, :presence => true
-  validates :nationality, :presence => true
-  validates :civility, :presence => true, :inclusion => { :in => [ CIVILITY_MR, CIVILITY_MME, CIVILITY_MLLE ] }
+  validates :civility, :inclusion => { :in => [ CIVILITY_MR, CIVILITY_MME, CIVILITY_MLLE ] }, :allow_nil => true
   validates :ip_address, :presence => true
   validates_confirmation_of :password
   validate :user_must_be_16_yo
@@ -33,7 +31,6 @@ class User < ActiveRecord::Base
   attr_accessor :addresses_attributes, :payment_cards_attributes
 
   before_validation :reset_test_account
-  before_validation :set_default_values
 
   before_create :skip_confirmation_email
   after_save :process_nested_attributes
@@ -63,7 +60,7 @@ class User < ActiveRecord::Base
   end
   
   def user_must_be_16_yo
-    self.errors.add(:base, I18n.t('users.invalid_birthdate')) if self.birthdate.nil? || Time.now - self.birthdate < 16.years
+    self.errors.add(:base, I18n.t('users.invalid_birthdate')) if self.birthdate.present? && Time.now - self.birthdate < 16.years
   end
   
   def male?
@@ -104,7 +101,6 @@ class User < ActiveRecord::Base
     self.psp_users.leetchi.first
   end
 
-
   def password_required?
     super if confirmed?
   end
@@ -117,12 +113,6 @@ class User < ActiveRecord::Base
   end
   
   private
-  
-  def set_default_values
-    self.civility = CIVILITY_MR if self.civility.nil?
-    self.birthdate = "1980-01-01" if self.birthdate.nil?
-    self.nationality_id = Country.find_by_name("France").id if self.nationality_id.nil?
-  end
   
   def skip_confirmation_email
     @confirmation_delayed = true

@@ -4,9 +4,6 @@ elarch:
   first_name: Eric
   last_name: Larchevêque
   confirmation_sent_at: <%= 1.day.ago %>
-  birthdate: '1973-09-30'
-  civility: <%= User::CIVILITY_MR %>
-  nationality: france
   ip_address: '127.0.0.1'
   pincode: '1234'
   
