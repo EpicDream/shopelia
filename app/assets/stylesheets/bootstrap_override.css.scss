@@ -7,6 +7,9 @@
   white-space: pre-wrap;
 }
 
+.row {
+  margin-left: 0;
+}
 
 .spacer5 { height: 5px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
 .spacer10 { height: 10px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
@@ -53,6 +56,18 @@
   .btn {
     font-size: $smallSizeFont;
     font-weight: bold;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .dl-horizontal.dl-custom dt {
+    text-align: left !important;
+    width:  auto !important;
+  }
+
+  .dl-horizontal.dl-custom dd {
+    clear: both !important;
+    margin-left:  0 !important;
   }
 }
 

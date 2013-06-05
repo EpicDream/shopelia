@@ -6,7 +6,7 @@
 .hidden-phone
   .spacer25
 .row
-  .box.span9.offset1
+  .box
     %h2 Suivi de votre commande :
     %br
     %table.table.table-striped.table-bordered
@@ -26,6 +26,7 @@
           %td= number_to_currency(@order.expected_price_total.round(2))
           %td= state[:name]
 
+    .spacer25
     .row-fluid
       .span6
         = link_to(image_tag(@order.order_items.first.product.image_url, class:"product_image"),@order.order_items.first.product.url)
@@ -48,16 +49,15 @@
               %li= " #{@order.address.city}, #{@order.address.zip}  #{@order.address.state} "
               %li= @order.address.country.name
         - if order_completed?
-          .row
-            %h4
-              Pour suivre votre commande chez votre marchand
-              =link_to(@order.merchant.name,@order.merchant.url)
-              Veuillez vous connecter avec les identifiants suivants :
-            %dl.dl-horizontal
-              %dt Votre Compte:
-              %dd= @order.merchant_account.login
-              %dt Votre Mot de passe:
-              %dd= @order.merchant_account.password
+          %p
+            Pour suivre votre commande chez votre marchand
+            =link_to(@order.merchant.name,@order.merchant.url)
+            Veuillez vous connecter avec les identifiants suivants :
+          %dl.dl-horizontal.dl-custom
+            %dt Votre Compte:
+            %dd= @order.merchant_account.login
+            %dt Votre Mot de passe:
+            %dd= @order.merchant_account.password
 
 
 .spacer50
