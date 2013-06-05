@@ -4,6 +4,7 @@ rueducommerce:
   url: "http://www.rueducommerce.fr"
   tc_url: "http://www.rueducommerce.fr/home/index.cfm/aide/cgv.htm"
   vendor: "RueDuCommerce"
+  accepting_orders: true
 
 amazon:
   name: "Amazon"
@@ -11,3 +12,5 @@ amazon:
   url: "http://www.amazon.fr"
   tc_url: "http://www.amazon.fr/terms"
   vendor: "AmazonFrance"
+  accepting_orders: true
+  

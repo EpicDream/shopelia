@@ -4,7 +4,7 @@ class Api::V1::MerchantsController < Api::V1::BaseController
 
   api :GET, "/merchants", "Get all available merchants"
   def index
-    render json: ActiveModel::ArraySerializer.new(Merchant.all)
+    render json: ActiveModel::ArraySerializer.new(Merchant.accepting_orders)
   end
     
   api :POST, "/merchants", "Get merchant for a specific url"

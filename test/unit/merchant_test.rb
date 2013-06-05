@@ -18,6 +18,11 @@ class MerchantTest < ActiveSupport::TestCase
     assert @merchant.destroy
   end
   
+  test "merchant should accept order" do
+    populate_merchant
+    assert @merchant.accepting_orders?
+  end
+  
   test "it should find merchant from a supported product url" do
     assert_equal merchants(:rueducommerce).id, Merchant.from_url("http://www.rueducommerce.fr/bla").id
   end

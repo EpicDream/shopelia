@@ -21,6 +21,12 @@ class Api::V1::MerchantsControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal merchants(:rueducommerce).id, json_response["merchant"]["id"]
   end
+  
+  test "it shouldn't send merchants not accepting order" do
+    merchants(:amazon).update_attribute :accepting_orders, false
+    get :index, format: :json
+    assert_equal Merchant.all.count - 1, json_response.count
+  end
 
 end
 

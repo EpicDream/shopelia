@@ -6,6 +6,8 @@ class Merchant < ActiveRecord::Base
   validates :vendor, :presence => true, :uniqueness => true
   validates :url, :presence => true, :uniqueness => true
   
+  scope :accepting_orders, :conditions => ['accepting_orders = ?', true]
+  
   attr_accessible :id, :name, :vendor, :url, :tc_url, :logo
   
   before_destroy :check_presence_of_orders
