@@ -2,12 +2,16 @@
 module OrdersHelper
   def state
     case @order.state
-      when "aborted"
-        {state:"error",name:"Annulée"}
-      when "completed"
+      when :initialized
+        {state: "initialization",name:"Initialisation"}
+      when :processing
+        {state: "processing",name:"Commande en cours"}
+      when :pending
+        {state:"warning",name:"En attente"}
+      when :completed
         {state:"success",name:"Validée"}
       else
-        {state:"warning",name:"En attente"}
+        {state:"error",name:"Annulée"}
     end
   end
 
