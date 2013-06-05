@@ -321,5 +321,18 @@ class OrderTest < ActiveSupport::TestCase
     @order.reload.process "success", {"billing" => {}}    
     assert @order.reload.error_code.nil?
   end
+  
+  test "it should start an order only if initialized or pending mode" do
+    @order.state_name = "processing"
+    assert !@order.start
+    @order.state_name = "completed"
+    assert !@order.start
+    @order.state_name = "aborted"
+    assert !@order.start
+    @order.state_name = "pending"
+    assert @order.start
+    @order.state_name = "initialized"
+    assert @order.start
+  end
    
 end

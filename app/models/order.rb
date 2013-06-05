@@ -39,6 +39,7 @@ class Order < ActiveRecord::Base
   end
   
   def start
+    return false unless [:initialized, :pending].include?(state)
     @questions = []
     error_code = message = nil
     self.state = :processing
@@ -50,6 +51,7 @@ class Order < ActiveRecord::Base
     if self.retry_count.to_i < Rails.configuration.max_retry
       self.merchant_account_id = MerchantAccount.create(user_id:self.user_id, merchant_id:self.merchant_id, address_id:self.address_id).id
       self.retry_count = self.retry_count.to_i + 1
+      self.state = :pending
       start
     else
       fail(I18n.t("orders.failure.account"), :account)
