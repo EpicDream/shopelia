@@ -198,11 +198,18 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "driver_failed", @order.message
   end
 
-  test "it should time our order" do
+  test "it should time out order" do
     @order.process "failure", { "status" => "order_timeout" }
     assert_equal :pending, @order.reload.state
     assert_equal "vulcain", @order.error_code
     assert_equal "order_timeout", @order.message
+  end
+
+  test "it should fail order with dispatcher crash" do
+    @order.process "failure", { "status" => "dispatcher_crash" }
+    assert_equal :pending, @order.reload.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "dispatcher_crash", @order.message
   end
 
   test "it should set message" do
