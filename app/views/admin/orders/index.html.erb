@@ -1,20 +1,68 @@
-<h1>Orders list</h1>
-<table class="table table-striped">
-  <tr>
-    <th><%= sortable "uuid", "UUID" %></th>
-    <th><%= sortable "user_id", "User" %></th>
-    <th><%= sortable "created_at", "Created at" %></th>
-    <th><%= sortable "state_name", "State" %></th>
-    <th><%= sortable "error_code", "Error code" %></th>
-  </tr>
-<% @orders.each do |order| %>
-  <tr>
-    <td><%= link_to order.uuid, order_path(order.uuid) %></td>
-    <td><%= order.user.first_name %> <%= order.user.last_name %></td>
-    <td><%= l order.created_at %></td>
-    <td><%= order.state %></td>
-    <td><%= order.error_code %></td>
-  </tr>
-<% end %>
-</table>
-<%= will_paginate(@orders) %>
+<audio id="sound-bell">
+  <source src="/sound/bell.mp3" type='audio/x-wav'>
+</audio>
+
+<div class="row">
+  <div class="span12" id="processingOrdersSection">
+    <span class="badge"><h2>Processing orders</h2></span>
+    <table id="processingOrders" class="table table-striped" data-source="<%= admin_orders_url(state:"processing", format: "json") %>">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>User</th>
+          <th>Updated at</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+  </div>
+  <div id="pendingOrdersSection">
+    <span class="badge badge-warning"><h2>Pending Orders</h2></span>
+    <table id="pendingOrders" class="table table-striped" data-source="<%= admin_orders_url(state:"pending", format: "json") %>">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>User</th>
+          <th>Updated at</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+  </div>
+</div>
+
+<div class="row">
+  <div class="span6" id="completedOrdersSection">
+    <span class="badge badge-success"><h2>Completed orders</h2></span>
+    <table id="completedOrders" class="table table-striped" data-source="<%= admin_orders_url(state:"completed", format: "json") %>">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>User</th>
+          <th>Updated at</th>
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+  </div>
+  <div class="span6" id="failedOrdersSection">
+    <span class="badge badge-important"><h2>Failed orders</h2></span>
+    <table id="failedOrders" class="table table-striped" data-source="<%= admin_orders_url(state:"failed", format: "json") %>">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Price</th>
+          <th>User</th>
+          <th>Updated at</th>
+          <th>Error</th>
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+  </div>
+</div>

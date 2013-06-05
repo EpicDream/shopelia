@@ -1,0 +1,22 @@
+<h1>Users list</h1>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th><%= sortable "email", "Email" %></th>
+      <th><%= sortable "last_name", "Name" %></th>
+      <th><%= sortable "created_at", "Created at" %></th>
+      <th>Confirmed at</th>
+    </tr>
+  </thead>
+  <tbody>
+<% @users.each do |user| %>
+    <tr>
+      <td><%= user.email %></td>
+      <td><%= user.first_name %> <%= user.last_name %></td>
+      <td><%= l user.created_at %></td>
+      <td><%= user.confirmed_at.nil? ? "" : l(user.confirmed_at) %></td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+<%= will_paginate(@users) %>
