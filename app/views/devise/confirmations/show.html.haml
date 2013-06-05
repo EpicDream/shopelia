@@ -1,4 +1,5 @@
-%h2 Compléter mon profil
+%h2 Votre profil a bien été validé !
+%h3 La création d'un mot de passe permet de vous identifier de manière sécurisée sur Shopelia
 = simple_form_for resource, :as => resource_name, :url => confirm_path,:validate => true do |f|
   = f.error_notification
   = f.input :password, :input_html => {:autofocus => true}
