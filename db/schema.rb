@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130605103640) do
+ActiveRecord::Schema.define(:version => 20130606125513) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -96,8 +96,8 @@ ActiveRecord::Schema.define(:version => 20130605103640) do
     t.string   "uuid"
     t.string   "state_name"
     t.string   "message"
-    t.datetime "created_at",              :null => false
-    t.datetime "updated_at",              :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -114,6 +114,7 @@ ActiveRecord::Schema.define(:version => 20130605103640) do
     t.string   "shipping_info"
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
+    t.datetime "notification_email_sent_at"
   end
 
   create_table "payment_cards", :force => true do |t|

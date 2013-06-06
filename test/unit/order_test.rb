@@ -60,10 +60,22 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
+  end
+  
+  test "it should send email if notification is requested" do
+    @order.notify_creation
     
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
-    assert_match /Amazon/, mail.encoded
+    assert_match /Rue du Commerce/, mail.decoded
+    
+    assert @order.reload.notification_email_sent_at.present?
+  end
+  
+  test "it shouldn't send notification email if already sent" do
+    @order.update_attribute :notification_email_sent_at, Time.now
+    @order.notify_creation
+    assert ActionMailer::Base.deliveries.last.nil?
   end
 
   test "it should create order with specific address" do
@@ -360,6 +372,20 @@ class OrderTest < ActiveSupport::TestCase
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
     assert_match /Le back office Shopelia est en maintenance/, mail.decoded
+  end
+  
+  test "it should match delayed & expired scopes" do
+    @order.update_attribute :state_name, "pending"
+    assert_equal 0, Order.delayed.count
+    assert_equal 0, Order.expired.count
+
+    @order.update_attribute :created_at, Time.now - 4.minutes
+    assert_equal 1, Order.delayed.count
+    assert_equal 0, Order.expired.count
+
+    @order.update_attribute :created_at, Time.now - 5.hours
+    assert_equal 1, Order.delayed.count
+    assert_equal 1, Order.expired.count
   end
    
 end

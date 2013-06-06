@@ -17,11 +17,14 @@ class Order < ActiveRecord::Base
   validates :payment_card, :presence => true
 
   attr_accessible :user_id, :address_id, :merchant_account_id, :payment_card_id
-  attr_accessible :message, :products, :shipping_info
+  attr_accessible :message, :products, :shipping_info, :should_auto_cancel
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :billed_price_product, :billed_price_shipping, :billed_price_total
   attr_accessor :products
+  
+  scope :delayed, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 3.minutes ) }
+  scope :expired, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 4.hours ) }
   
   before_validation :initialize_uuid
   before_validation :initialize_state
@@ -32,7 +35,6 @@ class Order < ActiveRecord::Base
   after_initialize :deserialize_questions
   after_create :prepare_order_items
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
-  after_create :notify_user, :if => Proc.new { |order| !order.destroyed? && order.order_items.count > 0 }
   
   def to_param
     self.uuid
@@ -131,6 +133,12 @@ class Order < ActiveRecord::Base
     abort
     self.save!
   end
+
+  def notify_creation
+    return unless self.notification_email_sent_at.nil?
+    Emailer.notify_order_creation(self).deliver
+    self.update_attribute :notification_email_sent_at, Time.now
+  end
   
   private
  
@@ -211,10 +219,6 @@ class Order < ActiveRecord::Base
   
   def deserialize_questions
     @questions = JSON.parse(self.questions_json || "[]")
-  end
-  
-  def notify_user
-    Emailer.notify_order_creation(self).deliver
   end
   
 end
