@@ -1,5 +1,5 @@
-%h2 Votre profil a bien été validé !
-%h3 La création d'un mot de passe permet de vous identifier de manière sécurisée sur Shopelia
+%h2 Finalisation de votre inscription
+%h4 Créez votre mot de passe afin de connecter de manière sécurisée à votre compte Shopelia.
 = simple_form_for resource, :as => resource_name, :url => confirm_path,:validate => true do |f|
   = f.error_notification
   = f.input :password, :input_html => {:autofocus => true}
@@ -8,7 +8,7 @@
   = f.input :birthdate, :as => :string, label: "Date de naissance", input_html: { value: "#{resource.birthdate.strftime("%d/%m/%Y") unless resource.birthdate.nil?}"}, :validate => false
   = f.input :nationality_id, label:"Pays de résidence",collection: Country.all
   = f.input :confirmation_token, :as => :hidden
-  = f.submit "MISE A JOUR DU PROFIL", :class => "btn", id:"confirm_submit_btn"
+  = f.submit "VALIDER", :class => "btn", id:"confirm_submit_btn"
 
 :javascript
   $(document).ready(function() {

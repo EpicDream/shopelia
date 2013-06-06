@@ -106,10 +106,11 @@
                                 <td width="20"></td>
                                 <!-- Content Text Here -->
                                 <td width="350" valign="top" align="left" style="font-size: 25px; color: #333333; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">					
-                                  <b style="color:#29b153; font-size: 27px;">En cours</b><br>
+                                  <b style="color:#29b153; font-size: 27px;">En cours</b><p>
                                   Votre commande<br>
                                   est en cours de<br>
-                                  traitement<br>
+                                  traitement<p>
+                                  <font style="font-size: 21px">Vous serez notifié par email dès son acceptation par le site marchand</font>
                                 </td>
                                 <!-- End of Content Text -->
                               </tr>
@@ -264,10 +265,11 @@
                                 <td width="20"></td>
                                 <!-- Content Text Here -->
                                 <td width="453" valign="top" align="left" style="font-size: 14px; color: #ffffff; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px; text-align:justify">
-                                  <b style="color:#29b153;">IMPORTANT !</b> Votre commande est en cours de traitement par notre service, et vous serez notifié par email dès son acceptation par le marchand.
+                                  Nous vous remercions d'utiliser le service Shopelia, 
+                                  et n'hésitez pas à nous contacter pour toute question&nbsp;!
                                   <p>
-                                    Dans la plupart des cas, le traitement d'une commande ne prend que quelques minutes, mais celui-ci peut parfois durer bien plus longtemps. Ne soyez donc pas inquiet si vous ne recevez pas immédiatement une notification. Consultez l'état de votre commande pour plus d'informations. 
-                                    Nous vous remercions d'utiliser le service Shopelia, et n'hésitez pas à nous contacter pour toute question !
+                                  L’équipe Shopelia<br>
+                                  <a href="mailto:contact@shopelia.com">contact@shopelia.com</a>
                                 </td>
                                 <!-- End of Content Text -->
                               </tr>
@@ -300,10 +302,12 @@
                       <tr>
                         <td width="20"></td>
                         <!--===============START LOGO===============-->
-                        <td width="64" height="64" align="center" style="font-size:30px; color:#bcbaba; text-align:center" class="content-center">
+                        <td width="128" height="64" align="center" style="font-size:30px; color:#bcbaba; text-align:center" class="content-center">
+                          <%= link_to(image_tag("emails/icon_1.jpg",'mc:edit' =>"footerIcon1",border:"0", alt:"", style:"vertical-align: middle;"),"https://www.facebook.com/Shopelia") %>
+                          <%= link_to(image_tag("emails/icon_2.jpg",border:"0", alt:"", style:"vertical-align: middle;"),"https://twitter.com/shopelia") %>
                         </td>
                         <!--===============END LOGO===============-->
-                        <td width="296"></td>
+                        <td width="232"></td>
                         <!--===============START LOGO===============-->
                         <td width="250" align="center" valign="middle" style="font-size:12px; color:#bcbaba; text-align:right;line-height:14px;" class="content-center">
                           &copy; Shopelia <%= Time.now.year %>

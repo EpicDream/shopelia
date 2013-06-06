@@ -12,7 +12,6 @@
     %table.table.table-striped.table-bordered
       %thead
         %tr
-          %th.hidden-phone N° de commande
           %th Nom de l'article
           %th.hidden-phone Nom du marchand
           %th Prix total
@@ -20,7 +19,6 @@
 
       %tbody
         %tr{class: state[:state]}
-          %td.hidden-phone= @order.uuid
           %td= @order.order_items.first.product.name
           %td.hidden-phone= @order.merchant.name
           %td= number_to_currency(@order.expected_price_total.round(2))
@@ -41,7 +39,7 @@
             %b= link_to(@order.merchant.name,@order.merchant.url)
             via le service
             %b=link_to "Shopelia", "https://shopelia.com"
-          %p Vous serez livré à l'adresse de livraison suivante :
+          %p Vous serez livré à l'adresse suivante :
           %b.span10
             %ul.unstyled
               %li #{@order.address.first_name} #{@order.address.last_name}
@@ -50,9 +48,8 @@
               %li= @order.address.country.name
         - if order_completed?
           %p
-            Pour suivre votre commande chez votre marchand
-            =link_to(@order.merchant.name,@order.merchant.url)
-            Veuillez vous connecter avec les identifiants suivants :
+            Pour suivre votre commande chez #{link_to(@order.merchant.name,@order.merchant.url)}, 
+            veuillez vous connecter avec les identifiants suivants :
           %dl.dl-horizontal.dl-custom
             %dt Votre Compte:
             %dd= @order.merchant_account.login
