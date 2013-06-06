@@ -52,6 +52,6 @@ class OrdersDatatable
   end
 
   def sort_direction
-    params[:sSortDir_0] == "desc" ? "desc" : "asc"
+    params[:sSortDir_0] == "asc" ? "asc" : "desc"
   end
 end
