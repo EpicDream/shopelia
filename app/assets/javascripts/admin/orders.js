@@ -98,7 +98,8 @@ $(document).ready(function() {
 } );
 
 var Refresh = {
-  total: 0,
+  totalProcessing: 0,
+  totalFailed: 0,
   
 	run: function() {
 	  Refresh.refresh();
@@ -120,9 +121,15 @@ var Refresh = {
     } else {
       $('#pendingOrdersSection').hide('fast');
     }
-    var total = $("#processingOrdersSection tr").size();
-    if (this.total > total) {
+    var totalProcessing = $("#processingOrdersSection tr").size();
+    if (this.totalProcessing > totalProcessing) {
       document.getElementById("sound-bell").play();
+      totalProcessing = this.totalProcessing;
+    }
+    var totalFailed = $("#failedOrdersSection tr").size();
+    if (this.totalFailed > totalFailed) {
+      document.getElementById("sound-fail").play();
+      totalFailed = this.totalFailed;
     }
 	}
 }
