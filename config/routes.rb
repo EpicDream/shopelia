@@ -1,6 +1,9 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
+
+  match "/checkout", :controller => "html_app", :action => "index"
+
   apipie
 
   devise_for :users, controllers: { confirmations: 'devise_override/confirmations' }
@@ -47,4 +50,5 @@ Shopelia::Application.routes.draw do
   match '*not_found', to: 'errors#error_404'
   get "errors/error_404"
   get "errors/error_500"
+
 end
