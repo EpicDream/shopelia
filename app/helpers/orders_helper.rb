@@ -18,5 +18,20 @@ module OrdersHelper
   def order_completed?
     @order.state == :completed
   end
+  
+  def failure_reason
+    case @order.error_code
+    when "vulcain"
+    when "vulcain_api"
+      "Le back office Shopelia est en maintenance"
+    when "payment"
+      "Le paiement de la commande a été refusé par votre banque"
+    when "price"
+      "Le prix total de votre commande a augmenté chez le marchand !"
+    when "account"
+      "Impossible de créer un compte à votre nom chez le marchand"
+    end
+  end
 
 end
+

@@ -94,7 +94,7 @@
                                 <td width="20"></td>
                                 <!-- DISCOUNT BADGE -->
                                 <td width="350" align="left" valign="top" style="font-size: 18px; color: #232323; font-weight: normal; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">													
-                                  <<%= image_tag("emails/loading.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>	
+                                  <%= image_tag("emails/ok.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>	
                                 </td>
                                 <!-- End DISCOUNT BADGE -->
                                 <td width="20"></td>
@@ -106,10 +106,9 @@
                                 <td width="20"></td>
                                 <!-- Content Text Here -->
                                 <td width="350" valign="top" align="left" style="font-size: 25px; color: #333333; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">					
-                                  <b style="color:#29b153; font-size: 27px;">En cours</b><br>
-                                  Votre commande<br>
-                                  est en cours de<br>
-                                  traitement<br>
+                                  <b style="color:#29b153; font-size: 27px;">Félicitations !</b><br>
+                                  Votre commande a été<br>
+                                  acceptée par <b><%= @vendor %></b><br>
                                 </td>
                                 <!-- End of Content Text -->
                               </tr>
@@ -205,15 +204,16 @@
                                       <td width="10" bgcolor="#fefaf7"></td>
                                       <!-- CART ITEMS -->
                                       <td width="230" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 14px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">
-                                        Vous pouvez si vous le souhaitez voir l'état de votre commande à tout moment en pressant le bouton ci-dessous :<br><br>
-                                        <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
-                                          <tr>
-                                            <td align="center" width="160" bgcolor="#29b153" style="background: #29b153; margin-bottom: 5px; margin-top: 5px; padding-top: 6px; padding-right: 10px; padding-bottom: 6px; padding-left: 10px; border: 1px solid #1d863d; color: #fff; font-weight: normal; text-decoration: none; font-family: Helvetica, Arial, sans-serif; text-transform:uppercase; display: block; font-size:0.8em;">
-                                              <%= link_to "VOIR L'ETAT DE MA COMMANDE", order_url(@order), style:"color: #fff; text-decoration: none;" %>
-                                            </td>
-                                          </tr>
-                                        </table>
-                                        <br>
+                                        Votre achat a été effectué chez <%= @vendor %> via le compte suivant&nbsp;:
+                                        <p>
+                                          <span style="font-size: 13px">
+                                          <%= link_to @vendor_url, @vendor_url, style:"color:#0088cc;" %><br>
+                                          <b>Identifiant :</b> <%= @account.login %><br>
+                                          <b>Mot de passe :</b> <%= @account.password %>
+                                          </span>
+                                        <p>
+                                          Pour toute question relative à votre achat, connectez-vous directement
+                                          chez le marchand avec ce compte.
                                       </td>
                                       <!-- End CART ITEMS -->
                                       <td width="10" bgcolor="#fefaf7"></td>
@@ -263,11 +263,10 @@
                               <tr>
                                 <td width="20"></td>
                                 <!-- Content Text Here -->
-                                <td width="453" valign="top" align="left" style="font-size: 14px; color: #ffffff; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px; text-align:justify">
-                                  <b style="color:#29b153;">IMPORTANT !</b> Votre commande est en cours de traitement par notre service, et vous serez notifié par email dès son acceptation par le marchand.
-                                  <p>
-                                    Dans la plupart des cas, le traitement d'une commande ne prend que quelques minutes, mais celui-ci peut parfois durer bien plus longtemps. Ne soyez donc pas inquiet si vous ne recevez pas immédiatement une notification. Consultez l'état de votre commande pour plus d'informations. 
-                                    Nous vous remercions d'utiliser le service Shopelia, et n'hésitez pas à nous contacter pour toute question !
+                                <td width="453" valign="top" align="left" style="font-size: 14px; color: #ffffff; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px; text-align: justify;">
+                                  <b style="color:#29b153;">IMPORTANT !</b> Vous devriez recevoir un email de confirmation de leur part dans les minutes qui suivent.<br>
+                                  Toute l'équipe de Shopelia vous remercie d'avoir utilisé le service et vous dit à bientôt
+                                  pour une prochaine commande !
                                 </td>
                                 <!-- End of Content Text -->
                               </tr>

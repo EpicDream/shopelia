@@ -2,7 +2,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Shopelia - Votre commande a été acceptée par le marchand</title>
+    <title>Shopelia - Votre commande n'a pas pu aboutir</title>
     <style type="text/css">
       .ReadMsgBody, .ExternalClass {width:100%; background-color: #ffffff;}
       .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height:100%;}
@@ -93,8 +93,8 @@
                               <tr>
                                 <td width="20"></td>
                                 <!-- DISCOUNT BADGE -->
-                                <td width="350" align="left" valign="top" style="font-size: 18px; color: #232323; font-weight: normal; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">													
-                                  <<%= image_tag("emails/loading.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>	
+                                <td width="350" align="left" valign="top" style="font-size: 18px; color: #232323; font-weight: normal; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">
+                                  <%= image_tag("emails/error.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>											
                                 </td>
                                 <!-- End DISCOUNT BADGE -->
                                 <td width="20"></td>
@@ -106,10 +106,9 @@
                                 <td width="20"></td>
                                 <!-- Content Text Here -->
                                 <td width="350" valign="top" align="left" style="font-size: 25px; color: #333333; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">					
-                                  <b style="color:#29b153; font-size: 27px;">En cours</b><br>
-                                  Votre commande<br>
-                                  est en cours de<br>
-                                  traitement<br>
+                                  <b style="color:#d5263b; font-size: 27px;">Attention !</b><br>
+                                  Votre commande n'a<br>
+                                  pas pu aboutir
                                 </td>
                                 <!-- End of Content Text -->
                               </tr>
@@ -152,8 +151,8 @@
                                     <tr>
                                       <td width="10" bgcolor="#fefaf7"></td>
                                       <!-- CART ITEMS -->
-                                      <td width="50" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 18px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">													
-                                        <%= image_tag(@product.image_url, style: "border:none; outline:none; text-decoration:none;", border:"0", width:"50px", height:"50px", alt:"") %>	
+                                      <td width="50" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 18px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">
+                                        <%= image_tag(@product.image_url, style: "border:none; outline:none; text-decoration:none;", border:"0", width:"50px", height:"50px", alt:"") %>											
                                       </td>
                                       <td width="10" bgcolor="#fefaf7"></td>
                                       <td width="170" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 14px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px;">													
@@ -204,16 +203,9 @@
                                     <tr>
                                       <td width="10" bgcolor="#fefaf7"></td>
                                       <!-- CART ITEMS -->
-                                      <td width="230" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 14px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">
-                                        Vous pouvez si vous le souhaitez voir l'état de votre commande à tout moment en pressant le bouton ci-dessous :<br><br>
-                                        <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
-                                          <tr>
-                                            <td align="center" width="160" bgcolor="#29b153" style="background: #29b153; margin-bottom: 5px; margin-top: 5px; padding-top: 6px; padding-right: 10px; padding-bottom: 6px; padding-left: 10px; border: 1px solid #1d863d; color: #fff; font-weight: normal; text-decoration: none; font-family: Helvetica, Arial, sans-serif; text-transform:uppercase; display: block; font-size:0.8em;">
-                                              <%= link_to "VOIR L'ETAT DE MA COMMANDE", order_url(@order), style:"color: #fff; text-decoration: none;" %>
-                                            </td>
-                                          </tr>
-                                        </table>
-                                        <br>
+                                      <td width="230" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 14px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">													
+                                        Nous n'avons pas réussi à passer votre commande pour la raison suivante :<br>
+                                        <b><%= failure_reason %></b><br>
                                       </td>
                                       <!-- End CART ITEMS -->
                                       <td width="10" bgcolor="#fefaf7"></td>
@@ -226,7 +218,7 @@
                               </tr>
                               <tr>
                                 <td>
-                                  <%= image_tag("emails/divider.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:250, height:1, alt:"", class:"badge") %>	
+                                  <img src="http://stamplia.com/uploads/214_4n6aqkj1jdic08kko0gssckwgc8sko0o0o44g408w04ckkcooo/289/img/divider.jpg" width="250" height="1" border="0" alt="" style="display:block; border:none; outline:none; text-decoration:none;" class="badge">
                                 </td>
                               </tr>
                             </tbody>
@@ -263,11 +255,9 @@
                               <tr>
                                 <td width="20"></td>
                                 <!-- Content Text Here -->
-                                <td width="453" valign="top" align="left" style="font-size: 14px; color: #ffffff; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px; text-align:justify">
-                                  <b style="color:#29b153;">IMPORTANT !</b> Votre commande est en cours de traitement par notre service, et vous serez notifié par email dès son acceptation par le marchand.
-                                  <p>
-                                    Dans la plupart des cas, le traitement d'une commande ne prend que quelques minutes, mais celui-ci peut parfois durer bien plus longtemps. Ne soyez donc pas inquiet si vous ne recevez pas immédiatement une notification. Consultez l'état de votre commande pour plus d'informations. 
-                                    Nous vous remercions d'utiliser le service Shopelia, et n'hésitez pas à nous contacter pour toute question !
+                                <td width="453" valign="top" align="left" style="font-size: 14px; color: #ffffff; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px; text-align: justify;">
+                                  <b style="color:#d5263b;">IMPORTANT !</b> Votre commande n'a <b>pas</b> été passée chez le marchand <%= @vendor %>, et <b style="color: #ffffff; text-transform: uppercase;">vous n'avez pas été facturé</b>.<br>
+                                  Nous vous remercions d'avoir utilisé le service Shopelia, n'hésitez pas à nous contacter pour toute question !
                                 </td>
                                 <!-- End of Content Text -->
                               </tr>

@@ -98,19 +98,15 @@ $(document).ready(function() {
 } );
 
 var Refresh = {
-  totalProcessing: 0,
-  totalFailed: 0,
+  totalProcessing: -1,
+  totalFailed: -1,
   
 	run: function() {
-	  Refresh.refresh();
 		setInterval("Refresh.refresh()", 5000);
 	},
 
 	refresh: function() {
-    processingTable.fnReloadAjax();
-    pendingTable.fnReloadAjax();
-    completedTable.fnReloadAjax();
-    failedTable.fnReloadAjax();
+	  this.reloadAjax();
     if (processingTable.fnGetData().length > 0) {
       $('#processingOrdersSection').show('fast');
     } else {
@@ -121,16 +117,23 @@ var Refresh = {
     } else {
       $('#pendingOrdersSection').hide('fast');
     }
-    var totalProcessing = $("#processingOrdersSection tr").size();
-    if (this.totalProcessing > totalProcessing) {
+    var totalProcessingNow = $("#processingOrders tr").size();
+    if (totalProcessingNow > this.totalProcessing && this.totalProcessing > -1) {
       document.getElementById("sound-bell").play();
-      totalProcessing = this.totalProcessing;
     }
-    var totalFailed = $("#failedOrdersSection tr").size();
-    if (this.totalFailed > totalFailed) {
+    this.totalProcessing = totalProcessingNow;
+    var totalFailedNow = $("#failedOrders tr").size();
+    if (totalFailedNow > this.totalFailed && this.totalFailed > -1) {
       document.getElementById("sound-fail").play();
-      totalFailed = this.totalFailed;
     }
-	}
+    this.totalFailed = totalFailedNow;
+	},
+	
+	reloadAjax: function() {
+    processingTable.fnReloadAjax();
+    pendingTable.fnReloadAjax();
+    completedTable.fnReloadAjax();
+    failedTable.fnReloadAjax();
+  }
 }
 
