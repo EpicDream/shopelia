@@ -19,7 +19,7 @@ class OrdersDatatable
   def data
     orders.map do |order|
       [
-        link_to(order.order_items.first.product.name, order),
+        link_to(order.order_items.first.product.name, "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
         number_to_currency(order.expected_price_total),
         h(order.user.name),
         time_ago_in_words(order.updated_at),
