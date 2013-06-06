@@ -94,7 +94,7 @@
                                 <td width="20"></td>
                                 <!-- DISCOUNT BADGE -->
                                 <td width="350" align="left" valign="top" style="font-size: 18px; color: #232323; font-weight: normal; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">
-                                  <%= image_tag("emails/error.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>											
+                                  <%= image_tag("emails/error.png", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>											
                                 </td>
                                 <!-- End DISCOUNT BADGE -->
                                 <td width="20"></td>
@@ -156,7 +156,7 @@
                                       </td>
                                       <td width="10" bgcolor="#fefaf7"></td>
                                       <td width="170" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 14px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px;">													
-                                        <%= @product.name %>
+                                        <%= @product.name %><br>
                                         <b style="font-weight:bold;line-height:18px;"><%= number_to_currency(@order.expected_price_total) %></b>
                                       </td>
                                       <!-- End CART ITEMS -->
@@ -256,7 +256,7 @@
                                 <td width="20"></td>
                                 <!-- Content Text Here -->
                                 <td width="453" valign="top" align="left" style="font-size: 14px; color: #ffffff; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px; text-align: justify;">
-                                  <b style="color:#d5263b;">IMPORTANT !</b> Votre commande n'a <b>pas</b> été passée chez le marchand <%= @vendor %>, et <b style="color: #ffffff; text-transform: uppercase;">vous n'avez pas été facturé</b>.<br>
+                                  <b style="color:#d5263b;">IMPORTANT !</b> Votre commande n'a <b>pas</b> été passée chez le marchand <%= @vendor %>, et <b style="color: #ffffff; text-transform: uppercase;"> vous n'avez pas été facturé</b>.<br>
                                   Nous vous remercions d'avoir utilisé le service Shopelia, n'hésitez pas à nous contacter pour toute question !
                                 </td>
                                 <!-- End of Content Text -->

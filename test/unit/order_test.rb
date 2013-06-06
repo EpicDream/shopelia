@@ -212,6 +212,13 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "dispatcher_crash", @order.message
   end
 
+  test "it should fail order if uuid conflict" do
+    @order.process "failure", { "status" => "uuid_conflict" }
+    assert_equal :pending, @order.reload.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "uuid_conflict", @order.message
+  end
+
   test "it should set message" do
     @order.process "message", { "message" => "bla" }
     assert_equal "bla", @order.message
@@ -345,10 +352,14 @@ class OrderTest < ActiveSupport::TestCase
     assert @order.start
   end
   
-  test "it should time out an order" do
+  test "it should time out an order and send notification email" do
+    @order.error_code = "vulcain"
     @order.time_out
     assert_equal :failed, @order.reload.state
-    assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
+    
+    mail = ActionMailer::Base.deliveries.last
+    assert mail.present?, "a notification email should have been sent"
+    assert_match /Le back office Shopelia est en maintenance/, mail.decoded
   end
    
 end

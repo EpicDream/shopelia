@@ -94,7 +94,7 @@
                                 <td width="20"></td>
                                 <!-- DISCOUNT BADGE -->
                                 <td width="350" align="left" valign="top" style="font-size: 18px; color: #232323; font-weight: normal; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">													
-                                  <<%= image_tag("emails/loading.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>	
+                                  <<%= image_tag("emails/loading.png", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>	
                                 </td>
                                 <!-- End DISCOUNT BADGE -->
                                 <td width="20"></td>
@@ -157,7 +157,7 @@
                                       </td>
                                       <td width="10" bgcolor="#fefaf7"></td>
                                       <td width="170" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 14px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px;">													
-                                        <%= @product.name %>
+                                        <%= @product.name %><br>
                                         <b style="font-weight:bold;line-height:18px;"><%= number_to_currency(@order.expected_price_total) %></b>
                                       </td>
                                       <!-- End CART ITEMS -->

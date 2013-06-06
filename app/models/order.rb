@@ -74,6 +74,7 @@ class Order < ActiveRecord::Base
         when "error" then fail("error", :vulcain)
         when "driver_failed" then fail("driver_failed", :vulcain)
         when "order_timeout" then fail("order_timeout", :vulcain)
+        when "uuid_conflict" then fail("uuid_conflict", :vulcain)
         when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
         when "order_validation_failed" then abort(:payment)
         when "account_creation_failed" then restart
