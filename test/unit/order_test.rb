@@ -244,12 +244,13 @@ class OrderTest < ActiveSupport::TestCase
   test "it should cancel order if target price it outside range" do
     @order.expected_price_total = 10
     @order.process "assess", @content
-    assert_equal :aborted, @order.reload.state
+    assert_equal :failed, @order.reload.state
     assert_equal false, @order.questions.first["answer"]
     assert_equal "price", @order.error_code
+    assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
 
-  test "it should succeed order" do
+  test "it should complete order" do
     @order.process "success", {
       "billing" => {
         "product" => 14,
@@ -263,6 +264,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 16, @order.billed_price_total
     assert_equal 14, @order.billed_price_product
     assert_equal 2, @order.billed_price_shipping
+    assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
   
   test "it should restart order with new account if account creation failed" do
@@ -284,8 +286,9 @@ class OrderTest < ActiveSupport::TestCase
  
   test "it should process order validation failure" do
    @order.process "failure", { "status" => "order_validation_failed" }
-   assert_equal :aborted, @order.reload.state
+   assert_equal :failed, @order.reload.state
    assert_equal "payment", @order.error_code
+   assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
   
   test "it shouldn't restart order if maximum number of retries has been reached" do
@@ -334,12 +337,18 @@ class OrderTest < ActiveSupport::TestCase
     assert !@order.start
     @order.state_name = "completed"
     assert !@order.start
-    @order.state_name = "aborted"
+    @order.state_name = "failed"
     assert !@order.start
     @order.state_name = "pending"
     assert @order.start
     @order.state_name = "initialized"
     assert @order.start
+  end
+  
+  test "it should time out an order" do
+    @order.time_out
+    assert_equal :failed, @order.reload.state
+    assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
    
 end

@@ -1,6 +1,6 @@
 class Order < ActiveRecord::Base
-  STATES = ["initialized", "processing", "pending", "completed", "aborted"]
-  ERRORS = ["vulcain_api", "vulcain", "user", "payment", "price", "account"]
+  STATES = ["initialized", "processing", "pending", "completed", "failed"]
+  ERRORS = ["vulcain_api", "vulcain", "payment", "price", "account"]
 
   belongs_to :user
   belongs_to :merchant
@@ -100,6 +100,7 @@ class Order < ActiveRecord::Base
         self.shipping_info = content["billing"]["shipping_info"]
         self.error_code = nil
         self.state = :completed
+        Emailer.notify_order_success(self).deliver
 
       end
     rescue Exception => e
@@ -125,6 +126,11 @@ class Order < ActiveRecord::Base
     @questions = questions
   end
   
+  def time_out
+    abort
+    self.save!
+  end
+  
   private
  
   def assess result
@@ -137,10 +143,11 @@ class Order < ActiveRecord::Base
     self.state = :pending
   end
 
-  def abort error_sym
-    self.error_code = check_error_validity(error_sym.to_s)
-    self.state = :aborted
-  end    
+  def abort error_sym=nil
+    self.error_code = check_error_validity(error_sym.to_s) unless error_sym.nil?
+    self.state = :failed
+    Emailer.notify_order_failure(self).deliver
+  end
 
   def check_error_validity error
     ERRORS.include?(error) ? error : "INVALID_ERROR"
