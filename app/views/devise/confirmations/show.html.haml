@@ -1,5 +1,5 @@
 %h2 Finalisation de votre inscription
-%h4 Créez votre mot de passe afin de connecter de manière sécurisée à votre compte Shopelia.
+%h4 Créez votre mot de passe afin de vous connecter de manière sécurisée à votre compte Shopelia.
 = simple_form_for resource, :as => resource_name, :url => confirm_path,:validate => true do |f|
   = f.error_notification
   = f.input :password, :input_html => {:autofocus => true}
