@@ -9,6 +9,8 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
   render: ->
     $(@el).html(@template())
+    view = new Shopelia.Views.AddressesIndex(collection: @collection)
+    @$('button').before(view.render().el)
     this
 
   createUser: (e) ->
@@ -19,7 +21,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
               loginFormObject[v.name] = v.value
     )
 
-    user = @collection.create({"user": loginFormObject},{
+    @collection.create({"user": loginFormObject},{
                               wait : true,
                               success : (resp) ->
                                 console.log('success callback')
@@ -29,5 +31,4 @@ class Shopelia.Views.UsersIndex extends Backbone.View
                                 console.log('error callback'+ json + JSON.stringify(response))
     })
 
-    if (model.validationError)
-      alert model.validationError
+
