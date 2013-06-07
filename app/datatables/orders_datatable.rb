@@ -1,5 +1,5 @@
 class OrdersDatatable
-  delegate :params, :h, :link_to, :number_to_currency, :time_ago_in_words, to: :@view
+  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :time_ago_in_words, :truncate, to: :@view
 
   def initialize(view)
     @view = view
@@ -19,7 +19,8 @@ class OrdersDatatable
   def data
     orders.map do |order|
       [
-        link_to(order.order_items.first.product.name, "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
+        link_to(truncate(order.order_items.first.product.name), "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
+        image_tag(order.merchant.logo, style:"max-width:100px;max-height:50px"),
         number_to_currency(order.expected_price_total),
         h(order.user.name),
         time_ago_in_words(order.updated_at),
