@@ -98,35 +98,43 @@ $(document).ready(function() {
 } );
 
 var Refresh = {
+  totalPending: -1,
   totalProcessing: -1,
   totalFailed: -1,
+  totalSuccess: -1,
   
 	run: function() {
+	  this.toggleVisibility();
 		setInterval("Refresh.refresh()", 5000);
 	},
 
 	refresh: function() {
 	  this.reloadAjax();
-    if (processingTable.fnGetData().length > 0) {
-      $('#processingOrdersSection').show('fast');
-    } else {
-      $('#processingOrdersSection').hide('fast');
-    }
-    if (pendingTable.fnGetData().length > 0) {
-      $('#pendingOrdersSection').show('fast');
-    } else {
-      $('#pendingOrdersSection').hide('fast');
-    }
+	  this.toggleVisibility();
+    
     var totalProcessingNow = $("#processingOrders tr").size();
     if (totalProcessingNow > this.totalProcessing && this.totalProcessing > -1) {
-      document.getElementById("sound-bell").play();
+      document.getElementById("sound-processing").play();
     }
     this.totalProcessing = totalProcessingNow;
+    
     var totalFailedNow = $("#failedOrders tr").size();
     if (totalFailedNow > this.totalFailed && this.totalFailed > -1) {
-      document.getElementById("sound-fail").play();
+      document.getElementById("sound-failed").play();
     }
     this.totalFailed = totalFailedNow;
+    
+    var totalPendingNow = $("#pendingOrders tr").size();
+    if (totalPendingNow > this.totalPending && this.totalPending > -1) {
+      document.getElementById("sound-pending").play();
+    }
+    this.totalPending = totalPendingNow;
+    
+    var totalSuccessNow = $("#completedOrders tr").size();
+    if (totalSuccessNow > this.totalSuccess && this.totalSuccess > -1) {
+      document.getElementById("sound-success").play();
+    }
+    this.totalSuccess = totalSuccessNow;
 	},
 	
 	reloadAjax: function() {
@@ -134,6 +142,20 @@ var Refresh = {
     pendingTable.fnReloadAjax();
     completedTable.fnReloadAjax();
     failedTable.fnReloadAjax();
-  }
+  },
+  
+  toggleVisibility: function() {
+    if (processingTable.fnGetData().length > 0) {
+      $('#processingOrdersSection').show('fast');
+    } else {
+      $('#processingOrdersSection').hide('fast');
+    }
+    
+    if (pendingTable.fnGetData().length > 0) {
+      $('#pendingOrdersSection').show('fast');
+    } else {
+      $('#pendingOrdersSection').hide('fast');
+    }
+  }  
 }
 
