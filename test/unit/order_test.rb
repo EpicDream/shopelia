@@ -260,13 +260,30 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal true, @order.questions.first["answer"]
   end
 
-  test "it should cancel order if target price it outside range" do
+  test "it should send request to user if price it outside range" do
     @order.expected_price_total = 10
     @order.process "assess", @content
-    assert_equal :failed, @order.reload.state
+    assert_equal :querying, @order.reload.state
     assert_equal false, @order.questions.first["answer"]
-    assert_equal "price", @order.error_code
     assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
+  end
+  
+  test "it should cancel order" do
+    @order.cancel
+    assert_equal :failed, @order.reload.state
+    assert_equal "user", @order.error_code
+    
+    mail = ActionMailer::Base.deliveries.last
+    assert mail.present?, "a notification email should have been sent"
+    assert_match /Vous avez annulé la commande/, mail.decoded    
+  end
+
+  test "it should confirm order" do
+    @order.state_name = "querying"
+    @order.prepared_price_total = 20
+    @order.confirm
+    assert_equal :processing, @order.reload.state
+    assert_equal 20, @order.expected_price_total    
   end
 
   test "it should complete order" do
@@ -351,7 +368,7 @@ class OrderTest < ActiveSupport::TestCase
     assert @order.reload.error_code.nil?
   end
   
-  test "it should start an order only if initialized or pending mode" do
+  test "it should start an order only if start-allowed mode" do
     @order.state_name = "processing"
     assert !@order.start
     @order.state_name = "completed"
@@ -362,6 +379,8 @@ class OrderTest < ActiveSupport::TestCase
     assert @order.start
     @order.state_name = "initialized"
     assert @order.start
+    @order.state_name = "querying"
+    assert @order.start
   end
   
   test "it should time out an order and send notification email" do
@@ -371,7 +390,7 @@ class OrderTest < ActiveSupport::TestCase
     
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
-    assert_match /Le back office Shopelia est en maintenance/, mail.decoded
+    assert_match /Le back office Shopelia/, mail.decoded
   end
   
   test "it should match delayed & expired scopes" do

@@ -7,8 +7,17 @@
   .spacer25
 .row
   .box
-    %h2 Suivi de votre commande :
-    %br
+    - if order_querying?
+      %p 
+        Le prix total de votre commande est de <strong>#{number_to_currency(@order.prepared_price_total)}</strong>
+        %br
+        Souhaitez-vous confirmer votre commande à ce prix ?
+      = form_for @order, {:html => {:class => "form-inline"}} do |f|
+        = f.select :confirmation, [["Oui, je confirme",'yes'], ["Non, j'annule",'no']]
+        = f.submit "Validez", class:"btn"
+    - else
+      %h2 Suivi de votre commande :
+      %br
     %table.table.table-striped.table-bordered
       %thead
         %tr
@@ -21,7 +30,10 @@
         %tr{class: state[:state]}
           %td= @order.order_items.first.product.name
           %td.hidden-phone= @order.merchant.name
-          %td= number_to_currency(@order.expected_price_total.round(2))
+          - if order_querying?
+            %td= number_to_currency(@order.prepared_price_total.round(2))
+          - else
+            %td= number_to_currency(@order.expected_price_total.round(2))
           %td= state[:name]
 
     .spacer25
@@ -55,7 +67,6 @@
             %dd= @order.merchant_account.login
             %dt Votre Mot de passe:
             %dd= @order.merchant_account.password
-
 
 .spacer50
 

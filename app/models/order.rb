@@ -1,6 +1,6 @@
 class Order < ActiveRecord::Base
-  STATES = ["initialized", "processing", "pending", "completed", "failed"]
-  ERRORS = ["vulcain_api", "vulcain", "payment", "price", "account"]
+  STATES = ["initialized", "processing", "pending", "querying", "completed", "failed"]
+  ERRORS = ["vulcain_api", "vulcain", "payment", "user", "account"]
 
   belongs_to :user
   belongs_to :merchant
@@ -17,11 +17,11 @@ class Order < ActiveRecord::Base
   validates :payment_card, :presence => true
 
   attr_accessible :user_id, :address_id, :merchant_account_id, :payment_card_id
-  attr_accessible :message, :products, :shipping_info, :should_auto_cancel
+  attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :billed_price_product, :billed_price_shipping, :billed_price_total
-  attr_accessor :products
+  attr_accessor :products, :confirmation
   
   scope :delayed, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 3.minutes ) }
   scope :expired, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 4.hours ) }
@@ -41,7 +41,7 @@ class Order < ActiveRecord::Base
   end
   
   def start
-    return false unless [:initialized, :pending].include?(state)
+    return false unless [:initialized, :pending, :querying].include?(state)
     @questions = []
     error_code = message = nil
     self.state = :processing
@@ -94,7 +94,7 @@ class Order < ActiveRecord::Base
         confirmed = self.expected_price_total >= self.prepared_price_total
         @questions.each { |question| question["answer"] = confirmed }
         assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
-        abort(:price) unless confirmed
+        query unless confirmed
 
       elsif verb.eql?("success")
         self.billed_price_total = content["billing"]["total"]
@@ -133,7 +133,20 @@ class Order < ActiveRecord::Base
     abort
     self.save!
   end
-
+  
+  def cancel
+    abort :user
+    self.save!
+  end
+  
+  def confirm
+    self.expected_price_total = self.prepared_price_total
+    self.prepared_price_total = nil
+    self.prepared_price_product = nil
+    self.prepared_price_shipping = nil
+    start
+  end
+  
   def notify_creation
     return unless self.notification_email_sent_at.nil?
     Emailer.notify_order_creation(self).deliver
@@ -144,6 +157,11 @@ class Order < ActiveRecord::Base
  
   def assess result
     fail(result['Error'], :vulcain_api) if result.has_key?("Error")
+  end
+
+  def query
+    self.state = :querying
+    Emailer.notify_order_price_change(self).deliver
   end
 
   def fail content, error_sym

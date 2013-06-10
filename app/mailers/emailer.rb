@@ -37,5 +37,16 @@ class Emailer < ActionMailer::Base
           :subject => "IMPORTANT ! Votre commande chez #{@vendor} n'a pas pu aboutir",
           :from => "Shopelia <contact@shopelia.fr>")
   end
+
+  def notify_order_price_change order
+    @order = order
+    @vendor = @order.merchant.name
+    @product = @order.order_items.first.product
+    @old_price = @order.expected_price_total
+    @new_price = @order.prepared_price_total
+    mail( :to => @order.user.email,
+          :subject => "ATTENTION ! Le prix de votre commande a evolué !",
+          :from => "Shopelia <contact@shopelia.fr>")
+  end
   
 end

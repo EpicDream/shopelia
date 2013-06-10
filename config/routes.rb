@@ -9,7 +9,7 @@ Shopelia::Application.routes.draw do
   end
 
   resources :contact, :only => :create
-  resources :orders, :only => :show
+  resources :orders, :only => [:show, :update]
 
   namespace :admin do
     resources :orders, :only => [:index, :show]
@@ -40,7 +40,7 @@ Shopelia::Application.routes.draw do
       namespace :places do
         resources :autocomplete, :only => :index
         resources :details, :only => :show
-      end      
+      end
     end
   end
 

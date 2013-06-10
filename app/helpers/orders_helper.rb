@@ -7,7 +7,9 @@ module OrdersHelper
       when :processing
         {state: "processing",name:"Commande en cours"}
       when :pending
-        {state:"warning",name:"En attente"}
+        {state:"warning",name:"En attente de traitement"}
+      when :querying
+        {state:"processing",name:"En attente de votre réponse"}
       when :completed
         {state:"success",name:"Validée"}
       else
@@ -19,16 +21,20 @@ module OrdersHelper
     @order.state == :completed
   end
   
+  def order_querying?
+    @order.state == :querying
+  end
+
   def failure_reason
     case @order.error_code
     when "payment"
       "Le paiement de la commande a été refusé par votre banque"
-    when "price"
-      "Le prix total de votre commande a augmenté chez le marchand !"
+    when "user"
+      "Vous avez annulé la commande"
     when "account"
       "Impossible de créer un compte à votre nom chez le marchand"
     else
-      "Le back office Shopelia est en maintenance"
+      "Le back office Shopelia n'a pas réussi à passer la commande suite à des erreurs techniques de notre part"
     end
   end
 
