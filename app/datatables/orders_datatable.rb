@@ -19,8 +19,8 @@ class OrdersDatatable
   def data
     orders.map do |order|
       [
-        link_to(truncate(order.order_items.first.product.name), "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
-        image_tag(order.merchant.logo, style:"max-width:100px;max-height:50px"),
+        link_to(image_tag(order.order_items.first.product.image_url, style:"max-width:100px;max-height:40px"), "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
+        image_tag(order.merchant.logo, style:"max-width:100px;max-height:40px"),
         number_to_currency(order.expected_price_total),
         h(order.user.name),
         time_ago_in_words(order.updated_at),
