@@ -35,6 +35,7 @@ class Order < ActiveRecord::Base
   before_create :validates_products
   after_initialize :deserialize_questions
   after_create :prepare_order_items
+  after_create :leftronic_incoming, :if => Proc.new { |order| !order.destroyed? }
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
   
   def to_param
@@ -104,6 +105,7 @@ class Order < ActiveRecord::Base
         self.shipping_info = content["billing"]["shipping_info"]
         self.error_code = nil
         self.state = :completed
+        self.leftronic_success
         Emailer.notify_order_success(self).deliver
 
       end
@@ -169,12 +171,14 @@ class Order < ActiveRecord::Base
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending
+    self.leftronic_failure
   end
 
   def abort error_sym=nil
     self.error_code = check_error_validity(error_sym.to_s) unless error_sym.nil?
     self.state = :failed
     Emailer.notify_order_failure(self).deliver
+    self.leftronic_abort
   end
 
   def check_error_validity error
@@ -238,6 +242,30 @@ class Order < ActiveRecord::Base
   
   def deserialize_questions
     @questions = JSON.parse(self.questions_json || "[]")
+  end
+  
+  def leftronic_success
+    return if Rails.env.test?
+    product = order_items.first.product
+    Leftronic.new.push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_successfully_completed.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
+    Leftronic.new.push_text("shopelia_completed_orders", product.name, user.name, product.image_url)
+  end
+
+  def leftronic_abort
+    return if Rails.env.test?
+    product = order_items.first.product
+    Leftronic.new.push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_abort.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
+    Leftronic.new.push_text("shopelia_aborted_orders", product.name, user.name, product.image_url)
+  end
+
+  def leftronic_fail
+    return if Rails.env.test?
+    Leftronic.new.push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_injection_failed.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
+  end
+
+  def leftronic_incoming
+    return if Rails.env.test?
+    Leftronic.new.push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/incoming_order.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
   end
   
 end

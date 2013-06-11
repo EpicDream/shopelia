@@ -35,6 +35,7 @@ class User < ActiveRecord::Base
   before_create :skip_confirmation_email
   after_save :process_nested_attributes
   after_save :send_confirmation_email
+  after_create :leftronic_users_count
 
   #after_save :create_psp_users
   #before_update :update_psp_users 
@@ -164,6 +165,10 @@ class User < ActiveRecord::Base
       user = User.find_by_email("test@shopelia.fr")
       user.destroy unless user.nil?
     end
+  end
+
+  def leftronic_users_count
+    Leftronic.new.push_number("shopelia_users_count", { "point" => User.count })
   end
 
 end
