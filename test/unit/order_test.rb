@@ -356,6 +356,15 @@ class OrderTest < ActiveSupport::TestCase
     @order.reload.process "success", {"billing" => {}}
     assert @order.reload.message.nil?
   end
+
+  test "it should clear message and error when state going from pending to processing" do
+    @order.state_name = "pending"
+    @order.message = "bla"
+    @order.error_code = "user"
+    assert @order.start
+    assert @order.reload.message.nil?
+    assert @order.error_code.nil?
+  end
   
   test "it should parametrize order with uuid" do
     assert_equal @order.uuid, @order.to_param

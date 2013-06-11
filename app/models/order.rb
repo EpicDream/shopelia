@@ -44,7 +44,8 @@ class Order < ActiveRecord::Base
   def start
     return false unless [:initialized, :pending, :querying].include?(state)
     @questions = []
-    error_code = message = nil
+    self.error_code = nil
+    self.message = nil
     self.state = :processing
     assess Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
     Leftronic.new.notify_order(self)
