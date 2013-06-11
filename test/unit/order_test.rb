@@ -415,4 +415,16 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 1, Order.canceled.count    
   end
    
+  test "it shouldn't cancel a completed order" do
+    @order.update_attribute :state_name, "completed"
+    @order.cancel
+    assert_equal :completed, @order.reload.state
+  end 
+
+  test "it shouldn't confirm a failed order" do
+    @order.update_attribute :state_name, "failed"
+    @order.confirm
+    assert_equal :failed, @order.reload.state    
+  end 
+   
 end

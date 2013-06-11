@@ -43,13 +43,12 @@ class Order < ActiveRecord::Base
   
   def start
     return false unless [:initialized, :pending, :querying].include?(state)
-    self.reload
     @questions = []
     error_code = message = nil
     self.state = :processing
     assess Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
-    self.save!
     Leftronic.new.notify_order(self)
+    self.save!
   end
 
   def restart
@@ -144,6 +143,7 @@ class Order < ActiveRecord::Base
   end
   
   def confirm
+    return unless self.state == :querying
     self.expected_price_total = self.prepared_price_total
     self.prepared_price_total = nil
     self.prepared_price_product = nil
@@ -164,12 +164,14 @@ class Order < ActiveRecord::Base
   end
 
   def query
+    return unless self.state == :processing
     self.state = :querying
     Leftronic.new.notify_order(self)
     Emailer.notify_order_price_change(self).deliver
   end
 
   def fail content, error_sym
+    return unless self.state == :processing
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending
@@ -177,6 +179,7 @@ class Order < ActiveRecord::Base
   end
 
   def abort error_sym=nil
+    return if self.state == :failed || self.state == :completed
     self.error_code = check_error_validity(error_sym.to_s) unless error_sym.nil?
     self.state = :failed
     Leftronic.new.notify_order(self)
