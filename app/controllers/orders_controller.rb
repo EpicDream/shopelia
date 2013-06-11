@@ -2,7 +2,7 @@ class OrdersController < ApplicationController
   before_filter :retrieve_order
 
   def update
-    if params["confirmation"].eql?("yes")
+    if params["order"]["confirmation"].eql?("yes")
       @order.confirm
     else
       @order.cancel

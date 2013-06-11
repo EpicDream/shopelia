@@ -22,7 +22,7 @@ class OrdersControllerTest < ActionController::TestCase
     @order.state_name = "querying"
     @order.save
 
-    put :update, id:@order.to_param, confirmation:"yes"
+    put :update, id:@order.to_param, order:{confirmation:"yes"}
     assert_response 302
     
     assert_equal :processing, @order.reload.state
@@ -32,7 +32,7 @@ class OrdersControllerTest < ActionController::TestCase
     @order.state_name = "querying"
     @order.save
 
-    put :update, id:@order.to_param, confirmation:"no"
+    put :update, id:@order.to_param, order:{confirmation:"no"}
     assert_response 302
     
     assert_equal :failed, @order.reload.state

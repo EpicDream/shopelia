@@ -21,7 +21,7 @@ class OrdersDatatable
       [
         link_to(truncate(order.order_items.first.product.name), "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
         image_tag(order.merchant.logo, style:"max-width:100px;max-height:50px"),
-        number_to_currency(order.expected_price_total),
+        number_to_currency(order.state == :completed ? order.billed_price_total : order.expected_price_total),
         h(order.user.name),
         time_ago_in_words(order.updated_at),
         order.error_code
