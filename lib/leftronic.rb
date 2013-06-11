@@ -11,6 +11,7 @@ class Leftronic
 
   def notify_order order
     return if order.order_items.blank?
+    puts "Notifying order #{order.state_name}"
     product = order.order_items.first.product
     push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_#{order.state_name}.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
     push_text("shopelia_orders_#{order.state_name}", product.name, order.user.name, product.image_url)
@@ -18,6 +19,14 @@ class Leftronic
   
   def notify_users_count
     push_number("shopelia_users_count", User.count)
+  end
+
+  def clear_board
+    clear("shopelia_sound")
+    clear("shopelia_orders_pending")
+    clear("shopelia_orders_processing")
+    clear("shopelia_orders_completed")
+    clear("shopelia_orders_aborted")    
   end
 
   def url=(url)

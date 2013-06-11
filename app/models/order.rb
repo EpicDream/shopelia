@@ -44,6 +44,7 @@ class Order < ActiveRecord::Base
   
   def start
     return false unless [:initialized, :pending, :querying].include?(state)
+    self.reload
     @questions = []
     error_code = message = nil
     self.state = :processing
