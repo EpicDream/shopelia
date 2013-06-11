@@ -112,7 +112,13 @@
                                   <p>
                                   <font style="font-size: 21px">Souhaitez-vous confirmer votre commande ?</font>
                                   <p>
-                                  <%= link_to "CONFIRMER MA COMMANDE", order_url(@order), style:"color: #fff; text-decoration: none;" %>
+                                  <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
+                                    <tr>
+                                      <td align="center" width="200" bgcolor="#29b153" style="background: #29b153; margin-bottom: 5px; margin-top: 5px; padding-top: 6px; padding-right: 10px; padding-bottom: 6px; padding-left: 10px; border: 1px solid #1d863d; color: #fff; font-weight: normal; text-decoration: none; font-family: Helvetica, Arial, sans-serif; text-transform:uppercase; display: block; font-size:0.8em;">
+                                        <%= link_to "PRENDRE UNE DECISION", order_url(@order), style:"color: #fff; text-decoration: none;" %>
+                                      </td>
+                                    </tr>
+                                  </table>
                                 </td>
                                 <!-- End of Content Text -->
                               </tr>
