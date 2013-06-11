@@ -11,9 +11,8 @@ class Leftronic
 
   def notify_order order
     return if order.order_items.blank?
-    puts "Notifying order #{order.state_name}"
     product = order.order_items.first.product
-    if order.state_name.eql?("aborted") && order.error_code.eql?("user")
+    if order.state_name.eql?("failed") && order.error_code.eql?("user")
       sound = "canceled" 
     else
       sound = order.state_name
