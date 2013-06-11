@@ -60,6 +60,13 @@ class Leftronic
     post stream, 'clear'
   end
 
+  def notify_order order
+    return if Rails.env.test?
+    product = order_items.first.product
+    Leftronic.new.push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_#{order.state_name}.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
+    Leftronic.new.push_text("shopelia_orders_#{order.state_name}", product.name, user.name, product.image_url)
+  end
+  
   protected
 
   def post(stream, params)
