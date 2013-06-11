@@ -5,11 +5,21 @@ require 'json'
 
 class Leftronic
 
-  ACCESS_KEY = "yiOeiGcux3ZuhdsWuVHJ"
-  
+  ACCESS_KEY = "yiOeiGcux3ZuhdsWuVHJ" 
   ALLOWED_COLORS = [:red, :yellow, :green, :blue, :purple]
-  attr_accessor :key
+  attr_accessor :key 
+
+  def notify_order order
+    return if order.order_items.blank?
+    product = order.order_items.first.product
+    push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_#{order.state_name}.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
+    push_text("shopelia_orders_#{order.state_name}", product.name, order.user.name, product.image_url)
+  end
   
+  def notify_users_count
+    push_number("shopelia_users_count", User.count)
+  end
+
   def url=(url)
     @url = URI(url.to_s)
   end
@@ -60,16 +70,11 @@ class Leftronic
     post stream, 'clear'
   end
 
-  def notify_order order
-    return if Rails.env.test?
-    product = order_items.first.product
-    Leftronic.new.push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_#{order.state_name}.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
-    Leftronic.new.push_text("shopelia_orders_#{order.state_name}", product.name, user.name, product.image_url)
-  end
   
   protected
 
   def post(stream, params)
+    return if Rails.env.test?
     request = build_request(stream, params)
     connection = build_connection
     connection.start{|http| http.request request}

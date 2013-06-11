@@ -242,7 +242,7 @@ class Order < ActiveRecord::Base
   end
   
   def notify_leftronic
-    Leftronic.notify_order(self) if self.state_name_changed?
+    Leftronic.new.notify_order(self) if self.state_name_changed?
   end
   
 end

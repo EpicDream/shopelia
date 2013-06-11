@@ -168,8 +168,7 @@ class User < ActiveRecord::Base
   end
 
   def leftronic_users_count
-    return if Rails.env.test?
-    Leftronic.new.push_number("shopelia_users_count", User.count)
+    Leftronic.new.notify_users_count
   end
 
 end
