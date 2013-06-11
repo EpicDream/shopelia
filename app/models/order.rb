@@ -105,7 +105,7 @@ class Order < ActiveRecord::Base
         self.shipping_info = content["billing"]["shipping_info"]
         self.error_code = nil
         self.state = :completed
-        self.leftronic_success
+        leftronic_success
         Emailer.notify_order_success(self).deliver
 
       end
@@ -171,14 +171,14 @@ class Order < ActiveRecord::Base
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending
-    self.leftronic_failure
+    leftronic_failure
   end
 
   def abort error_sym=nil
     self.error_code = check_error_validity(error_sym.to_s) unless error_sym.nil?
     self.state = :failed
     Emailer.notify_order_failure(self).deliver
-    self.leftronic_abort
+    leftronic_abort
   end
 
   def check_error_validity error
