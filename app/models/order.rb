@@ -36,7 +36,6 @@ class Order < ActiveRecord::Base
   after_initialize :deserialize_questions
   after_create :prepare_order_items
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
-  after_update :notify_leftronic
   
   def to_param
     self.uuid
@@ -50,6 +49,7 @@ class Order < ActiveRecord::Base
     self.state = :processing
     assess Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
     self.save!
+    Leftronic.new.notify_order(self)
   end
 
   def restart
@@ -106,6 +106,7 @@ class Order < ActiveRecord::Base
         self.shipping_info = content["billing"]["shipping_info"]
         self.error_code = nil
         self.state = :completed
+        Leftronic.new.notify_order(self)
         Emailer.notify_order_success(self).deliver
 
       end
@@ -164,6 +165,7 @@ class Order < ActiveRecord::Base
 
   def query
     self.state = :querying
+    Leftronic.new.notify_order(self)
     Emailer.notify_order_price_change(self).deliver
   end
 
@@ -171,11 +173,13 @@ class Order < ActiveRecord::Base
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending
+    Leftronic.new.notify_order(self)
   end
 
   def abort error_sym=nil
     self.error_code = check_error_validity(error_sym.to_s) unless error_sym.nil?
     self.state = :failed
+    Leftronic.new.notify_order(self)
     Emailer.notify_order_failure(self).deliver
   end
 
@@ -240,10 +244,6 @@ class Order < ActiveRecord::Base
   
   def deserialize_questions
     @questions = JSON.parse(self.questions_json || "[]")
-  end
-  
-  def notify_leftronic
-    Leftronic.new.notify_order(self) if self.state_name_changed?
   end
   
 end

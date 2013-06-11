@@ -13,7 +13,12 @@ class Leftronic
     return if order.order_items.blank?
     puts "Notifying order #{order.state_name}"
     product = order.order_items.first.product
-    push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_#{order.state_name}.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
+    if order.state_name.eql?("aborted") && order.error_code.eql?("user")
+      sound = "canceled" 
+    else
+      sound = order.state_name
+    end
+    push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_#{sound}.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
     push_text("shopelia_orders_#{order.state_name}", product.name, order.user.name, product.image_url)
   end
   
