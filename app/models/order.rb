@@ -25,6 +25,7 @@ class Order < ActiveRecord::Base
   
   scope :delayed, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 3.minutes ) }
   scope :expired, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 4.hours ) }
+  scope :canceled, lambda { where("state_name='querying' and created_at < ?", Time.zone.now - 2.hours ) }
   
   before_validation :initialize_uuid
   before_validation :initialize_state

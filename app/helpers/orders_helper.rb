@@ -30,7 +30,7 @@ module OrdersHelper
     when "payment"
       "Le paiement de la commande a été refusé par votre banque"
     when "user"
-      "Vous avez annulé la commande"
+      "La commande a été annulée"
     when "account"
       "Impossible de créer un compte à votre nom chez le marchand"
     else

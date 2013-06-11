@@ -94,7 +94,7 @@
                                 <td width="20"></td>
                                 <!-- DISCOUNT BADGE -->
                                 <td width="350" align="left" valign="top" style="font-size: 18px; color: #232323; font-weight: normal; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">
-                                  <%= image_tag("emails/query.png", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>											
+                                  <%= image_tag("emails/up.png", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>											
                                 </td>
                                 <!-- End DISCOUNT BADGE -->
                                 <td width="20"></td>
@@ -111,6 +111,8 @@
                                   au lieu de <%= number_to_currency(@old_price) %>
                                   <p>
                                   <font style="font-size: 21px">Souhaitez-vous confirmer votre commande ?</font>
+                                  <p>
+                                  <%= link_to "CONFIRMER MA COMMANDE", order_url(@order), style:"color: #fff; text-decoration: none;" %>
                                 </td>
                                 <!-- End of Content Text -->
                               </tr>
@@ -168,64 +170,6 @@
                                       <td colspan="3" height="10" bgcolor="#fefaf7"></td>
                                     </tr>
                                   </table>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <%= image_tag("emails/divider.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:250, height:1, alt:"", class:"badge") %>	
-                                </td>
-                              </tr>
-                              <tr>
-                                <td width="250">
-                                  <table align="left" bgcolor="#fefaf7" width="250" cellpadding="0" cellspacing="0" border="0" class="table">
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#f8f3ed"></td>
-                                    </tr>
-                                    <tr>
-                                      <td width="10" bgcolor="#f8f3ed"></td>
-                                      <!-- CART ITEMS -->
-                                      <td width="230" bgcolor="#f8f3ed"align="left" valign="top" style="font-size: 18px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px;">													
-                                        <a style="color:#29b153;line-height:18px; font-weight: bold;">Suivi de commande</a> 
-                                      </td>
-                                      <!-- End CART ITEMS -->
-                                      <td width="10" bgcolor="#f8f3ed"></td>
-                                    </tr>
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#f8f3ed"></td>
-                                    </tr>
-                                  </table>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td width="250">
-                                  <table align="left" bgcolor="#fefaf7" width="250" cellpadding="0" cellspacing="0" border="0" class="table">
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#fefaf7"></td>
-                                    </tr>
-                                    <tr>
-                                      <td width="10" bgcolor="#fefaf7"></td>
-                                      <!-- CART ITEMS -->
-                                      <td width="230" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 14px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">													
-                                        <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
-                                          <tr>
-                                            <td align="center" width="160" bgcolor="#29b153" style="background: #29b153; margin-bottom: 5px; margin-top: 5px; padding-top: 6px; padding-right: 10px; padding-bottom: 6px; padding-left: 10px; border: 1px solid #1d863d; color: #fff; font-weight: normal; text-decoration: none; font-family: Helvetica, Arial, sans-serif; text-transform:uppercase; display: block; font-size:0.8em;">
-                                              <%= link_to "CONFIRMER MA COMMANDE", order_url(@order), style:"color: #fff; text-decoration: none;" %>
-                                            </td>
-                                          </tr>
-                                        </table>
-                                      </td>
-                                      <!-- End CART ITEMS -->
-                                      <td width="10" bgcolor="#fefaf7"></td>
-                                    </tr>
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#fefaf7"></td>
-                                    </tr>
-                                  </table>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <img src="http://stamplia.com/uploads/214_4n6aqkj1jdic08kko0gssckwgc8sko0o0o44g408w04ckkcooo/289/img/divider.jpg" width="250" height="1" border="0" alt="" style="display:block; border:none; outline:none; text-decoration:none;" class="badge">
                                 </td>
                               </tr>
                             </tbody>

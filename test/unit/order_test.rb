@@ -275,7 +275,7 @@ class OrderTest < ActiveSupport::TestCase
     
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
-    assert_match /Vous avez annulé la commande/, mail.decoded    
+    assert_match /La commande a été annulée/, mail.decoded    
   end
 
   test "it should confirm order" do
@@ -405,6 +405,14 @@ class OrderTest < ActiveSupport::TestCase
     @order.update_attribute :created_at, Time.now - 5.hours
     assert_equal 1, Order.delayed.count
     assert_equal 1, Order.expired.count
+  end
+  
+  test "it should match canceled scope" do
+    @order.update_attribute :state_name, "querying"
+    assert_equal 0, Order.canceled.count
+    
+    @order.update_attribute :created_at, Time.now - 3.hours
+    assert_equal 1, Order.canceled.count    
   end
    
 end
