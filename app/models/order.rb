@@ -35,8 +35,8 @@ class Order < ActiveRecord::Base
   before_create :validates_products
   after_initialize :deserialize_questions
   after_create :prepare_order_items
-  after_create :leftronic_incoming, :if => Proc.new { |order| !order.destroyed? }
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
+  after_update :notify_leftronic
   
   def to_param
     self.uuid
@@ -105,7 +105,6 @@ class Order < ActiveRecord::Base
         self.shipping_info = content["billing"]["shipping_info"]
         self.error_code = nil
         self.state = :completed
-        leftronic_success
         Emailer.notify_order_success(self).deliver
 
       end
@@ -171,14 +170,12 @@ class Order < ActiveRecord::Base
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending
-    leftronic_failure
   end
 
   def abort error_sym=nil
     self.error_code = check_error_validity(error_sym.to_s) unless error_sym.nil?
     self.state = :failed
     Emailer.notify_order_failure(self).deliver
-    leftronic_abort
   end
 
   def check_error_validity error
@@ -242,6 +239,10 @@ class Order < ActiveRecord::Base
   
   def deserialize_questions
     @questions = JSON.parse(self.questions_json || "[]")
+  end
+  
+  def notify_leftronic
+    Leftronic.notify_order(self) if self.state_name_changed?
   end
   
 end
