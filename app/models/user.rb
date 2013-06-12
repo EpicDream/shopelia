@@ -10,7 +10,7 @@ class User < ActiveRecord::Base
   has_many :psp_users, :dependent => :destroy
   has_many :merchant_accounts, :dependent => :destroy
   has_many :user_verification_failures, :dependent => :destroy
-  has_many :orders
+  has_many :orders, :dependent => :destroy
   belongs_to :nationality, :class_name => "Country"
 
   CIVILITY_MR = 0
