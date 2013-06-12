@@ -166,10 +166,8 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test "it should create and update leetchi user" do
-    skip
-    allow_remote_api_calls
+    @user.destroy
     VCR.use_cassette('user') do
-      @user.destroy # cleanup
       user = User.new(
         :email => "elarch@gmail.com", 
         :password => "tototo", 
@@ -181,7 +179,8 @@ class UserTest < ActiveSupport::TestCase
         :ip_address => '127.0.0.1',
         :birthdate => '1973-09-30')
       assert user.save, user.errors.full_messages.join(",")
-      
+
+      user.create_leetchi      
       assert user.leetchi, "Leetchi user not created"
 
       # Request leetchi user to check data integrity
@@ -205,25 +204,23 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "it should manage leetchi api failure at user creation" do
-    skip
-    allow_remote_api_calls
     VCR.use_cassette('user_fail') do
-      assert_difference('User.count', 0) do
-        @user = User.create(
-          :email => "willfail@gmail.com", 
-          :password => "tototo", 
-          :password_confirmation => "tototo",
-          :first_name => "Joe",
-          :last_name => "Fail",
-          :civility => User::CIVILITY_MR,
-          :nationality_id => countries(:france).id,
-          :ip_address => '127.0.0.1',
-          :birthdate => '1973-09-30')
-        assert !@user.persisted?, "User creation should have failed"
-      end
+      user = User.new(
+        :email => "willfail@gmail.com", 
+        :password => "tototo", 
+        :password_confirmation => "tototo",
+        :first_name => "Joe",
+        :last_name => "Fail",
+        :civility => User::CIVILITY_MR,
+        :nationality_id => countries(:france).id,
+        :ip_address => '127.0.0.1',
+        :birthdate => '1973-09-30')
+      assert user.save, user.errors.full_messages.join(",")
+
+      result = user.create_leetchi
+      assert !user.leetchi.present?
       
-      assert @user.errors.present?
-      errors = Psp::LeetchiWrapper.extract_errors @user
+      errors = JSON.parse(result)
       assert_equal "remote", errors["origin"]
       assert_equal 0, errors["error_code"]
       assert_equal "Api failure", errors["user_message"]
@@ -233,8 +230,6 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "it should manage leetchi api failure at user update" do
-    skip
-    allow_remote_api_calls
     VCR.use_cassette('user_fail') do
       user = User.new(
         :email => "willfail_later@gmail.com", 
@@ -247,6 +242,9 @@ class UserTest < ActiveSupport::TestCase
         :ip_address => '127.0.0.1',
         :birthdate => '1973-09-30')
       assert user.save
+
+      user.create_leetchi      
+      assert user.leetchi, "Leetchi user not created"
 
       user.update_attributes(:birthdate => '1970-09-30')
       assert user.errors.present?

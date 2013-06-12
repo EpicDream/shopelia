@@ -30,7 +30,6 @@ class ActiveSupport::TestCase
 =end
 
   setup do
-    ENV["ALLOW_REMOTE_API_CALLS"] = "0"
     ENV["API_KEY"] = developers(:prixing).api_key
     ActionMailer::Base.deliveries.clear
   end
@@ -39,8 +38,5 @@ class ActiveSupport::TestCase
     JSON.parse @response.body
   end
 
-  def allow_remote_api_calls
-   ENV["ALLOW_REMOTE_API_CALLS"] = "1"
-  end
 end
 

@@ -6,8 +6,8 @@ class Psp::LeetchiUser < Psp::LeetchiWrapper
         'Email' => user.email,
         'FirstName' => user.first_name,
         'LastName' => user.last_name,
-        'Nationality' => user.nationality.iso,
-        'Birthday' => user.birthdate.to_i,
+        'Nationality' => user.nationality.nil? ? "fr" : user.nationality.iso,
+        'Birthday' => user.birthdate.nil? ? 30.years.ago.to_i : user.birthdate.to_i,
         'PersonType' => 'NATURAL_PERSON',
         'CanRegisterMeanOfPayment' => true,
         'IP' => user.ip_address
@@ -33,8 +33,8 @@ class Psp::LeetchiUser < Psp::LeetchiWrapper
         'Email' => user.email,
         'FirstName' => user.first_name,
         'LastName' => user.last_name,
-        'Nationality' => user.nationality.iso,
-        'Birthday' => user.birthdate.to_i,
+        'Nationality' => user.nationality.nil? ? "fr" : user.nationality.iso,
+        'Birthday' => user.birthdate.nil? ? 30.years.ago.to_i : user.birthdate.to_i
     })
     if remote_user["ID"].nil?
       remote_error remote_user
