@@ -92,6 +92,8 @@ class Leftronic
     connection = build_connection
     connection.start{|http| http.request request}
     params
+    rescue
+      nil
   end
 
   def build_request(stream, params)
