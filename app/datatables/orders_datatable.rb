@@ -1,5 +1,5 @@
 class OrdersDatatable
-  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :time_ago_in_words, :truncate, to: :@view
+  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :time_ago_in_words, :truncate, :admin_order_path, to: :@view
 
   def initialize(view)
     @view = view
@@ -24,7 +24,8 @@ class OrdersDatatable
         number_to_currency(order.state == :completed ? order.billed_price_total : order.expected_price_total),
         h(order.user.name),
         time_ago_in_words(order.updated_at),
-        order.error_code
+        order.error_code,
+        "<button type=\"button\" class=\"btn btn-warning\" data-url=\"#{admin_order_path(order)}\" data-state=\"retry\" style=\"visibility:hidden\">Retry the order</button> <button type=\"button\" class=\"btn btn-danger\" data-url=\"#{admin_order_path(order)}\" data-state=\"cancel\" style=\"visibility:hidden\">Cancel the order</button> "
       ]
     end
   end

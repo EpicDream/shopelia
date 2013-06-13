@@ -1,22 +1,37 @@
-<h1>Users list</h1>
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th><%= sortable "email", "Email" %></th>
-      <th><%= sortable "last_name", "Name" %></th>
-      <th><%= sortable "created_at", "Created at" %></th>
-      <th>Confirmed at</th>
-    </tr>
-  </thead>
-  <tbody>
-<% @users.each do |user| %>
-    <tr>
-      <td><%= user.email %></td>
-      <td><%= user.first_name %> <%= user.last_name %></td>
-      <td><%= l user.created_at %></td>
-      <td><%= user.confirmed_at.nil? ? "" : l(user.confirmed_at) %></td>
-    </tr>
+<% content_for :head do %>
+<%= javascript_include_tag 'datatable.reload_ajax' %>
+<%= javascript_include_tag 'admin/users' %>
 <% end %>
-  </tbody>
-</table>
-<%= will_paginate(@users) %>
+
+<div class="row">
+  <div class="span12">
+    <h1>Users list</h1>
+    <table id="users" class="table table-striped" data-source="<%= admin_users_url(format: 'json') %>">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Name</th>
+          <th>Created at</th>
+          <th>Confirmed</th>
+          <th>Orders</th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+  </div>
+</div>
+
+<div id="confirmModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Warning !</h3>
+  </div>
+  <div class="modal-body">
+    <p>Do you really want to destroy the user <strong><span id="confirmModelUsername"/></strong>&nbsp;?</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Close</a>
+    <a href="#" class="btn btn-danger" id="confirmDestruction">Confirm destruction</a>
+  </div>
+</div>
