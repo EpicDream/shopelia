@@ -1,6 +1,6 @@
 class Order < ActiveRecord::Base
   STATES = ["initialized", "processing", "pending", "querying", "completed", "failed"]
-  ERRORS = ["vulcain_api", "vulcain", "payment", "user", "account"]
+  ERRORS = ["vulcain_api", "vulcain", "payment", "user", "account", "stock"]
 
   belongs_to :user
   belongs_to :merchant
@@ -26,6 +26,12 @@ class Order < ActiveRecord::Base
   scope :delayed, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 3.minutes ) }
   scope :expired, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 4.hours ) }
   scope :canceled, lambda { where("state_name='querying' and created_at < ?", Time.zone.now - 2.hours ) }
+  
+  scope :processing, lambda { where("state_name='processing'") }
+  scope :pending, lambda { where("state_name='pending'") }
+  scope :querying, lambda { where("state_name='querying'") }
+  scope :completed, lambda { where("state_name='completed'") }
+  scope :failed, lambda { where("state_name='failed'") }
   
   before_validation :initialize_uuid
   before_validation :initialize_state
@@ -81,6 +87,8 @@ class Order < ActiveRecord::Base
         when "order_timeout" then fail("order_timeout", :vulcain)
         when "uuid_conflict" then fail("uuid_conflict", :vulcain)
         when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
+        when "no_product_available" then fail("product_not_found", :vulcain)
+        when "out_of_stock" then abort(:stock)
         when "order_validation_failed" then abort(:payment)
         when "account_creation_failed" then restart
         when "login_failed" then restart

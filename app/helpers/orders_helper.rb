@@ -33,6 +33,8 @@ module OrdersHelper
       "La commande a été annulée"
     when "account"
       "Impossible de créer un compte à votre nom chez le marchand"
+    when "stock"
+      "Le produit demandé n'est plus en stock"
     else
       "Le back office Shopelia n'a pas réussi à passer la commande suite à des erreurs techniques de notre part"
     end

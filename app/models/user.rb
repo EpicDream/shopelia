@@ -36,6 +36,7 @@ class User < ActiveRecord::Base
   after_save :process_nested_attributes
   after_save :send_confirmation_email
   after_create :leftronic_users_count
+  after_destroy :leftronic_users_count
 
   before_update :update_psp_users, :if => Proc.new { |user| user.leetchi.present? }
 

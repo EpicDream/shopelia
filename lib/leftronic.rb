@@ -87,7 +87,7 @@ class Leftronic
   protected
 
   def post(stream, params)
-    return if Rails.env.test?
+    return unless Rails.env.production?
     request = build_request(stream, params)
     connection = build_connection
     connection.start{|http| http.request request}

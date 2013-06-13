@@ -1,22 +1,25 @@
 class Admin::UsersController < Admin::AdminController
-  helper_method :sort_column, :sort_direction
+  
   
   def index
-    @users = User.page(params[:page]).order(sort_column + " " + sort_direction)
+    respond_to do |format|
+      format.html
+      format.json { render json: UsersDatatable.new(view_context) }
+    end
   end
 
   def show
     @user = User.find(params[:id])
   end
   
-  private
-  
-  def sort_column
-    User.column_names.include?(params[:sort]) ? params[:sort] : "created_at"
-  end
-  
-  def sort_direction
-    %w[asc desc].include?(params[:direction]) ? params[:direction] : "desc"
+  def destroy
+    @user = User.find(params[:id])
+    @user.destroy
+    
+    respond_to do |format|
+      format.html { redirect_to admin_users_url }
+      format.json { render json: {} }
+    end
   end
   
 end

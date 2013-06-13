@@ -231,6 +231,19 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "uuid_conflict", @order.message
   end
 
+  test "it should fail order if product not found" do
+    @order.process "failure", { "status" => "no_product_available" }
+    assert_equal :pending, @order.reload.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "product_not_found", @order.message
+  end
+
+  test "it should abort order if product is out of stock" do
+    @order.process "failure", { "status" => "out_of_stock" }
+    assert_equal :failed, @order.reload.state
+    assert_equal "stock", @order.error_code
+  end
+
   test "it should set message" do
     @order.process "message", { "message" => "bla" }
     assert_equal "bla", @order.message
