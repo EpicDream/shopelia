@@ -209,6 +209,8 @@ fr:
   activerecord:
     attributes:
       address:
+        first_name: "Prénom"
+        last_name: "Nom"
         zip: "Le code postal"
         city: "La ville"
         phone: "Le numéro de téléphone"
@@ -234,6 +236,24 @@ fr:
              payment_card:
                blank: "doit être renseigné"
 
+  simple_form:
+    placeholders:
+      address:
+        first_name: "Prénom"
+        last_name: "Nom"
+        address1: "Adresse"
+        address2: "Complément d'adresse"
+        zip: "Code postal"
+        city: "Ville"
+        country: "Pays"
+
+  addresses:
+    add: "Ajouter l'adresse"
+    success: "L'adresse a été créée avec succès"
+
+  countries:
+    choose: "Choisissez un pays"
+
   developers:
     unauthorized: "Clé API invalide"
     
@@ -248,6 +268,13 @@ fr:
       invalid_url: "L'URL du produit est invalide"
   
   users:
+    registration:
+      finalize:
+        title: "Informations manquantes"
+        tagline: "Afin de pouvoir passer une commande avec Shopélia, vous devez ajouter
+                 une adresse de livraison et une carte de paiement"
+        add_address: "Ajouter une addresse"
+        add_payment_card: "Ajouter une carte"
     invalid_birthdate: "Vous devez avoir au minimum 16 ans pour vous enregistrer"
 
   leetchi:
@@ -257,4 +284,7 @@ fr:
     payment_cards:
       creation_failure: "Impossible to create payment card on Leetchi API. Error: %{error}"
       destroy_failure: "Impossible to destroy payment card on Leetchi API. Error: %{error}"
-      
+
+  app:
+    cancel: "Annuler"
+    close: "Fermer"

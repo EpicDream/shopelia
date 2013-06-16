@@ -1,0 +1,28 @@
+<% javascript 'users/finalize_registration' %>
+
+<div class="hero-unit">
+  <h1><%= t "users.registration.finalize.title" %></h1>
+  <p><%= t "users.registration.finalize.tagline" %></p>
+  <p>
+  <% if current_user.addresses.count == 0 %>
+    <a class="btn btn-success btn-large" id="addressButton">
+      <i class="icon-plus icon-white"></i> <%= t "users.registration.finalize.add_address" %>
+    </a>
+  <% end %>
+  <% if current_user.addresses.count == 0 %>
+    <a class="btn btn-success btn-large" id="cardButton">
+      <i class="icon-plus icon-white"></i> <%= t "users.registration.finalize.add_payment_card" %>
+    </a>
+  <% end %>
+  </p>
+</div>
+
+<div id="addressModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="addressModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Ajout d'une adresse de livraison</h3>
+  </div>
+
+  <%= render partial:"addresses/form", locals:{address:Address.new(first_name:current_user.first_name, last_name:current_user.last_name)}  %>
+  
+</div>

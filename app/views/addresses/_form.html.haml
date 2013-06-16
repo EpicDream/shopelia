@@ -1,0 +1,33 @@
+= javascript "addresses/form"
+
+= simple_form_for address, wrapper: :compact do |f|
+  = f.error_notification
+
+  .modal-body
+    .row-fluid
+      .row
+        .span5
+          = f.input :first_name 
+        .span5
+          = f.input :last_name
+      .row
+        .span10
+          = f.input :address1
+      .row
+        .span10
+          = f.input :address2
+      .row
+        .control-group.span5
+          = f.input :zip
+        .control-group.span5
+          = f.input :city
+      .row
+        .control-group.span10
+          = f.association :country, collection: Country.all(order: 'name'), prompt: I18n.t("countries.choose")
+  
+  .modal-footer
+    %button{:class => 'btn btn-large'}
+      = I18n.t("app.cancel")
+    = f.button :submit, I18n.t("addresses.add"), class:'btn-success btn-large'
+
+

@@ -20,7 +20,6 @@ class User < ActiveRecord::Base
   validates :first_name, :presence => true
   validates :last_name, :presence => true
   validates :civility, :inclusion => { :in => [ CIVILITY_MR, CIVILITY_MME, CIVILITY_MLLE ] }, :allow_nil => true
-  validates :ip_address, :presence => true
   validates_confirmation_of :password
   validate :user_must_be_16_yo
 
@@ -82,6 +81,10 @@ class User < ActiveRecord::Base
   
   def has_password?
     !self.encrypted_password.blank?
+  end
+  
+  def can_order?
+    self.addresses.count > 0 && self.payment_cards.count > 0
   end
   
   def verify data

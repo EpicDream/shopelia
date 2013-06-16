@@ -6,6 +6,6 @@
 
   = f.input :email, :required => true, :autofocus => true
 
-  = f.button :submit, t('.resend_confirmation_instructions', :default => 'Resend confirmation instructions')
+  = f.button :submit, t('.resend_confirmation_instructions', :default => 'Resend confirmation instructions'), :class => 'btn-success'
 
 = render "devise/shared/links"

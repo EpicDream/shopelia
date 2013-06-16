@@ -3,8 +3,8 @@
 = simple_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f|
   = f.error_notification
 
-  = f.input :email, :required => true, :autofocus => true, :label => false
-  = f.button :submit, t('.send_me_reset_password_instructions', :default => "Send me reset password instructions")
+  = f.input :email, :required => true, :autofocus => true
+  = f.button :submit, t('.send_me_reset_password_instructions', :default => "Send me reset password instructions"), :class => 'btn-success'
 
 = render "devise/shared/links"
 
