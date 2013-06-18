@@ -11,7 +11,7 @@ class Psp::LeetchiWrapper
   
   def local_error object
      @errors = { :origin => "local", 
-                 :message => object.errors.full_messages.join(",") }.to_json
+                 :message => object.errors.full_messages.join(",") }
   end
   
   def remote_error object
@@ -19,12 +19,12 @@ class Psp::LeetchiWrapper
                 :message => object["TechnicalMessage"],
                 :error_code => object["ErrorCode"],
                 :user_message => object["UserMessage"],
-                :type => object["Type"] }.to_json
+                :type => object["Type"] }
   end
   
   def self.extract_errors object
     if m = object.errors.full_messages.join(",").match(/Error\: (.*)$/)
-      JSON.parse m[1]
+      eval(m[1])
     else
       nil
     end

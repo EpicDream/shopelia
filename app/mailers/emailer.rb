@@ -8,6 +8,8 @@ class Emailer < ActionMailer::Base
           :from => "#{name} <#{email}>",
           :body => message)
   end
+
+  ##################################################################################
   
   def notify_order_creation order
     @order = order
@@ -48,5 +50,23 @@ class Emailer < ActionMailer::Base
           :subject => "ATTENTION ! Le prix de votre commande a evolué !",
           :from => "Shopelia <contact@shopelia.fr>")
   end
+
+  ##################################################################################
+
+  def leetchi_user_creation_failure user, errors
+    @user = user
+    @errors = errors
+    mail( :to => "Eric <eric@shopelia.com>",
+          :subject => "[SUPERVISOR][CRITICAL] Leetchi user creation failure",
+          :from => "Supervisor <noreply@shopelia.com>")
+  end
   
+  def leetchi_card_creation_failure card, errors
+    @card = card
+    @errors = errors
+    mail( :to => "Eric <eric@shopelia.com>",
+          :subject => "[SUPERVISOR][CRITICAL] Leetchi card creation failure",
+          :from => "Supervisor <noreply@shopelia.com>")
+  end
+   
 end

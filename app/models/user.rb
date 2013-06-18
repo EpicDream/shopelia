@@ -38,6 +38,7 @@ class User < ActiveRecord::Base
   after_create :leftronic_users_count
   after_destroy :leftronic_users_count
 
+  after_create :create_psp_users
   before_update :update_psp_users, :if => Proc.new { |user| user.leetchi.present? }
 
   def addresses= params
@@ -110,7 +111,7 @@ class User < ActiveRecord::Base
     return unless self.leetchi.nil?
     wrapper = Psp::LeetchiUser.new
     wrapper.create(self)
-    wrapper.errors
+    Emailer.leetchi_user_creation_failure(self,wrapper.errors).deliver unless self.leetchi.present?
   end
 
   def password_required?
@@ -142,7 +143,16 @@ class User < ActiveRecord::Base
     self.send_confirmation_instructions if self.errors.count == 0 && @confirmation_delayed
   end
   
+  def create_psp_users
+    if Rails.env.production?
+      SuckerPunch::Queue[:leetchi_user_queue].async.perform(self)
+    else 
+      create_leetchi unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
+    end
+  end
+  
   def update_psp_users
+    return if self.leetchi.nil?
     if first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?
       wrapper = Psp::LeetchiUser.new
       if !wrapper.update(self)

@@ -167,6 +167,7 @@ class UserTest < ActiveSupport::TestCase
   
   test "it should create and update leetchi user" do
     @user.destroy
+    allow_remote_api_calls    
     VCR.use_cassette('user') do
       user = User.new(
         :email => "elarch@gmail.com", 
@@ -180,7 +181,6 @@ class UserTest < ActiveSupport::TestCase
         :birthdate => '1973-09-30')
       assert user.save, user.errors.full_messages.join(",")
 
-      user.create_leetchi      
       assert user.leetchi, "Leetchi user not created"
 
       # Request leetchi user to check data integrity
@@ -204,6 +204,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "it should manage leetchi api failure at user creation" do
+    allow_remote_api_calls
     VCR.use_cassette('user_fail') do
       user = User.new(
         :email => "willfail@gmail.com", 
@@ -216,20 +217,15 @@ class UserTest < ActiveSupport::TestCase
         :ip_address => '127.0.0.1',
         :birthdate => '1973-09-30')
       assert user.save, user.errors.full_messages.join(",")
-
-      result = user.create_leetchi
       assert !user.leetchi.present?
-      
-      errors = JSON.parse(result)
-      assert_equal "remote", errors["origin"]
-      assert_equal 0, errors["error_code"]
-      assert_equal "Api failure", errors["user_message"]
-      assert_equal "Api failure", errors["message"]
-      assert_equal "SystemError", errors["type"]
+
+      mail = ActionMailer::Base.deliveries.last
+      assert mail.present?, "a critical alert email should have been sent"      
     end
   end
 
   test "it should manage leetchi api failure at user update" do
+    allow_remote_api_calls
     VCR.use_cassette('user_fail') do
       user = User.new(
         :email => "willfail_later@gmail.com", 
@@ -243,7 +239,6 @@ class UserTest < ActiveSupport::TestCase
         :birthdate => '1973-09-30')
       assert user.save
 
-      user.create_leetchi      
       assert user.leetchi, "Leetchi user not created"
 
       user.update_attributes(:birthdate => '1970-09-30')
@@ -251,11 +246,11 @@ class UserTest < ActiveSupport::TestCase
       assert_equal DateTime.parse('1973-09-30'), user.reload.birthdate
       
       errors = Psp::LeetchiWrapper.extract_errors user
-      assert_equal "remote", errors["origin"]
-      assert_equal 0, errors["error_code"]
-      assert_equal "Api failure", errors["user_message"]
-      assert_equal "Api failure", errors["message"]
-      assert_equal "SystemError", errors["type"]
+      assert_equal "remote", errors[:origin]
+      assert_equal 0, errors[:error_code]
+      assert_equal "Api failure", errors[:user_message]
+      assert_equal "Api failure", errors[:message]
+      assert_equal "SystemError", errors[:type]
     end
   end
 
