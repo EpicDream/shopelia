@@ -78,7 +78,7 @@ class Order < ActiveRecord::Base
           self.merchant_account.confirm_creation!
         end
 
-      elsif verb.eql?("failure")
+      elsif verb.eql?("failure") && self.state == :processing
         case content["status"]
         when "exception" then fail("exception", :vulcain)
         when "no_idle" then fail("no_idle", :vulcain)
@@ -94,7 +94,7 @@ class Order < ActiveRecord::Base
         when "login_failed" then restart
         end
 
-      elsif verb.eql?("assess")
+      elsif verb.eql?("assess") && self.state == :processing
         @questions = content["questions"]
         self.prepared_price_total = content["billing"]["total"]
         self.prepared_price_product = content["billing"]["product"]
@@ -107,7 +107,7 @@ class Order < ActiveRecord::Base
         assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
         query unless confirmed
 
-      elsif verb.eql?("success")
+      elsif verb.eql?("success") && self.state == :processing
         self.billed_price_total = content["billing"]["total"]
         self.billed_price_product = content["billing"]["product"]
         self.billed_price_shipping = content["billing"]["shipping"]
