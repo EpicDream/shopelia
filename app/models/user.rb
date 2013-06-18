@@ -7,7 +7,6 @@ class User < ActiveRecord::Base
 
   has_many :addresses, :dependent => :destroy
   has_many :payment_cards, :dependent => :destroy
-  has_many :psp_users, :dependent => :destroy
   has_many :merchant_accounts, :dependent => :destroy
   has_many :user_verification_failures, :dependent => :destroy
   has_many :orders, :dependent => :destroy
@@ -19,6 +18,7 @@ class User < ActiveRecord::Base
 
   validates :first_name, :presence => true
   validates :last_name, :presence => true
+  validates :email, :presence => true
   validates :civility, :inclusion => { :in => [ CIVILITY_MR, CIVILITY_MME, CIVILITY_MLLE ] }, :allow_nil => true
   validates :ip_address, :presence => true
   validates_confirmation_of :password
@@ -33,13 +33,13 @@ class User < ActiveRecord::Base
   before_validation :reset_test_account
 
   before_create :skip_confirmation_email
-  after_save :process_nested_attributes
-  after_save :send_confirmation_email
+  after_create :process_nested_attributes
+  after_create :send_confirmation_email
   after_create :leftronic_users_count
   after_destroy :leftronic_users_count
 
-  after_create :create_psp_users
-  before_update :update_psp_users, :if => Proc.new { |user| user.leetchi.present? }
+  after_create :create_psp_users, :if => Proc.new { |user| user.persisted? }
+  before_update :update_psp_users, :if => Proc.new { |user| user.leetchi_created? }
 
   def addresses= params
     (params || []).each do |address|
@@ -103,15 +103,15 @@ class User < ActiveRecord::Base
     false
   end
   
-  def leetchi
-    self.psp_users.leetchi.first
+  def leetchi_created?
+    self.leetchi_id.present?
   end
   
   def create_leetchi
-    return unless self.leetchi.nil?
+    return if self.leetchi_created?
     wrapper = Psp::LeetchiUser.new
     wrapper.create(self)
-    Emailer.leetchi_user_creation_failure(self,wrapper.errors).deliver unless self.leetchi.present?
+    Emailer.leetchi_user_creation_failure(self,wrapper.errors).deliver unless self.leetchi_created?
   end
 
   def password_required?
@@ -133,10 +133,8 @@ class User < ActiveRecord::Base
   end
   
   def process_nested_attributes
-    if self.persisted?
-      self.addresses = self.addresses_attributes
-      self.payment_cards = self.payment_cards_attributes
-    end
+    self.addresses = self.addresses_attributes
+    self.payment_cards = self.payment_cards_attributes
   end
   
   def send_confirmation_email
@@ -152,7 +150,6 @@ class User < ActiveRecord::Base
   end
   
   def update_psp_users
-    return if self.leetchi.nil?
     if first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?
       wrapper = Psp::LeetchiUser.new
       if !wrapper.update(self)

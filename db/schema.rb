@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130606125513) do
+ActiveRecord::Schema.define(:version => 20130618214807) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -124,8 +124,10 @@ ActiveRecord::Schema.define(:version => 20130606125513) do
     t.string   "exp_month"
     t.string   "exp_year"
     t.string   "cvv"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+    t.integer  "leetchi_id"
+    t.datetime "leetchi_created_at"
   end
 
   create_table "products", :force => true do |t|
@@ -135,28 +137,6 @@ ActiveRecord::Schema.define(:version => 20130606125513) do
     t.string   "image_url"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
-  end
-
-  create_table "psp_payment_cards", :force => true do |t|
-    t.integer  "payment_card_id"
-    t.integer  "psp_id"
-    t.integer  "remote_payment_card_id"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
-  end
-
-  create_table "psp_users", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "psp_id"
-    t.integer  "remote_user_id"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
-  end
-
-  create_table "psps", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
   end
 
   create_table "states", :force => true do |t|
@@ -206,6 +186,8 @@ ActiveRecord::Schema.define(:version => 20130606125513) do
     t.integer  "nationality_id"
     t.string   "ip_address"
     t.string   "pincode"
+    t.integer  "leetchi_id"
+    t.datetime "leetchi_created_at"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

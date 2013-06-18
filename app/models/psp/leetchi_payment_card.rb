@@ -4,9 +4,10 @@ class Psp::LeetchiPaymentCard < Psp::LeetchiWrapper
   def create card
     remote_card = Leetchi::Card.create({
         'Tag' => card.id.to_s,
-        'OwnerID' => card.user.leetchi.remote_user_id,
+        'OwnerID' => card.user.leetchi_id,
         'ReturnURL' => CARD_RETURN_URL
     })
+    card.update_column "leetchi_created_at", Time.now
     
     if remote_card["ID"].present?
       begin
@@ -25,16 +26,8 @@ class Psp::LeetchiPaymentCard < Psp::LeetchiWrapper
         end while not (check_card["CardNumber"] || "").length == 16 || attemps > 30
       
         if (check_card["CardNumber"] || "").length == 16
-          psp_card = PspPaymentCard.new(
-            :psp_id => @psp.id, 
-            :payment_card_id => card.id, 
-            :remote_payment_card_id => remote_card["ID"].to_i)
-          if psp_card.save
-            return true
-          else
-            local_error psp_card
-            Leetchi::Card.delete remote_card["ID"]
-          end
+          card.update_column :leetchi_id, remote_card["ID"].to_i
+          return true
         else
           time_out_error
           Leetchi::Card.delete remote_card["ID"]
@@ -52,13 +45,7 @@ class Psp::LeetchiPaymentCard < Psp::LeetchiWrapper
   end
 
   def destroy card
-    remote_card = Leetchi::Card.delete(card.leetchi.remote_payment_card_id)
-    if remote_card.eql?("\"OK\"")
-      true
-    else
-      remote_error remote_card
-      false
-    end
+    Leetchi::Card.delete(card.leetchi_id)
   end
 
   def time_out_error

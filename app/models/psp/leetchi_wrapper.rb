@@ -1,17 +1,11 @@
 class Psp::LeetchiWrapper
 
   def initialize
-    @psp = Psp.find_by_name(Psp::LEETCHI)
     @errors = {}
   end
 
   def errors
     @errors
-  end
-  
-  def local_error object
-     @errors = { :origin => "local", 
-                 :message => object.errors.full_messages.join(",") }
   end
   
   def remote_error object

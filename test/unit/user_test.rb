@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  fixtures :users, :countries, :psps, :payment_cards
+  fixtures :users, :countries, :payment_cards
   
   setup do
     @user = users(:elarch)
@@ -180,11 +180,10 @@ class UserTest < ActiveSupport::TestCase
         :ip_address => '127.0.0.1',
         :birthdate => '1973-09-30')
       assert user.save, user.errors.full_messages.join(",")
-
-      assert user.leetchi, "Leetchi user not created"
+      assert user.leetchi_created?, "Leetchi user not created"
 
       # Request leetchi user to check data integrity
-      leetchi_user = Leetchi::User.details(user.leetchi.remote_user_id)
+      leetchi_user = Leetchi::User.details(user.leetchi_id)
       assert_equal user.email, leetchi_user['Email']
       assert_equal user.first_name, leetchi_user['FirstName']
       assert_equal user.last_name, leetchi_user['LastName']
@@ -198,7 +197,7 @@ class UserTest < ActiveSupport::TestCase
       user.update_attributes(:birthdate => '1970-09-30')
       
       # Request leetchi user to verify bithdate has been updated
-      leetchi_user = Leetchi::User.details(user.leetchi.remote_user_id)
+      leetchi_user = Leetchi::User.details(user.leetchi_id)
       assert_equal user.birthdate.to_i, leetchi_user['Birthday'].to_i
     end
   end
@@ -217,7 +216,7 @@ class UserTest < ActiveSupport::TestCase
         :ip_address => '127.0.0.1',
         :birthdate => '1973-09-30')
       assert user.save, user.errors.full_messages.join(",")
-      assert !user.leetchi.present?
+      assert !user.leetchi_created?
 
       mail = ActionMailer::Base.deliveries.last
       assert mail.present?, "a critical alert email should have been sent"      
@@ -239,7 +238,7 @@ class UserTest < ActiveSupport::TestCase
         :birthdate => '1973-09-30')
       assert user.save
 
-      assert user.leetchi, "Leetchi user not created"
+      assert user.leetchi_created?, "Leetchi user not created"
 
       user.update_attributes(:birthdate => '1970-09-30')
       assert user.errors.present?

@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Api::V1::RegistrationsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :countries, :psps
+  fixtures :countries
 
   test "it should register new user" do
     assert_difference(['User.count','Address.count']) do
