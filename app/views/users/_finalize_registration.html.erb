@@ -1,28 +1,38 @@
 <% javascript 'users/finalize_registration' %>
 
 <div class="hero-unit">
-  <h1><%= t "users.registration.finalize.title" %></h1>
+  <h2><%= t "users.registration.finalize.title" %></h2>
   <p><%= t "users.registration.finalize.tagline" %></p>
   <p>
   <% if current_user.addresses.count == 0 %>
-    <a class="btn btn-success btn-large" id="addressButton">
+    <a class="btn btn-success btn-large modal-button" id="addressButton" target-modal="addressModal" target-url="<%= new_address_path %>">
       <i class="icon-plus icon-white"></i> <%= t "users.registration.finalize.add_address" %>
     </a>
   <% end %>
-  <% if current_user.addresses.count == 0 %>
-    <a class="btn btn-success btn-large" id="cardButton">
+  <% if current_user.payment_cards.count == 0 %>
+    <a class="btn btn-success btn-large modal-button" id="cardButton" target-modal="cardModal" target-url="<%= new_payment_card_path %>">
       <i class="icon-plus icon-white"></i> <%= t "users.registration.finalize.add_payment_card" %>
     </a>
   <% end %>
   </p>
 </div>
 
-<div id="addressModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="addressModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>Ajout d'une adresse de livraison</h3>
-  </div>
 
-  <%= render partial:"addresses/form", locals:{address:Address.new(first_name:current_user.first_name, last_name:current_user.last_name)}  %>
-  
+<div id="addressModal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h3>Ajout d'une carte de adresse de livraison</h3>
+  </div>
+  <div class="modal-content">
+  </div>
 </div>
+
+<div id="cardModal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h3>Ajout d'une carte de paiement</h3>
+  </div>
+  <div class="modal-content">
+  </div>
+</div>
+

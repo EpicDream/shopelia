@@ -16,6 +16,7 @@ Shopelia::Application.routes.draw do
   
   resources :addresses
   resources :orders, :only => [:show, :update]
+  resources :payment_cards
 
   namespace :admin do
     resources :orders, :only => [:index, :show, :update]

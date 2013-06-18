@@ -209,26 +209,40 @@ fr:
   activerecord:
     attributes:
       address:
-        first_name: "Prénom"
-        last_name: "Nom"
+        first_name: "Le prénom"
+        last_name: "Le nom"
         zip: "Le code postal"
         city: "La ville"
         phone: "Le numéro de téléphone"
+        address1: "L'adresse"
+        country_id: "Le pays"
       order:
         address: "L'adresse"
         payment_card: "Le moyen de paiement"
+      payment_card:
+        number: "Le numéro"
+        exp_month: "Le mois d'expiration"
+        exp_year: "L'année d'expiration"
+        cvv: "Le code de vérification"
+        
     errors:
       models:
         address:
           attributes:
+            first_name:
+              blank: "doit être renseigné"
+            last_name:
+              blank: "doit être renseigné"
+            address1:
+              blank: "doit être renseignée"
             zip:
               blank: "doit être renseigné"
             city:
               blank: "doit être renseignée"
-        phone:
-          attributes:
-             number:
-               blank: "doit être renseigné"
+            phone:
+              blank: "doit être renseigné"
+            country_id:
+              blank: "doit être renseigné"
         order:
           attributes:
              address:
@@ -245,11 +259,19 @@ fr:
         address2: "Complément d'adresse"
         zip: "Code postal"
         city: "Ville"
+        phone: "Téléphone"
         country: "Pays"
+      payment_card:
+        number: "Numéro de la carte"
+        cvv: "CVV"
 
   addresses:
     add: "Ajouter l'adresse"
     success: "L'adresse a été créée avec succès"
+
+  payment_cards:
+    add: "Ajouter la carte"
+    success: "La carte a été créée avec succès"
 
   countries:
     choose: "Choisissez un pays"
@@ -288,3 +310,4 @@ fr:
   app:
     cancel: "Annuler"
     close: "Fermer"
+    wait: "Patientez..."

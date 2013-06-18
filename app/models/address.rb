@@ -5,7 +5,7 @@ class Address < ActiveRecord::Base
   belongs_to :order
   
   validates :user, :presence => true
-  validates :country, :presence => true
+  validates :country_id, :presence => true
   validates :address1, :presence => true
   validates :zip, :presence => true
   validates :city, :presence => true

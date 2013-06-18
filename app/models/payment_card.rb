@@ -14,12 +14,20 @@ class PaymentCard < ActiveRecord::Base
   def leetchi
     self.psp_payment_cards.leetchi.first
   end
-  
+    
   def create_leetchi
     return unless self.leetchi.nil?
     wrapper = Psp::LeetchiPaymentCard.new
     wrapper.create(self)
     wrapper.errors
+  end
+  
+  def self.months
+    ("01".."12").map{|i| i}
+  end
+
+  def self.years
+    (Time.now.year..(Time.now.year + 10)).map{|i| i}
   end
   
   private
