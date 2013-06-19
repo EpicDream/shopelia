@@ -38,7 +38,9 @@ class Linker
   end
 
   def self.fnac url
-    if url.include? "zanox"
+    if url.include? "25134383C1552684717T"
+      return url
+    elsif url.include? "zanox"
       uri = URI.parse(url)
       response = nil
       while response.nil? || response.code.to_i != 200 do
