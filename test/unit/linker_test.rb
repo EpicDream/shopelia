@@ -51,5 +51,15 @@ class LinkerTest < ActiveSupport::TestCase
     url = Linker.monetize nil
     assert url.nil?
   end  
-
+  
+  test "it should monetize fnac url" do
+    url = Linker.monetize "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4#bl=MMtvh"
+    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www.fnac.com%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4%23bl%3DMMtvh]]", url
+  end
+  
+  test "it should monetize zanox fnac url" do
+    url = Linker.monetize "http://ad.zanox.com/ppc/?19054231C2048768278&ULP=[[jeux-jouets.fnac.com/a5782285/DOUETCIE-FND-LAPIN-BONBON-PM-TAUPE]]#fnac"
+    assert_match /^http\:\/\/ad.zanox.com\/ppc\/\?25134383C1552684717T&ULP=\[\[www4.fnac.com%2FDoudou\-et\-Compagnie\-Lapin\-Bonbon\-Petit\-Modele\-Taupe/, url
+  end
+  
 end

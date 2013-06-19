@@ -8,6 +8,8 @@ class Linker
       self.amazon(url)
     elsif url.match(/priceminister/)
       self.price_minister(url)
+    elsif url.match(/fnac/)
+      self.fnac(url)
     else
       url
     end
@@ -33,6 +35,21 @@ class Linker
     else
       "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=" + url.gsub(/#.*$/, "")
     end
+  end
+
+  def self.fnac url
+    if url.include? "zanox"
+      uri = URI.parse(url)
+      response = nil
+      while response.nil? || response.code.to_i != 200 do
+        req = Net::HTTP::Get.new(uri.request_uri)
+        response = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
+        uri = URI.parse(response['location']) unless response.code.to_i == 200
+      end
+      url = uri.to_s
+    end
+    url = CGI::escape(url.gsub("http://", ""))
+    "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[#{url}]]"
   end
 
 end
