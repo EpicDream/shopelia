@@ -40,7 +40,7 @@ class ProductTest < ActiveSupport::TestCase
   test "it should monetize fnac url" do
     product = Product.new(:url => "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4")
     assert product.save, product.errors.full_messages.join(",")
-    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4]]", product.url
+    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4]]#fnac.com", product.url
     assert_equal merchants(:fnac).id, product.merchant_id
   end
   
@@ -51,6 +51,9 @@ class ProductTest < ActiveSupport::TestCase
   test "it should create and fetch new product" do
     assert_difference('Product.count', 1) do
       Product.fetch("http://www.rueducommerce.fr/productC")
+    end
+    assert_difference('Product.count', 1) do
+      Product.fetch("http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4")
     end
   end
   

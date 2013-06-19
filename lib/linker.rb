@@ -50,7 +50,7 @@ class Linker
       end
     end
     url = CGI::escape(uri.request_uri.gsub(/\?.*$/, ""))
-    "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[#{url}]]"
+    "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[#{url}]]#fnac.com"
   end
 
 end
