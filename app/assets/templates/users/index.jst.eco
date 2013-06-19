@@ -1,4 +1,14 @@
-<form accept-charset="UTF-8">
-    Email: <input type="text" name="email"><br>
-    <button>Submit yoyoy</button>
+<div class="span4 offset4">
+    <a href="https://shopelia.com"><img alt="Logo_shopelia" src="/assets/logo_shopelia.png"></a>
+</div>
+
+<form accept-charset="UTF-8" class="clearfix">
+    <div class="input-prepend"></div>
+    <input type="text" class="" placeholder= "Email" name="email"><br>
+    <input type="text" placeholder= "Phone" name="phone"><br>
+    <input type="text" placeholder="First Name" name="first_name"><br>
+    <input type="text" placeholder="Last Name" name="last_name"><br>
+    <input type="text" placeholder= "Address" name="address1" autocomplete="off"><br>
+    <input type="text" placeholder="Complément d'address" name="address2"><br>
+    <button class="btn btn-large">Poursuivre la commande</button>
 </form>

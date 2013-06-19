@@ -1,4 +1,0 @@
-First Name: <input type="text" name="first_name"><br>
-Last Name: <input type="text" name="last_name"><br>
-Address: <input type="text" name="address1" autocomplete="off"><br>
-Compl?ment d'adress: <input type="text" name="address2"><br>
