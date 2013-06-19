@@ -54,18 +54,18 @@ class LinkerTest < ActiveSupport::TestCase
   
   test "it should monetize fnac url" do
     url = Linker.monetize "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4#bl=MMtvh"
-    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www.fnac.com%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4%23bl%3DMMtvh]]", url
+    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4]]", url
   end
   
   test "it should monetize zanox fnac url" do
     url = Linker.monetize "http://ad.zanox.com/ppc/?19054231C2048768278&ULP=[[jeux-jouets.fnac.com/a5782285/DOUETCIE-FND-LAPIN-BONBON-PM-TAUPE]]#fnac"
-    assert_match /^http\:\/\/ad.zanox.com\/ppc\/\?25134383C1552684717T&ULP=\[\[www4.fnac.com%2FDoudou\-et\-Compagnie\-Lapin\-Bonbon\-Petit\-Modele\-Taupe/, url
+    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[%2FDoudou-et-Compagnie-Lapin-Bonbon-Petit-Modele-Taupe%2Fa5782285%2Fw-4]]", url
     url = Linker.monetize "http://ad.zanox.com/ppc/?19054231C2048768278&ULP=%5B%5Bjeux-jouets.fnac.com/a5073437/Lego-Duplo-Ville-10503-Le-numero-des-otaries%5D%5D#fnac.com"
-    assert_match /^http\:\/\/ad.zanox.com\/ppc\/\?25134383C1552684717T&ULP=\[\[www4.fnac.com%2FLego\-Duplo\-Ville\-10503\-Le\-numero\-des\-otaries%2Fa5073437%2Fw-4/, url
+    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[%2FLego-Duplo-Ville-10503-Le-numero-des-otaries%2Fa5073437%2Fw-4]]", url
   end
   
   test "it shouldn't change already monetized fnac url" do
-    url = "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www4.fnac.com%2FLego-Duplo-Ville-10503-Le-numero-des-otaries%2Fa5073437%2Fw-4%3FSID%3D25b9c27e-f46e-d24b-08e6-06c45cf2faad%26UID%3D0F7E11BF8-2B20-3497-C86D-CA150AD123FD%26Origin%3Dzanox1464273%26OrderInSession%3D1%26TTL%3D161220131934%26ectrans%3D1]]"
+    url = "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[%2FLego-Duplo-Ville-10503-Le-numero-des-otaries%2Fa5073437%2Fw-4]]"
     assert_equal url, Linker.monetize(url)
   end
   
