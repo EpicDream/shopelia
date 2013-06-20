@@ -9,37 +9,9 @@ class OrderTest < ActiveSupport::TestCase
     @product = products(:usbkey)
     @order = orders(:elarch_rueducommerce)
     @card = payment_cards(:elarch_hsbc)
-    @address = addresses(:elarch_neuilly)
-    @content = { 
-      "questions" => [
-        { "id" => "3" }
-      ],
-      "products" => [
-        { "url" => products(:usbkey).url,
-          "delivery_text" => "Shipping", 
-          "price_text" => "Price text", 
-          "product_title" => "Usbkey", 
-          "product_image_url" => "image.jpg", 
-          "price_delivery" => 2, 
-          "price_product" => 9 
-        },
-        { "url" => products(:headphones).url,
-          "delivery_text" => "Shipping", 
-          "price_text" => "Price text", 
-          "product_title" => "Headphones", 
-          "product_image_url" => "image.jpg", 
-          "price_delivery" => 0, 
-          "price_product" => 5 
-        }
-      ],
-      "billing" => {
-        "product" => 14,
-        "shipping" => 2,
-        "total" => 16
-      }
-    }    
+    @address = addresses(:elarch_neuilly) 
   end
-  
+
   test "it should create order" do
     order = Order.create(
       :user_id => @user.id,
@@ -177,81 +149,155 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY", order.order_items.first.product.url
   end
   
-  test "it should start order" do
-    @order.start
-    assert_equal :processing, @order.reload.state
+  test "it should set message" do
+    @order.process "message", { "message" => "bla" }
+    
+    assert_equal "bla", @order.message
   end
   
-  test "it should fail order with exception" do
-    @order.process "failure", { "status" => "exception" }
-    assert_equal :pending, @order.reload.state
+  test "it should start order" do
+    start_order
+    
+    assert_equal :preparing, @order.reload.state
+  end
+  
+  test "it shouldn't start order if missing address" do
+    @order.address_id = nil
+    start_order
+    
+    assert_equal :initialized, @order.state
+  end
+
+  test "it shouldn't start order if missing payment card" do
+    @order.payment_card_id = nil
+    start_order
+    
+    assert_equal :initialized, @order.state
+  end
+
+  test "it shouldn't start order if missing merchant account" do
+    @order.merchant_account_id = nil
+    start_order
+    
+    assert_equal :initialized, @order.state
+  end
+  
+  test "it shouldn't start order if missing order items" do
+    @order.order_items.destroy_all
+    start_order
+    
+    assert_equal :initialized, @order.state
+  end
+  
+  test "it should fail order if out of stock" do
+    start_order
+    callback_order "failure", { "status" => "out_of_stock" }
+    
+    assert_equal :failed, @order.state
+    assert_equal "out_of_stock", @order.error_code
+  end
+  
+  test "it should pause order with vulcain exception" do
+    start_order
+    calback_order "failure", { "status" => "exception" }
+    
+    assert_equal :pending, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "exception", @order.message
   end
 
-  test "it should fail order with error" do
-    @order.process "failure", { "status" => "error" }
-    assert_equal :pending, @order.reload.state
+  test "it should pause order with vulcain error" do
+    start_order
+    callback_order "failure", { "status" => "error" }
+    
+    assert_equal :pending, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "error", @order.message    
   end
   
-  test "it should fail order with lack of vulcains" do
-    @order.process "failure", { "status" => "no_idle" }
-    assert_equal :pending, @order.reload.state
+  test "it should pause order with vulcain no_idle" do
+    start_order
+    callback_order "failure", { "status" => "no_idle" }
+    
+    assert_equal :pending, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "no_idle", @order.message
   end
 
-  test "it should fail order with driver problem" do
-    @order.process "failure", { "status" => "driver_failed" }
-    assert_equal :pending, @order.reload.state
+  test "it should pause order with vulcain driver problem" do
+    start_order
+    callback_order "failure", { "status" => "driver_failed" }
+    
+    assert_equal :pending, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "driver_failed", @order.message
   end
 
-  test "it should time out order" do
-    @order.process "failure", { "status" => "order_timeout" }
-    assert_equal :pending, @order.reload.state
+  test "it should pause order with vulcain time out" do
+    start_order
+    callback_order "failure", { "status" => "order_timeout" }
+    
+    assert_equal :pending, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "order_timeout", @order.message
   end
 
-  test "it should fail order with dispatcher crash" do
-    @order.process "failure", { "status" => "dispatcher_crash" }
-    assert_equal :pending, @order.reload.state
+  test "it should pause order with vulcain dispatcher crash" do
+    start_order
+    callback_order "failure", { "status" => "dispatcher_crash" }
+    
+    assert_equal :pending, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "dispatcher_crash", @order.message
   end
 
-  test "it should fail order if uuid conflict" do
-    @order.process "failure", { "status" => "uuid_conflict" }
-    assert_equal :pending, @order.reload.state
+  test "it should pause order with vulcain uuid conflict" do
+    start_order
+    callback_order "failure", { "status" => "uuid_conflict" }
+    
+    assert_equal :pending, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "uuid_conflict", @order.message
   end
 
-  test "it should fail order if product not found" do
-    @order.process "failure", { "status" => "no_product_available" }
-    assert_equal :pending, @order.reload.state
+  test "it should pause order with vulcain product not found" do
+    start_order
+    callback_order "failure", { "status" => "no_product_available" }
+    
+    assert_equal :pending, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "product_not_found", @order.message
-  end
+  end  
 
-  test "it should abort order if product is out of stock" do
-    @order.process "failure", { "status" => "out_of_stock" }
-    assert_equal :failed, @order.reload.state
-    assert_equal "stock", @order.error_code
+  test "it should restart paused order" do
+    pause_order
+    start_order
+    
+    assert :preparing, @order.state
   end
-
-  test "it should set message" do
-    @order.process "message", { "message" => "bla" }
-    assert_equal "bla", @order.message
+  
+  test "it should time out paused order" do
+    pause_order
+    time_out_order
+    
+    assert :failed, @order.state
+    assert "shopelia", @order.error_code
+    assert "timed_out", @order.message
   end
-
-  test "it should process confirmation request" do
-    @order.process "assess", @content
-    assert_equal :processing, @order.reload.state
+  
+  test "it should cancel paused order" do
+    pause_order
+    cancel_order
+    
+    assert :failed, @order.reload.state
+    assert "shopelia", @order.error_code
+    assert "canceled", @order.message
+  end
+  
+  test "it should update order when assessing" do
+    start_order
+    assess_order
+    
     assert_equal 16, @order.prepared_price_total
     assert_equal 14, @order.prepared_price_product
     assert_equal 2, @order.prepared_price_shipping
@@ -266,55 +312,110 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 2, item.price_delivery
     assert_equal 9, item.price_product
   end
+  
+  test "it should start billing if target price is auto accepted" do
+    start_order
+    assess_order
 
-  test "it should auto confirm order if target price is within range" do
-    @order.process "assess", @content
-    assert_equal :processing, @order.reload.state
+    assert_equal :billing, @order.state
     assert_equal true, @order.questions.first["answer"]
   end
 
   test "it should send request to user if price it outside range" do
-    @order.expected_price_total = 10
-    @order.process "assess", @content
-    assert_equal :querying, @order.reload.state
+    start_order
+    assess_order_with_higher_price
+
+    assert_equal :querying, @order.state
     assert_equal false, @order.questions.first["answer"]
     assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
   
-  test "it should cancel order" do
-    @order.cancel
-    assert_equal :failed, @order.reload.state
+  test "it should reject order because of higher price" do
+    start_order
+    assess_order_with_higher_price
+    reject_order
+    
+    assert_equal :failed, @order.state
     assert_equal "user", @order.error_code
+    assert_equal "price_rejected", @order.message
     
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
     assert_match /La commande a été annulée/, mail.decoded    
   end
 
-  test "it should confirm order" do
-    @order.state_name = "querying"
-    @order.prepared_price_total = 20
-    @order.confirm
-    assert_equal :processing, @order.reload.state
-    assert_equal 20, @order.expected_price_total    
+  test "it should accept order if price is deemed good" do
+    start_order
+    assess_order_with_higher_price
+    accept_order
+    
+    assert_equal :preparing, @order.state   
+    assert_equal 16, @order.expected_price_total    
   end
 
-  test "it should complete order" do
-    @order.process "success", {
-      "billing" => {
-        "product" => 14,
-        "shipping" => 2,
-        "total" => 16,
-        "shipping_info" => "info"
-      }
-    }
-    assert_equal :completed, @order.reload.state
-    assert_equal "info", @order.shipping_info
-    assert_equal 16, @order.billed_price_total
-    assert_equal 14, @order.billed_price_product
-    assert_equal 2, @order.billed_price_shipping
+  test "it should process order if billing has been accepted" do
+    start_order
+    assess_order
+    billing_accepted
+    
+    assert_equal :injecting_payment, @order.state
+  end
+
+  test "it should fail order if billing has beed rejected" do
+    start_order
+    assess_order
+    billing_rejected
+    
+    assert_equal :failed, @order.state
+    assert_equal "user", @order.error_code
+    assert_equal "billing_rejected", @order.message
+  end
+  
+  test "it should process order with injection success" do
+    start_order
+    assess_order
+    billing_accepted
+    injection_success
+    
+    assert_equal :waiting_approval, @order.state
+  end
+  
+  test "it should pause order with injection error" do
+    start_order
+    assess_order
+    billing_accepted
+    injection_error
+    
+    assert_equal :pending, @order.state
+    assert_equal "limonetik", @order.error_code
+    assert_equal "injection_error", @order.message
+  end
+
+  test "it should complete order with payment success" do
+    start_order
+    assess_order
+    billing_accepted
+    injection_success
+    payment_success
+    
+    assert_equal :completed, @order.state
     assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
+
+  test "it should pause order with payment error" do
+    start_order
+    assess_order
+    billing_accepted
+    injection_success
+    payment_error
+    
+    assert_equal :pending, @order.state
+    assert_equal "limonetik", @order.error_code
+    assert_equal "payment_error", @order.message
+  end    
+
+
+
 
   test "it should complete an order only if it was processing" do
     @order.state_name = "failed"
@@ -464,5 +565,109 @@ class OrderTest < ActiveSupport::TestCase
     @order.confirm
     assert_equal :failed, @order.reload.state    
   end 
+   
+private
+  
+  def start_order
+    @order.start
+    @order.reload
+  end
+  
+  def callback_order verb, options
+    @order.callback verb, options
+    @order.reload
+  end
+  
+  def pause_order
+    start_order
+    callback_order "failure", { "status" => "error" }
+  end
+  
+  def time_out_order
+    @order.time_out
+    @order.reload
+  end
+  
+  def cancel_order
+    @order.cancel
+    @order.reload
+  end
+  
+  def assess_order
+    @order.process "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "url" => products(:usbkey).url,
+          "delivery_text" => "Shipping", 
+          "price_text" => "Price text", 
+          "product_title" => "Usbkey", 
+          "product_image_url" => "image.jpg", 
+          "price_delivery" => 2, 
+          "price_product" => 9 
+        },
+        { "url" => products(:headphones).url,
+          "delivery_text" => "Shipping", 
+          "price_text" => "Price text", 
+          "product_title" => "Headphones", 
+          "product_image_url" => "image.jpg", 
+          "price_delivery" => 0, 
+          "price_product" => 5 
+        }
+      ],
+      "billing" => {
+        "product" => 14,
+        "shipping" => 2,
+        "total" => 16
+      }
+    }
+    @order.reload
+  end
+  
+  def assess_order_with_higher_price
+    @order.update_attirbute :expected_price_total, 10
+    assess_order
+  end
+  
+  def reject_order
+    @order.reject
+    @order.reload
+  end
+  
+  def accept_order
+    @order.accept
+    @order.reload
+  end
+  
+  def billing_accepted
+    @order.billing_accepted
+    @order.reload
+  end
+  
+  def billing_rejected
+    @order.billing_rejected
+    @order.reload
+  end
+   
+  def injection_success
+    @order.injection_success
+    @order.reload
+  end 
+  
+  def injection_error
+    @order.injection_error
+    @order.reload
+  end
+  
+  def payment_success
+    @order.payment_success
+    @order.reload
+  end
+  
+  def payment_error
+    @order.payment_error
+    @order.reload
+  end
    
 end
