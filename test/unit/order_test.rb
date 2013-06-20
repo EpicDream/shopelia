@@ -159,7 +159,7 @@ class OrderTest < ActiveSupport::TestCase
       :products => [ { :invalid => "http://www.rueducommerce.fr/productA" } ],              
       :payment_card_id => @card.id)
     assert !order.persisted?, "Order shouldn't have saved"
-    assert_equal I18n.t('orders.errors.invalid_product'), order.errors.full_messages.first
+    assert_equal I18n.t('orders.errors.invalid_product', :error => ''), order.errors.full_messages.first
   end
   
   test "it should monetize urls" do
@@ -315,6 +315,20 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 2, @order.billed_price_shipping
     assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
+
+  test "it should complete an order only if it was processing" do
+    @order.state_name = "failed"
+    @order.process "success", {
+      "billing" => {
+        "product" => 14,
+        "shipping" => 2,
+        "total" => 16,
+        "shipping_info" => "info"
+      }
+    }
+    assert_equal :failed, @order.reload.state
+    assert !ActionMailer::Base.deliveries.last.present?, "a notification email shouldn't have been sent"
+  end
   
   test "it should restart order with new account if account creation failed" do
    assert_difference('MerchantAccount.count', 1) do
@@ -386,7 +400,9 @@ class OrderTest < ActiveSupport::TestCase
   test "it should clear error_code when state becomes completed" do
     @order.process "failure", { "status" => "error" }
     assert @order.reload.error_code.present?
-    @order.reload.process "success", {"billing" => {}}    
+    assert_equal :pending, @order.state
+    @order.state_name = "processing"
+    @order.process "success", {"billing" => {}}    
     assert @order.reload.error_code.nil?
   end
   

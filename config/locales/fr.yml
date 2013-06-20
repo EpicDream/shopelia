@@ -282,7 +282,7 @@ fr:
   orders:
     errors:
       no_product: "Impossible de créer une commande sans produit spécifié"
-      invalid_product: "Produit invalide"
+      invalid_product: "Produit invalide %{error}"
   
   products:
     errors:
