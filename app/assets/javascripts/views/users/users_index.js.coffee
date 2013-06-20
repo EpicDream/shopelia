@@ -3,6 +3,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
   template: JST['users/index']
   events:
     "click button": "createUser"
+    "keydown input[name='address1']": "removeReference"
 
   initialize: ->
     _.bindAll this
@@ -14,16 +15,45 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     this
 
   createUser: (e) ->
+    console.log("trigger createUser")
     e.preventDefault()
     userJson = @formSerializer()
-    @collection.create({"user": userJson},{
-                              wait : true,
+    that = this
+    user = new Shopelia.Models.User()
+    user.save({"user": userJson},{
                               success : (resp) ->
                                 console.log('success callback')
                                 console.log(resp)
-                              error : (model,response,json) ->
-                                console.log('error callback' + JSON.stringify(json))
+                                that.goToPaymentCardStep(model:user)
+                              error : (model, response) ->
+                                that.displayErrors($.parseJSON(response.responseText))
+
     })
+
+
+  displayErrors: (errors) ->
+    @eraseErrors()
+    keys = _.keys(errors)
+    console.log(errors)
+    that = this
+    _.each(keys,(key) ->
+      if (key == "base")
+        errorField =  that.$("input[name=address1]")
+      else
+        errorField =  that.$("input[name=" + key + "]")
+
+      errorField.parents(".control-group").addClass('error')
+      errorField.after('<span class="help-inline">'+ errors[key] + ' </span>')
+    )
+
+  eraseErrors: ->
+    @$(".control-group").removeClass("error")
+    @$(".help-inline").remove()
+
+
+  goToPaymentCardStep: (user) ->
+    view = new Shopelia.Views.PaymentCardsIndex(model:user )
+    $('#container').html(view.render().el)
 
   getLocation: ->
     if (navigator.geolocation)
@@ -62,6 +92,11 @@ class Shopelia.Views.UsersIndex extends Backbone.View
         selection
 
     );
+
+  removeReference: ->
+    $("input[name=address1]").removeAttr("reference")
+    console.log("change coco")
+
 
 
 

@@ -13,7 +13,6 @@
 //= require bootstrap
 //= require underscore
 //= require backbone
-//= require backbone.dualstorage
 //= require shopelia
 //= require_tree ../templates
 //= require_tree ./models

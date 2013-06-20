@@ -1,0 +1,6 @@
+<div class="span4 offset4">
+    <a href="https://shopelia.com"><img alt="Logo_shopelia" src="/assets/logo_shopelia.png"></a>
+</div>
+
+
+<%= @model.get("auth_token")%>
