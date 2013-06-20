@@ -159,7 +159,7 @@ class OrderTest < ActiveSupport::TestCase
       :products => [ { :invalid => "http://www.rueducommerce.fr/productA" } ],              
       :payment_card_id => @card.id)
     assert !order.persisted?, "Order shouldn't have saved"
-    assert_equal I18n.t('orders.errors.invalid_product'), order.errors.full_messages.first
+    assert_equal I18n.t('orders.errors.invalid_product', :error => ''), order.errors.full_messages.first
   end
   
   test "it should monetize urls" do

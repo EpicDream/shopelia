@@ -133,7 +133,7 @@ ActiveRecord::Schema.define(:version => 20130618214807) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.string   "url"
+    t.text     "url",         :limit => 255
     t.string   "image_url"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
