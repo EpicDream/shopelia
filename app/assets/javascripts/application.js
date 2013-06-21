@@ -9,7 +9,6 @@
 //= require rails.validations
 //= require rails.validations.simple_form
 //= require jquery_ujs
-//= require jquery-ui-1.10.3.custom.min
 //= require bootstrap
 //= require underscore
 //= require backbone

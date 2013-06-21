@@ -30,6 +30,11 @@
          <div class="control-group">
             <div class="controls">
                 <input type="text" placeholder="Complément d'address" name="address2">
+                <div id="manual_address">
+                    <input type="text" class="input-small" placeholder= "Code Postal" name="zip">
+                    <input type="text" class="input-small" placeholder= "Ville" name="city"> <br>
+                    <input type="text" placeholder= "Pays" name="country">
+                </div>
             </div>
          </div>
          <button class="btn btn-large">Préparer la commande</button>

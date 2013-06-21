@@ -4,13 +4,15 @@ class Shopelia.Views.UsersIndex extends Backbone.View
   events:
     "click button": "createUser"
     "keydown input[name='address1']": "removeReference"
+    "keypress input[name='address1']": "getLocation"
+    "focusout input[name='address1']": "showManualAddress"
 
   initialize: ->
     _.bindAll this
 
   render: ->
     $(@el).html(@template())
-    @$('input[name="address1"]').bind("keypress",@getLocation)
+    @hideManualAddress()
     console.log(@collection)
     this
 
@@ -100,22 +102,24 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
     );
 
+  showManualAddress: ->
+    reference = @$('input[name="address1"]').attr("reference")
+    if reference == undefined || reference == ""
+      $(@el).find("#manual_address").show()
+
+  hideManualAddress: ->
+    console.log($(@el).find("#manual_address"))
+    $(@el).find("#manual_address").hide()
+
+
   removeReference: ->
     $("input[name=address1]").removeAttr("reference")
-    console.log("change coco")
-
-
-
 
   formSerializer: ->
     loginFormObject = {};
-    full_name = @$('input[name="full_name"]').val()
-    firstName =  full_name.substr(0,full_name.indexOf(' '))
-    lastName =  full_name.substr(full_name.indexOf(' ')+1)
-    if firstName == ''
-      firstName = lastName
-      lastName = ''
-
+    fullName = @$('input[name="full_name"]').val()
+    firstName =  @split(fullName)[0]
+    lastName =  @split(fullName)[1]
     email = @$('input[name="email"]').val()
     phone = @$('input[name="phone"]').val()
     address1 = @$('input[name="address1"]').val()
@@ -131,11 +135,18 @@ class Shopelia.Views.UsersIndex extends Backbone.View
          "first_name": firstName,
          "last_name":  lastName,
          "phone": phone,
-         "reference": reference
+         "reference": reference,
+         "address2": address2
         }]
     }
 
     console.log loginFormObject
     loginFormObject
 
-
+  split: (fullName) ->
+    firstName =  fullName.substr(0,fullName.indexOf(' '))
+    lastName =  fullName.substr(fullName.indexOf(' ')+1)
+    if firstName == ''
+      [lastName,'']
+    else
+      [firstName,lastName]
