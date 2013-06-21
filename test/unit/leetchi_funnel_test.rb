@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 require 'test_helper'
 
-class LeetchiTest < ActiveSupport::TestCase
+class LeetchiFunnelTest < ActiveSupport::TestCase
   fixtures :users, :orders, :addresses, :payment_cards, :merchants, :merchant_accounts
   
   setup do
@@ -22,7 +22,8 @@ class LeetchiTest < ActiveSupport::TestCase
   test "it shouldn't bill if prepared price is not in range" do
     VCR.use_cassette('leetchi') do
       @order.prepared_price_total = 300
-      result = Leetchi.bill @order
+      @order.expected_price_total = 300
+      result = LeetchiFunnel.bill @order
       assert_equal "Order billing value should be beetwen 5€ and 200€", result["Error"]
     end
   end
@@ -30,7 +31,7 @@ class LeetchiTest < ActiveSupport::TestCase
   test "it shouldn't bill if state of order is not billing" do
     VCR.use_cassette('leetchi') do
       @order.update_attribute :state_name, "pending"
-      result = Leetchi.bill @order
+      result = LeetchiFunnel.bill @order
       assert_equal "Order is not in billing state", result["Error"]
     end
   end
@@ -38,14 +39,16 @@ class LeetchiTest < ActiveSupport::TestCase
   test "it shouldn't bill if order has already a contribution attached" do
     VCR.use_cassette('leetchi') do
       @order.leetchi_contribution_id = 1
-      result = Leetchi.bill @order
+      result = LeetchiFunnel.bill @order
       assert_equal "Order has already been billed on Leetchi", result["Error"]
     end
   end
   
   test "it should bill order" do
     VCR.use_cassette('leetchi') do
-      result = Leetchi.bill @order
+      result = LeetchiFunnel.bill @order
+      puts result.inspect
+      assert_equal "success", result["Status"]
     end
   end
       

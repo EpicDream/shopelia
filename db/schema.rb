@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130618214807) do
+ActiveRecord::Schema.define(:version => 20130621162907) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -96,8 +96,8 @@ ActiveRecord::Schema.define(:version => 20130618214807) do
     t.string   "uuid"
     t.string   "state_name"
     t.string   "message"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -115,6 +115,10 @@ ActiveRecord::Schema.define(:version => 20130618214807) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
+    t.integer  "leetchi_wallet_id"
+    t.integer  "leetchi_contribution_id"
+    t.string   "leetchi_contribution_status"
+    t.integer  "leetchi_contribution_amount"
   end
 
   create_table "payment_cards", :force => true do |t|
@@ -124,10 +128,9 @@ ActiveRecord::Schema.define(:version => 20130618214807) do
     t.string   "exp_month"
     t.string   "exp_year"
     t.string   "cvv"
-    t.datetime "created_at",         :null => false
-    t.datetime "updated_at",         :null => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
     t.integer  "leetchi_id"
-    t.datetime "leetchi_created_at"
   end
 
   create_table "products", :force => true do |t|
@@ -135,8 +138,8 @@ ActiveRecord::Schema.define(:version => 20130618214807) do
     t.integer  "merchant_id"
     t.text     "url",         :limit => 255
     t.string   "image_url"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
   end
 
   create_table "states", :force => true do |t|
@@ -187,7 +190,6 @@ ActiveRecord::Schema.define(:version => 20130618214807) do
     t.string   "ip_address"
     t.string   "pincode"
     t.integer  "leetchi_id"
-    t.datetime "leetchi_created_at"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true
