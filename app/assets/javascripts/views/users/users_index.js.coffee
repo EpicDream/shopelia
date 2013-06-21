@@ -11,16 +11,27 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
   render: ->
     $(@el).html(@template())
-    @$('input[name="country"]').autocomplete({
+    @setFormVariables()
+    @country.autocomplete({
       source: _.values(countries),
       select: ( event, ui ) ->
         _.each(countries, (value,key) ->
           if(value.toLowerCase()  == ui.item.label.toLowerCase())
-            @$('input[name="country"]').attr("country_code",key)
+            @country.attr("country_code",key)
         )
     });
     console.log(@collection)
     this
+
+  setFormVariables: ->
+    @fullName = @$('input[name="full_name"]')
+    @email = @$('input[name="email"]')
+    @phone = @$('input[name="phone"]')
+    @address1 = @$('input[name="address1"]')
+    @zip = @$('input[name="zip"]')
+    @city = @$('input[name="city"]')
+    @country = @$('input[name="country"]')
+    @address2 = @$('input[name="address2"]')
 
   createUser: (e) ->
     console.log("trigger createUser")
@@ -83,7 +94,8 @@ class Shopelia.Views.UsersIndex extends Backbone.View
   showPosition: (position) ->
     lat = position.coords.latitude.toString()
     lng = position.coords.longitude.toString()
-    input = @$('input[name="address1"]')
+    input = @address1
+    that = this
     placesData = {}
     input.typeahead(
       source: (query, process) ->
@@ -107,37 +119,49 @@ class Shopelia.Views.UsersIndex extends Backbone.View
                });
       updater: (selection) ->
         selectedPlace = _.first(_.where(placesData, { description : selection}))
-        $.ajax({
-               url: 'api/places/details/' + selectedPlace["reference"],
-               dataType: 'json',
-               contentType: 'application/json'
-               beforeSend: (xhr) ->
-                 xhr.setRequestHeader("Accept","application/json")
-                 xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
-                 xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
-               success: (data,textStatus,jqXHR) ->
-                 console.log("second query for places:" +  JSON.stringify(data))
-                 placesData = data
-               error: (jqXHR,textStatus,errorThrown) ->
-                 console.log("error second query for places")
-                 console.log(JSON.stringify(errorThrown))
-               });
+        that.getFullAddress(selectedPlace["reference"])
+
         selection
 
     );
 
+  getFullAddress: (reference) ->
+    that = this
+    $.ajax({
+           url: 'api/places/details/' + reference,
+           dataType: 'json',
+           contentType: 'application/json'
+           beforeSend: (xhr) ->
+             xhr.setRequestHeader("Accept","application/json")
+             xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
+             xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
+           success: (data,textStatus,jqXHR) ->
+             console.log("second query for places:" +  JSON.stringify(data))
+             that.populateAddressFields(data)
+           error: (jqXHR,textStatus,errorThrown) ->
+             console.log("error second query for places")
+             console.log(JSON.stringify(errorThrown))
+           });
+
+  populateAddressFields: (address) ->
+    console.log("lalal" + address)
+    @address1.val(address.address1)
+    @zip.val(address.zip)
+    @city.val(address.city)
+    @country.val(countries[address.country])
+
   formSerializer: ->
     loginFormObject = {};
-    fullName = @$('input[name="full_name"]').val()
+    fullName = @fullName.val()
     firstName =  @split(fullName)[0]
     lastName =  @split(fullName)[1]
-    email = @$('input[name="email"]').val()
-    phone = @$('input[name="phone"]').val()
-    address1 = @$('input[name="address1"]').val()
-    zip = @$('input[name="zip"]').val()
-    city = @$('input[name="city"]').val()
-    country = @$('input[name="country"]').attr("country_code")
-    address2 = @$('input[name="address2"]').val()
+    email = @email.val()
+    phone = @phone.val()
+    address1 = @address1.val()
+    zip = @zip.val()
+    city = @city.val()
+    country = @country.attr("country_code")
+    address2 = @address2.val()
 
     loginFormObject = {
     "first_name": firstName,

@@ -20,15 +20,14 @@ class Shopelia.Models.User extends Backbone.Model
     if(attrs.user.addresses_attributes[0].phone.length == 0)
       errors["phone"] = "phone required"
 
-    if(attrs.user.addresses_attributes[0].reference == undefined || attrs.user.addresses_attributes[0].reference.length == 0)
-      if(attrs.user.addresses_attributes[0].address1.length == 0)
-        errors["address1"] = "address is required"
-      if(attrs.user.addresses_attributes[0].zip.length == 0)
-        errors["zip"] = "zip is required"
-      if(attrs.user.addresses_attributes[0].country.length == 0)
-        errors["country"] = "country is required"
-      if(attrs.user.addresses_attributes[0].city.length == 0)
-        errors["city"] = "city is required"
+    if(attrs.user.addresses_attributes[0].address1.length == 0)
+       errors["address1"] = "address is required"
+    if(attrs.user.addresses_attributes[0].zip.length == 0)
+      errors["zip"] = "zip is required"
+    if(attrs.user.addresses_attributes[0].country == undefined || attrs.user.addresses_attributes[0].country.length == 0)
+      errors["country"] = "country is required"
+    if(attrs.user.addresses_attributes[0].city.length == 0)
+      errors["city"] = "city is required"
 
 
     console.log(_.size(errors))
