@@ -20,6 +20,10 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     userJson = @formSerializer()
     that = this
     user = new Shopelia.Models.User()
+    user.on("invalid", (model, errors) ->
+       that.displayErrors(errors)
+    )
+
     user.save({"user": userJson},{
                               success : (resp) ->
                                 console.log('success callback')
@@ -37,8 +41,10 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     console.log(errors)
     that = this
     _.each(keys,(key) ->
-      if (key == "base")
+      if (key == "reference" || key == "base")
         errorField =  that.$("input[name=address1]")
+      else if  (key == "first_name" || key == "last_name")
+        errorField =  that.$("input[name=full_name]")
       else
         errorField =  that.$("input[name=" + key + "]")
 
@@ -47,8 +53,9 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     )
 
   eraseErrors: ->
-    @$(".control-group").removeClass("error")
-    @$(".help-inline").remove()
+    $(".control-group").removeClass('error')
+    $('.help-inline').remove()
+
 
 
   goToPaymentCardStep: (user) ->
@@ -102,8 +109,13 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
   formSerializer: ->
     loginFormObject = {};
-    firstName =  @$('input[name="first_name"]').val()
-    lastName =  @$('input[name="last_name"]').val()
+    full_name = @$('input[name="full_name"]').val()
+    firstName =  full_name.substr(0,full_name.indexOf(' '))
+    lastName =  full_name.substr(full_name.indexOf(' ')+1)
+    if firstName == ''
+      firstName = lastName
+      lastName = ''
+
     email = @$('input[name="email"]').val()
     phone = @$('input[name="phone"]').val()
     address1 = @$('input[name="address1"]').val()
