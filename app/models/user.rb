@@ -38,8 +38,7 @@ class User < ActiveRecord::Base
   after_create :leftronic_users_count
   after_destroy :leftronic_users_count
 
-  after_create :create_psp_users, :if => Proc.new { |user| user.persisted? }
-  before_update :update_psp_users, :if => Proc.new { |user| user.leetchi_created? }
+  before_update :update_leetchi_user, :if => Proc.new { |user| user.leetchi_id.present? && (first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?) }
 
   def addresses= params
     (params || []).each do |address|
@@ -103,17 +102,6 @@ class User < ActiveRecord::Base
     false
   end
   
-  def leetchi_created?
-    self.leetchi_id.present?
-  end
-  
-  def create_leetchi
-    return if self.leetchi_created?
-    wrapper = Psp::LeetchiUser.new
-    wrapper.create(self)
-    Emailer.leetchi_user_creation_failure(self,wrapper.errors).deliver unless self.leetchi_created?
-  end
-
   def password_required?
     super if confirmed?
   end
@@ -141,22 +129,14 @@ class User < ActiveRecord::Base
     self.send_confirmation_instructions if self.errors.count == 0 && @confirmation_delayed
   end
   
-  def create_psp_users
-    if Rails.env.production?
-      SuckerPunch::Queue[:leetchi_user_queue].async.perform(self)
-    else 
-      create_leetchi unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
-    end
-  end
-  
-  def update_psp_users
-    if first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?
-      wrapper = Psp::LeetchiUser.new
-      if !wrapper.update(self)
-        self.errors.add(:base, I18n.t('leetchi.users.update_failure', :error => wrapper.errors))
-        false
-      end
-    end
+  def update_leetchi_user
+    Leetchi::User.update(user.leetchi_id, {
+      'Email' => user.email,
+      'FirstName' => user.first_name,
+      'LastName' => user.last_name,
+      'Nationality' => user.nationality.nil? ? "fr" : user.nationality.iso,
+      'Birthday' => user.birthdate.nil? ? 30.years.ago.to_i : user.birthdate.to_i
+    })
   end
 
   def reset_test_account

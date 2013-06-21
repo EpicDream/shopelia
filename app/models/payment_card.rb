@@ -8,32 +8,12 @@ class PaymentCard < ActiveRecord::Base
   validates :exp_year, :presence => true, :length => { :is => 4 }
   validates :cvv, :presence => true, :length => { :is => 3 }
   
-  after_create :create_psp_payment_cards
-  before_destroy :destroy_psp_payment_cards, :if => Proc.new { |card| card.leetchi_created? }
-  
-  def leetchi_created?
-    self.leetchi_id.present?
-  end
-  
-  def create_leetchi
-    return if !self.user.leetchi_created? || self.leetchi_created?
-    wrapper = Psp::LeetchiPaymentCard.new
-    wrapper.create(self)
-    Emailer.leetchi_card_creation_failure(self,wrapper.errors).deliver unless self.leetchi_created?
-  end
+  before_destroy :destroy_leetchi_payment_card, :if => Proc.new { |card| card.leetchi_id.present? }
   
   private
   
-  def create_psp_payment_cards
-    if Rails.env.production?
-      SuckerPunch::Queue[:leetchi_card_queue].async.perform(self)
-    else 
-      create_leetchi unless Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
-    end
-  end
-  
-  def destroy_psp_payment_cards
-    Psp::LeetchiPaymentCard.new.destroy(self)
+  def destroy_leetchi_payment_card
+    Leetchi::Card.delete(self.leetchi_id)
   end
     
 end

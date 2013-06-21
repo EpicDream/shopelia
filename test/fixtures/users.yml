@@ -6,7 +6,6 @@ elarch:
   confirmation_sent_at: <%= 1.day.ago %>
   ip_address: '127.0.0.1'
   pincode: '1234'
-  leetchi_id: 236975
   
 manu:
   email: manu@gmail.com
@@ -19,7 +18,6 @@ manu:
   nationality: france
   ip_address: '127.0.0.1'
   pincode: '1234'
-  leetchi_id: 123
   
 thomas:
   email: thomas@gmail.com

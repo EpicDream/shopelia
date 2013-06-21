@@ -202,57 +202,6 @@ class UserTest < ActiveSupport::TestCase
     end
   end
 
-  test "it should manage leetchi api failure at user creation" do
-    allow_remote_api_calls
-    VCR.use_cassette('user_fail') do
-      user = User.new(
-        :email => "willfail@gmail.com", 
-        :password => "tototo", 
-        :password_confirmation => "tototo",
-        :first_name => "Joe",
-        :last_name => "Fail",
-        :civility => User::CIVILITY_MR,
-        :nationality_id => countries(:france).id,
-        :ip_address => '127.0.0.1',
-        :birthdate => '1973-09-30')
-      assert user.save, user.errors.full_messages.join(",")
-      assert !user.leetchi_created?
-
-      mail = ActionMailer::Base.deliveries.last
-      assert mail.present?, "a critical alert email should have been sent"      
-    end
-  end
-
-  test "it should manage leetchi api failure at user update" do
-    allow_remote_api_calls
-    VCR.use_cassette('user_fail') do
-      user = User.new(
-        :email => "willfail_later@gmail.com", 
-        :password => "tototo", 
-        :password_confirmation => "tototo",
-        :first_name => "Joe",
-        :last_name => "Fail",
-        :civility => User::CIVILITY_MR,
-        :nationality_id => countries(:france).id,
-        :ip_address => '127.0.0.1',
-        :birthdate => '1973-09-30')
-      assert user.save
-
-      assert user.leetchi_created?, "Leetchi user not created"
-
-      user.update_attributes(:birthdate => '1970-09-30')
-      assert user.errors.present?
-      assert_equal DateTime.parse('1973-09-30'), user.reload.birthdate
-      
-      errors = Psp::LeetchiWrapper.extract_errors user
-      assert_equal "remote", errors[:origin]
-      assert_equal 0, errors[:error_code]
-      assert_equal "Api failure", errors[:user_message]
-      assert_equal "Api failure", errors[:message]
-      assert_equal "SystemError", errors[:type]
-    end
-  end
-
   test "it should return false when password or password confirmation are blanks" do
     user = User.create(
         :email => "willfail@gmail.com",

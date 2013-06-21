@@ -414,9 +414,6 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "payment_error", @order.message
   end    
 
-
-
-
   test "it should complete an order only if it was processing" do
     @order.state_name = "failed"
     @order.process "success", {
