@@ -3,16 +3,22 @@ class Shopelia.Views.UsersIndex extends Backbone.View
   template: JST['users/index']
   events:
     "click button": "createUser"
-    "keydown input[name='address1']": "removeReference"
     "keypress input[name='address1']": "getLocation"
-    "focusout input[name='address1']": "showManualAddress"
 
   initialize: ->
     _.bindAll this
 
+
   render: ->
     $(@el).html(@template())
-    @hideManualAddress()
+    @$('input[name="country"]').autocomplete({
+      source: _.values(countries),
+      select: ( event, ui ) ->
+        _.each(countries, (value,key) ->
+          if(value.toLowerCase()  == ui.item.label.toLowerCase())
+            @$('input[name="country"]').attr("country_code",key)
+        )
+    });
     console.log(@collection)
     this
 
@@ -43,7 +49,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     console.log(errors)
     that = this
     _.each(keys,(key) ->
-      if (key == "reference" || key == "base")
+      if (key == "base")
         errorField =  that.$("input[name=address1]")
       else if  (key == "first_name" || key == "last_name")
         errorField =  that.$("input[name=full_name]")
@@ -51,7 +57,11 @@ class Shopelia.Views.UsersIndex extends Backbone.View
         errorField =  that.$("input[name=" + key + "]")
 
       errorField.parents(".control-group").addClass('error')
-      errorField.after('<span class="help-inline">'+ errors[key] + ' </span>')
+      errorField.popover({
+                         'trigger' : 'focus',
+                         'placement': 'top',
+                         'content': errors[key]
+                         })
     )
 
   eraseErrors: ->
@@ -97,23 +107,24 @@ class Shopelia.Views.UsersIndex extends Backbone.View
                });
       updater: (selection) ->
         selectedPlace = _.first(_.where(placesData, { description : selection}))
-        input.attr("reference",selectedPlace["reference"])
+        $.ajax({
+               url: 'api/places/details/' + selectedPlace["reference"],
+               dataType: 'json',
+               contentType: 'application/json'
+               beforeSend: (xhr) ->
+                 xhr.setRequestHeader("Accept","application/json")
+                 xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
+                 xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
+               success: (data,textStatus,jqXHR) ->
+                 console.log("second query for places:" +  JSON.stringify(data))
+                 placesData = data
+               error: (jqXHR,textStatus,errorThrown) ->
+                 console.log("error second query for places")
+                 console.log(JSON.stringify(errorThrown))
+               });
         selection
 
     );
-
-  showManualAddress: ->
-    reference = @$('input[name="address1"]').attr("reference")
-    if reference == undefined || reference == ""
-      $(@el).find("#manual_address").show()
-
-  hideManualAddress: ->
-    console.log($(@el).find("#manual_address"))
-    $(@el).find("#manual_address").hide()
-
-
-  removeReference: ->
-    $("input[name=address1]").removeAttr("reference")
 
   formSerializer: ->
     loginFormObject = {};
@@ -123,21 +134,26 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     email = @$('input[name="email"]').val()
     phone = @$('input[name="phone"]').val()
     address1 = @$('input[name="address1"]').val()
-    reference = @$('input[name="address1"]').attr("reference")
+    zip = @$('input[name="zip"]').val()
+    city = @$('input[name="city"]').val()
+    country = @$('input[name="country"]').attr("country_code")
     address2 = @$('input[name="address2"]').val()
 
     loginFormObject = {
-      "first_name": firstName,
-      "last_name":  lastName,
-      "email": email,
-      "addresses_attributes":
-        [{
-         "first_name": firstName,
-         "last_name":  lastName,
-         "phone": phone,
-         "reference": reference,
-         "address2": address2
-        }]
+    "first_name": firstName,
+    "last_name":  lastName,
+    "email": email,
+    "addresses_attributes":
+      [{
+       "first_name": firstName,
+       "last_name":  lastName,
+       "phone": phone,
+       "address1": address1,
+       "zip":zip,
+       "city": city,
+       "country": country,
+       "address2": address2
+       }]
     }
 
     console.log loginFormObject

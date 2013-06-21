@@ -9,24 +9,27 @@ class Shopelia.Models.User extends Backbone.Model
       errors["email"] = "email invalid"
 
     if(attrs.user.email.length == 0)
-      console.log("email required")
       errors["email"] = "email required"
 
     if(attrs.user.first_name.length == 0)
-      console.log("first name required")
       errors["first_name"] = "first name required"
 
     if(attrs.user.last_name.length == 0)
-      console.log("last name required")
       errors["last_name"] ="last name required"
 
     if(attrs.user.addresses_attributes[0].phone.length == 0)
-      console.log("phone required")
       errors["phone"] = "phone required"
 
     if(attrs.user.addresses_attributes[0].reference == undefined || attrs.user.addresses_attributes[0].reference.length == 0)
-      console.log("reference required")
-      errors["reference"] = "address is required"
+      if(attrs.user.addresses_attributes[0].address1.length == 0)
+        errors["address1"] = "address is required"
+      if(attrs.user.addresses_attributes[0].zip.length == 0)
+        errors["zip"] = "zip is required"
+      if(attrs.user.addresses_attributes[0].country.length == 0)
+        errors["country"] = "country is required"
+      if(attrs.user.addresses_attributes[0].city.length == 0)
+        errors["city"] = "city is required"
+
 
     console.log(_.size(errors))
     if _.size(errors) > 0

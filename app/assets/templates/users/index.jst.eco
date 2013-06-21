@@ -7,33 +7,33 @@
 
         <div class="control-group">
             <div class="controls">
-                <input type="text" class="" placeholder= "Email" name="email">
+                <input rel="popover" type="text" class="" placeholder= "Email" name="email">
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
-                <input type="text" placeholder= "Phone" name="phone">
+                <input rel="popover" type="text" placeholder= "Phone" name="phone">
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
-                <input type="text" placeholder="Prénom Nom" name="full_name">
+                <input rel="popover" type="text" placeholder="Prénom Nom" name="full_name">
             </div>
         </div>
 
          <div class="control-group">
             <div class="controls">
-                <input type="text" placeholder= "Address" name="address1" autocomplete="off">
+                <input rel="popover"  type="text" placeholder= "Address" name="address1" autocomplete="off">
             </div>
          </div>
 
          <div class="control-group">
             <div class="controls">
-                <input type="text" placeholder="Complément d'address" name="address2">
+                <input rel="popover" type="text" placeholder="Complément d'address" name="address2">
                 <div id="manual_address">
-                    <input type="text" class="input-small" placeholder= "Code Postal" name="zip">
-                    <input type="text" class="input-small" placeholder= "Ville" name="city"> <br>
-                    <input type="text" placeholder= "Pays" name="country">
+                    <input rel="popover" type="text" class="input-small" placeholder= "Code Postal" name="zip">
+                    <input rel="popover" type="text" class="input-small" placeholder= "Ville" name="city"> <br>
+                    <input rel="popover" type="text" placeholder= "Pays" name="country">
                 </div>
             </div>
          </div>
