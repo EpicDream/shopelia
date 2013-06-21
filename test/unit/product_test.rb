@@ -37,13 +37,6 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
   end
 
-  test "it should monetize fnac url" do
-    product = Product.new(:url => "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4")
-    assert product.save, product.errors.full_messages.join(",")
-    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4]]#fnac.com", product.url
-    assert_equal merchants(:fnac).id, product.merchant_id
-  end
-  
   test "it should fetch existing product" do
     assert_equal products(:headphones), Product.fetch("http://www.rueducommerce.fr/productB")
   end
