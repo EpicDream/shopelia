@@ -4,6 +4,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
   events:
     "click button": "createUser"
     "keypress input[name='address1']": "getLocation"
+    "keydown input[name='address1']": "eraseAddressFields"
 
   initialize: ->
     _.bindAll this
@@ -14,11 +15,6 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     @setFormVariables()
     @country.autocomplete({
       source: _.values(countries),
-      select: ( event, ui ) ->
-        _.each(countries, (value,key) ->
-          if(value.toLowerCase()  == ui.item.label.toLowerCase())
-            @country.attr("country_code",key)
-        )
     });
     console.log(@collection)
     this
@@ -79,6 +75,12 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     $(".control-group").removeClass('error')
     $('.help-inline').remove()
 
+  eraseAddressFields: ->
+    console.log("je v enlver le gras")
+    @zip.val("")
+    @city.val("")
+    @country.val("")
+
 
 
   goToPaymentCardStep: (user) ->
@@ -120,7 +122,6 @@ class Shopelia.Views.UsersIndex extends Backbone.View
       updater: (selection) ->
         selectedPlace = _.first(_.where(placesData, { description : selection}))
         that.getFullAddress(selectedPlace["reference"])
-
         selection
 
     );
@@ -160,8 +161,13 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     address1 = @address1.val()
     zip = @zip.val()
     city = @city.val()
-    country = @country.attr("country_code")
+    country = @country.val()
     address2 = @address2.val()
+
+    _.each(countries, (value,key) ->
+      if(value.toLowerCase()  == country.toLowerCase())
+        country = key
+    )
 
     loginFormObject = {
     "first_name": firstName,
