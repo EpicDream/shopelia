@@ -150,24 +150,18 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should set message" do
-    @order.process "message", { "message" => "bla" }
+    start_order
+    @order.callback "message", { "message" => "bla" }
     
-    assert_equal "bla", @order.message
+    assert_equal "bla", @order.reload.message
   end
   
   test "it should start order" do
     start_order
     
-    assert_equal :preparing, @order.reload.state
+    assert_equal :preparing, @order.state
   end
   
-  test "it shouldn't start order if missing address" do
-    @order.address_id = nil
-    start_order
-    
-    assert_equal :initialized, @order.state
-  end
-
   test "it shouldn't start order if missing payment card" do
     @order.payment_card_id = nil
     start_order
@@ -175,14 +169,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :initialized, @order.state
   end
 
-  test "it shouldn't start order if missing merchant account" do
-    @order.merchant_account_id = nil
-    start_order
-    
-    assert_equal :initialized, @order.state
-  end
-  
-  test "it shouldn't start order if missing order items" do
+  test "it shouldn't start order if without order items" do
     @order.order_items.destroy_all
     start_order
     
@@ -194,14 +181,15 @@ class OrderTest < ActiveSupport::TestCase
     callback_order "failure", { "status" => "out_of_stock" }
     
     assert_equal :failed, @order.state
-    assert_equal "out_of_stock", @order.error_code
+    assert_equal "merchant", @order.error_code
+    assert_equal "stock", @order.message
   end
   
   test "it should pause order with vulcain exception" do
     start_order
     calback_order "failure", { "status" => "exception" }
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "exception", @order.message
   end
@@ -210,7 +198,7 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     callback_order "failure", { "status" => "error" }
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "error", @order.message    
   end
@@ -219,7 +207,7 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     callback_order "failure", { "status" => "no_idle" }
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "no_idle", @order.message
   end
@@ -228,7 +216,7 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     callback_order "failure", { "status" => "driver_failed" }
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "driver_failed", @order.message
   end
@@ -237,7 +225,7 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     callback_order "failure", { "status" => "order_timeout" }
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "order_timeout", @order.message
   end
@@ -246,7 +234,7 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     callback_order "failure", { "status" => "dispatcher_crash" }
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "dispatcher_crash", @order.message
   end
@@ -255,7 +243,7 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     callback_order "failure", { "status" => "uuid_conflict" }
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "uuid_conflict", @order.message
   end
@@ -264,7 +252,7 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     callback_order "failure", { "status" => "no_product_available" }
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "product_not_found", @order.message
   end  
@@ -289,9 +277,9 @@ class OrderTest < ActiveSupport::TestCase
     pause_order
     cancel_order
     
-    assert :failed, @order.reload.state
-    assert "shopelia", @order.error_code
-    assert "canceled", @order.message
+    assert_equal :failed, @order.state
+    assert_equal "shopelia", @order.error_code
+    assert_equal "canceled", @order.message
   end
   
   test "it should update order when assessing" do
@@ -358,7 +346,7 @@ class OrderTest < ActiveSupport::TestCase
     assess_order
     billing_accepted
     
-    assert_equal :injecting_payment, @order.state
+    assert_equal :injection, @order.state
   end
 
   test "it should fail order if billing has beed rejected" do
@@ -377,7 +365,7 @@ class OrderTest < ActiveSupport::TestCase
     billing_accepted
     injection_success
     
-    assert_equal :waiting_approval, @order.state
+    assert_equal :pending_clearing, @order.state
   end
   
   test "it should pause order with injection error" do
@@ -386,17 +374,17 @@ class OrderTest < ActiveSupport::TestCase
     billing_accepted
     injection_error
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "limonetik", @order.error_code
     assert_equal "injection_error", @order.message
   end
 
-  test "it should complete order with payment success" do
+  test "it should complete order with clearing success" do
     start_order
     assess_order
     billing_accepted
     injection_success
-    payment_success
+    clearing_success
     
     assert_equal :completed, @order.state
     assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
@@ -407,16 +395,16 @@ class OrderTest < ActiveSupport::TestCase
     assess_order
     billing_accepted
     injection_success
-    payment_error
+    clearing_error
     
-    assert_equal :pending, @order.state
+    assert_equal :pending_agent, @order.state
     assert_equal "limonetik", @order.error_code
     assert_equal "payment_error", @order.message
   end    
 
   test "it should complete an order only if it was processing" do
-    @order.state_name = "failed"
-    @order.process "success", {
+    pause_order
+    @order.callback "success", {
       "billing" => {
         "product" => 14,
         "shipping" => 2,
@@ -429,36 +417,40 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should restart order with new account if account creation failed" do
-   assert_difference('MerchantAccount.count', 1) do
-     @order.process "failure", { "status" => "account_creation_failed" }
-   end
-   assert_equal :processing, @order.reload.state
+    start_order
+    assert_difference('MerchantAccount.count', 1) do
+      @order.callback "failure", { "status" => "account_creation_failed" }
+    end
+    assert_equal :preparing, @order.reload.state
   end
-  
+
   test "it should restart order with new account if login failed" do
-   old_id = @order.merchant_account.id
-   assert_difference('MerchantAccount.count', 1) do
-     @order.process "failure", { "status" => "login_failed" }
-   end
-   assert_equal 1, @order.reload.retry_count
-   assert_not_equal old_id, @order.merchant_account.id
-   assert_equal :processing, @order.state
+    start_order
+    old_id = @order.merchant_account.id
+    assert_difference('MerchantAccount.count', 1) do
+      @order.callback "failure", { "status" => "login_failed" }
+    end
+    assert_equal 1, @order.reload.retry_count
+    assert_not_equal old_id, @order.merchant_account.id
+    assert_equal :preparing, @order.state
   end
- 
+
   test "it should process order validation failure" do
-   @order.process "failure", { "status" => "order_validation_failed" }
-   assert_equal :failed, @order.reload.state
-   assert_equal "payment", @order.error_code
-   assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
+    start_order
+    @order.callback "failure", { "status" => "order_validation_failed" }
+    assert_equal :failed, @order.reload.state
+    assert_equal "payment", @order.error_code
+    assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
-  
+
   test "it shouldn't restart order if maximum number of retries has been reached" do
-   @order.retry_count = Rails.configuration.max_retry
-   assert_difference('MerchantAccount.count', 0) do
-     @order.process "failure", { "status" => "account_creation_failed" }
-   end
-   assert_equal :pending, @order.reload.state
-   assert_equal "account", @order.error_code
+    start_order
+    @order.retry_count = Rails.configuration.max_retry
+    assert_difference('MerchantAccount.count', 0) do
+      @order.callback "failure", { "status" => "account_creation_failed" }
+    end
+    assert_equal :pending_agent, @order.reload.state
+    assert_equal "account", @order.error_code
   end
  
   test "it should set merchant account as created when message account_created received" do
@@ -472,13 +464,13 @@ class OrderTest < ActiveSupport::TestCase
       :payment_card_id => @card.id,
       :expected_price_total => 100,)
     assert_equal false, order.merchant_account.merchant_created
-    order.process "message", { "message" => "account_created" }
+    order.callback "message", { "message" => "account_created" }
     assert_equal true, order.merchant_account.reload.merchant_created    
   end
   
   test "it should clear message when state is not processing" do
-    @order.process "message", { "message" => "bla" }
-    @order.reload.process "success", {"billing" => {}}
+    @order.callback "message", { "message" => "bla" }
+    @order.reload.callback "success", {"billing" => {}}
     assert @order.reload.message.nil?
   end
 
@@ -496,7 +488,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should clear error_code when state becomes completed" do
-    @order.process "failure", { "status" => "error" }
+    @order.callback "failure", { "status" => "error" }
     assert @order.reload.error_code.present?
     assert_equal :pending, @order.state
     @order.state_name = "processing"
@@ -563,7 +555,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :failed, @order.reload.state    
   end 
    
-private
+  private
   
   def start_order
     @order.start
@@ -591,7 +583,7 @@ private
   end
   
   def assess_order
-    @order.process "assess", { 
+    @order.callback "assess", { 
       "questions" => [
         { "id" => "3" }
       ],
@@ -623,7 +615,7 @@ private
   end
   
   def assess_order_with_higher_price
-    @order.update_attirbute :expected_price_total, 10
+    @order.update_attribute :expected_price_total, 10
     assess_order
   end
   
@@ -657,13 +649,13 @@ private
     @order.reload
   end
   
-  def payment_success
-    @order.payment_success
+  def clearing_success
+    @order.clearing_success
     @order.reload
   end
   
-  def payment_error
-    @order.payment_error
+  def clearing_error
+    @order.clearing_error
     @order.reload
   end
    

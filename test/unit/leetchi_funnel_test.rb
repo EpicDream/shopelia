@@ -47,8 +47,10 @@ class LeetchiFunnelTest < ActiveSupport::TestCase
   test "it should bill order" do
     VCR.use_cassette('leetchi') do
       result = LeetchiFunnel.bill @order
-      puts result.inspect
       assert_equal "success", result["Status"]
+      assert @order.reload.leetchi_contribution_id
+      assert_equal @order.prepared_price_total, @order.leetchi_contribution_amout/100
+      assert_equal "success", @order.leetchi_contribution_status
     end
   end
       

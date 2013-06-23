@@ -28,7 +28,7 @@ module LeetchiFunnel
     if order.user.leetchi_id.nil?
       user = order.user
       remote_user = Leetchi::User.create({
-          'Tag' => user.id.to_s,
+          'Tag' => Rails.env.test? ? "User test" : user.id.to_s,
           'Email' => user.email,
           'FirstName' => user.first_name,
           'LastName' => user.last_name,
@@ -40,8 +40,6 @@ module LeetchiFunnel
       })
       if remote_user["ID"].present?
         user.update_attribute :leetchi_id, remote_user["ID"].to_i
-        puts "User created"
-        puts remote_user.inspect
       else
         return error "Impossible to create leetchi user object", remote_user
       end
@@ -50,13 +48,11 @@ module LeetchiFunnel
     # Create a wallet and attach it to order
     if order.leetchi_wallet_id.nil?
       wallet = Leetchi::Wallet.create({
-          'Tag' => "Order #{order.uuid}",
+          'Tag' => order.uuid,
           'Owners' => [order.user.leetchi_id]
       })
       if wallet["ID"].present?
         order.update_attribute :leetchi_wallet_id, wallet["ID"].to_i
-        puts "Wallet created"
-        puts wallet.inspect
       else
         return error "Impossible to create leetchi wallet object", wallet
       end
@@ -71,10 +67,13 @@ module LeetchiFunnel
           'ReturnURL' => 'https://www.shopelia.fr/null'
       })
       if remote_card['ID'].present?
-        begin
-          PaylineDriver.inject(card,remote_card["RedirectURL"]) 
-        rescue PaylineDriver::DriverError => e
-          return error "Impossible to inject payment card in Payline form", e
+        # If API is stubbed, skip card injection
+        unless Rails.env.test? && File.exist?("#{Rails.root}/test/fixtures/cassettes/leetchi.yml")
+          begin
+            PaylineDriver.inject(card,remote_card["RedirectURL"]) 
+          rescue PaylineDriver::DriverError => e
+            return error "Impossible to inject payment card in Payline form", e
+          end
         end
       else
         return error "Impossible to create leetchi payment card object", remote_card
@@ -90,8 +89,6 @@ module LeetchiFunnel
     
       if (check_card["CardNumber"] || "").length == 16
         card.update_attribute :leetchi_id, remote_card["ID"].to_i
-        puts "Card created"
-        puts card.inspect
       else
         Leetchi::Card.delete(remote_card["ID"])
         return error "Leetchi card injection from Payline timed out", check_card
@@ -101,7 +98,7 @@ module LeetchiFunnel
     # Initiate an immediate contribution
     if order.payment_card.leetchi_id.present?
       contribution = Leetchi::ImmediateContribution.create({
-        'Tag' => "Order #{order.uuid}",
+        'Tag' => order.uuid,
         'UserID' => order.user.leetchi_id,
         'WalletID' => order.leetchi_wallet_id,
         'PaymentCardID' => order.payment_card.leetchi_id,
@@ -113,65 +110,15 @@ module LeetchiFunnel
         order.update_attributes(
           :leetchi_contribution_id => contribution['ID'],
           :leetchi_contribution_amount => contribution['Amount'],
-          :leetchi_contribution_status => contribution['Status']
+          :leetchi_contribution_status => contribution['IsSucceeded'] ? "success" : "error"
         )         
+        return success    
       else
         return error "Impossible to create leetchi immediate contribution object", contribution
       end   
     end
-    
-    return success    
 
-=begin
-    # If payment card hasn't a leetchi object attached, initiate a contribution
-    if order.payment_card.leetchi_id.nil?
-      contribution = Leetchi::Contribution.create({
-        'Tag' => "Order #{order.uuid}",
-        'UserID' => order.user.leetchi_id,
-        'WalletID' => order.leetchi_wallet_id,
-        'Amount' => (order.prepared_price_total*100).to_i,
-        'RegisterMeanOfPayment' => true,
-        'ReturnURL' => 'https://www.shopelia.fr/null'
-      )}
-      if contribution['ID'].present?
-        order.update_attribute :leetchi_contribution_id, contribution['ID']
-      else
-        return {"Status" => "error", "Error" => 'Impossible to create leetchi contribution object', "Object" => contribution}
-      end
-      
-      # Inject payment card details
-      begin
-        PaylineDriver.inject(order.payment_card,contribution["PaymentURL"])      
-      rescue PaylineDriver::DriverError => e
-        {'Error':'Impossible to inject payment card in Payline form', "Object" => e}
-      end
-    end
-      
-      
-      
-    # If payment card is already a leetchi object, initiate an immediate contribution
-    if order.payment_card.leetchi_id.present?
-      contribution = Leetchi::ImmetiateContribution.create({
-        'Tag' => "Order #{order.uuid}",
-        'UserID' => order.user.leetchi_id,
-        'WalletID' => order.leetchi_wallet_id,
-        'PaymentCardID' => order.payment_card.leetchi_id,
-        'Amount' => (order.prepared_price_total*100).to_i,
-        'RegisterMeanOfPayment' => true,
-        'ReturnURL' => 'https://www.shopelia.fr/null'
-      )}
-      if contribution['ID'].present?
-        order.update_attributes(
-          :leetchi_contribution_id => contribution['ID'],
-          :leetchi_contribution_amount => contribution['Amount'],
-          :leetchi_contribution_status => contribution['Status']
-        )         
-      else
-        return {'Error':'Impossible to create leetchi immediate contribution object', "Object" => contribution}
-      end   
-    end
-=end
-       
+    return error "Billing failure in funnel. Something went wrong"
   end
 
   private

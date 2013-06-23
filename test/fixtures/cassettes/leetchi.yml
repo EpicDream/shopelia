@@ -1,0 +1,208 @@
+--- 
+http_interactions: 
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/users?ts=1371981940
+    body: 
+      encoding: UTF-8
+      string: "{\"Tag\":\"User test\",\"Email\":\"elarch@gmail.com\",\"FirstName\":\"Eric\",\"LastName\":\"Larchev\xC3\xAAque\",\"Nationality\":\"fr\",\"Birthday\":425210740,\"PersonType\":\"NATURAL_PERSON\",\"CanRegisterMeanOfPayment\":true,\"IP\":\"127.0.0.1\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - P0EPL5ZO+7YLzLKRcnLjnjOjAB1Rjj640eW16E0O+X+i1GXIZyaRE0mv2xQPDW6mNr+atDX182eBXE6P3xt1wVqTQ9KKpvDZz6T3V2KDxIYGQVFPsVSqUgOSWGOxXckauyDZHQ8Xxojzl4a8eIRT8qRHu/4JWCvciTJi3brchd/+XHupnZfmCtm2yu/eZyNEvkSuNO3+IOaoOL2gXbu5daxNLhrf/ybVZIYH/rDK4prXMUPNYtQSrriwjh8RUuEnP4aVprS6t875oBEhhtcAuXzLIeHrKK5Ffg8YIRSn6PLXNOEqShhLeUT3FfxTc1t4uUMkMVjSnKn7y2g4GAKsIw==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sun, 23 Jun 2013 10:05:42 GMT
+      Content-Length: 
+      - "407"
+    body: 
+      encoding: ASCII-8BIT
+      string: "{\"Email\":\"elarch@gmail.com\",\"FirstName\":\"Eric\",\"LastName\":\"Larchev\xC3\xAAque\",\"CanRegisterMeanOfPayment\":true,\"HasRegisteredMeansOfPayment\":false,\"IP\":\"127.0.0.1\",\"Birthday\":425210740,\"Password\":\"jV9xT8bxxGhD5VkFjuHsPkLUx3zZU7\",\"PersonalWalletAmount\":0,\"IsStrongAuthenticated\":false,\"Nationality\":\"fr\",\"PersonType\":\"NATURAL_PERSON\",\"ID\":337679,\"Tag\":\"User test\",\"CreationDate\":1371981942,\"UpdateDate\":1371981942}"
+    http_version: 
+  recorded_at: Sun, 23 Jun 2013 10:05:42 GMT
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/wallets?ts=1371981942
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"uuid\",\"Owners\":[337679]}"
+    headers: 
+      X-Leetchi-Signature: 
+      - KsRK1HwVRjs58/MbWca/mvxubONQf3VV3kwupMRNK989k7qBJ0AMqMphPhBkmmZ9sNCaR+EPSKeT5AY4K2P1UavR6X88XQiD4zRRfvmhXZqQH5YWi6guTvsG23M7MQZ+Sh7H6TC/9nnX4B/CAmPV/smdGX+0QJ8Y/o1VeY8zfFIP7L7z2eMEMtiHhjtjh38MFg46YInuM5FbsUBhtmu6fobsPvpMjh+8vYot9a+seuTDTZnINoZvPHLy+PPqeo3yl+vA+GcrLpy4pj9XJ7TyKrOTHZtT1eco7RfB/ecKhwCn5YzprjSFgWKa8hJ2Y2xZi5mlEpY9HwSo8AkRcI6wyQ==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sun, 23 Jun 2013 10:05:42 GMT
+      Content-Length: 
+      - "242"
+    body: 
+      encoding: US-ASCII
+      string: "{\"Owners\":[337679],\"Name\":null,\"Description\":null,\"RaisingGoalAmount\":null,\"CollectedAmount\":0,\"SpentAmount\":0,\"Amount\":0,\"ContributionLimitDate\":null,\"IsClosed\":true,\"ID\":337680,\"Tag\":\"uuid\",\"CreationDate\":1371981942,\"UpdateDate\":1371981942}"
+    http_version: 
+  recorded_at: Sun, 23 Jun 2013 10:05:42 GMT
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/cards?ts=1371981942
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"727572248\",\"OwnerID\":337679,\"ReturnURL\":\"https://www.shopelia.fr/null\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - jfudKxr9konuhoYmGMVFxDS0mLP/ph6DBb/8uo5UAK5wOulQbk/fRNdiuAhXnz5yFeFuIInFQSwekrBNLgvz8zi7QFKy49k+9laLKsJtONYXqL3IRT2LKDzWieYxvTARHjyCtvqnF67rEujfaHJ/o/KEwEPE0UienBw5i4LZg3WacHUmwrlCVbZqwVcWOl5L4jOVVOH6WYtiYIYafP6U0H9YlGEC9eRNKM89mq1iQE43nZtkNh4T3mb6tBg1LpGIEgJU233E2R4KcPSgZSctajed5JrsoNlZgiYozj7EDvW2mLQeT/kXkGMRE4NBrZ/EHdBvJcefYHGCsvbXThIFsg==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sun, 23 Jun 2013 10:05:43 GMT
+      Content-Length: 
+      - "342"
+    body: 
+      encoding: US-ASCII
+      string: "{\"OwnerID\":337679,\"CardNumber\":null,\"RedirectURL\":\"https://homologation-secure-p.payline.com/webpayment/step1.do?reqCode=prepareStep1&token=1MNoKF0Y3nzsqnWPPO6H1371981943252\",\"TemplateURL\":null,\"ReturnURL\":\"https://www.shopelia.fr/null?PaymentCardID=337681\",\"ID\":337681,\"Tag\":\"727572248\",\"CreationDate\":-62135596800,\"UpdateDate\":-62135596800}"
+    http_version: 
+  recorded_at: Sun, 23 Jun 2013 10:05:43 GMT
+- request: 
+    method: get
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/cards/337681?ts=1371981951
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      X-Leetchi-Signature: 
+      - ZMxMz2klE8IjqhFVyMSUrJULRXxVqg6l+cjTXWliRcI2VAXXUPNbGY14oDNUBmlPoETCAIW0ZvwVxh2YJxB0tXXmKxtheMFpaaxzFopKQZED+3yv5/yvtiSO7aui8yXDJkWwPNo44wl11cGlaRR62uIZn/CD9fK0qi7qXAFvhHxGf/U7nkqVwbQfZyMc8gMjfNY0vF5i1Q5EePWMjl4He5GwLF4dELI+8pQZlt5qKeXIA7SpfIsfuT3h24NsPmi2xx45FU7nsdqcUsrVuKQhG71e0xHnrBz1Nzfbr1fG1gdVxspGYBoScl3bBnC2WxSYk9pk7kOhWXxeNJ9Mj7rq/Q==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sun, 23 Jun 2013 10:05:52 GMT
+      Content-Length: 
+      - "356"
+    body: 
+      encoding: US-ASCII
+      string: "{\"OwnerID\":337679,\"CardNumber\":\"497010XXXXXX0154\",\"RedirectURL\":\"https://homologation-secure-p.payline.com/webpayment/step1.do?reqCode=prepareStep1&token=1MNoKF0Y3nzsqnWPPO6H1371981943252\",\"TemplateURL\":null,\"ReturnURL\":\"https://www.shopelia.fr/null?PaymentCardID=337681\",\"ID\":337681,\"Tag\":\"727572248\",\"CreationDate\":-62135596800,\"UpdateDate\":-62135596800}"
+    http_version: 
+  recorded_at: Sun, 23 Jun 2013 10:05:51 GMT
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/immediate-contributions?ts=1371981951
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"uuid\",\"UserID\":337679,\"WalletID\":337680,\"PaymentCardID\":337681,\"Amount\":1600}"
+    headers: 
+      X-Leetchi-Signature: 
+      - SlMTg6rHe9zUZ5xPW1QTOwb40rHiy/8wlEngzsxPgfiljvGEoD2G9fTicj4P0ESVE8QwKio5o91rQTHexekfFur07zQvmhSjhVyrjzgEnPjdELI971/KAq1C4+q5nLbdAetNxnqOVpJiv/5FDmkyh+iqpmPOtRu/19dnq/Bhyr+cFYE5CslgncIxo9qAqJ4vaRQTTtKIK1TN3B7x/LY8O2t5RYGUK3/luOSw1F51l5DpdwBlMYTeWt6xx+aVEejuByKa+zXUnKh2GHmJS+c8QAlvHlPUcwGKQE3nY7x8QfpOVMkvodk9kOuXV0+cHg5eZkL0mFGAQMmpATcdbin7aw==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Sun, 23 Jun 2013 10:05:54 GMT
+      Content-Length: 
+      - "316"
+    body: 
+      encoding: US-ASCII
+      string: "{\"UserID\":337679,\"WalletID\":337680,\"Amount\":1600,\"ClientFeeAmount\":0,\"LeetchiFeeAmount\":0,\"IsSucceeded\":true,\"IsCompleted\":true,\"Error\":null,\"PaymentCardID\":337681,\"Type\":\"Payline\",\"AnswerCode\":\"00000\",\"AnswerMessage\":\"Transaction approved\",\"ID\":337682,\"Tag\":\"uuid\",\"CreationDate\":1371981952,\"UpdateDate\":1371981953}"
+    http_version: 
+  recorded_at: Sun, 23 Jun 2013 10:05:54 GMT
+recorded_with: VCR 2.5.0

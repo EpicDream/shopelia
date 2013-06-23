@@ -2,7 +2,7 @@ elarch:
   email: elarch@gmail.com
   encrypted_password: <%= User.new.send(:password_digest, 'tototo') %>
   first_name: Eric
-  last_name: Larchevêque
+  last_name: Larcheveque
   confirmation_sent_at: <%= 1.day.ago %>
   ip_address: '127.0.0.1'
   pincode: '1234'

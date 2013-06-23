@@ -1,6 +1,6 @@
 class Order < ActiveRecord::Base
-  STATES = ["initialized", "processing", "pending", "querying", "completed", "failed"]
-  ERRORS = ["vulcain_api", "vulcain", "payment", "user", "account", "stock"]
+  STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
+  ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "leetchi"]
 
   belongs_to :user
   belongs_to :merchant
@@ -14,21 +14,21 @@ class Order < ActiveRecord::Base
   validates :uuid, :presence => true, :uniqueness => true
   validates :address, :presence => true
   validates :expected_price_total, :presence => true
-  validates :payment_card, :presence => true
 
   attr_accessible :user_id, :address_id, :merchant_account_id, :payment_card_id
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
-  attr_accessible :billed_price_product, :billed_price_shipping, :billed_price_total
   attr_accessor :products, :confirmation
   
-  scope :delayed, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 3.minutes ) }
-  scope :expired, lambda { where("state_name='pending' and created_at < ?", Time.zone.now - 4.hours ) }
+  scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
+  scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 4.hours ) }
   scope :canceled, lambda { where("state_name='querying' and created_at < ?", Time.zone.now - 2.hours ) }
   
-  scope :processing, lambda { where("state_name='processing'") }
-  scope :pending, lambda { where("state_name='pending'") }
+  scope :preparing, lambda { where("state_name='preparing'") }
+  scope :pending_agent, lambda { where("state_name='pending_agent'") }
+  scope :pending_clearing, lambda { where("state_name='pending_clearing'") }
+  scope :pending_refund, lambda { where("state_name='pending_refund'") }
   scope :querying, lambda { where("state_name='querying'") }
   scope :completed, lambda { where("state_name='completed'") }
   scope :failed, lambda { where("state_name='failed'") }
@@ -36,7 +36,6 @@ class Order < ActiveRecord::Base
   before_validation :initialize_uuid
   before_validation :initialize_state
   before_validation :initialize_merchant_account
-  before_validation :clear_message
   before_save :serialize_questions
   before_create :validates_products
   after_initialize :deserialize_questions
@@ -48,83 +47,87 @@ class Order < ActiveRecord::Base
   end
   
   def start
-    return false unless [:initialized, :pending, :querying].include?(state)
+    return unless [:initialized, :pending_agent, :querying].include?(state) && self.payment_card_id.present? && self
+    .order_items.count > 0
     @questions = []
     self.error_code = nil
     self.message = nil
-    self.state = :processing
+    self.state = :preparing
     assess Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
     Leftronic.new.notify_order(self)
-    self.save!
+    self.save
   end
 
   def restart
+    return unless [:preparing].include?(state)
     if self.retry_count.to_i < Rails.configuration.max_retry
       self.merchant_account_id = MerchantAccount.create(user_id:self.user_id, merchant_id:self.merchant_id, address_id:self.address_id).id
       self.retry_count = self.retry_count.to_i + 1
-      self.state = :pending
+      self.state = :initialized
       start
     else
       fail(I18n.t("orders.failure.account"), :account)
+      self.save
     end
-    self.save!
   end
 
-  def process verb, content
-    begin
-      if verb.eql?("message")
-        self.message = content["message"]
-        if self.message.eql?("account_created")
-          self.merchant_account.confirm_creation!
-        end
+  def callback verb, content
+    return unless [:preparing].include?(state)
+    
+    if verb.eql?("message")
+      self.message = content["message"]
+      if self.message.eql?("account_created")
+        self.merchant_account.confirm_creation!
+      end
 
-      elsif verb.eql?("failure") && self.state == :processing
-        case content["status"]
-        when "exception" then fail("exception", :vulcain)
-        when "no_idle" then fail("no_idle", :vulcain)
-        when "error" then fail("error", :vulcain)
-        when "driver_failed" then fail("driver_failed", :vulcain)
-        when "order_timeout" then fail("order_timeout", :vulcain)
-        when "uuid_conflict" then fail("uuid_conflict", :vulcain)
-        when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
-        when "no_product_available" then fail("product_not_found", :vulcain)
-        when "out_of_stock" then abort(:stock)
-        when "order_validation_failed" then abort(:payment)
-        when "account_creation_failed" then restart
-        when "login_failed" then restart
-        end
+    elsif verb.eql?("failure") 
+      case content["status"]
+      when "exception" then fail("exception", :vulcain)
+      when "no_idle" then fail("no_idle", :vulcain)
+      when "error" then fail("error", :vulcain)
+      when "driver_failed" then fail("driver_failed", :vulcain)
+      when "order_timeout" then fail("order_timeout", :vulcain)
+      when "uuid_conflict" then fail("uuid_conflict", :vulcain)
+      when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
+      when "no_product_available" then fail("product_not_found", :vulcain)
+      when "out_of_stock" then abort("stock", :merchant)
+      when "order_validation_failed" then abort("billing", :user)
+      when "account_creation_failed" then restart
+      when "login_failed" then restart
+      end
 
-      elsif verb.eql?("assess") && self.state == :processing
-        @questions = content["questions"]
-        self.prepared_price_total = content["billing"]["total"]
-        self.prepared_price_product = content["billing"]["product"]
-        self.prepared_price_shipping = content["billing"]["shipping"]
-        (content["products"] || []).each do |product|
-          self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
-        end
-        confirmed = self.expected_price_total >= self.prepared_price_total
-        @questions.each { |question| question["answer"] = confirmed }
+    elsif verb.eql?("assess")
+      @questions = content["questions"]
+      self.prepared_price_total = content["billing"]["total"]
+      self.prepared_price_product = content["billing"]["product"]
+      self.prepared_price_shipping = content["billing"]["shipping"]
+      (content["products"] || []).each do |product|
+        self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
+      end
+      confirmed = self.expected_price_total >= self.prepared_price_total
+      @questions.each { |question| question["answer"] = confirmed }
+      begin
         assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
         query unless confirmed
-
-      elsif verb.eql?("success") && self.state == :processing
-        self.billed_price_total = content["billing"]["total"]
-        self.billed_price_product = content["billing"]["product"]
-        self.billed_price_shipping = content["billing"]["shipping"]
-        self.shipping_info = content["billing"]["shipping_info"]
-        self.error_code = nil
-        self.state = :completed
-        Leftronic.new.notify_order(self)
-        Emailer.notify_order_success(self).deliver
-
+      rescue Exception => e
+        fail("Error parsing callback data\n#{e.inspect}", :vulcain_api)
       end
-    rescue Exception => e
-      puts e.inspect
-      fail("Error parsing callback data\n#{e.inspect}", :vulcain_api)
+      
+    elsif verb.eql?("success") 
+      self.billed_price_total = content["billing"]["total"]
+      self.billed_price_product = content["billing"]["product"]
+      self.billed_price_shipping = content["billing"]["shipping"]
+      self.shipping_info = content["billing"]["shipping_info"]
+      self.error_code = nil
+      self.state = :completed
+      Leftronic.new.notify_order(self)
+      Emailer.notify_order_success(self).deliver
+
     end
+
     self.save!
   end
-  
+
   def state
     self.state_name.to_sym
   end
@@ -142,17 +145,22 @@ class Order < ActiveRecord::Base
   end
   
   def time_out
-    abort
+    abort "timed_out", :shopelia
     self.save!
   end
-  
+
   def cancel
-    abort :user
+    abort "canceled", :shopelia
     self.save!
   end
   
-  def confirm
-    return unless self.state == :querying
+  def reject
+    abort "price_rejected", :user
+    self.save!
+  end
+  
+  def accept
+    return unless [:querying].include?(state)
     self.expected_price_total = self.prepared_price_total
     self.prepared_price_total = nil
     self.prepared_price_product = nil
@@ -173,22 +181,23 @@ class Order < ActiveRecord::Base
   end
 
   def query
-    return unless self.state == :processing
+    return unless [:preparing].include?(state)
     self.state = :querying
     Leftronic.new.notify_order(self)
     Emailer.notify_order_price_change(self).deliver
   end
 
   def fail content, error_sym
-    return unless self.state == :processing
+    return unless [:preparing].include?(state)
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s)
-    self.state = :pending
+    self.state = :pending_agent
     Leftronic.new.notify_order(self)
   end
 
-  def abort error_sym=nil
-    return if self.state == :failed || self.state == :completed
+  def abort content, error_sym
+    return unless [:preparing, :pending_agent, :billing, :querying, :pending_clearing].include?(state)
+    self.message = content
     self.error_code = check_error_validity(error_sym.to_s) unless error_sym.nil?
     self.state = :failed
     Leftronic.new.notify_order(self)
@@ -209,10 +218,6 @@ class Order < ActiveRecord::Base
   
   def initialize_state
     self.state = :initialized if self.state_name.nil?
-  end
-  
-  def clear_message
-    self.message = nil if self.state != :processing && self.state != :pending
   end
   
   def initialize_merchant_account
