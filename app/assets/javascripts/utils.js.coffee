@@ -1,3 +1,27 @@
+window.eraseErrors =  ->
+  $(".control-group").removeClass('error')
+  $('.help-inline').remove()
+
+window.displayErrors = (errors) ->
+  eraseErrors()
+  keys = _.keys(errors)
+  that = this
+  _.each(keys,(key) ->
+    if (key == "base")
+      errorField =  that.$("input[name=address1]")
+    else if  (key == "first_name" || key == "last_name")
+      errorField =  that.$("input[name=full_name]")
+    else
+      errorField =  that.$("input[name=" + key + "]")
+
+    errorField.parents(".control-group").addClass('error')
+    errorField.popover({
+                       'trigger' : 'focus',
+                       'placement': 'top',
+                       'content': errors[key]
+                       })
+  )
+
 window.countries =
 {
 "AF":"Afghanistan",

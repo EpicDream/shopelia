@@ -16,7 +16,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     @country.autocomplete({
       source: _.values(countries),
     });
-    console.log(@collection)
+    console.log(@collection.fetch())
     this
 
   setFormVariables: ->
@@ -36,44 +36,19 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     that = this
     user = new Shopelia.Models.User()
     user.on("invalid", (model, errors) ->
-       that.displayErrors(errors)
+       displayErrors(errors)
     )
 
-    user.save({"user": userJson},{
+    user.save(userJson,{
                               success : (resp) ->
                                 console.log('success callback')
-                                console.log(resp)
-                                that.goToPaymentCardStep(model:user)
+                                console.log("response user save:" + JSON.stringify(resp))
+                                that.goToPaymentCardStep(resp)
                               error : (model, response) ->
-                                that.displayErrors($.parseJSON(response.responseText))
+                                console.log(JSON.stringify(response))
+                                displayErrors($.parseJSON(response.responseText))
 
     })
-
-
-  displayErrors: (errors) ->
-    @eraseErrors()
-    keys = _.keys(errors)
-    console.log(errors)
-    that = this
-    _.each(keys,(key) ->
-      if (key == "base")
-        errorField =  that.$("input[name=address1]")
-      else if  (key == "first_name" || key == "last_name")
-        errorField =  that.$("input[name=full_name]")
-      else
-        errorField =  that.$("input[name=" + key + "]")
-
-      errorField.parents(".control-group").addClass('error')
-      errorField.popover({
-                         'trigger' : 'focus',
-                         'placement': 'top',
-                         'content': errors[key]
-                         })
-    )
-
-  eraseErrors: ->
-    $(".control-group").removeClass('error')
-    $('.help-inline').remove()
 
   eraseAddressFields: ->
     console.log("je v enlver le gras")
@@ -84,7 +59,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
 
   goToPaymentCardStep: (user) ->
-    view = new Shopelia.Views.PaymentCardsIndex(model:user )
+    view = new Shopelia.Views.PaymentCardsIndex(user: user )
     $('#container').html(view.render().el)
 
   getLocation: ->

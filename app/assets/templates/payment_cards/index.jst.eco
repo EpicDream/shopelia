@@ -2,5 +2,24 @@
     <a href="https://shopelia.com"><img alt="Logo_shopelia" src="/assets/logo_shopelia.png"></a>
 </div>
 
+<form accept-charset="UTF-8" class="clearfix">
+        <div class="control-group">
+            <div class="controls">
+                <input rel="popover" type="text" maxlength="19" class="" placeholder= "N° de carte bancaire" name="number">
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input rel="popover" class="input-small" maxlength="2" type="text" placeholder= "MM" name="exp_month">
+                <span> / </span>
+                <input rel="popover" class="input-small" maxlength="2" type="text"  placeholder= "YY" name="exp_year">
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <input rel="popover" type="text" maxlength="3" placeholder="Code CV" name="cvv">
+            </div>
+        </div>
 
-<%= @model.get("auth_token")%>
+        <button class="btn btn-large">Payer ma commande</button>
+</form>
