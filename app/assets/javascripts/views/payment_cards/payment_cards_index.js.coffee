@@ -13,6 +13,8 @@ class Shopelia.Views.PaymentCardsIndex extends Backbone.View
 
   render: ->
     $(@el).html(@template())
+    console.log(@options)
+    console.log("Product is passed to card View" + @options.product)
     @setCardFormVariables()
     this
 
@@ -27,13 +29,15 @@ class Shopelia.Views.PaymentCardsIndex extends Backbone.View
       displayErrors(errors)
     )
 
-    console.log(card)
-    card.save(cardJson,{
+    card.save({payment_card: cardJson},{
                         beforeSend : (xhr) ->
                           xhr.setRequestHeader("X-Shopelia-AuthToken",that.options.user.get("auth_token"))
                         success : (resp) ->
                           console.log('card success callback')
-                          console.log(resp)
+                          console.log(resp.get("payment_card"))
+                          console.log(that.options.user.get("user").payment_cards)
+                          that.options.user.get("user").payment_cards.push(resp.get("payment_card"))
+                          console.log(JSON.stringify(that.options))
                         error : (model, response) ->
                           console.log('card error callback')
                           console.log(JSON.stringify(response))

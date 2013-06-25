@@ -21,21 +21,5 @@
             </div>
         </div>
 
-         <div class="control-group">
-            <div class="controls">
-                <input rel="popover"  type="text" placeholder= "Address" name="address1" autocomplete="off">
-            </div>
-         </div>
-
-         <div class="control-group">
-            <div class="controls">
-                <input rel="popover" type="text" placeholder="Complément d'address" name="address2">
-                <div id="manual_address">
-                    <input rel="popover" type="text" class="input-small" placeholder= "Code Postal" name="zip">
-                    <input rel="popover" type="text" class="input-small" placeholder= "Ville" name="city"> <br>
-                    <input rel="popover" type="text" placeholder= "Pays" name="country">
-                </div>
-            </div>
-         </div>
          <button class="btn btn-large">Préparer la commande</button>
     </form>

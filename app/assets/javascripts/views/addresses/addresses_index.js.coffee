@@ -1,0 +1,93 @@
+class Shopelia.Views.AddressesIndex extends Backbone.View
+
+  template: JST['addresses/index']
+
+  events:
+    "keypress input[name='address1']": "getLocation"
+    "keydown input[name='address1']": "eraseAddressFields"
+
+  initialize: ->
+    _.bindAll this
+
+  render: ->
+    $(@el).html(@template())
+    @setFormVariables()
+    this
+
+  setFormVariables: ->
+    @phone = @$('input[name="phone"]')
+    @address1 = @$('input[name="address1"]')
+    @zip = @$('input[name="zip"]')
+    @city = @$('input[name="city"]')
+    @country = @$('input[name="country"]')
+    @address2 = @$('input[name="address2"]')
+
+
+  eraseAddressFields: ->
+    @zip.val("")
+    @city.val("")
+    @country.val("")
+
+  getLocation: ->
+    if (navigator.geolocation)
+      navigator.geolocation.getCurrentPosition(@showPosition)
+    else
+      x.innerHTML="Geolocation is not supported by this browser."
+
+  showPosition: (position) ->
+    lat = position.coords.latitude.toString()
+    lng = position.coords.longitude.toString()
+    input = @address1
+    that = this
+    placesData = {}
+    input.typeahead(
+      source: (query, process) ->
+        $.ajax({
+               url: 'api/places/autocomplete',
+               data: "query=" + query + "&lat=" + lat + "&lng=" + lng,
+               dataType: 'json',
+               contentType: 'application/json'
+               beforeSend: (xhr) ->
+                 xhr.setRequestHeader("Accept","application/json")
+                 xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
+                 xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
+               success: (data,textStatus,jqXHR) ->
+                 console.log(data)
+                 placesData = data
+                 places = _.pluck(data, "description")
+                 process(places)
+               error: (jqXHR,textStatus,errorThrown) ->
+                 console.log('error places callback')
+                 console.log(JSON.stringify(errorThrown))
+               });
+      updater: (selection) ->
+        selectedPlace = _.first(_.where(placesData, { description : selection}))
+        that.getFullAddress(selectedPlace["reference"])
+        selection
+
+    );
+
+  getFullAddress: (reference) ->
+    that = this
+    $.ajax({
+           url: 'api/places/details/' + reference,
+           dataType: 'json',
+           contentType: 'application/json'
+           beforeSend: (xhr) ->
+             xhr.setRequestHeader("Accept","application/json")
+             xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
+             xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
+           success: (data,textStatus,jqXHR) ->
+             console.log("second query for places:" +  JSON.stringify(data))
+             that.populateAddressFields(data)
+           error: (jqXHR,textStatus,errorThrown) ->
+             console.log("error second query for places")
+             console.log(JSON.stringify(errorThrown))
+           });
+
+  populateAddressFields: (address) ->
+    console.log("lalal" + address)
+    @address1.val(address.address1)
+    @zip.val(address.zip)
+    @city.val(address.city)
+    @country.val(countries[address.country])

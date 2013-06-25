@@ -1,10 +1,9 @@
 class Shopelia.Views.UsersIndex extends Backbone.View
 
   template: JST['users/index']
+
   events:
     "click button": "createUser"
-    "keypress input[name='address1']": "getLocation"
-    "keydown input[name='address1']": "eraseAddressFields"
 
   initialize: ->
     _.bindAll this
@@ -12,11 +11,15 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
   render: ->
     $(@el).html(@template())
+    console.log(@options.product)
+    productView = new Shopelia.Views.ProductsIndex(model:@options.product)
+    @$("form").before(productView.render().el)
+    addressView =  new Shopelia.Views.AddressesIndex()
+    @$("button").before(addressView.render().el)
     @setFormVariables()
     @country.autocomplete({
       source: _.values(countries),
     });
-    console.log(@collection.fetch())
     this
 
   setFormVariables: ->
@@ -31,134 +34,67 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
   createUser: (e) ->
     console.log("trigger createUser")
+    eraseErrors()
     e.preventDefault()
-    userJson = @formSerializer()
     that = this
     user = new Shopelia.Models.User()
     user.on("invalid", (model, errors) ->
        displayErrors(errors)
     )
 
-    user.save(userJson,{
-                              success : (resp) ->
-                                console.log('success callback')
-                                console.log("response user save:" + JSON.stringify(resp))
-                                that.goToPaymentCardStep(resp)
-                              error : (model, response) ->
-                                console.log(JSON.stringify(response))
-                                displayErrors($.parseJSON(response.responseText))
+    country_iso =  @country.val()
+    _.each(countries, (value,key) ->
+      if(value.toLowerCase()  == country_iso.toLowerCase())
+        country_iso = key
+    )
 
-    })
+    address = new Shopelia.Models.Address()
+    address.on("invalid", (model, errors) ->
+      console.log("displaying address Errors" + JSON.stringify(errors))
+      displayErrors(errors)
+    )
+    address.set({
+                 first_name:  @split(@fullName.val())[0],
+                 last_name:   @split(@fullName.val())[1],
+                 phone: @phone.val(),
+                 address1: @address1.val(),
+                 zip:@zip.val(),
+                 city: @city.val(),
+                 country: country_iso,
+                 address2: @address2.val()
+                 })
+    userJson = @formSerializer(address)
+    user.set({user: userJson})
+    userIsValid = user.isValid()
+    console.log("Addresss MAAAAAN" + JSON.stringify(address))
+    if address.isValid() && userIsValid
+      user.save({user: userJson},{
+                                success : (resp) ->
+                                  console.log('success callback')
+                                  console.log("response user save:" + JSON.stringify(resp))
+                                  that.goToPaymentCardStep(resp)
+                                error : (model, response) ->
+                                  console.log(JSON.stringify(response))
+                                  displayErrors($.parseJSON(response.responseText))
 
-  eraseAddressFields: ->
-    console.log("je v enlver le gras")
-    @zip.val("")
-    @city.val("")
-    @country.val("")
-
-
+      })
 
   goToPaymentCardStep: (user) ->
-    view = new Shopelia.Views.PaymentCardsIndex(user: user )
+    view = new Shopelia.Views.PaymentCardsIndex(product:@options.product,user: user )
     $('#container').html(view.render().el)
 
-  getLocation: ->
-    if (navigator.geolocation)
-      navigator.geolocation.getCurrentPosition(@showPosition)
-    else
-      x.innerHTML="Geolocation is not supported by this browser."
-
-  showPosition: (position) ->
-    lat = position.coords.latitude.toString()
-    lng = position.coords.longitude.toString()
-    input = @address1
-    that = this
-    placesData = {}
-    input.typeahead(
-      source: (query, process) ->
-        $.ajax({
-               url: 'api/places/autocomplete',
-               data: "query=" + query + "&lat=" + lat + "&lng=" + lng,
-               dataType: 'json',
-               contentType: 'application/json'
-               beforeSend: (xhr) ->
-                 xhr.setRequestHeader("Accept","application/json")
-                 xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
-                 xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
-               success: (data,textStatus,jqXHR) ->
-                 console.log(data)
-                 placesData = data
-                 places = _.pluck(data, "description")
-                 process(places)
-               error: (jqXHR,textStatus,errorThrown) ->
-                 console.log('error places callback')
-                 console.log(JSON.stringify(errorThrown))
-               });
-      updater: (selection) ->
-        selectedPlace = _.first(_.where(placesData, { description : selection}))
-        that.getFullAddress(selectedPlace["reference"])
-        selection
-
-    );
-
-  getFullAddress: (reference) ->
-    that = this
-    $.ajax({
-           url: 'api/places/details/' + reference,
-           dataType: 'json',
-           contentType: 'application/json'
-           beforeSend: (xhr) ->
-             xhr.setRequestHeader("Accept","application/json")
-             xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
-             xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
-           success: (data,textStatus,jqXHR) ->
-             console.log("second query for places:" +  JSON.stringify(data))
-             that.populateAddressFields(data)
-           error: (jqXHR,textStatus,errorThrown) ->
-             console.log("error second query for places")
-             console.log(JSON.stringify(errorThrown))
-           });
-
-  populateAddressFields: (address) ->
-    console.log("lalal" + address)
-    @address1.val(address.address1)
-    @zip.val(address.zip)
-    @city.val(address.city)
-    @country.val(countries[address.country])
-
-  formSerializer: ->
+  formSerializer: (address)->
     loginFormObject = {};
     fullName = @fullName.val()
     firstName =  @split(fullName)[0]
     lastName =  @split(fullName)[1]
     email = @email.val()
-    phone = @phone.val()
-    address1 = @address1.val()
-    zip = @zip.val()
-    city = @city.val()
-    country = @country.val()
-    address2 = @address2.val()
-
-    _.each(countries, (value,key) ->
-      if(value.toLowerCase()  == country.toLowerCase())
-        country = key
-    )
 
     loginFormObject = {
     "first_name": firstName,
     "last_name":  lastName,
     "email": email,
-    "addresses_attributes":
-      [{
-       "first_name": firstName,
-       "last_name":  lastName,
-       "phone": phone,
-       "address1": address1,
-       "zip":zip,
-       "city": city,
-       "country": country,
-       "address2": address2
-       }]
+    "addresses_attributes": [address]
     }
 
     console.log loginFormObject
