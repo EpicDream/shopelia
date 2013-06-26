@@ -205,4 +205,94 @@ http_interactions:
       string: "{\"UserID\":342123,\"WalletID\":342124,\"Amount\":1600,\"ClientFeeAmount\":0,\"LeetchiFeeAmount\":0,\"IsSucceeded\":true,\"IsCompleted\":true,\"Error\":null,\"PaymentCardID\":342125,\"Type\":\"Payline\",\"AnswerCode\":\"00000\",\"AnswerMessage\":\"Transaction approved\",\"ID\":342126,\"Tag\":\"uuid\",\"CreationDate\":1372260111,\"UpdateDate\":1372260111}"
     http_version: 
   recorded_at: Wed, 26 Jun 2013 15:21:52 GMT
+- request: 
+    method: post
+    uri: https://vulcain.shopelia.fr:444/orders
+    body: 
+      encoding: US-ASCII
+      string: "{\"vendor\":\"RueDuCommerce\",\"context\":{\"session\":{\"uuid\":\"uuid\",\"callback_url\":\"https://www.shopelia.fr/api/callback/orders/uuid\"},\"account\":{\"login\":\"elarch100.gmail.com@shopelia.fr\",\"password\":\"toto\",\"new_account\":true},\"order\":{\"products_urls\":[\"http://www.rueducommerce.fr/productB\",\"http://www.rueducommerce.fr/productA\"],\"credentials\":{\"holder\":\"Eric Larcheveque\",\"number\":\"4970100000000154\",\"exp_month\":\"2\",\"exp_year\":\"2015\",\"cvv\":\"123\"}},\"user\":{\"birthdate\":{\"day\":30,\"month\":9,\"year\":1973},\"gender\":0,\"address\":{\"mobile_phone\":\"0646403619\",\"address_1\":\"14 bd du Chateau\",\"address_2\":\"BP 212\",\"zip\":\"92200\",\"city\":\"Neuilly\",\"country\":\"FR\",\"additional_address\":\"Code porte 1234\"}}}}"
+    headers: 
+      X-Vulcain-Apikey: 
+      - none
+      Content-Type: 
+      - application/json
+      Accept: 
+      - application/json
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Server: 
+      - nginx/0.7.67
+      Date: 
+      - Wed, 26 Jun 2013 17:52:29 GMT
+      Content-Type: 
+      - text/html; charset=utf-8
+      Transfer-Encoding: 
+      - chunked
+      Connection: 
+      - keep-alive
+      Status: 
+      - 200 OK
+      Cache-Control: 
+      - no-cache
+      X-Request-Id: 
+      - baf7f7d80758de737de2ce962ff20fd1
+      X-Runtime: 
+      - "0.312676"
+      X-Rack-Cache: 
+      - invalidate, pass
+    body: 
+      encoding: US-ASCII
+      string: ""
+    http_version: 
+  recorded_at: Wed, 26 Jun 2013 17:52:29 GMT
+- request: 
+    method: post
+    uri: https://vulcain.shopelia.fr:444/answers
+    body: 
+      encoding: US-ASCII
+      string: "{\"context\":{\"session\":{\"uuid\":\"uuid\",\"callback_url\":\"https://www.shopelia.fr/api/callback/orders/uuid\"},\"account\":{\"login\":\"elarch100.gmail.com@shopelia.fr\",\"password\":\"toto\",\"new_account\":true},\"order\":{\"products_urls\":[\"http://www.rueducommerce.fr/productB\",\"http://www.rueducommerce.fr/productA\"],\"credentials\":{\"holder\":\"Eric Larcheveque\",\"number\":\"4970100000000154\",\"exp_month\":\"2\",\"exp_year\":\"2015\",\"cvv\":\"123\"}},\"user\":{\"birthdate\":{\"day\":30,\"month\":9,\"year\":1973},\"gender\":0,\"address\":{\"mobile_phone\":\"0646403619\",\"address_1\":\"14 bd du Chateau\",\"address_2\":\"BP 212\",\"zip\":\"92200\",\"city\":\"Neuilly\",\"country\":\"FR\",\"additional_address\":\"Code porte 1234\"}},\"answers\":[{\"question_id\":\"3\",\"answer\":true}]}}"
+    headers: 
+      X-Vulcain-Apikey: 
+      - none
+      Content-Type: 
+      - application/json
+      Accept: 
+      - application/json
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Server: 
+      - nginx/0.7.67
+      Date: 
+      - Wed, 26 Jun 2013 17:52:30 GMT
+      Content-Type: 
+      - text/html; charset=utf-8
+      Transfer-Encoding: 
+      - chunked
+      Connection: 
+      - keep-alive
+      Status: 
+      - 200 OK
+      Cache-Control: 
+      - no-cache
+      X-Request-Id: 
+      - 0b6e5287403dc3a2b59f5284cdc47132
+      X-Runtime: 
+      - "0.311571"
+      X-Rack-Cache: 
+      - invalidate, pass
+    body: 
+      encoding: US-ASCII
+      string: ""
+    http_version: 
+  recorded_at: Wed, 26 Jun 2013 17:52:30 GMT
 recorded_with: VCR 2.5.0

@@ -1,5 +1,5 @@
 class Order < ActiveRecord::Base
-  STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
+  STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "pending_injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
   ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "leetchi"]
 
   belongs_to :user
@@ -48,8 +48,7 @@ class Order < ActiveRecord::Base
   end
   
   def start
-    return unless [:initialized, :pending_agent, :querying].include?(state) && self.payment_card_id.present? && self
-    .order_items.count > 0
+    return unless [:initialized, :pending_agent, :querying].include?(state) && self.payment_card_id.present? && self.order_items.count > 0
     @questions = []
     self.error_code = nil
     self.message = nil
@@ -67,7 +66,7 @@ class Order < ActiveRecord::Base
       self.state = :initialized
       start
     else
-      fail(I18n.t("orders.failure.account"), :account)
+      fail("account_creation_failed", :merchant)
       self.save
     end
   end
@@ -92,7 +91,7 @@ class Order < ActiveRecord::Base
       when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
       when "no_product_available" then fail("product_not_found", :vulcain)
       when "out_of_stock" then abort("stock", :merchant)
-      when "order_validation_failed" then abort("billing", :user)
+      when "order_validation_failed" then abort("payment_refused_by_merchant", :billing)
       when "account_creation_failed" then restart
       when "login_failed" then restart
       end
@@ -102,16 +101,35 @@ class Order < ActiveRecord::Base
       self.prepared_price_total = content["billing"]["total"]
       self.prepared_price_product = content["billing"]["product"]
       self.prepared_price_shipping = content["billing"]["shipping"]
+      self.save!
       (content["products"] || []).each do |product|
         self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
       end
-      confirmed = self.expected_price_total >= self.prepared_price_total
-      @questions.each { |question| question["answer"] = confirmed }
-      begin
-        assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
-        query unless confirmed
-      rescue Exception => e
-        fail("Error parsing callback data\n#{e.inspect}", :vulcain_api)
+      if self.expected_price_total >= self.prepared_price_total
+        if self.billing_solution.nil?
+          callback_vulcain(true)
+        elsif self.billing_solution == "mangopay"
+          self.state = :billing
+          billing_result = LeetchiFunnel.bill(self)
+          if billing_result["Status"] == "success"
+            if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
+              callback_vulcain(true)
+              self.state = :pending_injection
+            else
+              callback_vulcain(false)
+              fail("invalid_cvd_solution", :shopelia)
+            end
+          else
+            callback_vulcain(false)
+            abort(billing_result["Error"], :billing)
+          end
+        else
+          callback_fulcain(false)
+          fail("invalid_billing_solution", :shopelia)      
+        end
+      else
+        callback_vulcain(false)
+        query
       end
       
     elsif verb.eql?("success") 
@@ -120,6 +138,7 @@ class Order < ActiveRecord::Base
       self.billed_price_shipping = content["billing"]["shipping"]
       self.shipping_info = content["billing"]["shipping_info"]
       self.error_code = nil
+      self.message = nil
       self.state = :completed
       Leftronic.new.notify_order(self)
       Emailer.notify_order_success(self).deliver
@@ -167,6 +186,11 @@ class Order < ActiveRecord::Base
     self.prepared_price_product = nil
     self.prepared_price_shipping = nil
     start
+  end
+  
+  def billing_accepted
+    return unless [:billing].include?(state)
+    
   end
   
   def notify_creation
@@ -263,5 +287,16 @@ class Order < ActiveRecord::Base
   def deserialize_questions
     @questions = JSON.parse(self.questions_json || "[]")
   end
+  
+  def callback_vulcain confirmed
+    return if @questions.empty?
+    begin
+      @questions.each { |question| question["answer"] = confirmed }
+      assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
+    rescue Exception => e
+      fail("Error parsing callback data\n#{e.inspect}", :vulcain_api)    
+    end
+  end
+  
   
 end

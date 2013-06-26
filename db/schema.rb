@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130621162907) do
+ActiveRecord::Schema.define(:version => 20130626163918) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -119,6 +119,10 @@ ActiveRecord::Schema.define(:version => 20130621162907) do
     t.integer  "leetchi_contribution_id"
     t.string   "leetchi_contribution_status"
     t.integer  "leetchi_contribution_amount"
+    t.string   "payment_solution"
+    t.string   "billing_solution"
+    t.string   "injection_solution"
+    t.string   "cvd_solution"
   end
 
   create_table "payment_cards", :force => true do |t|

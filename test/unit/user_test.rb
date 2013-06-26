@@ -164,43 +164,6 @@ class UserTest < ActiveSupport::TestCase
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a confirmation email should have been sent"
   end
-  
-  test "it should create and update leetchi user" do
-    @user.destroy
-    allow_remote_api_calls    
-    VCR.use_cassette('user') do
-      user = User.new(
-        :email => "elarch@gmail.com", 
-        :password => "tototo", 
-        :password_confirmation => "tototo",
-        :first_name => "Eric",
-        :last_name => "Larchevêque",
-        :civility => User::CIVILITY_MR,
-        :nationality_id => countries(:france).id,
-        :ip_address => '127.0.0.1',
-        :birthdate => '1973-09-30')
-      assert user.save, user.errors.full_messages.join(",")
-      assert user.leetchi_created?, "Leetchi user not created"
-
-      # Request leetchi user to check data integrity
-      leetchi_user = Leetchi::User.details(user.leetchi_id)
-      assert_equal user.email, leetchi_user['Email']
-      assert_equal user.first_name, leetchi_user['FirstName']
-      assert_equal user.last_name, leetchi_user['LastName']
-      assert_equal user.nationality.iso, leetchi_user['Nationality']
-      assert_equal user.birthdate.to_i, leetchi_user['Birthday']
-      assert_equal "NATURAL_PERSON", leetchi_user['PersonType']
-      assert !leetchi_user['IsStrongAuthenticated']
-      assert leetchi_user['CanRegisterMeanOfPayment']
-
-      # Update
-      user.update_attributes(:birthdate => '1970-09-30')
-      
-      # Request leetchi user to verify bithdate has been updated
-      leetchi_user = Leetchi::User.details(user.leetchi_id)
-      assert_equal user.birthdate.to_i, leetchi_user['Birthday'].to_i
-    end
-  end
 
   test "it should return false when password or password confirmation are blanks" do
     user = User.create(
@@ -250,7 +213,7 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test "it should set name" do
-    assert_equal "Eric Larchevêque", @user.name
+    assert_equal "Eric Larcheveque", @user.name
   end
   
 end

@@ -25,7 +25,7 @@ class OrdersControllerTest < ActionController::TestCase
     put :update, id:@order.to_param, order:{confirmation:"yes"}
     assert_response 302
     
-    assert_equal :processing, @order.reload.state
+    assert_equal :preparing, @order.reload.state
   end
 
   test "should update and cancel order" do

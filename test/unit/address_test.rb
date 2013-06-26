@@ -21,7 +21,7 @@ class AddressTest < ActiveSupport::TestCase
     
     assert address.save, address.errors.full_messages.join(",")
     assert_equal "Eric", address.first_name
-    assert_equal "Larchevêque", address.last_name    
+    assert_equal "Larcheveque", address.last_name    
     assert address.is_default?, "New address must be default"
     assert !@address.reload.is_default?, "Old address musn't be default"
 

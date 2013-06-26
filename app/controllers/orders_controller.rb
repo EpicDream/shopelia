@@ -3,7 +3,7 @@ class OrdersController < ApplicationController
 
   def update
     if params["order"]["confirmation"].eql?("yes")
-      @order.confirm
+      @order.accept
     else
       @order.cancel
     end
