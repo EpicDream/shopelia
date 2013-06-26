@@ -104,14 +104,12 @@ module LeetchiFunnel
         'PaymentCardID' => order.payment_card.leetchi_id,
         'Amount' => (order.prepared_price_total*100).to_i
       })
-      puts "Immediate contribution"
-      puts contribution.inspect
       if contribution['ID'].present?
         order.update_attributes(
           :leetchi_contribution_id => contribution['ID'],
           :leetchi_contribution_amount => contribution['Amount'],
           :leetchi_contribution_status => contribution['IsSucceeded'] ? "success" : "error"
-        )         
+        )
         return success    
       else
         return error "Impossible to create leetchi immediate contribution object", contribution

@@ -19,6 +19,7 @@ class Order < ActiveRecord::Base
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
+  attr_accessible :leetchi_contribution_id, :leetchi_contribution_amount, :leetchi_contribution_status
   attr_accessor :products, :confirmation
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }

@@ -4,6 +4,7 @@ elarch:
   first_name: Eric
   last_name: Larcheveque
   confirmation_sent_at: <%= 1.day.ago %>
+  birthdate: '1973-09-30'
   ip_address: '127.0.0.1'
   pincode: '1234'
   

@@ -49,7 +49,7 @@ class LeetchiFunnelTest < ActiveSupport::TestCase
       result = LeetchiFunnel.bill @order
       assert_equal "success", result["Status"]
       assert @order.reload.leetchi_contribution_id
-      assert_equal @order.prepared_price_total, @order.leetchi_contribution_amout/100
+      assert_equal @order.prepared_price_total, @order.leetchi_contribution_amount/100
       assert_equal "success", @order.leetchi_contribution_status
     end
   end
