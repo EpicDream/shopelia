@@ -14,5 +14,5 @@ class Shopelia.Models.Address extends Backbone.Model
       errors["city"] = "city is required"
 
     if _.size(errors) > 0
-      console.log("validation errors for Address" + JSON.stringify(errors))
+      console.log("Validation errors for Address : " + JSON.stringify(errors))
       errors

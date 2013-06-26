@@ -15,13 +15,36 @@ class Shopelia.Views.AddressesIndex extends Backbone.View
     this
 
   setFormVariables: ->
-    @phone = @$('input[name="phone"]')
+    #@phone = $('input[name="phone"]')
     @address1 = @$('input[name="address1"]')
     @zip = @$('input[name="zip"]')
     @city = @$('input[name="city"]')
     @country = @$('input[name="country"]')
     @address2 = @$('input[name="address2"]')
 
+  setAddress: ->
+    country_iso =  @country.val()
+    _.each(countries, (value,key) ->
+      if(value.toLowerCase()  == country_iso.toLowerCase())
+        country_iso = key
+    )
+    address = new Shopelia.Models.Address()
+    address.on("invalid", (model, errors) ->
+      console.log("displaying address Errors" + JSON.stringify(errors))
+      displayErrors(errors)
+    )
+    console.log($('input[name="full_name"]'))
+    address.set({
+                first_name:  split($('input[name="full_name"]').val())[0],
+                last_name:   split($('input[name="full_name"]').val())[1],
+                phone: $('input[name="phone"]').val(),
+                address1: @address1.val(),
+                zip:@zip.val(),
+                city: @city.val(),
+                country: country_iso,
+                address2: @address2.val()
+                })
+    address
 
   eraseAddressFields: ->
     @zip.val("")

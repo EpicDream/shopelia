@@ -1,8 +1,3 @@
-<div class="span4 offset4">
-    <a href="https://shopelia.com"><img alt="Logo_shopelia" src="/assets/logo_shopelia.png"></a>
-</div>
-
-<form accept-charset="UTF-8" class="clearfix">
         <div class="control-group">
             <div class="controls">
                 <input rel="popover" type="text" maxlength="19" class="" placeholder= "N° de carte bancaire" name="number">
@@ -20,6 +15,3 @@
                 <input rel="popover" type="text" maxlength="3" placeholder="Code CV" name="cvv">
             </div>
         </div>
-
-        <button class="btn btn-large">Payer ma commande</button>
-</form>

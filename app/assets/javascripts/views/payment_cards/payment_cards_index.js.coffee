@@ -18,6 +18,17 @@ class Shopelia.Views.PaymentCardsIndex extends Backbone.View
     @setCardFormVariables()
     this
 
+  setPaymentCard: ->
+    cardJson = @cardFormSerializer()
+    card = new Shopelia.Models.PaymentCard()
+    card.on("invalid", (model, errors) ->
+      displayErrors(errors)
+    )
+
+    card.set(cardJson)
+    console.log("card in setPaymentCard" + JSON.stringify(card))
+    card
+
 
   registerPaymentCard: (e) ->
     console.log("trigger registerPaymentCard")
@@ -29,7 +40,7 @@ class Shopelia.Views.PaymentCardsIndex extends Backbone.View
       displayErrors(errors)
     )
 
-    card.save({payment_card: cardJson},{
+    card.save(cardJson,{
                         beforeSend : (xhr) ->
                           xhr.setRequestHeader("X-Shopelia-AuthToken",that.options.user.get("auth_token"))
                         success : (resp) ->
@@ -57,16 +68,17 @@ class Shopelia.Views.PaymentCardsIndex extends Backbone.View
     month = @month.val()
     year = "20" + @year.val()
     cvv =  @cvv.val()
-    userId = @options.user.get("user").id
-    console.log("userId:" + userId )
 
     cardFormObject = {
-    "user_id": userId,
     "number":  cardNumber,
     "exp_month": month,
     "exp_year": year,
     "cvv": cvv
     }
+    if @options.user isnt undefined
+      userId = @options.user.get("user").id
+      console.log("userId:" + userId )
+      cardFormObject["user_id"] =  userId
 
     console.log cardFormObject
     cardFormObject

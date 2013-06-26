@@ -12,6 +12,7 @@
 //= require bootstrap
 //= require underscore
 //= require backbone
+//= require backbone.rails
 //= require backbone.queryparams
 //= require shopelia
 //= require_tree ../templates

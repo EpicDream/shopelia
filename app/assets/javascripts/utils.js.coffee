@@ -18,6 +18,14 @@ window.displayErrors = (errors) ->
                        })
   )
 
+window.split =  (fullName) ->
+  firstName =  fullName.substr(0,fullName.indexOf(' '))
+  lastName =  fullName.substr(fullName.indexOf(' ')+1)
+  if firstName == ''
+    [lastName,'']
+  else
+    [firstName,lastName]
+
 window.countries =
 {
 "AF":"Afghanistan",
