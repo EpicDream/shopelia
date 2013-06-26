@@ -64,7 +64,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
       })
 
   goToOrdersIndex: (session) ->
-    view = new Shopelia.Views.OrdersIndex(session: @session)
+    view = new Shopelia.Views.OrdersIndex(session: session, product: @options.product)
     $('#container').html(view.render().el)
 
   goToPaymentCardStep: (user) ->

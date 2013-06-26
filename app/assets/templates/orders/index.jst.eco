@@ -1,1 +1,12 @@
-<%= @session %>
+<%= @user.email %>
+<%= @user.addresses[0].address1 %>
+<%= @user.addresses[0].address2 %>
+<%= @user.addresses[0].city %>
+<%= countries[@user.addresses[0].country] %>
+<%= @user.addresses[0].zip %>
+<%= @user.addresses[0].phone %>
+<%= @user.first_name %>
+<%= @user.last_name %>
+<%= @user.payment_cards[0].number%>
+
+<button class="btn btn-large">Confirmer la commande</button>
