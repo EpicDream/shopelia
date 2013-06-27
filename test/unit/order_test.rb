@@ -439,6 +439,12 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :failed, @order.reload.state    
   end 
   
+  test "order should be audited" do
+    start_order
+    
+    assert !@order.audits.empty?
+  end
+  
   test "[alpha] it should continue order if target price is auto accepted" do
     configuration_alpha
     start_order
@@ -467,6 +473,12 @@ class OrderTest < ActiveSupport::TestCase
 
     assert_equal :pending_injection, @order.state
     assert_equal true, @order.questions.first["answer"]
+    
+    injection_success
+    assert_equal :pending_clearing, @order.state
+    
+    clearing_success
+    assert_equal :completed, @order.state    
   end
 
   test "[beta] it should fail order if billing failed" do
@@ -669,5 +681,5 @@ class OrderTest < ActiveSupport::TestCase
     }
     @order.reload
   end 
-   
+  
 end

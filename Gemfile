@@ -25,6 +25,7 @@ gem 'client_side_validations-simple_form'
 gem 'devise-i18n-views'
 gem 'rails-i18n'
 gem 'sucker_punch'
+gem "audited-activerecord", "~> 3.0"
 
 # Gems used only for assets and not required
 # in production environments by default.

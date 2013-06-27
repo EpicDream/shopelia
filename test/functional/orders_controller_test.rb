@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class OrdersControllerTest < ActionController::TestCase
+  include Devise::TestHelpers
   fixtures :orders
 
   setup do

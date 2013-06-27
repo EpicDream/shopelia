@@ -1,4 +1,6 @@
 class Order < ActiveRecord::Base
+  audited
+  
   STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "pending_injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
   ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "leetchi"]
 
@@ -107,30 +109,45 @@ class Order < ActiveRecord::Base
         self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
       end
       if self.expected_price_total >= self.prepared_price_total
+      
+        # Basic user payment
         if self.billing_solution.nil?
           callback_vulcain(true)
+          
+        # MangoPay billing
         elsif self.billing_solution == "mangopay"
           self.state = :billing
           billing_result = LeetchiFunnel.bill(self)
           if billing_result["Status"] == "success"
+          
+            # Billing success
             if self.reload.leetchi_contribution_status == "success"              
+            
+              # Limonetik CVD & injection
               if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
                 callback_vulcain(true)
                 self.state = :pending_injection
+                
+              # Invalid CVD solution
               else
                 callback_vulcain(false)
                 fail("invalid_cvd_solution", :shopelia)
               end
+              
+            # Billing failure
             else
               callback_vulcain(false)
               abort(self.leetchi_contribution_message, :billing)
             end
+            
           else
             callback_vulcain(false)
             abort(billing_result["Error"], :shopelia)
           end
+          
+        # Invalid billing solution
         else
-          callback_fulcain(false)
+          callback_vulcain(false)
           fail("invalid_billing_solution", :shopelia)      
         end
       else
@@ -143,12 +160,8 @@ class Order < ActiveRecord::Base
       self.billed_price_product = content["billing"]["product"]
       self.billed_price_shipping = content["billing"]["shipping"]
       self.shipping_info = content["billing"]["shipping_info"]
-      self.error_code = nil
-      self.message = nil
-      self.state = :completed
-      Leftronic.new.notify_order(self)
-      Emailer.notify_order_success(self).deliver
-
+      complete
+      
     end
 
     self.save!
@@ -194,9 +207,24 @@ class Order < ActiveRecord::Base
     start
   end
   
-  def billing_accepted
-    return unless [:billing].include?(state)
-    
+  def complete
+    self.error_code = nil
+    self.message = nil
+    self.state = :completed
+    Leftronic.new.notify_order(self)
+    Emailer.notify_order_success(self).deliver
+  end
+
+  def injection_success
+    return unless [:pending_injection].include?(state)
+    self.state = :pending_clearing
+    save
+  end
+  
+  def clearing_success
+    return unless [:pending_clearing].include?(state)
+    complete
+    save
   end
   
   def notify_creation
