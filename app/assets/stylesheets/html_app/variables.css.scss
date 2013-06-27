@@ -19,7 +19,6 @@ $btnBackground:              $green;
 $btnBackgroundHighlight:     darken($green,10%);
 $btnBorder:                  darken($green,5%);
 
-
 $btnInfoBackground:                 $blue;
 $btnInfoBackgroundHighlight:        darken($blue,10%);
 $btnInfoBorder:                     darken($blue,5%);
@@ -27,3 +26,9 @@ $btnInfoBorder:                     darken($blue,5%);
 //Font Size
 $smallSizeFont: 14px;
 $mediumSizeFont: 22px;
+
+//Forms
+$formsCellHeight:45px;
+$formsCellwidth: 294px;
+$formsButtonHeight: 45px;
+$formsButtonWidth: 308px;

@@ -6,6 +6,7 @@ class Shopelia.Routers.Products extends Backbone.Router
   initialize: ->
     _.bindAll this
     $(window).on('resize.modal',@center)
+    $(window).on('load',@center)
 
   showModal: (params)  ->
     @product = new Shopelia.Models.Product(params)

@@ -25,7 +25,10 @@ $borderRadius: 4px;
   height: 70px;
   background: $lightGrey;
   @include border-top-radius($borderRadius);
-  //border-bottom: 1px solid ;
+}
+
+#header-text {
+  padding-right: 10px;
 }
 
 #modal-content {

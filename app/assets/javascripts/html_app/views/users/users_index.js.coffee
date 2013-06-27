@@ -16,20 +16,12 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     @$("button").before(@addressView.render().el)
     #$(@addressView.render().el).after(@paymentCardView.render().el)
     @setFormVariables()
-    @country.autocomplete({
-      source: _.values(countries),
-    });
     this
 
   setFormVariables: ->
     @fullName = @$('input[name="full_name"]')
     @email = @$('input[name="email"]')
-    @phone = @$('input[name="phone"]')
-    @address1 = @$('input[name="address1"]')
-    @zip = @$('input[name="zip"]')
-    @city = @$('input[name="city"]')
-    @country = @$('input[name="country"]')
-    @address2 = @$('input[name="address2"]')
+
 
   createUser: (e) ->
     console.log("trigger createUser")

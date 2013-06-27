@@ -1,20 +1,20 @@
     <form accept-charset="UTF-8" class="clearfix">
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" class="" placeholder= "Email" name="email">
+                <input rel="popover" type="text" class="input-block-level" placeholder= "Email" name="email">
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" placeholder= "Phone" name="phone">
+                <input rel="popover" type="text" class="input-block-level"  placeholder= "Phone" name="phone">
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" placeholder="Prénom Nom" name="full_name">
+                <input rel="popover" type="text" class="input-block-level" placeholder="Prénom Nom" name="full_name">
             </div>
         </div>
 
-         <button class="btn btn-large">Préparer la commande</button>
+         <button class="btn btn-block btn-large">Préparer la commande</button>
     </form>
 

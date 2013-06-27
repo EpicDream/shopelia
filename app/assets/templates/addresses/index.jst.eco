@@ -1,16 +1,16 @@
     <div class="control-group">
         <div class="controls">
-            <input rel="popover"  type="text" placeholder= "Addresse" name="address1" autocomplete="off">
+            <input rel="popover" class="input-block-level"  type="text" placeholder= "Addresse"  name="address1" autocomplete="off">
         </div>
     </div>
 
     <div class="control-group">
         <div class="controls">
-            <input rel="popover" type="text" placeholder="Complément d'addresse" name="address2">
-            <div id="manual_address">
-               <input rel="popover" type="text" class="input-small" placeholder= "Code Postal" name="zip">
-               <input rel="popover" type="text" class="input-small" placeholder= "Ville" name="city"> <br>
-               <input rel="popover" type="text" placeholder= "Pays" name="country">
+            <input rel="popover" type="text" class="input-block-level"  placeholder="Complément d'addresse" name="address2">
+            <div id="manual_address row-fluid">
+                <input rel="popover" type="text" class="span6 input-block-level" placeholder= "Ville" name="city">
+                    <input rel="popover" type="text" class="span6 pull-right input-block-level" placeholder= "Code Postal" name="zip">
+               <input rel="popover" type="text" class="input-block-level" placeholder= "Pays" name="country">
             </div>
         </div>
     </div>

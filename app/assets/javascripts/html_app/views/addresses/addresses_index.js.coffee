@@ -12,10 +12,12 @@ class Shopelia.Views.AddressesIndex extends Backbone.View
   render: ->
     $(@el).html(@template())
     @setFormVariables()
+    @country.autocomplete({
+                          source: _.values(countries),
+                          });
     this
 
   setFormVariables: ->
-    #@phone = $('input[name="phone"]')
     @address1 = @$('input[name="address1"]')
     @zip = @$('input[name="zip"]')
     @city = @$('input[name="city"]')
