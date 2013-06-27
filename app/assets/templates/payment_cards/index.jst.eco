@@ -1,17 +1,13 @@
-        <div class="control-group">
-            <div class="controls">
-                <input rel="popover" type="text" maxlength="19" class="" placeholder= "N° de carte bancaire" name="number">
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                <input rel="popover" class="input-small" maxlength="2" type="text" placeholder= "MM" name="exp_month">
-                <span> / </span>
-                <input rel="popover" class="input-small" maxlength="2" type="text"  placeholder= "YY" name="exp_year">
-            </div>
-        </div>
-        <div class="control-group">
-            <div class="controls">
-                <input rel="popover" type="text" maxlength="3" placeholder="Code CV" name="cvv">
-            </div>
-        </div>
+<div class="field-title">
+   <img class="pull-left" src="/assets/html_app/shopelia-user.png">
+   <h5 class="pull-left">MÉTHODE DE PAIEMENT</h5>
+</div>
+<div class="control-group">
+    <div class="controls">
+        <input rel="popover"  class="input-block-level" type="text" maxlength="19" class="" placeholder= "N° de carte bancaire" name="number">
+        <input rel="popover" class="span4 input-block-level" maxlength="2" type="text" placeholder= "MM" name="exp_month">
+        <span> / </span>
+        <input rel="popover" class="span4 input-block-level" maxlength="2" type="text"  placeholder= "YY" name="exp_year">
+        <input rel="popover" class="span4 pull-right input-block-level"type="text" maxlength="3" placeholder="Code CV" name="cvv">
+    </div>
+</div>

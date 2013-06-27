@@ -32,13 +32,21 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     session.on("invalid", (model, errors) ->
        displayErrors(errors)
     )
-    card = @paymentCardView.setPaymentCard()
+
     address = @addressView.setAddress()
-    sessionJson = @formSerializer(address,card)
+    card = null
+    if @paymentCardView == undefined
+      cardIsValid = true
+      sessionJson = @formSerializer(address,card)
+    else
+      card = @paymentCardView.setPaymentCard()
+      cardIsValid = card.isValid()
+      sessionJson = @formSerializer(address,card.disableWrapping())
+
     session.set(sessionJson)
     sessionIsValid = session.isValid()
     addressIsValid = address.isValid()
-    cardIsValid = card.isValid()
+
     console.log("Addresss MAAAAAN" + JSON.stringify(address))
     if cardIsValid && addressIsValid && sessionIsValid
       session.save(sessionJson,{
@@ -54,11 +62,11 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
   goToOrdersIndex: (session) ->
     view = new Shopelia.Views.OrdersIndex(session: session, product: @options.product)
-    $('#container').html(view.render().el)
+    $('#modal-right').html(view.render().el)
 
-  goToPaymentCardStep: (user) ->
-    view = new Shopelia.Views.PaymentCardsIndex(product:@options.product,user: user )
-    $('#container').html(view.render().el)
+  goToPaymentCardStep: (session) ->
+    view = new Shopelia.Views.PaymentCardsIndex(product:@options.product,user: session )
+    $('#modal-right').html(view.render().el)
 
   formSerializer: (address,card)->
     loginFormObject = {};
@@ -74,7 +82,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
         "last_name":  lastName,
         "email": email,
         "addresses_attributes": [address]
-        "payment_cards_attributes": [card.disableWrapping()]
+        "payment_cards_attributes": [card]
       }
     }
 

@@ -35,7 +35,8 @@ input[type="color"],
 }
 
 
-.btn,input[type="button"],input[type="submit"], input[type="reset"],{
+.custom-btn ,input[type="button"],input[type="submit"], input[type="reset"],{
+  @include btn(1px,darken($green,15%),3px,$formsCellHeight,4px 6px,14px,#FFFFFF,$green,darken($green,10%),5%,3%);
 }
 
 form abbr {
