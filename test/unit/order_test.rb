@@ -469,6 +469,21 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal true, @order.questions.first["answer"]
   end
 
+  test "[beta] it should fail order if billing failed" do
+    allow_remote_api_calls    
+    configuration_beta
+    @order.update_attribute :expected_price_total, 333.05
+    VCR.use_cassette('leetchi') do
+      start_order
+      assess_order 333.05
+    end
+
+    assert_equal :failed, @order.state
+    assert_equal "billing", @order.error_code
+    assert_match /Do not honor/, @order.message
+    assert_equal false, @order.questions.first["answer"]
+  end
+
 =begin
   test "[beta] it should process order if billing has been accepted" do
     configuration_beta
@@ -576,7 +591,7 @@ class OrderTest < ActiveSupport::TestCase
     @order.reload
   end
   
-  def assess_order
+  def assess_order price=16
     @order.callback "assess", { 
       "questions" => [
         { "id" => "3" }
@@ -602,7 +617,7 @@ class OrderTest < ActiveSupport::TestCase
       "billing" => {
         "product" => 14,
         "shipping" => 2,
-        "total" => 16
+        "total" => price
       }
     }
     @order.reload
@@ -612,7 +627,7 @@ class OrderTest < ActiveSupport::TestCase
     @order.update_attribute :expected_price_total, 10
     assess_order
   end
-  
+    
   def reject_order
     @order.reject
     @order.reload

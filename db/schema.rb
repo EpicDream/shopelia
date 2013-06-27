@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130626163918) do
+ActiveRecord::Schema.define(:version => 20130627131113) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -96,8 +96,8 @@ ActiveRecord::Schema.define(:version => 20130626163918) do
     t.string   "uuid"
     t.string   "state_name"
     t.string   "message"
-    t.datetime "created_at",                  :null => false
-    t.datetime "updated_at",                  :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -123,6 +123,7 @@ ActiveRecord::Schema.define(:version => 20130626163918) do
     t.string   "billing_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
+    t.string   "leetchi_contribution_message"
   end
 
   create_table "payment_cards", :force => true do |t|

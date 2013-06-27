@@ -20,6 +20,7 @@ class Order < ActiveRecord::Base
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :leetchi_contribution_id, :leetchi_contribution_amount, :leetchi_contribution_status
+  attr_accessible :leetchi_contribution_message
   attr_accessor :products, :confirmation
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
@@ -112,16 +113,21 @@ class Order < ActiveRecord::Base
           self.state = :billing
           billing_result = LeetchiFunnel.bill(self)
           if billing_result["Status"] == "success"
-            if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
-              callback_vulcain(true)
-              self.state = :pending_injection
+            if self.reload.leetchi_contribution_status == "success"              
+              if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
+                callback_vulcain(true)
+                self.state = :pending_injection
+              else
+                callback_vulcain(false)
+                fail("invalid_cvd_solution", :shopelia)
+              end
             else
               callback_vulcain(false)
-              fail("invalid_cvd_solution", :shopelia)
+              abort(self.leetchi_contribution_message, :billing)
             end
           else
             callback_vulcain(false)
-            abort(billing_result["Error"], :billing)
+            abort(billing_result["Error"], :shopelia)
           end
         else
           callback_fulcain(false)

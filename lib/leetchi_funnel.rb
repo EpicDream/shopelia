@@ -10,8 +10,8 @@ module LeetchiFunnel
     end    
     
     # Ensure value of billing is in acceptable range
-    if order.prepared_price_total < 5 || order.prepared_price_total > 200
-      return error "Order billing value should be beetwen 5€ and 200€"
+    if order.prepared_price_total < 5 || order.prepared_price_total > 400
+      return error "Order billing value should be beetwen 5€ and 400€"
     end
     
     # Ensure we are in billing state
@@ -108,9 +108,16 @@ module LeetchiFunnel
         order.update_attributes(
           :leetchi_contribution_id => contribution['ID'],
           :leetchi_contribution_amount => contribution['Amount'],
-          :leetchi_contribution_status => contribution['IsSucceeded'] ? "success" : "error"
+          :leetchi_contribution_status => contribution['IsSucceeded'] ? "success" : "error",
+          :leetchi_contribution_message => contribution['AnswerMessage']
         )
         return success    
+      elsif contribution['Type'] == "PaymentSystem"
+        order.update_attributes(
+          :leetchi_contribution_status => "error",
+          :leetchi_contribution_message => "#{contribution['UserMessage']} #{contribution['TechnicalMessage']}"
+        )
+        return success        
       else
         return error "Impossible to create leetchi immediate contribution object", contribution
       end   
@@ -122,7 +129,11 @@ module LeetchiFunnel
   private
 
   def self.error message, object=nil
-    {"Status" => "error", "Error" => message, "Object" => object}
+    if object.nil?
+      {"Status" => "error", "Error" => message}
+    else
+      {"Status" => "error", "Error" => "#{message} #{object.inspect}"}
+    end
   end
   
   def self.success

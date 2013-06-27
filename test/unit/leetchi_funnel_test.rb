@@ -21,10 +21,10 @@ class LeetchiFunnelTest < ActiveSupport::TestCase
 
   test "it shouldn't bill if prepared price is not in range" do
     VCR.use_cassette('leetchi') do
-      @order.prepared_price_total = 300
-      @order.expected_price_total = 300
+      @order.prepared_price_total = 500
+      @order.expected_price_total = 500
       result = LeetchiFunnel.bill @order
-      assert_equal "Order billing value should be beetwen 5€ and 200€", result["Error"]
+      assert_equal "Order billing value should be beetwen 5€ and 400€", result["Error"]
     end
   end
 
@@ -51,6 +51,7 @@ class LeetchiFunnelTest < ActiveSupport::TestCase
       assert @order.reload.leetchi_contribution_id
       assert_equal @order.prepared_price_total, @order.leetchi_contribution_amount/100
       assert_equal "success", @order.leetchi_contribution_status
+      assert_equal "Transaction approved", @order.leetchi_contribution_message
     end
   end
       
