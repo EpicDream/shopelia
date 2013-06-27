@@ -1,5 +1,5 @@
 class HtmlAppController < ApplicationController
-  layout false
+  layout 'html_app'
 
   def index
   end

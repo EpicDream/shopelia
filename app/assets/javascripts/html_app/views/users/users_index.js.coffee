@@ -1,7 +1,6 @@
 class Shopelia.Views.UsersIndex extends Backbone.View
 
   template: JST['users/index']
-
   events:
     "click button": "createUser"
 
@@ -12,12 +11,10 @@ class Shopelia.Views.UsersIndex extends Backbone.View
   render: ->
     $(@el).html(@template())
     console.log(@options.product)
-    @productView = new Shopelia.Views.ProductsIndex(model:@options.product)
     @addressView =  new Shopelia.Views.AddressesIndex()
-    @paymentCardView =  new Shopelia.Views.PaymentCardsIndex()
-    @$("form").before(@productView.render().el)
+    #@paymentCardView =  new Shopelia.Views.PaymentCardsIndex()
     @$("button").before(@addressView.render().el)
-    $(@addressView.render().el).after(@paymentCardView.render().el)
+    #$(@addressView.render().el).after(@paymentCardView.render().el)
     @setFormVariables()
     @country.autocomplete({
       source: _.values(countries),

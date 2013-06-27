@@ -1,10 +1,4 @@
-<div class="span4 offset4">
-    <a href="https://shopelia.com"><img alt="Logo_shopelia" src="/assets/logo_shopelia.png"></a>
-</div>
-
     <form accept-charset="UTF-8" class="clearfix">
-
-
         <div class="control-group">
             <div class="controls">
                 <input rel="popover" type="text" class="" placeholder= "Email" name="email">
@@ -23,3 +17,4 @@
 
          <button class="btn btn-large">Préparer la commande</button>
     </form>
+

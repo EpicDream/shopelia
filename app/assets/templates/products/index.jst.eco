@@ -1,7 +1,5 @@
- <a href= <%= @model.get('url') %> >
-    <img src= <%= @model.get('image_url') %> width="100" height="100" />
- </a>
-
-  <p><%= @model.get('name') %> </p>
-  <p> <%= @model.get('expected_price_product') %> </p>
+  <img class="product-image" src= <%= @model.get('image_url') %> />
+  <h4><%= @model.get('name') %> </h4>
+  <span class="green bold"> <%= @model.get('expected_price_product') %> €</span>
+  <span class="taxes bold" > TTC </span>
   <p> <%= @model.get('expected_price_shipping') %> </p>

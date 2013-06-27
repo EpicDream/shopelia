@@ -6,7 +6,16 @@
 //
 //= require fastclick
 //= require jquery
-//= require rails.validations
-//= require rails.validations.simple_form
 //= require jquery_ujs
+//= require html_app/jquery-ui-1.10.3.custom.min
 //= require bootstrap
+//= require underscore
+//= require backbone
+//= require html_app/backbone.rails
+//= require html_app/backbone.queryparams
+//= require html_app/shopelia
+//= require_tree ../../templates
+//= require_tree ./models
+//= require_tree ./views
+//= require_tree ./routers
+//= require_directory .

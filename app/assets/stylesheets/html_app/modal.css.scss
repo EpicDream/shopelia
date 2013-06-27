@@ -1,0 +1,63 @@
+$modalHeight: 500px;
+$borderRadius: 4px;
+
+#container {
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background-color:rgba(0, 0, 0, 0.35);
+  z-index:9999;
+  color:white;
+}
+
+#modal {
+  position:absolute;
+  z-index: 10000;
+  border-radius:$borderRadius;
+  background-color:rgba(0, 0, 0, 0.65);
+  min-height: $modalHeight;
+}
+
+#modal-header {
+  padding: 10px;
+  height: 70px;
+  background: $lightGrey;
+  @include border-top-radius($borderRadius);
+  //border-bottom: 1px solid ;
+}
+
+#modal-content {
+
+}
+
+#modal-right,#modal-left {
+  border-radius:$borderRadius;
+  padding: 10px;
+  background: $lightGrey;
+}
+
+
+
+#close {
+  position:absolute;
+  background:url("bt-fermer-off.png") 0 0 no-repeat;
+  width:50px;
+  height:50px;
+  display:block;
+  text-indent:-9999px;
+  top:-15px;
+  right:-15px;
+  &:hover {
+    background:url("bt-fermer-hover.png") 0 0 no-repeat;
+  }
+}
+
+.green {
+  color: $green;
+}
+
+.bold {
+  font-weight: bold;
+}

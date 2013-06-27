@@ -21,10 +21,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     e.preventDefault()
     that = this
     console.log("processOrder")
-    console.log(@product.get('expected_price_product'))
-    console.log(@user)
     expected_price_total = parseFloat(@product.get('expected_price_product')) + parseFloat(@product.get('expected_price_shipping'))
-    console.log(expected_price_total)
     order = new Shopelia.Models.Order()
     order.save({
                "expected_price_total":expected_price_total,
