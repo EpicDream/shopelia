@@ -1,5 +1,27 @@
-  <img class="product-image" src= <%= @model.get('image_url') %> />
-  <h4><%= @model.get('name') %> </h4>
-  <span class="green bold"> <%= @model.get('expected_price_product') %> €</span>
-  <span class="taxes bold" > TTC </span>
-  <p> <%= @model.get('expected_price_shipping') %> </p>
+
+
+  <div class="clearfix">
+      <img class="product-image" src= <%= @model.get('image_url') %> />
+      <div class="spacer10"></div>
+      <h4><%= @model.get('name') %> </h4>
+  </div>
+  <div class="spacer10"></div>
+  <div class="price-infos">
+      <div class='pull-left'>
+        Proposé par <br>
+        <b>fnac.com</b>
+      </div>
+      <div class="pull-right">
+        <span class="price clearfix">
+            <span class="green bold pull-left"> <%= @model.get('expected_price_product') %> € </span>
+            <span class="taxes bold pull-left">TTC</span>
+        </span>
+        <span class="shipping">
+            frais de livraison
+            <span class="green"><%= @model.get('expected_price_shipping') %> €</span>
+        </span>
+      </div>
+   </div>
+  <div class="spacer10"></div>
+
+
