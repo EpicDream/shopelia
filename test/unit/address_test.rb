@@ -30,6 +30,23 @@ class AddressTest < ActiveSupport::TestCase
     assert @address.reload.is_default, "Last standing address should be default"    
   end
 
+  test "it should create address with first and last name" do
+    address = Address.new(
+      :user_id => @user.id,
+      :phone => "0646403619",
+      :first_name => "Toto",
+      :last_name => "France",
+      :address1 => "21 rue d'Aboukir",
+      :zip => "75002",
+      :city => "Paris",
+      :is_default => true,
+      :country_iso => "fr")
+    
+    assert address.save, address.errors.full_messages.join(",")
+    assert_equal "Toto", address.first_name
+    assert_equal "France", address.last_name    
+  end
+
   test "a new address must not be default if not specified" do
     address = Address.new(
       :user_id => users(:elarch).id,

@@ -14,6 +14,8 @@ class AddressSerializerTest < ActiveSupport::TestCase
     
     assert_equal @address.id, hash[:address][:id]
     assert_equal @address.code_name, hash[:address][:code_name]
+    assert_equal @address.first_name, hash[:address][:first_name]
+    assert_equal @address.last_name, hash[:address][:last_name]
     assert_equal @address.address1, hash[:address][:address1]
     assert_equal @address.address2, hash[:address][:address2]
     assert_equal @address.zip, hash[:address][:zip]
