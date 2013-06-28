@@ -35,7 +35,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "Doe", user.last_name
   
     assert_equal 2, ActionMailer::Base.deliveries.count, "a confirmation email should have been sent"
-    assert_equal "user@gmail.com", ActionMailer::Base.deliveries.second.to[0]
+    assert_equal ["user@gmail.com", "contact@shopelia.fr"].to_a, [ActionMailer::Base.deliveries.first.to[0], ActionMailer::Base.deliveries.second.to[0]].to_a
     assert user.confirmation_sent_at
     
     assert user.authentication_token.present?, "user should have an authentication token"
