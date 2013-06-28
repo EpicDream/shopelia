@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class AddressTest < ActiveSupport::TestCase
-  fixtures :users, :countries, :addresses
+  fixtures :users, :countries, :addresses, :orders
 
   setup do
     @user = users(:elarch)
@@ -28,6 +28,23 @@ class AddressTest < ActiveSupport::TestCase
     address.destroy
     addresses(:elarch_vignoux).destroy
     assert @address.reload.is_default, "Last standing address should be default"    
+  end
+
+  test "it should create address with first and last name" do
+    address = Address.new(
+      :user_id => @user.id,
+      :phone => "0646403619",
+      :first_name => "Toto",
+      :last_name => "France",
+      :address1 => "21 rue d'Aboukir",
+      :zip => "75002",
+      :city => "Paris",
+      :is_default => true,
+      :country_iso => "fr")
+    
+    assert address.save, address.errors.full_messages.join(",")
+    assert_equal "Toto", address.first_name
+    assert_equal "France", address.last_name    
   end
 
   test "a new address must not be default if not specified" do
@@ -70,6 +87,16 @@ class AddressTest < ActiveSupport::TestCase
       assert_equal "Paris", address.city
       assert_equal countries(:france).id, address.country_id
     end
+  end
+  
+  test "it should fail all non completed orders attached to a destroyed address" do
+    order = orders(:elarch_rueducommerce)
+    assert_equal :processing, order.state
+    @address.destroy
+    
+    assert_equal :failed, order.reload.state
+    assert_equal "user", order.error_code
+    #assert_equal "address_destroyed", order.message
   end
 
 end
