@@ -37,8 +37,8 @@ class User < ActiveRecord::Base
   after_create :send_confirmation_email
   after_create :leftronic_users_count
   after_destroy :leftronic_users_count
-
   before_update :update_leetchi_user, :if => Proc.new { |user| user.leetchi_id.present? && (first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?) }
+  after_create :notify_creation_to_admin
 
   def addresses= params
     (params || []).each do |address|
@@ -148,6 +148,10 @@ class User < ActiveRecord::Base
 
   def leftronic_users_count
     Leftronic.new.notify_users_count
+  end
+
+  def notify_creation_to_admin
+    Emailer.notify_admin_user_creation(self).deliver
   end
 
 end

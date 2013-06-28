@@ -46,6 +46,7 @@ class Order < ActiveRecord::Base
   after_initialize :deserialize_questions
   after_create :prepare_order_items
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
+  after_create :notify_creation_to_admin, :if => Proc.new { |order| !order.destroyed? }
   
   def to_param
     self.uuid
@@ -333,6 +334,9 @@ class Order < ActiveRecord::Base
       fail("Error parsing callback data\n#{e.inspect}", :vulcain_api)    
     end
   end
-  
+
+  def notify_creation_to_admin
+    Emailer.notify_admin_order_creation(self).deliver
+  end
   
 end
