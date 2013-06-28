@@ -43,7 +43,7 @@ class Address < ActiveRecord::Base
       default_address.update_attribute :is_default, true unless default_address.nil?
     end
     Order.running.where(address_id:record.id).each do |order|
-      order.cancel #("address_destroyed", :user)
+      order.reject "address_destroyed"
     end
   end
 

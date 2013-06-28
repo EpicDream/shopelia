@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
     if params["order"]["confirmation"].eql?("yes")
       @order.accept
     else
-      @order.cancel
+      @order.reject "price_rejected"
     end
     redirect_to @order
   end

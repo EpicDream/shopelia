@@ -91,12 +91,12 @@ class AddressTest < ActiveSupport::TestCase
   
   test "it should fail all non completed orders attached to a destroyed address" do
     order = orders(:elarch_rueducommerce)
-    assert_equal :processing, order.state
+    assert_equal :initialized, order.state
     @address.destroy
     
     assert_equal :failed, order.reload.state
     assert_equal "user", order.error_code
-    #assert_equal "address_destroyed", order.message
+    assert_equal "address_destroyed", order.message
   end
 
 end

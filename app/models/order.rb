@@ -194,8 +194,8 @@ class Order < ActiveRecord::Base
     self.save!
   end
   
-  def reject
-    abort "price_rejected", :user
+  def reject reason
+    abort reason, :user
     self.save!
   end
   
@@ -209,6 +209,7 @@ class Order < ActiveRecord::Base
   end
   
   def complete
+    return if state == :failed
     self.error_code = nil
     self.message = nil
     self.state = :completed
@@ -256,7 +257,7 @@ class Order < ActiveRecord::Base
   end
 
   def abort content, error_sym
-    return unless [:preparing, :pending_agent, :billing, :querying, :pending_clearing].include?(state)
+    return unless [:initialized, :preparing, :pending_agent, :billing, :querying, :pending_clearing].include?(state)
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s) unless error_sym.nil?
     self.state = :failed

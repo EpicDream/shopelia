@@ -641,7 +641,7 @@ class OrderTest < ActiveSupport::TestCase
   end
     
   def reject_order
-    @order.reject
+    @order.reject "price_rejected"
     @order.reload
   end
   
