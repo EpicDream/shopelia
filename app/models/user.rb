@@ -7,7 +7,6 @@ class User < ActiveRecord::Base
 
   has_many :addresses, :dependent => :destroy
   has_many :payment_cards, :dependent => :destroy
-  has_many :psp_users, :dependent => :destroy
   has_many :merchant_accounts, :dependent => :destroy
   has_many :user_verification_failures, :dependent => :destroy
   has_many :orders, :dependent => :destroy
@@ -19,6 +18,7 @@ class User < ActiveRecord::Base
 
   validates :first_name, :presence => true
   validates :last_name, :presence => true
+  validates :email, :presence => true
   validates :civility, :inclusion => { :in => [ CIVILITY_MR, CIVILITY_MME, CIVILITY_MLLE ] }, :allow_nil => true
   validates_confirmation_of :password
   validate :user_must_be_16_yo
@@ -32,12 +32,12 @@ class User < ActiveRecord::Base
   before_validation :reset_test_account
 
   before_create :skip_confirmation_email
-  after_save :process_nested_attributes
-  after_save :send_confirmation_email
+  after_create :process_nested_attributes
+  after_create :send_confirmation_email
   after_create :leftronic_users_count
   after_destroy :leftronic_users_count
+  before_update :update_leetchi_user, :if => Proc.new { |user| user.leetchi_id.present? && (first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?) }
   after_create :notify_creation_to_admin
-  before_update :update_psp_users, :if => Proc.new { |user| user.leetchi.present? }
 
   def addresses= params
     (params || []).each do |address|
@@ -105,17 +105,6 @@ class User < ActiveRecord::Base
     false
   end
   
-  def leetchi
-    self.psp_users.leetchi.first
-  end
-  
-  def create_leetchi
-    return unless self.leetchi.nil?
-    wrapper = Psp::LeetchiUser.new
-    wrapper.create(self)
-    wrapper.errors
-  end
-
   def password_required?
     super if confirmed?
   end
@@ -135,24 +124,22 @@ class User < ActiveRecord::Base
   end
   
   def process_nested_attributes
-    if self.persisted?
-      self.addresses = self.addresses_attributes
-      self.payment_cards = self.payment_cards_attributes
-    end
+    self.addresses = self.addresses_attributes
+    self.payment_cards = self.payment_cards_attributes
   end
   
   def send_confirmation_email
     self.send_confirmation_instructions if self.errors.count == 0 && @confirmation_delayed
   end
   
-  def update_psp_users
-    if first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?
-      wrapper = Psp::LeetchiUser.new
-      if !wrapper.update(self)
-        self.errors.add(:base, I18n.t('leetchi.users.update_failure', :error => wrapper.errors))
-        false
-      end
-    end
+  def update_leetchi_user
+    Leetchi::User.update(user.leetchi_id, {
+      'Email' => user.email,
+      'FirstName' => user.first_name,
+      'LastName' => user.last_name,
+      'Nationality' => user.nationality.nil? ? "fr" : user.nationality.iso,
+      'Birthday' => user.birthdate.nil? ? 30.years.ago.to_i : user.birthdate.to_i
+    })
   end
 
   def reset_test_account

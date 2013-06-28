@@ -27,7 +27,7 @@ class Api::V1::OrdersControllerTest < ActionController::TestCase
     end
     
     assert_response :success
-    assert_equal "processing", Order.last.state_name
+    assert_equal "preparing", Order.last.state_name
   end
 
   test "it should show order" do

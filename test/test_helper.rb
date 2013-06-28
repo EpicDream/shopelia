@@ -21,21 +21,18 @@ class ActiveSupport::TestCase
     c.allow_http_connections_when_no_cassette = true
   end
 
-=begin
-  Turn.config do |c|
-   c.format  = :cue
-   c.natural = true
-   c.verbose = true
-  end
-=end
-
   setup do
+    ENV["ALLOW_REMOTE_API_CALLS"] = "0"
     ENV["API_KEY"] = developers(:prixing).api_key
     ActionMailer::Base.deliveries.clear
   end
 
   def json_response
     JSON.parse @response.body
+  end
+  
+  def allow_remote_api_calls
+   ENV["ALLOW_REMOTE_API_CALLS"] = "1"
   end
 
 end
