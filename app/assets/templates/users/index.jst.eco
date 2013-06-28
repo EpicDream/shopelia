@@ -19,6 +19,6 @@
             </div>
         </div>
 
-         <button class="custom-btn btn-block">POURSUIVRE MA COMMANDE</button>
+         <button id="btn-register-user" class="custom-btn btn-block">POURSUIVRE MA COMMANDE</button>
     </form>
 

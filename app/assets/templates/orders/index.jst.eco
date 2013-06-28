@@ -7,6 +7,7 @@
 <%= @user.addresses[0].phone %>
 <%= @user.first_name %>
 <%= @user.last_name %>
-<%= @user.payment_cards[0].number unless @user.payment_cards.length == 0 %>
+<%= @user.payment_cards[0] %> <br>
+<%= @user.payment_cards[0].number %>  <br>
 
-<button class="btn btn-large">Confirmer la commande</button>
+<button id="process-order" class="btn btn-large">Confirmer la commande</button>

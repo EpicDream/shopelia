@@ -11,3 +11,4 @@
         <input rel="popover" class="span4 pull-right input-block-level"type="text" maxlength="3" placeholder="Code CV" name="cvv">
     </div>
 </div>
+<button id="btn-register-payment" class="custom-btn btn-block">POURSUIVRE MA COMMANDE</button>

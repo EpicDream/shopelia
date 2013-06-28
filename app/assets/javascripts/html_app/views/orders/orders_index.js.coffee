@@ -2,13 +2,14 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
 
   template: JST['orders/index']
   events:
-    "click button": "processOrder"
+    "click #process-order": "processOrder"
 
   initialize: ->
     _.bindAll this
     @user = @options.session.get("user")
     @authToken = @options.session.get("auth_token")
-    console.log(@authToken)
+    console.log("initialize processOrder View: ")
+    console.log(@options)
     @product = @options.product
 
   render: ->
