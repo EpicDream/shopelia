@@ -32,6 +32,7 @@ class Order < ActiveRecord::Base
   scope :querying, lambda { where("state_name='querying'") }
   scope :completed, lambda { where("state_name='completed'") }
   scope :failed, lambda { where("state_name='failed'") }
+  scope :running, lambda { where("state_name<>'completed' and state_name<>'failed'") }
   
   before_validation :initialize_uuid
   before_validation :initialize_state

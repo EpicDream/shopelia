@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class AddressTest < ActiveSupport::TestCase
-  fixtures :users, :countries, :addresses
+  fixtures :users, :countries, :addresses, :orders
 
   setup do
     @user = users(:elarch)
@@ -87,6 +87,16 @@ class AddressTest < ActiveSupport::TestCase
       assert_equal "Paris", address.city
       assert_equal countries(:france).id, address.country_id
     end
+  end
+  
+  test "it should fail all non completed orders attached to a destroyed address" do
+    order = orders(:elarch_rueducommerce)
+    assert_equal :processing, order.state
+    @address.destroy
+    
+    assert_equal :failed, order.reload.state
+    assert_equal "user", order.error_code
+    #assert_equal "address_destroyed", order.message
   end
 
 end
