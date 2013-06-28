@@ -34,9 +34,8 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "John", user.first_name
     assert_equal "Doe", user.last_name
   
-    mail = ActionMailer::Base.deliveries.last
-    assert mail.present?, "a confirmation email should have been sent"
-    assert_equal "user@gmail.com", mail.to[0]
+    assert_equal 2, ActionMailer::Base.deliveries.count, "a confirmation email should have been sent"
+    assert_equal "user@gmail.com", ActionMailer::Base.deliveries.second.to[0]
     assert user.confirmation_sent_at
     
     assert user.authentication_token.present?, "user should have an authentication token"
@@ -52,8 +51,7 @@ class UserTest < ActiveSupport::TestCase
     user = User.new(:email => "user@gmail.com")
     assert !user.save
 
-    mail = ActionMailer::Base.deliveries.last
-    assert !mail.present?, "a confirmation email shouldn't have been sent"
+    assert_equal 0, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
   end
 
   test "it should fail user creation with a bad address" do
@@ -71,8 +69,7 @@ class UserTest < ActiveSupport::TestCase
     assert !user.persisted?
     assert_equal "Le code postal doit être renseigné,La ville doit être renseignée", user.errors.full_messages.join(",")
 
-    mail = ActionMailer::Base.deliveries.last
-    assert !mail.present?, "a confirmation email shouldn't have been sent"
+    assert_equal 1, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
   end
 
   test "it should create infinitely user with email test@shopelia.fr" do

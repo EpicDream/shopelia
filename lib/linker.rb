@@ -38,19 +38,12 @@ class Linker
   end
 
   def self.fnac url
-    uri = URI.parse(url)
-    if url.include? "25134383C1552684717T"
-      return url
-    elsif url.include? "zanox"
-      response = nil
-      while response.nil? || response.code.to_i != 200 do
-        req = Net::HTTP::Get.new(uri.request_uri)
-        response = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
-        uri = URI.parse(response['location']) unless response.code.to_i == 200
-      end
+    if url.include? "zanox"
+      url.gsub(/\?[^&]+&/, "?25134383C1552684717T&")
+    else 
+      url = CGI::escape(url.gsub("http://", ""))
+      "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[#{url}]]"
     end
-    url = CGI::escape(uri.request_uri.gsub(/\?.*$/, ""))
-    "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[#{url}]]#fnac.com"
   end
 
 end

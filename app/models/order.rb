@@ -32,6 +32,7 @@ class Order < ActiveRecord::Base
   scope :querying, lambda { where("state_name='querying'") }
   scope :completed, lambda { where("state_name='completed'") }
   scope :failed, lambda { where("state_name='failed'") }
+  scope :running, lambda { where("state_name<>'completed' and state_name<>'failed'") }
   
   before_validation :initialize_uuid
   before_validation :initialize_state
@@ -42,6 +43,7 @@ class Order < ActiveRecord::Base
   after_initialize :deserialize_questions
   after_create :prepare_order_items
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
+  after_create :notify_creation_to_admin, :if => Proc.new { |order| !order.destroyed? }
   
   def to_param
     self.uuid
@@ -256,6 +258,10 @@ class Order < ActiveRecord::Base
   
   def deserialize_questions
     @questions = JSON.parse(self.questions_json || "[]")
+  end
+  
+  def notify_creation_to_admin
+    Emailer.notify_admin_order_creation(self).deliver
   end
   
 end

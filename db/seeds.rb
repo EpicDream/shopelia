@@ -4,8 +4,8 @@ Psp.create(:id=>1,:name=>Psp::LEETCHI)
 Merchant.delete_all
 Merchant.create(:id=>1,:name=>'Rue du Commerce',:url=>'http://www.rueducommerce.fr',:logo=>'http://www.prixing.fr/images/logos/rueducommerce.png',:vendor=>'RueDuCommerce')
 Merchant.create(:id=>2,:name=>'Amazon France',:url=>'http://www.amazon.fr',:logo=>'http://www.prixing.fr/images/logos/amazon.png',:vendor=>'AmazonFrance')
-Merchant.create(:id=>3,:name=>'Fnac',:url=>'http://www.fnac.fr',:logo=>'http://www.prixing.fr/images/logos/fnac.png',:vendor=>'Fnac')
-Merchant.create(:id=>4,:name=>'Price Minister',:url=>'http://www.priceminister.com',:logo=>'http://www.prixing.fr/images/logos/priceminister.png',:vendor=>'PriceMinister')
+Merchant.create(:id=>3,:name=>'Fnac',:url=>'http://www.fnac.fr',:logo=>'http://www.prixing.fr/images/logos/fnac_large.png',:vendor=>'Fnac')
+Merchant.create(:id=>4,:name=>'Price Minister',:url=>'http://www.priceminister.com',:logo=>'http://www.prixing.fr/images/logos/priceminister_large.png',:vendor=>'PriceMinister')
 Merchant.create(:id=>5,:name=>'CDiscount',:url=>'http://www.cdiscount.com',:logo=>'http://www.prixing.fr/images/logos/cdiscount.png',:vendor=>'Cdiscount')
 Developer.delete_all
 Developer.create(:name=>'Prixing',:api_key=>'52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4')

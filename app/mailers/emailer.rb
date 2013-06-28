@@ -9,6 +9,20 @@ class Emailer < ActionMailer::Base
           :body => message)
   end
   
+  def notify_admin_user_creation user
+    @user = user
+    mail( :to => "Shopelia <contact@shopelia.fr>",
+          :subject => "Nouvel utilisateur inscrit #{@user.name}",
+          :from => "Admin Shopelia <contact@shopelia.fr>")
+  end
+
+  def notify_admin_order_creation order
+    @order = order
+    mail( :to => "Shopelia <contact@shopelia.fr>",
+          :subject => "Nouvelle commande reçue de #{@order.user.name}",
+          :from => "Admin Shopelia <contact@shopelia.fr>")
+  end
+  
   def notify_order_creation order
     @order = order
     @vendor = @order.merchant.name
