@@ -22,6 +22,15 @@
 .popover-content {
 }
 
+ul.ui-autocomplete {
+  z-index: 11000;
+  height: 150px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+
+
 
 
 .spacer5 { height: 5px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
