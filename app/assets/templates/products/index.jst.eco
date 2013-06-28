@@ -1,11 +1,9 @@
-
-
   <div class="clearfix">
       <img class="product-image" src= <%= @model.get('image_url') %> />
       <div class="spacer10"></div>
       <h4><%= @model.get('name') %> </h4>
   </div>
-  <div class="spacer10"></div>
+  <div class="spacer5"></div>
   <div class="price-infos">
       <div class='pull-left'>
         Proposé par <br>
@@ -22,6 +20,6 @@
         </span>
       </div>
    </div>
-  <div class="spacer10"></div>
+  <div class="spacer5"></div>
 
 

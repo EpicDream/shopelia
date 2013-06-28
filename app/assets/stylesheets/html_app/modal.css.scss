@@ -1,19 +1,22 @@
 $modalHeight: 500px;
 $borderRadius: 4px;
 
-#container {
-  position:absolute;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
-  background-color:rgba(0, 0, 0, 0.35);
+#lean_overlay {
+  position: fixed;
+  z-index:100;
+  top: 0px;
+  left: 0px;
+  height:100%;
+  width:100%;
   z-index:9999;
-  color:white;
+  background-color:rgba(0, 0, 0, 0.35);
 }
 
+
 #modal {
-  position:absolute;
+  display: block;
+  position: absolute;
+  opacity: 1;
   z-index: 10000;
   border-radius:$borderRadius;
   background-color:rgba(0, 0, 0, 0.65);

@@ -5,6 +5,7 @@ class Shopelia.Routers.Products extends Backbone.Router
 
   initialize: ->
     _.bindAll this
+    $('#overlay').leanModal()
     $(window).on('resize.modal',@center)
     $(window).on('load',@center)
 
@@ -22,4 +23,3 @@ class Shopelia.Routers.Products extends Backbone.Router
     $('#modal').css
       top: top + $(window).scrollTop()
       left: left + $(window).scrollLeft()
-
