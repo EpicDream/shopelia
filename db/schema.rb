@@ -162,10 +162,32 @@ ActiveRecord::Schema.define(:version => 20130627161551) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url",         :limit => 255
+    t.text     "url"
     t.string   "image_url"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "psp_payment_cards", :force => true do |t|
+    t.integer  "payment_card_id"
+    t.integer  "psp_id"
+    t.integer  "remote_payment_card_id"
+    t.datetime "created_at",             :null => false
+    t.datetime "updated_at",             :null => false
+  end
+
+  create_table "psp_users", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "psp_id"
+    t.integer  "remote_user_id"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
+
+  create_table "psps", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "states", :force => true do |t|

@@ -1,7 +1,7 @@
 <b>Nouvelle commande enregistrée sur Shopelia !</b>
 <p>
 <u>Passée par :</u> <%= @order.user.name %><br>
-<u>Produit :</u> <%= @order.order_items.first.product.name %>
+<u>Produit :</u> <%= @order.order_items.first.product.name %><br>
 <u>Prix :</u> <%= number_to_currency(@order.expected_price_total) %>
 <p>
 <%= link_to "Suivre l'état de la commande", order_url(@order) %>
