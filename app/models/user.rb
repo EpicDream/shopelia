@@ -37,7 +37,7 @@ class User < ActiveRecord::Base
   after_save :send_confirmation_email
   after_create :leftronic_users_count
   after_destroy :leftronic_users_count
-
+  after_create :notify_creation_to_admin
   before_update :update_psp_users, :if => Proc.new { |user| user.leetchi.present? }
 
   def addresses= params
@@ -161,6 +161,10 @@ class User < ActiveRecord::Base
 
   def leftronic_users_count
     Leftronic.new.notify_users_count
+  end
+
+  def notify_creation_to_admin
+    Emailer.notify_admin_user_creation(self).deliver
   end
 
 end
