@@ -1,0 +1,7 @@
+<div class="greetings">
+<img class="present clearfix" src="/assets/html_app/shopelia-present.png">
+<span class="green bold clearfix">Merci !</span>
+<span class="bold clearfix">Merci pour votre commande !</span>
+<p class="clearfix"> Nous vous ferons parvenir <br> une confirmation sous peu </p>
+<img src="/assets/html_app/shopelia-logo-transparent.png">
+</div>

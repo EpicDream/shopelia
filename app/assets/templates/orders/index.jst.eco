@@ -1,13 +1,60 @@
-<%= @user.email %>
-<%= @user.addresses[0].address1 %>
-<%= @user.addresses[0].address2 %>
-<%= @user.addresses[0].city %>
-<%= countries[@user.addresses[0].country] %>
-<%= @user.addresses[0].zip %>
-<%= @user.addresses[0].phone %>
-<%= @user.first_name %>
-<%= @user.last_name %>
-<%= @user.payment_cards[0] %> <br>
-<%= @user.payment_cards[0].number %>  <br>
+<div class="field-title clearfix">
+    <img class="pull-left" src="/assets/html_app/shopelia-user.png">
+    <h5 class="pull-left">INFORMATIONS PERSONNELLES</h5>
+</div>
 
-<button id="process-order" class="btn btn-large">Confirmer la commande</button>
+    <div class="infos clearfix offset1">
+        <img class="pull-left" src="/assets/html_app/email-icon.png">
+        <span class="pull-left" ><%= @user.email %></span>
+    </div>
+            <div class="spacer5"></div>
+    <div class="infos clearfix offset1">
+        <img class="pull-left" src="/assets/html_app/phone-icon.png">
+        <span class="pull-left" ><%= @user.addresses[0].phone %></span>
+    </div>
+            <div class="spacer10"></div>
+<div class="line"></div>
+            <div class="spacer5"></div>
+<div class="field-title clearfix">
+   <img class="pull-left" src="/assets/html_app/address-icon.png">
+   <h5 class="pull-left">ADRESSE DE LIVRAISON</h5>
+</div>
+    <div class="offset1">
+        <%= @user.first_name %> <%= @user.last_name %><br>
+        <%= @user.addresses[0].address1 %>
+        <%= @user.addresses[0].address2 %> <br>
+        <%= @user.addresses[0].zip %> <%= @user.addresses[0].city %>
+         <%= countries[@user.addresses[0].country] %>
+    </div>
+
+        <div class="spacer10"></div>
+        <div class="line"></div>
+        <div class="spacer5"></div>
+<div class="field-title clearfix">
+    <img class="pull-left" src="/assets/html_app/shopelia-carte.png">
+    <h5 class="pull-left">MÉTHODE DE PAIEMENT</h5>
+</div>
+
+    <div class="offset1 clearfix">
+        <%= @user.payment_cards[0].number %>
+    </div>
+        <div class="spacer10"></div>
+        <div class="line"></div>
+        <div class="spacer5"></div>
+
+        <table class="table table-borderless" id="total-parice-table">
+            <tr>
+                <td><%= @product.get('name') %></td>
+                <td><%= @product.get('expected_price_product') %>€</td>
+            </tr>
+            <tr>
+                <td>Frais de livraison : </td>
+                <td><%= @product.get('expected_price_shipping') %>€</td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td><%= @expected_price_total %>€</td>
+            </tr>
+        </table>
+
+<button id="process-order" class="custom-btn btn-block">CONFIRMER LA COMMANDE</button>

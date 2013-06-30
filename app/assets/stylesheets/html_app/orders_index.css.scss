@@ -1,0 +1,32 @@
+.line {
+  border: 1px solid darken($lightGrey,10%);
+}
+
+#total-parice-table {
+  td:nth-child(2) {
+    float: right;
+  }
+  tr:nth-child(3) {
+    font-size: 24px;
+    font-weight: bold;
+    td:nth-child(2) {
+      color: $red;
+    }
+  }
+}
+
+.greetings {
+  img.present {
+    max-width: 80px;
+  }
+  text-align: center;
+  font-size: 16px;
+  * {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+
+  .green {
+    font-size: 20px;
+  }
+}

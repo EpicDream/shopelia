@@ -5,9 +5,9 @@
 <div class="control-group">
     <div class="controls">
         <input rel="popover"  class="input-block-level" type="text" maxlength="19" class="" placeholder= "N° de carte bancaire" name="number">
-        <input rel="popover" class="span4 input-block-level" maxlength="2" type="text" placeholder= "MM" name="exp_month">
+        <input rel="popover" class="span3 input-block-level" maxlength="2" type="text" placeholder= "MM" name="exp_month">
         <span> / </span>
-        <input rel="popover" class="span4 input-block-level" maxlength="2" type="text"  placeholder= "YY" name="exp_year">
+        <input rel="popover" class="span3 input-block-level" maxlength="2" type="text"  placeholder= "YY" name="exp_year">
         <input rel="popover" class="span4 pull-right input-block-level"type="text" maxlength="3" placeholder="Code CV" name="cvv">
     </div>
 </div>

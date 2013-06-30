@@ -20,6 +20,8 @@ class Shopelia.Views.Modal extends Backbone.View
     $('#container').show()
     productView = new Shopelia.Views.ProductsIndex(model:@options.product)
     view = new Shopelia.Views.UsersIndex(product: @options.product)
+    #view = new Shopelia.Views.OrdersIndex(product: @options.product)
+    #view = new Shopelia.Views.Greetings()
     @$('#modal-left').append(productView.render().el)
     @$('#modal-right').append(view.render().el)
 
