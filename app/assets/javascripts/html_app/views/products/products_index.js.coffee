@@ -5,7 +5,7 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
   initialize: ->
     _.bindAll this
-    @getProvider()
+    @getMerchant()
 
 
   render: ->
@@ -13,7 +13,7 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
     $(@el).html(@template(model: @model, merchant: @merchant))
     this
 
-  getProvider: ->
+  getMerchant: ->
     that = this
     $.ajax({
            type: "POST",

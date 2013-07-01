@@ -1,4 +1,5 @@
 $modalHeight: 500px;
+$modalWidth: 622px;
 $borderRadius: 4px;
 
 #lean_overlay {
@@ -21,6 +22,7 @@ $borderRadius: 4px;
   border-radius:$borderRadius;
   background-color:rgba(0, 0, 0, 0.65);
   min-height: $modalHeight;
+  min-width: $modalWidth ;
 }
 
 #modal-header {

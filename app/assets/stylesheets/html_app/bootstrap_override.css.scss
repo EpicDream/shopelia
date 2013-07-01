@@ -85,19 +85,5 @@ ul.ui-autocomplete {
   }
 }
 
-@media (min-width: 768px) and (max-width: 979px) {
-  .dl-horizontal.dl-custom dt {
-    text-align: left !important;
-    width:  auto !important;
-  }
 
-  .dl-horizontal.dl-custom dd {
-    clear: both !important;
-    margin-left:  0 !important;
-  }
-}
-
-@media (max-width: 767px) {
-
-}
 

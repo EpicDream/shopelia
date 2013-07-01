@@ -1,0 +1,29 @@
+@media (min-width: 768px) and (max-width: 979px) {
+  #modal {
+
+  }
+
+
+}
+
+@media (max-width: 767px) {
+  #modal {
+    min-width: 40%;
+    min-width: 319px;
+  }
+
+  .row-fluid {
+    margin-left: 0;
+  }
+
+  #modal-right, #modal-left {
+    display: block;
+    margin: auto;
+    width: 50%;
+    min-width: 310px;
+    margin-bottom: 20px;
+    border-radius:$borderRadius;
+    padding: 40px 20px ;
+    background: $lightGrey;
+  }
+}
