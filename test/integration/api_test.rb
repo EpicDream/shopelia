@@ -48,7 +48,7 @@ class ApiTest < ActionDispatch::IntegrationTest
     assert uuid.present?
     
     order = Order.find_by_uuid(uuid)
-    assert_equal :processing, order.state
+    assert_equal :preparing, order.state
     
     product = order.order_items.first.product
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name

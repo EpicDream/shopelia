@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130606125513) do
+ActiveRecord::Schema.define(:version => 20130701130830) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -31,6 +31,27 @@ ActiveRecord::Schema.define(:version => 20130606125513) do
     t.string   "first_name"
     t.string   "last_name"
   end
+
+  create_table "audits", :force => true do |t|
+    t.integer  "auditable_id"
+    t.string   "auditable_type"
+    t.integer  "associated_id"
+    t.string   "associated_type"
+    t.integer  "user_id"
+    t.string   "user_type"
+    t.string   "username"
+    t.string   "action"
+    t.text     "audited_changes"
+    t.integer  "version",         :default => 0
+    t.string   "comment"
+    t.string   "remote_address"
+    t.datetime "created_at"
+  end
+
+  add_index "audits", ["associated_id", "associated_type"], :name => "associated_index"
+  add_index "audits", ["auditable_id", "auditable_type"], :name => "auditable_index"
+  add_index "audits", ["created_at"], :name => "index_audits_on_created_at"
+  add_index "audits", ["user_id", "user_type"], :name => "user_index"
 
   create_table "countries", :force => true do |t|
     t.string   "iso"
@@ -80,14 +101,14 @@ ActiveRecord::Schema.define(:version => 20130606125513) do
     t.integer  "order_id"
     t.integer  "product_id"
     t.integer  "quantity",          :default => 1
-    t.float    "price_product",     :default => 0.0
+    t.float    "product_price",     :default => 0.0
     t.string   "product_title"
     t.string   "product_image_url"
     t.string   "price_text"
-    t.string   "delivery_text"
+    t.string   "shipping_info"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
-    t.float    "price_delivery"
+    t.float    "shipping_price"
   end
 
   create_table "orders", :force => true do |t|
@@ -96,8 +117,8 @@ ActiveRecord::Schema.define(:version => 20130606125513) do
     t.string   "uuid"
     t.string   "state_name"
     t.string   "message"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -115,6 +136,15 @@ ActiveRecord::Schema.define(:version => 20130606125513) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
+    t.integer  "leetchi_wallet_id"
+    t.integer  "leetchi_contribution_id"
+    t.string   "leetchi_contribution_status"
+    t.integer  "leetchi_contribution_amount"
+    t.string   "payment_solution"
+    t.string   "billing_solution"
+    t.string   "injection_solution"
+    t.string   "cvd_solution"
+    t.string   "leetchi_contribution_message"
   end
 
   create_table "payment_cards", :force => true do |t|
@@ -126,37 +156,16 @@ ActiveRecord::Schema.define(:version => 20130606125513) do
     t.string   "cvv"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "leetchi_id"
   end
 
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.string   "url"
+    t.text     "url",         :limit => 255
     t.string   "image_url"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  create_table "psp_payment_cards", :force => true do |t|
-    t.integer  "payment_card_id"
-    t.integer  "psp_id"
-    t.integer  "remote_payment_card_id"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
-  end
-
-  create_table "psp_users", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "psp_id"
-    t.integer  "remote_user_id"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
-  end
-
-  create_table "psps", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
   end
 
   create_table "states", :force => true do |t|
@@ -206,6 +215,7 @@ ActiveRecord::Schema.define(:version => 20130606125513) do
     t.integer  "nationality_id"
     t.string   "ip_address"
     t.string   "pincode"
+    t.integer  "leetchi_id"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

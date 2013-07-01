@@ -5,8 +5,8 @@ class Product < ActiveRecord::Base
   validates :merchant, :presence => true
   validates :url, :presence => true, :uniqueness => true
   
-  before_validation :monetize_url
   before_validation :extract_merchant_from_url
+  before_validation :monetize_url
   
   def self.fetch url
     Product.find_or_create_by_url(Linker.monetize(url)) unless url.nil?

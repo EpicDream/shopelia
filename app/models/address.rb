@@ -5,7 +5,7 @@ class Address < ActiveRecord::Base
   belongs_to :order
   
   validates :user, :presence => true
-  validates :country, :presence => true
+  validates :country_id, :presence => true
   validates :address1, :presence => true
   validates :zip, :presence => true
   validates :city, :presence => true
@@ -41,6 +41,9 @@ class Address < ActiveRecord::Base
     if record.user.addresses.where("is_default='t' and id<>?", record.id).count == 0
       default_address = record.user.addresses.where("id<>?", record.id).first
       default_address.update_attribute :is_default, true unless default_address.nil?
+    end
+    Order.running.where(address_id:record.id).each do |order|
+      order.reject "address_destroyed"
     end
   end
 

@@ -10,3 +10,4 @@
 //= require rails.validations.simple_form
 //= require jquery_ujs
 //= require bootstrap
+

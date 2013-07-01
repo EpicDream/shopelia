@@ -6,17 +6,28 @@ Shopelia::Application.routes.draw do
 
   apipie
 
-  devise_for :users, controllers: { confirmations: 'devise_override/confirmations' }
+  devise_for :users, controllers: { 
+    confirmations: 'devise_override/confirmations',
+    registrations: 'devise_override/registrations'
+  }
   devise_scope :user do
     put "/confirm" => "devise_override/confirmations#confirm"
   end
 
+  resources :home, :only => :index
   resources :contact, :only => :create
+  
+  resources :addresses
   resources :orders, :only => [:show, :update]
+  resources :payment_cards
 
   namespace :admin do
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
+  end
+  
+  namespace :zen do
+    resources :orders, :only => [:show, :update]  
   end
 
   namespace :api do
@@ -37,6 +48,9 @@ Shopelia::Application.routes.draw do
       namespace :callback do
         resources :orders, :only => :update
       end
+      namespace :leetchi do
+        resources :notifications, :only => :index
+      end      
       namespace :limonetik do
         resources :orders, :only => :update
       end

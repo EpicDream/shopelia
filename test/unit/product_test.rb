@@ -36,7 +36,7 @@ class ProductTest < ActiveSupport::TestCase
     assert product.save, product.errors.full_messages.join(",")
     assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
   end
-  
+
   test "it should fetch existing product" do
     assert_equal products(:headphones), Product.fetch("http://www.rueducommerce.fr/productB")
   end
@@ -44,6 +44,9 @@ class ProductTest < ActiveSupport::TestCase
   test "it should create and fetch new product" do
     assert_difference('Product.count', 1) do
       Product.fetch("http://www.rueducommerce.fr/productC")
+    end
+    assert_difference('Product.count', 1) do
+      Product.fetch("http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4")
     end
   end
   

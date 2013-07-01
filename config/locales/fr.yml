@@ -209,24 +209,40 @@ fr:
   activerecord:
     attributes:
       address:
+        first_name: "Le prénom"
+        last_name: "Le nom"
         zip: "Le code postal"
         city: "La ville"
         phone: "Le numéro de téléphone"
+        address1: "L'adresse"
+        country_id: "Le pays"
       order:
         address: "L'adresse"
         payment_card: "Le moyen de paiement"
+      payment_card:
+        number: "Le numéro"
+        exp_month: "Le mois d'expiration"
+        exp_year: "L'année d'expiration"
+        cvv: "Le code de vérification"
+        
     errors:
       models:
         address:
           attributes:
+            first_name:
+              blank: "doit être renseigné"
+            last_name:
+              blank: "doit être renseigné"
+            address1:
+              blank: "doit être renseignée"
             zip:
               blank: "doit être renseigné"
             city:
               blank: "doit être renseignée"
-        phone:
-          attributes:
-             number:
-               blank: "doit être renseigné"
+            phone:
+              blank: "doit être renseigné"
+            country_id:
+              blank: "doit être renseigné"
         order:
           attributes:
              address:
@@ -234,13 +250,39 @@ fr:
              payment_card:
                blank: "doit être renseigné"
 
+  simple_form:
+    placeholders:
+      address:
+        first_name: "Prénom"
+        last_name: "Nom"
+        address1: "Adresse"
+        address2: "Complément d'adresse"
+        zip: "Code postal"
+        city: "Ville"
+        phone: "Téléphone"
+        country: "Pays"
+      payment_card:
+        number: "Numéro de la carte"
+        cvv: "CVV"
+
+  addresses:
+    add: "Ajouter l'adresse"
+    success: "L'adresse a été créée avec succès"
+
+  payment_cards:
+    add: "Ajouter la carte"
+    success: "La carte a été créée avec succès"
+
+  countries:
+    choose: "Choisissez un pays"
+
   developers:
     unauthorized: "Clé API invalide"
     
   orders:
     errors:
       no_product: "Impossible de créer une commande sans produit spécifié"
-      invalid_product: "Produit invalide"
+      invalid_product: "Produit invalide %{error}"
   
   products:
     errors:
@@ -248,6 +290,13 @@ fr:
       invalid_url: "L'URL du produit est invalide"
   
   users:
+    registration:
+      finalize:
+        title: "Informations manquantes"
+        tagline: "Afin de pouvoir passer une commande avec Shopélia, vous devez ajouter
+                 une adresse de livraison et une carte de paiement"
+        add_address: "Ajouter une addresse"
+        add_payment_card: "Ajouter une carte"
     invalid_birthdate: "Vous devez avoir au minimum 16 ans pour vous enregistrer"
 
   leetchi:
@@ -257,4 +306,8 @@ fr:
     payment_cards:
       creation_failure: "Impossible to create payment card on Leetchi API. Error: %{error}"
       destroy_failure: "Impossible to destroy payment card on Leetchi API. Error: %{error}"
-      
+
+  app:
+    cancel: "Annuler"
+    close: "Fermer"
+    wait: "Patientez..."

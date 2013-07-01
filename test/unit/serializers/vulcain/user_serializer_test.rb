@@ -9,6 +9,8 @@ class Vulcain::UserSerializerTest < ActiveSupport::TestCase
   end
   
   test "it should serialize user with default values" do
+    @user.birthdate = nil
+    @user.save
     user_serializer = Vulcain::UserSerializer.new(@user, scope:{address_id:@user.addresses.first.id})
     hash = user_serializer.as_json
       
@@ -21,7 +23,6 @@ class Vulcain::UserSerializerTest < ActiveSupport::TestCase
 
   test "it should correctly serialize user" do
     @user.civility = User::CIVILITY_MME
-    @user.birthdate = "1973-09-30"
     @user.save
     user_serializer = Vulcain::UserSerializer.new(@user, scope:{address_id:@user.addresses.first.id})
     hash = user_serializer.as_json

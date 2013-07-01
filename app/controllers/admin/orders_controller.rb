@@ -14,7 +14,7 @@ class Admin::OrdersController < Admin::AdminController
   def update
     @order = Order.find_by_uuid!(params[:id])
     if params[:state].eql?("cancel")
-      @order.time_out
+      @order.cancel
     elsif params[:state].eql?("retry")
       @order.start
     end

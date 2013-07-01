@@ -8,7 +8,7 @@ class Api::V1::Callback::OrdersController < Api::V1::BaseController
   param :verb, String, "Action type", :required => true
   param :content, String, "Information about current processing", :required => false
   def update
-    @order.process(@verb, @content)
+    @order.callback(@verb, @content)
     head :no_content
   end
 
