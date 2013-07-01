@@ -3,11 +3,11 @@ class Zen::OrdersController < Zen::ZenController
 
   def update
     if params["order"]["confirmation"].eql?("yes")
-      @order.confirm
+      @order.accept
     else
-      @order.cancel
+      @order.reject "price_rejected"
     end
-    redirect_to @order
+    redirect_to zen_order_url(@order)
   end
 
   private
