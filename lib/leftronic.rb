@@ -28,8 +28,8 @@ class Leftronic
 
   def clear_board
     clear("shopelia_sound")
-    clear("shopelia_orders_pending")
-    clear("shopelia_orders_processing")
+    clear("shopelia_orders_pending_agent")
+    clear("shopelia_orders_preparing")
     clear("shopelia_orders_completed")
     clear("shopelia_orders_aborted")    
   end
