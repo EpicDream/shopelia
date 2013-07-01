@@ -321,7 +321,7 @@ class OrderTest < ActiveSupport::TestCase
     
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a notification email should have been sent"
-    assert_match /La commande a été annulée/, mail.decoded    
+    assert_match /Vous avez annulé la commande/, mail.decoded    
   end
 
   test "it should accept order if price is deemed good" do
