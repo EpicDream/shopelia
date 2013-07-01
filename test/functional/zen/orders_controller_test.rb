@@ -6,11 +6,16 @@ class Zen::OrdersControllerTest < ActionController::TestCase
 
   setup do
     @order = orders(:elarch_rueducommerce)
+    @order.prepared_price_total = 20
+    @order.state_name = "querying"
+    @order.save
   end
 
   test "should show order" do
     get :show, id:@order.to_param
     assert_response :success
+    
+    assert_match /\/zen\/orders\//, response.body
   end
   
   test "should respond to not found" do
@@ -19,10 +24,6 @@ class Zen::OrdersControllerTest < ActionController::TestCase
   end
   
   test "should update and confirm order" do
-    @order.prepared_price_total = 20
-    @order.state_name = "querying"
-    @order.save
-
     put :update, id:@order.to_param, order:{confirmation:"yes"}
     assert_redirected_to "/zen/orders/#{@order.uuid}"
     
@@ -30,11 +31,8 @@ class Zen::OrdersControllerTest < ActionController::TestCase
   end
 
   test "should update and cancel order" do
-    @order.state_name = "querying"
-    @order.save
-
     put :update, id:@order.to_param, order:{confirmation:"no"}
-    assert_response 302
+    assert_redirected_to "/zen/orders/#{@order.uuid}"
     
     assert_equal :failed, @order.reload.state
   end

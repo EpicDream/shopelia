@@ -2,7 +2,7 @@
   .hidden-phone
     .spacer25
     .span4.offset4
-      = link_to image_tag("logo_shopelia.png"), "https://shopelia.com"
+      = link_to image_tag("logo_shopelia.png"), "https://www.shopelia.fr"
 .hidden-phone
   .spacer25
 .row
@@ -12,7 +12,7 @@
         Le prix total de votre commande est de <strong>#{number_to_currency(@order.prepared_price_total)}</strong>
         %br
         Souhaitez-vous confirmer votre commande à ce prix ?
-      = form_for @order, {:html => {:class => "form-inline"}} do |f|
+      = form_for zen_order_path(@order), {:html => {:class => "form-inline"}} do |f|
         = f.select :confirmation, [["Oui, je confirme",'yes'], ["Non, j'annule",'no']]
         = f.submit "Validez", class:"btn"
     - else
@@ -50,7 +50,7 @@
             chez
             %b= link_to(@order.merchant.name,@order.merchant.url)
             via le service
-            %b=link_to "Shopelia", "https://shopelia.com"
+            %b=link_to "Shopelia", "https://www.shopelia.fr"
           %p Vous serez livré à l'adresse suivante :
           %b.span10
             %ul.unstyled
