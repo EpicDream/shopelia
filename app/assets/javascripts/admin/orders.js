@@ -24,6 +24,7 @@ $(document).ready(function() {
         var url = $(this).attr('data-url');
         var state = $(this).attr('data-state');
         $('#confirmModelState').html(state);
+        $('#confirmDestruction').off();
         $('#confirmDestruction').on("click", function(event){
           $.ajax({
             url: url,
