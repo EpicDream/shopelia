@@ -171,6 +171,15 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "merchant", @order.error_code
     assert_equal "stock", @order.message
   end
+
+  test "it should fail order if no delivery possible" do
+    start_order
+    callback_order "failure", { "status" => "no_delivery" }
+    
+    assert_equal :failed, @order.state
+    assert_equal "merchant", @order.error_code
+    assert_equal "delivery", @order.message
+  end
   
   test "it should pause order with vulcain exception" do
     start_order

@@ -37,6 +37,8 @@ module OrdersHelper
         "Impossible de créer un compte à votre nom chez le marchand"
       when "stock"
         "Le produit demandé n'est plus en stock"
+      when "delivery"
+        "Le produit demandé ne peut pas être livré par la poste"
       end
     else
       "Le back office Shopelia n'a pas réussi à passer la commande suite à des erreurs techniques de notre part"

@@ -97,6 +97,7 @@ class Order < ActiveRecord::Base
       when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
       when "no_product_available" then fail("product_not_found", :vulcain)
       when "out_of_stock" then abort("stock", :merchant)
+      when "no_delivery" then abort("delivery", :merchant)
       when "order_validation_failed" then abort("payment_refused_by_merchant", :billing)
       when "account_creation_failed" then restart
       when "login_failed" then restart
