@@ -1,6 +1,7 @@
 class Shopelia.Views.PaymentCardsIndex extends Backbone.View
 
   template: JST['payment_cards/index']
+  className: 'paiement-view'
 
   events:
     "click #btn-register-payment": "registerPaymentCard"

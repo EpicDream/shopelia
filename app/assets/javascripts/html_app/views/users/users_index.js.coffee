@@ -13,7 +13,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     console.log(@options.product)
     @addressView =  new Shopelia.Views.AddressesIndex()
     @$("#btn-register-user").before(@addressView.render().el)
-    @randomBool = !! Math.round(Math.random() * 1)
+    @randomBool = true #!! Math.round(Math.random() * 1)
     if @randomBool
       @paymentCardView =  new Shopelia.Views.PaymentCardsIndex()
       $(@addressView.render().el).after(@paymentCardView.render().el)

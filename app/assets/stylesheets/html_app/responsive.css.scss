@@ -17,10 +17,8 @@
   }
 
   #modal-header {
-    padding: 10px;
     height: 40px;
-    background: $lightGrey;
-    @include border-top-radius($borderRadius);
+    @include border-top-radius(0);
     img {
       width: 100px;
       margin-top: -10px;
@@ -40,15 +38,8 @@
 //Product
   .product-image {
     width: 30%;
-    background-color: #ffffff;
-    border: 1px solid darken($lightGrey,10%);
-    border-radius:$borderRadius;
-    padding: 5%;
     margin-right: 10px;
     float: left;
-  }
-
-  .product {
   }
 
   .product > h4 {
@@ -74,4 +65,14 @@
     margin-top: -10px;
     margin-left: 3px;
   }
+
+  //Paiement Card Fields
+
+  .paiement-view > .control-group > .controls > input {
+    width: 31%;
+  }
+  .paiement-view > .control-group > .controls > input:nth-child(1) {
+    width: 100%;
+  }
+
 }
