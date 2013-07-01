@@ -30,7 +30,7 @@ module OrdersHelper
     when "billing"
       "Le paiement de la commande a été refusé par votre banque"
     when "user"
-      "La commande a été annulée"
+      "Vous avez annulé la commande"
     when "merchant"
       case @order.message
       when "account"
