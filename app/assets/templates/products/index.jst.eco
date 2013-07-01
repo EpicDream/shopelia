@@ -5,9 +5,7 @@
   </div>
   <div class="spacer5"></div>
   <div class="price-infos">
-      <div class='pull-left'>
-        Proposé par <br>
-        <b>fnac.com</b>
+      <div class='merchant-infos pull-left'>
       </div>
       <div class="pull-right">
         <span class="price clearfix">
