@@ -470,6 +470,7 @@ class OrderTest < ActiveSupport::TestCase
     
     assert_equal :preparing, @order.state
     assert_equal true, @order.questions.first["answer"]
+    assert_equal "vulcain_assessment_done", @order.message
   end
   
   test "[alpha] it should complete order" do
@@ -479,6 +480,44 @@ class OrderTest < ActiveSupport::TestCase
     order_success
     
     assert_equal :completed, @order.state
+  end
+  
+  test "[alpha] it should fail if vulcain assessment is incorrectly formatted" do
+    configuration_alpha
+    start_order
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "1" }
+      ],
+      "products" => [
+        { "url" => products(:usbkey).url,
+          "delivery_text" => "Shipping", 
+          "price_text" => "Price text", 
+          "product_title" => "Usbkey", 
+          "product_image_url" => "image.jpg", 
+          "price_delivery" => 2, 
+          "product_price" => 9 
+        },
+        { "url" => products(:headphones).url,
+          "delivery_text" => "Shipping", 
+          "price_text" => "Price text", 
+          "product_title" => "Headphones", 
+          "product_image_url" => "image.jpg", 
+          "price_delivery" => 0, 
+          "product_price" => 5 
+        }
+      ],
+      "billing" => {
+        "product" => 14,
+        "shipping" => 2,
+        "total" => 16
+      }
+    }
+    @order.reload
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "shopelia", @order.error_code
+    assert_match /Error in ruby Vulcain callback/, @order.message
   end
   
   test "[beta] it should complete order" do

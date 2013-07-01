@@ -168,6 +168,10 @@ class Order < ActiveRecord::Base
     end
 
     self.save!
+    
+    rescue Exception => e
+      fail("Error in ruby Vulcain callback\n#{e.inspect}", :shopelia)
+      self.save!
   end
 
   def state
@@ -335,6 +339,7 @@ class Order < ActiveRecord::Base
   def callback_vulcain confirmed
     return if @questions.empty?
     begin
+      self.message = "vulcain_assessment_done"
       @questions.each { |question| question["answer"] = confirmed }
       assess Vulcain::Answer.create(Vulcain::ContextSerializer.new(self).as_json)
     rescue Exception => e
