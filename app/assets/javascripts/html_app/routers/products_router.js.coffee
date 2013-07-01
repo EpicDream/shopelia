@@ -18,8 +18,10 @@ class Shopelia.Routers.Products extends Backbone.Router
   center: ->
     top =undefined
     left = undefined
-    top = Math.max($(window).height() - $('#modal').outerHeight(), 0) / 2
+    top = Math.max($(window).height() - $('#modal').height(), 0) / 2
     left = Math.max($(window).width() - $('#modal').outerWidth(), 0) / 2
+    $('#lean_overlay').addClass("hidden-phone")
+
     $('#modal').css
-      top: top + $(window).scrollTop()
-      left: left + $(window).scrollLeft()
+      top: top
+      left: left

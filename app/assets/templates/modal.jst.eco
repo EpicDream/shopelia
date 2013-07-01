@@ -3,7 +3,7 @@
     <div class="span4 offset3" >
         <img class="pull-right"  src= "/assets/logo_shopelia.png" width="150px">
         <div class="spacer5"></div>
-        <span id="header-text" class="pull-right"> Achetez avec </span>
+        <span id="header-text" class="hidden-phone pull-right"> Achetez avec </span>
     </div>
 </div>
 <div class="spacer25"></div>
@@ -12,4 +12,4 @@
      <div id='modal-right' class='span5'></div>
 </div>
 <div class="spacer25"></div>
-<a id="close">close</a>
+<a id="close" class="hidden-phone">close</a>
