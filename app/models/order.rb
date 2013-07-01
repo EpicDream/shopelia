@@ -28,6 +28,7 @@ class Order < ActiveRecord::Base
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
   scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 4.hours ) }
   scope :canceled, lambda { where("state_name='querying' and created_at < ?", Time.zone.now - 2.hours ) }
+  scope :preparing_stale, lambda { where("state_name='preparing' and created_at < ?", Time.zone.now - 5.minutes ) }
   
   scope :preparing, lambda { where("state_name='preparing'") }
   scope :pending_agent, lambda { where("state_name='pending_agent'") }
@@ -185,8 +186,14 @@ class Order < ActiveRecord::Base
     @questions = questions
   end
   
-  def time_out
+  def user_time_out
     abort "timed_out", :shopelia
+    self.save!
+  end
+
+  def vulcain_time_out
+    return unless [:preparing].include?(state)
+    fail "preparing_stale", :vulcain
     self.save!
   end
 

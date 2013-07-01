@@ -445,6 +445,16 @@ class OrderTest < ActiveSupport::TestCase
     assert !@order.audits.empty?
   end
   
+  test "it should time out if vulcain is stale" do
+    start_order
+    @order.vulcain_time_out
+    
+    assert_equal :pending_agent, @order.reload.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "preparing_stale", @order.message
+  end
+ 
+  
   test "[alpha] it should continue order if target price is auto accepted" do
     configuration_alpha
     start_order
@@ -594,7 +604,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   def time_out_order
-    @order.time_out
+    @order.user_time_out
     @order.reload
   end
   
