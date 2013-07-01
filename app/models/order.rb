@@ -269,7 +269,7 @@ class Order < ActiveRecord::Base
   end
 
   def abort content, error_sym
-    return unless [:initialized, :preparing, :pending_agent, :billing, :querying, :pending_clearing].include?(state)
+    return unless [:initialized, :preparing, :pending_agent, :billing, :querying, :pending_agent, :pending_clearing].include?(state)
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s) unless error_sym.nil?
     self.state = :failed
