@@ -8,8 +8,8 @@ namespace :shopelia do
       Order.canceled.each { |order| order.cancel }
       Order.preparing_stale.each { |order| order.vulcain_time_out }
 
-      Leftronic.new.clear("shopelia_orders_pending") if Order.where(state_name:"pending_agent").count == 0
-      Leftronic.new.clear("shopelia_orders_processing") if Order.where(state_name:"preparing").count == 0
+      Leftronic.new.clear("shopelia_orders_pending_agent") if Order.where(state_name:"pending_agent").count == 0
+      Leftronic.new.clear("shopelia_orders_preparing") if Order.where(state_name:"preparing").count == 0
       Leftronic.new.clear("shopelia_sound")
 		
       status = Order.where(state_name:"pending_agent").count > 0 ? 100 : 0
