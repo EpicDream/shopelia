@@ -1,6 +1,4 @@
 # -*- encoding : utf-8 -*-
-Psp.delete_all
-Psp.create(:id=>1,:name=>Psp::LEETCHI)
 Merchant.delete_all
 Merchant.create(:id=>1,:name=>'Rue du Commerce',:url=>'http://www.rueducommerce.fr',:logo=>'http://www.prixing.fr/images/logos/rueducommerce.png',:vendor=>'RueDuCommerce')
 Merchant.create(:id=>2,:name=>'Amazon France',:url=>'http://www.amazon.fr',:logo=>'http://www.prixing.fr/images/logos/amazon.png',:vendor=>'AmazonFrance')

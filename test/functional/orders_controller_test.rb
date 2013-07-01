@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class OrdersControllerTest < ActionController::TestCase
+  include Devise::TestHelpers
   fixtures :orders
 
   setup do
@@ -25,7 +26,7 @@ class OrdersControllerTest < ActionController::TestCase
     put :update, id:@order.to_param, order:{confirmation:"yes"}
     assert_response 302
     
-    assert_equal :processing, @order.reload.state
+    assert_equal :preparing, @order.reload.state
   end
 
   test "should update and cancel order" do

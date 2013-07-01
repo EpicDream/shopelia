@@ -5,7 +5,7 @@ elarch_rueducommerce:
   payment_card: elarch_hsbc
   merchant: rueducommerce
   merchant_account: elarch_neuilly_rueducommerce
-  state_name: "processing"
+  state_name: "initialized"
   expected_price_total: 16.0
   expected_price_product: 14.0
   expected_price_shipping: 2.0
