@@ -53,22 +53,6 @@ class Emailer < ActionMailer::Base
 
   ##################################################################################
 
-  def leetchi_user_creation_failure user, errors
-    @user = user
-    @errors = errors
-    mail( :to => "Eric <eric@shopelia.com>",
-          :subject => "[SUPERVISOR][CRITICAL] Leetchi user creation failure",
-          :from => "Supervisor <noreply@shopelia.com>")
-  end
-  
-  def leetchi_card_creation_failure card, errors
-    @card = card
-    @errors = errors
-    mail( :to => "Eric <eric@shopelia.com>",
-          :subject => "[SUPERVISOR][CRITICAL] Leetchi card creation failure",
-          :from => "Supervisor <noreply@shopelia.com>")
-  end
-
   def notify_admin_user_creation user
     @user = user
     mail( :to => "Shopelia <contact@shopelia.fr>",
