@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130627161551) do
+ActiveRecord::Schema.define(:version => 20130701130830) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -101,14 +101,14 @@ ActiveRecord::Schema.define(:version => 20130627161551) do
     t.integer  "order_id"
     t.integer  "product_id"
     t.integer  "quantity",          :default => 1
-    t.float    "price_product",     :default => 0.0
+    t.float    "product_price",     :default => 0.0
     t.string   "product_title"
     t.string   "product_image_url"
     t.string   "price_text"
-    t.string   "delivery_text"
+    t.string   "shipping_info"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
-    t.float    "price_delivery"
+    t.float    "shipping_price"
   end
 
   create_table "orders", :force => true do |t|
@@ -162,32 +162,10 @@ ActiveRecord::Schema.define(:version => 20130627161551) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url"
+    t.text     "url",         :limit => 255
     t.string   "image_url"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  create_table "psp_payment_cards", :force => true do |t|
-    t.integer  "payment_card_id"
-    t.integer  "psp_id"
-    t.integer  "remote_payment_card_id"
-    t.datetime "created_at",             :null => false
-    t.datetime "updated_at",             :null => false
-  end
-
-  create_table "psp_users", :force => true do |t|
-    t.integer  "user_id"
-    t.integer  "psp_id"
-    t.integer  "remote_user_id"
-    t.datetime "created_at",     :null => false
-    t.datetime "updated_at",     :null => false
-  end
-
-  create_table "psps", :force => true do |t|
-    t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
   end
 
   create_table "states", :force => true do |t|

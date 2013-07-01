@@ -495,7 +495,7 @@ class OrderTest < ActiveSupport::TestCase
           "price_text" => "Price text", 
           "product_title" => "Usbkey", 
           "product_image_url" => "image.jpg", 
-          "price_delivery" => 2, 
+          "price_invalid_delivery" => 2, 
           "product_price" => 9 
         },
         { "url" => products(:headphones).url,
@@ -675,12 +675,11 @@ class OrderTest < ActiveSupport::TestCase
           "price_product" => 9 
         },
         { "url" => products(:headphones).url,
-          "delivery_text" => "Shipping", 
-          "price_text" => "Price text", 
+          "shipping_info" => "Shipping", 
           "product_title" => "Headphones", 
           "product_image_url" => "image.jpg", 
-          "price_delivery" => 0, 
-          "price_product" => 5 
+          "shipping_price" => 0, 
+          "product_price" => 5 
         }
       ],
       "billing" => {
