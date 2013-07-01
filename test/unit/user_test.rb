@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  fixtures :users, :countries, :psps, :payment_cards
+  fixtures :users, :countries, :payment_cards
   
   setup do
     @user = users(:elarch)
@@ -35,7 +35,7 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "Doe", user.last_name
   
     assert_equal 2, ActionMailer::Base.deliveries.count, "a confirmation email should have been sent"
-    assert_equal "user@gmail.com", ActionMailer::Base.deliveries.second.to[0]
+    assert_equal ["user@gmail.com", "contact@shopelia.fr"].to_a, [ActionMailer::Base.deliveries.first.to[0], ActionMailer::Base.deliveries.second.to[0]].to_a
     assert user.confirmation_sent_at
     
     assert user.authentication_token.present?, "user should have an authentication token"
@@ -161,100 +161,6 @@ class UserTest < ActiveSupport::TestCase
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "a confirmation email should have been sent"
   end
-  
-  test "it should create and update leetchi user" do
-    @user.destroy
-    VCR.use_cassette('user') do
-      user = User.new(
-        :email => "elarch@gmail.com", 
-        :password => "tototo", 
-        :password_confirmation => "tototo",
-        :first_name => "Eric",
-        :last_name => "Larchevêque",
-        :civility => User::CIVILITY_MR,
-        :nationality_id => countries(:france).id,
-        :ip_address => '127.0.0.1',
-        :birthdate => '1973-09-30')
-      assert user.save, user.errors.full_messages.join(",")
-
-      user.create_leetchi      
-      assert user.leetchi, "Leetchi user not created"
-
-      # Request leetchi user to check data integrity
-      leetchi_user = Leetchi::User.details(user.leetchi.remote_user_id)
-      assert_equal user.email, leetchi_user['Email']
-      assert_equal user.first_name, leetchi_user['FirstName']
-      assert_equal user.last_name, leetchi_user['LastName']
-      assert_equal user.nationality.iso, leetchi_user['Nationality']
-      assert_equal user.birthdate.to_i, leetchi_user['Birthday']
-      assert_equal "NATURAL_PERSON", leetchi_user['PersonType']
-      assert !leetchi_user['IsStrongAuthenticated']
-      assert leetchi_user['CanRegisterMeanOfPayment']
-
-      # Update
-      user.update_attributes(:birthdate => '1970-09-30')
-      
-      # Request leetchi user to verify bithdate has been updated
-      leetchi_user = Leetchi::User.details(user.leetchi.remote_user_id)
-      assert_equal user.birthdate.to_i, leetchi_user['Birthday'].to_i
-    end
-  end
-
-  test "it should manage leetchi api failure at user creation" do
-    VCR.use_cassette('user_fail') do
-      user = User.new(
-        :email => "willfail@gmail.com", 
-        :password => "tototo", 
-        :password_confirmation => "tototo",
-        :first_name => "Joe",
-        :last_name => "Fail",
-        :civility => User::CIVILITY_MR,
-        :nationality_id => countries(:france).id,
-        :ip_address => '127.0.0.1',
-        :birthdate => '1973-09-30')
-      assert user.save, user.errors.full_messages.join(",")
-
-      result = user.create_leetchi
-      assert !user.leetchi.present?
-      
-      errors = JSON.parse(result)
-      assert_equal "remote", errors["origin"]
-      assert_equal 0, errors["error_code"]
-      assert_equal "Api failure", errors["user_message"]
-      assert_equal "Api failure", errors["message"]
-      assert_equal "SystemError", errors["type"]
-    end
-  end
-
-  test "it should manage leetchi api failure at user update" do
-    VCR.use_cassette('user_fail') do
-      user = User.new(
-        :email => "willfail_later@gmail.com", 
-        :password => "tototo", 
-        :password_confirmation => "tototo",
-        :first_name => "Joe",
-        :last_name => "Fail",
-        :civility => User::CIVILITY_MR,
-        :nationality_id => countries(:france).id,
-        :ip_address => '127.0.0.1',
-        :birthdate => '1973-09-30')
-      assert user.save
-
-      user.create_leetchi      
-      assert user.leetchi, "Leetchi user not created"
-
-      user.update_attributes(:birthdate => '1970-09-30')
-      assert user.errors.present?
-      assert_equal DateTime.parse('1973-09-30'), user.reload.birthdate
-      
-      errors = Psp::LeetchiWrapper.extract_errors user
-      assert_equal "remote", errors["origin"]
-      assert_equal 0, errors["error_code"]
-      assert_equal "Api failure", errors["user_message"]
-      assert_equal "Api failure", errors["message"]
-      assert_equal "SystemError", errors["type"]
-    end
-  end
 
   test "it should return false when password or password confirmation are blanks" do
     user = User.create(
@@ -304,7 +210,7 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test "it should set name" do
-    assert_equal "Eric Larchevêque", @user.name
+    assert_equal "Eric Larcheveque", @user.name
   end
   
 end

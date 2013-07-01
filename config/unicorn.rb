@@ -87,6 +87,10 @@ after_fork do |server, worker|
   # and Redis.  TokyoCabinet file handles are safe to reuse
   # between any number of forked children (assuming your kernel
   # correctly implements pread()/pwrite() system calls)
+  SuckerPunch.config do
+    queue name: :leetchi_user_queue, worker: LeetchiUserWorker, worders: 2
+    queue name: :leetchi_card_queue, worker: LeetchiCardWorker, workers: 2
+  end
 
 end
 

@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class AddressTest < ActiveSupport::TestCase
-  fixtures :users, :countries, :addresses, :orders, :merchants, :products
+  fixtures :users, :countries, :addresses, :orders, :merchants, :products, :order_items
 
   setup do
     @user = users(:elarch)
@@ -21,7 +21,7 @@ class AddressTest < ActiveSupport::TestCase
     
     assert address.save, address.errors.full_messages.join(",")
     assert_equal "Eric", address.first_name
-    assert_equal "Larchevêque", address.last_name    
+    assert_equal "Larcheveque", address.last_name    
     assert address.is_default?, "New address must be default"
     assert !@address.reload.is_default?, "Old address musn't be default"
 
@@ -91,12 +91,12 @@ class AddressTest < ActiveSupport::TestCase
   
   test "it should fail all non completed orders attached to a destroyed address" do
     order = orders(:elarch_rueducommerce)
-    assert_equal :processing, order.state
+    assert_equal :initialized, order.state
     @address.destroy
     
     assert_equal :failed, order.reload.state
     assert_equal "user", order.error_code
-    #assert_equal "address_destroyed", order.message
+    assert_equal "address_destroyed", order.message
   end
 
 end

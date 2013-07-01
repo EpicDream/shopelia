@@ -18,8 +18,9 @@ module PaylineDriver
 
       begin
         wait = Selenium::WebDriver::Wait.new(:timeout => 15)
-        wait.until { @driver.current_url =~ /^#{Psp::LeetchiPaymentCard::CARD_RETURN_URL}/  }
+        wait.until { @driver.current_url =~ /shopelia/  }
       rescue 
+        @driver.quit
         raise DriverError.new("Time out on card validation for #{@url}")
       end
 
