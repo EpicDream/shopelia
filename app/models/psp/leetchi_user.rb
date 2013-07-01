@@ -12,16 +12,10 @@ class Psp::LeetchiUser < Psp::LeetchiWrapper
         'CanRegisterMeanOfPayment' => true,
         'IP' => user.ip_address
     })
+    user.update_column :leetchi_created_at, Time.now
     if remote_user["ID"].present?
-      psp_user = PspUser.new(
-        :psp_id => @psp.id, 
-        :user_id => user.id, 
-        :remote_user_id => remote_user["ID"].to_i)
-      if psp_user.save
-        return true
-      else
-        local_error psp_user
-      end
+      user.update_column :leetchi_id, remote_user["ID"].to_i
+      return true
     else
       remote_error remote_user
     end
@@ -29,7 +23,7 @@ class Psp::LeetchiUser < Psp::LeetchiWrapper
   end
 
   def update user
-    remote_user = Leetchi::User.update(user.leetchi.remote_user_id, {
+    remote_user = Leetchi::User.update(user.leetchi_id, {
         'Email' => user.email,
         'FirstName' => user.first_name,
         'LastName' => user.last_name,

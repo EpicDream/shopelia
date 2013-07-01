@@ -1,0 +1,11 @@
+<strong>User</strong> <%= link_to @user.name, admin_user_url(@user) %>
+<p>
+Impossible to create user in leetchi back office.
+<p>
+<u>Errors :</u>
+<ul>
+<% @errors.keys.each do |e| %>
+  <li><strong><%= e %></strong> : <%= @errors[e] %></li>
+<% end %>
+</ul>
+

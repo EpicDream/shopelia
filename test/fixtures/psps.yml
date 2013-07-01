@@ -1,5 +1,0 @@
-leetchi:
-  name: <%= Psp::LEETCHI %>
-
-tunz:
-  name: Tunz

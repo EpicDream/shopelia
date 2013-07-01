@@ -6,7 +6,7 @@
 
 # Use at least one worker per core if you're on a dedicated server,
 # more will usually help for _short_ waits on databases/caches.
-worker_processes 20
+worker_processes 2
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
@@ -70,7 +70,7 @@ before_fork do |server, worker|
 end
 
 after_fork do |server, worker|
-    # addr = "api.shopelia.fr:#{8000 + worker.nr}"
+#    addr = "api.shopelia.fr:#{8000 + worker.nr}"
     addr = "/var/run/shopelia-unicorn/unicorn_worker_#{worker.nr}"
     server.listen(addr, :tries => 0, :delay => 0, :backlog => 32)
   # per-process listener ports for debugging/admin/migrations
@@ -87,7 +87,10 @@ after_fork do |server, worker|
   # and Redis.  TokyoCabinet file handles are safe to reuse
   # between any number of forked children (assuming your kernel
   # correctly implements pread()/pwrite() system calls)
-
+  SuckerPunch.config do
+    queue name: :leetchi_user_queue, worker: LeetchiUserWorker, worders: 2
+    queue name: :leetchi_card_queue, worker: LeetchiCardWorker, workers: 2
+  end
 
 end
 

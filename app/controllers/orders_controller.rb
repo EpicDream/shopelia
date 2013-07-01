@@ -3,9 +3,9 @@ class OrdersController < ApplicationController
 
   def update
     if params["order"]["confirmation"].eql?("yes")
-      @order.confirm
+      @order.accept
     else
-      @order.cancel
+      @order.reject "price_rejected"
     end
     redirect_to @order
   end

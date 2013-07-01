@@ -19,6 +19,7 @@ class Leftronic
     end
     push("shopelia_sound", {"html" => "<audio id='sound'><source src='https://www.shopelia.fr/sounds/order_#{sound}.mp3' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
     push_text("shopelia_orders_#{order.state_name}", product.name, order.user.name, product.image_url)
+    push_number("shopelia_orders_count", Order.completed.count)
   end
   
   def notify_users_count
@@ -27,8 +28,8 @@ class Leftronic
 
   def clear_board
     clear("shopelia_sound")
-    clear("shopelia_orders_pending")
-    clear("shopelia_orders_processing")
+    clear("shopelia_orders_pending_agent")
+    clear("shopelia_orders_preparing")
     clear("shopelia_orders_completed")
     clear("shopelia_orders_aborted")    
   end

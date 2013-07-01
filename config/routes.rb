@@ -45,6 +45,9 @@ Shopelia::Application.routes.draw do
       namespace :callback do
         resources :orders, :only => :update
       end
+      namespace :leetchi do
+        resources :notifications, :only => :index
+      end      
       namespace :limonetik do
         resources :orders, :only => :update
       end

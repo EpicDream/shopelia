@@ -42,6 +42,9 @@ class Address < ActiveRecord::Base
       default_address = record.user.addresses.where("id<>?", record.id).first
       default_address.update_attribute :is_default, true unless default_address.nil?
     end
+    Order.running.where(address_id:record.id).each do |order|
+      order.reject "address_destroyed"
+    end
   end
 
   before_save do |record|

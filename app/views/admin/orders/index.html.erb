@@ -17,7 +17,7 @@
 <div class="row">
   <div class="span12" id="processingOrdersSection">
     <span class="badge"><h2>Processing orders</h2></span>
-    <table id="processingOrders" class="table table-striped" data-source="<%= admin_orders_url(state:"processing", format: "json") %>">
+    <table id="processingOrders" class="table table-striped" data-source="<%= admin_orders_url(state:"preparing", format: "json") %>">
       <thead>
         <tr>
           <th>Product</th>
@@ -33,7 +33,7 @@
   </div>
   <div id="pendingOrdersSection">
     <span class="badge badge-warning"><h2>Pending Orders</h2></span>
-    <table id="pendingOrders" class="table table-striped" data-source="<%= admin_orders_url(state:"pending", format: "json") %>">
+    <table id="pendingOrders" class="table table-striped" data-source="<%= admin_orders_url(state:"pending_agent", format: "json") %>">
       <thead>
         <tr>
           <th>Product</th>

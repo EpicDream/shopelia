@@ -23,7 +23,7 @@ module Vulcain
   private
 
     def self.request(method, route, data=nil, options=nil)
-      return {} if Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
+      return {} if Rails.env.test?
       path = path_for(route, options)
       uri = uri_for(path)
       method = method.upcase

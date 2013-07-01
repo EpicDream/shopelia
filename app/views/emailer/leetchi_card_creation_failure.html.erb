@@ -1,0 +1,11 @@
+<strong>User</strong> <%= link_to @card.user.name, admin_user_url(@card.user) %>
+<p>
+Impossible to create payment card in leetchi back office.
+<p>
+<u>Errors :</u>
+<ul>
+<% @errors.keys.each do |e| %>
+  <li><strong><%= e %></strong> : <%= @errors[e] %></li>
+<% end %>
+</ul>
+
