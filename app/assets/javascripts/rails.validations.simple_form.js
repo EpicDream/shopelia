@@ -68,6 +68,24 @@
           errorElement = wrapper_tag_element.find("" + settings.error_tag + "." + settings.error_class);
           return errorElement.remove();
         }
+      },
+      compact: {
+        add: function(element, settings, message) {
+          var wrapper_class_element = element.closest("." + settings.wrapper_class);
+          wrapper_class_element.addClass(settings.wrapper_error_class);
+
+          element.tooltip({
+            title: message,
+            trigger: "manual",
+            placement: element.attr('tooltip-position') || 'top'
+          }).tooltip('show');
+        },
+        remove: function(element, settings) {
+          var wrapper_class_element = element.closest("." + settings.wrapper_class + "." + settings.wrapper_error_class);
+          wrapper_class_element.removeClass(settings.wrapper_error_class);
+
+          element.tooltip('destroy');
+        }
       }
     }
   };

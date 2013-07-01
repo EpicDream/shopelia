@@ -213,4 +213,18 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "Eric Larcheveque", @user.name
   end
   
+  test "it should be able to order" do
+    assert @user.can_order?
+  end
+  
+  test "it shouldn't be able to order without address" do
+    @user.addresses.destroy_all
+    assert !@user.can_order?
+  end
+
+  test "it shouldn't be able to order without payment card" do
+    @user.payment_cards.destroy_all
+    assert !@user.can_order?
+  end
+  
 end

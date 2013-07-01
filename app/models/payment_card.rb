@@ -10,6 +10,14 @@ class PaymentCard < ActiveRecord::Base
   
   before_destroy :destroy_leetchi_payment_card, :if => Proc.new { |card| card.leetchi_id.present? }
   
+  def self.months
+    ("01".."12").map{|i| i}
+  end
+
+  def self.years
+    (Time.now.year..(Time.now.year + 10)).map{|i| i}
+  end
+  
   private
   
   def destroy_leetchi_payment_card

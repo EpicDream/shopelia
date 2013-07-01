@@ -24,6 +24,7 @@ gem 'client_side_validations'
 gem 'client_side_validations-simple_form'
 gem 'devise-i18n-views'
 gem 'rails-i18n'
+gem 'http_accept_language'
 gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
 

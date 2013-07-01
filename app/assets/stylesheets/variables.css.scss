@@ -15,10 +15,9 @@ $bodyBackground: $lightGrey;
 $linkColor: $blue;
 $textColor: $darkGrey;
 
-$btnBackground:              $green;
-$btnBackgroundHighlight:     darken($green,10%);
-$btnBorder:                  darken($green,5%);
-
+$btnSuccessBackground:              $green;
+$btnSuccessBackgroundHighlight:     darken($green,10%);
+$btnSuccessBorder:                  darken($green,5%);
 
 $btnInfoBackground:                 $blue;
 $btnInfoBackgroundHighlight:        darken($blue,10%);
