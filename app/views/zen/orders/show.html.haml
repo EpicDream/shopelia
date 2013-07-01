@@ -12,7 +12,7 @@
         Le prix total de votre commande est de <strong>#{number_to_currency(@order.prepared_price_total)}</strong>
         %br
         Souhaitez-vous confirmer votre commande à ce prix ?
-      = form_for zen_order_path(@order), {:html => {:class => "form-inline"}} do |f|
+      = form_for @order, {:url => zen_order_path(@order), :html => {:class => "form-inline"}} do |f|
         = f.select :confirmation, [["Oui, je confirme",'yes'], ["Non, j'annule",'no']]
         = f.submit "Validez", class:"btn"
     - else
