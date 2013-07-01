@@ -423,9 +423,17 @@ class OrderTest < ActiveSupport::TestCase
     @order.update_attribute :state_name, "querying"
     assert_equal 0, Order.canceled.count
     
-    @order.update_attribute :created_at, Time.now - 3.hours
+    @order.update_attribute :updated_at, Time.now - 3.hours
     assert_equal 1, Order.canceled.count    
   end
+  
+  test "it should match preparing stale scope" do
+    start_order
+    assert_equal 0, Order.preparing_stale.count
+    
+    @order.update_attribute :updated_at, Time.now - 6.minutes
+    assert_equal 1, Order.preparing_stale.count    
+  end  
    
   test "it shouldn't cancel a completed order" do
     @order.update_attribute :state_name, "completed"
