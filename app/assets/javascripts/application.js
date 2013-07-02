@@ -23,15 +23,4 @@ $(document).ready(function() {
     });
   });
 });
-var Callback = {
-  success: function(type) {
-    if (type == 'address') {
-      $("#mainContent").load('home?no_layout=1');
-      $("#addressModal").modal('hide');
-    } else if (type == 'card') {
-      $("#mainContent").load('home?no_layout=1');
-      $("#cardModal").modal('hide');
-    }
-  }
-}
 
