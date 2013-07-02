@@ -5,6 +5,7 @@ Merchant.create(:id=>2,:name=>'Amazon France',:url=>'http://www.amazon.fr',:logo
 Merchant.create(:id=>3,:name=>'Fnac',:url=>'http://www.fnac.fr',:logo=>'http://www.prixing.fr/images/logos/fnac_large.png',:vendor=>'Fnac')
 Merchant.create(:id=>4,:name=>'Price Minister',:url=>'http://www.priceminister.com',:logo=>'http://www.prixing.fr/images/logos/priceminister_large.png',:vendor=>'PriceMinister')
 Merchant.create(:id=>5,:name=>'CDiscount',:url=>'http://www.cdiscount.com',:logo=>'http://www.prixing.fr/images/logos/cdiscount.png',:vendor=>'Cdiscount')
+Merchant.create(:id=>6,:name=>'Darty',:url=>'http://www.darty.com',:logo=>'http://www.prixing.fr/images/logos/darty_large.png',:vendor=>'Darty')
 Developer.delete_all
 Developer.create(:name=>'Prixing',:api_key=>'52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4')
 Country.delete_all
