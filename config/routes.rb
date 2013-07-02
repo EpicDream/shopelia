@@ -8,7 +8,8 @@ Shopelia::Application.routes.draw do
 
   devise_for :users, controllers: { 
     confirmations: 'devise_override/confirmations',
-    registrations: 'devise_override/registrations'
+    registrations: 'devise_override/registrations',
+    sessions: 'devise_override/sessions',    
   }
   devise_scope :user do
     put "/confirm" => "devise_override/confirmations#confirm"

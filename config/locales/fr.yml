@@ -208,6 +208,9 @@ fr:
 
   activerecord:
     attributes:
+      user:
+        email: "Adresse email"
+        password: "Mot de passe"
       address:
         first_name: "Le prénom"
         last_name: "Le nom"
@@ -311,3 +314,7 @@ fr:
     cancel: "Annuler"
     close: "Fermer"
     wait: "Patientez..."
+    new_session: "Se connecter sur Shopelia"
+    sign_in: "Se connecter"
+    forgot_your_password: "Mot de passe oublié ?"
+    invalid_credentials: "Erreur dans l'email ou le mot de passe"
