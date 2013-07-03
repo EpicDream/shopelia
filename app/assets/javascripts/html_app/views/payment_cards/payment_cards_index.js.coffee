@@ -5,7 +5,7 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
 
   events:
     "click #btn-register-payment": "registerPaymentCard"
-    'keydown input[name="number"]':'isNumberKey'
+    'keydown input[name="number"]':'addSpaceToCardNumber'
     'keyup input[name="exp_date"]': "formatExpDate"
 
 
@@ -86,12 +86,6 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
 
     console.log cardFormObject
     cardFormObject
-
-  isNumberKey: (evt) ->
-    charCode = (if (evt.which) then evt.which else event.keyCode)
-    return false  if charCode > 31 and (charCode < 48 or charCode > 57)
-    @addSpaceToCardNumber()
-    true
 
   addSpaceToCardNumber: ->
     newValue = @cardNumber.val()

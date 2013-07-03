@@ -1,4 +1,4 @@
-    <form data-validate="parsley" accept-charset="UTF-8" class="clearfix">
+    <form data-persist="garlic" data-validate="parsley" accept-charset="UTF-8" class="clearfix">
         <div class="field-title">
             <img class="pull-left" src="/assets/html_app/shopelia-user.png">
             <h5 class="pull-left">INFORMATIONS PERSONNELLES</h5>
