@@ -1,11 +1,27 @@
-    <div class="control-group">
+<div class="control-group">
+    <div class="controls">
+        <input rel="popover" class="input-block-level"  type="text" data-required="true" data-trigger="focusout" placeholder= "Adresse"  name="address1" autocomplete="off">
+    </div>
+</div>
+<div class="control-group">
+    <div class="controls">
+       <input rel="popover" type="text" class="input-block-level"  placeholder="Complément d'adresse" name="address2">
+    </div>
+</div>
+<div id="manual_address row-fluid">
+    <div class="control-group span6 pull-left">
         <div class="controls">
-            <input rel="popover" class="input-block-level"  type="text" placeholder= "Adresse"  name="address1" autocomplete="off">
-            <input rel="popover" type="text" class="input-block-level"  placeholder="Complément d'adresse" name="address2">
-            <div id="manual_address row-fluid">
-                <input rel="popover" type="text" class="span6 input-block-level" placeholder= "Ville" name="city">
-                    <input rel="popover" type="text" class="span6 pull-right input-block-level" placeholder= "Code Postal" name="zip">
-               <input rel="popover" type="text" class="input-block-level" placeholder= "Pays" name="country">
-            </div>
+            <input rel="popover" type="text" data-required="true" data-trigger="change focusout" class="input-block-level" placeholder= "Ville" name="city">
         </div>
     </div>
+    <div class="control-group span6 pull-right ">
+        <div class="controls">
+            <input rel="popover" type="text" data-required="true" data-trigger="change focusout" data-type="number" class="input-block-level" placeholder= "Code Postal" name="zip">
+        </div>
+    </div>
+    <div class="control-group">
+        <div class="controls">
+            <input rel="popover" type="text" data-required="true" data-trigger="change focusout" class="input-block-level" placeholder= "Pays" name="country">
+        </div>
+    </div>
+</div>
