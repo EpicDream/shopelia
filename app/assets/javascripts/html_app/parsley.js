@@ -257,7 +257,6 @@
     * @return {String} Formatted string
     */
     , formatMesssage: function ( message, args ) {
-
       if ( 'object' === typeof args ) {
         for ( var i in args ) {
           message = this.formatMesssage( message, args[ i ] );

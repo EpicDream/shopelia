@@ -19,7 +19,7 @@
         </div>
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" data-required="true" class="input-block-level" placeholder="Prénom Nom" name="full_name">
+                <input rel="popover" type="text" data-required="true" data-trigger="focusout" class="input-block-level" placeholder="Prénom Nom" name="full_name">
             </div>
         </div>
 

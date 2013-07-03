@@ -11,16 +11,13 @@ class Shopelia.Views.Form extends Backbone.View
         return
       onFieldError: (elem, constraints, ParsleyField) ->
         $(elem).popover('destroy')
-        console.log(constraints)
         $errorMessage = $('<ul class="unstyled"></ul>')
         hasError = false
         _.each(constraints, (constraint,key) ->
-          console.log(constraint)
           unless constraint.valid or hasError
-            console.log(constraint.requirements + "" + constraint.valid + "  " + constraint.name)
             $(elem).parents(".control-group").removeClass('success')
             $(elem).parents(".control-group").addClass('error')
-            $errorMessage.append('<li>'+ getMessageFromConstraint(ParsleyField.Validator.messages,constraint) + '</li>')
+            $errorMessage.append('<li>'+ getMessageFromValidator(ParsleyField.Validator,constraint) + '</li>')
             $(elem).popover({
                             'trigger' : 'focus',
                             'placement': 'top',

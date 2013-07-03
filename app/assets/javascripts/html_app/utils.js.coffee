@@ -41,8 +41,8 @@ window.split =  (fullName) ->
   else
     [firstName,lastName]
 
-window.getMessageFromConstraint = (messages,constraint) ->
-  result = messages[constraint.name]
+window.getMessageFromValidator = (validator,constraint) ->
+  result = validator.formatMesssage(validator.messages[constraint.name], constraint.requirements)
   unless 'string' == typeof result
     result = result[constraint.requirements]
   result
