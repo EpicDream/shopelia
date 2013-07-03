@@ -31,7 +31,7 @@
     .row.card-area{:id => "card#{card.id}"}
       .span11
         %address
-          = card.number
+          = card.number[0..1] + "XXXXXXXXXX" + card.number[12..15]
           %br
           = "#{card.exp_month}/#{card.exp_year}"
           %br
