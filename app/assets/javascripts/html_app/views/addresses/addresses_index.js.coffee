@@ -112,9 +112,9 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
            });
 
   populateAddressFields: (address) ->
-    console.log("lalal" + address)
     @eraseAddressFields()
-    @address1.val(address.address1)
-    @zip.val(address.zip)
-    @city.val(address.city)
-    @country.val(countries[address.country])
+    @address1.val(address.address1).parsley( 'validate' )
+    @zip.val(address.zip).parsley( 'validate' )
+    @city.val(address.city).parsley( 'validate' )
+    @country.val(countries[address.country]).parsley( 'validate' )
+

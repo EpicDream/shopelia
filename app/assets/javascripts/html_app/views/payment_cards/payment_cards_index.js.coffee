@@ -36,27 +36,28 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
 
   registerPaymentCard: (e) ->
     console.log("trigger registerPaymentCard")
-    e.preventDefault()
-    cardJson = @cardFormSerializer()
-    that = this
-    card = new Shopelia.Models.PaymentCard()
-    card.on("invalid", (model, errors) ->
-      displayErrors(errors)
-    )
+    if $('form').parsley( 'validate' )
+      e.preventDefault()
+      cardJson = @cardFormSerializer()
+      that = this
+      card = new Shopelia.Models.PaymentCard()
+      card.on("invalid", (model, errors) ->
+        displayErrors(errors)
+      )
 
-    card.save(cardJson,{
-                        beforeSend : (xhr) ->
-                          xhr.setRequestHeader("X-Shopelia-AuthToken",that.options.session.get("auth_token"))
-                        success : (resp) ->
-                          console.log('card success callback')
-                          that.options.session.get("user").payment_cards.push(resp.disableWrapping().toJSON())
-                          console.log(JSON.stringify(that.options))
-                          goToOrdersIndex(that.options.session,that.options.product)
-                        error : (model, response) ->
-                          console.log('card error callback')
-                          console.log(JSON.stringify(response))
-                          displayErrors($.parseJSON(response.responseText))
-    })
+      card.save(cardJson,{
+                          beforeSend : (xhr) ->
+                            xhr.setRequestHeader("X-Shopelia-AuthToken",that.options.session.get("auth_token"))
+                          success : (resp) ->
+                            console.log('card success callback')
+                            that.options.session.get("user").payment_cards.push(resp.disableWrapping().toJSON())
+                            console.log(JSON.stringify(that.options))
+                            goToOrdersIndex(that.options.session,that.options.product)
+                          error : (model, response) ->
+                            console.log('card error callback')
+                            console.log(JSON.stringify(response))
+                            displayErrors($.parseJSON(response.responseText))
+      })
 
   setCardFormVariables: ->
     @cardNumber = @$('input[name="number"]')
@@ -83,7 +84,6 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
       userId = @options.session.get("user").id
       console.log("userId:" + userId )
       cardFormObject["user_id"] =  userId
-
     console.log cardFormObject
     cardFormObject
 
@@ -94,8 +94,7 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
       @cardNumber.val(newValue)
 
   formatExpDate: (e) ->
-    console.log @date.val()
-    if @date.val().length == 2 && event.keyCode != 8
+    if @date.val().length == 2 && e.keyCode != 8
       newValue = @date.val()
       newValue = newValue + "/"
       @date.val(newValue)
