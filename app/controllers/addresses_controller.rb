@@ -15,7 +15,6 @@ class AddressesController < ApplicationController
         format.json { render json: @address, status: :created, location: @address }
         format.js
       else
-        logger.error @address.errors.inspect
         format.html { render partial:"form" }
         format.json { render json: @address.errors, status: :unprocessable_entity }
         format.js

@@ -1,5 +1,6 @@
 <% if @card.errors.any? %>
   $("#cardForm").html('<%= escape_javascript(render partial:"payment_cards/form", locals:{card:@card}) %>');
 <% else %>
-  Callback.success("card");
+  $("#mainContent").load('home?no_layout=1');
+  $("#cardModal").modal('hide');
 <% end %>
