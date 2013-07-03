@@ -140,7 +140,6 @@ ActiveRecord::Schema.define(:version => 20130701130830) do
     t.integer  "leetchi_contribution_id"
     t.string   "leetchi_contribution_status"
     t.integer  "leetchi_contribution_amount"
-    t.string   "payment_solution"
     t.string   "billing_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
@@ -162,10 +161,10 @@ ActiveRecord::Schema.define(:version => 20130701130830) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url",         :limit => 255
+    t.text     "url"
     t.string   "image_url"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "states", :force => true do |t|
