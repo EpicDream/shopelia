@@ -1,10 +1,10 @@
-class Shopelia.Views.AddressesIndex extends Backbone.View
+class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
 
   template: JST['addresses/index']
 
   events:
     "keypress input[name='address1']": "getLocation"
-    "keydown input[name='address1']": "eraseAddressFields"
+    "change input[name='address1']": "eraseAddressFields"
 
   initialize: ->
     _.bindAll this
@@ -15,6 +15,7 @@ class Shopelia.Views.AddressesIndex extends Backbone.View
     @country.autocomplete({
                           source: _.values(countries),
                           });
+    Shopelia.Views.Form.prototype.render.call(this)
     this
 
   setFormVariables: ->
@@ -111,8 +112,9 @@ class Shopelia.Views.AddressesIndex extends Backbone.View
            });
 
   populateAddressFields: (address) ->
-    console.log("lalal" + address)
-    @address1.val(address.address1)
-    @zip.val(address.zip)
-    @city.val(address.city)
-    @country.val(countries[address.country])
+    @eraseAddressFields()
+    @address1.val(address.address1).parsley( 'validate' )
+    @zip.val(address.zip).parsley( 'validate' )
+    @city.val(address.city).parsley( 'validate' )
+    @country.val(countries[address.country]).parsley( 'validate' )
+
