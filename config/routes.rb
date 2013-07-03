@@ -8,7 +8,8 @@ Shopelia::Application.routes.draw do
 
   devise_for :users, controllers: { 
     confirmations: 'devise_override/confirmations',
-    registrations: 'devise_override/registrations'
+    registrations: 'devise_override/registrations',
+    sessions: 'devise_override/sessions',    
   }
   devise_scope :user do
     put "/confirm" => "devise_override/confirmations#confirm"
@@ -48,7 +49,7 @@ Shopelia::Application.routes.draw do
       namespace :callback do
         resources :orders, :only => :update
       end
-      namespace :leetchi do
+      namespace :mango_pay do
         resources :notifications, :only => :index
       end      
       namespace :limonetik do

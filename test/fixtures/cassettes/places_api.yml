@@ -2,271 +2,6 @@
 http_interactions: 
 - request: 
     method: get
-    uri: https://maps.googleapis.com/maps/api/place/autocomplete/json?input=21%20rue%20d'Abou&key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&location=48.84,2.24&sensor=true
-    body: 
-      encoding: US-ASCII
-      string: ""
-    headers: 
-      Content-Type: 
-      - application/json
-      Accept: 
-      - application/json
-      User-Agent: 
-      - Ruby
-  response: 
-    status: 
-      code: 200
-      message: OK
-    headers: 
-      Content-Type: 
-      - application/json; charset=UTF-8
-      Date: 
-      - Tue, 23 Apr 2013 08:44:43 GMT
-      Expires: 
-      - Tue, 23 Apr 2013 08:49:43 GMT
-      Cache-Control: 
-      - public, max-age=300
-      Vary: 
-      - Accept-Language
-      Server: 
-      - mafe
-      X-Xss-Protection: 
-      - 1; mode=block
-      X-Frame-Options: 
-      - SAMEORIGIN
-      Transfer-Encoding: 
-      - chunked
-    body: 
-      encoding: US-ASCII
-      string: |
-        {
-           "predictions" : [
-              {
-                 "description" : "21 Rue d'Aboukir, Paris, France",
-                 "id" : "d384459f2688029bde23ec80bdf0470ccd14ddad",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CjQjAAAAPtgCbee5jsEkoWoc6apT3qFBYmWlxcVOPrwUBoQ5Pqv8ExTxyh-M--tsL8QAT8xCEhBo2z7K3wdT4K6S7smh--ZIGhTCBtyjxjD5fBNcR15jutp7SZA2Fw",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Paris"
-                    },
-                    {
-                       "offset" : 25,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue d'Aboukir, Courbevoie, France",
-                 "id" : "e6129e16a73a5e3200f85f585a8c9eee2dd0e6c3",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CjQoAAAAdUVxtkedIl7lF-HSrEPg1AIPZ2gNdgqg9M6HvUx9u30ueiVkkkm00zzbXOxgP66gEhAtAaW67rwajNxskN__u4MGGhQ7ZgDgpHS1IWEEsQL3aW83ag-nZA",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Courbevoie"
-                    },
-                    {
-                       "offset" : 30,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue d'Aboukir, Toulouse, France",
-                 "id" : "8e62dfb78b6965749d15fb1ebdc0f115678c62dc",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CjQmAAAAgsZSvRtY3F89sgEXdUtJOS8ZTCG2caTAp48uwQo-0HMmDMjWnABViVOc9q0GiWUSEhCcyr25BJqY4wi1uDGJTUPmGhTLrpCIx1Uk5VV7A06RZOJsc9E84g",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Toulouse"
-                    },
-                    {
-                       "offset" : 28,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue d'Aboukir, Saint-Quentin, France",
-                 "id" : "9ec9c0df54c5fcb0f06db2f8f16f6a214541ab03",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CjQrAAAA47dLUMQLibMHKfkga5QruTGoNmuKKsky66NFhHWV77TFpPH15c3lpEnwtm6YwVbKEhC6VyM4wIPtQOf210XuW0xbGhTw0X9lTleHtbrG60Kw-cGyk1EFMg",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Saint-Quentin"
-                    },
-                    {
-                       "offset" : 33,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue d'Aboukir, Toulon, France",
-                 "id" : "93a3880e4f2c44232be061c11ec7d22d408c320f",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CjQkAAAAnC44dJOGDAINiRvuYqen5kL63mbUPs2ByQeUb34AjJHiqLqq5_HFdqrhILt55adTEhDlxDb8dEMCTY589Tk1AZxNGhRaTqM0DrWBohIAo2BMbgjMKxJHBg",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Toulon"
-                    },
-                    {
-                       "offset" : 26,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              }
-           ],
-           "status" : "OK"
-        }
-
-    http_version: 
-  recorded_at: Tue, 23 Apr 2013 08:44:43 GMT
-- request: 
-    method: get
-    uri: https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&reference=CjQjAAAAayp57PBp8VsXGk95D-bcjxaz8d1ZEZe1yrT07u8bukh751Kmd_KQoGBi-XrCgTTDEhAcEEqvF0sKgNGzbcaZgOL0GhTqOTTInJm1xWFqEF_rYiHkQbz9g
-    body: 
-      encoding: US-ASCII
-      string: ""
-    headers: 
-      Content-Type: 
-      - application/json
-      Accept: 
-      - application/json
-      User-Agent: 
-      - Ruby
-  response: 
-    status: 
-      code: 200
-      message: OK
-    headers: 
-      Content-Type: 
-      - application/json; charset=UTF-8
-      Vary: 
-      - Accept-Language
-      Date: 
-      - Tue, 23 Apr 2013 08:44:43 GMT
-      Server: 
-      - mafe
-      Cache-Control: 
-      - private
-      X-Xss-Protection: 
-      - 1; mode=block
-      X-Frame-Options: 
-      - SAMEORIGIN
-      Transfer-Encoding: 
-      - chunked
-    body: 
-      encoding: US-ASCII
-      string: |
-        {
-           "html_attributions" : [],
-           "status" : "REQUEST_DENIED"
-        }
-
-    http_version: 
-  recorded_at: Tue, 23 Apr 2013 08:44:43 GMT
-- request: 
-    method: get
-    uri: https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&reference=CjQjAAAAPtgCbee5jsEkoWoc6apT3qFBYmWlxcVOPrwUBoQ5Pqv8ExTxyh-M--tsL8QAT8xCEhBo2z7K3wdT4K6S7smh--ZIGhTCBtyjxjD5fBNcR15jutp7SZA2Fw
-    body: 
-      encoding: US-ASCII
-      string: ""
-    headers: 
-      Content-Type: 
-      - application/json
-      Accept: 
-      - application/json
-      User-Agent: 
-      - Ruby
-  response: 
-    status: 
-      code: 200
-      message: OK
-    headers: 
-      Content-Type: 
-      - application/json; charset=UTF-8
-      Vary: 
-      - Accept-Language
-      Date: 
-      - Tue, 23 Apr 2013 08:47:02 GMT
-      Server: 
-      - mafe
-      Cache-Control: 
-      - private
-      X-Xss-Protection: 
-      - 1; mode=block
-      X-Frame-Options: 
-      - SAMEORIGIN
-      Transfer-Encoding: 
-      - chunked
-    body: 
-      encoding: US-ASCII
-      string: |
-        {
-           "html_attributions" : [],
-           "status" : "REQUEST_DENIED"
-        }
-
-    http_version: 
-  recorded_at: Tue, 23 Apr 2013 08:47:02 GMT
-- request: 
-    method: get
     uri: https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&reference=CjQjAAAAPtgCbee5jsEkoWoc6apT3qFBYmWlxcVOPrwUBoQ5Pqv8ExTxyh-M--tsL8QAT8xCEhBo2z7K3wdT4K6S7smh--ZIGhTCBtyjxjD5fBNcR15jutp7SZA2Fw&sensor=true
     body: 
       encoding: US-ASCII
@@ -288,7 +23,7 @@ http_interactions:
       Vary: 
       - Accept-Language
       Date: 
-      - Tue, 23 Apr 2013 08:47:59 GMT
+      - Wed, 03 Jul 2013 16:50:38 GMT
       Server: 
       - mafe
       Cache-Control: 
@@ -301,13 +36,13 @@ http_interactions:
       - chunked
     body: 
       encoding: ASCII-8BIT
-      string: "{\n   \"html_attributions\" : [],\n   \"result\" : {\n      \"address_components\" : [\n         {\n            \"long_name\" : \"21\",\n            \"short_name\" : \"21\",\n            \"types\" : [ \"street_number\" ]\n         },\n         {\n            \"long_name\" : \"Rue d'Aboukir\",\n            \"short_name\" : \"Rue d'Aboukir\",\n            \"types\" : [ \"route\" ]\n         },\n         {\n            \"long_name\" : \"2nd arrondissement of Paris\",\n            \"short_name\" : \"2nd arrondissement of Paris\",\n            \"types\" : [ \"sublocality\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"Paris\",\n            \"short_name\" : \"Paris\",\n            \"types\" : [ \"locality\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"Paris\",\n            \"short_name\" : \"75\",\n            \"types\" : [ \"administrative_area_level_2\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"\xC3\x8Ele-de-France\",\n            \"short_name\" : \"IdF\",\n            \"types\" : [ \"administrative_area_level_1\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"France\",\n            \"short_name\" : \"FR\",\n            \"types\" : [ \"country\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"75002\",\n            \"short_name\" : \"75002\",\n            \"types\" : [ \"postal_code\" ]\n         }\n      ],\n      \"adr_address\" : \"\\u003cspan class=\\\"street-address\\\"\\u003e21 Rue d'Aboukir\\u003c/span\\u003e, \\u003cspan class=\\\"postal-code\\\"\\u003e75002\\u003c/span\\u003e \\u003cspan class=\\\"locality\\\"\\u003eParis\\u003c/span\\u003e, \\u003cspan class=\\\"country-name\\\"\\u003eFrance\\u003c/span\\u003e\",\n      \"formatted_address\" : \"21 Rue d'Aboukir, 75002 Paris, France\",\n      \"geometry\" : {\n         \"location\" : {\n            \"lat\" : 48.86658960,\n            \"lng\" : 2.34330030\n         }\n      },\n      \"icon\" : \"http://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png\",\n      \"id\" : \"4e1919a567807ee66c3c69285b87c6888b3a1a0d\",\n      \"name\" : \"21 Rue d'Aboukir\",\n      \"reference\" : \"CpQBhQAAAHhGNdKGXXoyPVsn2GH7IY3uIlB1HPCDGuoJp5ClyyViprpo6LE38j0mb-BTOBJxqWuh8X0bV1k8qTWxzR_irhvYi0Le1VGCAtW_n0GRvFdsFjXQhxp-pGC6eU_J8BMFXKWCG0kwHNAsjt8fixRhlrIIQHFPVf-dX4TNr5cHnas7gUcURqzP66iSKop2qUIBLhIQdgBbjFfYfwrV_x4GDFyV4hoUgHxi9g_bDsnCDCiSQrokuSCGdIU\",\n      \"types\" : [ \"street_address\" ],\n      \"url\" : \"https://maps.google.com/maps/place?q=21+Rue+d%27Aboukir&ftid=0x47e66e22d53221a3:0x56b1dd6ddb4cb00e\",\n      \"vicinity\" : \"2nd arrondissement of Paris\"\n   },\n   \"status\" : \"OK\"\n\
+      string: "{\n   \"debug_info\" : [],\n   \"html_attributions\" : [],\n   \"result\" : {\n      \"address_components\" : [\n         {\n            \"long_name\" : \"21\",\n            \"short_name\" : \"21\",\n            \"types\" : [ \"street_number\" ]\n         },\n         {\n            \"long_name\" : \"Rue d'Aboukir\",\n            \"short_name\" : \"Rue d'Aboukir\",\n            \"types\" : [ \"route\" ]\n         },\n         {\n            \"long_name\" : \"2nd arrondissement of Paris\",\n            \"short_name\" : \"2nd arrondissement of Paris\",\n            \"types\" : [ \"sublocality\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"Paris\",\n            \"short_name\" : \"Paris\",\n            \"types\" : [ \"locality\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"Paris\",\n            \"short_name\" : \"75\",\n            \"types\" : [ \"administrative_area_level_2\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"\xC3\x8Ele-de-France\",\n            \"short_name\" : \"IDF\",\n            \"types\" : [ \"administrative_area_level_1\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"France\",\n            \"short_name\" : \"FR\",\n            \"types\" : [ \"country\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"75002\",\n            \"short_name\" : \"75002\",\n            \"types\" : [ \"postal_code\" ]\n         }\n      ],\n      \"adr_address\" : \"\\u003cspan class=\\\"street-address\\\"\\u003e21 Rue d&#39;Aboukir\\u003c/span\\u003e, \\u003cspan class=\\\"postal-code\\\"\\u003e75002\\u003c/span\\u003e \\u003cspan class=\\\"locality\\\"\\u003eParis\\u003c/span\\u003e, \\u003cspan class=\\\"country-name\\\"\\u003eFrance\\u003c/span\\u003e\",\n      \"formatted_address\" : \"21 Rue d'Aboukir, 75002 Paris, France\",\n      \"geometry\" : {\n         \"location\" : {\n            \"lat\" : 48.86658670,\n            \"lng\" : 2.34329250\n         }\n      },\n      \"icon\" : \"http://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png\",\n      \"id\" : \"2c85058568da06f8359c412b304e5c35f3095343\",\n      \"name\" : \"21 Rue d'Aboukir\",\n      \"reference\" : \"CpQBhQAAAG15qCYpj5OmMTHcOTZ7qomrrr255FH3R_e3a7vpic35IQ-YXtY-ROwH81FL26jvAD7aEhnjE_FL4T-KRdMmntxFOVxEzdftm9RFzKw4ewtrERI4Y-2N_mguYcbd6f_VWDs7EbiXPzUe95oZPM2PDOaTVSJFmdrURpvxVkl2cvCj4KmyBH7JaqeABsynhWs21xIQf9FYYU6blaYNGU1uMGaC7hoUKSSaOYmY96xrmlwVV4MlmTuYoyY\",\n      \"types\" : [ \"street_address\" ],\n      \"url\" : \"https://maps.google.com/maps/place?q=21+Rue+d%27Aboukir&ftid=0x47e66e22d53221a3:0xf29fd0925fb5f3c8\",\n      \"vicinity\" : \"2nd arrondissement of Paris\"\n   },\n   \"status\" : \"OK\"\n\
         }\n"
     http_version: 
-  recorded_at: Tue, 23 Apr 2013 08:47:59 GMT
+  recorded_at: Wed, 03 Jul 2013 16:50:38 GMT
 - request: 
     method: get
-    uri: https://maps.googleapis.com/maps/api/place/autocomplete/json?input&key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&location=48.82,2.24&sensor=true
+    uri: https://maps.googleapis.com/maps/api/place/autocomplete/json?input=21%20rue%20d'Abou&key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&location=48.84,2.24&radius=100&sensor=true
     body: 
       encoding: US-ASCII
       string: ""
@@ -326,55 +61,9 @@ http_interactions:
       Content-Type: 
       - application/json; charset=UTF-8
       Date: 
-      - Tue, 23 Apr 2013 09:08:01 GMT
+      - Wed, 03 Jul 2013 16:50:42 GMT
       Expires: 
-      - Tue, 23 Apr 2013 09:13:01 GMT
-      Cache-Control: 
-      - public, max-age=300
-      Vary: 
-      - Accept-Language
-      Server: 
-      - mafe
-      X-Xss-Protection: 
-      - 1; mode=block
-      X-Frame-Options: 
-      - SAMEORIGIN
-      Transfer-Encoding: 
-      - chunked
-    body: 
-      encoding: US-ASCII
-      string: |
-        {
-           "predictions" : [],
-           "status" : "INVALID_REQUEST"
-        }
-
-    http_version: 
-  recorded_at: Tue, 23 Apr 2013 09:08:01 GMT
-- request: 
-    method: get
-    uri: https://maps.googleapis.com/maps/api/place/autocomplete/json?input=21%20rue%20Abou&key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&location=48.82,2.24&sensor=true
-    body: 
-      encoding: US-ASCII
-      string: ""
-    headers: 
-      Content-Type: 
-      - application/json
-      Accept: 
-      - application/json
-      User-Agent: 
-      - Ruby
-  response: 
-    status: 
-      code: 200
-      message: OK
-    headers: 
-      Content-Type: 
-      - application/json; charset=UTF-8
-      Date: 
-      - Tue, 23 Apr 2013 09:08:37 GMT
-      Expires: 
-      - Tue, 23 Apr 2013 09:13:37 GMT
+      - Wed, 03 Jul 2013 16:55:42 GMT
       Cache-Control: 
       - public, max-age=300
       Vary: 
@@ -393,6 +82,235 @@ http_interactions:
         {
            "predictions" : [
               {
+                 "description" : "21 Rue d'Aboukir, Paris, France",
+                 "id" : "04d1b57011a04898da3e9eba092b1595748a0f4a",
+                 "matched_substrings" : [
+                    {
+                       "length" : 13,
+                       "offset" : 0
+                    }
+                 ],
+                 "reference" : "ClRNAAAAjSDrtsN7ZD13UWHq9vEd-b0AbV-UTC0FCEnOo4v8hf71KLKrS3gWUz1-P9CVAA_6yfpqfzHKIaZ0iuZl_6Y3PPmh6MJe4T5zjUIqsoipYPISECU_GOCtomDwXq6UhGadEfoaFKks4fl7YptIi9pkxjCxglL7CQ0n",
+                 "terms" : [
+                    {
+                       "offset" : 0,
+                       "value" : "21 Rue d'Aboukir"
+                    },
+                    {
+                       "offset" : 18,
+                       "value" : "Paris"
+                    },
+                    {
+                       "offset" : 25,
+                       "value" : "France"
+                    }
+                 ],
+                 "types" : [ "route", "geocode" ]
+              },
+              {
+                 "description" : "21 Rue d'Aboukir, Courbevoie, France",
+                 "id" : "6f59abd13b2a4f2ad509e1fc27ede2a54886a006",
+                 "matched_substrings" : [
+                    {
+                       "length" : 13,
+                       "offset" : 0
+                    }
+                 ],
+                 "reference" : "CmRSAAAAFDVGTA2ELq0m-kDwPxxL4r2yPE4YZotHjcFNcDJ9hsDuKPsl1CmcihXMLyu4v6gmjMT1gjH6aR0jEghEY5HR4AGLbjfGo9xv_oAq2u2N53lJnG-rwk_6h70HejGQvGq9EhCLK4RrTpko7Eq9UugZhQJVGhRAqqImHStgN8dIv0A-VsB7b6DqjA",
+                 "terms" : [
+                    {
+                       "offset" : 0,
+                       "value" : "21 Rue d'Aboukir"
+                    },
+                    {
+                       "offset" : 18,
+                       "value" : "Courbevoie"
+                    },
+                    {
+                       "offset" : 30,
+                       "value" : "France"
+                    }
+                 ],
+                 "types" : [ "route", "geocode" ]
+              },
+              {
+                 "description" : "21 Rue d'Aboukir, Sartrouville, France",
+                 "id" : "de106061de060e3cc445c849eb3a9b3a0faae3e9",
+                 "matched_substrings" : [
+                    {
+                       "length" : 13,
+                       "offset" : 0
+                    }
+                 ],
+                 "reference" : "CmRUAAAACOZzU73ejwZlWDOHQOKQlzOUcMq6T-RNc9tSj5uyRpi0bN2mXTCyq6kDUn8Usb4mvNrF3--ZGX1JGJ1-hBmEO_8reGfxxPquRsx782qF7gl1aqtJ6EDMa7426X2x4fC7EhD5v0_US5vK31xzfwaR_4yNGhTnaPooeR4StXlPSgB_8mdn2LGSHQ",
+                 "terms" : [
+                    {
+                       "offset" : 0,
+                       "value" : "21 Rue d'Aboukir"
+                    },
+                    {
+                       "offset" : 18,
+                       "value" : "Sartrouville"
+                    },
+                    {
+                       "offset" : 32,
+                       "value" : "France"
+                    }
+                 ],
+                 "types" : [ "route", "geocode" ]
+              },
+              {
+                 "description" : "21 Rue d'Aboukir, Saint-Quentin, France",
+                 "id" : "ad8c43555b1bc07fab8b8765a63c5fdbe8f7cfd8",
+                 "matched_substrings" : [
+                    {
+                       "length" : 13,
+                       "offset" : 0
+                    }
+                 ],
+                 "reference" : "CmRVAAAAPBuzhvDVsFt05kQPNR40T9hRcP5KlDZPm94F9k4nwfQRmz2WHI8XMIoDiuYnfHIOoICeLwblZdkKpwChf7MkqaYOtOjXGnnIKnliHJDCsxTUt9u92CXvN1AmVJD7Vy7FEhD3PfGmGbErZOGNPa21sEoeGhQ7U0lQHBYBRXGHXpivPxRIBj6GBA",
+                 "terms" : [
+                    {
+                       "offset" : 0,
+                       "value" : "21 Rue d'Aboukir"
+                    },
+                    {
+                       "offset" : 18,
+                       "value" : "Saint-Quentin"
+                    },
+                    {
+                       "offset" : 33,
+                       "value" : "France"
+                    }
+                 ],
+                 "types" : [ "route", "geocode" ]
+              },
+              {
+                 "description" : "21 Rue d'Aboukir, Toulouse, France",
+                 "id" : "f0b85fdf335e47670fd8d6222a1f6d0670aadf98",
+                 "matched_substrings" : [
+                    {
+                       "length" : 13,
+                       "offset" : 0
+                    }
+                 ],
+                 "reference" : "ClRQAAAA3V5JafbsYCGJEJ0JeGbKr3aGJ7X47XRiLttF-c03cGh6ARPH5CPnQsjRuzNfBX7Py8KmTBc11an_Firmn-IvTs3ELIf1IYuNvR9jZuGv674SENnG97_1Hcq_JFjVyx_92qIaFDcUPx72fEBpJoORFHwsjw8JpPAB",
+                 "terms" : [
+                    {
+                       "offset" : 0,
+                       "value" : "21 Rue d'Aboukir"
+                    },
+                    {
+                       "offset" : 18,
+                       "value" : "Toulouse"
+                    },
+                    {
+                       "offset" : 28,
+                       "value" : "France"
+                    }
+                 ],
+                 "types" : [ "route", "geocode" ]
+              }
+           ],
+           "status" : "OK"
+        }
+
+    http_version: 
+  recorded_at: Wed, 03 Jul 2013 16:50:42 GMT
+- request: 
+    method: get
+    uri: https://maps.googleapis.com/maps/api/place/autocomplete/json?input=21%20rue%20Abou&key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&location=48.82,2.24&radius=100&sensor=true
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      Content-Type: 
+      - application/json
+      Accept: 
+      - application/json
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Content-Type: 
+      - application/json; charset=UTF-8
+      Date: 
+      - Wed, 03 Jul 2013 16:53:57 GMT
+      Expires: 
+      - Wed, 03 Jul 2013 16:58:57 GMT
+      Cache-Control: 
+      - public, max-age=300
+      Vary: 
+      - Accept-Language
+      Server: 
+      - mafe
+      X-Xss-Protection: 
+      - 1; mode=block
+      X-Frame-Options: 
+      - SAMEORIGIN
+      Transfer-Encoding: 
+      - chunked
+    body: 
+      encoding: US-ASCII
+      string: |
+        {
+           "predictions" : [
+              {
+                 "description" : "21 Rue d'Aboukir, Paris, France",
+                 "id" : "04d1b57011a04898da3e9eba092b1595748a0f4a",
+                 "matched_substrings" : [
+                    {
+                       "length" : 16,
+                       "offset" : 0
+                    }
+                 ],
+                 "reference" : "ClRNAAAAOU--s_KJToDI3UGslJhU29ad5BQoEmx3dJZId3YdrPjoG9eRsHdkQlWvJyv7K_7kTXqqNbXJPSr87Z9N6o4Xilac-6b3nqeeITy7sg052S8SEDSNZiehStJrc52B9uEHvo0aFCPSKwnAG4wP-UHnQ0fbp8jT94UF",
+                 "terms" : [
+                    {
+                       "offset" : 0,
+                       "value" : "21 Rue d'Aboukir"
+                    },
+                    {
+                       "offset" : 18,
+                       "value" : "Paris"
+                    },
+                    {
+                       "offset" : 25,
+                       "value" : "France"
+                    }
+                 ],
+                 "types" : [ "route", "geocode" ]
+              },
+              {
+                 "description" : "21 Rue d'Aboukir, Courbevoie, France",
+                 "id" : "6f59abd13b2a4f2ad509e1fc27ede2a54886a006",
+                 "matched_substrings" : [
+                    {
+                       "length" : 16,
+                       "offset" : 0
+                    }
+                 ],
+                 "reference" : "CmRSAAAAIH3MmL1YdjLUaHx94bTpai1hTPlX3k4s7yUmI3kPJnOeTaSziEwaYd6RUpdPTzSrnAPpkxhfGI2mfYUxUbvw9-k5IBBabShJcQNQTUsUzsAt8P6w1-zdfTB4idanT_7aEhAnlKtZk9R0yDCpXSwqwBrkGhTHqhqcEZXEPvIfoEB2ja_HnnZZoA",
+                 "terms" : [
+                    {
+                       "offset" : 0,
+                       "value" : "21 Rue d'Aboukir"
+                    },
+                    {
+                       "offset" : 18,
+                       "value" : "Courbevoie"
+                    },
+                    {
+                       "offset" : 30,
+                       "value" : "France"
+                    }
+                 ],
+                 "types" : [ "route", "geocode" ]
+              },
+              {
                  "description" : "21 Rue Abou Inane, Rabat, Rabat-Sale-Zemmour-Zaer, Morocco",
                  "id" : "1b6b580179a10ad8128352d237461f634a787661",
                  "matched_substrings" : [
@@ -401,7 +319,7 @@ http_interactions:
                        "offset" : 0
                     }
                  ],
-                 "reference" : "CkQ-AAAAA_UeDqMrfmJzX3PExDV-sS3ECpziWvm3EsA0OkQc6lecwsVmignMfz3WSWBdNDRRgoJbPEHNTjdUYibq9sE5ORIQbOcyRI-PvXCN2CGB--NdTBoUqUjKumy7Fg-1XtenpCjMj_jQwjs",
+                 "reference" : "CnRoAAAA9bzIvTigOsAzfiXZL0AtKwx9I6U0QhY0gNK37amOVY-8KREcTnT0ebMUoFXKq3EYGqbZNldjv9sD_91lscSZ1YxHD4HovC0wW85eTOrZK5g4l3rNM7m1ZC4HF6JjfLmhTu70MA2Px5PTDdADSiaEXxIQK3PT7kUQpf9GhrbIR6y5TRoUFmzEpnu-qNS35iUIENW9dyd6SCg",
                  "terms" : [
                     {
                        "offset" : 0,
@@ -423,15 +341,45 @@ http_interactions:
                  "types" : [ "route", "geocode" ]
               },
               {
-                 "description" : "21 Rue Abou Bakr Seddiq, Marrakesh, Marrakesh-Tensift-Al Haouz, Morocco",
-                 "id" : "e1126b2c4398bbb90b26a292124bde1ab9efcb8e",
+                 "description" : "21 Rue Abou El Abbes Sebti, Marrakesh, Marrakesh-Tensift-Al Haouz, Morocco",
+                 "id" : "248502d1d9923e8e1e535fda346a040185ef3b4f",
                  "matched_substrings" : [
                     {
                        "length" : 11,
                        "offset" : 0
                     }
                  ],
-                 "reference" : "ClRLAAAAnBTDyGK5oSOxV5DgtiolZN_hdQMlFSpEm-USVSZQVBqfpRdzcTaagt5kFopwb_cbum9RZhkFdWS7rBW-4FxDrz5J6678Xh1EqBb93AjkxmwSEInvZkHMQGaquhssGK5OPmUaFB3KsOfa2cxJricq4MYPE5j8Cos2",
+                 "reference" : "CoQBeAAAACFcSF56-5cB4z9UBHgQLKIEl0PocEhvtzFCJ0_5gYpAFgu3KQgo60kkeenjnPYujLiVItWARinQD_9o596wKODbQARnTXgKgu_vRiC_ddr3XhCE-L0UMFgXCasi3w4E6PhsETW6nSGrpnY70Ln1my-i7qZZKqJucMvZgZMHkDASEhAHhx-kH1iwynC17ZQOUfs1GhSTOOhsGCjWqownbJO3zFdmSbH3WA",
+                 "terms" : [
+                    {
+                       "offset" : 0,
+                       "value" : "21 Rue Abou El Abbes Sebti"
+                    },
+                    {
+                       "offset" : 28,
+                       "value" : "Marrakesh"
+                    },
+                    {
+                       "offset" : 39,
+                       "value" : "Marrakesh-Tensift-Al Haouz"
+                    },
+                    {
+                       "offset" : 67,
+                       "value" : "Morocco"
+                    }
+                 ],
+                 "types" : [ "route", "geocode" ]
+              },
+              {
+                 "description" : "21 Rue Abou Bakr Seddiq, Marrakesh, Marrakesh-Tensift-Al Haouz, Morocco",
+                 "id" : "ee2fb517f5a3237c4e904663f0fa059a8c53cc02",
+                 "matched_substrings" : [
+                    {
+                       "length" : 11,
+                       "offset" : 0
+                    }
+                 ],
+                 "reference" : "CoQBdQAAAJnUebBtBULUmAoaYT5bdDlPXg6FnFGQjHNcUnP6jl6x8oblq_6672_ao3reWiLiCX3WCL2_Kzu4irSnJy5TTMooCn7g6LIhBTsvK_PgiwTB9o6HLOkD3wPOHVB1n0bIOIZA0RfIukDgcMMJ4U_eeCOl_lf7LFD_vmf0RCINwg5SEhArr0gPZlfV6pol5M1IsNjAGhTjN2hiRta-XEvhr7ZbIKuqFx4bWA",
                  "terms" : [
                     {
                        "offset" : 0,
@@ -451,147 +399,13 @@ http_interactions:
                     }
                  ],
                  "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue Abou Abellah Nafii, Casablanca, Grand Casablanca, Morocco",
-                 "id" : "f05a5e62cbbfd5e1694041ce1f3f3daef2f37366",
-                 "matched_substrings" : [
-                    {
-                       "length" : 11,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "ClREAAAAXbu7uvpJ67_uif6yXMgnk-D9wWfTMQE1QYP9a-_57jAEKCQtEnsfjMhkyG-pMDnDqWokQ34Q42jrgpgAUb7aCvNHGFnlqb9oKhE0ReTQf5gSEKPbFz8CdEg_5p4TJ8JBAZoaFDT7Cxot3deyQo1OnfzAg1TcZb9q",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue Abou Abellah Nafii"
-                    },
-                    {
-                       "offset" : 27,
-                       "value" : "Casablanca"
-                    },
-                    {
-                       "offset" : 39,
-                       "value" : "Grand Casablanca"
-                    },
-                    {
-                       "offset" : 57,
-                       "value" : "Morocco"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue Abou Al Abbas, Casablanca, Grand Casablanca, Morocco",
-                 "id" : "496ea054e3eb1f483cad760b15e24f7b53400d0c",
-                 "matched_substrings" : [
-                    {
-                       "length" : 11,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CkQ_AAAAo3uCZ2I90JOEvOm9HSA_UoAVM7thnBPrRIfL1Fgdo5FEH0wtLdqHA1f1OSXoMCFeuA2b_0slHS7M6zg7TcuydBIQA7TKhnH0PUmxKIWwoKaJZhoUJTecDMYn1Q3gAiCvzxto85vF3As",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue Abou Al Abbas"
-                    },
-                    {
-                       "offset" : 22,
-                       "value" : "Casablanca"
-                    },
-                    {
-                       "offset" : 34,
-                       "value" : "Grand Casablanca"
-                    },
-                    {
-                       "offset" : 52,
-                       "value" : "Morocco"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue Abou Zaid Addadoussi, Casablanca, Grand Casablanca, Morocco",
-                 "id" : "302967122364841528dbcc5ec76aca69b86c8b3c",
-                 "matched_substrings" : [
-                    {
-                       "length" : 11,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "ClRGAAAAzgBJ9OzEgnJrg3lBfTIG-atzh-es9Pne9kDrBDVV94R98dbjs4VmauPJFNSmbYy5UqDQHu3my5uX2Xc0RMxC_gex9VoMLq4ra5C799U3oQISECUlgiQvcd5jMWy6GCxzqAQaFJwGIMpKOnpE9kykoH-qK3IMGN9u",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue Abou Zaid Addadoussi"
-                    },
-                    {
-                       "offset" : 29,
-                       "value" : "Casablanca"
-                    },
-                    {
-                       "offset" : 41,
-                       "value" : "Grand Casablanca"
-                    },
-                    {
-                       "offset" : 59,
-                       "value" : "Morocco"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
               }
            ],
            "status" : "OK"
         }
 
     http_version: 
-  recorded_at: Tue, 23 Apr 2013 09:08:37 GMT
-- request: 
-    method: get
-    uri: https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&reference=CjQjAAAAayp57PBp8VsXGk95D-bcjxaz8d1ZEZe1yrT07u8bukh751Kmd_KQoGBi-XrCgTTDEhAcEEqvF0sKgNGzbcaZgOL0GhTqOTTInJm1xWFqEF_rYiHkQbz9g&sensor=true
-    body: 
-      encoding: US-ASCII
-      string: ""
-    headers: 
-      Content-Type: 
-      - application/json
-      Accept: 
-      - application/json
-      User-Agent: 
-      - Ruby
-  response: 
-    status: 
-      code: 200
-      message: OK
-    headers: 
-      Content-Type: 
-      - application/json; charset=UTF-8
-      Vary: 
-      - Accept-Language
-      Date: 
-      - Tue, 23 Apr 2013 09:10:06 GMT
-      Server: 
-      - mafe
-      Cache-Control: 
-      - private
-      X-Xss-Protection: 
-      - 1; mode=block
-      X-Frame-Options: 
-      - SAMEORIGIN
-      Transfer-Encoding: 
-      - chunked
-    body: 
-      encoding: US-ASCII
-      string: |
-        {
-           "html_attributions" : [],
-           "status" : "INVALID_REQUEST"
-        }
-
-    http_version: 
-  recorded_at: Tue, 23 Apr 2013 09:10:06 GMT
+  recorded_at: Wed, 03 Jul 2013 16:53:57 GMT
 - request: 
     method: get
     uri: https://maps.googleapis.com/maps/api/place/details/json?key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&reference=ClRNAAAAu2vgwlaOOP9j92SUZSmS6c3XQppD_H3-g-LForQzhQAihTD0uTNT234nHwpnaVeWvCdntvOmrwouNIcBQwO4cOPR3bmdimEO0pP-9DwKQFoSEPa_CqCJIjc3H-w5hoxAQ60aFBJxKAF7cHWMdYe2A4bzJmCScypn&sensor=true
@@ -615,7 +429,7 @@ http_interactions:
       Vary: 
       - Accept-Language
       Date: 
-      - Tue, 23 Apr 2013 10:11:05 GMT
+      - Wed, 03 Jul 2013 16:53:57 GMT
       Server: 
       - mafe
       Cache-Control: 
@@ -628,374 +442,8 @@ http_interactions:
       - chunked
     body: 
       encoding: ASCII-8BIT
-      string: "{\n   \"html_attributions\" : [],\n   \"result\" : {\n      \"address_components\" : [\n         {\n            \"long_name\" : \"21\",\n            \"short_name\" : \"21\",\n            \"types\" : [ \"street_number\" ]\n         },\n         {\n            \"long_name\" : \"Rue d'Aboukir\",\n            \"short_name\" : \"Rue d'Aboukir\",\n            \"types\" : [ \"route\" ]\n         },\n         {\n            \"long_name\" : \"2nd arrondissement of Paris\",\n            \"short_name\" : \"2nd arrondissement of Paris\",\n            \"types\" : [ \"sublocality\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"Paris\",\n            \"short_name\" : \"Paris\",\n            \"types\" : [ \"locality\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"Paris\",\n            \"short_name\" : \"75\",\n            \"types\" : [ \"administrative_area_level_2\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"\xC3\x8Ele-de-France\",\n            \"short_name\" : \"IdF\",\n            \"types\" : [ \"administrative_area_level_1\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"France\",\n            \"short_name\" : \"FR\",\n            \"types\" : [ \"country\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"75002\",\n            \"short_name\" : \"75002\",\n            \"types\" : [ \"postal_code\" ]\n         }\n      ],\n      \"adr_address\" : \"\\u003cspan class=\\\"street-address\\\"\\u003e21 Rue d'Aboukir\\u003c/span\\u003e, \\u003cspan class=\\\"postal-code\\\"\\u003e75002\\u003c/span\\u003e \\u003cspan class=\\\"locality\\\"\\u003eParis\\u003c/span\\u003e, \\u003cspan class=\\\"country-name\\\"\\u003eFrance\\u003c/span\\u003e\",\n      \"formatted_address\" : \"21 Rue d'Aboukir, 75002 Paris, France\",\n      \"geometry\" : {\n         \"location\" : {\n            \"lat\" : 48.86658960,\n            \"lng\" : 2.34330030\n         }\n      },\n      \"icon\" : \"http://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png\",\n      \"id\" : \"4e1919a567807ee66c3c69285b87c6888b3a1a0d\",\n      \"name\" : \"21 Rue d'Aboukir\",\n      \"reference\" : \"CpQBhQAAAKm-DVkZFOOp0IJny2UT9PAtxl9hr_RQW7194Pn5pSrCJVcvEUoicf5CJ00qgQ0XLryq-9ThGeMXad3ayIb2q4rw1wL8u3ZZORa2SDJaqy0NbuMkp2pMg3IMcdbQmmyR0vrD_MEPG4bKyVSauGh2Wohaoy--j1NVVQ_TDiRRwYKDmeDIHlwOOZdGZRuDFkv89xIQn8C2CUvXVtwgdgFXPoAaNxoU78EDsBk6Ojj91HNE5f4kPmkKyGk\",\n      \"types\" : [ \"street_address\" ],\n      \"url\" : \"https://maps.google.com/maps/place?q=21+Rue+d%27Aboukir&ftid=0x47e66e22d53221a3:0x56b1dd6ddb4cb00e\",\n      \"vicinity\" : \"2nd arrondissement of Paris\"\n   },\n   \"status\" : \"OK\"\n\
+      string: "{\n   \"debug_info\" : [],\n   \"html_attributions\" : [],\n   \"result\" : {\n      \"address_components\" : [\n         {\n            \"long_name\" : \"21\",\n            \"short_name\" : \"21\",\n            \"types\" : [ \"street_number\" ]\n         },\n         {\n            \"long_name\" : \"Rue d'Aboukir\",\n            \"short_name\" : \"Rue d'Aboukir\",\n            \"types\" : [ \"route\" ]\n         },\n         {\n            \"long_name\" : \"2nd arrondissement of Paris\",\n            \"short_name\" : \"2nd arrondissement of Paris\",\n            \"types\" : [ \"sublocality\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"Paris\",\n            \"short_name\" : \"Paris\",\n            \"types\" : [ \"locality\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"Paris\",\n            \"short_name\" : \"75\",\n            \"types\" : [ \"administrative_area_level_2\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"\xC3\x8Ele-de-France\",\n            \"short_name\" : \"IDF\",\n            \"types\" : [ \"administrative_area_level_1\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"France\",\n            \"short_name\" : \"FR\",\n            \"types\" : [ \"country\", \"political\" ]\n         },\n         {\n            \"long_name\" : \"75002\",\n            \"short_name\" : \"75002\",\n            \"types\" : [ \"postal_code\" ]\n         }\n      ],\n      \"adr_address\" : \"\\u003cspan class=\\\"street-address\\\"\\u003e21 Rue d&#39;Aboukir\\u003c/span\\u003e, \\u003cspan class=\\\"postal-code\\\"\\u003e75002\\u003c/span\\u003e \\u003cspan class=\\\"locality\\\"\\u003eParis\\u003c/span\\u003e, \\u003cspan class=\\\"country-name\\\"\\u003eFrance\\u003c/span\\u003e\",\n      \"formatted_address\" : \"21 Rue d'Aboukir, 75002 Paris, France\",\n      \"geometry\" : {\n         \"location\" : {\n            \"lat\" : 48.86658670,\n            \"lng\" : 2.34329250\n         }\n      },\n      \"icon\" : \"http://maps.gstatic.com/mapfiles/place_api/icons/geocode-71.png\",\n      \"id\" : \"2c85058568da06f8359c412b304e5c35f3095343\",\n      \"name\" : \"21 Rue d'Aboukir\",\n      \"reference\" : \"CpQBhQAAAJ3dxG_8A-pjBjyS_DNAsuqD54UkWH7RvxYLfEG2wYWpgwZjPHVp5Nt4zQroH0j_amUJOAOQgCFUKucdZsYKJS3x_p1qlnoxPM_S2MGjghuqFWyAqc6oGo33GPN_nws7jZgQWbb5zh1fV-qXSSltOFMlwDdU3-fd2Tq9DSzNgFhZyuzhQB-eIlLLuCa228InjBIQ2zCY16el8adpbGjTTBdWJhoUnhxGz1orGuvmscTta4Z7rP0eIx4\",\n      \"types\" : [ \"street_address\" ],\n      \"url\" : \"https://maps.google.com/maps/place?q=21+Rue+d%27Aboukir&ftid=0x47e66e22d53221a3:0xf29fd0925fb5f3c8\",\n      \"vicinity\" : \"2nd arrondissement of Paris\"\n   },\n   \"status\" : \"OK\"\n\
         }\n"
     http_version: 
-  recorded_at: Tue, 23 Apr 2013 10:11:05 GMT
-- request: 
-    method: get
-    uri: https://maps.googleapis.com/maps/api/place/autocomplete/json?input=21%20rue%20Abou&key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&location=48.82,2.24&radius=100&sensor=true
-    body: 
-      encoding: US-ASCII
-      string: ""
-    headers: 
-      Content-Type: 
-      - application/json
-      Accept: 
-      - application/json
-      User-Agent: 
-      - Ruby
-  response: 
-    status: 
-      code: 200
-      message: OK
-    headers: 
-      Content-Type: 
-      - application/json; charset=UTF-8
-      Date: 
-      - Tue, 23 Apr 2013 10:12:05 GMT
-      Expires: 
-      - Tue, 23 Apr 2013 10:17:05 GMT
-      Cache-Control: 
-      - public, max-age=300
-      Vary: 
-      - Accept-Language
-      Server: 
-      - mafe
-      X-Xss-Protection: 
-      - 1; mode=block
-      X-Frame-Options: 
-      - SAMEORIGIN
-      Transfer-Encoding: 
-      - chunked
-    body: 
-      encoding: US-ASCII
-      string: |
-        {
-           "predictions" : [
-              {
-                 "description" : "21 Rue d'Aboukir, Paris, France",
-                 "id" : "d384459f2688029bde23ec80bdf0470ccd14ddad",
-                 "matched_substrings" : [
-                    {
-                       "length" : 16,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "ClRNAAAARPx65czImwxXWVFv9kcUpUdfLHI-3PvJGW5Brb89uptgJlpMAJ83mhGjruqvAzZcm_WxeJC7L-mFwrVXQqQvc79bMxhmoVa8RAGIBPFl5AkSEGSWDQzOmCz2IBDpjIMyo-gaFPbdXsYxeC3mXR7xSAM5qHU6HrFq",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Paris"
-                    },
-                    {
-                       "offset" : 25,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue d'Aboukir, Courbevoie, France",
-                 "id" : "e6129e16a73a5e3200f85f585a8c9eee2dd0e6c3",
-                 "matched_substrings" : [
-                    {
-                       "length" : 16,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CmRSAAAAPFxgOGUHltbqQXF-Ex-F2DUKa7X7fkKXCHm3qc_GHB6Yd2stpv-OWSKDUPi64MErPFBRpxhhHvdQ43kAULdMZgMCNzx92Ps9ZfFSnzGtk9DP6MQeAIvFT9WxLS8_UwynEhC0AxPwShgcy8usXH_LEnEdGhQCH6WE9tFBbRDkmTWxB5taaMuzEQ",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Courbevoie"
-                    },
-                    {
-                       "offset" : 30,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue Abou Inane, Rabat, Rabat-Sale-Zemmour-Zaer, Morocco",
-                 "id" : "1b6b580179a10ad8128352d237461f634a787661",
-                 "matched_substrings" : [
-                    {
-                       "length" : 11,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CnRoAAAAf9qJtNWcEAjN21ThGN_r_MqGBpSJ0o1LpJYRf5woCmiKDznYzl6KsQpyvWBWDPpnjifQjJC-t9wJMUpxT2m7VxLYS_BtOxM4fHk2WexFbcm3RDIKIKe5CANVP1tJusarKKUm6ZI6kIxeLJY1IMwhTRIQPT1ymO_sVIHxknycRvL4gxoUTcnaCjXiLhzO3EBgaSt501XopCs",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue Abou Inane"
-                    },
-                    {
-                       "offset" : 19,
-                       "value" : "Rabat"
-                    },
-                    {
-                       "offset" : 26,
-                       "value" : "Rabat-Sale-Zemmour-Zaer"
-                    },
-                    {
-                       "offset" : 51,
-                       "value" : "Morocco"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue Abou Bakr Seddiq, Marrakesh, Marrakesh-Tensift-Al Haouz, Morocco",
-                 "id" : "e1126b2c4398bbb90b26a292124bde1ab9efcb8e",
-                 "matched_substrings" : [
-                    {
-                       "length" : 11,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CoQBdQAAAKADQ2asT0GDmri04BJvlYMASvi1l2CVuGeLUmsi5UQwCtTZ-xE_vapSkZb8Ia4IxyG6yxjcs4j4-MfS-LIf1vqgY43uhxwpvvmBZTWl2ARqUsjuSw3tMCpSDntxedUBAzZv0d26LHNBZqdJGLwgWOZJoFJBoh4z4G3xe-86sENAEhD_AMhxab9D-PCooN89J2giGhQ0du2bQosGgjykMmfJS2srOOPU5w",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue Abou Bakr Seddiq"
-                    },
-                    {
-                       "offset" : 25,
-                       "value" : "Marrakesh"
-                    },
-                    {
-                       "offset" : 36,
-                       "value" : "Marrakesh-Tensift-Al Haouz"
-                    },
-                    {
-                       "offset" : 64,
-                       "value" : "Morocco"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue Abou Abellah Nafii, Casablanca, Grand Casablanca, Morocco",
-                 "id" : "f05a5e62cbbfd5e1694041ce1f3f3daef2f37366",
-                 "matched_substrings" : [
-                    {
-                       "length" : 11,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CnRuAAAA5geYHbbrBvIAIpyWrtD7Oj8WvtTgYwcCspWKPNW_9f1xLDX9wEHlw6TfxHIIj7sAZLd3cAPpFYe2WoBk-0qB0vTwI5ZNUUUR9w_qPG9ceOHpfY02SNvXBfWsnnX_CrE25df-ZgdSyvJlS7sW47yOBxIQ1ZRj1QKg_nf-czgRlqIbFRoUx-mzTBGagtX4Jj_E1Z5UXTpXaGE",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue Abou Abellah Nafii"
-                    },
-                    {
-                       "offset" : 27,
-                       "value" : "Casablanca"
-                    },
-                    {
-                       "offset" : 39,
-                       "value" : "Grand Casablanca"
-                    },
-                    {
-                       "offset" : 57,
-                       "value" : "Morocco"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              }
-           ],
-           "status" : "OK"
-        }
-
-    http_version: 
-  recorded_at: Tue, 23 Apr 2013 10:12:05 GMT
-- request: 
-    method: get
-    uri: https://maps.googleapis.com/maps/api/place/autocomplete/json?input=21%20rue%20d'Abou&key=AIzaSyDy_IvoH2PkTUM3e_5FBwMjHotCkNX1fTY&location=48.84,2.24&radius=100&sensor=true
-    body: 
-      encoding: US-ASCII
-      string: ""
-    headers: 
-      Content-Type: 
-      - application/json
-      Accept: 
-      - application/json
-      User-Agent: 
-      - Ruby
-  response: 
-    status: 
-      code: 200
-      message: OK
-    headers: 
-      Content-Type: 
-      - application/json; charset=UTF-8
-      Date: 
-      - Tue, 23 Apr 2013 10:12:07 GMT
-      Expires: 
-      - Tue, 23 Apr 2013 10:17:07 GMT
-      Cache-Control: 
-      - public, max-age=300
-      Vary: 
-      - Accept-Language
-      Server: 
-      - mafe
-      X-Xss-Protection: 
-      - 1; mode=block
-      X-Frame-Options: 
-      - SAMEORIGIN
-      Transfer-Encoding: 
-      - chunked
-    body: 
-      encoding: US-ASCII
-      string: |
-        {
-           "predictions" : [
-              {
-                 "description" : "21 Rue d'Aboukir, Paris, France",
-                 "id" : "d384459f2688029bde23ec80bdf0470ccd14ddad",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "ClRNAAAApFKTmSd66PtEYoKSCpL5sGtUfYgiBDazTWjuXhmpBayWam-R_sFtda8A1Awvohm5Olxix8aI4790phoK-6wJLmGAXpQDdCTJioWJDzjBNvUSEERQ4KBqFho5kbQFiYnDx_MaFJM72KfXfEmW6V3f3D-096z3evZF",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Paris"
-                    },
-                    {
-                       "offset" : 25,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue d'Aboukir, Courbevoie, France",
-                 "id" : "e6129e16a73a5e3200f85f585a8c9eee2dd0e6c3",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CmRSAAAAFs98Se20Lma2_YzaJ928pAomVxj3RYxn5mqhVq1l6Na_xQ3580CdSbeESaLiShrspIUAU73fk_6CiOSJM67KPIqLY4VUHakNphdkNUeXXWjCbHsqD9eo_ZX2pRa5e9LsEhCLoAym-pOWgKn06mzE_xOFGhTl0cBmr3yUExvzuj0rFat5XW8RpQ",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Courbevoie"
-                    },
-                    {
-                       "offset" : 30,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue d'Aboukir, Sartrouville, France",
-                 "id" : "5899a919a06f2101b3f67c8dad2e0dae9bc348e9",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CmRUAAAAoxjkl1w67G5AYNlh8nk6jhKXLcDcWUJVJFkcpdcT21D01c9CrrMpoKe19RtHFkZgcMfr0LuHVvTx7S_1hPTSrhIwugRZ1rUvcMfh7_AZxPzf1cAiv3sHfj0b_vHcoCnTEhB8pogjdr7-yUH6KrYTfXAwGhSeTTjDrWAxKoPo1KLz8NTYY1fs8Q",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Sartrouville"
-                    },
-                    {
-                       "offset" : 32,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue d'Aboukir, Saint-Quentin, France",
-                 "id" : "9ec9c0df54c5fcb0f06db2f8f16f6a214541ab03",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "CmRVAAAA1NW6ireZFDC48dmp3HPfortSq1iTG1EcTYaU4q4r8v7OBs7XHgKDAkywEcF1A0LB6OLEGjeTTlUzQr9XqRI9M184c8daPCM6ocYF2V99gOfxPWVo7TfmdCXbG9bsClXmEhBLxx30UIC25msRSvsKI6YEGhRg1tua3QzRXMH3n4tF1eGmHRvOXg",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Saint-Quentin"
-                    },
-                    {
-                       "offset" : 33,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              },
-              {
-                 "description" : "21 Rue d'Aboukir, Toulouse, France",
-                 "id" : "8e62dfb78b6965749d15fb1ebdc0f115678c62dc",
-                 "matched_substrings" : [
-                    {
-                       "length" : 13,
-                       "offset" : 0
-                    }
-                 ],
-                 "reference" : "ClRQAAAAVC66bDGnw5irUNfAnoRYUcqUA43VtDdMpC6iMq9RLvOFVVFbsURQvZGKn_7EVrprjMq6tD_x1pytfYl6MZPqySaZtBuxuJT9SjsjVRpwVekSEJJuY6sOQEvkGEgSl5FLBZoaFERDql6unTkjaeHyc-hyIdjF7Ke9",
-                 "terms" : [
-                    {
-                       "offset" : 0,
-                       "value" : "21 Rue d'Aboukir"
-                    },
-                    {
-                       "offset" : 18,
-                       "value" : "Toulouse"
-                    },
-                    {
-                       "offset" : 28,
-                       "value" : "France"
-                    }
-                 ],
-                 "types" : [ "route", "geocode" ]
-              }
-           ],
-           "status" : "OK"
-        }
-
-    http_version: 
-  recorded_at: Tue, 23 Apr 2013 10:12:07 GMT
-recorded_with: VCR 2.4.0
+  recorded_at: Wed, 03 Jul 2013 16:53:57 GMT
+recorded_with: VCR 2.5.0

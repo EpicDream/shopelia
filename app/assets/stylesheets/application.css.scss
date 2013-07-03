@@ -50,3 +50,9 @@
   opacity: 0.9;
   filter: alpha(opacity=90);
 }
+
+#sessionError {
+  display: none;
+  color: $red;
+  margin-bottom: 20px;
+}

@@ -208,6 +208,9 @@ fr:
 
   activerecord:
     attributes:
+      user:
+        email: "Adresse email"
+        password: "Mot de passe"
       address:
         first_name: "Le prénom"
         last_name: "Le nom"
@@ -299,15 +302,15 @@ fr:
         add_payment_card: "Ajouter une carte"
     invalid_birthdate: "Vous devez avoir au minimum 16 ans pour vous enregistrer"
 
-  leetchi:
-    users:
-      creation_failure: "Impossible to create user on Leetchi API. Error: %{error}"
-      update_failure: "Impossible to update user on Leetchi API. Error: %{error}"
-    payment_cards:
-      creation_failure: "Impossible to create payment card on Leetchi API. Error: %{error}"
-      destroy_failure: "Impossible to destroy payment card on Leetchi API. Error: %{error}"
-
   app:
     cancel: "Annuler"
     close: "Fermer"
     wait: "Patientez..."
+    new_session: "Se connecter sur Shopelia"
+    sign_in: "Se connecter"
+    forgot_your_password: "Mot de passe oublié ?"
+    invalid_credentials: "Erreur dans l'email ou le mot de passe"
+    send_me_reset_password_instructions: "Réinitialiser mon mot de passe"
+    my_addresses: "Mes adresses"
+    my_payment_cards: "Mes cartes"
+    

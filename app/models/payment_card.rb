@@ -8,7 +8,7 @@ class PaymentCard < ActiveRecord::Base
   validates :exp_year, :presence => true, :length => { :is => 4 }
   validates :cvv, :presence => true, :length => { :is => 3 }
   
-  before_destroy :destroy_leetchi_payment_card, :if => Proc.new { |card| card.leetchi_id.present? }
+  before_destroy :destroy_mangopay_payment_card, :if => Proc.new { |card| card.mangopay_id.present? }
   
   def self.months
     ("01".."12").map{|i| i}
@@ -20,8 +20,8 @@ class PaymentCard < ActiveRecord::Base
   
   private
   
-  def destroy_leetchi_payment_card
-    Leetchi::Card.delete(self.leetchi_id)
+  def destroy_mangopay_payment_card
+    MangoPay::Card.delete(self.mangopay_id)
   end
     
 end

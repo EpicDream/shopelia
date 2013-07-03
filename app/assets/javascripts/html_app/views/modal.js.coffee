@@ -13,6 +13,7 @@ class Shopelia.Views.Modal extends Backbone.View
   render: ->
     $(@el).html(@template())
     @open()
+    #@$('input').bind("keydown",eraseError)
     this
 
   open: (settings) ->
