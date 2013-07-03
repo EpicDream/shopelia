@@ -318,3 +318,4 @@ fr:
     sign_in: "Se connecter"
     forgot_your_password: "Mot de passe oublié ?"
     invalid_credentials: "Erreur dans l'email ou le mot de passe"
+    send_me_reset_password_instructions: "Réinitialiser mon mot de passe"
