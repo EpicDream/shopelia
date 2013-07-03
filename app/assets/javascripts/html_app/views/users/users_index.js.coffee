@@ -1,4 +1,4 @@
-class Shopelia.Views.UsersIndex extends Backbone.View
+class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
 
   template: JST['users/index']
   events:
@@ -6,6 +6,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
   initialize: ->
     _.bindAll this
+
 
 
   render: ->
@@ -18,6 +19,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
       @paymentCardView =  new Shopelia.Views.PaymentCardsIndex()
       $(@addressView.render().el).after(@paymentCardView.render().el)
     @setFormVariables()
+    Shopelia.Views.Form.prototype.render.call(this)
     this
 
   setFormVariables: ->
@@ -89,5 +91,4 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
     console.log loginFormObject
     loginFormObject
-
 

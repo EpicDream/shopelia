@@ -9,6 +9,9 @@
 //= require jquery_ujs
 //= require html_app/jquery-ui-1.10.3.custom.min
 //= require html_app/jquery.leanModal.min
+//= require html_app/i18n/messages.fr.js
+//= require html_app/parsley.extend.js
+//= require html_app/parsley
 //= require bootstrap
 //= require underscore
 //= require backbone
@@ -17,6 +20,7 @@
 //= require html_app/shopelia
 //= require_tree ../../templates
 //= require_tree ./models
+//= require ./views/form
 //= require_tree ./views
 //= require_tree ./routers
 //= require_directory .

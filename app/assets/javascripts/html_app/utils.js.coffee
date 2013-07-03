@@ -10,6 +10,13 @@ window.eraseErrors =  ->
   $(".control-group").removeClass('error')
   $('.help-inline').remove()
 
+#window.eraseError = () ->
+#  console.log("erase ERROR")
+#  console.log($(this))
+#  $(this).parents(".control-group").removeClass('error')
+#  $(this).popover('destroy')
+
+
 window.displayErrors = (errors) ->
   keys = _.keys(errors)
   _.each(keys,(key) ->
@@ -33,6 +40,12 @@ window.split =  (fullName) ->
     [lastName,'']
   else
     [firstName,lastName]
+
+window.getMessageFromConstraint = (messages,constraint) ->
+  result = messages[constraint.name]
+  unless 'string' == typeof result
+    result = result[constraint.requirements]
+  result
 
 window.countries =
 {

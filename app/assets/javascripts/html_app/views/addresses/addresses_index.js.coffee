@@ -1,4 +1,4 @@
-class Shopelia.Views.AddressesIndex extends Backbone.View
+class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
 
   template: JST['addresses/index']
 
@@ -15,6 +15,7 @@ class Shopelia.Views.AddressesIndex extends Backbone.View
     @country.autocomplete({
                           source: _.values(countries),
                           });
+    Shopelia.Views.Form.prototype.render.call(this)
     this
 
   setFormVariables: ->

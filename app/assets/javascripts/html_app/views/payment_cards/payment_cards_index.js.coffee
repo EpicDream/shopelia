@@ -1,4 +1,4 @@
-class Shopelia.Views.PaymentCardsIndex extends Backbone.View
+class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
 
   template: JST['payment_cards/index']
   className: 'paiement-view'
@@ -6,6 +6,7 @@ class Shopelia.Views.PaymentCardsIndex extends Backbone.View
   events:
     "click #btn-register-payment": "registerPaymentCard"
     'keydown input[name="number"]':'isNumberKey'
+    'keyup input[name="exp_date"]': "formatExpDate"
 
 
   initialize: ->
@@ -18,6 +19,7 @@ class Shopelia.Views.PaymentCardsIndex extends Backbone.View
       console.log(@$('#btn-register-payment'))
       @$('#btn-register-payment').remove()
     @setCardFormVariables()
+    Shopelia.Views.Form.prototype.render.call(this)
     this
 
   setPaymentCard: ->
@@ -58,16 +60,17 @@ class Shopelia.Views.PaymentCardsIndex extends Backbone.View
 
   setCardFormVariables: ->
     @cardNumber = @$('input[name="number"]')
-    @month = @$('input[name="exp_month"]')
-    @year = @$('input[name="exp_year"]')
+    @date =  @$('input[name="exp_date"]')
     @cvv = @$('input[name="cvv"]')
 
 
   cardFormSerializer: ->
     cardFormObject = {};
     cardNumber = @cardNumber.val().replace(/\s+/g,'')
-    month = @month.val()
-    year = "20" + @year.val()
+    date = @date.val()
+    month = date.substr(0,date.indexOf('/'))
+    year = date.substr(date.indexOf('/')+1)
+    year = "20" + year
     cvv =  @cvv.val()
 
     cardFormObject = {
@@ -88,44 +91,18 @@ class Shopelia.Views.PaymentCardsIndex extends Backbone.View
     charCode = (if (evt.which) then evt.which else event.keyCode)
     return false  if charCode > 31 and (charCode < 48 or charCode > 57)
     @addSpaceToCardNumber()
-    @cardNumber.popover({
-                        'trigger': 'manual'
-                        'placement': 'top',
-                        'content': 'Please enter a valid Credit Card Number'
-                        })
-    if @cardNumber.val().length == 19
-        if @checkLuhn()
-          @cardNumber.parents(".control-group").addClass('success')
-          @cardNumber.popover('hide')
-        else
-          @cardNumber.parents(".control-group").addClass('error')
-          @cardNumber.popover('show')
-    else
-      @cardNumber.parents(".control-group").removeClass('success')
-      @cardNumber.parents(".control-group").removeClass('error')
     true
 
   addSpaceToCardNumber: ->
     newValue = @cardNumber.val()
-    if newValue.length is 4 or newValue.length is 9 or newValue.length is 14
+    if (newValue.length is 4 or newValue.length is 9 or newValue.length is 14) and event.keyCode != 8
       newValue = newValue + " "
-    @cardNumber.val(newValue)
+      @cardNumber.val(newValue)
 
-  checkLuhn: ->
-    input = @cardNumber.val()
-    input = input.replace(/[^\d]/g, '')
-    console.log("checkLuhn")
-    sum = 0
-    numdigits = input.length
-    parity = numdigits % 2
-    i = 0
+  formatExpDate: (e) ->
+    console.log @date.val()
+    if @date.val().length == 2 && event.keyCode != 8
+      newValue = @date.val()
+      newValue = newValue + "/"
+      @date.val(newValue)
 
-    while i < numdigits
-      digit = parseInt(input.charAt(i),10)
-      console.log(digit)
-      digit *= 2  if i % 2 is parity
-      digit -= 9  if digit > 9
-      sum += digit
-      i++
-    console.log(sum)
-    (sum % 10) is 0
