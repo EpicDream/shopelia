@@ -1,9 +1,9 @@
-class Api::V1::Leetchi::NotificationsController < Api::V1::BaseController
+class Api::V1::MangoPay::NotificationsController < Api::V1::BaseController
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_developer!
   before_filter :prepare_params
 
-  api :GET, "/callback/operations", "Leetchi callback"
+  api :GET, "/mangopay/notifications", "MangoPay callback"
   param :operation, String, "JSON encoded operation", :required => true
   def index
     render :json => ""

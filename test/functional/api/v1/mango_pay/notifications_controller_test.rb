@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Api::V1::Leetchi::NotificationsControllerTest < ActionController::TestCase
+class Api::V1::MangoPay::NotificationsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   test "it should process notifications" do

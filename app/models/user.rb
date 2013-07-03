@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
   after_create :send_confirmation_email
   after_create :leftronic_users_count
   after_destroy :leftronic_users_count
-  before_update :update_leetchi_user, :if => Proc.new { |user| user.leetchi_id.present? && (first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?) }
+  before_update :update_mangopay_user, :if => Proc.new { |user| user.mangopay_id.present? && (first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?) }
   after_create :notify_creation_to_admin
 
   def addresses= params
@@ -132,8 +132,8 @@ class User < ActiveRecord::Base
     self.send_confirmation_instructions if self.errors.count == 0 && @confirmation_delayed
   end
   
-  def update_leetchi_user
-    Leetchi::User.update(user.leetchi_id, {
+  def update_mangopay_user
+    MangoPay::User.update(user.mangopay_id, {
       'Email' => user.email,
       'FirstName' => user.first_name,
       'LastName' => user.last_name,

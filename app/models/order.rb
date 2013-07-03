@@ -2,7 +2,7 @@ class Order < ActiveRecord::Base
   audited
   
   STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "pending_injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
-  ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "leetchi"]
+  ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "mangopay"]
 
   belongs_to :user
   belongs_to :merchant
@@ -21,8 +21,8 @@ class Order < ActiveRecord::Base
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
-  attr_accessible :leetchi_contribution_id, :leetchi_contribution_amount, :leetchi_contribution_status
-  attr_accessible :leetchi_contribution_message
+  attr_accessible :mangopay_contribution_id, :mangopay_contribution_amount, :mangopay_contribution_status
+  attr_accessible :mangopay_contribution_message
   attr_accessor :products, :confirmation
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
@@ -121,11 +121,11 @@ class Order < ActiveRecord::Base
         # MangoPay billing
         elsif self.billing_solution == "mangopay"
           self.state = :billing
-          billing_result = LeetchiFunnel.bill(self)
+          billing_result = MangoPayFunnel.bill(self)
           if billing_result["Status"] == "success"
           
             # Billing success
-            if self.reload.leetchi_contribution_status == "success"              
+            if self.reload.mangopay_contribution_status == "success"              
             
               # Limonetik CVD & injection
               if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
@@ -141,7 +141,7 @@ class Order < ActiveRecord::Base
             # Billing failure
             else
               callback_vulcain(false)
-              abort(self.leetchi_contribution_message, :billing)
+              abort(self.mangopay_contribution_message, :billing)
             end
             
           else

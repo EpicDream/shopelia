@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-module LeetchiFunnel
+module MangoPayFunnel
 
   def self.bill order
     return if Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
@@ -20,14 +20,14 @@ module LeetchiFunnel
     end
     
     # Ensure order hasn't already a contribution id
-    if order.leetchi_contribution_id.present?
-      return error "Order has already been billed on Leetchi"
+    if order.mangopay_contribution_id.present?
+      return error "Order has already been billed on MangoPay"
     end
     
-    # Create leetchi user object if necessary
-    if order.user.leetchi_id.nil?
+    # Create mangopay user object if necessary
+    if order.user.mangopay_id.nil?
       user = order.user
-      remote_user = Leetchi::User.create({
+      remote_user = MangoPay::User.create({
           'Tag' => Rails.env.test? ? "User test" : user.id.to_s,
           'Email' => user.email,
           'FirstName' => user.first_name,
@@ -39,36 +39,36 @@ module LeetchiFunnel
           'IP' => user.ip_address
       })
       if remote_user["ID"].present?
-        user.update_attribute :leetchi_id, remote_user["ID"].to_i
+        user.update_attribute :mangopay_id, remote_user["ID"].to_i
       else
-        return error "Impossible to create leetchi user object", remote_user
+        return error "Impossible to create mangopay user object", remote_user
       end
     end
     
     # Create a wallet and attach it to order
-    if order.leetchi_wallet_id.nil?
-      wallet = Leetchi::Wallet.create({
+    if order.mangopay_wallet_id.nil?
+      wallet = MangoPay::Wallet.create({
           'Tag' => order.uuid,
-          'Owners' => [order.user.leetchi_id]
+          'Owners' => [order.user.mangopay_id]
       })
       if wallet["ID"].present?
-        order.update_attribute :leetchi_wallet_id, wallet["ID"].to_i
+        order.update_attribute :mangopay_wallet_id, wallet["ID"].to_i
       else
-        return error "Impossible to create leetchi wallet object", wallet
+        return error "Impossible to create mangopay wallet object", wallet
       end
     end
 
-    # Create payment card leetchi object if necessary
-    if order.payment_card.leetchi_id.nil?
+    # Create payment card mangopay object if necessary
+    if order.payment_card.mangopay_id.nil?
       card = order.payment_card
-      remote_card = Leetchi::Card.create({
+      remote_card = MangoPay::Card.create({
           'Tag' => card.id.to_s,
-          'OwnerID' => card.user.leetchi_id,
+          'OwnerID' => card.user.mangopay_id,
           'ReturnURL' => 'https://www.shopelia.fr/null'
       })
       if remote_card['ID'].present?
         # If API is stubbed, skip card injection
-        unless Rails.env.test? && File.exist?("#{Rails.root}/test/fixtures/cassettes/leetchi.yml")
+        unless Rails.env.test? && File.exist?("#{Rails.root}/test/fixtures/cassettes/mangopay.yml")
           begin
             PaylineDriver.inject(card,remote_card["RedirectURL"]) 
           rescue PaylineDriver::DriverError => e
@@ -76,50 +76,50 @@ module LeetchiFunnel
           end
         end
       else
-        return error "Impossible to create leetchi payment card object", remote_card
+        return error "Impossible to create mangopay payment card object", remote_card
       end
       
       # Wait for card approval
       attempts = 0
       begin
         sleep 1 if attempts > 0
-        check_card = Leetchi::Card.details(remote_card['ID'])
+        check_card = MangoPay::Card.details(remote_card['ID'])
         attempts += 1
       end while not (check_card["CardNumber"] || "").length == 16 || attempts > 30
     
       if (check_card["CardNumber"] || "").length == 16
-        card.update_attribute :leetchi_id, remote_card["ID"].to_i
+        card.update_attribute :mangopay_id, remote_card["ID"].to_i
       else
-        Leetchi::Card.delete(remote_card["ID"])
-        return error "Leetchi card injection from Payline timed out", check_card
+        MangoPay::Card.delete(remote_card["ID"])
+        return error "MangoPay card injection from Payline timed out", check_card
       end
     end
  
     # Initiate an immediate contribution
-    if order.payment_card.leetchi_id.present?
-      contribution = Leetchi::ImmediateContribution.create({
+    if order.payment_card.mangopay_id.present?
+      contribution = MangoPay::ImmediateContribution.create({
         'Tag' => order.uuid,
-        'UserID' => order.user.leetchi_id,
-        'WalletID' => order.leetchi_wallet_id,
-        'PaymentCardID' => order.payment_card.leetchi_id,
+        'UserID' => order.user.mangopay_id,
+        'WalletID' => order.mangopay_wallet_id,
+        'PaymentCardID' => order.payment_card.mangopay_id,
         'Amount' => (order.prepared_price_total*100).to_i
       })
       if contribution['ID'].present?
         order.update_attributes(
-          :leetchi_contribution_id => contribution['ID'],
-          :leetchi_contribution_amount => contribution['Amount'],
-          :leetchi_contribution_status => contribution['IsSucceeded'] ? "success" : "error",
-          :leetchi_contribution_message => contribution['AnswerMessage']
+          :mangopay_contribution_id => contribution['ID'],
+          :mangopay_contribution_amount => contribution['Amount'],
+          :mangopay_contribution_status => contribution['IsSucceeded'] ? "success" : "error",
+          :mangopay_contribution_message => contribution['AnswerMessage']
         )
         return success    
       elsif contribution['Type'] == "PaymentSystem"
         order.update_attributes(
-          :leetchi_contribution_status => "error",
-          :leetchi_contribution_message => "#{contribution['UserMessage']} #{contribution['TechnicalMessage']}"
+          :mangopay_contribution_status => "error",
+          :mangopay_contribution_message => "#{contribution['UserMessage']} #{contribution['TechnicalMessage']}"
         )
         return success        
       else
-        return error "Impossible to create leetchi immediate contribution object", contribution
+        return error "Impossible to create mangopay immediate contribution object", contribution
       end   
     end
 

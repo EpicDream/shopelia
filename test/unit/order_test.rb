@@ -532,7 +532,7 @@ class OrderTest < ActiveSupport::TestCase
   test "[beta] it should complete order" do
     allow_remote_api_calls    
     configuration_beta
-    VCR.use_cassette('leetchi') do
+    VCR.use_cassette('mangopay') do
       start_order
       assess_order
     end
@@ -551,7 +551,7 @@ class OrderTest < ActiveSupport::TestCase
     allow_remote_api_calls    
     configuration_beta
     @order.update_attribute :expected_price_total, 333.05
-    VCR.use_cassette('leetchi') do
+    VCR.use_cassette('mangopay') do
       start_order
       assess_order 333.05
     end
