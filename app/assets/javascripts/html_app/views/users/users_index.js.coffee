@@ -29,44 +29,45 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
 
   createUser: (e) ->
     console.log("trigger createUser")
-    eraseErrors()
-    e.preventDefault()
-    that = this
-    session = new Shopelia.Models.Session()
-    session.on("invalid", (model, errors) ->
-       displayErrors(errors)
-    )
+    if $('form').parsley( 'validate' )
+      eraseErrors()
+      e.preventDefault()
+      that = this
+      session = new Shopelia.Models.Session()
+      session.on("invalid", (model, errors) ->
+         displayErrors(errors)
+      )
 
-    address = @addressView.setAddress()
-    card = null
-    if @randomBool
-      card = @paymentCardView.setPaymentCard()
-      cardIsValid = card.isValid()
-      sessionJson = @formSerializer(address,card.disableWrapping())
-    else
-      cardIsValid = true
-      sessionJson = @formSerializer(address,card)
+      address = @addressView.setAddress()
+      card = null
+      if @randomBool
+        card = @paymentCardView.setPaymentCard()
+        cardIsValid = card.isValid()
+        sessionJson = @formSerializer(address,card.disableWrapping())
+      else
+        cardIsValid = true
+        sessionJson = @formSerializer(address,card)
 
 
-    session.set(sessionJson)
-    sessionIsValid = session.isValid()
-    addressIsValid = address.isValid()
+      session.set(sessionJson)
+      sessionIsValid = session.isValid()
+      addressIsValid = address.isValid()
 
-    console.log("Addresss MAAAAAN" + JSON.stringify(address))
-    if cardIsValid && addressIsValid && sessionIsValid
-      session.save(sessionJson,{
-                                success : (resp) ->
-                                  console.log('success callback')
-                                  console.log("response user save: " + JSON.stringify(resp))
-                                  if that.randomBool
-                                    goToOrdersIndex(resp,that.options.product)
-                                  else
-                                    goToPaymentCardStep(resp,that.options.product)
-                                error : (model, response) ->
-                                  console.log(JSON.stringify(response))
-                                  displayErrors($.parseJSON(response.responseText))
+      console.log("Addresss MAAAAAN" + JSON.stringify(address))
+      if cardIsValid && addressIsValid && sessionIsValid
+        session.save(sessionJson,{
+                                  success : (resp) ->
+                                    console.log('success callback')
+                                    console.log("response user save: " + JSON.stringify(resp))
+                                    if that.randomBool
+                                      goToOrdersIndex(resp,that.options.product)
+                                    else
+                                      goToPaymentCardStep(resp,that.options.product)
+                                  error : (model, response) ->
+                                    console.log(JSON.stringify(response))
+                                    displayErrors($.parseJSON(response.responseText))
 
-      })
+        })
 
 
 

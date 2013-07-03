@@ -4,7 +4,7 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
 
   events:
     "keypress input[name='address1']": "getLocation"
-    "keydown input[name='address1']": "eraseAddressFields"
+    "change input[name='address1']": "eraseAddressFields"
 
   initialize: ->
     _.bindAll this
@@ -113,6 +113,7 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
 
   populateAddressFields: (address) ->
     console.log("lalal" + address)
+    @eraseAddressFields()
     @address1.val(address.address1)
     @zip.val(address.zip)
     @city.val(address.city)

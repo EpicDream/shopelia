@@ -78,6 +78,14 @@ window.ParsleyConfig = window.ParsleyConfig || {};
                 }
                 return sum % 10 === 0;
             }
+            , expirationdate: function(val,elem,self) {
+                var parts = val.split(/[.\/-]+/);
+                var month = parseInt(parts[0], 10);
+                var year = parseInt(parts[1], 10);
+                var currentDate =  new Date(Date.now());
+                var fullExpirationYear = 2000 + year;
+                return year != 0 && month != 0 && currentDate.getFullYear() <= fullExpirationYear &&  month <= 12
+            }
 
             , americandate: function ( val, elem, self) {
                 if(!/^([01]?[0-9])[\.\/-]([0-3]?[0-9])[\.\/-]([0-9]{4}|[0-9]{2})$/.test(val)) {
@@ -107,6 +115,7 @@ window.ParsleyConfig = window.ParsleyConfig || {};
             , afterdate:      "This date should be after %s."
             , luhn:           "This value should pass the luhn test."
             , americandate:	"This value should be a valid date (MM/DD/YYYY)."
+            , expirationdate: "This value should be a valid date (MM/YY)"
         }
     });
 }(window.jQuery || window.Zepto));

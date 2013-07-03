@@ -5,12 +5,12 @@
         </div>
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" data-required="true" data-trigger="focusin" data-type="email" data-validation-minlength="0" class="input-block-level" placeholder= "Email" name="email">
+                <input rel="popover" type="text" data-required="true" data-trigger="focusout" data-type="email" class="input-block-level" placeholder= "Email" name="email">
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" data-required="true" data-trigger="keyup"  class="input-block-level"  placeholder= "Téléphone" name="phone">
+                <input rel="popover" type="text" data-required="true" data-trigger="focusout" data-type="number" class="input-block-level"  placeholder= "Téléphone" name="phone">
             </div>
         </div>
         <div class="field-title">
