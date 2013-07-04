@@ -92,7 +92,12 @@ class User < ActiveRecord::Base
       if data["pincode"].eql?(self.pincode) && self.pincode.present?
         self.user_verification_failures.destroy_all
         return true
-      end      
+      end
+    elsif data["password"].present?
+      if self.valid_password?(data["password"]) && self.encrypted_password.present?
+        self.user_verification_failures.destroy_all
+        return true
+      end        
     elsif data["cc_num"].present? && data["cc_month"].present? && data["cc_year"].present?
       self.payment_cards.each do |card|
         if card.number.last(4).eql?(data["cc_num"]) && card.exp_month.to_i == data["cc_month"].to_i && card.exp_year.last(2).eql?(data["cc_year"])
