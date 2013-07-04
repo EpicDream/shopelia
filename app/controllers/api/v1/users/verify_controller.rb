@@ -11,7 +11,7 @@ class Api::V1::Users::VerifyController < Api::V1::BaseController
     if delay > 0
       render :json => { :delay => delay }, :status => 503
     elsif current_user.verify(params)
-      render json: UserSerializer.new(current_user).as_json
+      render json: UserSerializer.new(current_user).as_json, :status => 204
     else
       head :unauthorized
     end
