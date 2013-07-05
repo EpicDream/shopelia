@@ -1,5 +1,5 @@
 #sessionForm
-  = simple_form_for resource, as:resource_name, remote: true, wrapper: :bootstrap, url:session_path(resource_name), html:{class:'modal-form form-horizontal'} do |f|
+  = simple_form_for resource, as:resource_name, remote: true, wrapper: :bootstrap, url:session_path(resource_name), html:{class:'modal-form form-horizontal',id:'loginForm'} do |f|
     .modal-body
       .controls
         #sessionError
@@ -13,3 +13,9 @@
         = I18n.t("app.cancel")
       = f.button :submit, I18n.t("app.sign_in"), class:'btn-success btn-large', id:'submit-form', disable_with:I18n.t("app.wait")
 
+:javascript
+  $(document).ready(function() {
+    $('#loginForm').on('ajax:error', function(data, xhr, response) { 
+      $('#sessionError').html(xhr.responseText).show('fast');
+    });
+  });

@@ -1,13 +1,9 @@
 class AddressesController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :retrieve_address, :only => [:show, :destroy, :update]
   
   def new
     @address = Address.new(first_name:current_user.first_name, last_name:current_user.last_name)
-    render partial:"form"
-  end
-  
-  def show
-    @address = Address.find(params[:id])
   end
   
   def create
@@ -27,7 +23,6 @@ class AddressesController < ApplicationController
   end
 
   def destroy
-    @address = Address.find(params[:id])
     @address.destroy
     
     respond_to do |format|
@@ -36,5 +31,12 @@ class AddressesController < ApplicationController
       format.js
     end
   end    
+  
+  private
+  
+  def retrieve_address
+    @address = Address.find(params[:id])
+    render :status => :unauthorized and return if @address.user.id != current_user.id
+  end
   
 end
