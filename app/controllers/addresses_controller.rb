@@ -5,7 +5,11 @@ class AddressesController < ApplicationController
     @address = Address.new(first_name:current_user.first_name, last_name:current_user.last_name)
     render partial:"form"
   end
-
+  
+  def show
+    @address = Address.find(params[:id])
+  end
+  
   def create
     @address = Address.new(params[:address].merge(user_id:current_user.id));
 
@@ -21,5 +25,16 @@ class AddressesController < ApplicationController
       end
     end
   end
+
+  def destroy
+    @address = Address.find(params[:id])
+    @address.destroy
+    
+    respond_to do |format|
+      format.html { redirect_to addresses_path }
+      format.json { head :ok }
+      format.js
+    end
+  end    
   
 end

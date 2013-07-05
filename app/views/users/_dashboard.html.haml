@@ -1,8 +1,8 @@
 .span4
   %h1= t('app.my_addresses')
   - current_user.addresses.each do |address|
-    .row.address-area{:id => "address-#{address.id}"}
-      .span11
+    .row.well.fade-area{:id => "address-#{address.id}"}
+      .span10
         %address
           %strong
             = "#{address.first_name} #{address.last_name}"
@@ -16,7 +16,7 @@
           %br
           = address.country.name
           %br
-      .span1
+      .span2
         %a{:class => "btn ", :style => "display:none", :id => "deleteAddressButton-#{address.id}", "target-modal" => "deleteAddressModal"}
           %i{:class => "icon-trash"}
 
@@ -28,14 +28,14 @@
 .span4
   %h1= t('app.my_payment_cards')
   - current_user.payment_cards.each do |card|
-    .row.card-area{:id => "card#{card.id}"}
-      .span11
+    .row.well.fade-area{:id => "card#{card.id}"}
+      .span10
         %address
           = card.number[0..1] + "XXXXXXXXXX" + card.number[12..15]
           %br
           = "#{card.exp_month}/#{card.exp_year}"
           %br
-      .span1
+      .span2
         %a{:class => "btn", :style => "display:none", :id => "deleteCardButton-#{card.id}", "target-modal" => "deleteCardModal"}
           %i{:class => "icon-trash"}
 

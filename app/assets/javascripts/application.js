@@ -22,5 +22,17 @@ $(document).ready(function() {
       $(this).unbind('shown');
     });
   });
+  $(".fade-area").hover(
+    function() {
+      $(this).find("a").each(function() {
+        $(this).fadeIn(100);
+      })
+    },
+    function() {
+      $(this).find("a").each(function() {
+        $(this).fadeOut(100);
+      })
+    } 
+  );
 });
 
