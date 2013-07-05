@@ -130,6 +130,11 @@ class UserTest < ActiveSupport::TestCase
     @user.pincode = ""
     assert !@user.verify({ "pincode" => "" })
   end
+
+  test "it should verify user by password" do
+    assert @user.verify({ "password" => "tototo" })
+    assert !@user.verify({ "password" => "bla" })
+  end
   
   test "it should verify user by cc number" do
     assert @user.verify({ "cc_num" => "0154", "cc_month" => "02", "cc_year" => "15" })

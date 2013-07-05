@@ -20,8 +20,9 @@ class AddressTest < ActiveSupport::TestCase
       :country_iso => "fr")
     
     assert address.save, address.errors.full_messages.join(",")
-    assert_equal "Eric", address.first_name
+    assert_equal "Eric", address.reload.first_name
     assert_equal "Larcheveque", address.last_name    
+    assert_equal "0646403619", address.phone
     assert address.is_default?, "New address must be default"
     assert !@address.reload.is_default?, "Old address musn't be default"
 
@@ -99,4 +100,17 @@ class AddressTest < ActiveSupport::TestCase
     assert_equal "address_destroyed", order.message
   end
 
+  test "it should rewrite international phone format" do
+    address = Address.new(
+      :user_id => @user.id,
+      :phone => "+33646403619",
+      :address1 => "21 rue d'Aboukir",
+      :zip => "75002",
+      :city => "Paris",
+      :is_default => true,
+      :country_iso => "fr")
+    assert address.save
+    assert_equal "0646403619", address.reload.phone
+  end
+  
 end

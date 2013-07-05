@@ -33,6 +33,9 @@ class Address < ActiveRecord::Base
       record.country_id = Country.find_by_iso(record.country_iso.upcase).id unless record.country_iso.blank?
       record.country_id = Country.find_by_name("France").id if record.country_id.nil?
     end
+    if record.phone =~ /^\+33/
+      record.phone.gsub! "+33", "0"
+    end
     record.first_name = record.user.first_name if record.first_name.blank?
     record.last_name = record.user.last_name if record.last_name.blank?
   end
