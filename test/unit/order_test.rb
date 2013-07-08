@@ -490,7 +490,15 @@ class OrderTest < ActiveSupport::TestCase
     
     assert_equal :completed, @order.state
   end
-  
+
+  test "[alpha] it should auto cancel order if price is higher" do
+    configuration_alpha
+    start_order
+    assess_order_with_higher_price
+    
+    assert_equal :querying, @order.state
+  end
+
   test "[alpha] it should fail if vulcain assessment is incorrectly formatted" do
     configuration_alpha
     start_order

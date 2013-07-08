@@ -54,14 +54,15 @@ class Order < ActiveRecord::Base
   end
   
   def start
-    return unless [:initialized, :pending_agent, :querying].include?(state) && self.payment_card_id.present? && self.order_items.count > 0
+    return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.payment_card_id.present? && self.order_items.count > 0
     @questions = []
     self.error_code = nil
     self.message = nil
     self.state = :preparing
+    self.save
     assess Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
     Leftronic.new.notify_order(self)
-    self.save
+    true
   end
 
   def restart
