@@ -45,7 +45,6 @@ var ShopeliaCheckout = {
         iframe.height = "100%";
         iframe.width = "100%";
         iframe.allowtransparency = "true";
-        console.log(iframe);
         document.getElementById('lean_overlay').appendChild(iframe);
     },
     generateEncodedUri: function(options) {
@@ -62,27 +61,21 @@ var ShopeliaCheckout = {
             i ++;
             uri += key +"=" + encodeURIComponent(value);
         }
-        console.log("uri");
-        console.log(uri);
         return uri
     },
     handleIframe: function(options) {
-        window.addEventListener("DOMContentLoaded", function() {
-            var iframe = document.querySelector("iframe")
-                , _window = iframe.contentWindow;
+        var iframe = document.querySelector("iframe")
+            , _window = iframe.contentWindow;
+        window.addEventListener("message", function(e) {
+            if ( e.data === "loaded" && e.origin === iframe.src.split("/").splice(0, 3).join("/")) {
+                _window.postMessage(document.location.origin, iframe.src);
+            } else if (e.data == "deleteIframe" && e.origin === iframe.src.split("/").splice(0, 3).join("/"))
+            {
+                iframe.parentNode.removeChild(iframe);
+                var overlay = document.getElementById("lean_overlay");
+                overlay.parentNode.removeChild(overlay);
+            }
+        })
 
-            window.addEventListener("message", function(e) {
-                if ( e.data === "loaded" && e.origin === iframe.src.split("/").splice(0, 3).join("/")) {
-                    _window.postMessage(document.location.origin, iframe.src);
-                    console.log(options.developer_key)
-                } else if (e.data == "deleteIframe" && e.origin === iframe.src.split("/").splice(0, 3).join("/"))
-                {
-                    iframe.parentNode.removeChild(iframe);
-                    var overlay = document.getElementById("lean_overlay");
-                    overlay.parentNode.removeChild(overlay);
-                }
-            })
-
-        }, false);
     }
 };

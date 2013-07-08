@@ -30,6 +30,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
   createUser: (e) ->
     console.log("trigger createUser")
     if $('form').parsley( 'validate' )
+      @$("#btn-register-user").attr('disabled', 'disabled');
       eraseErrors()
       e.preventDefault()
       that = this

@@ -14,7 +14,7 @@
 </div>
 <div class="control-group pull-right">
     <div class="controls">
-        <input rel="popover" class="input-block-level"type="text" data-storage="false" data-trigger="change focusout" maxlength="3" data-required="true" data-minlength="3" data-type="number" placeholder="Code CV" name="cvv">
+        <input rel="popover" class="input-block-level"type="text" data-storage="false" data-trigger="change focusout" maxlength="3" data-required="true" data-minlength="3" data-type="number" placeholder="Code de sécurité" name="cvv">
     </div>
 </div>
 <button id="btn-register-payment" class="custom-btn btn-block">POURSUIVRE MA COMMANDE</button>
