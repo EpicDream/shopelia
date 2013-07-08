@@ -7,12 +7,17 @@ class Product < ActiveRecord::Base
   
   before_validation :extract_merchant_from_url
   before_validation :monetize_url
+  before_save :truncate_name
   
   def self.fetch url
     Product.find_or_create_by_url(Linker.monetize(url)) unless url.nil?
   end
   
   private
+  
+  def truncate_name
+    self.name = self.name[0..249] if self.name && self.name.length > 250
+  end
   
   def monetize_url
     self.url = Linker.monetize(self.url) unless self.url.nil?
