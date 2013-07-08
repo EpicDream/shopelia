@@ -29,7 +29,7 @@ var ShopeliaCheckout = {
             el.style.left = '0px';
             el.style.height = '100%';
             el.style.width = '100%';
-            el.style.zIndex = '100%';
+            el.style.zIndex = '10000';
             el.style.backgroundColor = 'rgba(0, 0, 0, 0.35)';
         });
         console.log(document.getElementById('lean_overlay'));
@@ -60,18 +60,21 @@ var ShopeliaCheckout = {
                 uri += "&"
             }
             i ++;
-            uri += key +"=" + value;
+            uri += key +"=" + encodeURIComponent(value);
         }
-        return encodeURI(uri)
+        console.log("uri");
+        console.log(uri);
+        return uri
     },
     handleIframe: function(options) {
         window.addEventListener("DOMContentLoaded", function() {
             var iframe = document.querySelector("iframe")
-                , _window = iframe.contentWindow
+                , _window = iframe.contentWindow;
 
             window.addEventListener("message", function(e) {
                 if ( e.data === "loaded" && e.origin === iframe.src.split("/").splice(0, 3).join("/")) {
                     _window.postMessage(document.location.origin, iframe.src);
+                    console.log(options.developer_key)
                 } else if (e.data == "deleteIframe" && e.origin === iframe.src.split("/").splice(0, 3).join("/"))
                 {
                     iframe.parentNode.removeChild(iframe);
