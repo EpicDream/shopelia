@@ -38,6 +38,7 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
     console.log("trigger registerPaymentCard")
     if $('form').parsley( 'validate' )
       e.preventDefault()
+      @$("#btn-register-payment").attr('disabled', 'disabled');
       cardJson = @cardFormSerializer()
       that = this
       card = new Shopelia.Models.PaymentCard()
