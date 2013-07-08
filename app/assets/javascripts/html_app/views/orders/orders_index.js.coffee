@@ -11,8 +11,8 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     console.log("initialize processOrder View: ")
     console.log(@options)
     @product = @options.product
-    @expected_price_total = parseFloat(@product.get('expected_price_product')) + parseFloat(@product.get('expected_price_shipping'))
-
+    total_price = parseFloat(@product.get('expected_price_product')) + parseFloat(@product.get('expected_price_shipping'))
+    @expected_price_total = Math.ceil(total_price * 100) / 100;
 
   render: ->
     console.log(@options)
@@ -22,6 +22,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
 
   processOrder: (e) ->
     e.preventDefault()
+    @$("#process-order").attr('disabled', 'disabled');
     that = this
     console.log("processOrder")
     order = new Shopelia.Models.Order()
