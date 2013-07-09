@@ -43,8 +43,6 @@ class PaymentCard < ActiveRecord::Base
     raise ArgumentError, "Exp year does not match crypted value for PaymentCard ID #{self.id}"    unless self.exp_year == decrypted[18..21]
 
     self.number = decrypted[0..15]
-    self.exp_month = decrypted[16..17]
-    self.exp_year = decrypted[18..21]
     self.cvv = decrypted[22..24]
   end
 
