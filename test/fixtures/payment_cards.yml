@@ -1,6 +1,10 @@
 elarch_hsbc:
   user: elarch
   name: HSBC
+  number: '4XXXXXXXXXXX0154'
+  exp_month: '02'
+  exp_year: '2015'
+  cvv: 'XXX'
   crypted: "hQEMA5HH5Uj01PRKAQgAn3O4WwN0wLMhT4rOkV5qOxjm4BEFx6K3EpdOabnk
 Ky9Q97PKH0JLjN5K/x7Cj1tqFhk3F0cXcia6ZbTTdOXu5LNzbnTPYo1vsqGT
 IH8kw0/5XFUOCRGFmWl+7ulybL4pTEU8jZ3aPJ2PB5Qr9vc1uu2z0LKIlroo
@@ -16,6 +20,10 @@ HwEh90wt2VTw25BtOIGqUhB1ukytTdx+H1JfxhwerILPNslft0joHEySC9zu
 manu_hsbc:
   user: manu
   name: HSBC
+  number: '4XXXXXXXXXXX0154'
+  exp_month: '02'
+  exp_year: '2015'
+  cvv: 'XXX'
   crypted: "hQEMA5HH5Uj01PRKAQgAn3O4WwN0wLMhT4rOkV5qOxjm4BEFx6K3EpdOabnk
 Ky9Q97PKH0JLjN5K/x7Cj1tqFhk3F0cXcia6ZbTTdOXu5LNzbnTPYo1vsqGT
 IH8kw0/5XFUOCRGFmWl+7ulybL4pTEU8jZ3aPJ2PB5Qr9vc1uu2z0LKIlroo

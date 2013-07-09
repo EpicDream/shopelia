@@ -4,20 +4,17 @@ class PaymentCard < ActiveRecord::Base
   
   validates :user, :presence => true
 
-  attr_accessor :number, :exp_month, :exp_year, :cvv
-  attr_accessible :number, :exp_month, :exp_year, :cvv, :user_id
-
   before_destroy :destroy_leetchi_payment_card, :if => Proc.new { |card| card.leetchi_id.present? }
+  validates :number, :presence => true, :length => { :is => 16 }
+  validates :exp_month, :presence => true, :inclusion => { :in => "01".."12" }
+  validates :exp_year, :presence => true, :inclusion => {:in => (Time.now.year..(Time.now.year + 10)).map{|i| i.to_s} }
+  validates :cvv, :presence => true, :length => { :is => 3 }
 
   after_initialize :decrypt
+  after_save :decrypt
   before_save :crypt
 
   def crypt
-
-    raise ArgumentError, "card number is invalid: #{self.number}"   unless self.number =~ /\A[0-9]{16}\Z/
-    raise ArgumentError, "card month is invalid: #{self.exp_month}" unless PaymentCard.months.include?(self.exp_month)
-    raise ArgumentError, "card year is invalid: #{self.exp_year}"   unless PaymentCard.years.include?(self.exp_year)
-    raise ArgumentError, "card cvv is invalid: #{self.cvv}"         unless self.cvv =~ /\A[0-9]{3}\Z/
 
     card_data = "#{self.number}#{self.exp_month}#{self.exp_year}#{self.cvv}"
     obfuscated = ''
@@ -30,14 +27,21 @@ class PaymentCard < ActiveRecord::Base
         i += 1
       end
     end
-
     self.crypted = Base64::encode64($crypto.encrypt(obfuscated, :recipients => "gpg-#{Rails.env}@shopelia.com").to_s)
+    self.number = "#{self.number[0]}XXXXXXXXXXX#{self.number[12..15]}"
+    self.cvv = 'XXX'
   end
  
   def decrypt
     return if self.crypted.nil?
     obfuscated = $crypto.decrypt(GPGME::Data.new(Base64::decode64(self.crypted)))
     decrypted = obfuscated.to_s.gsub(/[^0-9]/, '')
+    raise ArgumentError, "Card data is invalid for PaymentCard ID #{self.id}" unless decrypted =~ /\A[0-9]{25}\Z/
+    raise ArgumentError, "Number does not match crypted value for PaymentCard ID #{self.id}" unless self.number[0] == decrypted[0]
+    raise ArgumentError, "Number does not match crypted value for PaymentCard ID #{self.id}" unless self.number[12..15] == decrypted[12..15]
+    raise ArgumentError, "Exp month does not match crypted value for PaymentCard ID #{self.id}"   unless self.exp_month == decrypted[16..17]
+    raise ArgumentError, "Exp year does not match crypted value for PaymentCard ID #{self.id}"    unless self.exp_year == decrypted[18..21]
+
     self.number = decrypted[0..15]
     self.exp_month = decrypted[16..17]
     self.exp_year = decrypted[18..21]
