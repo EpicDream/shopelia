@@ -15,11 +15,6 @@ var ShopeliaCheckout = {
     },
     createIframe: function(options) {
         console.log("create iframe");
-        var div = document.createElement('div');
-        div.id = 'container';
-        div.rel = 'leanModal';
-        div.href = '#overlay';
-        document.body.appendChild(div);
         var overlay = document.createElement('div');
         overlay.id = 'lean_overlay';
         document.body.appendChild(overlay);
@@ -33,10 +28,10 @@ var ShopeliaCheckout = {
             el.style.backgroundColor = 'rgba(0, 0, 0, 0.35)';
         });
         console.log(document.getElementById('lean_overlay'));
-        var iframe = document.createElement('iframe')
+        var iframe = document.createElement('iframe');
         iframe.setAttribute("src",this.generateEncodedUri(options));
         iframe.style.border = "0px #FFFFFF none";
-        iframe.style.id = "shopeliaIframe";
+        iframe.id = "shopeliaIframe";
         iframe.name = "shopeliaIframe";
         iframe.scrolling = "yes";
         iframe.frameborder ="0";
@@ -64,18 +59,23 @@ var ShopeliaCheckout = {
         return uri
     },
     handleIframe: function(options) {
-        var iframe = document.querySelector("iframe")
+        console.log("handleIframe begins");
+        var iframe = document.querySelector("#shopeliaIframe")
             , _window = iframe.contentWindow;
-        window.addEventListener("message", function(e) {
+
+        var listener =  function(e) {
             if ( e.data === "loaded" && e.origin === iframe.src.split("/").splice(0, 3).join("/")) {
                 _window.postMessage(document.location.origin, iframe.src);
-            } else if (e.data == "deleteIframe" && e.origin === iframe.src.split("/").splice(0, 3).join("/"))
+            } else if (e.data === "deleteIframe" && e.origin === iframe.src.split("/").splice(0, 3).join("/"))
             {
-                iframe.parentNode.removeChild(iframe);
+                window.removeEventListener("message",listener);
+                console.log("1");
                 var overlay = document.getElementById("lean_overlay");
                 overlay.parentNode.removeChild(overlay);
             }
-        })
+        };
+
+        window.addEventListener("message",listener);
 
     }
 };
