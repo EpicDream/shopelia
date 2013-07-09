@@ -19,3 +19,4 @@ window.Shopelia =
 
 $(document).ready ->
   Shopelia.initialize()
+  Tracker.init()

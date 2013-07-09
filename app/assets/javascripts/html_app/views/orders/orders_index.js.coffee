@@ -17,6 +17,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
   render: ->
     console.log(@options)
     $(@el).html(@template(user: @user, product: @product, expected_price_total: @expected_price_total))
+    Tracker.onDisplay('Confirmation');
     this
 
 
@@ -36,6 +37,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
                  xhr.setRequestHeader("X-Shopelia-AuthToken",that.authToken)
                success: (resp) ->
                  console.log(resp)
+                 Tracker.custom("Order Completed")
                  view = new Shopelia.Views.Greetings()
                  $('#modal-right').html(view.render().el)
                error: (model, response) ->

@@ -11,6 +11,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
 
   render: ->
     $(@el).html(@template())
+    Tracker.onDisplay('Sign Up');
     console.log(@options.product)
     @addressView =  new Shopelia.Views.AddressesIndex()
     @$("#btn-register-user").before(@addressView.render().el)
