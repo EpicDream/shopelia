@@ -1,7 +1,21 @@
 class Shopelia.Views.Form extends Backbone.View
 
-
   render: ->
+    @$('form :input').each(() ->
+      $(this).focusout(() ->
+        if $(this).attr('tracker-name') != undefined &&  $(this).parsley('validate')
+          Tracker.onValidate($(this).attr('tracker-name'))
+          $(this).unbind('focusout')
+      )
+
+      $(this).focusin(() ->
+        if $(this).attr('tracker-name') != undefined
+          Tracker.onFocusIn($(this).attr('tracker-name'))
+          $(this).unbind('focusin')
+      )
+    )
+
+
     @$( 'form' ).parsley
       showErrors: false
 
@@ -37,5 +51,6 @@ class Shopelia.Views.Form extends Backbone.View
           $(elem).popover('destroy')
           $(elem).parents(".control-group").removeClass('error')
           $(elem).parents(".control-group").addClass('success')
+
       })
     this
