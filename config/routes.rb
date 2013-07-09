@@ -61,6 +61,12 @@ Shopelia::Application.routes.draw do
         resources :details, :only => :show
       end
     end
+
+    scope :module => :v2, constraints: ApiConstraints.new(version:2)  do
+      namespace :users do
+        resources :verify, :only => :create
+      end
+    end    
   end
 
   match '*not_found', to: 'errors#error_404'
