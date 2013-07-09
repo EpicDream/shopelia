@@ -5,12 +5,12 @@
         </div>
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" data-required="true" data-trigger="focusout" data-type="email" class="input-block-level" placeholder= "Email" name="email">
+                <input rel="popover" type="text" tracker-name="Email" data-required="true" data-trigger="focusout" data-type="email" class="input-block-level" placeholder= "Email" name="email">
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" data-required="true" data-trigger="focusout" data-type="number" class="input-block-level"  placeholder= "Téléphone" name="phone">
+                <input rel="popover" type="text" tracker-name= "Phone" data-required="true" data-trigger="focusout" data-type="number" class="input-block-level"  placeholder= "Téléphone" name="phone">
             </div>
         </div>
         <div class="field-title">
@@ -19,7 +19,7 @@
         </div>
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" data-required="true" data-trigger="focusout" class="input-block-level" placeholder="Prénom Nom" name="full_name">
+                <input rel="popover" type="text" tracker-name="Full Name" data-required="true" data-trigger="focusout" class="input-block-level" placeholder="Prénom Nom" name="full_name">
             </div>
         </div>
 

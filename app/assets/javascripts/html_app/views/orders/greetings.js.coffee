@@ -9,4 +9,5 @@ class Shopelia.Views.Greetings extends Backbone.View
 
   render: ->
     $(@el).html(@template())
+    Tracker.onDisplay('Greetings');
     this
