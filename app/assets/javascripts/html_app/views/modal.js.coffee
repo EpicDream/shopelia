@@ -10,12 +10,11 @@ class Shopelia.Views.Modal extends Backbone.View
   initialize: ->
     _.bindAll this
     window.addEventListener("DOMContentLoaded", () ->
-      window.parent.postMessage("loaded", "*")
       window.addEventListener("message", (e) ->
         console.log("set shopelia parent host")
-        console.log(e.origin)
         window.shopeliaParentHost = e.origin
       , false)
+      window.parent.postMessage("loaded", "*")
     , false)
 
   render: ->
@@ -39,6 +38,7 @@ class Shopelia.Views.Modal extends Backbone.View
   close: ->
     console.log("close please")
     top.postMessage("deleteIframe",window.shopeliaParentHost)
+
 
 
 
