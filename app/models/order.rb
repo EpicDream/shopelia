@@ -277,7 +277,7 @@ class Order < ActiveRecord::Base
   end
 
   def fail content, error_sym
-    return unless [:preparing].include?(state)
+    return unless [:preparing, :billing, :pending_injection].include?(state)
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending_agent
