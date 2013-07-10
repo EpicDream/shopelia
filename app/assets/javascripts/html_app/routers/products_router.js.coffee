@@ -8,11 +8,13 @@ class Shopelia.Routers.Products extends Backbone.Router
     $(window).on('resize.modal',@center)
     $(window).on('load',@center)
 
+
   showModal: (params)  ->
     @product = new Shopelia.Models.Product(params)
     view = new Shopelia.Views.Modal(product: @product)
-    $('body').append(view.render().el)
+    $('#container').append(view.render().el)
     @center()
+
 
   center: ->
     top =undefined

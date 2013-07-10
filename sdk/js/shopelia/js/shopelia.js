@@ -1,6 +1,7 @@
 var ShopeliaCheckout = {
     init: function(options) {
         var base = "https://www.shopelia.fr/checkout";
+        this.createLoader();
         this.extend(options, {base:base});
         this.createIframe(options);
         this.handleIframe(options);
@@ -13,20 +14,36 @@ var ShopeliaCheckout = {
                     arguments[0][key] = arguments[i][key];
         return arguments[0];
     },
+    createLoader: function() {
+        var loader = document.createElement('div');
+        loader.id = 'loader';
+        document.body.appendChild(loader);
+        this.center($(loader))
+    },
+    deleteLoader: function() {
+        var loader = document.getElementById("loader");
+        loader.parentNode.removeChild(loader);
+    },
+
+    center: function($elem) {
+        console.log("centering");
+        var top = undefined;
+        var left = undefined;
+        top = Math.max( $(window).height() - $elem.height(), 0) / 2 ;
+        left = Math.max( $(window).width() - $elem.outerWidth(), 0) / 2;
+        console.log(top);
+        console.log(left);
+        $elem.css({
+            "top": top,
+            "left":left
+        });
+        console.log($elem);
+    },
     createIframe: function(options) {
         console.log("create iframe");
         var overlay = document.createElement('div');
         overlay.id = 'lean_overlay';
         document.body.appendChild(overlay);
-        [].forEach.call( document.querySelectorAll('#lean_overlay'), function(el) {
-            el.style.position = 'fixed';
-            el.style.top = '0px';
-            el.style.left = '0px';
-            el.style.height = '100%';
-            el.style.width = '100%';
-            el.style.zIndex = '10000';
-            el.style.backgroundColor = 'rgba(0, 0, 0, 0.35)';
-        });
         console.log(document.getElementById('lean_overlay'));
         var iframe = document.createElement('iframe');
         iframe.setAttribute("src",this.generateEncodedUri(options));
@@ -36,6 +53,7 @@ var ShopeliaCheckout = {
         iframe.scrolling = "yes";
         iframe.frameborder ="0";
         iframe.marginHeight = "0";
+        iframe.style.opacity = "0";
         iframe.marginWidth = "0";
         iframe.height = "100%";
         iframe.width = "100%";
@@ -65,7 +83,9 @@ var ShopeliaCheckout = {
 
         var listener =  function(e) {
             if ( e.data === "loaded" && e.origin === iframe.src.split("/").splice(0, 3).join("/")) {
+                iframe.style.opacity = '1';
                 _window.postMessage(document.location.origin, iframe.src);
+                ShopeliaCheckout.deleteLoader();
             } else if (e.data === "deleteIframe" && e.origin === iframe.src.split("/").splice(0, 3).join("/"))
             {
                 window.removeEventListener("message",listener);
