@@ -4,7 +4,7 @@ namespace :shopelia do
     desc "Manage orders life cycle"
     task :monitor => :environment do
       Order.delayed.each { |order| order.notify_creation }
-      Order.expired.each { |order| order.user_time_out }
+      Order.expired.each { |order| order.shopelia_time_out }
       Order.canceled.each { |order| order.reject "price_rejected" }
       Order.preparing_stale.each { |order| order.vulcain_time_out }
 

@@ -1,6 +1,9 @@
 # -*- encoding : utf-8 -*-
 module MangoPayFunnel
 
+  #
+  # Bill a user and contrbute to its wallet
+  #
   def self.bill order
     return if Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
 
@@ -125,6 +128,42 @@ module MangoPayFunnel
 
     return error "Billing failure in funnel. Something went wrong"
   end
+
+  #
+  # Generate an Amazon Voucher from a wallet
+  #
+  def self.voucher order, store="FR"
+    return if Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
+
+    if !order.mangopay_contribution_id.present? || !order.mangopay_wallet_id.present?
+      return error "Order must have a mangopay wallet and contribution"
+    end
+    
+    # Check that wallet has exactly the needed amount
+    amount = (order.prepared_price_total*100).to_i
+    wallet = MangoPay::Wallet.details(order.mangopay_wallet_id)
+    if wallet['Amount'] != amount
+      return error "Wallet must have exactly the requested amount (has #{wallet['Amount']} but need #{amount}"
+    end
+    
+    voucher = MangoPay::AmazonVoucher.create({
+        'Tag' => order.uuid,
+        'UserID' => order.user.mangopay_id,
+        'WalletID' => order.mangopay_wallet_id,
+        'Amount' => amount,
+        'Store' => store
+      })
+    if voucher['ID'].present?
+      order.update_attributes(
+        :mangopay_amazon_voucher_id => voucher['ID'],
+        :mangopay_amazon_voucher_code => voucher['VoucherCode']
+      )
+      return success          
+    else
+      return error "Impossible to create amazon voucher", voucher
+    end
+  end
+
 
   private
 

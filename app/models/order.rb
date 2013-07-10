@@ -22,7 +22,8 @@ class Order < ActiveRecord::Base
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :mangopay_contribution_id, :mangopay_contribution_amount, :mangopay_contribution_status
-  attr_accessible :mangopay_contribution_message
+  attr_accessible :mangopay_contribution_message, :mangopay_amazon_voucher_id, :mangopay_amazon_voucher_code
+  attr_accessible :billing_solution, :injection_solution, :cvd_solution
   attr_accessor :products, :confirmation
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
@@ -133,6 +134,18 @@ class Order < ActiveRecord::Base
                 callback_vulcain(true)
                 self.state = :pending_injection
                 
+              # Amazon vouchers
+              elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
+                self.state = :preparing
+                
+                voucher_result = MangoPayFunnel.voucher(self)
+                if voucher_result["Status"] == "success"
+                  callback_vulcain(true)
+                else
+                  callback_vulcain(false)
+                  fail(voucher_result["Error"], :shopelia)
+                end
+                
               # Invalid CVD solution
               else
                 callback_vulcain(false)
@@ -147,7 +160,7 @@ class Order < ActiveRecord::Base
             
           else
             callback_vulcain(false)
-            abort(billing_result["Error"], :shopelia)
+            fail(billing_result["Error"], :shopelia)
           end
           
         # Invalid billing solution
@@ -192,7 +205,7 @@ class Order < ActiveRecord::Base
     @questions = questions
   end
   
-  def user_time_out
+  def shopelia_time_out
     abort "timed_out", :shopelia
     self.save!
   end

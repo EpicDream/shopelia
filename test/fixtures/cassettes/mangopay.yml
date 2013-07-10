@@ -246,4 +246,86 @@ http_interactions:
       string: "{\"ErrorCode\":0,\"TechnicalMessage\":\"Payline payment has failed: Do not honor (transaction #346815, result code '01100').\",\"UserMessage\":\"The contribution has failed.\",\"Type\":\"PaymentSystem\"}"
     http_version: 
   recorded_at: Wed, 03 Jul 2013 16:52:43 GMT
+- request: 
+    method: get
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/wallets/346812?ts=1373462887
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      X-Leetchi-Signature: 
+      - j0jw5Y1GoCbRKkcNshG2N3kPvrsuwkFb84VA4gZnBAORTUwmX/YjuvaZWAOupiC3ZhbpPui48bqWg2rN7XWdKFw5yDvvsIwP/0R4nLa3iyQ27zY5xnUTZGS+gC3z9bTwNnVEKPba9L9mMpax3mJfkkwwPO0hAVhZJWxQHfodODSVsQGt1k69S7FXxUgUQ1/vnWkzgsNv2PR2vr9BAwXe9McSuVxRKXnhfgOnizlzlK3y4yhObRHJJRV+oZEH85GYWJ0w89bcMslKzHB35vg0/NFKy0enhGr023QM3njN6so5hPV+fMHF33icL95yCFSokn77ePQIl8kcqyrqiXCuZQ==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Wed, 10 Jul 2013 13:28:08 GMT
+      Content-Length: 
+      - "248"
+    body: 
+      encoding: US-ASCII
+      string: "{\"Owners\":[346811],\"Name\":null,\"Description\":null,\"RaisingGoalAmount\":null,\"CollectedAmount\":1600,\"SpentAmount\":0,\"Amount\":1600,\"ContributionLimitDate\":null,\"IsClosed\":true,\"ID\":346812,\"Tag\":\"uuid\",\"CreationDate\":1372870342,\"UpdateDate\":1372870362}"
+    http_version: 
+  recorded_at: Wed, 10 Jul 2013 13:28:08 GMT
+- request: 
+    method: post
+    uri: https://api-preprod.leetchi.com/v1/partner/prixing/amazonvoucher?ts=1373462888
+    body: 
+      encoding: US-ASCII
+      string: "{\"Tag\":\"uuid\",\"UserID\":346811,\"WalletID\":346812,\"Amount\":1600,\"Store\":\"FR\"}"
+    headers: 
+      X-Leetchi-Signature: 
+      - ZiP4D2depH0SRHO5LELYUpWi9HYcsWraocaFqpQMdeSU8SsdaMaASReOC5hNpIsOOvchQ1Tx4RaSeIjZw/s6vcnSQ0NyxlKhNJDS2eeu5iDdGG+pffhxoq7kXN8FmthLDx2MVef+oDskytvoZO7Xsm+ncYY6WAMQoBQWpViszM9EofyCCbabc4l3AO5rDXviXE6+grzuCsytEuf7tGYlCsaZSs/GG3pLZ1IpKG2cUMPSrtUpfavmUQM9l0G3DFfurEKORKpm4cQOpKkfu0llQI4QeChZnEVKR9CpDaxon9WKG03fVqX0G+vYLXVcZ0URq9teY3FOfq579t/0rhlqLw==
+      Content-Type: 
+      - application/json
+      Accept: 
+      - "*/*"
+      User-Agent: 
+      - Ruby
+  response: 
+    status: 
+      code: 200
+      message: OK
+    headers: 
+      Cache-Control: 
+      - private
+      Content-Type: 
+      - application/json; charset=utf-8
+      Server: 
+      - Microsoft-IIS/8.0
+      X-Aspnetmvc-Version: 
+      - "3.0"
+      X-Aspnet-Version: 
+      - 4.0.30319
+      X-Powered-By: 
+      - ASP.NET
+      Date: 
+      - Wed, 10 Jul 2013 13:28:10 GMT
+      Content-Length: 
+      - "221"
+    body: 
+      encoding: US-ASCII
+      string: "{\"UserID\":346811,\"WalletID\":346812,\"Amount\":1600,\"IsSucceeded\":true,\"IsCompleted\":true,\"Error\":null,\"Store\":\"FR\",\"VoucherCode\":\"73UB-NFEQ4Q-JWNS\",\"ID\":372791,\"Tag\":\"uuid\",\"CreationDate\":1373462888,\"UpdateDate\":1373462890}"
+    http_version: 
+  recorded_at: Wed, 10 Jul 2013 13:28:10 GMT
 recorded_with: VCR 2.5.0

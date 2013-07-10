@@ -569,6 +569,26 @@ class OrderTest < ActiveSupport::TestCase
     assert_match /Do not honor/, @order.message
     assert_equal false, @order.questions.first["answer"]
   end
+  
+  test "[amazon] it should complete order" do
+    allow_remote_api_calls
+    configuration_amazon
+    VCR.use_cassette('mangopay') do
+      start_order
+      assess_order
+
+      assert @order.mangopay_wallet_id.present?
+      assert @order.mangopay_contribution_id.present?
+      assert_equal "success", @order.mangopay_contribution_status
+      assert_equal 1600, @order.mangopay_contribution_amount
+      assert @order.mangopay_amazon_voucher_id.present?
+      assert @order.mangopay_amazon_voucher_code.present?    
+      
+      order_success
+    end
+    
+    assert_equal :completed, @order.state
+  end
 
 =begin
   test "[beta] it should process order if billing has been accepted" do
@@ -644,12 +664,21 @@ class OrderTest < ActiveSupport::TestCase
   def configuration_alpha
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "user"
+    @order.save
   end
   
   def configuration_beta
     @order.billing_solution = "mangopay"
     @order.injection_solution = "limonetik"
     @order.cvd_solution = "limonetik"  
+    @order.save
+  end
+
+  def configuration_amazon
+    @order.billing_solution = "mangopay"
+    @order.injection_solution = "vulcain"
+    @order.cvd_solution = "amazon"
+    @order.save
   end
   
   def start_order
@@ -668,7 +697,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   def time_out_order
-    @order.user_time_out
+    @order.shopelia_time_out
     @order.reload
   end
   

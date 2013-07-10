@@ -54,6 +54,23 @@ class MangoPayFunnelTest < ActiveSupport::TestCase
       assert_equal "Transaction approved", @order.mangopay_contribution_message
     end
   end
-      
+
+  test "it shouldn't generate voucher if order doesn't have wallet and contribution" do
+    VCR.use_cassette('mangopay') do
+      result = MangoPayFunnel.voucher @order
+      assert_equal "Order must have a mangopay wallet and contribution", result["Error"]
+    end
+  end
+
+  test "it should generate voucher corresponding of the wallet amount" do
+    VCR.use_cassette('mangopay') do
+      MangoPayFunnel.bill @order
+      result = MangoPayFunnel.voucher @order.reload
+      assert_equal "success", result["Status"]
+      assert @order.reload.mangopay_amazon_voucher_id.present?
+      assert @order.mangopay_amazon_voucher_code.present?
+    end
+  end
+ 
 end
 
