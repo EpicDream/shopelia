@@ -32,6 +32,11 @@ Shopelia::Application.routes.draw do
   end
 
   namespace :api do
+    scope :module => :v2, constraints: ApiConstraints.new(version:2)  do
+      namespace :users do
+        resources :verify, :only => :create
+      end
+    end
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
@@ -61,12 +66,6 @@ Shopelia::Application.routes.draw do
         resources :details, :only => :show
       end
     end
-
-    scope :module => :v2, constraints: ApiConstraints.new(version:2)  do
-      namespace :users do
-        resources :verify, :only => :create
-      end
-    end    
   end
 
   match '*not_found', to: 'errors#error_404'

@@ -119,9 +119,9 @@ ActiveRecord::Schema.define(:version => 20130710110157) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message",                       :limit => 255
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
+    t.text     "message"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -166,10 +166,10 @@ ActiveRecord::Schema.define(:version => 20130710110157) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url",         :limit => 255
+    t.text     "url"
     t.string   "image_url"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "states", :force => true do |t|
