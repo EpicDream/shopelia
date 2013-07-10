@@ -20,12 +20,16 @@ class Shopelia.Views.Modal extends Backbone.View
   render: ->
     $(@el).html(@template())
     @open()
-    #@$('input').bind("keydown",eraseError)
+    $(@el).fadeIn('slow')
+    that = this
+    $(@el).click (e) ->
+      e.stopPropagation()
+
+    $(document).click ->
+      that.close()
     this
 
   open: (settings) ->
-    $('#modal').show()
-    $('#container').show()
     productView = new Shopelia.Views.ProductsIndex(model:@options.product)
     view = new Shopelia.Views.UsersIndex(product: @options.product)
     #view = new Shopelia.Views.OrdersIndex(product: @options.product)
@@ -33,11 +37,14 @@ class Shopelia.Views.Modal extends Backbone.View
     @$('#modal-left').append(productView.render().el)
     @$('#modal-right').append(view.render().el)
 
-
-
   close: ->
     console.log("close please")
-    top.postMessage("deleteIframe",window.shopeliaParentHost)
+    $(@el).fadeOut({
+                   duration: "fast",
+                   complete: () ->
+                    top.postMessage("deleteIframe",window.shopeliaParentHost)
+                   })
+
 
 
 
