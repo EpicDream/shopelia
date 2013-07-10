@@ -47,6 +47,7 @@ class Order < ActiveRecord::Base
   before_create :validates_products
   after_initialize :deserialize_questions
   after_create :prepare_order_items
+  after_create :mirror_solutions_from_merchant, :if => Proc.new { |order| !order.destroyed? }
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
   after_create :notify_creation_to_admin, :if => Proc.new { |order| !order.destroyed? }
   
@@ -310,6 +311,12 @@ class Order < ActiveRecord::Base
   
   def initialize_merchant_account
     self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
+  end
+  
+  def mirror_solutions_from_merchant
+    self.billing_solution = self.merchant.billing_solution if self.billing_solution.nil?
+    self.injection_solution = self.merchant.injection_solution if self.injection_solution.nil?
+    self.cvd_solution = self.merchant.cvd_solution if self.cvd_solution.nil?
   end
   
   def validates_products  

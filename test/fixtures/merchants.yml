@@ -13,6 +13,9 @@ amazon:
   tc_url: "http://www.amazon.fr/terms"
   vendor: "AmazonFrance"
   accepting_orders: true
+  billing_solution: "mangopay"
+  injection_solution: "vulcain"
+  cvd_solution: "amazon"
   
 fnac:
   name: "Fnac"

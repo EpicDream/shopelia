@@ -32,6 +32,10 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
+    
+    assert_equal "mangopay", order.billing_solution
+    assert_equal "vulcain", order.injection_solution
+    assert_equal "amazon", order.cvd_solution
   end
   
   test "it should send email if notification is requested" do

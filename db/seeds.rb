@@ -13,7 +13,8 @@ Merchant.create(
   :logo=>'http://www.prixing.fr/images/logos/amazon.png',
   :vendor=>'AmazonFrance', 
   :billing_solution => 'mangopay',
-  :injection_solution => 'amazon')
+  :injection_solution => 'vulcain',
+  :cvd_solution => 'amazon')
 Merchant.create(
   :id=>3,
   :name=>'Fnac',
