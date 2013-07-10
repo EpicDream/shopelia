@@ -138,12 +138,12 @@ class User < ActiveRecord::Base
   end
   
   def update_mangopay_user
-    MangoPay::User.update(user.mangopay_id, {
-      'Email' => user.email,
-      'FirstName' => user.first_name,
-      'LastName' => user.last_name,
-      'Nationality' => user.nationality.nil? ? "fr" : user.nationality.iso,
-      'Birthday' => user.birthdate.nil? ? 30.years.ago.to_i : user.birthdate.to_i
+    MangoPay::User.update(self.mangopay_id, {
+      'Email' => self.email,
+      'FirstName' => self.first_name,
+      'LastName' => self.last_name,
+      'Nationality' => self.nationality.nil? ? "fr" : self.nationality.iso,
+      'Birthday' => self.birthdate.nil? ? 30.years.ago.to_i : self.birthdate.to_i
     })
   end
 
