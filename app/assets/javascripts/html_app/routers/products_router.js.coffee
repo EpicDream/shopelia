@@ -1,7 +1,4 @@
 class Shopelia.Routers.Products extends Backbone.Router
-  routes: {
-  'checkout': 'showModal'
-  }
 
   initialize: ->
     _.bindAll this

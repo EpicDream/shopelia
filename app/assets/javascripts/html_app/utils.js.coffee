@@ -1,3 +1,7 @@
+window.goToSignIn = (product) ->
+  view = new Shopelia.Views.SignIn(product: product)
+  $('#modal-right').html(view.render().el)
+
 window.goToOrdersIndex =  (session,product) ->
   view = new Shopelia.Views.OrdersIndex(session: session, product: product)
   $('#modal-right').html(view.render().el)
@@ -9,12 +13,6 @@ window.goToPaymentCardStep = (session,product) ->
 window.eraseErrors =  ->
   $(".control-group").removeClass('error')
   $('.help-inline').remove()
-
-#window.eraseError = () ->
-#  console.log("erase ERROR")
-#  console.log($(this))
-#  $(this).parents(".control-group").removeClass('error')
-#  $(this).popover('destroy')
 
 
 window.displayErrors = (errors) ->

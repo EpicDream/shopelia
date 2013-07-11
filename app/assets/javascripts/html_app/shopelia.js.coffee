@@ -3,10 +3,10 @@ window.Shopelia =
   Views: {}
   Routers: {}
   initialize: ->
-    new Shopelia.Routers.Products()
-    Backbone.history.start(pushState: true)
     originalSync = Backbone.sync
     Backbone.sync = (method, model, options) ->
+      console.log("BACKBONE SYNC")
+      console.log(method)
       options.headers = options.headers or {}
       options.contentType = 'application/json'
       _.extend(options.headers, {
@@ -16,6 +16,10 @@ window.Shopelia =
                                })
 
       originalSync.call(this,method,model, options)
+    new Shopelia.Routers.Sessions()
+    Backbone.history.start(pushState: true)
+
+
 
 $(document).ready ->
   Shopelia.initialize()
