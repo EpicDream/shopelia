@@ -1,13 +1,22 @@
 class PaymentCard < ActiveRecord::Base
   belongs_to :user
   has_many :orders
-  
+ 
   validates :user, :presence => true
 
   validates :number, :presence => true, :length => { :is => 16 }
-  validates :exp_month, :presence => true, :inclusion => { :in => "01".."12" }
-  validates :exp_year, :presence => true, :inclusion => {:in => (Time.now.year..(Time.now.year + 10)).map{|i| i.to_s} }
   validates :cvv, :presence => true, :length => { :is => 3 }
+
+  def self.months
+    ("01".."12").map{|i| i}
+  end
+  validates :exp_month, :presence => true, :inclusion => { :in => PaymentCard.months }
+
+  def self.years
+    (Time.now.year..(Time.now.year + 10)).map{|i| i.to_s}
+  end
+  validates :exp_year, :presence => true, :inclusion => { :in => PaymentCard.years }
+
 
   after_initialize :decrypt
   after_save :decrypt
@@ -20,6 +29,11 @@ class PaymentCard < ActiveRecord::Base
   def crypt
 
     card_data = "#{self.number}#{self.exp_month}#{self.exp_year}#{self.cvv}"
+    unless card_data =~ /\A\d{25}\Z/
+      id = self.id.nil? ? 'nil - new card' : self.id
+      raise ArgumentError, "Will not save: card data is invalid for PaymentCard ID #{id}"
+    end
+
     obfuscated = ''
     card_data.split(//).each do |c|
       filler_size = Random.rand(4) + 1
@@ -49,15 +63,7 @@ class PaymentCard < ActiveRecord::Base
     self.cvv = decrypted[22..24]
   end
 
-  
-  def self.months
-    ("01".."12").map{|i| i}
-  end
-
-  def self.years
-    (Time.now.year..(Time.now.year + 10)).map{|i| i.to_s}
-  end
-  
+   
   
   def destroy_mangopay_payment_card
     MangoPay::Card.delete(self.mangopay_id)
