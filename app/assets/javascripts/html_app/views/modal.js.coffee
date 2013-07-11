@@ -62,5 +62,6 @@ class Shopelia.Views.Modal extends Backbone.View
     @$('#modal-right').html(el)
     if @setContentView.InitializeActionButton == undefined
       @contentView.InitializeActionButton(@$("#link-header"))
+    center($("#modal"))
 
 

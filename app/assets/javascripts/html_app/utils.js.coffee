@@ -10,6 +10,16 @@ window.eraseErrors =  ->
   $(".control-group").removeClass('error')
   $('.help-inline').remove()
 
+window.center = ($elem) ->
+  top =undefined
+  left = undefined
+  top = Math.max($(window).height() - $elem.height(), 0) / 2
+  left = Math.max($(window).width() - $elem.outerWidth(), 0) / 2
+
+  $elem.css
+    top: top
+    left: left
+
 
 window.displayErrors = (errors) ->
   keys = _.keys(errors)
