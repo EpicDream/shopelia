@@ -8,7 +8,6 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     _.bindAll this
 
 
-
   render: ->
     $(@el).html(@template())
     Tracker.onDisplay('Sign In');
@@ -39,14 +38,12 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
           session.set(resp)
           session.saveCookies(session)
           goToOrdersIndex(session,that.options.product)
-        error : (model, response) ->
+        error : (response) ->
           console.log("callback error login")
-          console.log(JSON.stringify(response))
+          console.log(JSON.stringify(response.responseText))
           displayErrors($.parseJSON(response.responseText))
 
       })
-
-
 
 
   formSerializer: ->
@@ -58,3 +55,9 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     }
     console.log loginFormObject
     loginFormObject
+
+  InitializeActionButton: (element) ->
+    element.text("Première Commande ?")
+
+  onActionClick: (e) ->
+    @parent.setContentView(new Shopelia.Views.UsersIndex(product: @options.product))

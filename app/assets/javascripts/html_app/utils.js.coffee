@@ -1,7 +1,3 @@
-window.goToSignIn = (product) ->
-  view = new Shopelia.Views.SignIn(product: product)
-  $('#modal-right').html(view.render().el)
-
 window.goToOrdersIndex =  (session,product) ->
   view = new Shopelia.Views.OrdersIndex(session: session, product: product)
   $('#modal-right').html(view.render().el)
@@ -20,9 +16,20 @@ window.displayErrors = (errors) ->
   _.each(keys,(key) ->
     if  (key == "first_name" || key == "last_name")
       errorField =  $("input[name=full_name]")
+    else if key == "error" && errors[key] == "Email ou mot de passe incorrect."
+      errorField = $("input[name=email]")
+      passwordField = $("input[name=password]")
+      passwordField.parents(".control-group").removeClass('success')
+      passwordField.parents(".control-group").addClass('error')
+      passwordField.popover({
+                       'trigger' : 'focus',
+                       'placement': 'top',
+                       'content': errors[key]
+                       })
     else
       errorField =  $("input[name=" + key + "]")
 
+    errorField.parents(".control-group").removeClass('success')
     errorField.parents(".control-group").addClass('error')
     errorField.popover({
                        'trigger' : 'focus',

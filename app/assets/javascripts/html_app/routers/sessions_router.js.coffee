@@ -5,13 +5,14 @@ class Shopelia.Routers.Sessions extends Backbone.Router
 
   initialize: ->
     _.bindAll this
+    $(window).on('resize.modal',@center)
+    $(window).on('load',@center)
 
 
   checkSession: (params) ->
-    @productRouter = new Shopelia.Routers.Products()
     @product = new Shopelia.Models.Product(params)
     @session = new Shopelia.Models.Session()
-    @productRouter.showModal(params)
+    @modal = @showModal(params)
     console.log("check")
     if @session.authenticated()
       console.log(@session)
@@ -26,12 +27,28 @@ class Shopelia.Routers.Sessions extends Backbone.Router
                     success : (resp) ->
                       console.log("fetched user success callback: " + JSON.stringify(resp))
                       that.session.updateCookies(resp)
-                      console.log(that.session)
-                      goToOrdersIndex(that.session,that.product)
-                      that.productRouter.center()
-                  error : (model, response) ->
-                      that.session.deleteCookies()
+                      that.modal.setContentView(new Shopelia.Views.SignIn(product: @product))
+                      that.center()
+                    error : (model, response) ->
+                        that.session.deleteCookies()
                     })
-    else
-      goToSignIn(@product)
 
+    @modal.setContentView(new Shopelia.Views.UsersIndex(product: @product))
+
+
+  showModal: (params)  ->
+    @product = new Shopelia.Models.Product(params)
+    view = new Shopelia.Views.Modal(product: @product)
+    $('#container').append(view.render().el)
+    @center()
+    view
+
+  center: ->
+    top =undefined
+    left = undefined
+    top = Math.max($(window).height() - $('#modal').height(), 0) / 2
+    left = Math.max($(window).width() - $('#modal').outerWidth(), 0) / 2
+
+    $('#modal').css
+      top: top
+      left: left

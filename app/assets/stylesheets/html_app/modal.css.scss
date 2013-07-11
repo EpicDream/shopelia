@@ -20,6 +20,17 @@ $borderRadius: 4px;
   @include border-top-radius($borderRadius);
 }
 
+#modal-header .logo {
+  margin-top: 20px;
+}
+
+#link-header {
+  color: $darkGrey;
+  margin-right:5%;
+  margin-top: 25px;
+  width: auto;
+}
+
 #header-text {
   padding-right: 10px;
 }

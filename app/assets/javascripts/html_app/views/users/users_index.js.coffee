@@ -90,3 +90,9 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
     console.log loginFormObject
     loginFormObject
 
+  InitializeActionButton: (element) ->
+    element.text("Déjà membre ?")
+
+  onActionClick: (e) ->
+    @parent.setContentView(new Shopelia.Views.SignIn(product: @options.product))
+
