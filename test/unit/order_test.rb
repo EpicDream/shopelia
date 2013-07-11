@@ -32,6 +32,10 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
+    
+    assert_equal "mangopay", order.billing_solution
+    assert_equal "vulcain", order.injection_solution
+    assert_equal "amazon", order.cvd_solution
   end
   
   test "it should send email if notification is requested" do
@@ -338,7 +342,8 @@ class OrderTest < ActiveSupport::TestCase
     order_success
     
     assert_equal :pending_agent, @order.state
-    assert !ActionMailer::Base.deliveries.last.present?, "a notification email shouldn't have been sent"
+    assert_equal 1, ActionMailer::Base.deliveries.count, "a notification email shouldn't have been sent"
+    assert_match /Echec/, ActionMailer::Base.deliveries.last.decoded
   end
   
   test "it should restart order with new account if account creation failed" do
@@ -423,7 +428,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 1, Order.delayed.count
     assert_equal 0, Order.expired.count
 
-    @order.update_attribute :created_at, Time.now - 5.hours
+    @order.update_attribute :created_at, Time.now - 13.hours
     assert_equal 1, Order.delayed.count
     assert_equal 1, Order.expired.count
   end
@@ -490,7 +495,15 @@ class OrderTest < ActiveSupport::TestCase
     
     assert_equal :completed, @order.state
   end
-  
+
+  test "[alpha] it should auto cancel order if price is higher" do
+    configuration_alpha
+    start_order
+    assess_order_with_higher_price
+    
+    assert_equal :querying, @order.state
+  end
+
   test "[alpha] it should fail if vulcain assessment is incorrectly formatted" do
     configuration_alpha
     start_order
@@ -532,7 +545,7 @@ class OrderTest < ActiveSupport::TestCase
   test "[beta] it should complete order" do
     allow_remote_api_calls    
     configuration_beta
-    VCR.use_cassette('leetchi') do
+    VCR.use_cassette('mangopay') do
       start_order
       assess_order
     end
@@ -551,7 +564,7 @@ class OrderTest < ActiveSupport::TestCase
     allow_remote_api_calls    
     configuration_beta
     @order.update_attribute :expected_price_total, 333.05
-    VCR.use_cassette('leetchi') do
+    VCR.use_cassette('mangopay') do
       start_order
       assess_order 333.05
     end
@@ -560,6 +573,26 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "billing", @order.error_code
     assert_match /Do not honor/, @order.message
     assert_equal false, @order.questions.first["answer"]
+  end
+  
+  test "[amazon] it should complete order" do
+    allow_remote_api_calls
+    configuration_amazon
+    VCR.use_cassette('mangopay') do
+      start_order
+      assess_order
+
+      assert @order.mangopay_wallet_id.present?
+      assert @order.mangopay_contribution_id.present?
+      assert_equal "success", @order.mangopay_contribution_status
+      assert_equal 1600, @order.mangopay_contribution_amount
+      assert @order.mangopay_amazon_voucher_id.present?
+      assert @order.mangopay_amazon_voucher_code.present?    
+      
+      order_success
+    end
+    
+    assert_equal :completed, @order.state
   end
 
 =begin
@@ -636,12 +669,21 @@ class OrderTest < ActiveSupport::TestCase
   def configuration_alpha
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "user"
+    @order.save
   end
   
   def configuration_beta
     @order.billing_solution = "mangopay"
     @order.injection_solution = "limonetik"
     @order.cvd_solution = "limonetik"  
+    @order.save
+  end
+
+  def configuration_amazon
+    @order.billing_solution = "mangopay"
+    @order.injection_solution = "vulcain"
+    @order.cvd_solution = "amazon"
+    @order.save
   end
   
   def start_order
@@ -660,7 +702,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   def time_out_order
-    @order.user_time_out
+    @order.shopelia_time_out
     @order.reload
   end
   

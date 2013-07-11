@@ -15,7 +15,7 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     assert context[:account].present?
     assert context[:session].present?
     assert context[:order].present?
-    assert context[:order][:credentials].present?
+    assert context[:order][:credentials][:number].present?
     assert context[:user].present?
 
     session = context[:session]
@@ -48,6 +48,16 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     
     assert_equal "red", context[:answers][0][:answer]
     assert_equal "1", context[:answers][0][:question_id]
+  end
+  
+  test "it should send back amazon voucher" do
+    @order.update_attributes(
+      :cvd_solution => "amazon",
+      :mangopay_amazon_voucher_code => "JTUJ-SC5P4S-6N3F"
+    )
+    order_serializer = Vulcain::ContextSerializer.new(@order)
+    context = order_serializer.as_json[:context]
+    assert_equal "JTUJ-SC5P4S-6N3F", context[:order][:credentials][:voucher]
   end
 
 end

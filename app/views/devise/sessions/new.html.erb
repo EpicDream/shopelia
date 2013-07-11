@@ -1,18 +1,1 @@
-<h2><%= t('.sign_in', :default => "Sign in") %></h2>
-
-<%= simple_form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-  <%= f.error_notification %>
-
-    <div class="control-group">
-      <%= f.input :email, :required => true, :autofocus => true %>
-      <%= f.input :password, :required => true %>
-      <%= f.input :remember_me, :as => :boolean, :class => 'checkbox' if devise_mapping.rememberable? %>
-    </div>
-
-    <div class="control-group">
-      <%= f.button :submit, t('.sign_in', :default => "Sign in"), :class => 'btn-success' %>
-    </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
-
+<%= render partial:"form" %>

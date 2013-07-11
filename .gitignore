@@ -8,3 +8,4 @@ Gemfile.lock
 config/database.yml
 public/assets/
 gpg/random_seed
+keys/mango_pay/production

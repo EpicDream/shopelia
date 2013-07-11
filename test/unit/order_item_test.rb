@@ -13,4 +13,12 @@ class OrderItemTest < ActiveSupport::TestCase
     item = OrderItem.new(order:@order, product:@product)
     assert item.save
   end  
+  
+  test "it should truncate product title to 250 characteres" do
+    @item.product_title = "0" * 500
+    assert @item.save
+    
+    assert_equal 250, @item.product_title.length
+  end
+  
 end

@@ -8,7 +8,8 @@ Shopelia::Application.routes.draw do
 
   devise_for :users, controllers: { 
     confirmations: 'devise_override/confirmations',
-    registrations: 'devise_override/registrations'
+    registrations: 'devise_override/registrations',
+    sessions: 'devise_override/sessions',    
   }
   devise_scope :user do
     put "/confirm" => "devise_override/confirmations#confirm"
@@ -31,6 +32,11 @@ Shopelia::Application.routes.draw do
   end
 
   namespace :api do
+    scope :module => :v2, constraints: ApiConstraints.new(version:2)  do
+      namespace :users do
+        resources :verify, :only => :create
+      end
+    end
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
@@ -38,6 +44,7 @@ Shopelia::Application.routes.draw do
       resources :phone_lookup, :only => :show
       resources :merchants, :only => [:index, :create]
       resources :orders, :only => [:create, :show]
+      resources :products, :only => :index
       resources :users, :only => [:show, :update, :destroy]
       namespace :users do
         resources :autocomplete, :only => :create
@@ -48,7 +55,7 @@ Shopelia::Application.routes.draw do
       namespace :callback do
         resources :orders, :only => :update
       end
-      namespace :leetchi do
+      namespace :mango_pay do
         resources :notifications, :only => :index
       end      
       namespace :limonetik do

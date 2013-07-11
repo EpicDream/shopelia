@@ -1,4 +1,4 @@
-class Shopelia.Views.UsersIndex extends Backbone.View
+class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
 
   template: JST['users/index']
   events:
@@ -8,8 +8,10 @@ class Shopelia.Views.UsersIndex extends Backbone.View
     _.bindAll this
 
 
+
   render: ->
     $(@el).html(@template())
+    Tracker.onDisplay('Sign Up');
     console.log(@options.product)
     @addressView =  new Shopelia.Views.AddressesIndex()
     @$("#btn-register-user").before(@addressView.render().el)
@@ -18,6 +20,7 @@ class Shopelia.Views.UsersIndex extends Backbone.View
       @paymentCardView =  new Shopelia.Views.PaymentCardsIndex()
       $(@addressView.render().el).after(@paymentCardView.render().el)
     @setFormVariables()
+    Shopelia.Views.Form.prototype.render.call(this)
     this
 
   setFormVariables: ->
@@ -27,44 +30,46 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
   createUser: (e) ->
     console.log("trigger createUser")
-    eraseErrors()
-    e.preventDefault()
-    that = this
-    session = new Shopelia.Models.Session()
-    session.on("invalid", (model, errors) ->
-       displayErrors(errors)
-    )
+    if $('form').parsley( 'validate' )
+      @$("#btn-register-user").attr('disabled', 'disabled');
+      eraseErrors()
+      e.preventDefault()
+      that = this
+      session = new Shopelia.Models.Session()
+      session.on("invalid", (model, errors) ->
+         displayErrors(errors)
+      )
 
-    address = @addressView.setAddress()
-    card = null
-    if @randomBool
-      card = @paymentCardView.setPaymentCard()
-      cardIsValid = card.isValid()
-      sessionJson = @formSerializer(address,card.disableWrapping())
-    else
-      cardIsValid = true
-      sessionJson = @formSerializer(address,card)
+      address = @addressView.setAddress()
+      card = null
+      if @randomBool
+        card = @paymentCardView.setPaymentCard()
+        cardIsValid = card.isValid()
+        sessionJson = @formSerializer(address,card.disableWrapping())
+      else
+        cardIsValid = true
+        sessionJson = @formSerializer(address,card)
 
 
-    session.set(sessionJson)
-    sessionIsValid = session.isValid()
-    addressIsValid = address.isValid()
+      session.set(sessionJson)
+      sessionIsValid = session.isValid()
+      addressIsValid = address.isValid()
 
-    console.log("Addresss MAAAAAN" + JSON.stringify(address))
-    if cardIsValid && addressIsValid && sessionIsValid
-      session.save(sessionJson,{
-                                success : (resp) ->
-                                  console.log('success callback')
-                                  console.log("response user save: " + JSON.stringify(resp))
-                                  if that.randomBool
-                                    goToOrdersIndex(resp,that.options.product)
-                                  else
-                                    goToPaymentCardStep(resp,that.options.product)
-                                error : (model, response) ->
-                                  console.log(JSON.stringify(response))
-                                  displayErrors($.parseJSON(response.responseText))
+      console.log("Addresss MAAAAAN" + JSON.stringify(address))
+      if cardIsValid && addressIsValid && sessionIsValid
+        session.save(sessionJson,{
+                                  success : (resp) ->
+                                    console.log('success callback')
+                                    console.log("response user save: " + JSON.stringify(resp))
+                                    if that.randomBool
+                                      goToOrdersIndex(resp,that.options.product)
+                                    else
+                                      goToPaymentCardStep(resp,that.options.product)
+                                  error : (model, response) ->
+                                    console.log(JSON.stringify(response))
+                                    displayErrors($.parseJSON(response.responseText))
 
-      })
+        })
 
 
 
@@ -89,5 +94,4 @@ class Shopelia.Views.UsersIndex extends Backbone.View
 
     console.log loginFormObject
     loginFormObject
-
 

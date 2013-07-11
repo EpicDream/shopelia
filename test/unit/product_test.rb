@@ -50,4 +50,14 @@ class ProductTest < ActiveSupport::TestCase
     end
   end
   
+  test "it should truncate name to 250 chars" do
+    product = Product.new(
+      :url => 'http://www.amazon.fr/product',
+      :name => "0" * 500
+    )
+    assert product.save
+    
+    assert_equal 250, product.name.length
+  end
+  
 end

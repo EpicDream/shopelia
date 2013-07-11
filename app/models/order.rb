@@ -2,7 +2,7 @@ class Order < ActiveRecord::Base
   audited
   
   STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "pending_injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
-  ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "leetchi"]
+  ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "mangopay"]
 
   belongs_to :user
   belongs_to :merchant
@@ -21,12 +21,13 @@ class Order < ActiveRecord::Base
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
-  attr_accessible :leetchi_contribution_id, :leetchi_contribution_amount, :leetchi_contribution_status
-  attr_accessible :leetchi_contribution_message
+  attr_accessible :mangopay_contribution_id, :mangopay_contribution_amount, :mangopay_contribution_status
+  attr_accessible :mangopay_contribution_message, :mangopay_amazon_voucher_id, :mangopay_amazon_voucher_code
+  attr_accessible :billing_solution, :injection_solution, :cvd_solution
   attr_accessor :products, :confirmation
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
-  scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 4.hours ) }
+  scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 12.hours ) }
   scope :canceled, lambda { where("state_name='querying' and updated_at < ?", Time.zone.now - 2.hours ) }
   scope :preparing_stale, lambda { where("state_name='preparing' and updated_at < ?", Time.zone.now - 5.minutes ) }
   
@@ -46,6 +47,7 @@ class Order < ActiveRecord::Base
   before_create :validates_products
   after_initialize :deserialize_questions
   after_create :prepare_order_items
+  after_create :mirror_solutions_from_merchant, :if => Proc.new { |order| !order.destroyed? }
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
   after_create :notify_creation_to_admin, :if => Proc.new { |order| !order.destroyed? }
   
@@ -54,14 +56,15 @@ class Order < ActiveRecord::Base
   end
   
   def start
-    return unless [:initialized, :pending_agent, :querying].include?(state) && self.payment_card_id.present? && self.order_items.count > 0
+    return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.payment_card_id.present? && self.order_items.count > 0
     @questions = []
     self.error_code = nil
     self.message = nil
     self.state = :preparing
+    self.save
     assess Vulcain::Order.create(Vulcain::OrderSerializer.new(self).as_json[:order])
     Leftronic.new.notify_order(self)
-    self.save
+    true
   end
 
   def restart
@@ -121,16 +124,28 @@ class Order < ActiveRecord::Base
         # MangoPay billing
         elsif self.billing_solution == "mangopay"
           self.state = :billing
-          billing_result = LeetchiFunnel.bill(self)
+          billing_result = MangoPayFunnel.bill(self)
           if billing_result["Status"] == "success"
           
             # Billing success
-            if self.reload.leetchi_contribution_status == "success"              
+            if self.reload.mangopay_contribution_status == "success"              
             
               # Limonetik CVD & injection
               if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
                 callback_vulcain(true)
                 self.state = :pending_injection
+                
+              # Amazon vouchers
+              elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
+                self.state = :preparing
+                
+                voucher_result = MangoPayFunnel.voucher(self)
+                if voucher_result["Status"] == "success"
+                  callback_vulcain(true)
+                else
+                  callback_vulcain(false)
+                  fail(voucher_result["Error"], :shopelia)
+                end
                 
               # Invalid CVD solution
               else
@@ -141,12 +156,12 @@ class Order < ActiveRecord::Base
             # Billing failure
             else
               callback_vulcain(false)
-              abort(self.leetchi_contribution_message, :billing)
+              abort(self.mangopay_contribution_message, :billing)
             end
             
           else
             callback_vulcain(false)
-            abort(billing_result["Error"], :shopelia)
+            fail(billing_result["Error"], :shopelia)
           end
           
         # Invalid billing solution
@@ -191,7 +206,7 @@ class Order < ActiveRecord::Base
     @questions = questions
   end
   
-  def user_time_out
+  def shopelia_time_out
     abort "timed_out", :shopelia
     self.save!
   end
@@ -262,11 +277,12 @@ class Order < ActiveRecord::Base
   end
 
   def fail content, error_sym
-    return unless [:preparing].include?(state)
+    return unless [:preparing, :billing, :pending_injection].include?(state)
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending_agent
     Leftronic.new.notify_order(self)
+    Emailer.notify_admin_order_failure(self).deliver
   end
 
   def abort content, error_sym
@@ -296,6 +312,12 @@ class Order < ActiveRecord::Base
   
   def initialize_merchant_account
     self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
+  end
+  
+  def mirror_solutions_from_merchant
+    self.billing_solution = self.merchant.billing_solution if self.billing_solution.nil?
+    self.injection_solution = self.merchant.injection_solution if self.injection_solution.nil?
+    self.cvd_solution = self.merchant.cvd_solution if self.cvd_solution.nil?
   end
   
   def validates_products  

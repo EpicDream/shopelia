@@ -1,5 +1,6 @@
 class PaymentCardsController < ApplicationController
   before_filter :authenticate_user!
+  before_filter :retrieve_card, :only => [:show, :destroy, :update]
   
   def new
     @card = PaymentCard.new
@@ -22,5 +23,22 @@ class PaymentCardsController < ApplicationController
       end
     end
   end
+
+  def destroy
+    @card.destroy
+    
+    respond_to do |format|
+      format.html { redirect_to payment_cards_path }
+      format.json { head :ok }
+      format.js
+    end
+  end
   
+  private
+  
+  def retrieve_card
+    @card = PaymentCard.find(params[:id])
+    render :status => :unauthorized and return if @card.user.id != current_user.id
+  end
+    
 end

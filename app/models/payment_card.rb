@@ -4,7 +4,6 @@ class PaymentCard < ActiveRecord::Base
   
   validates :user, :presence => true
 
-  before_destroy :destroy_leetchi_payment_card, :if => Proc.new { |card| card.leetchi_id.present? }
   validates :number, :presence => true, :length => { :is => 16 }
   validates :exp_month, :presence => true, :inclusion => { :in => "01".."12" }
   validates :exp_year, :presence => true, :inclusion => {:in => (Time.now.year..(Time.now.year + 10)).map{|i| i.to_s} }
@@ -13,6 +12,10 @@ class PaymentCard < ActiveRecord::Base
   after_initialize :decrypt
   after_save :decrypt
   before_save :crypt
+
+  before_destroy :destroy_mangopay_payment_card, :if => Proc.new { |card| card.mangopay_id.present? }
+  
+  private
 
   def crypt
 
@@ -46,6 +49,7 @@ class PaymentCard < ActiveRecord::Base
     self.cvv = decrypted[22..24]
   end
 
+  
   def self.months
     ("01".."12").map{|i| i}
   end
@@ -54,10 +58,9 @@ class PaymentCard < ActiveRecord::Base
     (Time.now.year..(Time.now.year + 10)).map{|i| i.to_s}
   end
   
-  private
   
-  def destroy_leetchi_payment_card
-    Leetchi::Card.delete(self.leetchi_id)
+  def destroy_mangopay_payment_card
+    MangoPay::Card.delete(self.mangopay_id)
   end
     
 end

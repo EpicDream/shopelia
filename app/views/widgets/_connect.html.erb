@@ -14,5 +14,17 @@
     </ul>
   </div>
 <% else %>
-  <%= link_to "Sign in", new_user_session_path, class:'btn btn-success' %>
+  <a class="btn btn-success modal-button" id="sessionButton" target-modal="sessionModal" target-url="<%= new_user_session_path(no_layout:true) %>">
+    <%= t "app.sign_in" %>
+  </a>
+  <div id="sessionModal" class="modal hide fade">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h3><%= t "app.new_session" %></h3>
+    </div>
+    <div class="modal-content">
+    </div>
+  </div>
 <% end %>
+
+

@@ -14,6 +14,11 @@ class Api::V1::Users::VerifyControllerTest < ActionController::TestCase
     assert_response :success
   end
 
+  test "it should verify user with password" do
+    post :create, password:"tototo", format: :json
+    assert_response :success
+  end
+
   test "it should verify user with cc info" do
     post :create, cc_num:"0154", cc_month:"02", cc_year:"15", format: :json
     assert_response :success

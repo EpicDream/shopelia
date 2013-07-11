@@ -10,4 +10,29 @@
 //= require rails.validations.simple_form
 //= require jquery_ujs
 //= require bootstrap
+//= require html_app/underscore
+
+$(document).ready(function() {
+  $(".modal-button").on('click', function(event) {
+    event.preventDefault();
+    id = $(this).attr('target-modal');
+    $('#' + id).find('.modal-content').load($(this).attr('target-url'));
+    $('#' + id).modal('show').on('shown', function() {
+      $(ClientSideValidations.selectors.forms).validate();
+      $(this).unbind('shown');
+    });
+  });
+  $(".fade-area").hover(
+    function() {
+      $(this).find("a").each(function() {
+        $(this).fadeIn(100);
+      })
+    },
+    function() {
+      $(this).find("a").each(function() {
+        $(this).fadeOut(100);
+      })
+    } 
+  );
+});
 

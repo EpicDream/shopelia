@@ -1,10 +1,56 @@
 # -*- encoding : utf-8 -*-
 Merchant.delete_all
-Merchant.create(:id=>1,:name=>'Rue du Commerce',:url=>'http://www.rueducommerce.fr',:logo=>'http://www.prixing.fr/images/logos/rueducommerce.png',:vendor=>'RueDuCommerce')
-Merchant.create(:id=>2,:name=>'Amazon France',:url=>'http://www.amazon.fr',:logo=>'http://www.prixing.fr/images/logos/amazon.png',:vendor=>'AmazonFrance')
-Merchant.create(:id=>3,:name=>'Fnac',:url=>'http://www.fnac.fr',:logo=>'http://www.prixing.fr/images/logos/fnac_large.png',:vendor=>'Fnac')
-Merchant.create(:id=>4,:name=>'Price Minister',:url=>'http://www.priceminister.com',:logo=>'http://www.prixing.fr/images/logos/priceminister_large.png',:vendor=>'PriceMinister')
-Merchant.create(:id=>5,:name=>'CDiscount',:url=>'http://www.cdiscount.com',:logo=>'http://www.prixing.fr/images/logos/cdiscount.png',:vendor=>'Cdiscount')
+Merchant.create(
+  :id=>1,
+  :name=>'Rue du Commerce',
+  :url=>'http://www.rueducommerce.fr',
+  :logo=>'http://www.prixing.fr/images/logos/rueducommerce.png',
+  :vendor=>'RueDuCommerce')
+Merchant.create(
+  :id=>2,
+  :name=>'Amazon France',
+  :url=>'http://www.amazon.fr',
+  :logo=>'http://www.prixing.fr/images/logos/amazon.png',
+  :vendor=>'AmazonFrance', 
+  :billing_solution => 'mangopay',
+  :injection_solution => 'vulcain',
+  :cvd_solution => 'amazon')
+Merchant.create(
+  :id=>3,
+  :name=>'Fnac',
+  :url=>'http://www.fnac.fr',
+  :logo=>'http://www.prixing.fr/images/logos/fnac_large.png',
+  :vendor=>'Fnac')
+Merchant.create(
+  :id=>4,
+  :name=>'Price Minister',
+  :url=>'http://www.priceminister.com',
+  :logo=>'http://www.prixing.fr/images/logos/priceminister_large.png',
+  :vendor=>'PriceMinister')
+Merchant.create(
+  :id=>5,
+  :name=>'CDiscount',
+  :url=>'http://www.cdiscount.com',
+  :logo=>'http://www.prixing.fr/images/logos/cdiscount.png',
+  :vendor=>'Cdiscount')
+Merchant.create(
+  :id=>6,
+  :name=>'Darty',
+  :url=>'http://www.darty.com',
+  :logo=>'http://www.prixing.fr/images/logos/darty_large.png',
+  :vendor=>'Darty')
+Merchant.create(
+  :id=>7,
+  :name=>"Toys 'R' Us",
+  :url=>'http://www.toysrus.fr',
+  :logo=>'http://www.prixing.fr/images/logos/7b623412345fa4253ae235b35f2bc853.jpg',
+  :vendor=>'ToysrusFrance')
+Merchant.create(
+  :id=>8,
+  :name=>"Conforama",
+  :url=>'http://www.conforama.fr',
+  :logo=>'http://www.prixing.fr/images/logos/conforama.png',
+  :vendor=>'Conforama')
 Developer.delete_all
 Developer.create(:name=>'Prixing',:api_key=>'52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4')
 Country.delete_all

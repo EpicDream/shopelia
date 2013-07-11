@@ -1,8 +1,28 @@
 <div class='spacer25'></div>
 <div class="row-fluid"> 
-<div class="span8">
+<div class="span12">
   <% if current_user.can_order? %>
+    <%= render "users/dashboard" %>
   <% else %>
     <%= render "users/finalize_registration" %>
   <% end %>
 </div>
+
+<div id="addressModal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h3>Ajout d'une carte de adresse de livraison</h3>
+  </div>
+  <div class="modal-content">
+  </div>
+</div>
+
+<div id="cardModal" class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal">&times;</button>
+    <h3>Ajout d'une carte de paiement</h3>
+  </div>
+  <div class="modal-content">
+  </div>
+</div>
+

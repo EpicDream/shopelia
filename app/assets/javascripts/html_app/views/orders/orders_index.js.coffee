@@ -11,17 +11,19 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     console.log("initialize processOrder View: ")
     console.log(@options)
     @product = @options.product
-    @expected_price_total = parseFloat(@product.get('expected_price_product')) + parseFloat(@product.get('expected_price_shipping'))
-
+    total_price = parseFloat(@product.get('expected_price_product')) + parseFloat(@product.get('expected_price_shipping'))
+    @expected_price_total = Math.ceil(total_price * 100) / 100;
 
   render: ->
     console.log(@options)
     $(@el).html(@template(user: @user, product: @product, expected_price_total: @expected_price_total))
+    Tracker.onDisplay('Confirmation');
     this
 
 
   processOrder: (e) ->
     e.preventDefault()
+    @$("#process-order").attr('disabled', 'disabled');
     that = this
     console.log("processOrder")
     order = new Shopelia.Models.Order()
@@ -35,6 +37,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
                  xhr.setRequestHeader("X-Shopelia-AuthToken",that.authToken)
                success: (resp) ->
                  console.log(resp)
+                 Tracker.custom("Order Completed")
                  view = new Shopelia.Views.Greetings()
                  $('#modal-right').html(view.render().el)
                error: (model, response) ->

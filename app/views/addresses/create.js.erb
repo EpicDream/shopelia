@@ -1,5 +1,6 @@
 <% if @address.errors.any? %>
   $("#addressForm").html('<%= escape_javascript(render partial:"addresses/form", locals:{address:@address}) %>');
 <% else %>
-  Callback.success("address");
+  $("#addressModal").modal('hide');
+  window.location='<%= home_index_path %>';  
 <% end %>
