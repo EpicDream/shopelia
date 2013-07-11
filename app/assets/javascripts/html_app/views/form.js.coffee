@@ -53,4 +53,6 @@ class Shopelia.Views.Form extends Backbone.View
           $(elem).parents(".control-group").addClass('success')
 
       })
+
+    @$('form :button').after($('<img class="paiement-logos" src="/assets/html_app/mango-logos.png"/>'))
     this

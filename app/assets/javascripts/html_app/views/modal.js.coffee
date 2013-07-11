@@ -6,6 +6,7 @@ class Shopelia.Views.Modal extends Backbone.View
 
   events:
     'click #close': 'close'
+    'click #link-header': 'onActionClick'
 
   initialize: ->
     _.bindAll this
@@ -32,10 +33,9 @@ class Shopelia.Views.Modal extends Backbone.View
   open: (settings) ->
     productView = new Shopelia.Views.ProductsIndex(model:@options.product)
     view = new Shopelia.Views.UsersIndex(product: @options.product)
-    #view = new Shopelia.Views.OrdersIndex(product: @options.product)
-    #view = new Shopelia.Views.Greetings()
     @$('#modal-left').append(productView.render().el)
-    @$('#modal-right').append(view.render().el)
+    @setContentView(view)
+
 
   close: ->
     console.log("close please")
@@ -48,8 +48,19 @@ class Shopelia.Views.Modal extends Backbone.View
 
 
 
+  onActionClick: (e)->
+    @contentView.onActionClick(e)
 
 
-
+  setContentView: (backboneView) ->
+    if @contentView isnt undefined
+      @contentView.parent = undefined
+    @contentView = backboneView
+    @contentView.parent = this
+    el = @contentView.render().el
+    $(el).fadeIn(500)
+    @$('#modal-right').html(el)
+    if @setContentView.InitializeActionButton == undefined
+      @contentView.InitializeActionButton(@$("#link-header"))
 
 

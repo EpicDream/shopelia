@@ -59,8 +59,6 @@ _.extend(Backbone.Model.prototype, Backbone.RailsJSON, {
     // This is called on all models coming in from a remote server.
     // Unwraps the given response from the default Rails format.
     parse : function(resp) {
-        console.log("parse");
-        console.log(resp);
         return this.unwrappedAttributes(resp);
     },
 
