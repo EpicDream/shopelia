@@ -18,11 +18,13 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
   setFormVariables: ->
     @email = @$('input[name="email"]')
     @password = @$('input[name="password"]')
+    console.log(@password)
+    unless @options.email is undefined
+      @email.val(@options.email)
 
   loginUser: (e) ->
     console.log("trigger loginUser")
     if $('form').parsley( 'validate' )
-      #@$("#btn-login-user").attr('disabled', 'disabled');
       eraseErrors()
       e.preventDefault()
       that = this
