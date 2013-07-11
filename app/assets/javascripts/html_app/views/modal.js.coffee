@@ -57,7 +57,10 @@ class Shopelia.Views.Modal extends Backbone.View
       @contentView.parent = undefined
     @contentView = backboneView
     @contentView.parent = this
-    @$('#modal-right').html(@contentView.render().el)
-    @contentView.InitializeActionButton(@$("#link-header"))
+    el = @contentView.render().el
+    $(el).fadeIn(500)
+    @$('#modal-right').html(el)
+    if @setContentView.InitializeActionButton == undefined
+      @contentView.InitializeActionButton(@$("#link-header"))
 
 
