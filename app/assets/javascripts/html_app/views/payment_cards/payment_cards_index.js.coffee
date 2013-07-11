@@ -38,7 +38,7 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
     console.log("trigger registerPaymentCard")
     if $('form').parsley( 'validate' )
       e.preventDefault()
-      @$("#btn-register-payment").attr('disabled', 'disabled');
+      disableButton($("#btn-register-payment"))
       cardJson = @cardFormSerializer()
       that = this
       card = new Shopelia.Models.PaymentCard()
@@ -53,9 +53,10 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
                             console.log('card success callback')
                             that.options.session.get("user").payment_cards.push(resp.disableWrapping().toJSON())
                             console.log(JSON.stringify(that.options))
-                            goToOrdersIndex(that.options.session,that.options.product)
+                            that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: that.options.session,product: that.options.product))
                           error : (model, response) ->
                             console.log('card error callback')
+                            enableButton($("#btn-register-payment"))
                             console.log(JSON.stringify(response))
                             displayErrors($.parseJSON(response.responseText))
       })

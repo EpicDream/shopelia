@@ -1,41 +1,41 @@
 class Shopelia.Models.Session extends Backbone.Model
   urlRoot: "/api/users"
   defaults:
-    authToken: null,
+    auth_token: null,
     user: null
 
   initialize: ->
     @load()
 
   authenticated: ->
-    Boolean(@get("authToken"))
+    Boolean(@get("auth_token"))
 
   # Saves session information to cookie
   saveCookies: (session)->
     console.log("save cookies")
     console.log(session)
     $.cookie.json = true;
-    $.cookie('authToken', session.get("auth_token"))
+    $.cookie('auth_token', session.get("auth_token"))
     $.cookie('user', session.get("user"))
 
   updateCookies: (user) ->
     console.log("updating cookies")
-    console.log(user.disableWrapping())
     $.cookie.json = true;
-    $.cookie('user', user.disableWrapping())
+    $.cookie('user', user)
 
   deleteCookies: ->
     console.log("deleting cookies")
-    $.removeCookie('authToken')
+    $.removeCookie('auth_token')
     $.removeCookie('user')
     $.removeCookie('_shopelia_session')
 
   # Loads session information from cookie
   load: ->
     console.log("load")
-    @set
-      user: (JSON.parse($.cookie('user')) unless $.cookie('user') is undefined)
-      authToken: $.cookie('authToken')
+    unless $.cookie('user') is undefined
+      @set
+        user: JSON.parse($.cookie('user'))
+        authToken: $.cookie('auth_token')
 
   login: (session,callbacks) ->
     console.log("In session login method")
