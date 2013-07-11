@@ -1,14 +1,14 @@
-window.goToOrdersIndex =  (session,product) ->
-  view = new Shopelia.Views.OrdersIndex(session: session, product: product)
-  $('#modal-right').html(view.render().el)
-
-window.goToPaymentCardStep = (session,product) ->
-  view = new Shopelia.Views.PaymentCardsIndex(product:product,session: session )
-  $('form').html(view.render().el)
-
 window.eraseErrors =  ->
   $(".control-group").removeClass('error')
   $('.help-inline').remove()
+
+window.disableButton = ($button) ->
+  $button.attr('disabled','disabled')
+  $button.addClass('disabled')
+
+window.enableButton = ($button) ->
+  $button.removeAttr('disabled','disabled')
+  $button.removeClass('disabled')
 
 window.center = ($elem) ->
   top =undefined

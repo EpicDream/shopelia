@@ -60,8 +60,11 @@ class Shopelia.Views.Modal extends Backbone.View
     el = @contentView.render().el
     $(el).fadeIn(500)
     @$('#modal-right').html(el)
-    if @setContentView.InitializeActionButton == undefined
+    if @contentView.InitializeActionButton != undefined
+      @$("#link-header").show()
       @contentView.InitializeActionButton(@$("#link-header"))
+    else
+      @$("#link-header").hide()
     center($("#modal"))
 
 

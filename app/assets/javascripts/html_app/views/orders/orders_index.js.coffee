@@ -23,7 +23,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
 
   processOrder: (e) ->
     e.preventDefault()
-    @$("#process-order").attr('disabled', 'disabled');
+    disableButton($("#process-order"))
     that = this
     console.log("processOrder")
     order = new Shopelia.Models.Order()
@@ -41,6 +41,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
                  view = new Shopelia.Views.Greetings()
                  $('#modal-right').html(view.render().el)
                error: (model, response) ->
+                 enableButton($("#process-order"))
                  console.log(JSON.stringify(response))
     })
 

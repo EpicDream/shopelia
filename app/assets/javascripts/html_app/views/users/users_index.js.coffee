@@ -54,7 +54,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
   createUser: (e) ->
     console.log("trigger createUser")
     if $('form').parsley( 'validate' )
-      @$("#btn-register-user").attr('disabled', 'disabled');
+      disableButton($("#btn-register-user"))
       eraseErrors()
       e.preventDefault()
       that = this
@@ -80,11 +80,12 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
                                   console.log("response user save: " + JSON.stringify(resp))
                                   session.saveCookies(resp)
                                   if that.randomBool
-                                    goToOrdersIndex(resp,that.options.product)
+                                    that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: resp,product: that.options.product))
                                   else
-                                    goToPaymentCardStep(resp,that.options.product)
+                                    that.parent.setContentView(new Shopelia.Views.PaymentCardsIndex(session: resp,product: that.options.product))
                                 error : (model, response) ->
                                   console.log(JSON.stringify(response))
+                                  enableButton($("#btn-register-user"))
                                   displayErrors($.parseJSON(response.responseText))
 
       })
