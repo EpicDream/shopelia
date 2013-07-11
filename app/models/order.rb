@@ -282,6 +282,7 @@ class Order < ActiveRecord::Base
     self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending_agent
     Leftronic.new.notify_order(self)
+    Emailer.notify_admin_order_failure(self).deliver
   end
 
   def abort content, error_sym

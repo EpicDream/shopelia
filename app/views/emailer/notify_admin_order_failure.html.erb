@@ -1,9 +1,11 @@
-<b>Nouvelle commande enregistrée sur Shopelia !</b>
+<b>Echec dans l'injection de la commande !</b>
+<p>
+Intervention nécessaire sur Vulcain
 <p>
 <u>Passée par :</u> <%= @order.user.name %><br>
 <u>Produit :</u> <%= @order.order_items.first.product.name %><br>
 <u>Prix :</u> <%= number_to_currency(@order.expected_price_total) %><br>
 <u>Marchand :</u> <%= @order.merchant.name %>
 <p>
-<%= link_to "Suivre l'état de la commande", order_url(@order) %>
+<%= link_to "Voir les logs de la commande", "https://vulcain.shopelia.fr:444/admin/logs/#{@order.uuid}" %>
 

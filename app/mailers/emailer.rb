@@ -67,4 +67,11 @@ class Emailer < ActionMailer::Base
           :from => "Admin Shopelia <contact@shopelia.fr>")
   end
    
+  def notify_admin_order_failure order
+    @order = order
+    mail( :to => "Shopelia <contact@shopelia.fr>,anoiaque@gmail.com",
+          :subject => "Echec de l'injection de la commande passée par #{@order.user.name}",
+          :from => "Admin Shopelia <contact@shopelia.fr>")
+  end
+
 end

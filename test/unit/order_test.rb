@@ -342,7 +342,8 @@ class OrderTest < ActiveSupport::TestCase
     order_success
     
     assert_equal :pending_agent, @order.state
-    assert !ActionMailer::Base.deliveries.last.present?, "a notification email shouldn't have been sent"
+    assert_equal 1, ActionMailer::Base.deliveries.count, "a notification email shouldn't have been sent"
+    assert_match /Echec/, ActionMailer::Base.deliveries.last.decoded
   end
   
   test "it should restart order with new account if account creation failed" do
