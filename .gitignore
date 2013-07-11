@@ -7,3 +7,4 @@ Gemfile.lock
 /coverage
 config/database.yml
 public/assets/
+gpg/random_seed
