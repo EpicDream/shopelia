@@ -32,6 +32,11 @@ Shopelia::Application.routes.draw do
   end
 
   namespace :api do
+    scope :module => :v2, constraints: ApiConstraints.new(version:2)  do
+      namespace :users do
+        resources :verify, :only => :create
+      end
+    end
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
@@ -39,6 +44,7 @@ Shopelia::Application.routes.draw do
       resources :phone_lookup, :only => :show
       resources :merchants, :only => [:index, :create]
       resources :orders, :only => [:create, :show]
+      resources :products, :only => :index
       resources :users, :only => [:show, :update, :destroy]
       namespace :users do
         resources :autocomplete, :only => :create

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Api::V1::Users::VerifyControllerTest < ActionController::TestCase
+class Api::V2::Users::VerifyControllerTest < ActionController::TestCase
   include Devise::TestHelpers
   fixtures :users, :orders, :merchants, :products, :merchant_accounts, :addresses, :payment_cards
 
@@ -12,6 +12,8 @@ class Api::V1::Users::VerifyControllerTest < ActionController::TestCase
   test "it should verify user" do
     post :create, pincode:"1234", format: :json
     assert_response :success
+    
+    assert json_response['user'].present?
   end
 
   test "it should verify user with password" do
@@ -26,18 +28,18 @@ class Api::V1::Users::VerifyControllerTest < ActionController::TestCase
 
   test "it should fail user verification" do
     post :create, pincode:"4567", format: :json
-    assert_response :unauthorized
+    assert_response :not_found
   end
   
   test "it should send 503 with delay after 3 failures, even with correct pincode" do
     post :create, pincode:"4567", format: :json
-    assert_response :unauthorized
+    assert_response :not_found
 
     post :create, pincode:"4567", format: :json
-    assert_response :unauthorized
+    assert_response :not_found
 
     post :create, pincode:"4567", format: :json
-    assert_response :unauthorized
+    assert_response :not_found
     
     post :create, pincode:"1234", format: :json
     assert_response 503

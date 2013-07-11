@@ -1,4 +1,4 @@
-class Api::V1::Users::VerifyController < Api::V1::BaseController
+class Api::V2::Users::VerifyController < Api::V2::BaseController
 
   api :POST, "/users/verify", "Verify a user by pincode or credit card details"
   param :pincode, String, "pincode", :required => false
@@ -11,9 +11,9 @@ class Api::V1::Users::VerifyController < Api::V1::BaseController
     if delay > 0
       render :json => { :delay => delay }, :status => 503
     elsif current_user.verify(params)
-      head :no_content
+      render json: UserSerializer.new(current_user).as_json
     else
-      head :unauthorized
+      head :not_found
     end
   end
 

@@ -10,7 +10,7 @@ gem 'sqlite3'
 gem 'devise', '~> 2.2'
 gem 'apipie-rails'
 gem "active_model_serializers", "~> 0.7.0"
-gem "mangopay"
+gem "mangopay", github: 'EricLarch/mangopay-ruby-sdk'
 gem 'selenium-webdriver'
 gem 'headless'
 gem 'mechanize'

@@ -9,7 +9,10 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
 
   def order
     { :products_urls => object.order_items.map{|item| item.product.url},
-      :credentials => Vulcain::PaymentCardSerializer.new(object.payment_card).as_json[:payment_card] }
+      :credentials => case object.cvd_solution
+                      when nil then Vulcain::PaymentCardSerializer.new(object.payment_card).as_json[:payment_card]
+                      when "amazon" then { :voucher => object.mangopay_amazon_voucher_code }
+                      end }
   end
   
   def account
