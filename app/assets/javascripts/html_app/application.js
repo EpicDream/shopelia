@@ -9,6 +9,7 @@
 //= require jquery_ujs
 //= require html_app/jquery-ui-1.10.3.custom.min
 //= require html_app/jquery.leanModal.min
+//= require html_app/jquery.cookie
 //= require html_app/garlic.min
 //= require html_app/i18n/messages.fr
 //= require html_app/parsley.extend

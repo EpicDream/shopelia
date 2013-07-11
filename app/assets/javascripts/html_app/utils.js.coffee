@@ -10,21 +10,26 @@ window.eraseErrors =  ->
   $(".control-group").removeClass('error')
   $('.help-inline').remove()
 
-#window.eraseError = () ->
-#  console.log("erase ERROR")
-#  console.log($(this))
-#  $(this).parents(".control-group").removeClass('error')
-#  $(this).popover('destroy')
-
 
 window.displayErrors = (errors) ->
   keys = _.keys(errors)
   _.each(keys,(key) ->
     if  (key == "first_name" || key == "last_name")
       errorField =  $("input[name=full_name]")
+    else if key == "error" && errors[key] == "Email ou mot de passe incorrect."
+      errorField = $("input[name=email]")
+      passwordField = $("input[name=password]")
+      passwordField.parents(".control-group").removeClass('success')
+      passwordField.parents(".control-group").addClass('error')
+      passwordField.popover({
+                       'trigger' : 'focus',
+                       'placement': 'top',
+                       'content': errors[key]
+                       })
     else
       errorField =  $("input[name=" + key + "]")
 
+    errorField.parents(".control-group").removeClass('success')
     errorField.parents(".control-group").addClass('error')
     errorField.popover({
                        'trigger' : 'focus',
