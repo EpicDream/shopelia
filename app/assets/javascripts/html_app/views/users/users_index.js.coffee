@@ -44,7 +44,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
              xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
            success: (data,textStatus,jqXHR) ->
-             that.parent.setContentView(new Shopelia.Views.SignIn(product: that.options.product,email:email))
+             that.parent.setContentView(new Shopelia.Views.SignIn(session: that.options.session,product: that.options.product,email:email))
            error: (jqXHR,textStatus,errorThrown) ->
              console.log("user dosn't exist")
              console.log(JSON.stringify(errorThrown))
@@ -58,7 +58,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
       eraseErrors()
       e.preventDefault()
       that = this
-      session = new Shopelia.Models.Session()
+      session = @options.session
       session.on("invalid", (model, errors) ->
          displayErrors(errors)
       )
@@ -117,5 +117,6 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
     element.text("Déjà membre ?")
 
   onActionClick: (e) ->
-    @parent.setContentView(new Shopelia.Views.SignIn(product: @options.product))
+    that = this
+    @parent.setContentView(new Shopelia.Views.SignIn(session: that.options.session ,product: that.options.product))
 

@@ -20,9 +20,8 @@ class Shopelia.Models.Session extends Backbone.Model
 
   updateCookies: (user) ->
     console.log("updating cookies")
-    console.log(user.disableWrapping())
     $.cookie.json = true;
-    $.cookie('user', user.disableWrapping())
+    $.cookie('user', user)
 
   deleteCookies: ->
     console.log("deleting cookies")
@@ -33,9 +32,10 @@ class Shopelia.Models.Session extends Backbone.Model
   # Loads session information from cookie
   load: ->
     console.log("load")
-    @set
-      user: (JSON.parse($.cookie('user')) unless $.cookie('user') is undefined)
-      authToken: $.cookie('authToken')
+    unless $.cookie('user') is undefined
+      @set
+        user: JSON.parse($.cookie('user'))
+        authToken: $.cookie('authToken')
 
   login: (session,callbacks) ->
     console.log("In session login method")

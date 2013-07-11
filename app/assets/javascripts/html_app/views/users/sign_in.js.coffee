@@ -24,11 +24,12 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
 
   loginUser: (e) ->
     console.log("trigger loginUser")
+    console.log(@options.session)
     if $('form').parsley( 'validate' )
       eraseErrors()
       e.preventDefault()
       that = this
-      session = new Shopelia.Models.Session()
+      session = @options.session
       session.on("invalid", (model, errors) ->
         displayErrors(errors)
       )
@@ -62,4 +63,4 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     element.text("Première Commande ?")
 
   onActionClick: (e) ->
-    @parent.setContentView(new Shopelia.Views.UsersIndex(product: @options.product))
+    @parent.setContentView(new Shopelia.Views.UsersIndex(session: @options.session,product: @options.product))
