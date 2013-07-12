@@ -64,6 +64,13 @@ before_fork do |server, worker|
     File.delete(f)
   end
 
+  begin
+    $crypto.decrypt($crypto.encrypt('hello', :recipients => 'gpg-production@shopelia.com'))
+  rescue => e
+    puts "Failed decryption: exit"
+    exit
+  end
+
   old_pid = "#{server.config[:pid]}.oldbin"
   if old_pid != server.pid
     begin
