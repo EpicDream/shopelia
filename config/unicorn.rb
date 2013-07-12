@@ -56,6 +56,14 @@ before_fork do |server, worker|
   # # thundering herd (especially in the "preload_app false" case)
   # # when doing a transparent upgrade.  The last worker spawned
   # # will then kill off the old master process with a SIGQUIT.
+
+  f = "#{Rails.root}/tmp/p.dat"
+  if File.readable?(f)
+    $gpgme_passphrase = File.read(f)
+    $gpgme_passphrase.chomp!
+    File.delete(f)
+  end
+
   old_pid = "#{server.config[:pid]}.oldbin"
   if old_pid != server.pid
     begin
