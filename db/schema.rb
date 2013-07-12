@@ -161,6 +161,7 @@ ActiveRecord::Schema.define(:version => 20130710110157) do
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
     t.integer  "mangopay_id"
+    t.text     "crypted"
   end
 
   create_table "products", :force => true do |t|
