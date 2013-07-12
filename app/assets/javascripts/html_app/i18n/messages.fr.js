@@ -35,6 +35,8 @@ window.ParsleyConfig = window.ParsleyConfig || {};
             , rangewords:     "Cette valeur doit comprendre %s à %s mots."
             , greaterthan:    "Cette valeur doit être plus grande que %s."
             , lessthan:       "Cette valeur doit être plus petite que %s."
+            , luhn:           "Veuillez saisir une carte bancaire valide"
+            , expirationdate: "Cette date d'expiration n'est pas valide (MM/YY)"
         }
     });
 }(window.jQuery || window.Zepto));

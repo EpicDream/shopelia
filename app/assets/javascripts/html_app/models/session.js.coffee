@@ -35,7 +35,7 @@ class Shopelia.Models.Session extends Backbone.Model
     unless $.cookie('user') is undefined
       @set
         user: JSON.parse($.cookie('user'))
-        authToken: $.cookie('auth_token')
+        auth_token: $.cookie('auth_token')
 
   login: (session,callbacks) ->
     console.log("In session login method")
