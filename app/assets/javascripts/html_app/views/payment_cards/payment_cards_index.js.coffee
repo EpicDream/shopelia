@@ -6,6 +6,7 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
   events:
     "click #btn-register-payment": "registerPaymentCard"
     'keydown input[name="number"]':'addSpaceToCardNumber'
+    'keyup input[name="number"]': 'addCardType'
     'keyup input[name="exp_date"]': "formatExpDate"
 
 
@@ -16,7 +17,6 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
   render: ->
     $(@el).html(@template())
     if @options.session is undefined
-      console.log(@$('#btn-register-payment'))
       @$('#btn-register-payment').remove()
     @setCardFormVariables()
     Shopelia.Views.Form.prototype.render.call(this)
@@ -30,7 +30,6 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
     )
 
     card.set(cardJson)
-    console.log("card in setPaymentCard" + JSON.stringify(card))
     card
 
 
@@ -52,12 +51,10 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
                           success : (resp) ->
                             console.log('card success callback')
                             that.options.session.get("user").payment_cards.push(resp.disableWrapping().toJSON())
-                            console.log(JSON.stringify(that.options))
                             that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: that.options.session,product: that.options.product))
                           error : (model, response) ->
                             console.log('card error callback')
                             enableButton($("#btn-register-payment"))
-                            console.log(JSON.stringify(response))
                             displayErrors($.parseJSON(response.responseText))
       })
 
@@ -84,10 +81,29 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
     }
     if @options.session isnt undefined
       userId = @options.session.get("user").id
-      console.log("userId:" + userId )
       cardFormObject["user_id"] =  userId
-    console.log cardFormObject
     cardFormObject
+
+  addCardType: ->
+    console.log(@cardNumber.val().charAt(0))
+    if @cardNumber.val().length > 2
+      if  @cardNumber.val().charAt(0) == "3"
+        @cardNumber.removeClass("visa")
+        @cardNumber.addClass("amex")
+        @cardNumber.removeClass("mastercard")
+      else if @cardNumber.val().charAt(0) == "4"
+        @cardNumber.addClass("visa")
+        @cardNumber.removeClass("amex")
+        @cardNumber.removeClass("mastercard")
+      else if @cardNumber.val().charAt(0) == "5"
+        @cardNumber.removeClass("visa")
+        @cardNumber.removeClass("amex")
+        @cardNumber.addClass("mastercard")
+    else
+      @cardNumber.removeClass("visa")
+      @cardNumber.removeClass("amex")
+      @cardNumber.removeClass("mastercard")
+
 
   addSpaceToCardNumber: ->
     newValue = @cardNumber.val()

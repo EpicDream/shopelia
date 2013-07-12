@@ -1,6 +1,6 @@
 <div class="control-group">
     <div class="controls">
-        <input rel="popover" tracker-name="Address 1" class="input-block-level"  type="text" data-required="true" data-trigger="focusout" placeholder= "Adresse"  name="address1" autocomplete="off">
+        <input rel="popover" tracker-name="Address 1" class="input-block-level"  type="text" data-storage="false"  data-required="true" data-trigger="focusout" placeholder= "Adresse"  name="address1" autocomplete="off">
     </div>
 </div>
 <div class="control-group">

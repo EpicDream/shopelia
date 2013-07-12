@@ -4,7 +4,7 @@
 </div>
 <div class="control-group">
     <div class="controls">
-        <input rel="popover"  tracker-name="Card Number" class="input-block-level" type="text" maxlength="19" data-storage="false"  data-minlength="19" data-validation-minlength="19" data-trigger="keyup change focusout" data-required="true" data-luhn="true" class="" placeholder= "N° de carte bancaire" name="number">
+        <input rel="popover"  tracker-name="Card Number" class="cardLogo input-block-level" type="text" maxlength="19" data-storage="false"  data-minlength="19" data-validation-minlength="19" data-trigger="keyup change focusout" data-required="true" data-luhn="true" class="" placeholder= "N° de carte bancaire" name="number">
     </div>
 </div>
 <div class="control-group pull-left">

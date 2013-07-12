@@ -15,7 +15,6 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     @expected_price_total = Math.ceil(total_price * 100) / 100;
 
   render: ->
-    console.log(@options)
     $(@el).html(@template(user: @user, product: @product, expected_price_total: @expected_price_total))
     Tracker.onDisplay('Confirmation');
     this
