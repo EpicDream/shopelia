@@ -31,6 +31,8 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
       if that.email.parsley("validate")
         that.verifyEmail(that.email.val())
     )
+    unless @options.email is undefined
+      @email.val(@options.email)
 
   verifyEmail: (email) ->
     that = this
@@ -118,6 +120,5 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
     element.text("Déjà membre ?")
 
   onActionClick: (e) ->
-    that = this
-    @parent.setContentView(new Shopelia.Views.SignIn(session: that.options.session ,product: that.options.product))
+    @parent.setContentView(new Shopelia.Views.SignIn(session: @options.session ,product: @options.product,email: @email.val()))
 

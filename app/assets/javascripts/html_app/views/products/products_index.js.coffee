@@ -9,7 +9,6 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
 
   render: ->
-    console.log(@merchant)
     $(@el).html(@template(model: @model, merchant: @merchant))
     this
 
@@ -26,7 +25,6 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
              xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
            success: (data,textStatus,jqXHR) ->
              $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
-             console.log(data.merchant)
            error: (jqXHR,textStatus,errorThrown) ->
              console.log('error merchant callback')
              console.log(JSON.stringify(errorThrown))

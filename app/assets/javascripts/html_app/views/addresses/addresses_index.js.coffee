@@ -36,7 +36,6 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
       console.log("displaying address Errors" + JSON.stringify(errors))
       displayErrors(errors)
     )
-    console.log($('input[name="full_name"]'))
     address.set({
                 first_name:  split($('input[name="full_name"]').val())[0],
                 last_name:   split($('input[name="full_name"]').val())[1],
@@ -50,6 +49,7 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
     address
 
   eraseAddressFields: ->
+    console.log("eraseAddressFields")
     @zip.val("")
     @city.val("")
     @country.val("")

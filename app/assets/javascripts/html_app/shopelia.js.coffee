@@ -5,8 +5,8 @@ window.Shopelia =
   initialize: ->
     originalSync = Backbone.sync
     Backbone.sync = (method, model, options) ->
-      console.log("BACKBONE SYNC")
-      console.log(method)
+      #console.log("BACKBONE SYNC")
+      #console.log(method)
       options.headers = options.headers or {}
       options.contentType = 'application/json'
       _.extend(options.headers, {

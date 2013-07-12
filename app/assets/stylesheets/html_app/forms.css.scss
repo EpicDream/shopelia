@@ -1,3 +1,5 @@
+@import 'bourbon';
+
 select,
 textarea,
 input[type="text"],
@@ -59,3 +61,29 @@ form label {
 .paiement-logos {
   margin-top: 20px;
 }
+
+
+.cardLogo
+  {
+  background-image: url("empty-logo.png");
+  background-repeat:no-repeat;
+  background-position:98% center;
+  background-size: 30px;
+
+}
+
+
+.visa {
+  background-image: url("visa-logo.png");
+}
+
+.mastercard {
+  background-image: url("mastercard-logo.png");
+}
+
+.amex {
+  background-image: url("amex-logo.png");
+}
+
+
+
