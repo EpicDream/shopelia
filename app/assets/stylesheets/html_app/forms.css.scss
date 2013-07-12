@@ -39,6 +39,10 @@ input[type="color"],
   @include btn(1px,darken($green,15%),3px,$formsCellHeight,4px 20px,14px,#FFFFFF,$green,darken($green,10%),5%,3%);
 }
 
+.disabled {
+  @include btn(1px,darken($lightGrey,15%),3px,$formsCellHeight,4px 20px,14px,#000000,$lightGrey,darken($lightGrey,10%),5%,3%);
+}
+
 form abbr {
   display: none;
 }

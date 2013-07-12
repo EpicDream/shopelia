@@ -24,11 +24,13 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
 
   loginUser: (e) ->
     console.log("trigger loginUser")
+    console.log(@options.session)
     if $('form').parsley( 'validate' )
+      disableButton($("#btn-login-user"))
       eraseErrors()
       e.preventDefault()
       that = this
-      session = new Shopelia.Models.Session()
+      session = @options.session
       session.on("invalid", (model, errors) ->
         displayErrors(errors)
       )
@@ -39,9 +41,10 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
           console.log("response login success: " + JSON.stringify(resp))
           session.set(resp)
           session.saveCookies(session)
-          goToOrdersIndex(session,that.options.product)
+          that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: that.options.session,product: that.options.product))
         error : (response) ->
           console.log("callback error login")
+          enableButton($("#btn-login-user"))
           console.log(JSON.stringify(response.responseText))
           displayErrors($.parseJSON(response.responseText))
 
@@ -62,4 +65,4 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     element.text("Première Commande ?")
 
   onActionClick: (e) ->
-    @parent.setContentView(new Shopelia.Views.UsersIndex(product: @options.product))
+    @parent.setContentView(new Shopelia.Views.UsersIndex(session: @options.session,product: @options.product))
