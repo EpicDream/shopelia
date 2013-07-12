@@ -16,6 +16,11 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
 
   render: ->
     $(@el).html(@template(user: @user, product: @product, expected_price_total: @expected_price_total))
+    @$("#process-order").after(
+      () ->
+        securityView = new Shopelia.Views.Security()
+        $(securityView.render().el)
+    )
     Tracker.onDisplay('Confirmation');
     this
 

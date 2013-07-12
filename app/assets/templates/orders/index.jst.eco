@@ -58,3 +58,4 @@
         </table>
 
 <button id="process-order" class="custom-btn btn-block">CONFIRMER LA COMMANDE</button>
+<div class="spacer25"></div>
