@@ -11,9 +11,9 @@
 //= require html_app/jquery.leanModal.min
 //= require html_app/jquery.cookie
 //= require html_app/garlic.min
-//= require html_app/i18n/messages.fr
 //= require html_app/parsley.extend
 //= require html_app/parsley
+//= require html_app/i18n/messages.fr
 //= require bootstrap
 //= require underscore
 //= require backbone
