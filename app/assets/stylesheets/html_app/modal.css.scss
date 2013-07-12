@@ -11,6 +11,7 @@ $borderRadius: 4px;
   background-color:rgba(0, 0, 0, 0.65);
   min-height: $modalHeight;
   min-width: $modalWidth ;
+  margin-top: 10px;
 }
 
 #modal-header {
@@ -46,12 +47,12 @@ $borderRadius: 4px;
 #close {
   position:absolute;
   background:url("bt-fermer-off.png") 0 0 no-repeat;
-  width:50px;
-  height:50px;
+  width:30px;
+  height:30px;
   display:block;
   text-indent:-9999px;
-  top:-15px;
-  right:-15px;
+  top:0;
+  right:0;
   &:hover {
     background:url("bt-fermer-hover.png") 0 0 no-repeat;
   }
@@ -67,4 +68,21 @@ $borderRadius: 4px;
 
 .bold {
   font-weight: bold;
+}
+
+
+.security {
+  .field-title img {
+    width: auto;
+  }
+  font-size: 11px;
+  line-height: -5px;
+}
+.security-infos {
+  margin-top:5px
+}
+
+#security-256 {
+  display: block;
+  margin-top: -6px;
 }

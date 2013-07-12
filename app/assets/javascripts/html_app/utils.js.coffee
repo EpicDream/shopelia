@@ -13,7 +13,7 @@ window.enableButton = ($button) ->
 window.center = ($elem) ->
   top =undefined
   left = undefined
-  top = Math.max($(window).height() - $elem.height(), 0) / 2
+  top = Math.max($(window).height() - $elem.height(),0) / 2
   left = Math.max($(window).width() - $elem.outerWidth(), 0) / 2
 
   $elem.css
