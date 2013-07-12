@@ -26,25 +26,25 @@ var ShopeliaCheckout = {
     },
 
     center: function($elem) {
-        console.log("centering");
+        //console.log("centering");
         var top = undefined;
         var left = undefined;
-        top = Math.max( $(window).height() - $elem.height(), 0) / 2 ;
+        top = Math.max( $(window).height() - $elem.height(), 0) / 2 + $(window).scrollTop()   ;
         left = Math.max( $(window).width() - $elem.outerWidth(), 0) / 2;
-        console.log(top);
-        console.log(left);
+        console.log($(window).scrollTop() );
+        //console.log(left);
         $elem.css({
             "top": top,
             "left":left
         });
-        console.log($elem);
+        //console.log($elem);
     },
     createIframe: function(options) {
-        console.log("create iframe");
+        //console.log("create iframe");
         var overlay = document.createElement('div');
         overlay.id = 'lean_overlay';
         document.body.appendChild(overlay);
-        console.log(document.getElementById('lean_overlay'));
+        //console.log(document.getElementById('lean_overlay'));
         var iframe = document.createElement('iframe');
         iframe.setAttribute("src",this.generateEncodedUri(options));
         iframe.style.border = "0px #FFFFFF none";
@@ -77,10 +77,13 @@ var ShopeliaCheckout = {
         return uri
     },
     handleIframe: function(options) {
-        console.log("handleIframe begins");
+        //console.log("handleIframe begins");
         var iframe = document.querySelector("#shopeliaIframe")
             , _window = iframe.contentWindow;
 
+        var body = document.body;
+        var bodyClass = body.className;
+        body.className += " " + 'overflow-hidden';
         var listener =  function(e) {
             if ( e.data === "loaded" && e.origin === iframe.src.split("/").splice(0, 3).join("/")) {
                 iframe.style.opacity = '1';
@@ -89,7 +92,7 @@ var ShopeliaCheckout = {
             } else if (e.data === "deleteIframe" && e.origin === iframe.src.split("/").splice(0, 3).join("/"))
             {
                 window.removeEventListener("message",listener);
-                console.log("1");
+                body.className = bodyClass;
                 var overlay = document.getElementById("lean_overlay");
                 overlay.parentNode.removeChild(overlay);
             }

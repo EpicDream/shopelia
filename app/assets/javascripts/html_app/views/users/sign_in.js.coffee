@@ -18,7 +18,6 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
   setFormVariables: ->
     @email = @$('input[name="email"]')
     @password = @$('input[name="password"]')
-    console.log(@password)
     unless @options.email is undefined
       @email.val(@options.email)
 
@@ -65,4 +64,4 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     element.text("Première Commande ?")
 
   onActionClick: (e) ->
-    @parent.setContentView(new Shopelia.Views.UsersIndex(session: @options.session,product: @options.product))
+    @parent.setContentView(new Shopelia.Views.UsersIndex(session: @options.session,product: @options.product,email:@email.val() ))
