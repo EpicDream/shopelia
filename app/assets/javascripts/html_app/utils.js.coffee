@@ -13,7 +13,7 @@ window.enableButton = ($button) ->
 window.center = ($elem) ->
   top =undefined
   left = undefined
-  top = Math.max($(window).height() - $elem.height(), 0) / 2
+  top = Math.max($(window).height() - $elem.height(),0) / 2
   left = Math.max($(window).width() - $elem.outerWidth(), 0) / 2
 
   $elem.css
@@ -57,7 +57,10 @@ window.split =  (fullName) ->
     [firstName,lastName]
 
 window.getMessageFromValidator = (validator,constraint) ->
+  console.log(validator)
   result = validator.formatMesssage(validator.messages[constraint.name], constraint.requirements)
+  if result == ""
+    result = validator.messages[constraint.name]
   unless 'string' == typeof result
     result = result[constraint.requirements]
   result

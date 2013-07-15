@@ -1,6 +1,6 @@
 <div id='modal-header'>
     <div class="span2" >
-        <img class="pull-left logo"  src= "/assets/logo_shopelia.png" width="150px">
+        <img class="pull-left logo"  src= "/assets/html_app/logo-black.png">
     </div>
     <a id="link-header" class="pull-right"></a>
 </div>
@@ -10,4 +10,4 @@
      <div id='modal-right' class='span5'></div>
 </div>
 <div class="spacer25"></div>
-<a id="close" class="hidden-phone">close</a>
+<a id="close">x</a>
