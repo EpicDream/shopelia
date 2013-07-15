@@ -12,6 +12,8 @@ module OrdersHelper
         {state:"processing",name:"En attente de votre réponse"}
       when :completed
         {state:"success",name:"Validée"}
+      when :failed
+        {state:"error",name:failure_reason}
       else
         {state:"error",name:"Annulée"}
     end
