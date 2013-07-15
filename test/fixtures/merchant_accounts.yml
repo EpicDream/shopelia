@@ -6,7 +6,16 @@ elarch_neuilly_rueducommerce:
   is_default: true
   merchant_created: false
   address: elarch_neuilly
-  
+
+elarch_neuilly_amazon:
+  user: elarch
+  merchant: amazon
+  login: elarch100.gmail.com@shopelia.fr
+  password: toto
+  is_default: true
+  merchant_created: true
+  address: elarch_neuilly
+    
 manu_rueducommerce:
   user: manu
   merchant: rueducommerce
