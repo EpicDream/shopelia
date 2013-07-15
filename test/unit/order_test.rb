@@ -252,9 +252,9 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     callback_order "failure", { "status" => "no_product_available" }
     
-    assert_equal :pending_agent, @order.state
-    assert_equal "vulcain", @order.error_code
-    assert_equal "product_not_found", @order.message
+    assert_equal :failed, @order.state
+    assert_equal "merchant", @order.error_code
+    assert_equal "stock", @order.message
   end  
 
   test "it should restart paused order" do
