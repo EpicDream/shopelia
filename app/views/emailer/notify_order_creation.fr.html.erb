@@ -71,14 +71,12 @@
                                   <table class="table1-3" width="183" bgcolor="#ffffff" border="0" align="left" cellpadding="0" cellspacing="0">
                                     <tr>
                                       <td height="30" align="right" valign="top">
-                                        <div class="hide">
-                                          <%= image_tag("emails/fold_corner.png", width:15, height:26) %>
-                                        </div>
+                                        &nbsp;
                                       </td>
-                                    </tr>
+                                    </tr>                                    
                                     <tr>
                                       <td align="center">
-                                        <%= image_tag("emails/logo_shopelia.png", width:130, alt:"Logo") %>
+                                        <%= image_tag("emails/logo_shopelia.png", width:130) %>
                                       </td>
                                     </tr>
                                   </table>
@@ -87,7 +85,7 @@
                                   <table border="0" align="right" cellpadding="0" cellspacing="0" class="table3-1">
                                     <tr>
                                       <td height="30" align="right" valign="top">
-                                        <%= image_tag("emails/fold_corner.png", width:15, height:27, class:"top_fold") %>
+                                        <%= image_tag("emails/fold_top_right.jpg", width:15, height:27, class:"top_fold") %>
                                       </td>
                                     </tr>
                                     <tr>
@@ -95,9 +93,7 @@
                                         <table height="27" border="0" align="center" cellpadding="0" cellspacing="0">
                                           <tr>
                                             <td style=" font-family: Helvetica, Arial, sans-serif; font-size:14px; color:#95a5a6;">
-                                              <a href="#" style="color:#95a5a6; font-weight: normal;">Votre compte</a>
-                                              <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                              <a href="#" style="color:#95a5a6; font-weight: normal;">A propos</a>
+                                              &nbsp;
                                             </td>
                                           </tr>
                                         </table>
@@ -135,7 +131,7 @@
                               </tr>
                               <!--Article Title-->
                               <tr>
-                                <td width="42" align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:24px; color:#ffffff;"><img src="./images/icon_waiting.png" width="32" height="32" alt="facebook" /></td>
+                                <td width="42" align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:24px; color:#ffffff;"><%= image_tag("emails/icon_waiting.png", width:32, height:32) %></td>
                                 <td align="left" valign="middle" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:24px; color:#ffffff;">Commande en cours</td>
                               </tr>
                               <!--End Article Title-->
@@ -163,6 +159,7 @@
             </tr>
             <!--End Header Text-->
             <!--1:3 Panel Icon  [Right Text]-->
+<% @order.order_items.each do |item| %>            
             <tr>
               <td valign="top">
                 <table bgcolor="#ffffff" class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -178,7 +175,7 @@
                             <table class="table2-2" width="167" border="0" align="left" cellpadding="0" cellspacing="0">
                               <tr>
                                 <td align="center">
-                                  <img class="img2" src="./images/gift.png" width="112" height="112" alt="navigator" />
+                                  <%= image_tag(item.product.image_url, style: "max-width:112px; max_height:112px", class:"img2") %>
                                 </td>
                               </tr>
                               <tr>
@@ -190,7 +187,7 @@
                               <tr></tr>
                               <!--Article Title-->
                               <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:18px; color:#34495e;">Papier Fax</td>
+                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:18px; color:#34495e;"><%= item.product.name %></td>
                               </tr>
                               <!--End Article Title-->
                               <tr>
@@ -198,11 +195,9 @@
                               </tr>
                               <!--Content-->
                               <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px;">
-                                  Papier normal Fax T102 Brother FAXT102G1<br />
-                                  Commandé chez: <a href="#">Amazon</a><br />
-                                  Frais de livraison: <strong>Gratuit</strong>
-                                  <p style="font-family: Helvetica, Arial, sans-serif; font-size:17px; color:#46b758; line-height:24px; font-weight:bold; margin:0px;">69.75 €</p>
+                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px;"><br />
+                                  Commandé chez: <%= link_to @order.merchant.name, @order.merchant.url %><br />
+                                  <p style="font-family: Helvetica, Arial, sans-serif; font-size:17px; color:#46b758; line-height:24px; font-weight:bold; margin:0px;"><%= number_to_currency(item.product_price) %></p>
                                 </td>
                               </tr>
                               <!--End Content--> 
@@ -219,63 +214,7 @@
               </td>
             </tr>
             <!--End 1:3 Panel Icon [Right Text]-->
-            <!--1:3 Panel Icon  [Right Text]-->
-            <tr>
-              <td valign="top">
-                <table bgcolor="#ffffff" class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td height="30"></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <table class="table550" width="550" border="0" align="center" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td valign="top">
-                            <!--image-->
-                            <table class="table2-2" width="167" border="0" align="left" cellpadding="0" cellspacing="0">
-                              <tr>
-                                <td align="center">
-                                  <img class="img2" src="./images/gift.png" width="112" height="112" alt="navigator" />
-                                </td>
-                              </tr>
-                              <tr>
-                                <td align="left" valign="top" height="20"></td>
-                              </tr>
-                            </table>
-                            <!--End image-->
-                            <table width="358" border="0" align="right" cellpadding="0" cellspacing="0" class="table2-2">
-                              <tr></tr>
-                              <!--Article Title-->
-                              <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:18px; color:#34495e;">Papier Fax</td>
-                              </tr>
-                              <!--End Article Title-->
-                              <tr>
-                                <td height="10" align="left" valign="top"></td>
-                              </tr>
-                              <!--Content-->
-                              <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px;">
-                                  Papier normal Fax T102 Brother FAXT102G1<br />
-                                  Commandé chez: <a href="#">Amazon</a><br />
-                                  Frais de livraison: <strong>5.25€</strong>
-                                  <p style="font-family: Helvetica, Arial, sans-serif; font-size:17px; color:#46b758; line-height:24px; font-weight:bold; margin:0px;">69.75 €</p>
-                                </td>
-                              </tr>
-                              <!--End Content--> 
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td height="30" style="border-bottom:1px dashed #bdc3c7;"></td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <!--End 1:3 Panel Icon [Right Text]-->
+<% end %>
             <!--2:2 Content-->
             <tr>
               <td valign="top">
@@ -332,14 +271,14 @@
                                   Prix Total:<br />
                                   Frais de livraison
                                 </td>
-                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;"><strong><strong>140.50€</strong><br />
-                                  Gratuits</strong>
+                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;"><strong><strong><%= number_to_currency(@order.expected_price_product) %></strong><br />
+                                  <%= number_to_currency(@order.expected_price_shipping) %></strong>
                                 </td>
                               </tr>
                               <!--Article Title-->
                               <tr>
                                 <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;">Total à payer</td>
-                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;"><span style="font-family: Helvetica, Arial, sans-serif; color:#46b758; font-weight:bold;">140.50 €</span></td>
+                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;"><span style="font-family: Helvetica, Arial, sans-serif; color:#46b758; font-weight:bold;"><%= number_to_currency(@order.expected_price_total) %></span></td>
                               </tr>
                               <!--End Article Title-->
                               <!--End Content--> 
@@ -378,8 +317,7 @@
                         <!--Content-->
                         <tr>
                           <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px;">
-                            Vous pouvez si vous le souhaitez voir l'état de votre commande à tout moment en pressant le bouton ci-dessous :
-                            <a href="#">more...</a>
+                            Vous pouvez si vous le souhaitez voir l'état de votre commande à tout moment en pressant le bouton ci-dessous&nbsp;:
                             <!--Button-->
                             <table class="button" width="200" height="35" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#46b758" style="border-radius:4px;">
                               <tr>
@@ -387,7 +325,7 @@
                                   <table width="200" height="32" border="0" cellspacing="0" cellpadding="0" bgcolor="#69bf6a" style="border-radius:4px;">
                                     <tr>
                                       <td align="center">
-                                        <a href="#" style="font-family: Arial, Helvetica, sans-serif; font-size:14px; color:#ffffff;">Suivre ma commande</a>
+                                        <%= link_to "Suivre ma commande", zen_order_url(@order), style:"font-family: Arial, Helvetica, sans-serif; font-size:14px; color:#ffffff;" %>
                                       </td>
                                     </tr>
                                   </table>
@@ -424,8 +362,8 @@
                           </td>
                         </tr>
                         <tr>
-                          <td height="25" align="left" valign="bottom">
-                            <img src="./images/fold_bottom.jpg" width="15" height="27" alt="" />
+                          <td height="30" align="left" valign="bottom">
+                            <%= image_tag("emails/fold_bottom_left.jpg", width:15, height:27) %>
                           </td>
                         </tr>
                       </table>
@@ -449,37 +387,13 @@
                               <!--info-->
                               <tr>
                                 <td align="center" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:12px; color:#ecf0f1; line-height:22px;">
-                                  Une question, un problème ? Appelez nous au <a href="#">01 82 09 15 44</a><br />
-                                  <span style="font-family: Helvetica, Arial, sans-serif; font-size:11px; color:#999999;">&copy; Shopelia 2013 RCS 529991119 - SAS au capital de 291676€</span>
+                                  Contactez-nous par mail sur <a href="mailto:support@shopelia.com" style="color: #ffffff">support@shopelia.com</a> ou par téléphone au 01 82 09 15 44
+                                  <span style="font-family: Helvetica, Arial, sans-serif; font-size:11px; color:#999999;">&copy; Shopelia <%= Time.now.year %> RCS 529991119 - SAS au capital de 291676€</span>
                                 </td>
                               </tr>
                               <!--End info-->
                               <tr>
                                 <td align="center" valign="top" height="20"></td>
-                              </tr>
-                              <!--Social-->
-                              <tr>
-                                <td align="center" valign="top">
-                                  <table width="130" border="0" cellspacing="0" cellpadding="0">
-                                    <tr>
-                                      <td>
-                                        <img src="./images/facebook.png" width="32" height="32" alt="facebook" />
-                                      </td>
-                                      <td width="17"></td>
-                                      <td>
-                                        <img src="./images/twitter.png" width="32" height="32" alt="twitter" />
-                                      </td>
-                                      <td width="17"></td>
-                                      <td>
-                                        <img src="./images/googleplus.png" width="32" height="32" />
-                                      </td>
-                                    </tr>
-                                  </table>
-                                </td>
-                              </tr>
-                              <!--End Social-->
-                              <tr>
-                                <td align="center" valign="top" height="30"></td>
                               </tr>
                             </table>
                           </td>
@@ -494,342 +408,6 @@
         </td>
       </tr>
       <!--End Footer--> 
-    </table>
-  </body>
-</html>
-
-
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-    <title>Shopelia - Votre commande a été acceptée par le marchand</title>
-    <style type="text/css">
-      .ReadMsgBody, .ExternalClass {width:100%; background-color: #ffffff;}
-      .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height:100%;}
-      body {-webkit-text-size-adjust:none; -ms-text-size-adjust:none;}
-      body {margin:0; padding:0;}
-      table {border-spacing:0; border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;}
-      table td {border-collapse:collapse;}
-      img { border: 0; }
-      html {width: 100%; height: 100%;}
-      a         {color:#d8d8d8; text-decoration:none;}
-      a:link    {color:#959595; text-decoration:none;}
-      a:visited {color:#959595; text-decoration:none;}
-      a:focus   {color:#959595 !important;}
-      a:hover   {color:#333333 !important;}
-      a[href^="tel"], a[href^="sms"] {text-decoration:none; color:#525252; pointer-events:none; cursor:default;}
-      .mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {text-decoration:default; color:#d8d8d8 !important; pointer-events:auto; cursor:default;}
-      /*--===============MEDIA QUERIES===============--*/
-      @media only screen and (max-width: 639px) {
-      body{width:auto!important;}
-      body[yahoo] .table		{width:320px !important;}
-      body[yahoo] .t180		{width:300px !important;}
-      body[yahoo] .image		{width:180 !important;margin:auto!important;}
-      body[yahoo] .activate		{width:300px !important;height:40px!important;}
-      body[yahoo] .divider	{width:320px !important; height:20px!important;}
-      body[yahoo] .divider	{width:320px !important; height:15px!important;}
-      body[yahoo] .couple	{width:320px !important; height:117px!important;}
-      body[yahoo] .social-icons	{width:140px !important;height:21px !important;}
-      body[yahoo] .heading	{width:280px !important;font-size: 20px!important}
-      body[yahoo] .headingsmall	{width:280px !important;font-size: 18px!important}
-      body[yahoo] .center 		{text-align:center !important;}
-      body[yahoo] .spacing		{height:15px !important;}
-      }
-      /*--===============END MEDIA QUERIES===============--*/
-    </style>
-  <body style="width:100% !important; color:#525252; background:#ffffff; font-family: Helvetica,sans-serif; font-size:13px; line-height:130%; margin:0; padding:0;" yahoo="fix">
-    <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
-      <!--===============WRAPPER===============-->
-      <tr>
-        <td width="100%" valign="top" bgcolor="#ffffff">
-          <!--===============START HEADER===============-->
-          <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" style="width:100% !important; margin:0; padding:0; border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
-            <tbody>
-              <tr>
-                <td bgcolor="#ffffff">
-                  <table width="650" bgcolor="#333333" cellpadding="0" cellspacing="0" border="0" align="center" class="table">
-                    <tbody>
-                      <tr>
-                        <td colspan="3" height="20" valign="middle" class="center" style="font-size:5px;lineheight:20px;">&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td width="20"></td>
-                        <!--===============START LOGO===============-->
-                        <td align="center" class="content-center" style="font-size:30px; color:#bcbaba; text-align:center">
-                          <%= image_tag("emails/logo.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", alt:"", class:"logo") %>
-                        </td>
-                        <!--===============END LOGO===============-->
-                        <!--===============START LOGO===============-->
-                        <!--===============END LOGO===============-->
-                        <td width="20"></td>
-                      </tr>
-                      <tr>
-                        <td colspan="3" height="20" valign="middle" class="center" style="font-size:5px;lineheight:20px;border-bottom:3px solid #000000;">&nbsp;</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!--===============END HEADER===============-->	
-          <!--===============TWO COLUMNS===============-->
-          <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" style="width:100% !important; margin:0; padding:0; border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
-            <tbody>
-              <tr>
-                <td bgcolor="#ffffff">
-                  <!-- Tables Width -->
-                  <table width="650" cellpadding="0" cellspacing="0" border="0" align="center" class="table" bgcolor="#f5f5f5">
-                    <tbody>
-                      <tr>
-                        <td>
-                          <!-- LEFT COLUMN -->
-                          <table align="left" bgcolor="#f5f5f5" width="390" cellpadding="0" cellspacing="0" border="0" class="t180">
-                            <tbody>
-                              <tr>
-                              <tr>
-                                <td colspan="3" height="15"></td>
-                              </tr>
-                              <tr>
-                                <td width="20"></td>
-                                <!-- DISCOUNT BADGE -->
-                                <td width="350" align="left" valign="top" style="font-size: 18px; color: #232323; font-weight: normal; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">													
-                                  <<%= image_tag("emails/loading.png", style: "border:none; outline:none; text-decoration:none;", border:"0", width:128, height:128, alt:"", class:"badge") %>	
-                                </td>
-                                <!-- End DISCOUNT BADGE -->
-                                <td width="20"></td>
-                              </tr>
-                              <tr>
-                                <td colspan="3" height="15"></td>
-                              </tr>
-                              <tr>
-                                <td width="20"></td>
-                                <!-- Content Text Here -->
-                                <td width="350" valign="top" align="left" style="font-size: 25px; color: #333333; text-align: center; font-family: Helvetica, Arial, sans-serif; vertical-align: top; line-height:27px;">					
-                                  <b style="color:#29b153; font-size: 27px;">En cours</b><p>
-                                  Votre commande<br>
-                                  est en cours de<br>
-                                  traitement<p>
-                                  <font style="font-size: 21px">Vous serez notifié par email dès son acceptation par le site marchand</font>
-                                </td>
-                                <!-- End of Content Text -->
-                              </tr>
-                              <tr>
-                                <td colspan="3" height="15"></td>
-                              </tr>
-                            </tbody>
-                          </table>
-                          <!-- End of LEFT COLUMN -->					
-                          <!-- RIGHT COLUMN -->
-                          <table align="left" bgcolor="#fefaf7" width="250" cellpadding="0" cellspacing="0" border="0" class="table">
-                            <tbody>
-                              <tr>
-                                <td width="250">
-                                  <table align="left" bgcolor="#fefaf7" width="250" cellpadding="0" cellspacing="0" border="0" class="table">
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#f8f3ed"></td>
-                                    </tr>
-                                    <tr>
-                                      <td width="10" bgcolor="#f8f3ed"></td>
-                                      <!-- CART ITEMS -->
-                                      <td width="230" bgcolor="#f8f3ed"align="left" valign="top" style="font-size: 18px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px;">													
-                                        <a style="color:#29b153;line-height:18px; font-weight: bold;">Votre commande</a> 
-                                      </td>
-                                      <!-- End CART ITEMS -->
-                                      <td width="10" bgcolor="#f8f3ed"></td>
-                                    </tr>
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#f8f3ed"></td>
-                                    </tr>
-                                  </table>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td width="250">
-                                  <table align="left" bgcolor="#fefaf7" width="250" cellpadding="0" cellspacing="0" border="0" class="table">
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#fefaf7"></td>
-                                    </tr>
-                                    <tr>
-                                      <td width="10" bgcolor="#fefaf7"></td>
-                                      <!-- CART ITEMS -->
-                                      <td width="50" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 18px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">													
-                                        <%= image_tag(@product.image_url, style: "border:none; outline:none; text-decoration:none;", border:"0", width:"50px", height:"50px", alt:"") %>	
-                                      </td>
-                                      <td width="10" bgcolor="#fefaf7"></td>
-                                      <td width="170" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 14px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px;">													
-                                        <%= @product.name %><br>
-                                        <b style="font-weight:bold;line-height:18px;"><%= number_to_currency(@order.expected_price_total) %></b>
-                                      </td>
-                                      <!-- End CART ITEMS -->
-                                      <td width="10" bgcolor="#fefaf7"></td>
-                                    </tr>
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#fefaf7"></td>
-                                    </tr>
-                                  </table>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <%= image_tag("emails/divider.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:250, height:1, alt:"", class:"badge") %>	
-                                </td>
-                              </tr>
-                              <tr>
-                                <td width="250">
-                                  <table align="left" bgcolor="#fefaf7" width="250" cellpadding="0" cellspacing="0" border="0" class="table">
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#f8f3ed"></td>
-                                    </tr>
-                                    <tr>
-                                      <td width="10" bgcolor="#f8f3ed"></td>
-                                      <!-- CART ITEMS -->
-                                      <td width="230" bgcolor="#f8f3ed"align="left" valign="top" style="font-size: 18px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px;">													
-                                        <a style="color:#29b153;line-height:18px; font-weight: bold;">Suivi de commande</a> 
-                                      </td>
-                                      <!-- End CART ITEMS -->
-                                      <td width="10" bgcolor="#f8f3ed"></td>
-                                    </tr>
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#f8f3ed"></td>
-                                    </tr>
-                                  </table>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td width="250">
-                                  <table align="left" bgcolor="#fefaf7" width="250" cellpadding="0" cellspacing="0" border="0" class="table">
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#fefaf7"></td>
-                                    </tr>
-                                    <tr>
-                                      <td width="10" bgcolor="#fefaf7"></td>
-                                      <!-- CART ITEMS -->
-                                      <td width="230" bgcolor="#fefaf7"align="left" valign="top" style="font-size: 14px; color: #363838; font-weight: normal; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;">
-                                        Vous pouvez si vous le souhaitez voir l'état de votre commande chez <%= @vendor %> à tout moment en pressant le bouton ci-dessous :<br>
-                                        <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
-                                          <tr>
-                                            <td align="center" width="160" bgcolor="#29b153" style="background: #29b153; margin-bottom: 5px; margin-top: 5px; padding-top: 6px; padding-right: 10px; padding-bottom: 6px; padding-left: 10px; border: 1px solid #1d863d; color: #fff; font-weight: normal; text-decoration: none; font-family: Helvetica, Arial, sans-serif; text-transform:uppercase; display: block; font-size:0.8em;">
-                                              <%= link_to "VOIR L'ETAT DE MA COMMANDE", zen_order_url(@order), style:"color: #fff; text-decoration: none;" %>
-                                            </td>
-                                          </tr>
-                                        </table>
-                                        <br>
-                                      </td>
-                                      <!-- End CART ITEMS -->
-                                      <td width="10" bgcolor="#fefaf7"></td>
-                                    </tr>
-                                    <tr>
-                                      <td colspan="3" height="10" bgcolor="#fefaf7"></td>
-                                    </tr>
-                                  </table>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <%= image_tag("emails/divider.jpg", style: "border:none; outline:none; text-decoration:none;", border:"0", width:250, height:1, alt:"", class:"badge") %>	
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                          <!-- End of RIGHT COLUMN -->					
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <!-- End of Tables Width -->				
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!--===============TWO COLUMNS===============-->
-          <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" style="width:100% !important; margin:0; padding:0; border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
-            <tbody>
-              <tr>
-                <td bgcolor="#ffffff">
-                  <!-- Tables Width -->
-                  <table width="650" cellpadding="0" cellspacing="0" border="0" align="center" class="table" bgcolor="#222222">
-                    <tbody>
-                      <tr>
-                        <td>
-                          <!-- LEFT COLUMN -->
-                          <table align="left" bgcolor="#222222" width="600" cellpadding="0" cellspacing="0" border="0" class="t180">
-                            <tbody>
-                              <tr>
-                                <td colspan="2" class="spacing"></td>
-                              </tr>
-                              <tr>
-                                <td colspan="2" height="20"></td>
-                              </tr>
-                              <tr>
-                                <td width="20"></td>
-                                <!-- Content Text Here -->
-                                <td width="453" valign="top" align="left" style="font-size: 14px; color: #ffffff; text-align: left; font-family: Helvetica, Arial, sans-serif; vertical-align: top;line-height:18px; text-align:justify">
-                                  Nous vous remercions d'utiliser le service Shopelia, 
-                                  et n'hésitez pas à nous contacter pour toute question&nbsp;!
-                                  <p>
-                                  L’équipe Shopelia<br>
-                                  <a href="mailto:support@shopelia.com" style="color: #ffffff">support@shopelia.com</a>
-                                </td>
-                                <!-- End of Content Text -->
-                              </tr>
-                              <tr>
-                                <td colspan="2" height="20"></td>
-                              </tr>
-                            </tbody>
-                          </table>
-                          <!-- End of LEFT COLUMN -->					
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <!-- End of Tables Width -->				
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!--===============TWO COLUMNS===============-->
-          <!--===============START FOOTER===============-->
-          <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" style="width:100% !important; margin:0; padding:0; border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;">
-            <tbody>
-              <tr>
-                <td bgcolor="#ffffff">
-                  <table width="650" bgcolor="#333333" cellpadding="0" cellspacing="0" border="0" align="center" class="table">
-                    <tbody>
-                      <tr>
-                        <td colspan="5" height="20" valign="middle" class="center" style="font-size:5px;lineheight:20px;">&nbsp;</td>
-                      </tr>
-                      <tr>
-                        <td width="20"></td>
-                        <!--===============START LOGO===============-->
-                        <td width="128" height="48" align="center" style="font-size:30px; color:#bcbaba; text-align:center" class="content-center">
-                          <%= link_to(image_tag("emails/facebook.png",'mc:edit' =>"footerIcon1",border:"0", alt:"", style:"vertical-align: middle;"),"https://www.facebook.com/Shopelia") %>
-                          <%= link_to(image_tag("emails/twitter.png",border:"0", alt:"", style:"vertical-align: middle;"),"https://twitter.com/shopelia") %>
-                        </td>
-                        <!--===============END LOGO===============-->
-                        <td width="232"></td>
-                        <!--===============START LOGO===============-->
-                        <td width="250" align="center" valign="middle" style="font-size:12px; color:#bcbaba; text-align:right;line-height:14px;" class="content-center">
-                          &copy; Shopelia <%= Time.now.year %>
-                        </td>
-                        <!--===============END LOGO===============-->
-                        <td width="20"></td>
-                      </tr>
-                      <tr>
-                        <td colspan="5" height="20" valign="middle" class="center" style="font-size:5px;lineheight:20px;">&nbsp;</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <!--===============END FOOTER===============-->	
-        </td>
-      </tr>
-      <!--===============END WRAPPER===============-->
     </table>
   </body>
 </html>
