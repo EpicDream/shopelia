@@ -301,6 +301,7 @@ fr:
         add_address: "Ajouter une addresse"
         add_payment_card: "Ajouter une carte"
     invalid_birthdate: "Vous devez avoir au minimum 16 ans pour vous enregistrer"
+    cannot_destroy: "Impossible de supprimer un utilisateur avec des commandes déjà effectuées"
 
   app:
     cancel: "Annuler"

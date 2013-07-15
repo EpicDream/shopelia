@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  fixtures :users, :countries, :payment_cards
+  fixtures :users, :countries, :payment_cards, :orders
   
   setup do
     @user = users(:elarch)
@@ -108,10 +108,12 @@ class UserTest < ActiveSupport::TestCase
   end
   
   test "it should destroy dependent objects" do
+    @user.orders.destroy_all # clean orders to allow destruction
     user_id = @user.id
     assert_equal 2, Address.find_all_by_user_id(user_id).count
     @user.destroy
     assert_equal 0, Address.find_all_by_user_id(user_id).count
+    assert !User.exists?(@user)
   end
   
   test "it should have password" do
@@ -230,6 +232,13 @@ class UserTest < ActiveSupport::TestCase
   test "it shouldn't be able to order without payment card" do
     @user.payment_cards.destroy_all
     assert !@user.can_order?
+  end
+
+  test "it shouldn't be able to destroy a user with a completed order" do
+    @user.destroy
+    
+    assert User.exists?(@user)
+    assert_equal "Impossible de supprimer un utilisateur avec des commandes déjà effectuées", @user.errors.full_messages.first
   end
   
 end

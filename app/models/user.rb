@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   devise :recoverable, :rememberable, :trackable, :validatable
 
   before_save :ensure_authentication_token
+  before_destroy :check_absence_of_completed_orders
 
   has_many :addresses, :dependent => :destroy
   has_many :payment_cards, :dependent => :destroy
@@ -160,6 +161,13 @@ class User < ActiveRecord::Base
 
   def notify_creation_to_admin
     Emailer.notify_admin_user_creation(self).deliver
+  end
+
+  def check_absence_of_completed_orders
+    if self.orders.completed.count > 0
+      self.errors.add(:base, I18n.t('users.cannot_destroy'))
+      false
+    end
   end
 
 end

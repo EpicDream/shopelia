@@ -40,6 +40,7 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
   end
 
   test "it should destroy user" do
+    @user.orders.destroy_all # clean orders to allow destruction
     assert_difference('User.count', -1) do
       delete :destroy, id: @user, password:"tototo", format: :json
     end
