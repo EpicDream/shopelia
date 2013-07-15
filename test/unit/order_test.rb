@@ -38,6 +38,53 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "amazon", order.cvd_solution
   end
   
+  test "it shouldn't be able to create same order in a 5 minutes delay" do
+    order = Order.create(
+      :user_id => @user.id,
+      :payment_card_id => @card.id,
+      :products => [ {
+        :url => "http://www.amazon.fr/one",
+        :name => "Papier normal Fax T102 Brother FAXT102G1",
+        :image_url => "http://www.prixing.fr/images/one.jpg" } ],
+      :address_id => @address.id,
+      :expected_price_total => 100)
+    another = Order.create(
+      :user_id => @user.id,
+      :payment_card_id => @card.id,
+      :products => [ {
+        :url => "http://www.amazon.fr/another_product",
+        :name => "Bla",
+        :image_url => "http://www.prixing.fr/images/another.jpg" } ],
+      :address_id => @address.id,
+      :expected_price_total => 100)
+    assert another.persisted?
+    duplicate = Order.create(
+      :user_id => @user.id,
+      :payment_card_id => @card.id,
+      :products => [ {
+        :url => "http://www.amazon.fr/one",
+        :name => "Papier normal Fax T102 Brother FAXT102G1",
+        :image_url => "http://www.prixing.fr/images/one.jpg" } ],
+      :address_id => @address.id,
+      :expected_price_total => 100)
+
+    assert !duplicate.persisted?
+    assert_equal "Vous ne pouvez pas commander deux fois le même produit dans un délai de 5 minutes", duplicate.errors.full_messages.first
+    
+    order.update_attribute :created_at, 10.minutes.ago
+    duplicate = Order.create(
+      :user_id => @user.id,
+      :payment_card_id => @card.id,
+      :products => [ {
+        :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
+        :name => "Papier normal Fax T102 Brother FAXT102G1",
+        :image_url => "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg" } ],
+      :address_id => @address.id,
+      :expected_price_total => 100)
+      
+    assert duplicate.persisted?
+  end
+  
   test "it should send email if notification is requested" do
     @order.notify_creation
     
@@ -420,6 +467,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should match delayed & expired scopes" do
+    @order.update_attribute :created_at, Time.now
     @order.update_attribute :state_name, "pending_agent"
     assert_equal 0, Order.delayed.count
     assert_equal 0, Order.expired.count

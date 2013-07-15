@@ -330,6 +330,8 @@ class Order < ActiveRecord::Base
         self.errors.add(
           :base, I18n.t('orders.errors.invalid_product', 
           :error => product.nil? ? "" : product.errors.full_messages.join(","))) and next if product.nil? || !product.persisted?
+          
+        self.errors.add(:base, I18n.t('orders.errors.duplicate_order')) if OrderItem.where(order_id:self.user.orders.where("created_at >= ?", 5.minutes.ago).map(&:id)).where(product_id:product.id).count > 0
 
         product.name = p[:name] unless p[:name].blank?
         product.image_url = p[:image_url] unless p[:image_url].blank?
