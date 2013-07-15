@@ -17,13 +17,13 @@ class PaymentCard < ActiveRecord::Base
   end
   validates :exp_year, :presence => true, :inclusion => { :in => PaymentCard.years }
 
-
   after_initialize :decrypt
   after_save :decrypt
   before_save :crypt
 
+  before_destroy :destroy_associated_orders
   before_destroy :destroy_mangopay_payment_card, :if => Proc.new { |card| card.mangopay_id.present? }
-  
+
   private
 
   def crypt
@@ -62,11 +62,15 @@ class PaymentCard < ActiveRecord::Base
     self.number = decrypted[0..15]
     self.cvv = decrypted[22..24]
   end
-
-   
   
   def destroy_mangopay_payment_card
     MangoPay::Card.delete(self.mangopay_id)
   end
-    
+
+  def destroy_associated_orders
+    Order.running.where(payment_card_id:self.id).each do |order|
+      order.reject "payment_card_destroyed"
+    end
+  end
+  
 end

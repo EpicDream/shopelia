@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class PaymentCardTest < ActiveSupport::TestCase
-  fixtures :users, :payment_cards
+  fixtures :users, :payment_cards, :orders
 
   test "it should create a payment card" do
     card = PaymentCard.new(
@@ -47,4 +47,22 @@ class PaymentCardTest < ActiveSupport::TestCase
     assert_raises(ArgumentError) { card.save }
   end
   
+  test "it should fail all non completed orders attached to a destroyed payment card" do
+    order = orders(:elarch_rueducommerce)
+    assert_equal :initialized, order.state
+    order.payment_card.destroy
+    
+    assert_equal :failed, order.reload.state
+    assert_equal "user", order.error_code
+    assert_equal "payment_card_destroyed", order.message
+  end
+
+  test "it shouldn't fail a completed orders attached to a destroyed payment card" do
+    order = orders(:elarch_rueducommerce)
+    order.update_attribute :state_name, "completed"
+    order.payment_card.destroy
+    
+    assert_equal :completed, order.reload.state
+  end
+
 end

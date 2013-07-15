@@ -30,6 +30,9 @@ class MerchantAccount < ActiveRecord::Base
       default_account = MerchantAccount.where("user_id=? and merchant_id=? and id<>?", record.user_id, record.merchant_id, record.id).first
       default_account.update_attribute :is_default, true unless default_account.nil?
     end
+    Order.running.where(merchant_account_id:record.id).each do |order|
+      order.reject "merchant_account_destroyed"
+    end
   end
   
   after_save do |record|

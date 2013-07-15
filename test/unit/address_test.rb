@@ -100,6 +100,14 @@ class AddressTest < ActiveSupport::TestCase
     assert_equal "address_destroyed", order.message
   end
 
+  test "it shouldn't fail a completed orders attached to a destroyed address" do
+    order = orders(:elarch_rueducommerce)
+    order.update_attribute :state_name, "completed"
+    @address.destroy
+    
+    assert_equal :completed, order.reload.state
+  end
+
   test "it should rewrite international phone format" do
     address = Address.new(
       :user_id => @user.id,

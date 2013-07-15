@@ -57,5 +57,23 @@ class MerchantAccountTest < ActiveSupport::TestCase
   test "it should find or create a new merchant account for order" do
     assert MerchantAccount.find_or_create_for_order(orders(:elarch_rueducommerce)).present?
   end
+
+  test "it should fail all non completed orders attached to a destroyed merchant account" do
+    order = orders(:elarch_rueducommerce)
+    assert_equal :initialized, order.state
+    order.merchant_account.destroy
+    
+    assert_equal :failed, order.reload.state
+    assert_equal "user", order.error_code
+    assert_equal "merchant_account_destroyed", order.message
+  end
+
+  test "it shouldn't fail a completed orders attached to a destroyed merchant account" do
+    order = orders(:elarch_rueducommerce)
+    order.update_attribute :state_name, "completed"
+    order.merchant_account.destroy
+    
+    assert_equal :completed, order.reload.state
+  end  
   
 end
