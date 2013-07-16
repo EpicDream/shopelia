@@ -183,7 +183,7 @@ class Order < ActiveRecord::Base
         query
       end
       
-    elsif verb.eql?("success") 
+    elsif verb.eql?("success")
       self.billed_price_total = content["billing"]["total"]
       self.billed_price_product = content["billing"]["product"]
       self.billed_price_shipping = content["billing"]["shipping"]

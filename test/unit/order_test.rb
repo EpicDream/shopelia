@@ -436,6 +436,10 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :querying, @order.state
     assert_equal false, @order.questions.first["answer"]
     assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
+    
+    mail = ActionMailer::Base.deliveries.last
+    assert_match /\/zen\/orders\/#{@order.uuid}\/confirm/, mail.decoded
+    assert_match /\/zen\/orders\/#{@order.uuid}\/cancel/, mail.decoded
   end
   
   test "it should reject order because of higher price" do
@@ -619,6 +623,9 @@ class OrderTest < ActiveSupport::TestCase
     order_success
     
     assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total
   end
 
   test "[alpha] it should auto cancel order if price is higher" do
@@ -644,7 +651,11 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :pending_clearing, @order.state
     
     clearing_success
-    assert_equal :completed, @order.state    
+    assert_equal :completed, @order.state
+    
+    #assert_equal 14, @order.billed_price_product
+    #assert_equal 2, @order.billed_price_shipping
+    #assert_equal 16, @order.billed_price_total    
   end
 
   test "[beta] it should fail order if billing failed" do
@@ -682,6 +693,9 @@ class OrderTest < ActiveSupport::TestCase
     end
     
     assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total    
   end
 
 =begin

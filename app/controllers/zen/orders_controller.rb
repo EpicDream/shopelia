@@ -10,6 +10,16 @@ class Zen::OrdersController < Zen::ZenController
     redirect_to zen_order_url(@order)
   end
 
+  def confirm
+    @order.accept
+    redirect_to zen_order_url(@order)
+  end
+  
+  def cancel
+    @order.reject "price_rejected"
+    redirect_to zen_order_url(@order)
+  end
+  
   private
   
   def retrieve_order

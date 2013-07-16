@@ -19,7 +19,10 @@ Shopelia::Application.routes.draw do
   resources :contact, :only => :create
   
   resources :addresses
-  resources :orders, :only => [:show, :update]
+  resources :orders, :only => [:show, :update] do
+    get :confirm, :on => :member
+    get :cancel, :on => :member
+  end
   resources :payment_cards
 
   namespace :admin do
@@ -28,7 +31,10 @@ Shopelia::Application.routes.draw do
   end
   
   namespace :zen do
-    resources :orders, :only => [:show, :update]  
+    resources :orders, :only => [:show, :update] do
+      get :confirm, :on => :member
+      get :cancel, :on => :member
+    end
   end
 
   namespace :api do

@@ -9,6 +9,16 @@ class OrdersController < ApplicationController
     end
     redirect_to @order
   end
+  
+  def confirm
+    @order.accept
+    redirect_to @order
+  end
+  
+  def cancel
+    @order.reject "price_rejected"
+    redirect_to @order
+  end
 
   private
   
