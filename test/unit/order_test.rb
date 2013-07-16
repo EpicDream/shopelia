@@ -17,18 +17,28 @@ class OrderTest < ActiveSupport::TestCase
       :user_id => @user.id,
       :payment_card_id => @card.id,
       :products => [ {
+        :price => 90,
         :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
         :name => "Papier normal Fax T102 Brother FAXT102G1",
         :image_url => "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg" } ],
       :address_id => @address.id,
-      :expected_price_total => 100)
+      :expected_price_total => 100,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10)
     assert order.persisted?, order.errors.full_messages.join(",")
     assert_equal :preparing, order.state
     assert order.merchant_account.present?
     assert order.uuid.present?
     assert_equal 1, order.reload.order_items.count
+    assert_equal 90, order.expected_price_product
+    assert_equal 10, order.expected_price_shipping
+    assert_equal 100, order.expected_price_total
     
-    product = order.order_items.first.product
+    item = order.order_items.first
+    assert_equal 1, item.quantity
+    assert_equal 90, item.reload.price
+    
+    product = item.product
     assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
@@ -36,6 +46,24 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "mangopay", order.billing_solution
     assert_equal "vulcain", order.injection_solution
     assert_equal "amazon", order.cvd_solution
+  end
+  
+  test "it should fill default value for prices if not set" do
+    order = Order.create(
+      :user_id => @user.id,
+      :payment_card_id => @card.id,
+      :products => [ {
+        :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
+        :name => "Papier normal Fax T102 Brother FAXT102G1",
+        :image_url => "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg" } ],
+      :address_id => @address.id,
+      :expected_price_total => 100)
+    assert order.persisted?, order.errors.full_messages.join(",")
+
+    assert_equal 100, order.expected_price_product
+    assert_equal 0, order.expected_price_shipping
+    assert_equal 100, order.expected_price_total
+    assert_equal 100, order.order_items.first.price
   end
   
   test "it shouldn't be able to create same order in a 5 minutes delay" do
@@ -344,12 +372,27 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "3", @order.questions.first["id"]
     
     item = @order.order_items.where(:product_id => products(:usbkey).id).first
-    assert_equal "Shipping", item.delivery_text
-    assert_equal "Price text", item.price_text
-    assert_equal "Usbkey", item.product_title
-    assert_equal "image.jpg", item.product_image_url
-    assert_equal 2, item.price_delivery
-    assert_equal 9, item.price_product
+    assert_equal 9, item.price
+    
+    assert_not_equal :pending_agent, @order.state
+  end
+  
+  test "it should set missing product price if only one item" do
+    @order.order_items.first.destroy # keep only one item
+    start_order
+    assess_order_with_missing_price
+    
+    assert_equal 14, @order.order_items.first.price
+    assert_not_equal :pending_agent, @order.state
+  end
+  
+  test "it should fail assess if product prices doesn't match total" do
+    start_order
+    assess_order_invalid
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "shopelia", @order.error_code
+    assert_match /Les prix des produits ne correspondent pas/, @order.message
   end
 
   test "it should send request to user if price it outside range" do
@@ -552,44 +595,6 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :querying, @order.state
   end
 
-  test "[alpha] it should fail if vulcain assessment is incorrectly formatted" do
-    configuration_alpha
-    start_order
-    @order.callback "assess", { 
-      "questions" => [
-        { "id" => "1" }
-      ],
-      "products" => [
-        { "url" => products(:usbkey).url,
-          "delivery_text" => "Shipping", 
-          "price_text" => "Price text", 
-          "product_title" => "Usbkey", 
-          "product_image_url" => "image.jpg", 
-          "price_invalid_delivery" => 2, 
-          "product_price" => 9 
-        },
-        { "url" => products(:headphones).url,
-          "delivery_text" => "Shipping", 
-          "price_text" => "Price text", 
-          "product_title" => "Headphones", 
-          "product_image_url" => "image.jpg", 
-          "price_delivery" => 0, 
-          "product_price" => 5 
-        }
-      ],
-      "billing" => {
-        "product" => 14,
-        "shipping" => 2,
-        "total" => 16
-      }
-    }
-    @order.reload
-    
-    assert_equal :pending_agent, @order.state
-    assert_equal "shopelia", @order.error_code
-    assert_match /Error in ruby Vulcain callback/, @order.message
-  end
-  
   test "[beta] it should complete order" do
     allow_remote_api_calls    
     configuration_beta
@@ -614,7 +619,7 @@ class OrderTest < ActiveSupport::TestCase
     @order.update_attribute :expected_price_total, 333.05
     VCR.use_cassette('mangopay') do
       start_order
-      assess_order 333.05
+      assess_order_billing_failure
     end
 
     assert_equal :failed, @order.state
@@ -759,36 +764,89 @@ class OrderTest < ActiveSupport::TestCase
     @order.reload
   end
   
-  def assess_order price=16
+  def assess_order
     @order.callback "assess", { 
       "questions" => [
         { "id" => "3" }
       ],
       "products" => [
         { "url" => products(:usbkey).url,
-          "delivery_text" => "Shipping", 
-          "price_text" => "Price text", 
-          "product_title" => "Usbkey", 
-          "product_image_url" => "image.jpg", 
-          "price_delivery" => 2, 
-          "price_product" => 9 
+          "price" => 9 
         },
         { "url" => products(:headphones).url,
-          "shipping_info" => "Shipping", 
-          "product_title" => "Headphones", 
-          "product_image_url" => "image.jpg", 
-          "shipping_price" => 0, 
-          "product_price" => 5 
+          "price_product" => 5
         }
       ],
       "billing" => {
         "product" => 14,
         "shipping" => 2,
-        "total" => price
+        "total" => 16
       }
     }
     @order.reload
   end
+
+  def assess_order_with_missing_price
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "url" => products(:usbkey).url
+        }
+      ],
+      "billing" => {
+        "product" => 14,
+        "shipping" => 2,
+        "total" => 16
+      }
+    }
+    @order.reload
+  end
+  
+  def assess_order_invalid
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "url" => products(:usbkey).url,
+          "price" => 5 
+        },
+        { "url" => products(:headphones).url,
+          "price_product" => 5 
+        }
+      ],
+      "billing" => {
+        "product" => 14,
+        "shipping" => 2,
+        "total" => 16
+      }
+    }
+    @order.reload
+  end
+  
+  def assess_order_billing_failure
+     @order.callback "assess", { 
+       "questions" => [
+         { "id" => "3" }
+       ],
+       "products" => [
+         { "url" => products(:usbkey).url,
+           "price" => 200 
+         },
+         { "url" => products(:headphones).url,
+           "price_product" => 100
+         }
+       ],
+       "billing" => {
+         "product" => 300,
+         "shipping" => 33.05,
+         "total" => 333.05
+       }
+     }
+     @order.reload
+  end  
   
   def assess_order_with_higher_price
     @order.update_attribute :expected_price_total, 10

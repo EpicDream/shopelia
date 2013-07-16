@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130710110157) do
+ActiveRecord::Schema.define(:version => 20130716122059) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -103,15 +103,10 @@ ActiveRecord::Schema.define(:version => 20130710110157) do
   create_table "order_items", :force => true do |t|
     t.integer  "order_id"
     t.integer  "product_id"
-    t.integer  "quantity",          :default => 1
-    t.float    "product_price",     :default => 0.0
-    t.string   "product_title"
-    t.string   "product_image_url"
-    t.string   "price_text"
-    t.string   "shipping_info"
-    t.datetime "created_at",                         :null => false
-    t.datetime "updated_at",                         :null => false
-    t.float    "shipping_price"
+    t.integer  "quantity",   :default => 1
+    t.float    "price",      :default => 0.0
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
   end
 
   create_table "orders", :force => true do |t|
@@ -119,9 +114,9 @@ ActiveRecord::Schema.define(:version => 20130710110157) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.text     "message"                      
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -169,8 +164,8 @@ ActiveRecord::Schema.define(:version => 20130710110157) do
     t.integer  "merchant_id"
     t.text     "url"
     t.string   "image_url"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
   end
 
   create_table "states", :force => true do |t|
