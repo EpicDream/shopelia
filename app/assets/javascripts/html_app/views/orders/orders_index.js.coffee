@@ -11,8 +11,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     console.log("initialize processOrder View: ")
     console.log(@options)
     @product = @options.product
-    total_price = parseFloat(@product.get('expected_price_product')) + parseFloat(@product.get('expected_price_shipping'))
-    @expected_price_total = Math.ceil(total_price * 100) / 100;
+    @expected_price_total = customParseFloat(parseFloat(@product.get('expected_price_product')) + parseFloat(@product.get('expected_price_shipping')))
 
   render: ->
     $(@el).html(@template(user: @user, product: @product, expected_price_total: @expected_price_total))

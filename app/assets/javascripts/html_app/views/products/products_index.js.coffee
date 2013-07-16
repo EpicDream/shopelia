@@ -9,6 +9,11 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
 
   render: ->
+    console.log(@model)
+    expected_price_product = customParseFloat(@model.get('expected_price_product'))
+    @model.set('expected_price_product',expected_price_product)
+    expected_price_shipping  = customParseFloat(@model.get('expected_price_shipping'))
+    @model.set('expected_price_shipping',expected_price_shipping)
     $(@el).html(@template(model: @model, merchant: @merchant))
     this
 

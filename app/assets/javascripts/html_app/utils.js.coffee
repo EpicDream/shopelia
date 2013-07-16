@@ -20,6 +20,8 @@ window.center = ($elem) ->
     top: top
     left: left
 
+window.customParseFloat = (float) ->
+  parseFloat(Math.round(float * 100) / 100).toFixed(2)
 
 window.displayErrors = (errors) ->
   keys = _.keys(errors)
