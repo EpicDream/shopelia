@@ -47,7 +47,7 @@ class Shopelia.Models.Session extends Backbone.Model
            beforeSend: (xhr) ->
              xhr.setRequestHeader("Accept","application/json")
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
-             xhr.setRequestHeader("X-Shopelia-ApiKey","52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4")
+             xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: callbacks.success
            error: callbacks.error
            })

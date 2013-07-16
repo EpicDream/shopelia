@@ -9,10 +9,12 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     @user = @options.session.get("user") #{"id":136,"email":"kf@glb.com","first_name":"lef","last_name":"pefh","addresses":[{"id":111,"address1":"4 Rue Chapon","address2":"","zip":"75003","city":"Paris","country":"FR","is_default":1,"phone":"0675198943"}],"payment_cards":[{"id":51,"number":"12XXXXXXXXXX3452","name":null,"exp_month":"11","exp_year":"2013"}],"has_pincode":0,"has_password":0}
     @authToken = @options.session.get("auth_token")
     console.log("initialize processOrder View: ")
-    console.log(@options)
     @product = @options.product
-    total_price = parseFloat(@product.get('expected_price_product')) + parseFloat(@product.get('expected_price_shipping'))
-    @expected_price_total = Math.ceil(total_price * 100) / 100;
+    @expected_price_product = @product.get('expected_price_product')
+    @expected_price_shipping = @product.get('expected_price_shipping')
+    console.log(@expected_price_product)
+    console.log(@expected_price_shipping)
+    @expected_price_total = customParseFloat(parseFloat(@expected_price_product) + parseFloat(@expected_price_shipping))
 
   render: ->
     $(@el).html(@template(user: @user, product: @product, expected_price_total: @expected_price_total))
@@ -32,6 +34,8 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     console.log("processOrder")
     order = new Shopelia.Models.Order()
     order.save({
+               "expected_price_shipping": that.expected_price_shipping
+               "expected_price_product":  that.expected_price_product
                "expected_price_total":that.expected_price_total,
                "address_id": that.user.addresses[0].id ,
                "products":[that.product.disableWrapping()],
