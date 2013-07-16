@@ -9,4 +9,6 @@ Gemfile.lock
 config/database.yml
 public/assets/
 gpg/random_seed
+gpg/pubring.gpg~
+gpg/trustdb.gpg
 keys/mango_pay/production
