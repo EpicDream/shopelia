@@ -1,11 +1,12 @@
 var ShopeliaCheckout = {
-    init: function(options) {
-        var base = "https://www.shopelia.fr/checkout";
+    init: function(developerKey) {
+        document.cookie= "developer_key =" + developerKey;
+        this.base = "https://www.shopelia.fr/checkout";
+    },
+    getProduct: function(options) {
         this.createLoader();
-        this.extend(options, {base:base});
         this.createIframe(options);
         this.handleIframe(options);
-
     },
     extend: function (){
         for(var i=1; i<arguments.length; i++)
@@ -61,11 +62,11 @@ var ShopeliaCheckout = {
         document.getElementById('lean_overlay').appendChild(iframe);
     },
     generateEncodedUri: function(options) {
-        var uri = options.base;
+        var uri = this.base;
         i = 0;
 
-        for (var key in options['product']) {
-            var value = options['product'][key];
+        for (var key in options) {
+            var value = options[key];
             if(i == 0){
                 uri += "?"
             } else {
