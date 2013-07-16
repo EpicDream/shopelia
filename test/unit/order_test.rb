@@ -65,7 +65,41 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 100, order.expected_price_total
     assert_equal 100, order.order_items.first.price
   end
+ 
+  test "it should fill default value for prices if not set - variant" do
+    order = Order.create(
+      :user_id => @user.id,
+      :payment_card_id => @card.id,
+      :products => [ {
+        :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
+        :name => "Papier normal Fax T102 Brother FAXT102G1",
+        :image_url => "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg" } ],
+      :address_id => @address.id,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10)
+    assert order.persisted?, order.errors.full_messages.join(",")
+
+    assert_equal 100, order.expected_price_total
+    assert_equal 90, order.order_items.first.price
+  end
   
+  test "it should fail order creation with iconsistent prices" do
+    order = Order.create(
+      :user_id => @user.id,
+      :payment_card_id => @card.id,
+      :products => [ {
+        :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
+        :name => "Papier normal Fax T102 Brother FAXT102G1",
+        :image_url => "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg" } ],
+      :address_id => @address.id,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10,
+      :expected_price_total => 200)
+      
+    assert !order.persisted?, "The order shouldn't have save"
+    assert_match /Les prix des produits ne correspondent pas au total de la commande/, order.errors.full_messages.first
+  end
+
   test "it shouldn't be able to create same order in a 5 minutes delay" do
     order = Order.create(
       :user_id => @user.id,
@@ -616,7 +650,9 @@ class OrderTest < ActiveSupport::TestCase
   test "[beta] it should fail order if billing failed" do
     allow_remote_api_calls    
     configuration_beta
-    @order.update_attribute :expected_price_total, 333.05
+    @order.expected_price_total = 333.05
+    @order.expected_price_shipping = 33.05
+    @order.expected_price_product = 300
     VCR.use_cassette('mangopay') do
       start_order
       assess_order_billing_failure
@@ -849,7 +885,10 @@ class OrderTest < ActiveSupport::TestCase
   end  
   
   def assess_order_with_higher_price
-    @order.update_attribute :expected_price_total, 10
+    @order.expected_price_total = 10
+    @order.expected_price_shipping = 2
+    @order.expected_price_product = 8
+    @order.save
     assess_order
   end
     

@@ -240,6 +240,8 @@ class Order < ActiveRecord::Base
   def accept
     return unless [:querying].include?(state)
     self.expected_price_total = self.prepared_price_total
+    self.expected_price_shipping = self.prepared_price_shipping
+    self.expected_price_product = self.prepared_price_product
     self.prepared_price_total = nil
     self.prepared_price_product = nil
     self.prepared_price_shipping = nil
@@ -372,6 +374,10 @@ class Order < ActiveRecord::Base
     elsif self.expected_price_total.to_i > 0 && self.expected_price_product.to_i == 0
       self.expected_price_product = self.expected_price_total
       self.expected_price_shipping = 0
+    elsif self.expected_price_total.to_i == 0
+      self.expected_price_total = self.expected_price_product + self.expected_price_shipping
+    elsif self.expected_price_total != self.expected_price_product + self.expected_price_shipping
+      self.errors.add(:base, I18n.t('orders.errors.price_inconsistency'))
     end
   end
   
