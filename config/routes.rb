@@ -73,6 +73,12 @@ Shopelia::Application.routes.draw do
         resources :details, :only => :show
       end
     end
+    namespace :viking do
+      resources :products, :only => [:index, :update]
+      namespace :products do
+        get :shift
+      end
+    end
   end
 
   match '*not_found', to: 'errors#error_404'
