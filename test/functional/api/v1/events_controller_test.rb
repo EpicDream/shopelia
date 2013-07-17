@@ -3,9 +3,13 @@ require 'test_helper'
 class Api::V1::EventsControllerTest < ActionController::TestCase
   fixtures :developers
 
+  setup do
+    ENV["API_KEY"]  = nil
+  end
+
   test "it should create events from list of urls" do
     assert_difference("Event.count", 2) do
-      post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/1"], tracker:"toto", visitor:"1234", format: :json
+      post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/1"], tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key, format: :json
     end
     assert_equal developers(:prixing).api_key, cookies[:developer_key]
     
@@ -28,7 +32,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
 
   test "it should create events from list of urls and with action type" do
     assert_difference("Event.count", 2) do
-      post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/1"], type:"click", format: :json
+      post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/1"], type:"click", developer:developers(:prixing).api_key, format: :json
     end
     assert_equal 32, cookies[:visitor].length
     

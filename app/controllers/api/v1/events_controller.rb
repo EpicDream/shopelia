@@ -1,6 +1,7 @@
 class Api::V1::EventsController < Api::V1::BaseController
   skip_before_filter :authenticate_user!
-  before_filter :retrieve_developer_key, :only => :index
+  skip_before_filter :authenticate_developer!
+  before_filter :retrieve_developer_key
   before_filter :prepare_params
   before_filter :set_visitor_cookie
   before_filter :set_developer_cookie
