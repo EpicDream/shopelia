@@ -28,6 +28,10 @@ class Api::V1::OrdersControllerTest < ActionController::TestCase
     
     assert_response :success
     assert_equal "preparing", Order.last.state_name
+    
+    mail = ActionMailer::Base.deliveries.last
+    assert mail.present?, "an admin email should have been sent"
+    assert_match /Rails Testing/, mail.decoded
   end
 
   test "it should show order" do

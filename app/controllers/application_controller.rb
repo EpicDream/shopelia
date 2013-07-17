@@ -46,7 +46,7 @@ class ApplicationController < ActionController::Base
   end
   
   def set_navigator_properties
-    @user_agent = request.env['HTTP_USER_AGENT']
+    ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
   end
   
 end

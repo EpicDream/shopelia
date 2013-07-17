@@ -19,5 +19,14 @@ class EventTest < ActiveSupport::TestCase
         :developer_id => developers(:prixing).id)
       assert event.save, event.errors.full_messages.join(",")
     end
-  end    
+  end
+  
+  test "it should create events from a list of urls" do
+    assert_difference('Event.count', 2) do
+      Event.from_urls(
+        :action => Event::VIEW,
+        :developer_id => developers(:prixing).id,
+        :urls => [ "http://www.amazon.fr/product1", "http://www.amazon.fr/product2" ])
+    end
+  end
 end

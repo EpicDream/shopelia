@@ -14,6 +14,19 @@ class Event < ActiveRecord::Base
 
   attr_accessor :url
   
+  def self.from_urls data
+    data[:urls].each do |url|
+      Event.create!(
+        :url => url,
+        :action => data[:action],
+        :developer_id => data[:developer_id],
+        :visitor => data[:visitor],
+        :tracker => data[:tracker],
+        :user_agent => data[:user_agent],
+        :ip_address => data[:ip_address])
+    end
+  end        
+  
   private
   
   def find_or_create_product

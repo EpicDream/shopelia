@@ -16,8 +16,8 @@ class Api::ApiController < ActionController::Base
   end
   
   def authenticate_developer!
-    dev = Developer.find_by_api_key(ENV['API_KEY'] || request.headers['X-Shopelia-ApiKey'])
-    render json: { error:I18n.t('developers.unauthorized') }, status: :unauthorized if dev.nil?
+    @developer = Developer.find_by_api_key(ENV['API_KEY'] || request.headers['X-Shopelia-ApiKey'])
+    render json: { error:I18n.t('developers.unauthorized') }, status: :unauthorized if @developer.nil?
   end
 
   def remove_session_cookie
@@ -25,7 +25,7 @@ class Api::ApiController < ActionController::Base
   end
   
   def set_navigator_properties
-    @user_agent = request.env['HTTP_USER_AGENT']
+    ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
   end
 
 end
