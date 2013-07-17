@@ -606,7 +606,7 @@ class OrderTest < ActiveSupport::TestCase
   end
  
   
-  test "[alpha] it should continue order if target price is auto accepted" do
+  test "[alpha] it should continue order if target price is same than expected" do
     configuration_alpha
     start_order
     assess_order
@@ -614,6 +614,20 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :preparing, @order.state
     assert_equal true, @order.questions.first["answer"]
     assert_equal "vulcain_assessment_done", @order.message
+  end
+
+  test "[alpha] it should continue order if target price is less than expected" do
+    configuration_alpha
+    start_order
+    assess_order_with_lower_price
+    
+    assert_equal :preparing, @order.state
+    assert_equal true, @order.questions.first["answer"]
+    assert_equal "vulcain_assessment_done", @order.message
+    
+    assert_equal 16, @order.prepared_price_total
+    assert_equal 2, @order.prepared_price_shipping
+    assert_equal 14, @order.prepared_price_product
   end
   
   test "[alpha] it should complete order" do
@@ -692,6 +706,24 @@ class OrderTest < ActiveSupport::TestCase
       order_success
     end
     
+    assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total    
+  end
+
+  test "[amazon] it should complete order with lower price than expected" do
+    allow_remote_api_calls
+    configuration_amazon
+    VCR.use_cassette('mangopay') do
+      start_order
+      assess_order_with_lower_price
+
+      assert_equal 1600, @order.mangopay_contribution_amount
+
+      order_success
+    end
+
     assert_equal :completed, @order.state
     assert_equal 14, @order.billed_price_product
     assert_equal 2, @order.billed_price_shipping
@@ -902,6 +934,14 @@ class OrderTest < ActiveSupport::TestCase
     @order.expected_price_total = 10
     @order.expected_price_shipping = 2
     @order.expected_price_product = 8
+    @order.save
+    assess_order
+  end
+
+  def assess_order_with_lower_price
+    @order.expected_price_total = 20
+    @order.expected_price_shipping = 6
+    @order.expected_price_product = 14
     @order.save
     assess_order
   end
