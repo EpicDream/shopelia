@@ -43,6 +43,7 @@ class Order < ActiveRecord::Base
   before_validation :initialize_uuid
   before_validation :initialize_state
   before_validation :initialize_merchant_account
+  before_validation :verify_prices_integrity
   before_save :serialize_questions
   before_create :validates_products
   after_initialize :deserialize_questions
@@ -108,13 +109,21 @@ class Order < ActiveRecord::Base
 
     elsif verb.eql?("assess")
       @questions = content["questions"]
+      
+      (content["products"] || []).each do |product|
+        self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attribute(:price, product["price"] || product["price_product"] || product["product_price"])
+      end
+      
+      # Set product price if unique item and without price
+      if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
+        self.order_items.first.update_attribute :price, content["billing"]["product"]
+      end
+      
       self.prepared_price_total = content["billing"]["total"]
       self.prepared_price_product = content["billing"]["product"]
       self.prepared_price_shipping = content["billing"]["shipping"]
       self.save!
-      (content["products"] || []).each do |product|
-        self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attributes(product.except("url"))
-      end
+      
       if self.expected_price_total >= self.prepared_price_total
       
         # Basic user payment
@@ -174,7 +183,7 @@ class Order < ActiveRecord::Base
         query
       end
       
-    elsif verb.eql?("success") 
+    elsif verb.eql?("success")
       self.billed_price_total = content["billing"]["total"]
       self.billed_price_product = content["billing"]["product"]
       self.billed_price_shipping = content["billing"]["shipping"]
@@ -186,7 +195,8 @@ class Order < ActiveRecord::Base
     self.save!
     
     rescue Exception => e
-      fail("Error in ruby Vulcain callback\n#{e.inspect}", :shopelia)
+      fail("Error during order Callback\n#{e.inspect}", :shopelia)
+      self.update_attribute :prepared_price_product, 0 # allow save if price mismatch
       self.save!
   end
 
@@ -230,6 +240,8 @@ class Order < ActiveRecord::Base
   def accept
     return unless [:querying].include?(state)
     self.expected_price_total = self.prepared_price_total
+    self.expected_price_shipping = self.prepared_price_shipping
+    self.expected_price_product = self.prepared_price_product
     self.prepared_price_total = nil
     self.prepared_price_product = nil
     self.prepared_price_shipping = nil
@@ -349,7 +361,23 @@ class Order < ActiveRecord::Base
       end
       self.merchant_id = product.merchant_id
       self.save
-      order = OrderItem.create!(order:self, product:product)
+      order = OrderItem.create!(order:self, product:product, price:p[:price])
+    end
+    if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
+      self.order_items.first.update_attribute :price, self.expected_price_product
+    end
+  end
+  
+  def verify_prices_integrity
+    if self.prepared_price_product.to_i > 0 && self.prepared_price_product != self.order_items.map(&:price).sum
+      self.errors.add(:base, I18n.t('orders.errors.price_inconsistency'))
+    elsif self.expected_price_total.to_i > 0 && self.expected_price_product.to_i == 0
+      self.expected_price_product = self.expected_price_total
+      self.expected_price_shipping = 0
+    elsif self.expected_price_total.to_i == 0
+      self.expected_price_total = self.expected_price_product + self.expected_price_shipping
+    elsif self.expected_price_total != self.expected_price_product + self.expected_price_shipping
+      self.errors.add(:base, I18n.t('orders.errors.price_inconsistency'))
     end
   end
   

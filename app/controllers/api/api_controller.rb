@@ -3,6 +3,7 @@ class Api::ApiController < ActionController::Base
   before_filter :authenticate_developer!
   before_filter :authenticate_user!
   after_filter :remove_session_cookie
+  before_filter :set_navigator_properties
 
   rescue_from ActiveRecord::RecordNotFound do |e|
     render :json => {:error => "Object not found"}, :status => :not_found
@@ -21,6 +22,10 @@ class Api::ApiController < ActionController::Base
 
   def remove_session_cookie
     request.session_options[:skip] = true
+  end
+  
+  def set_navigator_properties
+    @user_agent = request.env['HTTP_USER_AGENT']
   end
 
 end

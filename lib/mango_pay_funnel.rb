@@ -8,8 +8,8 @@ module MangoPayFunnel
     return if Rails.env.test? && ENV["ALLOW_REMOTE_API_CALLS"] != "1"
 
     # Ensure expected value is equal to prepared value
-    if order.expected_price_total != order.prepared_price_total
-      return error "Order expected total price and prepared total price are not equal"
+    if order.expected_price_total < order.prepared_price_total
+      return error "Order prepared price total is higher than expected one"
     end    
     
     # Ensure value of billing is in acceptable range
