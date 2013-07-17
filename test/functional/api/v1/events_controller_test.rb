@@ -18,6 +18,14 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_equal "1234", event.visitor
   end
 
+  test "it should create events from list of urls in GET mode" do
+    assert_difference("Event.count", 2) do
+      get :index, urls:"http://www.prout.fr/1||http://www.prout.fr/1", tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key
+    end
+    assert_equal developers(:prixing).api_key, cookies[:developer_key]
+    assert_equal ["http://www.prout.fr/1","http://www.prout.fr/1"].to_set, Event.all.map(&:product).map(&:url).to_set
+  end
+
   test "it should create events from list of urls and with action type" do
     assert_difference("Event.count", 2) do
       post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/1"], type:"click", format: :json
