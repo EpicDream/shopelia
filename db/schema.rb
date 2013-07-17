@@ -114,9 +114,9 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message"                      
-    t.datetime "created_at",                                   :null => false
-    t.datetime "updated_at",                                   :null => false
+    t.text     "message"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -164,8 +164,8 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.integer  "merchant_id"
     t.text     "url"
     t.string   "image_url"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
   end
 
   create_table "states", :force => true do |t|
