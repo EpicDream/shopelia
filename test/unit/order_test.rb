@@ -268,14 +268,23 @@ class OrderTest < ActiveSupport::TestCase
     
     assert_equal :initialized, @order.state
   end
-
+  
   test "it shouldn't start order if without order items" do
     @order.order_items.destroy_all
     start_order
     
     assert_equal :initialized, @order.state
   end
-  
+
+  test "it should immediately fail order if merchant doesn't have vendor for Vulcain" do
+    @order.merchant.update_attribute :vendor, nil
+    start_order
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "unsupported", @order.message
+  end
+   
   test "it should fail order if out of stock" do
     start_order
     callback_order "failure", { "status" => "out_of_stock" }

@@ -58,6 +58,11 @@ class Order < ActiveRecord::Base
   
   def start
     return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.payment_card_id.present? && self.order_items.count > 0
+    if self.merchant.vendor.nil?
+      fail("unsupported", "vulcain")
+      self.save
+      return
+    end
     @questions = []
     self.error_code = nil
     self.message = nil
@@ -289,7 +294,7 @@ class Order < ActiveRecord::Base
   end
 
   def fail content, error_sym
-    return unless [:preparing, :billing, :pending_injection].include?(state)
+    return unless [:initialized, :preparing, :billing, :pending_injection].include?(state)
     self.message = content
     self.error_code = check_error_validity(error_sym.to_s)
     self.state = :pending_agent
