@@ -11,11 +11,11 @@ class MangoPayFunnelTest < ActiveSupport::TestCase
     allow_remote_api_calls    
   end
 
-  test "it shouldn't bill if prepared price is not equal to expected price" do
+  test "it shouldn't bill if prepared price is is higher than expected price" do
     VCR.use_cassette('mangopay') do
       @order.prepared_price_total = 100
       result = MangoPayFunnel.bill @order
-      assert_equal "Order expected total price and prepared total price are not equal", result["Error"]
+      assert_equal "Order prepared price total is higher than expected one", result["Error"]
     end
   end
 
