@@ -375,7 +375,7 @@ class Order < ActiveRecord::Base
       self.expected_price_product = self.expected_price_total
       self.expected_price_shipping = 0
     elsif self.expected_price_total.to_i == 0
-      self.expected_price_total = self.expected_price_product + self.expected_price_shipping
+      self.expected_price_total = self.expected_price_product.to_i + self.expected_price_shipping.to_i
     elsif self.expected_price_total.round(2) != (self.expected_price_product + self.expected_price_shipping).round(2)
       self.errors.add(:base, I18n.t('orders.errors.price_inconsistency'))
     end
