@@ -30,6 +30,14 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_response :not_found
   end
 
+  test "it should update product" do
+    populate_events
+    product = Product.first
+    put :update, id:product.id, product: { name: "Name" }, format: :json
+    
+    assert_response 204
+  end
+
   private
   
   def populate_events
