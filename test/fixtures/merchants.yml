@@ -5,6 +5,7 @@ rueducommerce:
   tc_url: "http://www.rueducommerce.fr/home/index.cfm/aide/cgv.htm"
   vendor: "RueDuCommerce"
   accepting_orders: true
+  domain: "rueducommerce.fr"
 
 amazon:
   name: "Amazon"
@@ -16,9 +17,11 @@ amazon:
   billing_solution: "mangopay"
   injection_solution: "vulcain"
   cvd_solution: "amazon"
+  domain: "amazon.fr"
   
 fnac:
   name: "Fnac"
   url: "http://www.fnac.com"
   vendor: "Fnac"
+  domain: "fnac.com"
   

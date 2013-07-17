@@ -19,10 +19,11 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal merchants(:rueducommerce).id, product.merchant_id
   end
   
-  test "it should prevent product creation from unsupported merchant" do
-    product = Product.new(:url => 'http://www.bla.fr/product')
-    assert !product.save
-    assert_equal I18n.t('products.errors.unsupported_merchant'), product.errors.full_messages.first
+  test "it should create new merchant if not found" do
+    assert_difference("Merchant.count", 1) do
+      product = Product.new(:url => 'http://www.bla.fr/product')
+      assert product.save, product.errors.full_messages.join(",")
+    end
   end
 
   test "it should unaccent url" do

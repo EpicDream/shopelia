@@ -9,8 +9,8 @@ class Api::V1::ProductsControllerTest < ActionController::TestCase
     assert_response :success
   end
 
-  test "it should fails not supported merchant extraction" do
-    get :index, url:"http://www.bla.com"
+  test "it should fail bad url" do
+    get :index, url:"bla"
     assert_response :not_found
   end
 

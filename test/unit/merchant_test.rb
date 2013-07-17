@@ -27,20 +27,24 @@ class MerchantTest < ActiveSupport::TestCase
     assert_equal merchants(:rueducommerce).id, Merchant.from_url("http://www.rueducommerce.fr/bla").id
   end
   
-  test "it shouldn't find merchant from a non supported product url" do
-    assert Merchant.from_url("http://www.bla.com").nil?
+  test "it should create merchant from a new merchant product url" do
+    assert_difference('Merchant.count', 1) do
+      merchant =  Merchant.from_url("http://www.bla.com/product")
+      assert merchant.present?
+      assert_equal "bla.com", merchant.name
+      assert_equal "bla.com", merchant.domain
+    end
+  end
+
+  test "it shouldn't create merchant from a new merchant product url if specified so" do
+    assert_difference('Merchant.count', 0) do
+      merchant =  Merchant.from_url("http://www.bla.com/product", false)
+      assert merchant.nil?
+    end
   end
   
   test "it should match url with accents" do
     assert_equal merchants(:rueducommerce).id, Merchant.from_url("http://www.rueducommerce.fr/bla-accent-é").id
-  end
-
-  test "it should match url hostname in the url" do
-    assert_equal merchants(:rueducommerce).id, Merchant.from_url("http://www.tracker.fr/bla-rueducommerce.fr-yo").id
-  end
-
-  test "it should match url hostname at the end of url" do
-    assert_equal merchants(:rueducommerce).id, Merchant.from_url("http://www.tracker.fr/bla#rueducommerce.fr").id
   end
   
   private
@@ -49,6 +53,7 @@ class MerchantTest < ActiveSupport::TestCase
     @merchant = Merchant.new(
       :name => 'Amazon UK',
       :vendor => 'AmazonUk',
+      :domain => 'amazon.uk',
       :logo => 'http://www.achatsweb.fr/wp-content/uploads/2012/03/Amazon-fr.jpeg',
       :url => 'http://www.amazon.uk',
       :tc_url => 'http://www.amazon.uk/gp/help/customer/display.html/ref=hp_rel_topic?ie=UTF8&nodeId=548524#conditions_vente')

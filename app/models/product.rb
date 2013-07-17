@@ -5,8 +5,8 @@ class Product < ActiveRecord::Base
   validates :merchant, :presence => true
   validates :url, :presence => true, :uniqueness => true
   
-  before_validation :extract_merchant_from_url
   before_validation :monetize_url
+  before_validation :extract_merchant_from_url
   before_save :truncate_name
   
   def self.fetch url
@@ -24,10 +24,10 @@ class Product < ActiveRecord::Base
   end
   
   def extract_merchant_from_url
-    if self.merchant_id.nil?
+    if self.merchant_id.nil? && self.url.present?
       merchant = Merchant.from_url(url)
       if merchant.nil?
-        self.errors.add(:base, I18n.t('products.errors.unsupported_merchant'))
+        self.errors.add(:base, I18n.t('products.errors.invalid_url', :url => url))
       else
         self.merchant_id = merchant.id
       end
