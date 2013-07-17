@@ -28,4 +28,5 @@ elarch_amazon:
   mangopay_contribution_id: 20
   mangopay_contribution_amount: 1000
   billing_solution : "mangopay"
+  created_at: <%= 2.days.ago %>
   
