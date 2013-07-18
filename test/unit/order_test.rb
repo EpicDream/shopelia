@@ -2,7 +2,8 @@
 require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
-  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :addresses, :merchant_accounts, :countries
+  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items
+  fixtures :product_versions, :addresses, :merchant_accounts, :countries, :developers
   
   setup do
     @user = users(:elarch)
@@ -10,11 +11,13 @@ class OrderTest < ActiveSupport::TestCase
     @order = orders(:elarch_rueducommerce)
     @card = payment_cards(:elarch_hsbc)
     @address = addresses(:elarch_neuilly) 
+    @developer = developers(:prixing)
   end
 
   test "it should create order" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :price => 90,
@@ -51,6 +54,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should fill default value for prices if not set" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
@@ -69,6 +73,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should fill default value for prices if not set - variant" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
@@ -86,6 +91,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should fail order creation with iconsistent prices" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
@@ -103,6 +109,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't be able to create same order in a 5 minutes delay" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/one",
@@ -112,6 +119,7 @@ class OrderTest < ActiveSupport::TestCase
       :expected_price_total => 100)
     another = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/another_product",
@@ -122,6 +130,7 @@ class OrderTest < ActiveSupport::TestCase
     assert another.persisted?
     duplicate = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/one",
@@ -136,6 +145,7 @@ class OrderTest < ActiveSupport::TestCase
     order.update_attribute :created_at, 10.minutes.ago
     duplicate = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
@@ -167,6 +177,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_difference('MerchantAccount.count', 1) do
       order = Order.new(
         :user_id => @user.id,
+        :developer_id => @developer.id,
         :expected_price_total => 100,
         :payment_card_id => @card.id,
         :products => [ {
@@ -181,6 +192,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't create order without address specified" do
     order = Order.new(
       :user_id => @user.id, 
+      :developer_id => @developer.id,
       :expected_price_total => 100,
       :products => [ {
         :url => "http://www.rueducommerce.fr/productA",
@@ -196,6 +208,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't accept urls from different merchants" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :address_id => @address.id,
       :expected_price_total => 100,
@@ -216,6 +229,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't create order without products" do
     order = Order.new(
       :user_id => @user.id, 
+      :developer_id => @developer.id,
       :expected_price_total => 100,
       :address_id => @address.id,
       :payment_card_id => @card.id)
@@ -226,6 +240,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't create order with invalid product" do
     order = Order.create(
       :user_id => @user.id, 
+      :developer_id => @developer.id,
       :expected_price_total => 100,
       :address_id => @address.id,
       :products => [ { :invalid => "http://www.rueducommerce.fr/productA" } ],              
@@ -237,6 +252,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should monetize urls" do
     order = Order.new(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY",
@@ -414,7 +430,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 1, @order.questions.count
     assert_equal "3", @order.questions.first["id"]
     
-    item = @order.order_items.where(:product_id => products(:usbkey).id).first
+    item = @order.order_items.where(:product_version_id => product_versions(:usbkey).id).first
     assert_equal 9, item.price
     
     assert_not_equal :pending_agent, @order.state
@@ -525,6 +541,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should set merchant account as created when message account_created received" do
     order = Order.create(
       :user_id => @user.id, 
+      :developer_id => @developer.id,
       :products => [ {
         :url => "http://www.rueducommerce.fr/productA",
         :name => "Product A",

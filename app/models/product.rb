@@ -1,16 +1,20 @@
 class Product < ActiveRecord::Base
+  belongs_to :product_master
   belongs_to :merchant
-  has_many :orders
   has_many :events
+  has_many :product_versions
   
   validates :merchant, :presence => true
+  validates :product_master, :presence => true
   validates :url, :presence => true, :uniqueness => true
   
+  before_validation :create_product_master
   before_validation :monetize_url
   before_validation :extract_merchant_from_url
   before_save :truncate_name
+  after_create :create_version
   
-  scope :viking_pending, lambda { joins(:events).where("(products.last_checked_at is null or products.last_checked_at < ?) and events.created_at > ?", 1.hours.ago, 12.hours.ago) }
+  scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or products.versions_expires_at < ?) and events.created_at > ?", 1.hours.ago, 12.hours.ago) }
   
   def self.fetch url
     Product.find_or_create_by_url(Linker.monetize(url)) unless url.nil?
@@ -39,6 +43,10 @@ class Product < ActiveRecord::Base
         self.merchant_id = merchant.id
       end
     end
+  end
+  
+  def create_version
+    ProductVersion.create!(product_id:self.id)
   end
   
 end

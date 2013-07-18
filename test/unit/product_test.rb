@@ -11,6 +11,7 @@ class ProductTest < ActiveSupport::TestCase
       :url => 'http://www.rueducommerce.fr/product',
       :image_url => 'http://www.rueducommerce.fr/image')
     assert product.save, product.errors.full_messages.join(",")
+    assert_equal 1, product.product_versions.count
   end
   
   test "it should create product from url" do
@@ -67,7 +68,7 @@ class ProductTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id,
       :action => Event::VIEW)
     assert_equal 2, Product.viking_pending.count
-    products(:headphones).update_attribute :last_checked_at, 1.minute.ago
+    products(:headphones).update_attribute :versions_expires_at, 1.minute.ago
     assert_equal 1, Product.viking_pending.count
   end
   
@@ -77,9 +78,9 @@ class ProductTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id,
       :action => Event::VIEW)
     assert_equal products(:usbkey), Product.viking_shift
-    products(:usbkey).update_attribute :last_checked_at, 1.minute.ago
+    products(:usbkey).update_attribute :versions_expires_at, 1.minute.ago
     assert_equal products(:headphones), Product.viking_shift
-    products(:headphones).update_attribute :last_checked_at, 1.minute.ago
+    products(:headphones).update_attribute :versions_expires_at, 1.minute.ago
     assert Product.viking_shift.nil?
   end
 
