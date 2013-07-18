@@ -1,6 +1,7 @@
 class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
 
   template: JST['users/index']
+  className: "box"
   events:
     "click #btn-register-user": "createUser"
 
@@ -15,10 +16,8 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
     console.log(@options.product)
     @addressView =  new Shopelia.Views.AddressesIndex()
     @$("#btn-register-user").before(@addressView.render().el)
-    @randomBool = true #!! Math.round(Math.random() * 1)
-    if @randomBool
-      @paymentCardView =  new Shopelia.Views.PaymentCardsIndex()
-      $(@addressView.render().el).after(@paymentCardView.render().el)
+    @paymentCardView =  new Shopelia.Views.PaymentCardsIndex()
+    $(@addressView.render().el).after(@paymentCardView.render().el)
     @setFormVariables()
     Shopelia.Views.Form.prototype.render.call(this)
     this
@@ -67,11 +66,8 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
 
       address = @addressView.setAddress()
       card = null
-      if @randomBool
-        card = @paymentCardView.setPaymentCard()
-        sessionJson = @formSerializer(address,card.disableWrapping())
-      else
-        sessionJson = @formSerializer(address,card)
+      card = @paymentCardView.setPaymentCard()
+      sessionJson = @formSerializer(address,card.disableWrapping())
 
       session.set(sessionJson)
 
@@ -81,10 +77,8 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
                                   console.log('success callback')
                                   console.log("response user save: " + JSON.stringify(resp))
                                   session.saveCookies(resp)
-                                  if that.randomBool
-                                    that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: resp,product: that.options.product))
-                                  else
-                                    that.parent.setContentView(new Shopelia.Views.PaymentCardsIndex(session: resp,product: that.options.product))
+                                  that.parent.addPasswordView()
+                                  that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: resp,product: that.options.product))
                                 error : (model, response) ->
                                   console.log(JSON.stringify(response))
                                   enableButton($("#btn-register-user"))

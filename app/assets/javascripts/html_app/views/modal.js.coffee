@@ -59,7 +59,7 @@ class Shopelia.Views.Modal extends Backbone.View
     @contentView.parent = this
     el = @contentView.render().el
     $(el).fadeIn(500)
-    @$('#modal-right').html(el)
+    @$('#modal-right-top').html(el)
     if @contentView.InitializeActionButton != undefined
       @$("#link-header").show()
       @contentView.InitializeActionButton(@$("#link-header"))
@@ -68,3 +68,7 @@ class Shopelia.Views.Modal extends Backbone.View
     center($("#modal"))
 
 
+  addPasswordView : ->
+    passwordView = new Shopelia.Views.NewPassword()
+    @$('#modal-right').append(passwordView.render().el)
+    $(passwordView.render().el).hide()
