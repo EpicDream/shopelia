@@ -20,18 +20,16 @@ class Shopelia.Routers.Sessions extends Backbone.Router
     if @session.authenticated()
       console.log("authenticated")
       console.log(@session)
-      userId = @session.get("user").id
       authToken = @session.get("auth_token")
-      console.log(userId)
-      @user = new Shopelia.Models.User(id:userId)
+      @user = @session.get("user")
       that = this
       @user.fetch({
                     beforeSend: (xhr) ->
                       xhr.setRequestHeader("X-Shopelia-AuthToken",authToken)
                     success : (resp) ->
                       console.log("fetched user success callback: " + JSON.stringify(resp.disableWrapping()))
-                      that.session.updateCookies(resp.disableWrapping())
-                      that.modal.setContentView(new Shopelia.Views.SignIn(session: that.session ,product: that.product, email: that.session.get("user").email))
+                      that.session.updateUserCookies(resp.disableWrapping())
+                      that.modal.setContentView(new Shopelia.Views.SignIn(session: that.session ,product: that.product, email: that.session.get("user").get('email')))
                       center($("#modal"))
                     error : (model, response) ->
                         that.session.deleteCookies()

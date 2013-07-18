@@ -1,6 +1,7 @@
 class Shopelia.Views.SignIn extends Shopelia.Views.Form
 
   template: JST['users/sign_in']
+  className: "box"
   events:
     "click #btn-login-user": "loginUser"
 
