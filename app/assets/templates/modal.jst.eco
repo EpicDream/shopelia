@@ -7,7 +7,10 @@
 <div class="spacer25"></div>
 <div id='modal-content' class='row-fluid'>
      <div id='modal-left' class='span6'></div>
-     <div id='modal-right' class='span5'></div>
+     <div id='modal-right' class='span5'>
+         <div id='modal-right-top'></div>
+         <div class="spacer25"></div>
+     </div>
 </div>
 <div class="spacer25"></div>
 <a id="close">x</a>

@@ -8,8 +8,8 @@ mixpanel.init("95c15bf80bf7bf93cb1c673865c75a22");
 var Tracker = {
   init: function(){
       mixpanel.register({
-          "SDK": window.SDK,
-          "SDK Version": window.SDKVersion
+          "SDK": Shopelia.SDK,
+          "SDK Version": Shopelia.SDKVersion
       });
   }
   , onDisplay: function(name) {

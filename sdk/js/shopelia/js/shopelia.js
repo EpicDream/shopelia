@@ -1,7 +1,7 @@
 var ShopeliaCheckout = {
     init: function(developerKey) {
         document.cookie= "developer_key =" + developerKey;
-        this.base = "https://www.shopelia.fr/checkout";
+        this.base = "https://www.shopelia.com/checkout";
     },
     getProduct: function(options) {
         this.createLoader();
