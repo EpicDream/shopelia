@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130718123048) do
+ActiveRecord::Schema.define(:version => 20130718173800) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -216,6 +216,13 @@ ActiveRecord::Schema.define(:version => 20130718123048) do
 
   create_table "statuses", :force => true do |t|
     t.integer  "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "url_matchers", :force => true do |t|
+    t.text     "url"
+    t.text     "canonical"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

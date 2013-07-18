@@ -8,8 +8,8 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   end
 
   def order
-    { :products_urls => object.order_items.map{|item| item.product.url},
-      :products => object.order_items.map{|item| { :url => item.product_version.product.url, 
+    { :products_urls => object.order_items.map{|item| Linker.monetize(item.product.url)},
+      :products => object.order_items.map{|item| { :url => Linker.monetize(item.product_version.product.url), 
                                                    :quantity => item.quantity, 
                                                    :id => item.product_version_id }},
       :credentials => case object.cvd_solution

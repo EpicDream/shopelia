@@ -349,7 +349,7 @@ class Order < ActiveRecord::Base
     else
       self.products.each do |p|
         product = Product.fetch(p[:url])
-
+        
         self.errors.add(
           :base, I18n.t('orders.errors.invalid_product', 
           :error => product.nil? ? "" : product.errors.full_messages.join(","))) and next if product.nil? || !product.persisted?

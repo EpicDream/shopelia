@@ -12,6 +12,9 @@ class ProductTest < ActiveSupport::TestCase
       :image_url => 'http://www.rueducommerce.fr/image')
     assert product.save, product.errors.full_messages.join(",")
     assert_equal 1, product.product_versions.count
+    
+    product.name = "New name"
+    assert product.save, product.errors.full_messages.join(",")
   end
   
   test "it should create product from url" do
@@ -33,14 +36,20 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal "http://www.rueducommerce.fr/product-e", product.url
   end
 
-  test "it should monetize url" do
+  test "it should clean url" do
     product = Product.new(:url => "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO")
     assert product.save, product.errors.full_messages.join(",")
-    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
+    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
   end
 
   test "it should fetch existing product" do
     assert_equal products(:headphones), Product.fetch("http://www.rueducommerce.fr/productB")
+  end
+  
+  test "it should fail fetch if url is null" do
+    assert_difference(["Product.count","ProductMaster.count","ProductVersion.count"], 0) do
+      assert Product.fetch(nil).nil?
+    end
   end
   
   test "it should create and fetch new product" do

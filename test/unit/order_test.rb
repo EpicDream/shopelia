@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
-  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items
+  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :product_masters
   fixtures :product_versions, :addresses, :merchant_accounts, :countries, :developers
   
   setup do
@@ -15,7 +15,7 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it should create order" do
-    order = Order.create(
+    order = Order.create!(
       :user_id => @user.id,
       :developer_id => @developer.id,
       :payment_card_id => @card.id,
@@ -42,7 +42,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 90, item.reload.price
     
     product = item.product
-    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
+    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
     
@@ -249,7 +249,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal I18n.t('orders.errors.invalid_product', :error => ''), order.errors.full_messages.first
   end
   
-  test "it should monetize urls" do
+  test "it should clean urls" do
     order = Order.new(
       :user_id => @user.id,
       :developer_id => @developer.id,
@@ -262,7 +262,7 @@ class OrderTest < ActiveSupport::TestCase
       :expected_price_total => 100)
     assert order.save
     assert_equal 1, order.reload.order_items.count
-    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY", order.order_items.first.product.url
+    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY", order.order_items.first.product.url
   end
   
   test "it should set message" do
