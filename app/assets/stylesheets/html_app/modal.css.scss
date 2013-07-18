@@ -36,7 +36,7 @@ $borderRadius: 4px;
   padding-right: 10px;
 }
 
-#modal-right,#modal-left {
+#modal-left, .box {
   border-radius:$borderRadius;
   padding: 10px;
   background: $lightGrey;

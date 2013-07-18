@@ -1,12 +1,15 @@
 class Shopelia.Views.OrdersIndex extends Backbone.View
 
   template: JST['orders/index']
+  className: 'box'
   events:
     "click #process-order": "processOrder"
 
   initialize: ->
     _.bindAll this
-    @user = @options.session.get("user") #{"id":136,"email":"kf@glb.com","first_name":"lef","last_name":"pefh","addresses":[{"id":111,"address1":"4 Rue Chapon","address2":"","zip":"75003","city":"Paris","country":"FR","is_default":1,"phone":"0675198943"}],"payment_cards":[{"id":51,"number":"12XXXXXXXXXX3452","name":null,"exp_month":"11","exp_year":"2013"}],"has_pincode":0,"has_password":0}
+    #@user = {"id":136,"email":"kf@glb.com","first_name":"lef","last_name":"pefh","addresses":[{"id":111,"address1":"4 Rue Chapon","address2":"","zip":"75003","city":"Paris","country":"FR","is_default":1,"phone":"0675198943"}],"payment_cards":[{"id":51,"number":"12XXXXXXXXXX3452","name":null,"exp_month":"11","exp_year":"2013"}],"has_pincode":0,"has_password":0}
+    #@authToken = "34456666"
+    @user = @options.session.get("user")
     @authToken = @options.session.get("auth_token")
     console.log("initialize processOrder View: ")
     @product = @options.product
@@ -46,8 +49,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
                success: (resp) ->
                  console.log(resp)
                  Tracker.custom("Order Completed")
-                 view = new Shopelia.Views.Greetings()
-                 $('#modal-right').html(view.render().el)
+                 that.parent.setContentView(new Shopelia.Views.ThankYou())
                error: (model, response) ->
                  enableButton($("#process-order"))
                  console.log(JSON.stringify(response))

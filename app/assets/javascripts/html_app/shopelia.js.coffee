@@ -2,7 +2,9 @@ window.Shopelia =
   Models: {}
   Views: {}
   Routers: {}
-  developerKey: $.cookie("developer_key")
+  developerKey: "52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4"
+  SDKVersion: "0.1"
+  SDK: "HTML"
 
   initialize: ->
     originalSync = Backbone.sync
