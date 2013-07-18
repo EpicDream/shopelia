@@ -20,7 +20,7 @@ class Api::V1::MerchantsController < Api::V1::BaseController
   private
   
   def retrieve_merchant
-    @merchant = Merchant.from_url(params[:url])
+    @merchant = Merchant.from_url(params[:url], false)
   end
   
 end

@@ -287,11 +287,11 @@ fr:
       no_product: "Impossible de créer une commande sans produit spécifié"
       invalid_product: "Produit invalide %{error}"
       duplicate_order: "Vous ne pouvez pas commander deux fois le même produit dans un délai de 5 minutes"
+      price_inconsistency: "Les prix des produits ne correspondent pas au total de la commande"
   
   products:
     errors:
-      unsupported_merchant: "Ce produit ne peut pas être commandé par Shopelia"
-      invalid_url: "L'URL du produit est invalide"
+      invalid_url: "L'URL du produit est invalide -- %{url}"
   
   users:
     registration:

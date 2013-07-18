@@ -1,9 +1,9 @@
 Shopelia::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
-  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
-  config.action_mailer.delivery_method = :letter_opener
-  config.action_mailer.asset_host = "http://localhost:3000"
+  config.action_mailer.default_url_options = { :host => 'zola.epicdream.fr:4444' }
+  #config.action_mailer.delivery_method = :letter_opener
+  config.action_mailer.asset_host = "http://zola.epicdream.fr:4444"
 
 
   # In the development environment your application's code is reloaded on

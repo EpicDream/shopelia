@@ -24,6 +24,10 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     
     order = context[:order]
     assert_equal 2, order[:products_urls].count
+    assert_equal [products(:headphones).url, products(:usbkey).url].to_set, order[:products_urls].to_set
+    assert_equal 2, order[:products].count
+    assert_equal [1, 1], order[:products].map{|e| e[:quantity]}
+    assert_equal [products(:headphones).url, products(:usbkey).url].to_set, order[:products].map{|e| e[:url]}.to_set
   end
 
   test "it should correctly serialize context when answering" do

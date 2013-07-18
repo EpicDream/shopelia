@@ -32,7 +32,7 @@ module Integrity
           log << "Unexpected TypeTransaction -- #{line}"
         end
       end
-      contribution_ids_B = Order.completed.where("created_at >= ?", 31.days.ago.to_date.to_s).where(billing_solution:'mangopay').map(&:mangopay_contribution_id)
+      contribution_ids_B = Order.completed.where("created_at >= ? and created_at < ?", 31.days.ago.to_date.to_s, Time.now.to_date.to_s).where(billing_solution:'mangopay').map(&:mangopay_contribution_id)
       if contribution_ids_A.to_set != contribution_ids_B.to_set
         log << "Inconsistent contribution_ids ! REPORT:#{contribution_ids_A} vs DB:#{contribution_ids_B}"
       end

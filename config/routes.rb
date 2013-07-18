@@ -19,7 +19,10 @@ Shopelia::Application.routes.draw do
   resources :contact, :only => :create
   
   resources :addresses
-  resources :orders, :only => [:show, :update]
+  resources :orders, :only => [:show, :update] do
+    get :confirm, :on => :member
+    get :cancel, :on => :member
+  end
   resources :payment_cards
 
   namespace :admin do
@@ -28,7 +31,10 @@ Shopelia::Application.routes.draw do
   end
   
   namespace :zen do
-    resources :orders, :only => [:show, :update]  
+    resources :orders, :only => [:show, :update] do
+      get :confirm, :on => :member
+      get :cancel, :on => :member
+    end
   end
 
   namespace :api do
@@ -40,6 +46,7 @@ Shopelia::Application.routes.draw do
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
+      resources :events, :only => [:index, :create]
       resources :payment_cards, :only => [:index, :create, :show, :destroy]
       resources :phone_lookup, :only => :show
       resources :merchants, :only => [:index, :create]
@@ -64,6 +71,12 @@ Shopelia::Application.routes.draw do
       namespace :places do
         resources :autocomplete, :only => :index
         resources :details, :only => :show
+      end
+    end
+    namespace :viking do
+      resources :products, :only => [:index, :update]
+      namespace :products do
+        get :shift
       end
     end
   end

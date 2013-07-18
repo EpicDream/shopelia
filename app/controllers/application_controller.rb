@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :set_navbar
+  before_filter :set_navigator_properties
   layout :set_layout
   
   def after_sign_in_path_for(resource)
@@ -42,6 +43,10 @@ class ApplicationController < ActionController::Base
     else
       'application'
     end
+  end
+  
+  def set_navigator_properties
+    ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
   end
   
 end

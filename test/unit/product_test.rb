@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class ProductTest < ActiveSupport::TestCase
-  fixtures :merchants, :products
+  fixtures :merchants, :products, :developers
   
   test "it should create product" do
     product = Product.new(
@@ -19,10 +19,11 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal merchants(:rueducommerce).id, product.merchant_id
   end
   
-  test "it should prevent product creation from unsupported merchant" do
-    product = Product.new(:url => 'http://www.bla.fr/product')
-    assert !product.save
-    assert_equal I18n.t('products.errors.unsupported_merchant'), product.errors.full_messages.first
+  test "it should create new merchant if not found" do
+    assert_difference("Merchant.count", 1) do
+      product = Product.new(:url => 'http://www.bla.fr/product')
+      assert product.save, product.errors.full_messages.join(",")
+    end
   end
 
   test "it should unaccent url" do
@@ -60,4 +61,26 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 250, product.name.length
   end
   
+  test "it should get all products needing a Viking check" do
+    Event.from_urls(
+      :urls => [products(:headphones).url,products(:usbkey).url],
+      :developer_id => developers(:prixing).id,
+      :action => Event::VIEW)
+    assert_equal 2, Product.viking_pending.count
+    products(:headphones).update_attribute :last_checked_at, 1.minute.ago
+    assert_equal 1, Product.viking_pending.count
+  end
+  
+  test "it should get last product needing a Viking check" do
+    Event.from_urls(
+      :urls => [products(:headphones).url,products(:usbkey).url],
+      :developer_id => developers(:prixing).id,
+      :action => Event::VIEW)
+    assert_equal products(:usbkey), Product.viking_shift
+    products(:usbkey).update_attribute :last_checked_at, 1.minute.ago
+    assert_equal products(:headphones), Product.viking_shift
+    products(:headphones).update_attribute :last_checked_at, 1.minute.ago
+    assert Product.viking_shift.nil?
+  end
+
 end

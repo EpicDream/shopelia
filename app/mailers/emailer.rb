@@ -62,6 +62,7 @@ class Emailer < ActionMailer::Base
 
   def notify_admin_order_creation order
     @order = order
+    @user_agent = ENV['HTTP_USER_AGENT']
     mail( :to => "Shopelia <contact@shopelia.fr>",
           :subject => "Nouvelle commande reçue de #{@order.user.name}",
           :from => "Admin Shopelia <contact@shopelia.fr>")
