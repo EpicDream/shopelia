@@ -879,10 +879,12 @@ class OrderTest < ActiveSupport::TestCase
       ],
       "products" => [
         { "url" => products(:usbkey).url,
-          "price" => 9 
+          "price" => 9,
+          "id" => product_versions(:usbkey).id 
         },
         { "url" => products(:headphones).url,
-          "price_product" => 5
+          "price_product" => 5,
+          "id" => product_versions(:headphones).id 
         }
       ],
       "billing" => {
@@ -918,12 +920,14 @@ class OrderTest < ActiveSupport::TestCase
         { "id" => "3" }
       ],
       "products" => [
-        { "url" => products(:usbkey).url,
-          "price" => 5 
-        },
-        { "url" => products(:headphones).url,
-          "price_product" => 5 
-        }
+         { "url" => products(:usbkey).url,
+           "price" => 5,
+           "id" => product_versions(:usbkey).id 
+         },
+         { "url" => products(:headphones).url,
+           "price_product" => 5,
+           "id" => product_versions(:headphones).id 
+         }
       ],
       "billing" => {
         "product" => 14,
@@ -941,10 +945,12 @@ class OrderTest < ActiveSupport::TestCase
        ],
        "products" => [
          { "url" => products(:usbkey).url,
-           "price" => 200 
+           "price" => 200,
+           "id" => product_versions(:usbkey).id 
          },
          { "url" => products(:headphones).url,
-           "price_product" => 100
+           "price_product" => 100,
+           "id" => product_versions(:headphones).id 
          }
        ],
        "billing" => {
