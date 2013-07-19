@@ -1,22 +1,31 @@
 var ShopeliaCheckout = {
     init: function(options) {
-        this.base = "https://www.shopelia.com/";
+        this.base = "https://www.shopelia.com";
         this.options = options;
+        var $shopelia_buttons = $("[data-shopelia-url]");
+        if($shopelia_buttons.length > 0) {
+            var params = this.extend(this.options,{action: "0"});
+            this.sendUrls($shopelia_buttons,params);
+        }
+
+    },
+    bindClickWith: function ($elements) {
+        $elements.click(function(){
+            var clickedParams = ShopeliaCheckout.extend(ShopeliaCheckout.options,{action: "1"});
+            ShopeliaCheckout.sendUrls($(this),clickedParams);
+        });
+    },
+    sendUrls: function($elements,params) {
+        this.bindClickWith($elements);
         var urls = "";
-        $.each($("[data-shopelia-url]"),function(){
+        $.each($elements,function(){
             if(urls != ""){
                 urls += "||"
             }
             urls += $(this).attr("data-shopelia-url");
         });
-        this.sendUrls(urls)
-
-    },
-    sendUrls: function(urls) {
-        var url =  this.base + "api/events?urls=" + encodeURIComponent(urls) +"&developer=" + encodeURIComponent(this.options.developer);
-        if(this.options.tracker != undefined){
-            url += "&tracker=" + encodeURIComponent(this.options.tracker)
-        }
+        this.extend(params,{urls: urls});
+        var url = this.generateEncodedUri(this.base,"/api/events",params);
 
         $.ajax({
             type: 'GET',
@@ -71,7 +80,7 @@ var ShopeliaCheckout = {
         document.body.appendChild(overlay);
         //console.log(document.getElementById('lean_overlay'));
         var iframe = document.createElement('iframe');
-        iframe.setAttribute("src",this.generateEncodedUri(options));
+        iframe.setAttribute("src",this.generateEncodedUri(this.base,"/checkout",options));
         iframe.style.border = "0px #FFFFFF none";
         iframe.id = "shopeliaIframe";
         iframe.name = "shopeliaIframe";
@@ -85,12 +94,12 @@ var ShopeliaCheckout = {
         iframe.allowtransparency = "true";
         document.getElementById('lean_overlay').appendChild(iframe);
     },
-    generateEncodedUri: function(options) {
-        var uri = this.base + "checkout";
+    generateEncodedUri: function(base,endpoint,params) {
+        var uri = base + endpoint;
         i = 0;
 
-        for (var key in options) {
-            var value = options[key];
+        for (var key in params) {
+            var value = params[key];
             if(i == 0){
                 uri += "?"
             } else {
