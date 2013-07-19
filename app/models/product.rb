@@ -14,7 +14,7 @@ class Product < ActiveRecord::Base
   before_save :truncate_name
   after_create :create_version
   
-  scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or products.versions_expires_at < ?) and events.created_at > ?", 1.hours.ago, 12.hours.ago) }
+  scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or products.versions_expires_at < ?) and events.created_at > ?", Time.now, 12.hours.ago) }
   
   def self.fetch url
     Product.find_or_create_by_url(Linker.clean(url)) unless url.nil?
@@ -22,6 +22,10 @@ class Product < ActiveRecord::Base
   
   def self.viking_shift
     Product.viking_pending.order("events.created_at desc").first
+  end
+  
+  def versions_expired?
+    self.versions_expires_at.nil? || self.versions_expires_at < Time.now
   end
   
   private

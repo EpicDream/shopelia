@@ -77,7 +77,7 @@ class ProductTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id,
       :action => Event::VIEW)
     assert_equal 2, Product.viking_pending.count
-    products(:headphones).update_attribute :versions_expires_at, 1.minute.ago
+    products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
     assert_equal 1, Product.viking_pending.count
   end
   
@@ -87,10 +87,17 @@ class ProductTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id,
       :action => Event::VIEW)
     assert_equal products(:usbkey), Product.viking_shift
-    products(:usbkey).update_attribute :versions_expires_at, 1.minute.ago
+    products(:usbkey).update_attribute :versions_expires_at, 1.hour.from_now
     assert_equal products(:headphones), Product.viking_shift
-    products(:headphones).update_attribute :versions_expires_at, 1.minute.ago
+    products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
     assert Product.viking_shift.nil?
+  end
+
+  test "it should expires versions" do
+    product = Product.create(:url => 'http://www.rueducommerce.fr/product')
+    assert product.versions_expired?
+    product.update_attribute :versions_expires_at, 4.hours.from_now
+    assert !product.versions_expired?
   end
 
 end
