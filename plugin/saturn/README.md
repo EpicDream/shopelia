@@ -83,3 +83,8 @@ The mapping must be previously set with Humanis extension.
 [Chrome extensions, Content Scripts.](http://developer.chrome.com/extensions/content_scripts.html)
 
 [CSS selectors.](http://www.w3schools.com/cssref/css_selectors.asp)
+
+TODO list
+---------
+
+Add the possibility to click on an element to get images.

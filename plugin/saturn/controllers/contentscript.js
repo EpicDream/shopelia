@@ -1,6 +1,8 @@
 
 function getColors(mapping) {
-  var path = mapping.colors;
+  if (! mapping.colors)
+    return [];
+  var path = mapping.colors.path;
   var e = document.querySelector(path);
   if (! e)
     return [];
@@ -16,7 +18,7 @@ function getColors(mapping) {
 };
 
 function setColor(mapping, color) {
-  var path = mapping.colors;
+  var path = mapping.colors.path;
   var e = document.querySelector(path);
 
   if (e && e.tagName == "SELECT") {
@@ -35,7 +37,7 @@ function setColor(mapping, color) {
 function getSizes(mapping) {
   if (! mapping.sizes)
     return [];
-  var path = mapping.sizes;
+  var path = mapping.sizes.path;
   var e = document.querySelector(path);
   if (! e)
     return [];
@@ -51,7 +53,7 @@ function getSizes(mapping) {
 };
 
 function setSize(mapping, size) {
-  var path = mapping.sizes;
+  var path = mapping.sizes.path;
   var e = document.querySelector(path);
   
   if (e && e.tagName == "SELECT") {
@@ -68,10 +70,11 @@ function setSize(mapping, size) {
 
 function crawl(mapping) {
   var option = {};
-  var textFields = ['name', 'brand', 'description', 'price', 'price_strikeout', 'shipping_price', 'shipping_info', 'availibility'];
+  var textFields = ['name', 'brand', 'description', 'price', 'price_strikeout', 'shipping_price', 'shipping_info', 'availability'];
   for (var i in textFields) {
     var key = textFields[i];
-    var path = mapping[key];
+    if (! mapping[key]) continue;
+    var path = mapping[key].path;
     if (! path) continue;
     var e = document.querySelector(path);
     if (! e) continue;
@@ -81,7 +84,8 @@ function crawl(mapping) {
   var imageFields = ['image_url', 'images'];
   for (var i in imageFields) {
     var key = imageFields[i];
-    var path = mapping[key];
+    if (! mapping[key]) continue;
+    var path = mapping[key].path;
     if (! path) continue;
     var e = document.querySelector(path);
     if (! e) continue;
