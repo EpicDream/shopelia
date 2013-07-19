@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class MerchantAccountTest < ActiveSupport::TestCase
-  fixtures :users, :merchants, :merchant_accounts, :addresses, :orders
+  fixtures :users, :merchants, :merchant_accounts, :addresses, :orders, :order_items, :products, :product_versions
   
   setup do
     @user = users(:elarch)
