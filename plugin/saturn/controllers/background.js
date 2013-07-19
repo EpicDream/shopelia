@@ -25,7 +25,7 @@ var data = {};
 
 // On extension button clicked.
 chrome.browserAction.onClicked.addListener(function(tab) {
-  console.log("Button pressed, going to load Saturn..");
+  console.log("Button pressed, going to load Saturn..", tab.id);
   start();
   // parseCurrentPage(tab);
 });
