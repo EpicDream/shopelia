@@ -25,16 +25,19 @@ var ShopeliaCheckout = {
             urls += $(this).attr("data-shopelia-url");
         });
         this.extend(params,{urls: urls});
+        console.log("params");
+        console.log(params);
         var url = this.generateEncodedUri(this.base,"/api/events",params);
-
-        $.ajax({
-            type: 'GET',
-            url: url ,
-            async: false,
-            jsonpCallback: 'jsonCallback',
-            contentType: "application/json",
-            dataType: 'jsonp'
-        });
+        if(urls != "") {
+            $.ajax({
+                type: 'GET',
+                url: url ,
+                async: false,
+                jsonpCallback: 'jsonCallback',
+                contentType: "application/json",
+                dataType: 'jsonp'
+            });
+        }
     },
     getProduct: function(options) {
         this.createLoader();
