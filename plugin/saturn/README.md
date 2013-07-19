@@ -78,9 +78,9 @@ The mapping must be previously set with Humanis extension.
 
 ### More Documentation
 
-[Chrome extensions, pour commencer.](http://developer.chrome.com/extensions/getstarted.html)
-[Chrome extensions, Background Pages.](http://developer.chrome.com/extensions/background_pages.html)
-[Chrome extensions, Content Scripts.](http://developer.chrome.com/extensions/content_scripts.html)
+[Chrome extensions, pour commencer.](http://developer.chrome.com/extensions/getstarted.html)  
+[Chrome extensions, Background Pages.](http://developer.chrome.com/extensions/background_pages.html)  
+[Chrome extensions, Content Scripts.](http://developer.chrome.com/extensions/content_scripts.html)  
 
 [CSS selectors.](http://www.w3schools.com/cssref/css_selectors.asp)
 
