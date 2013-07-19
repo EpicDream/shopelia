@@ -21,7 +21,14 @@ class Linker
         url = uri.scheme + "://" + uri.host + url if url =~ /^\//
         count += 1
       end while res.code =~ /^30/ && count < 10
-      canonical = url.gsub(/#.*$/, "").gsub(/\?.*$/, "")
+      canonical = url.gsub(/#.*$/, "")
+
+      domain = Utils.extract_domain(canonical)
+      merchant = Merchant.find_by_domain(domain)
+      if merchant && merchant.should_clean_args?
+        canonical = canonical.gsub(/\?.*$/, "")
+      end
+      
       UrlMatcher.create(url:orig,canonical:canonical)
     end
     canonical
