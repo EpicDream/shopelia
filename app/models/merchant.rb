@@ -15,10 +15,11 @@ class Merchant < ActiveRecord::Base
   before_destroy :check_presence_of_orders
   
   def self.from_url url, create=true
+    domain = Utils.extract_domain(Linker.clean(url))
     if create
-      Merchant.find_or_create_by_domain(Utils.extract_domain(url))
+      Merchant.find_or_create_by_domain(domain)
     else
-      Merchant.find_by_domain(Utils.extract_domain(url))
+      Merchant.find_by_domain(domain)
     end
     rescue 
       nil

@@ -8,11 +8,5 @@ class RefactorProduct < ActiveRecord::Migration
     add_column :products, :product_master_id, :integer
     add_column :products, :brand, :string
     add_column :products, :versions_expires_at, :datetime
-    
-    Product.all.each do |product|
-      master = ProductMaster.create!
-      product.product_master_id = master.id
-      product.save!
-    end
   end
 end
