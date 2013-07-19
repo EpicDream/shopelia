@@ -1,7 +1,31 @@
 var ShopeliaCheckout = {
-    init: function(developerKey) {
-        document.cookie= "developer_key =" + developerKey;
-        this.base = "https://www.shopelia.com/checkout";
+    init: function(options) {
+        this.base = "https://www.shopelia.com/";
+        this.options = options;
+        var urls = "";
+        $.each($("[data-shopelia-url]"),function(){
+            if(urls != ""){
+                urls += "||"
+            }
+            urls += $(this).attr("data-shopelia-url");
+        });
+        this.sendUrls(urls)
+
+    },
+    sendUrls: function(urls) {
+        var url =  this.base + "api/events?urls=" + encodeURIComponent(urls) +"&developer=" + encodeURIComponent(this.options.developer);
+        if(this.options.tracker != undefined){
+            url += "&tracker=" + encodeURIComponent(this.options.tracker)
+        }
+
+        $.ajax({
+            type: 'GET',
+            url: url ,
+            async: false,
+            jsonpCallback: 'jsonCallback',
+            contentType: "application/json",
+            dataType: 'jsonp'
+        });
     },
     getProduct: function(options) {
         this.createLoader();
@@ -62,7 +86,7 @@ var ShopeliaCheckout = {
         document.getElementById('lean_overlay').appendChild(iframe);
     },
     generateEncodedUri: function(options) {
-        var uri = this.base;
+        var uri = this.base + "checkout";
         i = 0;
 
         for (var key in options) {
