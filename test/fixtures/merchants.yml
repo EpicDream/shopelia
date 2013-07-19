@@ -6,6 +6,7 @@ rueducommerce:
   vendor: "RueDuCommerce"
   accepting_orders: true
   domain: "rueducommerce.fr"
+  should_clean_args: true
 
 amazon:
   name: "Amazon"
@@ -18,10 +19,16 @@ amazon:
   injection_solution: "vulcain"
   cvd_solution: "amazon"
   domain: "amazon.fr"
+  should_clean_args: true
   
 fnac:
   name: "Fnac"
   url: "http://www.fnac.com"
   vendor: "Fnac"
   domain: "fnac.com"
-  
+  should_clean_args: true
+
+cdiscount:
+  name: "Cdiscount"
+  domain: "cdiscount.com"
+  should_clean_args: true
