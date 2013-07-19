@@ -29,10 +29,10 @@ class MerchantTest < ActiveSupport::TestCase
   
   test "it should create merchant from a new merchant product url" do
     assert_difference('Merchant.count', 1) do
-      merchant =  Merchant.from_url("http://www.bla.com/product")
+      merchant =  Merchant.from_url("http://www.amazon.co.uk/gp/product/B007OZO03M/ref=s9_pop_gw_g349_ir03?pf_rd_m=A3P5ROKL5A1OLE&pf_rd_s=center-2&pf_rd_r=0KBJFT6QS74TAYTT1SGZ&pf_rd_t=101&pf_rd_p=358550247&pf_rd_i=468294")
       assert merchant.present?
-      assert_equal "bla.com", merchant.name
-      assert_equal "bla.com", merchant.domain
+      assert_equal "amazon.co.uk", merchant.name
+      assert_equal "amazon.co.uk", merchant.domain
     end
   end
 

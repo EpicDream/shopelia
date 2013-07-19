@@ -15,10 +15,12 @@ class Linker
         if res.code.to_i == 405
           req = Net::HTTP::Get.new(uri.request_uri, {'User-Agent' => UA })
           res = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
-        end        
-        url = res['location'] if res.code.to_i == 302
+        end   
+        url = res['location'] if res.code =~ /^30/
+        url = url.gsub(" ", "+")
+        url = uri.scheme + "://" + uri.host + url if url =~ /^\//
         count += 1
-      end while res.code.to_i == 302 && count < 10
+      end while res.code =~ /^30/ && count < 10
       canonical = url.gsub(/#.*$/, "").gsub(/\?.*$/, "")
       UrlMatcher.create(url:orig,canonical:canonical)
     end

@@ -14,7 +14,9 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www.fnac.com%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4%23bl%3DMMtvh]]",
         :out => "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4" },
       { :in  => "http://ad.zanox.com/ppc/?19436175C242487251&ULP=%5B%5Bm/ps/mpid:MP-0006DM7671064%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d%5D%5D#rueducommerce.fr",
-        :out => "http://www.rueducommerce.fr/m/ps/mpid:MP-0006DM7671064" }
+        :out => "http://www.rueducommerce.fr/m/ps/mpid:MP-0006DM7671064" },
+      { :in  => "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(717215663)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Fdp.asp%3Fsku%3DROSITRIPLE10M%26refer%3D*)",
+        :out => "http://www.cdiscount.com/electromenager/lave-vaisselle/rosieres-triple-10m/f-11025-rositriple10m.html" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])
