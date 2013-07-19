@@ -86,8 +86,9 @@ function fromParentSelector(jelement, complete) {
     res += _.map(elementClasses, function(c){return "."+c;}).join('');
   }
   // POSITION
-  var pos = jelement.index() + 1;
-  res += ":nth-child(" + pos + ")";
+  var pos = jelement.index(jelement.parent().children(tag)) + 1;
+  // var pos = jelement.index(tag) + 1;
+  res += ":nth-of-type(" + pos + ")";
   return res;
 };
 

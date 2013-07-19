@@ -24,8 +24,8 @@ function onBodyClick(event) {
 
 // May be use be the user in the console.
 function setMapping(fieldId, path) {
-  var elems = document.querySelectorAll(path);
-  $(elems).effect("highlight", {color: "#00cc00" }, "slow");
+  var elems = $(path);
+  elems.effect("highlight", {color: "#00cc00" }, "slow");
   console.log("Set mapping for '"+fieldId+"' at '"+path+"'.", elems.length, "elements found.");
   var context = elems.length == 1 ? hu.getElementContext(elems[0]) : {};
   chrome.extension.sendMessage({setMapping: true, fieldId: fieldId, path: path, context: context});
