@@ -23,10 +23,11 @@ Installation
 ------------
   
 In Chromium extensions' tab :
-1) Check 'Developper mode'
-2) Then click on 'Load unpacked extension'
-3) Browse on Saturn directory and open it.
-4) Check 'Allow in private navigation'.
+
+1. Check 'Developper mode'
+2. Then click on 'Load unpacked extension'
+3. Browse on Saturn directory and open it.
+4. Check 'Allow in private navigation'.
 
 Usage
 -----
