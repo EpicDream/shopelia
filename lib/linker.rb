@@ -5,7 +5,7 @@ class Linker
   def self.clean url
     count = 0
     url = url.unaccent
-    canonical = UrlMatcher.find_by_url(url).try(:canonical)
+    canonical = UrlMatcher.find_by_url(canonical).try(:canonical) || UrlMatcher.find_by_url(url).try(:canonical)
     if canonical.nil?
       orig = url
       begin

@@ -19,4 +19,14 @@ class UrlMatcherTest < ActiveSupport::TestCase
     assert !matcher.save
   end
   
+  test "it shouldn't create canonical to canonical match" do
+    UrlMatcher.create(
+      :url => "http://www.toto.fr/xxx",
+      :canonical => "http://www.toto.fr")
+     matcher = UrlMatcher.new(
+      :url => "http://www.toto.fr",
+      :canonical => "http://www.toto.fr")
+    assert !matcher.save  
+  end
+  
 end
