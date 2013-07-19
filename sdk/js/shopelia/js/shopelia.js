@@ -1,6 +1,7 @@
 var ShopeliaCheckout = {
     init: function(options) {
         this.base = "https://www.shopelia.com/";
+        this.options = options;
         var urls = "";
         $.each($("[data-shopelia-url]"),function(){
             if(urls != ""){
@@ -8,16 +9,23 @@ var ShopeliaCheckout = {
             }
             urls += $(this).attr("data-shopelia-url");
         });
+        this.sendUrls(urls)
+
+    },
+    sendUrls: function(urls) {
+        var url =  this.base + "api/events?urls=" + encodeURIComponent(urls) +"&developer=" + encodeURIComponent(this.options.developer);
+        if(this.options.tracker != undefined){
+            url += "&tracker=" + encodeURIComponent(this.options.tracker)
+        }
 
         $.ajax({
             type: 'GET',
-            url:  this.base + "api/events?urls=" + encodeURIComponent(urls) + "&tracker=" + encodeURIComponent(options.tracker)+"&developer=" + encodeURIComponent(options.developer),
+            url: url ,
             async: false,
             jsonpCallback: 'jsonCallback',
             contentType: "application/json",
             dataType: 'jsonp'
         });
-
     },
     getProduct: function(options) {
         this.createLoader();
