@@ -1,10 +1,10 @@
 item1:
   order: elarch_rueducommerce
-  product: usbkey
+  product_version: usbkey
   quantity: 1
 
 item2:
   order: elarch_rueducommerce
-  product: headphones
+  product_version: headphones
   quantity: 1
 
