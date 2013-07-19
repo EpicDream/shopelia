@@ -9,6 +9,7 @@ class Order < ActiveRecord::Base
   belongs_to :address
   belongs_to :merchant_account
   belongs_to :payment_card
+  belongs_to :developer
   has_many :order_items, :dependent => :destroy
   
   validates :user, :presence => true
@@ -16,8 +17,9 @@ class Order < ActiveRecord::Base
   validates :uuid, :presence => true, :uniqueness => true
   validates :address, :presence => true
   validates :expected_price_total, :presence => true
+  validates :developer, :presence => true
 
-  attr_accessible :user_id, :address_id, :merchant_account_id, :payment_card_id
+  attr_accessible :user_id, :address_id, :merchant_account_id, :payment_card_id, :developer_id
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
@@ -116,7 +118,11 @@ class Order < ActiveRecord::Base
       @questions = content["questions"]
       
       (content["products"] || []).each do |product|
-        self.order_items.where(:product_id => Product.find_by_url(product["url"]).id).first.update_attribute(:price, product["price"] || product["price_product"] || product["product_price"])
+        if product["id"].nil?
+          product["id"] = Product.find_by_url(product["url"]).product_versions.first.id
+        end
+        item = self.order_items.where(:product_version_id => product["id"]).first
+        item.update_attribute(:price, product["price"] || product["price_product"] || product["product_price"])
       end
       
       # Set product price if unique item and without price
@@ -343,12 +349,12 @@ class Order < ActiveRecord::Base
     else
       self.products.each do |p|
         product = Product.fetch(p[:url])
-
+        
         self.errors.add(
           :base, I18n.t('orders.errors.invalid_product', 
           :error => product.nil? ? "" : product.errors.full_messages.join(","))) and next if product.nil? || !product.persisted?
           
-        self.errors.add(:base, I18n.t('orders.errors.duplicate_order')) if OrderItem.where(order_id:self.user.orders.where("created_at >= ?", 5.minutes.ago).map(&:id)).where(product_id:product.id).count > 0
+        self.errors.add(:base, I18n.t('orders.errors.duplicate_order')) if OrderItem.where(order_id:self.user.orders.where("created_at >= ?", 5.minutes.ago).map(&:id)).where(product_version_id: ProductVersion.where(product_id:product.id).map(&:id)).count > 0
 
         product.name = p[:name] unless p[:name].blank?
         product.image_url = p[:image_url] unless p[:image_url].blank?
@@ -366,7 +372,7 @@ class Order < ActiveRecord::Base
       end
       self.merchant_id = product.merchant_id
       self.save
-      order = OrderItem.create!(order:self, product:product, price:p[:price])
+      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price])
     end
     if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
       self.order_items.first.update_attribute :price, self.expected_price_product

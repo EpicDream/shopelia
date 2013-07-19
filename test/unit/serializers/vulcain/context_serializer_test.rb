@@ -2,7 +2,8 @@
 require 'test_helper'
 
 class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :merchants, :users, :payment_cards, :merchant_accounts, :order_items, :addresses
+  fixtures :orders, :products, :merchants, :users, :payment_cards
+  fixtures :merchant_accounts, :order_items, :addresses, :product_versions
   
   setup do
     @order = orders(:elarch_rueducommerce)
@@ -24,10 +25,11 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     
     order = context[:order]
     assert_equal 2, order[:products_urls].count
-    assert_equal [products(:headphones).url, products(:usbkey).url].to_set, order[:products_urls].to_set
+    assert_equal [Linker.monetize(products(:headphones).url), Linker.monetize(products(:usbkey).url)].to_set, order[:products_urls].to_set
     assert_equal 2, order[:products].count
     assert_equal [1, 1], order[:products].map{|e| e[:quantity]}
-    assert_equal [products(:headphones).url, products(:usbkey).url].to_set, order[:products].map{|e| e[:url]}.to_set
+    assert_equal [Linker.monetize(products(:headphones).url), Linker.monetize(products(:usbkey).url)].to_set, order[:products].map{|e| e[:url]}.to_set
+    assert_equal [product_versions(:headphones).id, product_versions(:usbkey).id].to_set, order[:products].map{|e| e[:id]}.to_set
   end
 
   test "it should correctly serialize context when answering" do

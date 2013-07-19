@@ -2,7 +2,7 @@
 require 'test_helper'
 
 class ProductSerializerTest < ActiveSupport::TestCase
-  fixtures :products, :merchants
+  fixtures :products, :merchants, :product_masters, :product_versions
   
   setup do
     @product = products(:usbkey)
@@ -16,7 +16,11 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal @product.name, hash[:product][:name]
     assert_equal @product.url, hash[:product][:url]
     assert_equal @product.image_url, hash[:product][:image_url]
+    assert_equal @product.images, hash[:product][:images]
+    assert_equal @product.description, hash[:product][:description]
     assert_equal @product.merchant.name, hash[:product][:merchant][:name]
+    assert_equal @product.product_master_id, hash[:product][:master_id]
+    assert_equal 1, hash[:product][:versions].count
   end
 
 end
