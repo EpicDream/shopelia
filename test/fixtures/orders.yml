@@ -1,6 +1,7 @@
 elarch_rueducommerce:
   uuid: uuid
   user: elarch
+  developer: prixing
   address: elarch_neuilly
   payment_card: elarch_hsbc
   merchant: rueducommerce
@@ -14,6 +15,7 @@ elarch_rueducommerce:
 elarch_amazon:
   uuid: orderamazon
   user: elarch
+  developer: prixing
   address: elarch_neuilly
   payment_card: elarch_hsbc
   merchant: amazon

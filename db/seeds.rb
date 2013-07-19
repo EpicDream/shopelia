@@ -29,7 +29,7 @@ Merchant.create(
   :name=>'Price Minister',
   :url=>'http://www.priceminister.com',
   :logo=>'http://www.prixing.fr/images/logos/priceminister_large.png',
-  :vendor=>'PriceMinister'
+  :vendor=>'PriceMinister',
   :domain=>'priceminister.com')
 Merchant.create(
   :id=>5,
