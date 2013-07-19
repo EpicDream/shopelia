@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130716122059) do
+ActiveRecord::Schema.define(:version => 20130717175440) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -74,6 +74,19 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.datetime "updated_at",  :null => false
   end
 
+  create_table "events", :force => true do |t|
+    t.integer  "action"
+    t.string   "tracker"
+    t.string   "user_agent"
+    t.string   "ip_address"
+    t.string   "visitor"
+    t.integer  "developer_id"
+    t.integer  "product_id"
+    t.integer  "user_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
   create_table "merchant_accounts", :force => true do |t|
     t.integer  "user_id"
     t.integer  "merchant_id"
@@ -98,6 +111,7 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.string   "billing_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
+    t.string   "domain"
   end
 
   create_table "order_items", :force => true do |t|
@@ -164,8 +178,15 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.integer  "merchant_id"
     t.text     "url"
     t.string   "image_url"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.text     "description"
+    t.text     "images"
+    t.text     "options"
+    t.datetime "last_checked_at"
+    t.float    "price"
+    t.float    "price_shipping"
+    t.float    "price_strikeout"
   end
 
   create_table "states", :force => true do |t|
