@@ -6,7 +6,8 @@ usbkey:
   shipping_info: "Sous 24h"
   description: "Description"
   images: "[\"http://www.img.com/img.jpg\"]"
-  name : "Version"
+  name: "Version"
+  available: true
   
 headphones:
   product: headphones
