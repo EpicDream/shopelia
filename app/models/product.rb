@@ -14,7 +14,8 @@ class Product < ActiveRecord::Base
   before_save :truncate_name
   after_save :create_versions
   
-  attr_accessible :versions, :merchant_id, :url, :name, :description, :product_master_id, :image_url
+  attr_accessible :versions, :merchant_id, :url, :name, :description
+  attr_accessible :product_master_id, :image_url, :versions_expires_at
   attr_accessor :versions
   
   scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or products.versions_expires_at < ?) and events.created_at > ?", Time.now, 12.hours.ago) }
