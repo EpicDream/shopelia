@@ -1,0 +1,34 @@
+{
+  "name": "Ariane",
+  "version": "0.1.0",
+  "manifest_version": 2,
+
+  "description": "Outil de mapping de page produit pour Viking/Saturn.",
+  "icons": {
+    "48": "img/rocket48.png",
+    "128": "img/rocket128.png"
+  },
+  // "default_locale": "fr",
+
+  "browser_action": {
+    "default_title": "Active Ariane",
+    "default_icon": "img/rocket48.png"
+  },
+
+  "background": {
+    "scripts": ["lib/uri.js", "lib/jquery-1.9.1.min.js", "controllers/background.js"]
+  },
+
+  "commands": {
+    "next-step": {
+      "suggested_key": {"default": "Alt+N"},
+      "description": "Go to next step"
+    }
+  },
+
+  "web_accessible_resources": [
+    "views/toolbar.html",
+    "assets/smoothness/*"
+  ],
+  "permissions": ["tabs", "contextMenus", "*://*/*"]
+}
