@@ -1,0 +1,44 @@
+<tr>
+  <td valign="top">
+    <table bgcolor="#ffffff" class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td height="30"></td>
+      </tr>
+      <tr>
+        <td>
+          <table class="table550" width="550" border="0" align="center" cellpadding="0" cellspacing="0">
+            <tr>
+              <td valign="top" width="167" border="0" align="left" cellpadding="0" cellspacing="0">
+                <%= image_tag(order_item.product.image_url, style: "max-width:112px; max_height:112px", class:"img2") %>
+              </td>
+              <td valign="top" width="383" border="0" align="left" cellpadding="0" cellspacing="0">
+                <table width="383" border="0" align="right" cellpadding="0" cellspacing="0" class="table2-2">
+                  <!--Article Title-->
+                  <tr>
+                    <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:18px; color:#34495e;"><%= order_item.product.name %></td>
+                  </tr>
+                  <!--End Article Title-->
+                  <tr>
+                    <td height="10" align="left" valign="top"></td>
+                  </tr>
+                  <!--Content-->
+                  <tr>
+                    <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666;"><br />
+                      Commandé chez: <%= link_to @order.merchant.name, @order.merchant.url, style:"color: #3498db; text-decoration: none; font-weight: bold;" %><br /><br />
+                      <p style="font-family: Helvetica, Arial, sans-serif; font-size:17px; color:#46b758; line-height:24px; font-weight:bold; margin:0px;"><%= number_to_currency(order_item.product_price) %></p>
+                    </td>
+                  </tr>
+                  <!--End Content--> 
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td height="30" style="border-bottom:1px dashed #bdc3c7;"></td>
+      </tr>
+    </table>
+  </td>
+</tr>
+
