@@ -501,6 +501,10 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     assess_order_with_higher_price
 
+    assert_equal 16, @order.prepared_price_total
+    assert_equal 14, @order.prepared_price_product
+    assert_equal 2, @order.prepared_price_shipping
+
     assert_equal :querying, @order.state
     assert_equal false, @order.questions.first["answer"]
     assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
@@ -931,7 +935,6 @@ class OrderTest < ActiveSupport::TestCase
         }
       ],
       "billing" => {
-        "product" => 14,
         "shipping" => 2,
         "total" => 16
       }
@@ -949,7 +952,6 @@ class OrderTest < ActiveSupport::TestCase
         }
       ],
       "billing" => {
-        "product" => 14,
         "shipping" => 2,
         "total" => 16
       }
@@ -973,7 +975,6 @@ class OrderTest < ActiveSupport::TestCase
          }
       ],
       "billing" => {
-        "product" => 14,
         "shipping" => 2,
         "total" => 16
       }
@@ -997,7 +998,6 @@ class OrderTest < ActiveSupport::TestCase
          }
        ],
        "billing" => {
-         "product" => 300,
          "shipping" => 33.05,
          "total" => 333.05
        }
@@ -1054,7 +1054,6 @@ class OrderTest < ActiveSupport::TestCase
   def order_success
     @order.callback "success", {
       "billing" => {
-        "product" => 14,
         "shipping" => 2,
         "total" => 16,
         "shipping_info" => "info"

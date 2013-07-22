@@ -12,7 +12,10 @@ class Product < ActiveRecord::Base
   before_validation :extract_merchant_from_url
   before_validation :create_product_master
   before_save :truncate_name
-  after_create :create_version
+  after_save :create_versions
+  
+  attr_accessible :versions, :merchant_id, :url, :name, :description, :product_master_id, :image_url
+  attr_accessor :versions
   
   scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or products.versions_expires_at < ?) and events.created_at > ?", Time.now, 12.hours.ago) }
   
@@ -26,6 +29,10 @@ class Product < ActiveRecord::Base
   
   def versions_expired?
     self.versions_expires_at.nil? || self.versions_expires_at < Time.now
+  end
+  
+  def self.versions_expiration_date
+    4.hours.from_now
   end
   
   private
@@ -50,8 +57,16 @@ class Product < ActiveRecord::Base
     end
   end
   
-  def create_version
-    ProductVersion.create(product_id:self.id) if self.product_versions.empty?
+  def create_versions
+    if self.versions.present?
+      self.product_versions.destroy_all
+      self.versions.each do |version|
+        ProductVersion.create!(version.merge({product_id:self.id}))
+      end
+      self.update_column "versions_expires_at", Product.versions_expiration_date
+    elsif self.product_versions.empty?
+      ProductVersion.create(product_id:self.id)
+    end
   end
   
   def create_product_master
