@@ -367,15 +367,17 @@ class Order < ActiveRecord::Base
   def prepare_order_items
     self.products.each do |p|
       product = Product.fetch(p[:url])
+      p[:quantity] ||= 1
       if product.nil? || !product.persisted? || self.merchant_id && self.merchant_id != product.merchant_id
         self.destroy and return
       end
       self.merchant_id = product.merchant_id
       self.save
-      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price])
+      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price].to_i*p[:quantity], quantity:p[:quantity])
     end
     if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
-      self.order_items.first.update_attribute :price, self.expected_price_product
+      item = self.order_items.first
+      item.update_attribute :price, self.expected_price_product / item.quantity
     end
   end
   

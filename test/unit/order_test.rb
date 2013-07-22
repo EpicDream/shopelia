@@ -51,6 +51,49 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "amazon", order.cvd_solution
   end
   
+  test "it should create multiple order items with quantities" do
+    order = Order.create!(
+      :user_id => @user.id,
+      :developer_id => @developer.id,
+      :payment_card_id => @card.id,
+      :products => [
+        { :url => "http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367", :quantity => 2 },
+        { :url => "http://www.eveiletjeux.com/bac-a-sable-fleur/produit/300173", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/jeu-de-societe-coloroflor/produit/306375", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/les-cookies-des-sables/produit/306562", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/les-cupcakes-des-sables/produit/306561", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/4-marqueurs-chunkie-couleurs-tropicales/produit/305851", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/montre-sablier-rose/produit/159487", :quantity => 1 }
+      ],
+      :address_id => @address.id,
+      :expected_price_total => 100,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10)
+
+    assert order.persisted?, order.errors.full_messages.join(",")
+    assert_equal 7, order.order_items.count
+    assert_equal 8, order.order_items.map(&:quantity).sum
+  end
+
+  test "it should prepare item price from quantity" do
+    order = Order.create!(
+      :user_id => @user.id,
+      :developer_id => @developer.id,
+      :payment_card_id => @card.id,
+      :products => [
+        { :url => "http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367", :quantity => 2 }
+      ],
+      :address_id => @address.id,
+      :expected_price_total => 100,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10)
+
+    assert order.persisted?, order.errors.full_messages.join(",")
+    item = order.reload.order_items.first
+    assert_equal 2, item.quantity
+    assert_equal 45, item.price
+  end
+  
   test "it should fill default value for prices if not set" do
     order = Order.create(
       :user_id => @user.id,
