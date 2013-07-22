@@ -78,6 +78,7 @@ Shopelia::Application.routes.draw do
       namespace :products do
         get :shift
       end
+      resources :merchants, :only => [:show, :update]
     end
   end
 
