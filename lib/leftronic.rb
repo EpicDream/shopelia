@@ -25,6 +25,15 @@ class Leftronic
   def notify_users_count
     push_number("shopelia_users_count", User.count)
   end
+  
+  def notify_button_stats
+    stats = Event.where("created_at > ?", 1.day.ago).group(:action).count
+    push_number("button_views_count", stats[0])
+    push_number("button_clicks_count", stats[1])
+    stats = Event.where("created_at > ?", 1.day.ago).group(:action).count("distinct visitor")
+    push_number("button_unique_views_count", stats[0])
+    push_number("button_unique_clicks_count", stats[1])
+  end
 
   def clear_board
     clear("shopelia_sound")
