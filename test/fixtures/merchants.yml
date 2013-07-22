@@ -20,7 +20,7 @@ amazon:
   cvd_solution: "amazon"
   domain: "amazon.fr"
   should_clean_args: true
-  viking_data: <%= {"bla" => "boo"}.to_json %>
+  viking_data: "{\"bla\":\"boo\"}"
   
 fnac:
   name: "Fnac"

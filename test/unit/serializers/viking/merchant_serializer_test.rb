@@ -12,8 +12,8 @@ class Viking::MerchantSerializerTest < ActiveSupport::TestCase
     merchant_serializer = Viking::MerchantSerializer.new(@merchant)
     hash = merchant_serializer.as_json
       
-    assert_equal @merchant.id, hash[:product][:id]
-    assert_equal @merchant.viking_data, hash[:product][:data]
+    assert_equal @merchant.id, hash[:merchant][:id]
+    assert_equal JSON.parse(@merchant.viking_data), hash[:merchant][:data]
   end
 
 end
