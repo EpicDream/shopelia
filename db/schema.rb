@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130716122059) do
+ActiveRecord::Schema.define(:version => 20130719174442) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -74,6 +74,19 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.datetime "updated_at",  :null => false
   end
 
+  create_table "events", :force => true do |t|
+    t.integer  "action"
+    t.string   "tracker"
+    t.string   "user_agent"
+    t.string   "ip_address"
+    t.string   "visitor"
+    t.integer  "developer_id"
+    t.integer  "product_id"
+    t.integer  "user_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
   create_table "merchant_accounts", :force => true do |t|
     t.integer  "user_id"
     t.integer  "merchant_id"
@@ -91,22 +104,24 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.string   "logo"
     t.string   "url"
     t.string   "tc_url"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
     t.string   "vendor"
     t.boolean  "accepting_orders",   :default => true
     t.string   "billing_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
+    t.string   "domain"
+    t.boolean  "should_clean_args",  :default => false
   end
 
   create_table "order_items", :force => true do |t|
     t.integer  "order_id"
-    t.integer  "product_id"
-    t.integer  "quantity",   :default => 1
-    t.float    "price",      :default => 0.0
-    t.datetime "created_at",                  :null => false
-    t.datetime "updated_at",                  :null => false
+    t.integer  "quantity",           :default => 1
+    t.float    "price",              :default => 0.0
+    t.datetime "created_at",                          :null => false
+    t.datetime "updated_at",                          :null => false
+    t.integer  "product_version_id"
   end
 
   create_table "orders", :force => true do |t|
@@ -144,6 +159,7 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.string   "mangopay_contribution_message"
     t.integer  "mangopay_amazon_voucher_id"
     t.string   "mangopay_amazon_voucher_code"
+    t.integer  "developer_id"
   end
 
   create_table "payment_cards", :force => true do |t|
@@ -159,13 +175,38 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.text     "crypted"
   end
 
+  create_table "product_masters", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "product_versions", :force => true do |t|
+    t.integer  "product_id"
+    t.float    "price"
+    t.float    "price_shipping"
+    t.float    "price_strikeout"
+    t.string   "shipping_info"
+    t.text     "description"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.string   "color"
+    t.string   "size"
+    t.string   "name"
+    t.string   "images"
+  end
+
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
     t.text     "url"
     t.string   "image_url"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+    t.text     "description"
+    t.text     "images"
+    t.integer  "product_master_id"
+    t.string   "brand"
+    t.datetime "versions_expires_at"
   end
 
   create_table "states", :force => true do |t|
@@ -181,6 +222,16 @@ ActiveRecord::Schema.define(:version => 20130716122059) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "url_matchers", :force => true do |t|
+    t.text     "url"
+    t.text     "canonical"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "url_matchers", ["canonical"], :name => "index_url_matchers_on_canonical"
+  add_index "url_matchers", ["url"], :name => "index_url_matchers_on_url"
 
   create_table "user_verification_failures", :force => true do |t|
     t.integer  "user_id"

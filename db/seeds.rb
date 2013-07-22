@@ -29,7 +29,7 @@ Merchant.create(
   :name=>'Price Minister',
   :url=>'http://www.priceminister.com',
   :logo=>'http://www.prixing.fr/images/logos/priceminister_large.png',
-  :vendor=>'PriceMinister'
+  :vendor=>'PriceministerMobile',
   :domain=>'priceminister.com')
 Merchant.create(
   :id=>5,
@@ -59,6 +59,13 @@ Merchant.create(
   :logo=>'http://www.prixing.fr/images/logos/conforama.png',
   :vendor=>'Conforama',
   :domain=>'conforama.fr')
+Merchant.create(
+  :id=>9,
+  :name=>"Eveil et jeux",
+  :url=>'http://www.eveiletjeux.com',
+  :logo=>'http://www.prixing.fr/images/logos/eveiletjeux.png',
+  :vendor=>'EveilEtJeux',
+  :domain=>'eveiletjeux.com')  
 Developer.delete_all
 Developer.create(:name=>'Prixing',:api_key=>'52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4')
 Country.delete_all

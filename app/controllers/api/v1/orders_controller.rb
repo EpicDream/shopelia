@@ -16,7 +16,7 @@ class Api::V1::OrdersController < Api::V1::BaseController
     # Required for tests
     render :json => {}, status: :created and return if current_user.email.eql?("test@shopelia.fr")
   
-    @order = Order.new(params[:order].merge({ user_id: current_user.id }))
+    @order = Order.new(params[:order].merge({ user_id: current_user.id, developer_id:@developer.id }))
 
     if @order.save
       render json: OrderSerializer.new(@order).as_json, status: :created

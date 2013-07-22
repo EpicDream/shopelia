@@ -15,7 +15,7 @@ class Shopelia.Routers.Sessions extends Backbone.Router
   checkSession: (params) ->
     @product = new Shopelia.Models.Product(params)
     @session = new Shopelia.Models.Session()
-    @modal = @showModal(params)
+    @modal = @showModal()
     console.log("check")
     if @session.authenticated()
       console.log("authenticated")
@@ -38,8 +38,7 @@ class Shopelia.Routers.Sessions extends Backbone.Router
       @modal.setContentView(new Shopelia.Views.UsersIndex(session: @session,product: @product))
       center($("#modal"))
 
-  showModal: (params)  ->
-    @product = new Shopelia.Models.Product(params)
+  showModal: ->
     view = new Shopelia.Views.Modal(product: @product)
     $('#container').append(view.render().el)
     center($("#modal"))

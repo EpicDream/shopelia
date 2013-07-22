@@ -1,0 +1,13 @@
+usbkey:
+  product: usbkey
+  price: 5
+  price_shipping: 2
+  price_strikeout: 7
+  shipping_info: "Sous 24h"
+  description: "Description"
+  images: "[\"http://www.img.com/img.jpg\"]"
+  name : "Version"
+  
+headphones:
+  product: headphones
+

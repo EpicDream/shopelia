@@ -6,11 +6,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
   param :url, String, "Url of the product to extract", :required => true
   def index
     if @product
-      result = Vulcain::ProductInformations.create({
-        "vendor" => @product.merchant.vendor,
-        "context" => { "url" => @product.url }
-      })
-      render :json => result.to_json
+      if @product.versions_expired? && @product.merchant.vendor.present?
+        Vulcain::ProductInformations.generate_versions(@product)
+      end
+      render :json => ProductSerializer.new(@product).as_json[:product]
     else
       head :not_found
     end
@@ -20,7 +19,12 @@ class Api::V1::ProductsController < Api::V1::BaseController
   
   def prepare_params
     @product = Product.fetch(params[:url])
-    @product = nil unless @product.persisted?
+    if @product.persisted?
+      # retrieve created versions
+      @product.reload
+    else
+      @product = nil 
+    end
   end
   
 end

@@ -2,7 +2,8 @@
 require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
-  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :addresses, :merchant_accounts, :countries
+  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :product_masters
+  fixtures :product_versions, :addresses, :merchant_accounts, :countries, :developers
   
   setup do
     @user = users(:elarch)
@@ -10,11 +11,13 @@ class OrderTest < ActiveSupport::TestCase
     @order = orders(:elarch_rueducommerce)
     @card = payment_cards(:elarch_hsbc)
     @address = addresses(:elarch_neuilly) 
+    @developer = developers(:prixing)
   end
 
   test "it should create order" do
-    order = Order.create(
+    order = Order.create!(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :price => 90,
@@ -39,7 +42,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 90, item.reload.price
     
     product = item.product
-    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO", product.url
+    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
     
@@ -48,9 +51,53 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "amazon", order.cvd_solution
   end
   
+  test "it should create multiple order items with quantities" do
+    order = Order.create!(
+      :user_id => @user.id,
+      :developer_id => @developer.id,
+      :payment_card_id => @card.id,
+      :products => [
+        { :url => "http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367", :quantity => 2 },
+        { :url => "http://www.eveiletjeux.com/bac-a-sable-fleur/produit/300173", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/jeu-de-societe-coloroflor/produit/306375", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/les-cookies-des-sables/produit/306562", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/les-cupcakes-des-sables/produit/306561", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/4-marqueurs-chunkie-couleurs-tropicales/produit/305851", :quantity => 1 },
+        { :url => "http://www.eveiletjeux.com/montre-sablier-rose/produit/159487", :quantity => 1 }
+      ],
+      :address_id => @address.id,
+      :expected_price_total => 100,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10)
+
+    assert order.persisted?, order.errors.full_messages.join(",")
+    assert_equal 7, order.order_items.count
+    assert_equal 8, order.order_items.map(&:quantity).sum
+  end
+
+  test "it should prepare item price from quantity" do
+    order = Order.create!(
+      :user_id => @user.id,
+      :developer_id => @developer.id,
+      :payment_card_id => @card.id,
+      :products => [
+        { :url => "http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367", :quantity => 2 }
+      ],
+      :address_id => @address.id,
+      :expected_price_total => 100,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10)
+
+    assert order.persisted?, order.errors.full_messages.join(",")
+    item = order.reload.order_items.first
+    assert_equal 2, item.quantity
+    assert_equal 45, item.price
+  end
+  
   test "it should fill default value for prices if not set" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
@@ -69,6 +116,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should fill default value for prices if not set - variant" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
@@ -86,6 +134,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should fail order creation with iconsistent prices" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
@@ -103,6 +152,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't be able to create same order in a 5 minutes delay" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/one",
@@ -112,6 +162,7 @@ class OrderTest < ActiveSupport::TestCase
       :expected_price_total => 100)
     another = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/another_product",
@@ -122,6 +173,7 @@ class OrderTest < ActiveSupport::TestCase
     assert another.persisted?
     duplicate = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/one",
@@ -136,6 +188,7 @@ class OrderTest < ActiveSupport::TestCase
     order.update_attribute :created_at, 10.minutes.ago
     duplicate = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
@@ -167,6 +220,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_difference('MerchantAccount.count', 1) do
       order = Order.new(
         :user_id => @user.id,
+        :developer_id => @developer.id,
         :expected_price_total => 100,
         :payment_card_id => @card.id,
         :products => [ {
@@ -181,6 +235,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't create order without address specified" do
     order = Order.new(
       :user_id => @user.id, 
+      :developer_id => @developer.id,
       :expected_price_total => 100,
       :products => [ {
         :url => "http://www.rueducommerce.fr/productA",
@@ -196,6 +251,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't accept urls from different merchants" do
     order = Order.create(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :address_id => @address.id,
       :expected_price_total => 100,
@@ -216,6 +272,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't create order without products" do
     order = Order.new(
       :user_id => @user.id, 
+      :developer_id => @developer.id,
       :expected_price_total => 100,
       :address_id => @address.id,
       :payment_card_id => @card.id)
@@ -226,6 +283,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it shouldn't create order with invalid product" do
     order = Order.create(
       :user_id => @user.id, 
+      :developer_id => @developer.id,
       :expected_price_total => 100,
       :address_id => @address.id,
       :products => [ { :invalid => "http://www.rueducommerce.fr/productA" } ],              
@@ -234,9 +292,10 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal I18n.t('orders.errors.invalid_product', :error => ''), order.errors.full_messages.first
   end
   
-  test "it should monetize urls" do
+  test "it should clean urls" do
     order = Order.new(
       :user_id => @user.id,
+      :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
         :url => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY",
@@ -246,7 +305,7 @@ class OrderTest < ActiveSupport::TestCase
       :expected_price_total => 100)
     assert order.save
     assert_equal 1, order.reload.order_items.count
-    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY", order.order_items.first.product.url
+    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY", order.order_items.first.product.url
   end
   
   test "it should set message" do
@@ -414,7 +473,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 1, @order.questions.count
     assert_equal "3", @order.questions.first["id"]
     
-    item = @order.order_items.where(:product_id => products(:usbkey).id).first
+    item = @order.order_items.where(:product_version_id => product_versions(:usbkey).id).first
     assert_equal 9, item.price
     
     assert_not_equal :pending_agent, @order.state
@@ -525,6 +584,7 @@ class OrderTest < ActiveSupport::TestCase
   test "it should set merchant account as created when message account_created received" do
     order = Order.create(
       :user_id => @user.id, 
+      :developer_id => @developer.id,
       :products => [ {
         :url => "http://www.rueducommerce.fr/productA",
         :name => "Product A",
@@ -862,10 +922,12 @@ class OrderTest < ActiveSupport::TestCase
       ],
       "products" => [
         { "url" => products(:usbkey).url,
-          "price" => 9 
+          "price" => 9,
+          "id" => product_versions(:usbkey).id 
         },
         { "url" => products(:headphones).url,
-          "price_product" => 5
+          "price_product" => 5,
+          "id" => product_versions(:headphones).id 
         }
       ],
       "billing" => {
@@ -901,12 +963,14 @@ class OrderTest < ActiveSupport::TestCase
         { "id" => "3" }
       ],
       "products" => [
-        { "url" => products(:usbkey).url,
-          "price" => 5 
-        },
-        { "url" => products(:headphones).url,
-          "price_product" => 5 
-        }
+         { "url" => products(:usbkey).url,
+           "price" => 5,
+           "id" => product_versions(:usbkey).id 
+         },
+         { "url" => products(:headphones).url,
+           "price_product" => 5,
+           "id" => product_versions(:headphones).id 
+         }
       ],
       "billing" => {
         "product" => 14,
@@ -924,10 +988,12 @@ class OrderTest < ActiveSupport::TestCase
        ],
        "products" => [
          { "url" => products(:usbkey).url,
-           "price" => 200 
+           "price" => 200,
+           "id" => product_versions(:usbkey).id 
          },
          { "url" => products(:headphones).url,
-           "price_product" => 100
+           "price_product" => 100,
+           "id" => product_versions(:headphones).id 
          }
        ],
        "billing" => {
