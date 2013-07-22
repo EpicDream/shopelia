@@ -99,5 +99,33 @@ class ProductTest < ActiveSupport::TestCase
     product.update_attribute :versions_expires_at, 4.hours.from_now
     assert !product.versions_expired?
   end
+  
+  test "it should update product and version" do
+    product = products(:usbkey)
+    product.update_attributes(
+      :name => "name",
+      :image_url => "image_url",
+      :description => "description",
+      :versions => [ 
+        { :price => 10,
+          :price_shipping => 2,
+          :color => "blue",
+          :size => "XL",
+          :shipping_info => "info",
+          :available => 0 },
+        { :price => 12,
+          :price_shipping => 2,
+          :color => "red",
+          :size => "XL",
+          :shipping_info => "info",
+          :available => 1 }
+        ]
+      );
+
+     assert_equal "name", product.reload.name
+     assert_equal 2, product.product_versions.count
+     assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
+     assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
+  end
 
 end

@@ -10,11 +10,13 @@ window.enableButton = ($button) ->
   $button.removeAttr('disabled','disabled')
   $button.removeClass('disabled')
 
-window.center = ($elem) ->
+window.center = ($parent,$elem) ->
   top =undefined
   left = undefined
-  top = Math.max($(window).height() - $elem.height(),0) / 2
-  left = Math.max($(window).width() - $elem.outerWidth(), 0) / 2
+  top = Math.max($parent.height() - $elem.height(),0) / 2
+  left = Math.max($parent.width() - $elem.outerWidth(), 0) / 2
+  unless $parent[0] is window
+    top += $parent.outerHeight(true)
 
   $elem.css
     top: top

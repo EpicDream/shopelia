@@ -4,5 +4,5 @@ class ProductVersion < ActiveRecord::Base
   validates :product, :presence => true
   
   attr_accessible :description, :size, :color, :price, :price_shipping
-  attr_accessible :price_strikeout, :product_id, :shipping_info
+  attr_accessible :price_strikeout, :product_id, :shipping_info, :available
 end

@@ -18,3 +18,19 @@ body {
 .text-center {
   text-align: center;
 }
+
+.loader {
+  width : 100px;
+  height : 100px;
+  position:relative;
+  display: block;
+  margin: auto;
+  background-color : #000000;
+  border-radius : 8px;
+  opacity : 1;
+  z-index: 10001;
+  background-image: url(image-path('html_app/loader.gif'));
+  background-repeat: no-repeat;
+  background-position: center;
+}
+

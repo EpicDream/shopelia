@@ -11,8 +11,10 @@ var ShopeliaCheckout = {
     },
     bindClickWith: function ($elements) {
         $elements.click(function(){
+            $(this).unbind('click');
             var clickedParams = ShopeliaCheckout.extend(ShopeliaCheckout.options,{action: "1"});
             ShopeliaCheckout.sendUrls($(this),clickedParams);
+            ShopeliaCheckout.getProduct($(this));
         });
     },
     sendUrls: function($elements,params) {
@@ -39,7 +41,28 @@ var ShopeliaCheckout = {
             });
         }
     },
-    getProduct: function(options) {
+    getProduct: function($element) {
+        var options= {};
+        if($element.attr('data-shopelia-url') != undefined && $element.attr('data-shopelia-url') != "") {
+            options.url = $element.attr('data-shopelia-url')
+        }
+        if($element.attr('data-shopelia-name') != undefined && $element.attr('data-shopelia-name') != "") {
+            options.name = $element.attr('data-shopelia-name')
+        }
+        if($element.attr('data-shopelia-image-url') != undefined && $element.attr('data-shopelia-image-url') != "") {
+            options.image_url = $element.attr('data-shopelia-image-url')
+        }
+        if($element.attr('data-shopelia-expected-price') != undefined && $element.attr('data-shopelia-expected-price') != "") {
+            options.expected_price_product = $element.attr('data-shopelia-expected-price')
+        }
+        if($element.attr('data-shopelia-expected-price-shipping') != undefined && $element.attr('data-shopelia-expected-price-shipping') != "") {
+            options.expected_price_shipping = $element.attr('data-shopelia-expected-price-shipping')
+        }
+        if($element.attr('data-shopelia-shipping-info') != undefined && $element.attr('data-shopelia-shipping-info') != "") {
+            options.shipping_info = $element.attr('data-shopelia-shipping-info')
+        }
+        console.log("Get Product");
+        console.log(options);
         this.createLoader();
         this.createIframe(options);
         this.handleIframe(options);

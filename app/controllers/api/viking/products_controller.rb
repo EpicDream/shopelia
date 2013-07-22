@@ -8,11 +8,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
       param :name, String, "Name", :required => false
       param :image_url, String, "Main image", :required => false
       param :description, String, "Description", :required => false
-      param :price, Float, "Price of product", :required => false
-      param :price_shipping, Float, "Shipping price", :required => false
-      param :price_strikeout, Float, "Striked out price (old price)", :required => false
-      param :images, String, "JSON of all images", :required => false
-      param :options, String, "JSON of all options", :required => false
+      param :versions, Hash, "Versions of product", :required => true
     end
   end
   
