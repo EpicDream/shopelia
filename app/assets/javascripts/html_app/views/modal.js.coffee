@@ -65,7 +65,7 @@ class Shopelia.Views.Modal extends Backbone.View
       @contentView.InitializeActionButton(@$("#link-header"))
     else
       @$("#link-header").hide()
-    center($("#modal"))
+    center($(window),$("#modal"))
 
 
   addPasswordView : ->

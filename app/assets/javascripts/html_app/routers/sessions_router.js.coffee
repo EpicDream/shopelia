@@ -6,10 +6,10 @@ class Shopelia.Routers.Sessions extends Backbone.Router
   initialize: ->
     _.bindAll this
     $(window).on('resize.modal',() ->
-      center($("#modal"))
+      center($(window),$("#modal"))
     )
     $(window).on('load',() ->
-      center($("#modal"))
+      center($(window),$("#modal"))
     )
 
   checkSession: (params) ->
@@ -30,16 +30,16 @@ class Shopelia.Routers.Sessions extends Backbone.Router
                       console.log("fetched user success callback: " + JSON.stringify(resp.disableWrapping()))
                       that.session.updateUserCookies(resp.disableWrapping())
                       that.modal.setContentView(new Shopelia.Views.SignIn(session: that.session ,product: that.product, email: that.session.get("user").get('email')))
-                      center($("#modal"))
+                      center($(window),$("#modal"))
                     error : (model, response) ->
                         that.session.deleteCookies()
                     })
     else
       @modal.setContentView(new Shopelia.Views.UsersIndex(session: @session,product: @product))
-      center($("#modal"))
+      center($(window),$("#modal"))
 
   showModal: ->
     view = new Shopelia.Views.Modal(product: @product)
     $('#container').append(view.render().el)
-    center($("#modal"))
+    center($(window),$("#modal"))
     view
