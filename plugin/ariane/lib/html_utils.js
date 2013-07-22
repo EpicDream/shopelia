@@ -65,7 +65,7 @@ function fromParentSelector(jelement, complete) {
   var res = tag.toLowerCase();
   // ID
   var id = jelement.attr("id");
-  if (id && (id.length < 15 || ! hu.isRandom(id))) {
+  if (id && ! hu.isRandom(id)) {
     res += "#"+id;
     if (! complete)
       return res;
@@ -86,7 +86,7 @@ function fromParentSelector(jelement, complete) {
     res += _.map(elementClasses, function(c){return "."+c;}).join('');
   }
   // POSITION
-  var pos = jelement.index(jelement.parent().children(tag)) + 1;
+  var pos = jelement.parent().children(tag).index(jelement) + 1;
   // var pos = jelement.index(tag) + 1;
   res += ":nth-of-type(" + pos + ")";
   return res;

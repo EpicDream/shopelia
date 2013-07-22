@@ -31,7 +31,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
   if (changeInfo.status == "loading" && changeInfo.url) {
     var uri = new Uri(changeInfo.url);
     if (tasks[tabId] && uri.host() != tasks[tabId].host) {
-      clear_tab(tabId);
       console.log("Quit Ariane. Good bye !", tabId);
     }
   } else if (changeInfo.status == "complete" && tasks[tabId]) {
