@@ -2,7 +2,7 @@ class Product < ActiveRecord::Base
   belongs_to :product_master
   belongs_to :merchant
   has_many :events
-  has_many :product_versions
+  has_many :product_versions, :dependent => :destroy
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true
