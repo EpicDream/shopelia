@@ -19,7 +19,12 @@ class Api::V1::ProductsController < Api::V1::BaseController
   
   def prepare_params
     @product = Product.fetch(params[:url])
-    @product = nil unless @product.persisted?
+    if @product.persisted?
+      # retrieve created versions
+      @product.reload
+    else
+      @product = nil 
+    end
   end
   
 end

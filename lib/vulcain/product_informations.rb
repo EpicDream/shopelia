@@ -18,7 +18,7 @@ module Vulcain
         :versions_expires_at => 4.hours.from_now
       )
       version = product.product_versions.first
-      version = ProductVersion.create(product:product) if version.nil?
+      version = ProductVersion.create(product_id:product.id) if version.nil?
       version.update_attributes(
         :price => result["product_price"],
         :price_shipping => result["shipping_price"],
