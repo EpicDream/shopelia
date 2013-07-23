@@ -8,6 +8,7 @@ usbkey:
   image_url: "http://www.img.com/img.jpg"
   name: "Version"
   available: true
+  brand: "Brand"
   
 headphones:
   product: headphones

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130723094706) do
+ActiveRecord::Schema.define(:version => 20130723174909) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -195,8 +195,9 @@ ActiveRecord::Schema.define(:version => 20130723094706) do
     t.string   "color"
     t.string   "size"
     t.string   "name"
-    t.string   "images"
     t.boolean  "available"
+    t.text     "image_url"
+    t.string   "brand"
   end
 
   create_table "products", :force => true do |t|
@@ -207,10 +208,10 @@ ActiveRecord::Schema.define(:version => 20130723094706) do
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
     t.text     "description"
-    t.text     "images"
     t.integer  "product_master_id"
     t.string   "brand"
     t.datetime "versions_expires_at"
+    t.boolean  "viking_failure"
   end
 
   create_table "states", :force => true do |t|
