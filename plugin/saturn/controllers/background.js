@@ -159,6 +159,8 @@ function initTabVariables(tabId, hash) {
   data[tabId] = hash;
   data[tabId].host = uri.host();
   data[tabId].results = [];
+  // Remove all previous cookies
+  chrome.cookies.getAll({},function(cooks){cookies=cooks;for (var i in cookies) {chrome.cookies.remove({name: cookies[i].name, url: "http://"+cookies[i].domain+cookies[i].path, storeId: cookies[i].storeId})}})
 };
 
 function loadContentScript(tabId) {
@@ -318,3 +320,6 @@ function assertTest(tabId) {
   if (! o.availability || ! o.availability.match(/stock/)) console.error("Bad availability", o.availability);
   delete data[tabId];
 };
+
+if (! TEST_ENV)
+  setTimeout(function() { start() }, 5000); // 5s

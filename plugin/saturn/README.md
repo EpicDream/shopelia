@@ -21,7 +21,9 @@ He can extract for example :
 
 Installation
 ------------
-  
+
+#### Manually, for tests
+
 In Chromium extensions' tab :
 
 1. Check 'Developper mode'
@@ -29,12 +31,18 @@ In Chromium extensions' tab :
 3. Browse on Saturn directory and open it.
 4. Check 'Allow in private navigation'.
 
+#### Automatically, in prod
+
+Just run
+
+    google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn
+
 Usage
 -----
   
 You have nothing to do, the extension ask itself for product to crawl.
   
-You can crawl the product on the current page by clicking on the extension's button at top-right of the window.
+You can crawl the product on the current page by clicking on the extension's button at top-right of the window in TestMode.
 
 We recommand you to use it in a private tab, to do not be tracked.
 
