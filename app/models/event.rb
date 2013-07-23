@@ -2,6 +2,7 @@ class Event < ActiveRecord::Base
   belongs_to :product
   belongs_to :user
   belongs_to :developer
+  has_many :merchants, :through => :product
   
   VIEW = 0
   CLICK = 1
