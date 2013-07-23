@@ -76,7 +76,7 @@ function crawl(mapping) {
     var e = $(path);
     if (e.length == 0) continue;
     if (key != 'description')
-      option[key] = e.text().replace(/ {2,}/g,' ').replace(/\n/g,'');
+      option[key] = e.text().replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
     else
       option[key] = e.html().replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n");
 
@@ -89,7 +89,7 @@ function crawl(mapping) {
     if (! path) continue;
     var e = $(path);
     if (e.length == 0) continue;
-    var images = e.find("img");
+    var images = e.add(e.find("img")).filter("img");
     if (images.length == 0) continue;
     var values = _.chain(images).map(function(img) {return img.getAttribute("src");}).uniq().value();
     if (key == 'image_url')

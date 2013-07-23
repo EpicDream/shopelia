@@ -88,3 +88,4 @@ TODO list
 ---------
 
 Add the possibility to click on an element to get images.
+Add the possibility to handle multiple extractor at the same time on different tab.
