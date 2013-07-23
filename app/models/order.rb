@@ -124,15 +124,17 @@ class Order < ActiveRecord::Base
         item = self.order_items.where(:product_version_id => product["id"]).first
         item.update_attribute(:price, product["price"] || product["price_product"] || product["product_price"])
       end
-      
+
+      prepared_price_product = content["billing"]["total"] - content["billing"]["shipping"]
+
       # Set product price if unique item and without price
       if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
-        self.order_items.first.update_attribute :price, content["billing"]["product"]
+        self.order_items.first.update_attribute :price, prepared_price_product
       end
-      
+
       self.prepared_price_total = content["billing"]["total"]
-      self.prepared_price_product = content["billing"]["product"]
       self.prepared_price_shipping = content["billing"]["shipping"]
+      self.prepared_price_product = prepared_price_product
       self.save!
       
       if self.expected_price_total >= self.prepared_price_total
@@ -196,8 +198,8 @@ class Order < ActiveRecord::Base
       
     elsif verb.eql?("success")
       self.billed_price_total = content["billing"]["total"]
-      self.billed_price_product = content["billing"]["product"]
       self.billed_price_shipping = content["billing"]["shipping"]
+      self.billed_price_product = self.billed_price_total - self.billed_price_shipping
       self.shipping_info = content["billing"]["shipping_info"]
       complete
       
