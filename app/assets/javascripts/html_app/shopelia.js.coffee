@@ -23,7 +23,17 @@ window.Shopelia =
     Backbone.history.start(pushState: true)
 
 
-
 $(document).ready ->
   Shopelia.initialize()
   Tracker.init()
+  console.log($('#amIHere').length)
+  if $('#amIHere').length isnt 0
+    Shopelia.Adblock = false
+  else
+    Shopelia.Adblock = true
+
+
+
+
+
+
