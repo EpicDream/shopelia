@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class Api::V1::Limonetik::OrdersControllerTest < ActionController::TestCase
-  fixtures :orders
 
   setup do
     @order = orders(:elarch_rueducommerce)

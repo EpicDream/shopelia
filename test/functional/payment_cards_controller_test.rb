@@ -2,7 +2,6 @@ require 'test_helper'
 
 class PaymentCardsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users, :payment_cards
 
   setup do
     @user = users(:elarch)

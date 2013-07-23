@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::V1::Users::ResetControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users
 
   test "it should send password if email exists" do
     post :create, email:"elarch@gmail.com", format: :json

@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class MerchantSerializerTest < ActiveSupport::TestCase
-  fixtures :merchants
   
   setup do
     @merchant = merchants(:rueducommerce)

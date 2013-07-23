@@ -16,9 +16,10 @@ class Product < ActiveRecord::Base
   
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
+  attr_accessible :brand
   attr_accessor :versions
   
-  scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or products.versions_expires_at < ?) and events.created_at > ?", Time.now, 12.hours.ago) }
+  scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ?", Time.now, 6.hours.ago, 12.hours.ago) }
   
   def self.fetch url
     Product.find_or_create_by_url(Linker.clean(url)) unless url.nil?
@@ -34,6 +35,16 @@ class Product < ActiveRecord::Base
   
   def self.versions_expiration_date
     4.hours.from_now
+  end
+  
+  def assess_versions
+    ok = self.product_versions.count > 0
+    self.product_versions.each do |version|
+      ok = false if version.name.nil? || version.image_url.nil? || version.brand.nil? \
+        || version.description.nil? || version.price.nil? || version.price_shipping.nil? \
+        || version.shipping_info.nil?
+    end
+    self.update_attribute :viking_failure, !ok
   end
   
   private
@@ -64,7 +75,13 @@ class Product < ActiveRecord::Base
       self.versions.each do |version|
         ProductVersion.create!(version.merge({product_id:self.id}))
       end
+      version = self.reload.product_versions.first
+      self.update_column "name", version.name
+      self.update_column "brand", version.brand
+      self.update_column "image_url", version.image_url
+      self.update_column "description", version.description
       self.update_column "versions_expires_at", Product.versions_expiration_date
+      self.reload
     elsif self.product_versions.empty?
       ProductVersion.create(product_id:self.id)
     end
@@ -72,6 +89,10 @@ class Product < ActiveRecord::Base
   
   def create_product_master
     self.product_master_id = ProductMaster.create.id if self.product_master_id.nil?
+  end
+  
+  def set_viking_failure
+    self.viking_failure = false if self.viking_failure.nil?
   end
   
 end

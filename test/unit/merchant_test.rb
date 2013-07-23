@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class MerchantTest < ActiveSupport::TestCase
-  fixtures :merchants, :orders
 
   test "it should create merchant" do
     populate_merchant
