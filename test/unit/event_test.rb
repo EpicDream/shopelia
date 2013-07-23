@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class EventTest < ActiveSupport::TestCase
-  fixtures :products, :developers
+  fixtures :products, :developers, :merchants, :product_versions, :product_masters
 
   test "it should create event" do
     event = Event.new(
@@ -9,6 +9,7 @@ class EventTest < ActiveSupport::TestCase
       :product_id => products(:headphones).id,
       :developer_id => developers(:prixing).id)
     assert event.save, event.errors.full_messages.join(",")
+    assert_equal true, event.monetizable
   end
   
   test "it should create event from url" do
@@ -19,6 +20,14 @@ class EventTest < ActiveSupport::TestCase
         :developer_id => developers(:prixing).id)
       assert event.save, event.errors.full_messages.join(",")
     end
+  end
+
+  test "it should set false for monetizable if unkown merchant" do
+    event = Event.create(
+      :action => Event::VIEW,
+      :url => "http://www.google.com/my_product",
+      :developer_id => developers(:prixing).id)
+    assert_equal false, event.monetizable
   end
   
   test "it should create events from a list of urls" do
