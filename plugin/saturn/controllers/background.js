@@ -255,9 +255,10 @@ function crawl(tabId) {
   console.log("Going to crawl");
   data[tabId].last_action = "crawl";
   chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(option) {
-    option.color = data[tabId].colors[data[tabId].lastColorIdx];
-    option.size = data[tabId].sizes[data[tabId].lastSizeIdx];
-    if (jQuery.map(option,function(v,k){return k;}).length > 2)
+    option.color = data[tabId].colors[data[tabId].lastColorIdx] || undefined;
+    option.size = data[tabId].sizes[data[tabId].lastSizeIdx] || undefined;
+    // Il faut autre chose que color ou size.
+    if (option.length - (option.color ? 1 : 0) - (option.size ? 1 : 0) > 0)
       data[tabId].results.push(option);
     setNextSize(tabId);
   });
