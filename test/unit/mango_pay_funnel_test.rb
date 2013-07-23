@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class MangoPayFunnelTest < ActiveSupport::TestCase
-  fixtures :users, :orders, :addresses, :payment_cards, :merchants, :merchant_accounts
   
   setup do
     @order = orders(:elarch_rueducommerce)

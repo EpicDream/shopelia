@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class ProductSerializerTest < ActiveSupport::TestCase
-  fixtures :products, :merchants, :product_masters, :product_versions
   
   setup do
     @product = products(:usbkey)

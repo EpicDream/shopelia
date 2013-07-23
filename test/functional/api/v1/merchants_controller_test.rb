@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class Api::V1::MerchantsControllerTest < ActionController::TestCase
-  fixtures :merchants
 
   test "it should get all merchants" do
     get :index, format: :json

@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  fixtures :users, :countries, :payment_cards, :orders
   
   setup do
     @user = users(:elarch)

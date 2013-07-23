@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::V1::Users::ExistsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users
 
   test "user exists" do
     post :create, email:"elarch@gmail.com", format: :json

@@ -5,7 +5,7 @@ usbkey:
   price_strikeout: 7
   shipping_info: "Sous 24h"
   description: "Description"
-  images: "[\"http://www.img.com/img.jpg\"]"
+  image_url: "http://www.img.com/img.jpg"
   name: "Version"
   available: true
   

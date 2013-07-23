@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class EventTest < ActiveSupport::TestCase
-  fixtures :products, :developers, :merchants, :product_versions, :product_masters
 
   test "it should create event" do
     event = Event.new(

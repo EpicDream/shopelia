@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class Api::V1::EventsControllerTest < ActionController::TestCase
-  fixtures :developers, :merchants
 
   setup do
     ENV["API_KEY"]  = nil

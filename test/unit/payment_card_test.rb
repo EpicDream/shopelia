@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class PaymentCardTest < ActiveSupport::TestCase
-  fixtures :users, :payment_cards, :orders
 
   test "it should create a payment card" do
     card = PaymentCard.new(

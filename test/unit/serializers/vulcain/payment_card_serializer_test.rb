@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class Vulcain::PaymentCardSerializerTest < ActiveSupport::TestCase
-  fixtures :users, :payment_cards
   
   setup do
     @card = payment_cards(:elarch_hsbc)

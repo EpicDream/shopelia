@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class LinkerTest < ActiveSupport::TestCase
-  fixtures :merchants
  
   test "it should clean url" do
     array = [
