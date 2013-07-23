@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class Api::V1::EventsControllerTest < ActionController::TestCase
-  fixtures :developers
+  fixtures :developers, :merchants
 
   setup do
     ENV["API_KEY"]  = nil
@@ -20,6 +20,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_equal "0.0.0.0", event.ip_address
     assert_equal "toto", event.tracker
     assert_equal "1234", event.visitor
+    assert_equal true, event.monetizable
   end
 
   test "it should create events from list of urls in GET mode" do

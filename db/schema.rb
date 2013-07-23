@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130722162829) do
+ActiveRecord::Schema.define(:version => 20130723094706) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -85,6 +85,7 @@ ActiveRecord::Schema.define(:version => 20130722162829) do
     t.integer  "user_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.boolean  "monetizable"
   end
 
   create_table "merchant_accounts", :force => true do |t|

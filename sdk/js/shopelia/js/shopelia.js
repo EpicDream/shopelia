@@ -4,7 +4,7 @@ var ShopeliaCheckout = {
         this.options = options;
         var $shopelia_buttons = $("[data-shopelia-url]");
         if($shopelia_buttons.length > 0) {
-            var params = this.extend(this.options,{action: "0"});
+            var params = this.extend(this.options,{type: "view"});
             this.sendUrls($shopelia_buttons,params);
         }
 
@@ -12,7 +12,7 @@ var ShopeliaCheckout = {
     bindClickWith: function ($elements) {
         $elements.click(function(){
             $(this).unbind('click');
-            var clickedParams = ShopeliaCheckout.extend(ShopeliaCheckout.options,{action: "1"});
+            var clickedParams = ShopeliaCheckout.extend(ShopeliaCheckout.options,{type: "click"});
             ShopeliaCheckout.sendUrls($(this),clickedParams);
             ShopeliaCheckout.getProduct($(this));
         });
