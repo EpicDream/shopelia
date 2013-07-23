@@ -50,21 +50,26 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
     $iframe.attr('marginWidth',"0")
     $iframe.attr('height',"100%")
     $iframe.attr('width',"100%")
+    console.log($iframe)
     $iframe
 
 
   showProductInfos: ->
     console.log("Show Product Infos")
-    $iframe = @iframe
-    $("#modal-header").after($iframe)
-    that = this
-    $iframe.animate({height:'550px'}, "slow")
-    $("#modal-content").animate({height:'65px',opacity:0},"slow", () ->
-      $(this).hide()
-      $("#modal-footer").show()
-      $("#btn-hide-product-infos").click ->
-        that.closeProducIframe()
-    )
+    if @model.get('merchant_name') is "Amazon France" or Shopelia.Adblock
+      window.open(@model.get('url'))
+    else
+      $iframe = @iframe
+      $("#modal-header").after($iframe)
+      that = this
+      $iframe.animate({height:'550px'}, "slow")
+      $("#modal-content").animate({height:'65px',opacity:0},"slow", () ->
+        $(this).hide()
+        $("#modal-footer").show()
+        $("#btn-hide-product-infos").click ->
+          that.closeProducIframe()
+      )
+
 
 
   closeProducIframe: ->

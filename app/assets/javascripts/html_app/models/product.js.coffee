@@ -2,7 +2,6 @@ class Shopelia.Models.Product extends Backbone.Model
   name: "product"
 
   validate: (attrs, options) ->
-    console.log("validate")
     if attrs.shipping_info is undefined or attrs.shipping_info == ""
       "Invalid Product: Missing Attrs"
     if attrs.expected_price_product is undefined or attrs.expected_price_product == ""
@@ -36,6 +35,7 @@ class Shopelia.Models.Product extends Backbone.Model
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
+             that.set({merchant_name:data.merchant.name})
              $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
            error: (jqXHR,textStatus,errorThrown) ->
              console.log('error merchant callback')
@@ -68,6 +68,7 @@ class Shopelia.Models.Product extends Backbone.Model
                       expected_price_product: data.versions[0].price,
                       expected_price_shipping: data.versions[0].price_shipping,
                       shipping_info: data.versions[0].shipping_info
+                      merchant_name: data.merchant.name
                       })
              $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
            error: (jqXHR,textStatus,errorThrown) ->
