@@ -9,7 +9,7 @@ window.Shopelia =
   initialize: ->
     originalSync = Backbone.sync
     Backbone.sync = (method, model, options) ->
-      console.log("BACKBONE SYNC")
+      #console.log("BACKBONE SYNC")
       options.headers = options.headers or {}
       options.contentType = 'application/json'
       _.extend(options.headers, {
@@ -26,11 +26,15 @@ window.Shopelia =
 $(document).ready ->
   Shopelia.initialize()
   Tracker.init()
-  console.log($('#amIHere').length)
-  if $('#amIHere').length isnt 0
-    Shopelia.Adblock = false
-  else
-    Shopelia.Adblock = true
+  $.ajax({
+         url: "/javascripts/ads.js",
+         dataType: "script",
+         success: (data,textStatus,jqxhr) ->
+            Shopelia.Adblock = false
+         error: ->
+            Shopelia.Adblock = true
+         });
+
 
 
 

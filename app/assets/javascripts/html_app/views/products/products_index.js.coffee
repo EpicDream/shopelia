@@ -20,7 +20,7 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
 
   render: ->
-    console.log(@model)
+    #console.log(@model)
     if @model.isValid()
       expected_price_product = customParseFloat(@model.get('expected_price_product'))
       @model.set('expected_price_product',expected_price_product)
@@ -33,10 +33,10 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
       this
 
   createIframe: ->
-    console.log("Create Iframe")
+    #console.log("Create Iframe")
     $iframe = $('<iframe></iframe>')
     $iframe.attr('id','productInfosIframe')
-    console.log(@model.get('url'))
+    #console.log(@model.get('url'))
     $iframe.attr('src',@model.get('url'))
     $iframe.attr('scrolling','yes')
     $iframe.attr('frameborder','0')
@@ -50,12 +50,12 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
     $iframe.attr('marginWidth',"0")
     $iframe.attr('height',"100%")
     $iframe.attr('width',"100%")
-    console.log($iframe)
+    #console.log($iframe)
     $iframe
 
 
   showProductInfos: ->
-    console.log("Show Product Infos")
+    #console.log("Show Product Infos")
     if @model.get('merchant_name') is "Amazon France" or Shopelia.Adblock
       window.open(@model.get('url'))
     else

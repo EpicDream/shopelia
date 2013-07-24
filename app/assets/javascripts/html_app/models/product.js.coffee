@@ -16,7 +16,7 @@ class Shopelia.Models.Product extends Backbone.Model
 
 
   initialize: (params) ->
-    console.log('Initializing Product with params')
+    #console.log('Initializing Product with params')
     if this.isValid()
       @getMerchant()
     else
@@ -38,8 +38,8 @@ class Shopelia.Models.Product extends Backbone.Model
              that.set({merchant_name:data.merchant.name})
              $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
            error: (jqXHR,textStatus,errorThrown) ->
-             console.log('error merchant callback')
-             console.log(JSON.stringify(errorThrown))
+             #console.log('error merchant callback')
+             #console.log(JSON.stringify(errorThrown))
            });
 
   getProduct: ->
@@ -54,14 +54,7 @@ class Shopelia.Models.Product extends Backbone.Model
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
-             console.log("success retrieving product")
-             console.log(data)
-             console.log(data.name)
-             console.log(data.image_url)
-             console.log(data.merchant.name)
-             console.log(data.versions[0].price)
-             console.log(data.versions[0].price_shipping)
-             console.log(data.versions[0].shipping_info)
+             #console.log("success retrieving product")
              that.set({
                       name: data.name,
                       image_url: data.image_url,
@@ -72,6 +65,6 @@ class Shopelia.Models.Product extends Backbone.Model
                       })
              $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
            error: (jqXHR,textStatus,errorThrown) ->
-             console.log('error callback getting Product ')
-             console.log(JSON.stringify(errorThrown))
+             #console.log('error callback getting Product ')
+             #console.log(JSON.stringify(errorThrown))
            });
