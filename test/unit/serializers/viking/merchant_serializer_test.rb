@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class Viking::MerchantSerializerTest < ActiveSupport::TestCase
-  fixtures :merchants
   
   setup do
     @merchant = merchants(:amazon)

@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class Integrity::MangoPayTest < ActiveSupport::TestCase
-  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :addresses, :merchant_accounts, :countries
 
   setup do
     user = users(:elarch)

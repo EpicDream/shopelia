@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class Vulcain::UserSerializerTest < ActiveSupport::TestCase
-  fixtures :users, :addresses
   
   setup do
     @user = users(:elarch)

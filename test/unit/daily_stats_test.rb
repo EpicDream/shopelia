@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class EventTest < ActiveSupport::TestCase
-  fixtures :developers, :merchants, :users, :orders
 
   setup do
     @developer = developers(:prixing)

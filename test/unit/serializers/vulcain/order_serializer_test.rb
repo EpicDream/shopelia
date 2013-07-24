@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class Vulcain::OrderSerializerTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :merchants, :users, :payment_cards, :merchant_accounts, :order_items
   
   setup do
     @order = orders(:elarch_rueducommerce)

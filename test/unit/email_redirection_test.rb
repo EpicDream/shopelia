@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class EmailRedirectionTest < ActiveSupport::TestCase
-  fixtures :users, :merchants
   
   test "it should create an email redirection" do
     redir = EmailRedirection.new(:user_name => "elarch.gmail.com", :destination => "elarch@gmail.com")

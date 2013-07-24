@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::V1::UsersControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users
 
   setup do
     @user = users(:elarch)
