@@ -15,7 +15,7 @@ class Shopelia.Views.Loading extends Backbone.View
 
 
   centerLoader: ->
-    console.log("center Loader")
+    #console.log("center Loader")
     #$(@el).css
     #  "margin-top": ($(@el).outerHeight(true) - $(@parent.el).outerHeight(true))/2,
     #  "margin-left": ($(@parent.el).outerWidth(true) - $(@el).outerWidth(true))/2

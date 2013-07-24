@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::V1::Users::AutocompleteControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users
 
   test "it should match" do
     post :create, email:"elarch", format: :json

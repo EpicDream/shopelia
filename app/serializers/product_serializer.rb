@@ -1,7 +1,7 @@
 class ProductSerializer < ActiveModel::Serializer
   include ActiveModelSerializerExtension::JsonWithoutNilKeys
   
-  attributes :id, :image_url, :name, :url, :merchant, :description, :master_id, :images, :versions
+  attributes :id, :image_url, :name, :url, :merchant, :description, :master_id, :versions, :brand
  
   def master_id
     object.product_master_id

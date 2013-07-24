@@ -17,37 +17,37 @@ class Shopelia.Models.Session extends Backbone.Model
         @user = new Shopelia.Models.User(session.user)
       if session.auth_token isnt undefined
         @auth_token = session.auth_token
-    console.log("save cookies")
-    console.log(this)
+    #console.log("save cookies")
+    #console.log(this)
     $.cookie.json = true;
     $.cookie('session', this)
 
   updateUserCookies: (user) ->
-    console.log("updating cookies")
+    #console.log("updating cookies")
     $.cookie.json = true;
     @user = new Shopelia.Models.User(user)
     @saveCookies()
 
   deleteCookies: ->
-    console.log("deleting cookies")
+    #console.log("deleting cookies")
     $.removeCookie('session')
 
   # Loads session information from cookie
   load: ->
-    console.log("load")
+    #console.log("load")
     $.cookie.json = true;
     session = $.cookie('session')
     unless session is undefined
-      console.log(session.user)
+      #console.log(session.user)
       @set
         user: new Shopelia.Models.User(session.user)
         auth_token: session.auth_token
 
-    console.log("load finished")
-    console.log(session)
+    #console.log("load finished")
+    #console.log(session)
 
   login: (session,callbacks) ->
-    console.log("In session login method")
+    #console.log("In session login method")
     $.ajax({
            type: "POST",
            url: 'api/users/sign_in',

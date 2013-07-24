@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class OrderSerializerTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :merchants, :order_items
   
   setup do
     @item = order_items(:item1)

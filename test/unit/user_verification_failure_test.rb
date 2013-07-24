@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class UserVerificationFailureTest < ActiveSupport::TestCase
-  fixtures :users
   
   setup do
     @user = users(:elarch)

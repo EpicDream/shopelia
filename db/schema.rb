@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130722162829) do
+ActiveRecord::Schema.define(:version => 20130724145151) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -85,6 +85,7 @@ ActiveRecord::Schema.define(:version => 20130722162829) do
     t.integer  "user_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.boolean  "monetizable"
   end
 
   create_table "merchant_accounts", :force => true do |t|
@@ -114,6 +115,7 @@ ActiveRecord::Schema.define(:version => 20130722162829) do
     t.string   "domain"
     t.boolean  "should_clean_args",  :default => false
     t.text     "viking_data"
+    t.boolean  "allow_iframe",       :default => true
   end
 
   create_table "order_items", :force => true do |t|
@@ -193,8 +195,9 @@ ActiveRecord::Schema.define(:version => 20130722162829) do
     t.string   "color"
     t.string   "size"
     t.string   "name"
-    t.string   "images"
     t.boolean  "available"
+    t.text     "image_url"
+    t.string   "brand"
   end
 
   create_table "products", :force => true do |t|
@@ -205,10 +208,10 @@ ActiveRecord::Schema.define(:version => 20130722162829) do
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
     t.text     "description"
-    t.text     "images"
     t.integer  "product_master_id"
     t.string   "brand"
     t.datetime "versions_expires_at"
+    t.boolean  "viking_failure"
   end
 
   create_table "states", :force => true do |t|

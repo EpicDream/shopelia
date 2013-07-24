@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::V1::Users::VerifyControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users, :orders, :merchants, :products, :merchant_accounts, :addresses, :payment_cards
 
   setup do
     @user = users(:elarch)
