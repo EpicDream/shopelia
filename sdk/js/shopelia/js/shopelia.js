@@ -27,8 +27,6 @@ var ShopeliaCheckout = {
             urls += $(this).attr("data-shopelia-url");
         });
         this.extend(params,{urls: urls});
-        console.log("params");
-        console.log(params);
         var url = this.generateEncodedUri(this.base,"/api/events",params);
         if(urls != "") {
             $.ajax({
@@ -61,8 +59,10 @@ var ShopeliaCheckout = {
         if($element.attr('data-shopelia-shipping-info') != undefined && $element.attr('data-shopelia-shipping-info') != "") {
             options.shipping_info = $element.attr('data-shopelia-shipping-info')
         }
-        console.log("Get Product");
-        console.log(options);
+
+        options.developer = this.options.developer;
+        //console.log("Get Product");
+        //console.log(options);
         this.createLoader();
         this.createIframe(options);
         this.handleIframe(options);
