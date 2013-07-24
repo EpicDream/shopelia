@@ -10,7 +10,7 @@ namespace :shopelia do
     desc "Send daily global stats email"
     task :daily => :environment do
       stats = DailyStats.new
-      l.send_email
+      stats.send_email
     end
 
   end
