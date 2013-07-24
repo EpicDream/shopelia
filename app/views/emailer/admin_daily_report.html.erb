@@ -44,23 +44,23 @@
                                     </table>
                                     <table width="100%" border="0" cellspacing="0" cellpadding="0" style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:right; margin-bottom:20px; padding-bottom: 10px; border-bottom:1px solid #ccc;">
                                       <tr>
-                                        <td width="25%">ACTIVE MERCHANTS</td>
-                                        <td width="25%">ACTIVE DEVELOPERS</td>
-                                        <td width="25%">ACTIVE MERCHANTS</td>
-                                        <td width="25%">ACTIVE DEVELOPERS</td>
+                                        <td width="25%">UNIQUE VIEWS</td>
+                                        <td width="25%">UNIQUE CLICKS</td>
+                                        <td width="25%">UNIQUE VIEWS</td>
+                                        <td width="25%">UNIQUE CLICKS</td>
                                       </tr>
                                       <tr>
                                         <td style="color:#333; font-family:Arial; font-size:14px; line-height:125%; text-align:right;">
-                                          <%= @stats.daily_active_merchants %>
+                                          <%= @stats.daily_unique_views %>
                                         </td>
                                         <td style="color:#333; font-family:Arial; font-size:14px; line-height:125%; text-align:right;">
-                                          <%= @stats.daily_active_developers %>
+                                          <%= @stats.daily_unique_clicks %>
                                         </td>
                                         <td style="color:#333; font-family:Arial; font-size:14px; line-height:125%; text-align:right;">
-                                          <%= @stats.monthly_active_merchants %>
+                                          <%= @stats.monthly_unique_views %>
                                         </td>
                                         <td style="color:#333; font-family:Arial; font-size:14px; line-height:125%; text-align:right;">
-                                          <%= @stats.monthly_active_developers %>
+                                          <%= @stats.monthly_unique_clicks %>
                                         </td>
                                       </tr>
                                     </table>
@@ -74,28 +74,28 @@
                                         <td width="25%" valign="top">
                                           <div style="border-top: 1px solid #D5D5D5; border-bottom: 3px solid #D5D5D5; border-right: 3px solid #D5D5D5; border-left: 1px solid #D5D5D5; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px; background: #fefefe; padding:5px; text-align:left; margin-right:10px;">
                                             <span style="color:#707070; font-family:Arial; font-size:34px; font-weight: bold; line-height:125%; text-align:left; margin-bottom:30px; color:#669900 !important;"><%= @stats.daily_views %></span><br />
-                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_views %>)</span><br />
+                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_views %> this month)</span><br />
                                             <span style="color:#333; font-family:Arial; font-size:12px; line-height:125%; text-align:left; margin-bottom:30px;">Button views</span>
                                           </div>
                                         </td>
                                         <td width="25%" valign="top">
                                           <div style="border-top: 1px solid #D5D5D5; border-bottom: 3px solid #D5D5D5; border-right: 3px solid #D5D5D5; border-left: 1px solid #D5D5D5; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px; background: #fefefe; padding:5px; text-align:left; margin-right:15px;">
                                             <span style="color:#707070; font-family:Arial; font-size:34px; font-weight: bold; line-height:125%; text-align:left; margin-bottom:30px;color: #669900 !important;"><%= @stats.daily_clicks %></span><br />
-                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_clicks %>)</span><br />
+                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_clicks %> this month)</span><br />
                                             <span style="color:#333; font-family:Arial; font-size:12px; line-height:125%; text-align:left; margin-bottom:30px;">Button clicks</span>
                                           </div>
                                         </td>
                                         <td width="25%" valign="top">
                                           <div style="border-top: 1px solid #D5D5D5; border-bottom: 3px solid #D5D5D5; border-right: 3px solid #D5D5D5; border-left: 1px solid #D5D5D5; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px; background: #fefefe; padding:5px; text-align:left; margin-left:10px;">
                                             <span style="color:#707070; font-family:Arial; font-size:34px; font-weight: bold; line-height:125%; text-align:left; margin-bottom:30px; color: #669900 !important;"><%= @stats.daily_signups %></span><br />
-                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_signups %>)</span><br />
+                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_signups %> this month)</span><br />
                                             <span style="color:#333; font-family:Arial; font-size:12px; line-height:125%; text-align:left; margin-bottom:30px;">Sign ups</span>
                                           </div>
                                         </td>
                                         <td width="25%" valign="top">
                                            <div style="border-top: 1px solid #D5D5D5; border-bottom: 3px solid #D5D5D5; border-right: 3px solid #D5D5D5; border-left: 1px solid #D5D5D5; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px; background: #fefefe; padding:5px; text-align:left; margin-left:15px;">
                                             <span style="color:#707070; font-family:Arial; font-size:34px; font-weight: bold; line-height:125%; text-align:left; margin-bottom:30px;color: #669900 !important;"><%= @stats.daily_orders %></span><br />
-                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_orders %>)</span><br />
+                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_orders %> this month)</span><br />
                                             <span style="color:#333; font-family:Arial; font-size:12px; line-height:125%; text-align:left; margin-bottom:30px;">Orders</span>
                                           </div>
                                         </td>
@@ -122,7 +122,7 @@
                                               <%= rank[:name] %>
                                             </td>
                                             <td style="border-left:1px solid #F3F3f3; border-bottom:1px solid #F3F3f3; padding: 5px 5px 0px 55px; text-align:right">
-                                              <%= rank[:values] %>
+                                              <%= rank[:views] %>
                                             </td>
                                             <td style="border-left:1px solid #F3F3f3; border-bottom:1px solid #F3F3f3; padding: 5px 5px 0px 55px; text-align:right">
                                               <%= rank[:clicks] %>

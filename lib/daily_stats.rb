@@ -7,7 +7,9 @@ class DailyStats
     @date = date
     @rankings = []
     @daily = Event.where("created_at >= ? and created_at < ?", @date, @date + 1.day).group(:action).count
+    @daily_unique = Event.where("created_at >= ? and created_at < ?", @date, @date + 1.day).group(:action).count("distinct visitor")
     @monthly = Event.where("created_at >= ? and created_at < ?", @date.at_beginning_of_month, @date.at_end_of_month).group(:action).count
+    @monthly_unique = Event.where("created_at >= ? and created_at < ?", @date.at_beginning_of_month, @date.at_end_of_month).group(:action).count("distinct visitor")
     prepare_rankings
   end
   
@@ -35,12 +37,28 @@ class DailyStats
     @daily[Event::CLICK]
   end
 
+  def daily_unique_views
+    @daily_unique[Event::VIEW]
+  end
+  
+  def daily_unique_clicks
+    @daily_unique[Event::CLICK]
+  end
+
   def monthly_views
     @monthly[Event::VIEW]
   end
   
   def monthly_clicks
     @monthly[Event::CLICK]
+  end
+
+  def monthly_unique_views
+    @monthly_unique[Event::VIEW]
+  end
+  
+  def monthly_unique_clicks
+    @monthly_unique[Event::CLICK]
   end
   
   def daily_orders
@@ -67,7 +85,9 @@ class DailyStats
   
   def prepare_rankings
     @rankings << top_daily_merchants
+    @rankings << top_monthly_merchants
     @rankings << top_daily_developers
+    @rankings << top_monthly_developers
   end
   
   def top_daily_merchants
@@ -94,6 +114,30 @@ class DailyStats
     ranking
   end
 
+  def top_monthly_merchants
+    ranking = {}
+    ranking[:name] = "Top monthly merchants"
+    hash = Event.where("action=#{Event::VIEW} and events.created_at >= ? and events.created_at < ?", @date.at_beginning_of_month, @date.at_end_of_month).joins(:merchants).group("merchants.name").count
+    ranking[:data] = to_sorted_array(hash)
+    hash = Event.where("action=#{Event::CLICK} and events.created_at >= ? and events.created_at < ?", @date.at_beginning_of_month, @date.at_end_of_month).joins(:merchants).group("merchants.name").count
+    ranking[:data].each do |rank|
+      rank[:clicks] = hash[rank[:name]]
+    end
+    ranking
+  end
+
+  def top_monthly_developers
+    ranking = {}
+    ranking[:name] = "Top monthly developers"
+    hash = Event.where("action=#{Event::VIEW} and events.created_at >= ? and events.created_at < ?", @date.at_beginning_of_month, @date.at_end_of_month).joins(:developer).group("developers.name").count
+    ranking[:data] = to_sorted_array(hash)
+    hash = Event.where("action=#{Event::CLICK} and events.created_at >= ? and events.created_at < ?", @date.at_beginning_of_month, @date.at_end_of_month).joins(:developer).group("developers.name").count
+    ranking[:data].each do |rank|
+      rank[:clicks] = hash[rank[:name]]
+    end
+    ranking
+  end
+  
   def to_sorted_array hash
     hash.keys.map{ |k| {:name => k,:views => hash[k]}}.sort_by { |k| k[:value] }.reverse
   end

@@ -61,12 +61,28 @@ class EventTest < ActiveSupport::TestCase
     assert_equal 3, @stats.monthly_signups
   end
   
-  test "it should generate two rankings" do
-    assert_equal 2, @stats.rankings.count
+  test "it should count daily unique views" do
+    assert_equal 1, @stats.daily_unique_views
+  end
+
+  test "it should count daily unique clicks" do
+    assert_equal 1, @stats.daily_unique_clicks
+  end
+
+  test "it should count monthly unique views" do
+    assert_equal 2, @stats.monthly_unique_views
+  end
+
+  test "it should count monthly unique clicks" do
+    assert_equal 2, @stats.monthly_unique_clicks
   end
   
-  test "it should generate merchant ranking" do
-    ranking = @stats.rankings.first
+  test "it should generate two rankings" do
+    assert_equal 4, @stats.rankings.count
+  end
+  
+  test "it should generate merchant daily ranking" do
+    ranking = @stats.rankings[0]
     assert_equal "Top daily merchants", ranking[:name]
     data = ranking[:data]
     assert_equal 1, data.count
@@ -75,14 +91,34 @@ class EventTest < ActiveSupport::TestCase
     assert_equal 1, data[0][:clicks]
   end
 
-  test "it should generate developer ranking" do
-    ranking = @stats.rankings.second
+  test "it should generate merchant monthly ranking" do
+    ranking = @stats.rankings[1]
+    assert_equal "Top monthly merchants", ranking[:name]
+    data = ranking[:data]
+    assert_equal 1, data.count
+    assert_equal "Amazon", data[0][:name]
+    assert_equal 4, data[0][:views]
+    assert_equal 2, data[0][:clicks]
+  end
+
+  test "it should generate developer daily ranking" do
+    ranking = @stats.rankings[2]
     assert_equal "Top daily developers", ranking[:name]
     data = ranking[:data]
     assert_equal 1, data.count
     assert_equal "Prixing", data[0][:name]
     assert_equal 2, data[0][:views]
     assert_equal 1, data[0][:clicks]
+  end
+
+  test "it should generate developer monthly ranking" do
+    ranking = @stats.rankings[3]
+    assert_equal "Top monthly developers", ranking[:name]
+    data = ranking[:data]
+    assert_equal 1, data.count
+    assert_equal "Prixing", data[0][:name]
+    assert_equal 4, data[0][:views]
+    assert_equal 2, data[0][:clicks]
   end
   
   test "it should send email" do
@@ -97,18 +133,22 @@ class EventTest < ActiveSupport::TestCase
     Event.from_urls(
       :urls => [ "http://www.amazon.fr/productA", "http://www.amazon.fr/productB" ],
       :action => Event::VIEW,
+      :visitor => "aaa",
       :developer_id => @developer.id)
     Event.from_urls(
       :urls => [ "http://www.amazon.fr/productA" ],
       :action => Event::CLICK,
+      :visitor => "aaa",
       :developer_id => @developer.id)
     Event.update_all "created_at='#{@date.at_beginning_of_month}'"
     Event.from_urls(
       :urls => [ "http://www.amazon.fr/productA", "http://www.amazon.fr/productB" ],
       :action => Event::VIEW,
+      :visitor => "bbb",
       :developer_id => @developer.id)
     Event.from_urls(
       :urls => [ "http://www.amazon.fr/productA" ],
+      :visitor => "bbb",
       :action => Event::CLICK,
       :developer_id => @developer.id)
     Order.first.update_attribute :state_name, "completed"
