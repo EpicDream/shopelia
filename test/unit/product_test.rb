@@ -124,6 +124,16 @@ class ProductTest < ActiveSupport::TestCase
     product.update_attribute :versions_expires_at, 4.hours.from_now
     assert !product.versions_expired?
   end
+
+  test "it should destroy all related events when a product is destroyed" do
+    Event.from_urls(
+      :urls => [products(:headphones).url],
+      :developer_id => developers(:prixing).id,
+      :action => Event::VIEW)
+    assert_difference("Event.count",-1) do
+      products(:headphones).destroy
+    end
+  end
   
   test "it should update product and version" do
     product = products(:usbkey)
@@ -160,5 +170,23 @@ class ProductTest < ActiveSupport::TestCase
      assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
      assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
   end
+  
+  test "it should reset viking_failure if correct version is added" do
+    product = products(:usbkey)
+    product.update_attribute :viking_failure, true
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        shipping_price: "3.5"
+      }]);
+
+     assert !product.reload.viking_failure
+  end  
 
 end

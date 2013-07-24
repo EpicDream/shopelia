@@ -36,7 +36,6 @@ class Api::Viking::ProductsController < Api::V1::BaseController
       @product.update_column "versions_expires_at", Product.versions_expiration_date
       head :no_content
     elsif @product.update_attribute :versions, @versions
-      @product.assess_versions
       head :no_content
     else
       render json: @product.errors, status: :unprocessable_entity

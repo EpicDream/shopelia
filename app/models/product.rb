@@ -1,7 +1,7 @@
 class Product < ActiveRecord::Base
   belongs_to :product_master
   belongs_to :merchant
-  has_many :events
+  has_many :events, :dependent => :destroy
   has_many :product_versions, :dependent => :destroy
   
   validates :merchant, :presence => true
@@ -44,7 +44,7 @@ class Product < ActiveRecord::Base
         || version.description.nil? || version.price.nil? || version.price_shipping.nil? \
         || version.shipping_info.nil?
     end
-    self.update_attribute :viking_failure, !ok
+    self.update_column "viking_failure", !ok
   end
   
   private
@@ -82,6 +82,7 @@ class Product < ActiveRecord::Base
       self.update_column "description", version.description
       self.update_column "versions_expires_at", Product.versions_expiration_date
       self.reload
+      self.assess_versions
     elsif self.product_versions.empty?
       ProductVersion.create(product_id:self.id)
     end
