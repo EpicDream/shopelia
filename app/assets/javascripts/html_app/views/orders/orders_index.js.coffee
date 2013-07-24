@@ -48,7 +48,6 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
                  xhr.setRequestHeader("X-Shopelia-AuthToken",that.authToken)
                success: (resp) ->
                  #console.log(resp)
-                 Tracker.custom("Order Completed")
                  that.parent.setContentView(new Shopelia.Views.ThankYou())
                error: (model, response) ->
                  enableButton($("#process-order"))
