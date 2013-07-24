@@ -2,14 +2,14 @@ window.Shopelia =
   Models: {}
   Views: {}
   Routers: {}
-  developerKey: $.cookie('developer_key')
+  developerKey: $.cookie('developer_key') unless $.cookie('developer_key') is undefined
   SDKVersion: "0.1"
   SDK: "HTML"
 
   initialize: ->
     originalSync = Backbone.sync
     Backbone.sync = (method, model, options) ->
-      #console.log("BACKBONE SYNC")
+      console.log("BACKBONE SYNC")
       options.headers = options.headers or {}
       options.contentType = 'application/json'
       _.extend(options.headers, {

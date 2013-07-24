@@ -56,6 +56,7 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
   showProductInfos: ->
     #console.log("Show Product Infos")
+    Tracker.onClick('Product Informations')
     if @model.get('merchant_name') is "Amazon France" or Shopelia.Adblock
       window.open(@model.get('url'))
     else

@@ -13,10 +13,12 @@ class Shopelia.Routers.Sessions extends Backbone.Router
     )
 
   checkSession: (params) ->
+    if params.developer isnt undefined
+      Shopelia.developerKey = params.developer
     @product = new Shopelia.Models.Product(params)
     @session = new Shopelia.Models.Session()
     @modal = @showModal()
-    #console.log("check")
+    console.log("check")
     if @session.authenticated()
       #console.log("authenticated")
       #console.log(@session)
