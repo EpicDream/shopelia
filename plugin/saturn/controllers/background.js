@@ -5,17 +5,17 @@
 
 TEST_ENV = false;
 
-// if (TEST_ENV == true) {
-//   SHOPELIA_DOMAIN = "http://localhost:3000"
-//   MAPPING_SHOPELIA_DOMAIN = SHOPELIA_DOMAIN + "/saturn/mappings"
-//   PRODUCT_EXTRACT_SHIFT_URL = SHOPELIA_DOMAIN + "/saturn/products/shift";
-//   PRODUCT_EXTRACT_UPDATE = SHOPELIA_DOMAIN + "/saturn/options/create";
-// } else {
+if (TEST_ENV == true) {
+  SHOPELIA_DOMAIN = "http://localhost:3000"
+  MAPPING_SHOPELIA_DOMAIN = SHOPELIA_DOMAIN + "/saturn/mapping/";
+  PRODUCT_EXTRACT_SHIFT_URL = SHOPELIA_DOMAIN + "/saturn/products/shift";
+  PRODUCT_EXTRACT_UPDATE = SHOPELIA_DOMAIN + "/saturn/options/create";
+} else {
   SHOPELIA_DOMAIN = "http://www.shopelia.fr"
   PRODUCT_EXTRACT_SHIFT_URL = SHOPELIA_DOMAIN + "/api/viking/products/shift";
   MAPPING_SHOPELIA_DOMAIN = SHOPELIA_DOMAIN + "/api/viking/merchants/";
   PRODUCT_EXTRACT_UPDATE = SHOPELIA_DOMAIN + "/api/viking/products/";
-// }
+}
 
 var data = {};
 var merchants = {
@@ -35,10 +35,12 @@ var merchants = {
 // On extension button clicked.
 chrome.browserAction.onClicked.addListener(function(tab) {
   console.log("Button pressed, going to load Saturn..", tab.id);
-  if (TEST_ENV)
+  if (data[tab.id]) // Stop
+    delete data[tab.id];//??
+  else if (TEST_ENV && isParsable(tab.url))
     parseCurrentPage(tab);
   else
-    start();
+    start(tab.id);
 });
 
 // On page reloaded.
@@ -75,13 +77,15 @@ function start(tabId) {
     var uri = new Uri(hash.url);
     console.debug("Get product_url to extract :", hash);
     loadMapping(hash.merchant_id).done(function(mapping) {
-      if (! mapping.data)
-        return (TEST_ENV ? null : start(tabId));
-      hash.mapping = chooseMapping(uri, mapping.data);
+      if (mapping.data)
+        hash.mapping = chooseMapping(uri, mapping.data);
       console.log("mapping choosen", mapping);
       hash.uri = uri;
       initTabVariables(tabId, hash);
-      chrome.tabs.update(tabId, {url: hash.url});
+      if (mapping.data)
+        chrome.tabs.update(tabId, {url: hash.url});
+      else
+        finished(tabId);
     });
   });
 };
@@ -97,20 +101,18 @@ function parseCurrentPage(tab) {
   });
 };
 
-/////////////////////////////////////////////////////////////////
-//                        LOAD INFORMATION
-/////////////////////////////////////////////////////////////////
-
-function loadProductUrlToExtract() {
-  console.debug("Going to get product_url to extract...");
-  return $.ajax({
-    type : "GET",
-    dataType: "json",
-    url: PRODUCT_EXTRACT_SHIFT_URL
-  }).fail(function(err) {
-    console.error("When getting product_url to extract :", err);
-  });
+function initTabVariables(tabId, hash) {
+  var uri = hash.uri || new Uri(hash.url);
+  data[tabId] = hash;
+  data[tabId].host = uri.host();
+  data[tabId].results = [];
+  // Remove all previous cookies
+  chrome.cookies.getAll({},function(cooks){cookies=cooks;for (var i in cookies) {chrome.cookies.remove({name: cookies[i].name, url: "http://"+cookies[i].domain+cookies[i].path, storeId: cookies[i].storeId})}})
 };
+
+/////////////////////////////////////////////////////////////////
+//                         UTILITIES
+/////////////////////////////////////////////////////////////////
 
 function chooseMapping(uri, hash) {
   var host = uri.host();
@@ -124,6 +126,28 @@ function chooseMapping(uri, hash) {
         return hash[i];
     }
   return null;
+};
+
+function isParsable(url) {
+  for (var key in merchants)
+    if (url.match(key) !== null)
+      return true;
+  return false;
+};
+
+/////////////////////////////////////////////////////////////////
+//                        LOAD INFORMATION
+/////////////////////////////////////////////////////////////////
+
+function loadProductUrlToExtract() {
+  console.debug("Going to get product_url to extract...");
+  return $.ajax({
+    type : "GET",
+    dataType: "json",
+    url: PRODUCT_EXTRACT_SHIFT_URL
+  }).fail(function(err) {
+    console.error("When getting product_url to extract :", err);
+  });
 };
 
 function loadMappingFromUri(uri) {
@@ -152,15 +176,6 @@ function loadMapping(merchant_id) {
   }).fail(function(err) {
     console.error("When getting mapping to extract :", err);
   });
-};
-
-function initTabVariables(tabId, hash) {
-  var uri = hash.uri || new Uri(hash.url);
-  data[tabId] = hash;
-  data[tabId].host = uri.host();
-  data[tabId].results = [];
-  // Remove all previous cookies
-  chrome.cookies.getAll({},function(cooks){cookies=cooks;for (var i in cookies) {chrome.cookies.remove({name: cookies[i].name, url: "http://"+cookies[i].domain+cookies[i].path, storeId: cookies[i].storeId})}})
 };
 
 function loadContentScript(tabId) {
@@ -258,19 +273,24 @@ function crawl(tabId) {
     option.color = data[tabId].colors[data[tabId].lastColorIdx] || undefined;
     option.size = data[tabId].sizes[data[tabId].lastSizeIdx] || undefined;
     // Il faut autre chose que color ou size.
-    if (option.length - (option.color ? 1 : 0) - (option.size ? 1 : 0) > 0)
+    if ((_.size(option) - (option.color ? 1 : 0) - (option.size ? 1 : 0)) > 0)
       data[tabId].results.push(option);
+    else
+      console.warn("not enough values", option);
     setNextSize(tabId);
   });
 };
 
 function finish(tabId) {
   console.log("finished !", data[tabId].results);
+  if (! data[tabId] || ! data[tabId].id) // Stop pushed or Local Test
+    return;
+
   $.ajax({
     type : "PUT",
     url: PRODUCT_EXTRACT_UPDATE+data[tabId].id,
-    contentType: "json",
-    data: {versions: data[tabId].results}
+    contentType: 'application/json',
+    data: JSON.stringify({versions: data[tabId].results})
   }).done(function() {
     console.debug("Options for", data[tabId].url, "sended (", data[tabId].results.length,")");
     delete data[tabId];
