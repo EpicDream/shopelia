@@ -222,6 +222,7 @@ function getColors(tabId) {
   console.log("Going to get colors");
   data[tabId].last_action = "getColors";
   chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
+    if (! result) return;
     if (result.length > 0)
       data[tabId].colors = result;
     else
@@ -254,6 +255,7 @@ function getSizes(tabId) {
   console.log("Going to get sizes");
   data[tabId].last_action = "getSizes";
   chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
+    if (! result) return;
     if (result.length > 0)
       data[tabId].sizes = result;
     else
