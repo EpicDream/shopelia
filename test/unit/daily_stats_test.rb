@@ -70,8 +70,9 @@ class EventTest < ActiveSupport::TestCase
     assert_equal "Top daily merchants", ranking[:name]
     data = ranking[:data]
     assert_equal 1, data.count
-    assert_equal "Amazon", data[0][:key]
-    assert_equal 2, data[0][:value]
+    assert_equal "Amazon", data[0][:name]
+    assert_equal 2, data[0][:views]
+    assert_equal 1, data[0][:clicks]
   end
 
   test "it should generate developer ranking" do
@@ -79,8 +80,9 @@ class EventTest < ActiveSupport::TestCase
     assert_equal "Top daily developers", ranking[:name]
     data = ranking[:data]
     assert_equal 1, data.count
-    assert_equal "Prixing", data[0][:key]
-    assert_equal 2, data[0][:value]
+    assert_equal "Prixing", data[0][:name]
+    assert_equal 2, data[0][:views]
+    assert_equal 1, data[0][:clicks]
   end
   
   test "it should send email" do
