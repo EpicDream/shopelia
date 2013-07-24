@@ -4,7 +4,7 @@ var ShopeliaCheckout = {
         this.options = options;
         var $shopelia_buttons = $("[data-shopelia-url]");
         if($shopelia_buttons.length > 0) {
-            var params = this.extend(this.options,{type: "view"});
+            var params = {type: "view"};
             this.sendUrls($shopelia_buttons,params);
         }
 
@@ -12,12 +12,14 @@ var ShopeliaCheckout = {
     bindClickWith: function ($elements) {
         $elements.click(function(){
             $(this).unbind('click');
-            var clickedParams = ShopeliaCheckout.extend(ShopeliaCheckout.options,{type: "click"});
+            var clickedParams = {type: "click"};
             ShopeliaCheckout.sendUrls($(this),clickedParams);
             ShopeliaCheckout.getProduct($(this));
         });
     },
     sendUrls: function($elements,params) {
+        params = this.extend(this.options,params);
+        console.log(params);
         this.bindClickWith($elements);
         var urls = "";
         $.each($elements,function(){
@@ -61,8 +63,8 @@ var ShopeliaCheckout = {
         }
 
         options.developer = this.options.developer;
-        //console.log("Get Product");
-        //console.log(options);
+        console.log("Get Product");
+        console.log(options);
         this.createLoader();
         this.createIframe(options);
         this.handleIframe(options);
