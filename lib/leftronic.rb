@@ -34,6 +34,11 @@ class Leftronic
     push_number("button_unique_views_count", stats[0])
     push_number("button_unique_clicks_count", stats[1])
   end
+  
+  def notify_viking_stats
+    result = Product.where("versions_expires_at>?", Time.now).group(:viking_failure).count
+    push_number("viking_success_rate", result[false].to_f * 100 / result[true])
+  end
 
   def clear_board
     clear("shopelia_sound")
