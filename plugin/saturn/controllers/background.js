@@ -239,6 +239,7 @@ function setNextColor(tabId) {
     lastColorIdx += 1;
   data[tabId].lastColorIdx = lastColorIdx;
 
+  if (! data) return;
   var color = data[tabId].colors[lastColorIdx];
   if (color === undefined) {
     data[tabId].lastColorIdx = lastColorIdx;
@@ -272,6 +273,8 @@ function setNextSize(tabId) {
     lastSizeIdx += 1;
   data[tabId].lastSizeIdx = lastSizeIdx;
 
+  if (! data) return;
+  if (! data[tabId].sizes) return;
   var size = data[tabId].sizes[lastSizeIdx];
   if (size === undefined) {
     data[tabId].lastSizeIdx = undefined;
