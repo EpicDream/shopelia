@@ -112,16 +112,20 @@
                                           </td>
                                         </tr>
                                         <tr>
-                                        <td width="67%" style="border-bottom:1px solid #cecece; background-color: #F3F3f3; padding: 5px 5px;"></td>
-                                        <td width="33%" style="border-bottom:1px solid #cecece; background-color: #F3F3f3; padding: 5px 5px; text-align:right">Views</td>
+                                        <td width="60%" style="border-bottom:1px solid #cecece; background-color: #F3F3f3; padding: 5px 5px;"></td>
+                                        <td width="20%" style="border-bottom:1px solid #cecece; background-color: #F3F3f3; padding: 5px 5px; text-align:right">Views</td>
+                                        <td width="20%" style="border-bottom:1px solid #cecece; background-color: #F3F3f3; padding: 5px 5px; text-align:right">Clicks</td>
                                         </tr>
                                         <% ranking[:data].each do |rank| %>
                                           <tr>
                                             <td style="text-align: left; border-right:1px solid #F3F3f3; border-bottom:1px solid #F3F3f3; padding: 5px 5px;">
-                                              <%= rank[:key] %>
+                                              <%= rank[:name] %>
                                             </td>
                                             <td style="border-left:1px solid #F3F3f3; border-bottom:1px solid #F3F3f3; padding: 5px 5px 0px 55px; text-align:right">
-                                              <%= rank[:value] %>
+                                              <%= rank[:values] %>
+                                            </td>
+                                            <td style="border-left:1px solid #F3F3f3; border-bottom:1px solid #F3F3f3; padding: 5px 5px 0px 55px; text-align:right">
+                                              <%= rank[:clicks] %>
                                             </td>
                                           </tr>
                                         <% end %>                                      
