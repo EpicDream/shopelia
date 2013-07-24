@@ -139,7 +139,7 @@ class DailyStats
   end
   
   def to_sorted_array hash
-    hash.keys.map{ |k| {:name => k,:views => hash[k]}}.sort_by { |k| k[:value] }.reverse
+    hash.keys.map{ |k| {:name => k,:views => hash[k]}}.sort_by { |k| k[:views] }.reverse
   end
 
 end
