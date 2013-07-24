@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class OrderItemTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :order_items
 
   setup do
     @order = orders(:elarch_rueducommerce)

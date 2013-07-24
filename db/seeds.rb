@@ -66,6 +66,13 @@ Merchant.create(
   :logo=>'http://www.prixing.fr/images/logos/eveiletjeux.png',
   :vendor=>'EveilEtJeux',
   :domain=>'eveiletjeux.com')  
+Merchant.create(
+  :id=>10,
+  :name=>"Sephora",
+  :url=>'http://www.sephora.fr',
+  :logo=>'http://www.prixing.fr/images/logos/eb0376551c3ef012b416b626ecb8be4a.jpg',
+  :vendor=>'Sephora',
+  :domain=>'sephora.fr')  
 Developer.delete_all
 Developer.create(:name=>'Prixing',:api_key=>'52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4')
 Country.delete_all

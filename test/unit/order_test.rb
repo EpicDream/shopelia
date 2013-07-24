@@ -2,8 +2,6 @@
 require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
-  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :product_masters
-  fixtures :product_versions, :addresses, :merchant_accounts, :countries, :developers
   
   setup do
     @user = users(:elarch)

@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class AddressTest < ActiveSupport::TestCase
-  fixtures :users, :countries, :addresses, :orders, :merchants, :products, :order_items
 
   setup do
     @user = users(:elarch)

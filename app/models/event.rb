@@ -2,6 +2,7 @@ class Event < ActiveRecord::Base
   belongs_to :product
   belongs_to :user
   belongs_to :developer
+  has_many :merchants, :through => :product
   
   VIEW = 0
   CLICK = 1
@@ -11,6 +12,7 @@ class Event < ActiveRecord::Base
   validates :action, :presence => true, :inclusion => { :in => [ VIEW, CLICK ] }
 
   before_validation :find_or_create_product
+  before_validation :set_monetizable
 
   attr_accessor :url
   
@@ -33,4 +35,9 @@ class Event < ActiveRecord::Base
     self.product = Product.fetch(self.url) unless self.url.blank?
   end
   
+  def set_monetizable
+    mlink = Linker.monetize(self.product.url)
+    self.monetizable = !mlink.eql?(self.product.url)
+    true
+  end
 end

@@ -61,7 +61,7 @@ window.split =  (fullName) ->
     [firstName,lastName]
 
 window.getMessageFromValidator = (validator,constraint) ->
-  console.log(validator)
+  #console.log(validator)
   result = validator.formatMesssage(validator.messages[constraint.name], constraint.requirements)
   if result == ""
     result = validator.messages[constraint.name]

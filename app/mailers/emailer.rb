@@ -53,6 +53,13 @@ class Emailer < ActionMailer::Base
 
   ##################################################################################
 
+  def admin_daily_report stats
+    @stats = stats
+    mail( :to => "Shopelia <staff@shopelia.com>",
+          :subject => "Daily global statistics for #{@stats.date.to_s(:long)}",
+          :from => "Admin Shopelia <contact@shopelia.fr>")
+  end
+
   def notify_admin_user_creation user
     @user = user
     mail( :to => "Shopelia <contact@shopelia.fr>",

@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class ProductTest < ActiveSupport::TestCase
-  fixtures :merchants, :products, :developers
   
   test "it should create product" do
     product = Product.new(
@@ -71,6 +70,15 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 250, product.name.length
   end
   
+  test "it should assess versions quality" do
+    product = products(:usbkey)
+    product.assess_versions
+    assert !product.viking_failure
+    product.product_versions.first.update_attribute :price, nil    
+    product.assess_versions
+    assert product.viking_failure
+  end
+  
   test "it should get all products needing a Viking check" do
     Event.from_urls(
       :urls => [products(:headphones).url,products(:usbkey).url],
@@ -80,6 +88,23 @@ class ProductTest < ActiveSupport::TestCase
     products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
     assert_equal 1, Product.viking_pending.count
   end
+
+  test "it should get all products needing a Viking check and without failure" do
+    Event.from_urls(
+      :urls => [products(:headphones).url,products(:usbkey).url],
+      :developer_id => developers(:prixing).id,
+      :action => Event::VIEW)
+    products(:headphones).update_attribute :versions_expires_at, Time.now
+    assert_equal 2, Product.viking_pending.count
+    products(:headphones).update_attribute :viking_failure, true
+    assert_equal 1, Product.viking_pending.count
+    products(:headphones).update_attribute :versions_expires_at, nil
+    assert_equal 2, Product.viking_pending.count
+    products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
+    assert_equal 1, Product.viking_pending.count
+    products(:headphones).update_attribute :versions_expires_at, 1.day.ago
+    assert_equal 2, Product.viking_pending.count
+  end  
   
   test "it should get last product needing a Viking check" do
     Event.from_urls(
@@ -102,27 +127,35 @@ class ProductTest < ActiveSupport::TestCase
   
   test "it should update product and version" do
     product = products(:usbkey)
-    product.update_attributes(
-      :name => "name",
-      :image_url => "image_url",
-      :description => "description",
-      :versions => [ 
-        { :price => 10,
-          :price_shipping => 2,
-          :color => "blue",
-          :size => "XL",
-          :shipping_info => "info",
-          :available => 0 },
-        { :price => 12,
-          :price_shipping => 2,
-          :color => "red",
-          :size => "XL",
-          :shipping_info => "info",
-          :available => 1 }
-        ]
-      );
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        shipping_price: "3.5",
+        color: "blue",
+        size: "4"
+      },
+      { availability:"out of stock",
+        brand: "brand",
+        description: "description2",
+        image_url: "http://www.amazon.fr/image2.jpg",
+        name: "name2",
+        price: "12 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        shipping_price: "3.5",
+        color: "blue",
+        size: "4"
+      }]);
 
-     assert_equal "name", product.reload.name
+     assert_equal "name", product.name
+     assert_equal "http://www.amazon.fr/image.jpg", product.image_url
+     assert_equal "description", product.description
      assert_equal 2, product.product_versions.count
      assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
      assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set

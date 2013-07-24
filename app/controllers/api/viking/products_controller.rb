@@ -31,6 +31,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   param_group :product
   def update
     if @product.update_attributes(params[:product])
+      @product.assess_versions
       head :no_content
     else
       render json: @product.errors, status: :unprocessable_entity

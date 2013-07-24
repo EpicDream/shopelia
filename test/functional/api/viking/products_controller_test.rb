@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::Viking::ProductsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :developers
   
   setup do
     @developer = developers(:prixing)
@@ -30,12 +29,43 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_response :not_found
   end
 
-  test "it should update product" do
+  test "it should update product with versions" do
     populate_events
     product = Product.first
-    put :update, id:product.id, product: { name: "Name" }, format: :json
+    put :update, id:product.id, versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "2,26 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        shipping_price: "3.5",
+        color: "blue",
+        size: "4"
+      }], format: :json
     
     assert_response 204
+    assert !product.viking_failure
+  end
+  
+  test "it should set product as viking failed if missing any main element" do
+    populate_events
+    product = Product.first
+    put :update, id:product.id, versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        shipping_price: "3.5",
+      }], format: :json
+    
+    assert_response 204
+    
+    assert product.reload.viking_failure
   end
 
   private

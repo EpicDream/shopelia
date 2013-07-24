@@ -2,7 +2,6 @@ require 'test_helper'
 
 class DeviseOverride::ConfirmationsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users, :countries
 
   setup do
     request.env['devise.mapping'] = Devise.mappings[:user]

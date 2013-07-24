@@ -23,8 +23,8 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
       @email.val(@options.email)
 
   loginUser: (e) ->
-    console.log("trigger loginUser")
-    console.log(@options.session)
+    #console.log("trigger loginUser")
+    #console.log(@options.session)
     if $('form').parsley( 'validate' )
       disableButton($("#btn-login-user"))
       eraseErrors()
@@ -37,15 +37,15 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
       sessionJson = @formSerializer()
       session.login(sessionJson,{
         success : (resp) ->
-          console.log('login success callback')
-          console.log("response login success: " + JSON.stringify(resp))
+          #console.log('login success callback')
+          #console.log("response login success: " + JSON.stringify(resp))
           session.set(resp)
           session.saveCookies(session)
           that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: that.options.session,product: that.options.product))
         error : (response) ->
-          console.log("callback error login")
+          #console.log("callback error login")
           enableButton($("#btn-login-user"))
-          console.log(JSON.stringify(response.responseText))
+          #console.log(JSON.stringify(response.responseText))
           displayErrors($.parseJSON(response.responseText))
 
       })
@@ -58,7 +58,7 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
       "email": email,
       "password": password
     }
-    console.log loginFormObject
+    #console.log loginFormObject
     loginFormObject
 
   InitializeActionButton: (element) ->

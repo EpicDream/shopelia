@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class OrderSerializerTest < ActiveSupport::TestCase
-  fixtures :orders, :products, :merchants, :order_items, :addresses, :payment_cards
   
   setup do
     @order = orders(:elarch_rueducommerce)

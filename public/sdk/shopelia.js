@@ -1,0 +1,1 @@
+../../sdk/js/shopelia/js/shopelia.js
