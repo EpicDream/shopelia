@@ -27,7 +27,7 @@ $(document).ready ->
   Shopelia.initialize()
   Tracker.init()
   $.ajax({
-         url: "/javascripts/ads.js",
+         url: "/sdk/ads.js",
          dataType: "script",
          success: (data,textStatus,jqxhr) ->
             Shopelia.Adblock = false
