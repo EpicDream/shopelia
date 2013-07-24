@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class UserSerializerTest < ActiveSupport::TestCase
-  fixtures :users, :addresses, :payment_cards
   
   setup do
     @user = users(:elarch)

@@ -24,7 +24,7 @@ module Integrity
             log << "User ID doesn't match -- #{line}"
           elsif order.mangopay_wallet_id != mp_wallet_id
             log << "Wallet ID doesn't match -- #{line}"
-          elsif (order.expected_price_total*100).to_i != mp_amount || (order.billed_price_total*100).to_i != mp_amount || (order.prepared_price_total*100).to_i != mp_amount && mangopay_contribution_amount != mp_amount
+          elsif (order.billed_price_total*100).to_i != mp_amount || (order.prepared_price_total*100).to_i != mp_amount || order.mangopay_contribution_amount != mp_amount
             log << "Amounts not consistent -- #{line}"
           end
           contribution_ids_A << mp_contribution_id

@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class AddressSerializerTest < ActiveSupport::TestCase
-  fixtures :addresses, :users, :states, :countries
   
   setup do
     @address = addresses(:elarch_neuilly)

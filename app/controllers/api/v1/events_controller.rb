@@ -42,7 +42,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   private
   
   def retrieve_developer_key
-    @developer = Developer.find_by_api_key!(params[:developer])
+    @developer = Developer.find_by_api_key!(params[:developer] || request.headers['X-Shopelia-ApiKey'])
   end
   
   def prepare_params

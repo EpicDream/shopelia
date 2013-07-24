@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class Viking::ProductSerializerTest < ActiveSupport::TestCase
-  fixtures :products
   
   setup do
     @product = products(:usbkey)

@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::V1::Callback::OrdersControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users, :orders, :merchants, :products, :merchant_accounts, :addresses, :payment_cards
 
   setup do
     @order = orders(:elarch_rueducommerce)

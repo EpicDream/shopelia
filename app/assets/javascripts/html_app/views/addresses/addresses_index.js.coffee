@@ -33,7 +33,7 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
     )
     address = new Shopelia.Models.Address()
     address.on("invalid", (model, errors) ->
-      console.log("displaying address Errors" + JSON.stringify(errors))
+      #console.log("displaying address Errors" + JSON.stringify(errors))
       displayErrors(errors)
     )
     address.set({
@@ -49,7 +49,7 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
     address
 
   eraseAddressFields: ->
-    console.log("eraseAddressFields")
+    #console.log("eraseAddressFields")
     @zip.val("")
     @city.val("")
     @country.val("")
@@ -78,13 +78,13 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
                  xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
                  xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
                success: (data,textStatus,jqXHR) ->
-                 console.log(data)
+                 #console.log(data)
                  placesData = data
                  places = _.pluck(data, "description")
                  process(places)
                error: (jqXHR,textStatus,errorThrown) ->
-                 console.log('error places callback')
-                 console.log(JSON.stringify(errorThrown))
+                 #console.log('error places callback')
+                 #console.log(JSON.stringify(errorThrown))
                });
       updater: (selection) ->
         selectedPlace = _.first(_.where(placesData, { description : selection}))
@@ -104,11 +104,11 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
-             console.log("second query for places:" +  JSON.stringify(data))
+             #console.log("second query for places:" +  JSON.stringify(data))
              that.populateAddressFields(data)
            error: (jqXHR,textStatus,errorThrown) ->
-             console.log("error second query for places")
-             console.log(JSON.stringify(errorThrown))
+             #console.log("error second query for places")
+             #console.log(JSON.stringify(errorThrown))
            });
 
   populateAddressFields: (address) ->
