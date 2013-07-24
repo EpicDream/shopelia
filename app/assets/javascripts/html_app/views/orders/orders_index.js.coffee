@@ -11,12 +11,12 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     #@authToken = "34456666"
     @user = @options.session.get("user")
     @authToken = @options.session.get("auth_token")
-    console.log("initialize processOrder View: ")
+    #console.log("initialize processOrder View: ")
     @product = @options.product
     @expected_price_product = @product.get('expected_price_product')
     @expected_price_shipping = @product.get('expected_price_shipping')
-    console.log(@expected_price_product)
-    console.log(@expected_price_shipping)
+    #console.log(@expected_price_product)
+    #console.log(@expected_price_shipping)
     @expected_price_total = customParseFloat(parseFloat(@expected_price_product) + parseFloat(@expected_price_shipping))
 
   render: ->
@@ -34,7 +34,7 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     e.preventDefault()
     disableButton($("#process-order"))
     that = this
-    console.log("processOrder")
+    #console.log("processOrder")
     order = new Shopelia.Models.Order()
     order.save({
                "expected_price_shipping": that.expected_price_shipping
@@ -47,12 +47,12 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
                beforeSend : (xhr) ->
                  xhr.setRequestHeader("X-Shopelia-AuthToken",that.authToken)
                success: (resp) ->
-                 console.log(resp)
+                 #console.log(resp)
                  Tracker.custom("Order Completed")
                  that.parent.setContentView(new Shopelia.Views.ThankYou())
                error: (model, response) ->
                  enableButton($("#process-order"))
-                 console.log(JSON.stringify(response))
+                 #console.log(JSON.stringify(response))
     })
 
 

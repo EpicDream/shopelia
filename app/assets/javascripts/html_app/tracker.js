@@ -15,6 +15,9 @@ var Tracker = {
   , onDisplay: function(name) {
         mixpanel.track("Display " + name) ;
     }
+  ,onClick: function(name) {
+        mixpanel.track("Click On " + name) ;
+    }
   , onFocusIn: function(name) {
         mixpanel.track("In " + name) ;
     },
