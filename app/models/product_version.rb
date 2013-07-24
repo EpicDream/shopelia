@@ -14,7 +14,13 @@ class ProductVersion < ActiveRecord::Base
   before_validation :parse_available
   
   def self.parse_float str
-    str.gsub(/[^\d\.,]/, "").gsub(",", ".").to_f
+    str = str.downcase
+    if str =~ /gratuit/ || str =~ /free/
+      0.0
+    else
+      r = str.gsub(/[^\d\.,]/, "").gsub(",", ".")
+      r.length > 0 && r =~ /\d+/ ? r.to_f : nil
+    end
   end
 
   private

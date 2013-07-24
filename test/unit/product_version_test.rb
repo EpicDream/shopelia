@@ -18,6 +18,20 @@ class ProductVersionTest < ActiveSupport::TestCase
       assert_equal 2.79, ProductVersion.parse_float(s)
     end
   end
+
+  test "it should parse free shipping" do
+    str = [ "LIVRAISON GRATUITE", "free shipping" ]
+    str.each do |s|
+      assert_equal 0, ProductVersion.parse_float(s)
+    end
+  end
+
+  test "it should fail bad prices" do
+    str = [ ".", "invalid" ]
+    str.each do |s|
+      assert_equal nil, ProductVersion.parse_float(s)
+    end
+  end
   
   test "it should create version with prices" do
     version = ProductVersion.new(
