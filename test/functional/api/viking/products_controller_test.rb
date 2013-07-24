@@ -68,6 +68,16 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert product.reload.viking_failure
   end
 
+  test "it should set product as viking failed if empty versions" do
+    populate_events
+    product = Product.first
+    put :update, id:product.id, versions:nil, format: :json
+    assert_response 204
+    
+    assert product.reload.viking_failure
+    assert !product.versions_expires_at.nil?
+  end
+
   private
   
   def populate_events

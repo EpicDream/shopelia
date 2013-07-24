@@ -2,6 +2,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_developer!
   before_filter :retrieve_product, :only => :update
+  before_filter :retrieve_versions, :only => :update
 
   def_param_group :product do
     param :product, Hash, :required => true, :action_aware => true do
@@ -30,7 +31,11 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   api :PUT, "/api/viking/products", "Update product"
   param_group :product
   def update
-    if @product.update_attributes(params[:product])
+    if @versions.blank?
+      @product.update_column "viking_failure", true
+      @product.update_column "versions_expires_at", Product.versions_expiration_date
+      head :no_content
+    elsif @product.update_attribute :versions, @versions
       @product.assess_versions
       head :no_content
     else
@@ -42,6 +47,10 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   
   def retrieve_product
     @product = Product.find(params[:id])
+  end
+  
+  def retrieve_versions
+    @versions = params[:versions]
   end
   
 end
