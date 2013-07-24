@@ -17,7 +17,12 @@ if (TEST_ENV == true) {
   PRODUCT_EXTRACT_UPDATE = SHOPELIA_DOMAIN + "/api/viking/products/";
 }
 
+DELAY_BEFORE_START = 5000; // 5s
+DELAY_BETWEEN_PRODUCTS = 500; // 500ms
+DELAY_AFTER_NO_PRODUCT = 300000; // 30s
+
 var data = {};
+var reask = ! TEST_ENV;
 var merchants = {
   "rueducommerce.fr" : "1",
   "amazon.fr" : "2",
@@ -35,12 +40,16 @@ var merchants = {
 // On extension button clicked.
 chrome.browserAction.onClicked.addListener(function(tab) {
   console.log("Button pressed, going to load Saturn..", tab.id);
-  if (data[tab.id]) // Stop
-    delete data[tab.id];//??
-  else if (TEST_ENV && isParsable(tab.url))
-    parseCurrentPage(tab);
-  else
-    start(tab.id);
+  if (! TEST_ENV) {
+    reask = ! reask;
+    if (reask)
+      start(tab.id);
+  } else {
+    if (isParsable(tab.url))
+      parseCurrentPage(tab);
+    else
+      start(tab.id);
+  }
 });
 
 // On page reloaded.
@@ -71,7 +80,7 @@ function start(tabId) {
   loadProductUrlToExtract().done(function(hash) {
     if (typeof hash != "object" || ! hash.url) {
       console.warn("Nothing to extract");
-      setTimeout(function() { start(tabId) }, 30000); // 30s
+      reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
       return;
     }
     var uri = new Uri(hash.url);
@@ -85,7 +94,7 @@ function start(tabId) {
       if (mapping.data)
         chrome.tabs.update(tabId, {url: hash.url});
       else
-        finished(tabId);
+        finish(tabId);
     });
   });
 };
@@ -113,6 +122,13 @@ function initTabVariables(tabId, hash) {
 /////////////////////////////////////////////////////////////////
 //                         UTILITIES
 /////////////////////////////////////////////////////////////////
+
+function reask_a_product(tabId, delay) {
+  if (! reask)
+    return;
+  delay = delay || 3000;
+  setTimeout(function() { start(tabId) }, delay); // 30s
+};
 
 function chooseMapping(uri, hash) {
   var host = uri.host();
@@ -270,13 +286,11 @@ function crawl(tabId) {
   console.log("Going to crawl");
   data[tabId].last_action = "crawl";
   chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(option) {
-    option.color = data[tabId].colors[data[tabId].lastColorIdx] || undefined;
-    option.size = data[tabId].sizes[data[tabId].lastSizeIdx] || undefined;
+    option.color = data[tabId].colors[data[tabId].lastColorIdx];
+    option.size = data[tabId].sizes[data[tabId].lastSizeIdx];
     // Il faut autre chose que color ou size.
-    if ((_.size(option) - (option.color ? 1 : 0) - (option.size ? 1 : 0)) > 0)
+    if ((_.size(option) - 2) > 0)
       data[tabId].results.push(option);
-    else
-      console.warn("not enough values", option);
     setNextSize(tabId);
   });
 };
@@ -294,14 +308,13 @@ function finish(tabId) {
   }).done(function() {
     console.debug("Options for", data[tabId].url, "sended (", data[tabId].results.length,")");
     delete data[tabId];
-    if (! TEST_ENV)
-      setTimeout(function() { start(tabId) }, 5000); // 5s
+    reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
   }).fail(function(err) {
     console.error("Fail to send options to serverWhen getting product_url to extract for tab", tabId, ":", err);
-    $e = data[tabId].results;
-    console.log($e);
-    if (! TEST_ENV)
-      setTimeout(function() { start(tabId) }, 5000); // 5s
+    $e = data[tabId];
+    console.log("$e =", $e);
+    delete data[tabId];
+    reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
   });
 };
 
@@ -343,4 +356,4 @@ function assertTest(tabId) {
 };
 
 if (! TEST_ENV)
-  setTimeout(function() { start() }, 5000); // 5s
+  reask_a_product(undefined, DELAY_BEFORE_START);
