@@ -75,6 +75,10 @@ class DailyStats
     ranking[:name] = "Top daily merchants"
     hash = Event.where("action=#{Event::VIEW} and events.created_at >= ? and events.created_at < ?", @date, @date + 1.day).joins(:merchants).group("merchants.name").count
     ranking[:data] = to_sorted_array(hash)
+    hash = Event.where("action=#{Event::CLICK} and events.created_at >= ? and events.created_at < ?", @date, @date + 1.day).joins(:merchants).group("merchants.name").count
+    ranking[:data].each do |rank|
+      rank[:clicks] = hash[rank[:name]]
+    end
     ranking
   end
 
@@ -83,11 +87,15 @@ class DailyStats
     ranking[:name] = "Top daily developers"
     hash = Event.where("action=#{Event::VIEW} and events.created_at >= ? and events.created_at < ?", @date, @date + 1.day).joins(:developer).group("developers.name").count
     ranking[:data] = to_sorted_array(hash)
+    hash = Event.where("action=#{Event::CLICK} and events.created_at >= ? and events.created_at < ?", @date, @date + 1.day).joins(:developer).group("developers.name").count
+    ranking[:data].each do |rank|
+      rank[:clicks] = hash[rank[:name]]
+    end
     ranking
   end
 
   def to_sorted_array hash
-    hash.keys.map{ |k| {:key => k,:value => hash[k]}}.sort_by { |k| k[:value] }.reverse
+    hash.keys.map{ |k| {:name => k,:views => hash[k]}}.sort_by { |k| k[:value] }.reverse
   end
 
 end
