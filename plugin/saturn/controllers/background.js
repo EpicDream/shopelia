@@ -286,6 +286,8 @@ function crawl(tabId) {
   console.log("Going to crawl");
   data[tabId].last_action = "crawl";
   chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(option) {
+    if (! option)
+      return;
     option.color = data[tabId].colors[data[tabId].lastColorIdx];
     option.size = data[tabId].sizes[data[tabId].lastSizeIdx];
     // Il faut autre chose que color ou size.
