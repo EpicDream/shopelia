@@ -4,8 +4,8 @@ class Shopelia.Models.User extends Backbone.Model
 
 
   update: (attrs,callbacks) ->
-    console.log("In update login method")
-    console.log(@id)
+    #console.log("In update login method")
+    #console.log(@id)
     $.ajax({
            type: "PUT",
            url: 'api/users/' + @get('id'),

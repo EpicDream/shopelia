@@ -2,7 +2,7 @@ window.Shopelia =
   Models: {}
   Views: {}
   Routers: {}
-  developerKey: $.cookie('developer_key')
+  developerKey: $.cookie('developer_key') unless $.cookie('developer_key') is undefined
   SDKVersion: "0.1"
   SDK: "HTML"
 
@@ -26,11 +26,15 @@ window.Shopelia =
 $(document).ready ->
   Shopelia.initialize()
   Tracker.init()
-  console.log($('#amIHere').length)
-  if $('#amIHere').length isnt 0
-    Shopelia.Adblock = false
-  else
-    Shopelia.Adblock = true
+  $.ajax({
+         url: "/javascripts/ads.js",
+         dataType: "script",
+         success: (data,textStatus,jqxhr) ->
+            Shopelia.Adblock = false
+         error: ->
+            Shopelia.Adblock = true
+         });
+
 
 
 

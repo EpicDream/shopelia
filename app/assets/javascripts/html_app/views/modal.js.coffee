@@ -11,7 +11,7 @@ class Shopelia.Views.Modal extends Backbone.View
   initialize: ->
     _.bindAll this
     messageListener = (e) ->
-      console.log("set shopelia parent host")
+      #console.log("set shopelia parent host")
       window.shopeliaParentHost = e.origin
       window.removeEventListener("message",messageListener)
     DOMContentLoadedListener = () ->
@@ -45,7 +45,7 @@ class Shopelia.Views.Modal extends Backbone.View
 
 
   close: ->
-    console.log("close please")
+    #console.log("close please")
     $(@el).fadeOut({
                    duration: "fast",
                    complete: () ->

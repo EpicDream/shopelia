@@ -34,7 +34,7 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
 
 
   registerPaymentCard: (e) ->
-    console.log("trigger registerPaymentCard")
+    #console.log("trigger registerPaymentCard")
     if $('form').parsley( 'validate' )
       e.preventDefault()
       disableButton($("#btn-register-payment"))
@@ -49,11 +49,11 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
                           beforeSend : (xhr) ->
                             xhr.setRequestHeader("X-Shopelia-AuthToken",that.options.session.get("auth_token"))
                           success : (resp) ->
-                            console.log('card success callback')
+                            #console.log('card success callback')
                             that.options.session.get("user").payment_cards.push(resp.disableWrapping().toJSON())
                             that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: that.options.session,product: that.options.product))
                           error : (model, response) ->
-                            console.log('card error callback')
+                            #console.log('card error callback')
                             enableButton($("#btn-register-payment"))
                             displayErrors($.parseJSON(response.responseText))
       })
@@ -85,7 +85,7 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
     cardFormObject
 
   addCardType: ->
-    console.log(@cardNumber.val().charAt(0))
+    #console.log(@cardNumber.val().charAt(0))
     if @cardNumber.val().length > 2
       if  @cardNumber.val().charAt(0) == "3"
         @cardNumber.removeClass("visa")

@@ -20,7 +20,6 @@
 //= require html_app/backbone.rails
 //= require html_app/backbone.queryparams
 //= require html_app/tracker
-//= require html_app/ads
 //= require html_app/shopelia
 //= require_tree ../../templates
 //= require_tree ./models

@@ -14,7 +14,7 @@ class Shopelia.Views.NewPassword extends Shopelia.Views.Form
     Tracker.onDisplay('Password');
     @setFormVariables()
     Shopelia.Views.Form.prototype.render.call(this)
-    console.log()
+    #console.log()
     this
 
   setFormVariables: ->
@@ -26,7 +26,7 @@ class Shopelia.Views.NewPassword extends Shopelia.Views.Form
     session = new Shopelia.Models.Session()
     authToken = session.get("auth_token")
     user = session.get("user")
-    console.log(user)
+    #console.log(user)
     that = this
     user.update({
                password: @password.val(),
