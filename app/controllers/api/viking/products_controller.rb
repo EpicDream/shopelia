@@ -13,12 +13,27 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     end
   end
   
-  api :GET, "/api/viking/products", "Get all products pending check"
+  api :GET, "/viking/products", "Get all products pending check"
   def index
     render json: Product.viking_pending, each_serializer: Viking::ProductSerializer
   end
+ 
+  api :GET, "/viking/products/failure", "Get all products which failed with Viking extraction"
+  def failure
+    render json: Product.viking_failure, each_serializer: Viking::ProductSerializer
+  end
 
-  api :GET, "/api/viking/products/shift", "Get next product pending check"
+  api :GET, "/viking/products/failure_shift", "Get next product which failed Viking extraction"
+  def failure_shift
+    product = Product.viking_failure.first
+    if product.present? 
+      render json: Viking::ProductSerializer.new(product).as_json[:product]
+    else
+      render :json => {:error => "Queue is empty"}, :status => :not_found
+    end
+  end
+
+  api :GET, "/viking/products/shift", "Get next product pending check"
   def shift
     product = Product.viking_shift
     if product.present? 
@@ -28,7 +43,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     end
   end
   
-  api :PUT, "/api/viking/products", "Update product"
+  api :PUT, "/viking/products", "Update product"
   param_group :product
   def update
     if @versions.blank?

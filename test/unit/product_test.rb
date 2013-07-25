@@ -89,6 +89,15 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 1, Product.viking_pending.count
   end
 
+  test "it should get all products which failed Viking extraction" do
+    Event.from_urls(
+      :urls => [products(:headphones).url],
+      :developer_id => developers(:prixing).id,
+      :action => Event::VIEW)
+    products(:headphones).update_attribute :viking_failure, true
+    assert_equal 1, Product.viking_failure.count
+  end
+
   test "it should get all products needing a Viking check and without failure" do
     Event.from_urls(
       :urls => [products(:headphones).url,products(:usbkey).url],
@@ -146,7 +155,7 @@ class ProductTest < ActiveSupport::TestCase
         price: "10 EUR",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
-        shipping_price: "3.5",
+        price_shipping: "3.5",
         color: "blue",
         size: "4"
       },
@@ -158,7 +167,7 @@ class ProductTest < ActiveSupport::TestCase
         price: "12 EUR",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
-        shipping_price: "3.5",
+        price_shipping: "3.5",
         color: "blue",
         size: "4"
       }]);
@@ -182,11 +191,11 @@ class ProductTest < ActiveSupport::TestCase
         name: "name",
         price: "10 EUR",
         price_strikeout: "2.58 EUR",
-        shipping_info: "info shipping",
-        shipping_price: "3.5"
+        shipping_info: "free shipping",
+        price_shipping: "3.5"
       }]);
 
-     assert !product.reload.viking_failure
+     assert !product.viking_failure
   end  
 
 end

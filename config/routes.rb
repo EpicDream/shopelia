@@ -77,8 +77,10 @@ Shopelia::Application.routes.draw do
       resources :products, :only => [:index, :update]
       namespace :products do
         get :shift
+        get :failure
+        get :failure_shift
       end
-      resources :merchants, :only => [:show, :update]
+      resources :merchants, :only => [:show, :update, :create]
     end
   end
 

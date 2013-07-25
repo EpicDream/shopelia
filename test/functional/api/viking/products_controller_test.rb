@@ -78,6 +78,26 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert !product.versions_expires_at.nil?
   end
 
+  test "it should send all failed viking products" do
+    populate_events
+    product = Product.find_by_url("http://www.amazon.fr/1")
+    product.update_attribute :viking_failure, true
+    get :failure
+    
+    assert_response :success
+    assert_equal 1, json_response.count
+  end
+
+  test "it should send next failed viking products" do
+    populate_events
+    product = Product.find_by_url("http://www.amazon.fr/1")
+    product.update_attribute :viking_failure, true
+    get :failure_shift
+    
+    assert_response :success
+    assert_match /amazon.fr\/1/, json_response["url"]
+  end
+  
   private
   
   def populate_events

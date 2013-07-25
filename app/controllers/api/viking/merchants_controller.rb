@@ -1,7 +1,7 @@
 class Api::Viking::MerchantsController < Api::V1::BaseController
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_developer!
-  before_filter :retrieve_merchant, :only => [:show, :update]
+  before_filter :retrieve_merchant, :only => [:show, :update, :create]
 
   def_param_group :merchant do
     param :merchant, Hash, :required => true, :action_aware => true do
@@ -18,6 +18,17 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
   param_group :merchant
   def update
     if @merchant.update_attribute :viking_data, params[:data].to_json
+      head :no_content
+    else
+      render json: @merchant.errors, status: :unprocessable_entity
+    end
+  end
+
+  api :POST, "/viking/merchants/:id", "Merge merchant information"
+  param_group :merchant
+  def create
+    data = JSON.parse(@merchant.viking_data).merge(params[:data])
+    if @merchant.update_attribute :viking_data, data.to_json
       head :no_content
     else
       render json: @merchant.errors, status: :unprocessable_entity
