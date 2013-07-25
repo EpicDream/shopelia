@@ -16,12 +16,21 @@ class ProductVersion < ActiveRecord::Base
   
   def self.parse_float str
     str = str.downcase
-    if str =~ /gratuit/ || str =~ /free/
+    if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else
       r = str.gsub(/[^\d\.,]/, "").gsub(",", ".")
-      r.length > 0 && r =~ /\d+/ ? r.to_f : nil
+      if r.length > 0 && r =~ /\d+/
+        r.to_f
+      else
+        Incident.create(
+          :issue => "Viking",
+          :description => "Cannot parse price : #{str}",
+          :severity => Incident::IMPORTANT)
+        nil
+      end
     end
+    
   end
 
   private
@@ -31,15 +40,15 @@ class ProductVersion < ActiveRecord::Base
   end
 
   def parse_price
-    self.price = ProductVersion.parse_float(self.price.to_s)
+    self.price = ProductVersion.parse_float(self.price.to_s) unless self.price.nil?
   end
 
   def parse_price_shipping
-    self.price_shipping = ProductVersion.parse_float(self.price_shipping.to_s)
+    self.price_shipping = ProductVersion.parse_float(self.price_shipping.to_s) unless self.price_shipping.nil?
   end
   
   def parse_price_strikeout
-    self.price_strikeout = ProductVersion.parse_float(self.price_strikeout.to_s)
+    self.price_strikeout = ProductVersion.parse_float(self.price_strikeout.to_s) unless self.price_strikeout.nil?
   end
   
   def parse_available
