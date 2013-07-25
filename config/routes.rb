@@ -26,6 +26,7 @@ Shopelia::Application.routes.draw do
   resources :payment_cards
 
   namespace :admin do
+    resources :developers, :only => [:index, :new, :create]
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
   end
