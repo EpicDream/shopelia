@@ -12,6 +12,7 @@ class ProductVersion < ActiveRecord::Base
   before_validation :parse_price_shipping
   before_validation :parse_price_strikeout
   before_validation :parse_available
+  before_validation :crop_shipping_info
   
   def self.parse_float str
     str = str.downcase
@@ -25,6 +26,10 @@ class ProductVersion < ActiveRecord::Base
 
   private
   
+  def crop_shipping_info
+    self.shipping_info = self.shipping_info[0..249] if self.shipping_info && self.shipping_info.length > 250
+  end
+
   def parse_price
     self.price = ProductVersion.parse_float(self.price.to_s)
   end
@@ -47,5 +52,5 @@ class ProductVersion < ActiveRecord::Base
     self.available = result
     true
   end
-  
+   
 end
