@@ -37,6 +37,10 @@ Just run
 
     google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn
 
+or, on a server
+
+    DISPLAY=:0 google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn
+
 Usage
 -----
   
