@@ -19,7 +19,7 @@ if (TEST_ENV == true) {
 
 DELAY_BEFORE_START = 5000; // 5s
 DELAY_BETWEEN_PRODUCTS = 500; // 500ms
-DELAY_AFTER_NO_PRODUCT = 300000; // 30s
+DELAY_AFTER_NO_PRODUCT = 1000; // 1s
 
 var data = {};
 var reask = ! TEST_ENV;
@@ -77,7 +77,7 @@ function start(tabId) {
     return chrome.tabs.create({}, function(tab) {
       start(tab.id);
     });
-  loadProductUrlToExtract().done(function(hash) {
+  loadProductUrlToExtract(tabId).done(function(hash) {
     if (typeof hash != "object" || ! hash.url) {
       console.warn("Nothing to extract");
       reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
@@ -155,7 +155,7 @@ function isParsable(url) {
 //                        LOAD INFORMATION
 /////////////////////////////////////////////////////////////////
 
-function loadProductUrlToExtract() {
+function loadProductUrlToExtract(tabId) {
   console.debug("Going to get product_url to extract...");
   return $.ajax({
     type : "GET",
@@ -163,6 +163,7 @@ function loadProductUrlToExtract() {
     url: PRODUCT_EXTRACT_SHIFT_URL
   }).fail(function(err) {
     console.error("When getting product_url to extract :", err);
+    reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
   });
 };
 
