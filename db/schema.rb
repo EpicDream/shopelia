@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130724145151) do
+ActiveRecord::Schema.define(:version => 20130725144721) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -67,6 +67,15 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "devices", :force => true do |t|
+    t.string   "uuid"
+    t.text     "user_agent"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "devices", ["uuid"], :name => "index_devices_on_uuid"
+
   create_table "email_redirections", :force => true do |t|
     t.string   "user_name"
     t.string   "destination"
@@ -77,15 +86,14 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
   create_table "events", :force => true do |t|
     t.integer  "action"
     t.string   "tracker"
-    t.string   "user_agent"
     t.string   "ip_address"
-    t.string   "visitor"
     t.integer  "developer_id"
     t.integer  "product_id"
     t.integer  "user_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
     t.boolean  "monetizable"
+    t.integer  "device_id"
   end
 
   create_table "merchant_accounts", :force => true do |t|
@@ -132,9 +140,9 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.text     "message",                       :limit => 255
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -156,6 +164,7 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.integer  "mangopay_contribution_id"
     t.string   "mangopay_contribution_status"
     t.integer  "mangopay_contribution_amount"
+    t.string   "payment_solution"
     t.string   "billing_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
@@ -203,10 +212,10 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url"
+    t.text     "url",                 :limit => 255
     t.string   "image_url"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
@@ -272,6 +281,7 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.string   "ip_address"
     t.string   "pincode"
     t.integer  "mangopay_id"
+    t.integer  "developer_id"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

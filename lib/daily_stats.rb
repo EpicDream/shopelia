@@ -7,9 +7,9 @@ class DailyStats
     @date = date
     @rankings = []
     @daily = Event.where("created_at >= ? and created_at < ?", @date, @date + 1.day).group(:action).count
-    @daily_unique = Event.where("created_at >= ? and created_at < ?", @date, @date + 1.day).group(:action).count("distinct visitor")
+    @daily_unique = Event.where("created_at >= ? and created_at < ?", @date, @date + 1.day).group(:action).count("distinct device_id")
     @monthly = Event.where("created_at >= ? and created_at < ?", @date.at_beginning_of_month, @date.at_end_of_month).group(:action).count
-    @monthly_unique = Event.where("created_at >= ? and created_at < ?", @date.at_beginning_of_month, @date.at_end_of_month).group(:action).count("distinct visitor")
+    @monthly_unique = Event.where("created_at >= ? and created_at < ?", @date.at_beginning_of_month, @date.at_end_of_month).group(:action).count("distinct device_id")
     prepare_rankings
   end
   
