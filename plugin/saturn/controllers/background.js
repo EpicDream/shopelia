@@ -78,11 +78,7 @@ function start(tabId) {
       start(tab.id);
     });
   loadProductUrlToExtract(tabId).done(function(hash) {
-    if (typeof hash != "object" || ! hash.url) {
-      console.warn("Nothing to extract");
-      reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
-      return;
-    }
+    hash = preProcessData(hash);
     var uri = new Uri(hash.url);
     console.debug("Get product_url to extract :", hash);
     loadMapping(hash.merchant_id).done(function(mapping) {
@@ -100,13 +96,14 @@ function start(tabId) {
 };
 
 function parseCurrentPage(tab) {
-  var uri = new Uri(tab.url);
-  loadMappingFromUri(uri).done(function(hash) {
-    console.log("mapping-data received :", hash);
-    var mapping = chooseMapping(uri, hash.data);
-    console.log("mapping choosen", mapping);
-    initTabVariables(tab.id, {uri: uri, url: tab.url, mapping: mapping});
-    loadContentScript(tab.id);
+  var hash = preProcessData({url: tab.url});
+  hash.uri = new Uri(hash.url);
+  loadMappingFromUri(hash.uri).done(function(maphash) {
+    console.log("mapping-data received :", maphash);
+    hash.mapping = chooseMapping(hash.uri, maphash.data);
+    console.log("mapping choosen", hash.mapping);
+    initTabVariables(tab.id, hash);
+    chrome.tabs.update(tab.id, {url: hash.url});
   });
 };
 
@@ -149,6 +146,13 @@ function isParsable(url) {
     if (url.match(key) !== null)
       return true;
   return false;
+};
+
+function preProcessData(data) {
+  if (data.url.match(/priceminister/) !== null && data.url.match(/filter=10/) === null) {
+    data.url += (data.url.match(/#/) !== null ? "&filter=10" : "#filter=10");
+  }
+  return data;
 };
 
 /////////////////////////////////////////////////////////////////
