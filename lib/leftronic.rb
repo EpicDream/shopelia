@@ -30,14 +30,14 @@ class Leftronic
     stats = Event.where("created_at > ?", 1.day.ago).group(:action).count
     push_number("button_views_count", stats[0])
     push_number("button_clicks_count", stats[1])
-    stats = Event.where("created_at > ?", 1.day.ago).group(:action).count("distinct visitor")
+    stats = Event.where("created_at > ?", 1.day.ago).group(:action).count("distinct device_id")
     push_number("button_unique_views_count", stats[0])
     push_number("button_unique_clicks_count", stats[1])
   end
   
   def notify_viking_stats
     result = Product.where("versions_expires_at>?", Time.now).group(:viking_failure).count
-    push_number("viking_success_rate", result[false].to_f * 100 / result[true])
+    push_number("viking_success_rate", result[true].to_i > 0 ? result[false].to_f * 100 / result[true] : 0)
   end
 
   def clear_board
