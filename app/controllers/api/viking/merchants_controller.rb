@@ -27,7 +27,7 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
   api :POST, "/viking/merchants/:id", "Merge merchant information"
   param_group :merchant
   def create
-    data = JSON.parse(@merchant.viking_data).merge(params[:data])
+    data = merge_viking_data(JSON.parse(@merchant.viking_data), params[:data])
     if @merchant.update_attribute :viking_data, data.to_json
       head :no_content
     else
@@ -40,5 +40,8 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
   def retrieve_merchant
     @merchant = Merchant.find(params[:id])
   end
-  
+
+  def merge_viking_data(previous, incoming)
+    return previous || incoming
+  end
 end
