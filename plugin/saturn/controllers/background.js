@@ -361,7 +361,7 @@ function assertTest(tabId) {
   if (! o.results.color || ! o.results.color.length >= 5) console.error("Bad color", o.results.color);
   if (! o.price || ! o.price.match(/\d+,\d+/)) console.error("Bad price", o.price);
   if (! o.price_strikeout) console.error("Bad price_strikeout", o.price_strikeout);
-  if (! o.shipping_price || ! o.shipping_price.match(/Gratuite/)) console.error("Bad shipping_price", o.shipping_price);
+  if (! o.price_shipping || ! o.price_shipping.match(/Gratuite/)) console.error("Bad price_shipping", o.price_shipping);
   if (! o.shipping_info || ! o.shipping_info.match(/Livraison/)) console.error("Bad shipping_info", o.shipping_info);
   if (! o.availability || ! o.availability.match(/stock/)) console.error("Bad availability", o.availability);
   delete data[tabId];

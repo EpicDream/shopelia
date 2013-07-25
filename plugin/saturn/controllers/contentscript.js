@@ -67,7 +67,7 @@ function setSize(mapping, size) {
 
 function crawl(mapping) {
   var option = {};
-  var textFields = ['name', 'brand', 'description', 'price', 'price_strikeout', 'shipping_price', 'shipping_info', 'availability'];
+  var textFields = ['name', 'brand', 'description', 'price', 'price_strikeout', 'price_shipping', 'shipping_info', 'availability'];
   for (var i in textFields) {
     var key = textFields[i];
     if (! mapping[key]) continue;
