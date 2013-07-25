@@ -6,6 +6,7 @@ class EventTest < ActiveSupport::TestCase
     event = Event.new(
       :action => Event::VIEW,
       :product_id => products(:headphones).id,
+      :device_id => devices(:web).id,
       :developer_id => developers(:prixing).id)
     assert event.save, event.errors.full_messages.join(",")
     assert_equal true, event.monetizable
@@ -17,6 +18,7 @@ class EventTest < ActiveSupport::TestCase
       event = Event.new(
         :action => Event::VIEW,
         :url => "http://www.amazon.fr/my_product",
+      :device_id => devices(:web).id,
         :developer_id => developers(:prixing).id)
       assert event.save, event.errors.full_messages.join(",")
     end
@@ -26,6 +28,7 @@ class EventTest < ActiveSupport::TestCase
     event = Event.create(
       :action => Event::VIEW,
       :url => "http://www.google.com/my_product",
+      :device_id => devices(:web).id,
       :developer_id => developers(:prixing).id)
     assert_equal false, event.monetizable
   end
@@ -34,6 +37,7 @@ class EventTest < ActiveSupport::TestCase
     assert_difference(["Event.count","Product.count"], 2) do
       Event.from_urls(
         :action => Event::VIEW,
+        :device_id => devices(:web).id,
         :developer_id => developers(:prixing).id,
         :urls => [ "http://www.amazon.fr/product1", "http://www.amazon.fr/product2" ])
     end

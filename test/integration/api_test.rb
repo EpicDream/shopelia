@@ -32,6 +32,7 @@ class ApiTest < ActionDispatch::IntegrationTest
     
     user = User.find_by_id(json_response["user"]["id"])
     auth_token = json_response["auth_token"]
+    assert_equal developers(:prixing).id, user.developer_id
 
     post "/api/orders", auth_token:auth_token, order: { 
       products: [ {

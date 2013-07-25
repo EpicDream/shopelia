@@ -83,6 +83,7 @@ class ProductTest < ActiveSupport::TestCase
     Event.from_urls(
       :urls => [products(:headphones).url,products(:usbkey).url],
       :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
       :action => Event::VIEW)
     assert_equal 2, Product.viking_pending.count
     products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
@@ -93,6 +94,7 @@ class ProductTest < ActiveSupport::TestCase
     Event.from_urls(
       :urls => [products(:headphones).url],
       :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
       :action => Event::VIEW)
     products(:headphones).update_attribute :viking_failure, true
     assert_equal 1, Product.viking_failure.count
@@ -102,6 +104,7 @@ class ProductTest < ActiveSupport::TestCase
     Event.from_urls(
       :urls => [products(:headphones).url,products(:usbkey).url],
       :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
       :action => Event::VIEW)
     products(:headphones).update_attribute :versions_expires_at, Time.now
     assert_equal 2, Product.viking_pending.count
@@ -119,6 +122,7 @@ class ProductTest < ActiveSupport::TestCase
     Event.from_urls(
       :urls => [products(:headphones).url,products(:usbkey).url],
       :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
       :action => Event::VIEW)
     assert_equal products(:usbkey), Product.viking_shift
     products(:usbkey).update_attribute :versions_expires_at, 1.hour.from_now
@@ -138,6 +142,7 @@ class ProductTest < ActiveSupport::TestCase
     Event.from_urls(
       :urls => [products(:headphones).url],
       :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
       :action => Event::VIEW)
     assert_difference("Event.count",-1) do
       products(:headphones).destroy

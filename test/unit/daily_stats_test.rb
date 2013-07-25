@@ -133,22 +133,22 @@ class EventTest < ActiveSupport::TestCase
     Event.from_urls(
       :urls => [ "http://www.amazon.fr/productA", "http://www.amazon.fr/productB" ],
       :action => Event::VIEW,
-      :visitor => "aaa",
+      :device_id => devices(:web).id,
       :developer_id => @developer.id)
     Event.from_urls(
       :urls => [ "http://www.amazon.fr/productA" ],
       :action => Event::CLICK,
-      :visitor => "aaa",
+      :device_id => devices(:web).id,
       :developer_id => @developer.id)
     Event.update_all "created_at='#{@date.at_beginning_of_month}'"
     Event.from_urls(
       :urls => [ "http://www.amazon.fr/productA", "http://www.amazon.fr/productB" ],
       :action => Event::VIEW,
-      :visitor => "bbb",
+      :device_id => devices(:mobile).id,
       :developer_id => @developer.id)
     Event.from_urls(
       :urls => [ "http://www.amazon.fr/productA" ],
-      :visitor => "bbb",
+      :device_id => devices(:mobile).id,
       :action => Event::CLICK,
       :developer_id => @developer.id)
     Order.first.update_attribute :state_name, "completed"

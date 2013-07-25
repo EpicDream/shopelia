@@ -12,15 +12,15 @@ class User < ActiveRecord::Base
   has_many :user_verification_failures, :dependent => :destroy
   has_many :orders, :dependent => :destroy
   belongs_to :nationality, :class_name => "Country"
+  belongs_to :developer
 
   CIVILITY_MR = 0
   CIVILITY_MME = 1
   CIVILITY_MLLE = 2
 
-  validates :first_name, :presence => true
-  validates :last_name, :presence => true
   validates :email, :presence => true
   validates :civility, :inclusion => { :in => [ CIVILITY_MR, CIVILITY_MME, CIVILITY_MLLE ] }, :allow_nil => true
+  validates :developer, :presence => true
   validates_confirmation_of :password
   validate :user_must_be_16_yo
 
@@ -28,6 +28,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :remember_me, :first_name, :last_name
   attr_accessible :birthdate, :civility, :nationality_id, :ip_address, :pincode
   attr_accessible :addresses_attributes, :payment_cards_attributes
+  attr_accessible :developer_id
   attr_accessor :addresses_attributes, :payment_cards_attributes
 
   before_validation :reset_test_account
