@@ -4,7 +4,7 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
   className: 'product'
 
   events:
-    "click #btn-product-infos": "showProductInfos"
+    "click #product-infos": "showProductInfos"
 
   initialize: ->
     _.bindAll this
@@ -20,7 +20,6 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
 
   render: ->
-    #console.log(@model)
     if @model.isValid()
       expected_price_product = customParseFloat(@model.get('expected_price_product'))
       @model.set('expected_price_product',expected_price_product)
@@ -28,6 +27,9 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
       @model.set('expected_price_shipping',expected_price_shipping)
       $(@el).html(@template(model: @model, merchant: @merchant))
       this
+    else if @model.get('found') isnt undefined and @model.get('found') is false
+      view = new Shopelia.Views.NotFound(model:@model)
+      $(@el).html(view.render().el)
     else
       $(@el).html()
       this
@@ -55,9 +57,10 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
 
   showProductInfos: ->
-    #console.log("Show Product Infos")
+    console.log("Show Product Infos")
     Tracker.onClick('Product Informations')
-    if @model.get('merchant_name') is "Amazon France" or Shopelia.Adblock
+    console.log(@model.get('allow_iframe'))
+    if @model.get('allow_iframe') == 0 or Shopelia.Adblock
       window.open(@model.get('url'))
     else
       $iframe = @iframe
