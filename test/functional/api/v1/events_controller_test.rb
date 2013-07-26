@@ -39,6 +39,13 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_equal 1, event.action
     assert_equal 32, event.device.uuid.length
   end
+  
+  test "it should ignore events from Googlebot" do
+    request.env['HTTP_USER_AGENT'] = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+    assert_difference("Event.count", 0) do
+      post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/1"], tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key, format: :json
+    end
+  end  
 
 end
 

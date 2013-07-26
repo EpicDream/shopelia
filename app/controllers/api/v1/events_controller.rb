@@ -50,6 +50,7 @@ class Api::V1::EventsController < Api::V1::BaseController
     
   def set_visitor_cookie 
     ua = request.env['HTTP_USER_AGENT']
+    head :no_content and return if ua =~ /Googlebot/
     if params[:visitor]
       @device = Device.fetch(params[:visitor], ua)
     else
