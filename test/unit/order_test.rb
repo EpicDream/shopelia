@@ -923,13 +923,11 @@ class OrderTest < ActiveSupport::TestCase
         { "id" => "3" }
       ],
       "products" => [
-        { "url" => products(:usbkey).url,
-          "price" => 9,
-          "id" => product_versions(:usbkey).id 
+        { "url" => products(:usbkey).url + "?key=toto",
+          "price" => 9
         },
         { "url" => products(:headphones).url,
-          "price_product" => 5,
-          "id" => product_versions(:headphones).id 
+          "price_product" => 5
         }
       ],
       "billing" => {

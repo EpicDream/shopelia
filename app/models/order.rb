@@ -119,7 +119,7 @@ class Order < ActiveRecord::Base
       
       (content["products"] || []).each do |product|
         if product["id"].nil?
-          product["id"] = Product.find_by_url(product["url"]).product_versions.first.id
+          product["id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
         end
         item = self.order_items.where(:product_version_id => product["id"]).first
         item.update_attribute(:price, product["price"] || product["price_product"] || product["product_price"])
