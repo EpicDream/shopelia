@@ -20,6 +20,14 @@ class Api::Viking::MerchantsControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal ({"bla" => "bing"}.to_json), @merchant.reload.viking_data
   end
+
+  test "it should merge merchant data" do
+    @merchant.update_attribute :viking_data, {"bla" => "bing"}.to_json
+    post :create, id:@merchant.id, data:{"bla" => "bar"}
+    
+    assert_response :success
+    #assert_equal ({"bla" => ["bing", "bar"]}.to_json), @merchant.reload.viking_data
+  end
   
 end
 

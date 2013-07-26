@@ -20,7 +20,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
 
   test "it should parse free shipping" do
-    str = [ "LIVRAISON GRATUITE", "free shipping" ]
+    str = [ "LIVRAISON GRATUITE", "free shipping", "Livraison offerte" ]
     str.each do |s|
       assert_equal 0, ProductVersion.parse_float(s)
     end
@@ -30,6 +30,12 @@ class ProductVersionTest < ActiveSupport::TestCase
     str = [ ".", "invalid" ]
     str.each do |s|
       assert_equal nil, ProductVersion.parse_float(s)
+    end
+  end
+  
+  test "it should generate incident if shipping is not correctly parsed" do
+    assert_difference "Incident.count", 1 do
+      ProductVersion.parse_float("Invalid string")
     end
   end
   

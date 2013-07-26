@@ -20,6 +20,7 @@ class Product < ActiveRecord::Base
   attr_accessor :versions
   
   scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ?", Time.now, 6.hours.ago, 12.hours.ago) }
+  scope :viking_failure, lambda { where(viking_failure:true).order("updated_at desc").limit(100) }
   
   def self.fetch url
     Product.find_or_create_by_url(Linker.clean(url)) unless url.nil?
@@ -28,7 +29,7 @@ class Product < ActiveRecord::Base
   def self.viking_shift
     Product.viking_pending.order("events.created_at desc").first
   end
-  
+
   def versions_expired?
     self.versions_expires_at.nil? || self.versions_expires_at < Time.now
   end
@@ -83,6 +84,7 @@ class Product < ActiveRecord::Base
       self.update_column "versions_expires_at", Product.versions_expiration_date
       self.reload
       self.assess_versions
+      self.reload
     elsif self.product_versions.empty?
       ProductVersion.create(product_id:self.id)
     end

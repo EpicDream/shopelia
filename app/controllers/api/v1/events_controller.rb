@@ -17,9 +17,8 @@ class Api::V1::EventsController < Api::V1::BaseController
       :developer_id => @developer.id,
       :action => @action,
       :tracker => @tracker,
-      :visitor => @visitor,
-      :ip_address => request.remote_ip,
-      :user_agent => request.env['HTTP_USER_AGENT'])
+      :device_id => @device.id,
+      :ip_address => request.remote_ip)
     head :no_content
   end
   
@@ -33,9 +32,8 @@ class Api::V1::EventsController < Api::V1::BaseController
       :developer_id => @developer.id,
       :action => @action,
       :tracker => @tracker,
-      :visitor => @visitor,
-      :ip_address => request.remote_ip,
-      :user_agent => request.env['HTTP_USER_AGENT'])
+      :device_id => @device.id,
+      :ip_address => request.remote_ip)
     head :no_content
   end
   
@@ -51,13 +49,16 @@ class Api::V1::EventsController < Api::V1::BaseController
   end
     
   def set_visitor_cookie 
+    ua = request.env['HTTP_USER_AGENT']
+    head :no_content and return if ua =~ /Googlebot/
     if params[:visitor]
-      @visitor = params[:visitor]
+      @device = Device.fetch(params[:visitor], ua)
     else
-      @visitor = cookies[:visitor]
-      if @visitor.nil?
-        @visitor = SecureRandom.hex(16)
-        cookies[:visitor] = { :value => @visitor, :expires => 10.years.from_now }
+      if cookies[:visitor]
+        @device = Device.fetch(cookies[:visitor], ua)
+      else
+        @device = Device.create(user_agent:ua)
+        cookies[:visitor] = { :value => @device.uuid, :expires => 10.years.from_now }
       end
     end
   end

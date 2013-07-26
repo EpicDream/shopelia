@@ -1,7 +1,7 @@
 class Event < ActiveRecord::Base
   belongs_to :product
-  belongs_to :user
   belongs_to :developer
+  belongs_to :device
   has_many :merchants, :through => :product
   
   VIEW = 0
@@ -9,11 +9,13 @@ class Event < ActiveRecord::Base
   
   validates :product, :presence => true
   validates :developer, :presence => true
+  validates :device, :presence => true
   validates :action, :presence => true, :inclusion => { :in => [ VIEW, CLICK ] }
 
   before_validation :find_or_create_product
   before_validation :set_monetizable
 
+  attr_accessible :url, :product_id, :developer_id, :device_id, :action, :tracker, :ip_address
   attr_accessor :url
   
   def self.from_urls data
@@ -22,9 +24,8 @@ class Event < ActiveRecord::Base
         :url => url,
         :action => data[:action],
         :developer_id => data[:developer_id],
-        :visitor => data[:visitor],
+        :device_id => data[:device_id],
         :tracker => data[:tracker],
-        :user_agent => data[:user_agent],
         :ip_address => data[:ip_address])
     end
   end        
