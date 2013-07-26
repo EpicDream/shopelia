@@ -24,6 +24,8 @@
   <div class="clearfix"></div>
 
   <div class="spacer20"></div>
-  <button id="btn-product-infos" class="custom-btn btn-block">Informations sur le Produit</button>
+  <a id="product-infos" class="block text-center">Consulter la fiche du produit chez <%= @model.get('merchant_name') %></a>
+   <div class="spacer20"></div>
+
 
 
