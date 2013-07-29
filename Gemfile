@@ -30,6 +30,7 @@ gem 'backbone-on-rails'
 gem 'http_accept_language'
 gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
+gem 'sanitize'
 
 # Gems used only for assets and not required
 # in production environments by default.

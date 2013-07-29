@@ -13,6 +13,7 @@ class ProductVersion < ActiveRecord::Base
   before_validation :parse_price_strikeout
   before_validation :parse_available
   before_validation :crop_shipping_info
+  before_validation :sanitize_description
   
   private
 
@@ -69,6 +70,15 @@ class ProductVersion < ActiveRecord::Base
     end
     self.available = result
     true
+  end
+  
+  def sanitize_description
+    return if self.description.nil?
+    doc = Nokogiri::HTML(self.description)
+    doc.search('style').remove
+    html = doc.to_s
+    
+    self.description = Sanitize.clean(html, Sanitize::Config::BASIC).gsub(/[\n\s]+/, " ").strip
   end
    
 end
