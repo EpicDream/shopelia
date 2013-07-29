@@ -5,11 +5,11 @@ class ProductVersionTest < ActiveSupport::TestCase
   
   setup do
     @product = products(:usbkey)
+    @version = ProductVersion.new(product_id:@product.id)
   end  
 
   test "it should create version" do
-    version = ProductVersion.new(product_id:@product.id)
-    assert version.save, version.errors.full_messages.join(",")
+    assert @version.save, @version.errors.full_messages.join(",")
   end
   
   test "it should parse float" do
@@ -17,33 +17,55 @@ class ProductVersionTest < ActiveSupport::TestCase
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
             "2��79 6��30" ]
     str.each do |s|
-      assert_equal 2.79, ProductVersion.parse_float(s), s
+      @version.price = s
+      @version.price_strikeout = s
+      @version.price_shipping = s
+      @version.save
+      assert_equal 2.79, @version.price, s
+      assert_equal 2.79, @version.price_strikeout, s
+      assert_equal 2.79, @version.price_shipping, s
+    end
+    str = [ "2", "2€", "Bla bla 2 €" ]
+    str.each do |s|
+      @version.price = s
+      @version.price_strikeout = s
+      @version.price_shipping = s
+      @version.save
+      assert_equal 2, @version.price, s
+      assert_equal 2, @version.price_strikeout, s
+      assert_equal 2, @version.price_shipping, s
     end
   end
 
   test "it should parse free shipping" do
     str = [ "LIVRAISON GRATUITE", "free shipping", "Livraison offerte" ]
     str.each do |s|
-      assert_equal 0, ProductVersion.parse_float(s)
+      @version.price_shipping = s
+      @version.save
+      assert_equal 0, @version.price_shipping, s
     end
   end
 
   test "it should fail bad prices" do
     str = [ ".", "invalid" ]
     str.each do |s|
-      assert_equal nil, ProductVersion.parse_float(s)
+      @version.price = s
+      @version.save
+      assert_equal nil, @version.price, s
     end
   end
   
   test "it should generate incident if shipping is not correctly parsed" do
     assert_difference "Incident.count", 1 do
-      ProductVersion.parse_float("Invalid string")
+      @version.price_shipping = "Invalid string"
+      @version.save
     end
   end
 
   test "it should generate incident if shipping price is too high" do
     assert_difference "Incident.count", 1 do
-      ProductVersion.parse_float("1000")
+      @version.price_shipping = "1000"
+      @version.save
     end
   end
   
@@ -69,5 +91,5 @@ class ProductVersionTest < ActiveSupport::TestCase
       availability:"stock")
     assert version.available
   end
-  
+    
 end

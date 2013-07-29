@@ -25,6 +25,10 @@ class ActiveSupport::TestCase
     ENV["ALLOW_REMOTE_API_CALLS"] = "0"
     ENV["API_KEY"] = developers(:prixing).api_key
     ActionMailer::Base.deliveries.clear
+
+    # Need this to initialize values
+    product_versions(:usbkey).save
+    product_versions(:headphones).save
   end
 
   def json_response
