@@ -11,15 +11,25 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should create version" do
     assert @version.save, @version.errors.full_messages.join(",")
   end
+
+  test "it should create version with data" do
+    version = ProductVersion.new(
+       product_id:@product.id,
+       price:"10€",
+       reference:"reference")
+    assert version.save, version.errors.full_messages.join(",")
+    assert_equal 10, version.price
+    assert_equal "reference", version.reference
+  end
   
   test "it should parse float" do
     str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", 
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
             "2��79 6��30" ]
     str.each do |s|
-      @version.price = s
-      @version.price_strikeout = s
-      @version.price_shipping = s
+      @version.price_text = s
+      @version.price_strikeout_text = s
+      @version.price_shipping_text = s
       @version.save
       assert_equal 2.79, @version.price, s
       assert_equal 2.79, @version.price_strikeout, s
@@ -27,9 +37,9 @@ class ProductVersionTest < ActiveSupport::TestCase
     end
     str = [ "2", "2€", "Bla bla 2 €" ]
     str.each do |s|
-      @version.price = s
-      @version.price_strikeout = s
-      @version.price_shipping = s
+      @version.price_text = s
+      @version.price_strikeout_text = s
+      @version.price_shipping_text = s
       @version.save
       assert_equal 2, @version.price, s
       assert_equal 2, @version.price_strikeout, s
@@ -40,7 +50,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should parse free shipping" do
     str = [ "LIVRAISON GRATUITE", "free shipping", "Livraison offerte" ]
     str.each do |s|
-      @version.price_shipping = s
+      @version.price_shipping_text = s
       @version.save
       assert_equal 0, @version.price_shipping, s
     end
@@ -49,7 +59,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should fail bad prices" do
     str = [ ".", "invalid" ]
     str.each do |s|
-      @version.price = s
+      @version.price_text = s
       @version.save
       assert_equal nil, @version.price, s
     end
@@ -57,14 +67,14 @@ class ProductVersionTest < ActiveSupport::TestCase
   
   test "it should generate incident if shipping is not correctly parsed" do
     assert_difference "Incident.count", 1 do
-      @version.price_shipping = "Invalid string"
+      @version.price_shipping_text = "Invalid string"
       @version.save
     end
   end
 
   test "it should generate incident if shipping price is too high" do
     assert_difference "Incident.count", 1 do
-      @version.price_shipping = "1000"
+      @version.price_shipping_text = "1000"
       @version.save
     end
   end
@@ -84,11 +94,11 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should set available info" do
     version = ProductVersion.create(
       product_id:@product.id,
-      availability:"out of stock")
+      availability_text:"out of stock")
     assert !version.available
     version = ProductVersion.create(
       product_id:@product.id,
-      availability:"stock")
+      availability_text:"stock")
     assert version.available
   end
   

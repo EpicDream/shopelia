@@ -154,6 +154,7 @@ class ProductTest < ActiveSupport::TestCase
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",
+        reference: "reference",
         description: "description",
         image_url: "http://www.amazon.fr/image.jpg",
         name: "name",
@@ -178,8 +179,10 @@ class ProductTest < ActiveSupport::TestCase
       }]);
 
      assert_equal "name", product.name
+     assert_equal "brand", product.brand
+     assert_equal "reference", product.reference
      assert_equal "http://www.amazon.fr/image.jpg", product.image_url
-     assert_equal "description", product.description
+     assert_equal "<p>description</p>", product.description
      assert_equal 2, product.product_versions.count
      assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
      assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
