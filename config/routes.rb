@@ -30,6 +30,7 @@ Shopelia::Application.routes.draw do
     resources :incidents, :only => [:index, :update]
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
+    resources :viking, :only => :index
   end
   
   namespace :zen do
