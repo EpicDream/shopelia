@@ -1,7 +1,7 @@
 class Shopelia.Views.ProductsIndex extends Backbone.View
 
   template: JST['products/index']
-  className: 'product'
+  className: 'product box'
 
   events:
     "click #product-infos": "showProductInfos"

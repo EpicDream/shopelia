@@ -50,9 +50,10 @@ $borderRadius: 4px;
   padding-right: 10px;
 }
 
-#modal-left, .box {
+.box {
   border-radius:$borderRadius;
   padding: 10px;
+  min-width: 310px;
   background: $lightGrey;
 }
 

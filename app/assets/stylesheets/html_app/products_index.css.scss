@@ -13,13 +13,18 @@
   margin: auto;
 }
 
+.price {
+  display: block;
+  width: 130px;
+}
+
 .price-infos > .pull-left {
   padding-top: 7px;
   line-height: 1.1em;
 }
 
 .price-infos > .pull-right {
-  max-width: 40%;
+  width: 160px;
 }
 
 .pull-right > .price > span.green.bold {
