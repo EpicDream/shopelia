@@ -102,7 +102,7 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert version.available
   end
   
-  test "it should sanitize description" do
+  test "it should sanitize description (1)" do
     @version.description = <<__END
 
 <h3 class="productDescriptionSource"></h3> <div class="productDescriptionWrapper"> <p>filtre à eau.</p><p>compatible avec tous les modèles de frigo lg</p> <div class="emptyClear"> </div> </div>
@@ -110,10 +110,12 @@ class ProductVersionTest < ActiveSupport::TestCase
 __END
     @version.save
     
-    assert_equal "<p>filtre à eau.</p> <p>compatible avec tous les modèles de frigo lg</p>", @version.description
-    
+    assert_equal "<h3></h3> <p>filtre à eau.</p> <p>compatible avec tous les modèles de frigo lg</p>", @version.description
+  end
+
+  test "it should sanitize description (2)" do
     @version.description = <<__END
-<div id=\"ccs-inline-content\"></div><link href=\"http://www.cdiscount.com/include/CSS/tdv.css\" rel=\"stylesheet\" type=\"text/css\"> 
+<div id="ccs-inline-content"></div><link href="http://www.cdiscount.com/include/CSS/tdv.css" rel="stylesheet" type="text/css"> 
 <style> 
 .lien_offre { 
 FONT-FAMILY: Arial; COLOR: #848077; FONT-SIZE: 10pt; FONT-WEIGHT: bold; TEXT-DECORATION: none 
@@ -130,28 +132,28 @@ BORDER-BOTTOM: #999 1px solid; BORDER-LEFT: #999 1px solid; BACKGROUND-COLOR: #f
 } 
 </style> 
 <!-- tableau global --> 
-<table width=\"100%\" style=\"background-color: white;\" cellspacing=\"0\" cellpadding=\"0\"> 
+<table width="100%" style="background-color: white;" cellspacing="0" cellpadding="0"> 
 <tbody> 
 <tr> 
-<td valign=\"top\"><!-- tableau layout --> 
-<table width=\"587\" align=\"center\" style=\"width: 587px; height: 977px;\" cellspacing=\"0\" cellpadding=\"0\"> 
-<script language=\"javascript\" src=\"http://www.cdiscount.com/include/js/integrationFlashNew.js\"></script> 
+<td valign="top"><!-- tableau layout --> 
+<table width="587" align="center" style="width: 587px; height: 977px;" cellspacing="0" cellpadding="0"> 
+<script language="javascript" src="http://www.cdiscount.com/include/js/integrationFlashNew.js"></script> 
 <tbody> 
 <tr> 
 <td> 
-<table style=\"filter: none; margin-bottom: 5px;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"> 
+<table style="filter: none; margin-bottom: 5px;" border="0" cellspacing="0" cellpadding="0"> 
 <!-- ligne du template --> 
 <tbody> 
 <tr> 
-<td align=\"center\"> 
-<table width=\"100%\" style=\"padding-left: 4px; padding-right: 4px;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"> 
+<td align="center"> 
+<table width="100%" style="padding-left: 4px; padding-right: 4px;" border="0" cellspacing="0" cellpadding="0"> 
 <tbody> 
 <tr> 
-<td align=\"center\" valign=\"top\" style=\"height: 100%;\"> 
-<table height=\"100%\" align=\"center\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"> 
+<td align="center" valign="top" style="height: 100%;"> 
+<table height="100%" align="center" border="0" cellspacing="0" cellpadding="0"> 
 <tbody> 
 <tr> 
-<td><img alt=\"\" id=\"img_20612\" style=\"width: 392px; height: 109px;\" data-src=\"http://i5.cdscdn.com/other/20612.jpg\" src=\"http://i3.cdscdn.com/imagesok/rien.gif\"></td> 
+<td><img alt="" id="img_20612" style="width: 392px; height: 109px;" data-src="http://i5.cdscdn.com/other/20612.jpg" src="http://i3.cdscdn.com/imagesok/rien.gif"></td> 
 </tr> 
 </tbody> 
 </table> 
@@ -167,26 +169,26 @@ BORDER-BOTTOM: #999 1px solid; BORDER-LEFT: #999 1px solid; BACKGROUND-COLOR: #f
 </tr> 
 <tr> 
 <td> 
-<table style=\"filter: none; margin-bottom: 5px;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"> 
+<table style="filter: none; margin-bottom: 5px;" border="0" cellspacing="0" cellpadding="0"> 
 <!-- ligne du template --> 
 <tbody> 
 <tr> 
-<td align=\"center\"> 
-<table width=\"100%\" style=\"padding-left: 4px; padding-right: 4px;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"> 
+<td align="center"> 
+<table width="100%" style="padding-left: 4px; padding-right: 4px;" border="0" cellspacing="0" cellpadding="0"> 
 <tbody> 
 <tr> 
-<td align=\"center\" valign=\"top\" style=\"height: 100%;\"> 
-<table width=\"100%\" height=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"> 
+<td align="center" valign="top" style="height: 100%;"> 
+<table width="100%" height="100%" border="0" cellspacing="0" cellpadding="0"> 
 <tbody> 
 <tr> 
-<td><span style=\"font-size: 8px;\"></span></td> 
+<td><span style="font-size: 8px;"></span></td> 
 </tr> 
 <tr> 
 <td> 
-<table width=\"100%\" style=\"font-weight: bold;\" cellspacing=\"0\" cellpadding=\"0\"> 
+<table width="100%" style="font-weight: bold;" cellspacing="0" cellpadding="0"> 
 <tbody> 
 <tr> 
-<td align=\"center\" class=\"titre_bloc_28\" style=\"white-space: nowrap;\">Matelas 140x190 DORSOLATEX </td> 
+<td align="center" class="titre_bloc_28" style="white-space: nowrap;">Matelas 140x190 DORSOLATEX </td> 
 </tr> 
 </tbody> 
 </table> 
@@ -194,16 +196,16 @@ BORDER-BOTTOM: #999 1px solid; BORDER-LEFT: #999 1px solid; BACKGROUND-COLOR: #f
 </tr> 
 <tr> 
 <td> 
-<table width=\"566\" height=\"328\" align=\"center\" style=\"width: 566px; font-family: arial; height: 328px; color: #3c505b; font-size: 12px;\" border=\"0\" cellspacing=\"0\" cellpadding=\"0\"> 
+<table width="566" height="328" align="center" style="width: 566px; font-family: arial; height: 328px; color: #3c505b; font-size: 12px;" border="0" cellspacing="0" cellpadding="0"> 
 <tbody> 
 <tr> 
-<td><span style=\"color: #ff0000; font-size: small;\"><strong> 
-<p style=\"text-align: center;\"> 
-</p><table border=\"0\" cellpadding=\"0\"> 
+<td><span style="color: #ff0000; font-size: small;"><strong> 
+<p style="text-align: center;"> 
+</p><table border="0" cellpadding="0"> 
 <tbody> 
 <tr> 
-<td style=\"padding-bottom: 0.75pt; background-color: transparent; padding-left: 0.75pt; padding-right: 0.75pt; padding-top: 0.75pt;border: #ece9d8;\"> 
-<p style=\"text-align: center;\"><span style=\"font-family: arial; font-size: 14px;\">Passez de belles nuits avec le&nbsp;<strong>matelas</strong><span style=\"color: #000000; font-size: small;\"><strong> 140x190 DORSOLATEX <br> 
+<td style="padding-bottom: 0.75pt; background-color: transparent; padding-left: 0.75pt; padding-right: 0.75pt; padding-top: 0.75pt;border: #ece9d8;"> 
+<p style="text-align: center;"><span style="font-family: arial; font-size: 14px;">Passez de belles nuits avec le&nbsp;<strong>matelas</strong><span style="color: #000000; font-size: small;"><strong> 140x190 DORSOLATEX <br> 
 100% latex de 23 cm</strong> </span>et ses <strong>5 zones de confort.<br> 
 <br> 
 <br> 
@@ -211,22 +213,22 @@ BORDER-BOTTOM: #999 1px solid; BORDER-LEFT: #999 1px solid; BACKGROUND-COLOR: #f
 </td> 
 </tr> 
 <tr> 
-<td style=\"padding-bottom: 0.75pt; background-color: transparent; padding-left: 0.75pt; padding-right: 0.75pt; padding-top: 0.75pt;border: #ece9d8;\"> 
-<p style=\"text-align: center;\"><span style=\"font-family: arial; color: #000000; font-size: 10pt;\">&nbsp;&nbsp;&nbsp;&nbsp;La plupart des maux de dos sont dus à un matelas trop dur ou trop mou qui génère des points de pression induisant des douleurs lombaires ou articulaires. Le matelas dorsolatex est composé d’un noyau 100% latex âme de 16 cm avec 5 zones de confort. Ce latex de qualité offre une résilience qui permet de répartir la pression sur l'ensemble du corps et détend ainsi les muscles pour un sommeil récupérateur.&nbsp;<br> 
+<td style="padding-bottom: 0.75pt; background-color: transparent; padding-left: 0.75pt; padding-right: 0.75pt; padding-top: 0.75pt;border: #ece9d8;"> 
+<p style="text-align: center;"><span style="font-family: arial; color: #000000; font-size: 10pt;">&nbsp;&nbsp;&nbsp;&nbsp;La plupart des maux de dos sont dus à un matelas trop dur ou trop mou qui génère des points de pression induisant des douleurs lombaires ou articulaires. Le matelas dorsolatex est composé d’un noyau 100% latex âme de 16 cm avec 5 zones de confort. Ce latex de qualité offre une résilience qui permet de répartir la pression sur l'ensemble du corps et détend ainsi les muscles pour un sommeil récupérateur.&nbsp;<br> 
 <br> 
-<strong><span style=\"font-size: 14px;\">Le Latex<br> 
+<strong><span style="font-size: 14px;">Le Latex<br> 
 <br> 
-</span></strong><img alt=\"\" id=\"img_30382\" data-src=\"http://i5.cdscdn.com/other/30382.jpg\" src=\"http://i3.cdscdn.com/imagesok/rien.gif\"></span></p> 
+</span></strong><img alt="" id="img_30382" data-src="http://i5.cdscdn.com/other/30382.jpg" src="http://i3.cdscdn.com/imagesok/rien.gif"></span></p> 
 </td> 
 </tr> 
 </tbody> 
 </table> 
 <p></p> 
-</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img alt=\"\" id=\"img_30557\" data-src=\"http://i5.cdscdn.com/other/30557.jpg\" src=\"http://i3.cdscdn.com/imagesok/rien.gif\"><img style=\"border: 0px solid;\" alt=\"Matelas Dorsolatex\" data-src=\"http://i3.cdiscount.com/imagesok/medias/10/149523.jpg\" src=\"http://i3.cdscdn.com/imagesok/rien.gif\"></td> 
+</strong></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img alt="" id="img_30557" data-src="http://i5.cdscdn.com/other/30557.jpg" src="http://i3.cdscdn.com/imagesok/rien.gif"><img style="border: 0px solid;" alt="Matelas Dorsolatex" data-src="http://i3.cdiscount.com/imagesok/medias/10/149523.jpg" src="http://i3.cdscdn.com/imagesok/rien.gif"></td> 
 </tr> 
 </tbody> 
 </table> 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img style=\"border: 0px solid;\" alt=\"Matelas Dorsolatex\" data-src=\"http://i3.cdiscount.com/imagesok/medias/10/149537.jpg\" src=\"http://i3.cdscdn.com/imagesok/rien.gif\"></td> 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <img style="border: 0px solid;" alt="Matelas Dorsolatex" data-src="http://i3.cdiscount.com/imagesok/medias/10/149537.jpg" src="http://i3.cdscdn.com/imagesok/rien.gif"></td> 
 </tr> 
 </tbody> 
 </table> 
@@ -234,7 +236,7 @@ BORDER-BOTTOM: #999 1px solid; BORDER-LEFT: #999 1px solid; BACKGROUND-COLOR: #f
 </tr> 
 </tbody> 
 </table> 
-<p style=\"text-align: right;\"><span style=\"font-size: 10px; text-decoration: underline;\">Matelas fabriqué en Belgique<br> 
+<p style="text-align: right;"><span style="font-size: 10px; text-decoration: underline;">Matelas fabriqué en Belgique<br> 
 </span></p> 
 </td> 
 </tr> 
@@ -254,7 +256,42 @@ BORDER-BOTTOM: #999 1px solid; BORDER-LEFT: #999 1px solid; BACKGROUND-COLOR: #f
 __END
 
     @version.save 
-    assert_equal "Matelas 140x190 DORSOLATEX <strong> <p> </p> <p>Passez de belles nuits avec le <strong>matelas</strong><strong> 140x190 DORSOLATEX <br> 100% latex de 23 cm</strong> et ses <strong>5 zones de confort.<br><br><br>  Un confort ergonomique !</strong></p> <p>    La plupart des maux de dos sont dus à un matelas trop dur ou trop mou qui génère des points de pression induisant des douleurs lombaires ou articulaires. Le matelas dorsolatex est composé d’un noyau 100% latex âme de 16 cm avec 5 zones de confort. Ce latex de qualité offre une résilience qui permet de répartir la pression sur l'ensemble du corps et détend ainsi les muscles pour un sommeil récupérateur. <br><br><strong>Le Latex<br><br></strong></p> <p></p> </strong>                             <p>Matelas fabriqué en Belgique<br></p>", @version.description
+    assert_equal "<table><tbody><tr> <td> <table><tbody> <tr> <td> <table><tbody><tr> <td> <table><tbody><tr> <td> <table><tbody><tr> <td></td> </tr></tbody></table> </td> </tr></tbody></table> </td> </tr></tbody></table> </td> </tr> <tr> <td> <table><tbody><tr> <td> <table><tbody><tr> <td> <table><tbody> <tr> <td></td> </tr> <tr> <td> <table><tbody><tr> <td>Matelas 140x190 DORSOLATEX </td> </tr></tbody></table> </td> </tr> <tr> <td> <table><tbody><tr> <td> <strong> <p> </p> <table><tbody> <tr> <td> <p>Passez de belles nuits avec le <strong>matelas</strong><strong> 140x190 DORSOLATEX <br> 100% latex de 23 cm</strong> et ses <strong>5 zones de confort.<br><br><br>  Un confort ergonomique !</strong></p> </td> </tr> <tr> <td> <p>    La plupart des maux de dos sont dus à un matelas trop dur ou trop mou qui génère des points de pression induisant des douleurs lombaires ou articulaires. Le matelas dorsolatex est composé d’un noyau 100% latex âme de 16 cm avec 5 zones de confort. Ce latex de qualité offre une résilience qui permet de répartir la pression sur l'ensemble du corps et détend ainsi les muscles pour un sommeil récupérateur. <br><br><strong>Le Latex<br><br></strong></p> </td> </tr> </tbody></table> <p></p> </strong>            </td> </tr></tbody></table>                  </td> </tr> </tbody></table> </td> </tr></tbody></table> <p>Matelas fabriqué en Belgique<br></p> </td> </tr></tbody></table> </td> </tr> <tr> <td></td> </tr> </tbody></table> </td> </tr></tbody></table>", @version.description
+  end
+  
+  test "it should sanitize description (3)" do
+    @version.description =<<__END
+<ul class="contributors"><li class="sub"><span class="label">Fabricant&nbsp;: </span><em class="value"><a href="javascript:void PM.BT.ubs(47,'s',47,'olympus')" class="pmbt pmbtjs ft_link">Olympus</a></em></li> <li class="sub"><span class="label">Référence fabricant&nbsp;: </span><em class="value">V104080UE000 - TG320BLEU</em></li></ul> 
+<p class="edito"></p><div>Achetez un appareil photo, c'est comme s'offrir une paire de lunettes de soleil; on a toujours peur de les casser la première fois qu'on les sort de leur étui! C'est pour éviter toutes ces craintes qu'Olympus a développé sa série de compacts, tout-terrain: résistants aux chocs, étanches, et au froid extrême. Une gamme quasi indestructible!<br>Le TG-320 dispose de nombreuses fonctionnalités automatiques qui permettent de photographier sans complexe toutes les situations, même les plus compliquées. Et afin de garantir la meilleure qualité des photos de groupe ou d'un sujet éloigné, celui-ci est équipé d'un zoom optique grand angle. Le TG-320 est le compagnon idéal des aventuriers. Avec cet appareil, pas besoin de prendre des précautions il suffit juste de s'amuser et de saisir l'instant!<br>Pour s'approcher au plus près de la réalité le TG-320 est doté de la fonction 3D utilisable même sous l'eau. Il est également équipé de filtres artistiques pour donner une touche de créativité à vos photos. Et pour revivre et partager les moments forts rien de plus simple via la carte Eye-Fi. Avec toutes ses fonctionnalités, ses performances technologiques et sa robustesse, le TG-320 est exceptionnel sans oublier son rapport qualité/prix.<br></div><br><p></p> 
+<p class="edito"></p><div><ul><li>Zoom optique 3.6x grand angle</li><li>14 méga pixels</li><li>Ecran LCD 6.9cm/ 2.7"</li><li>Double stabilisation d'image</li><li>Filtres artistiques pour les vidéos et photos</li><li>Détection de visage et SAT</li><li>Mode photo 3D</li><li>Mode beauté</li><li>Mode détection animaux</li><li>Compatible carte Eye-Fi</li><li>Chargeur de batterie via USB</li></ul></div><br><p></p> 
+<div class="specs_ctn"> 
+<div class="spec_table"> 
+<p class="table_caption">Général</p> 
+<table class="spec_table_ctn"> 
+<tbody> 
+<tr class="odd first_child"> 
+<th class="label first_child"><span>Type de Produit</span></th> 
+<td class="value last_child"><span>Appareil photo numérique - compact</span></td> 
+</tr> 
+<tr class="even"> 
+<th class="label first_child"><span>Couleur du boîtier</span></th> 
+<td class="value last_child"><span>Bleu</span></td> 
+</tr> 
+<tr class="odd"> 
+<th class="label first_child"><span>Résolution du Capteur</span></th> 
+<td class="value last_child"><span>14.0 mégapixel</span></td> 
+</tr> 
+<tr class="odd last_child"> 
+<th class="label first_child"><span>Interfaces AV</span></th> 
+<td class="value last_child"><span>Audio/vidéo composite, HDMI</span></td> 
+</tr> 
+</tbody> 
+</table> 
+</div> 
+</div> 
+__END
+    @version.save
+    assert_equal "<ul> <li> Fabricant : <em>Olympus</em> </li> <li> Référence fabricant : <em>V104080UE000 - TG320BLEU</em> </li> </ul><p></p> Achetez un appareil photo, c'est comme s'offrir une paire de lunettes de soleil; on a toujours peur de les casser la première fois qu'on les sort de leur étui! C'est pour éviter toutes ces craintes qu'Olympus a développé sa série de compacts, tout-terrain: résistants aux chocs, étanches, et au froid extrême. Une gamme quasi indestructible!<br>Le TG-320 dispose de nombreuses fonctionnalités automatiques qui permettent de photographier sans complexe toutes les situations, même les plus compliquées. Et afin de garantir la meilleure qualité des photos de groupe ou d'un sujet éloigné, celui-ci est équipé d'un zoom optique grand angle. Le TG-320 est le compagnon idéal des aventuriers. Avec cet appareil, pas besoin de prendre des précautions il suffit juste de s'amuser et de saisir l'instant!<br>Pour s'approcher au plus près de la réalité le TG-320 est doté de la fonction 3D utilisable même sous l'eau. Il est également équipé de filtres artistiques pour donner une touche de créativité à vos photos. Et pour revivre et partager les moments forts rien de plus simple via la carte Eye-Fi. Avec toutes ses fonctionnalités, ses performances technologiques et sa robustesse, le TG-320 est exceptionnel sans oublier son rapport qualité/prix.<br> <br><p></p> <p></p> <ul> <li>Zoom optique 3.6x grand angle</li> <li>14 méga pixels</li> <li>Ecran LCD 6.9cm/ 2.7\"</li> <li>Double stabilisation d'image</li> <li>Filtres artistiques pour les vidéos et photos</li> <li>Détection de visage et SAT</li> <li>Mode photo 3D</li> <li>Mode beauté</li> <li>Mode détection animaux</li> <li>Compatible carte Eye-Fi</li> <li>Chargeur de batterie via USB</li> </ul> <br><p></p> <p>Général</p> <table><tbody> <tr> <th>Type de Produit</th> <td>Appareil photo numérique - compact</td> </tr> <tr> <th>Couleur du boîtier</th> <td>Bleu</td> </tr> <tr> <th>Résolution du Capteur</th> <td>14.0 mégapixel</td> </tr> <tr> <th>Interfaces AV</th> <td>Audio/vidéo composite, HDMI</td> </tr> </tbody></table>", @version.description
   end
     
 end

@@ -15,7 +15,21 @@ class ProductVersion < ActiveRecord::Base
   before_validation :parse_available
   before_validation :crop_shipping_info
   before_validation :sanitize_description
-  
+
+  SANITIZED_CONFIG = {
+    :elements => %w[
+      b blockquote br dd dl
+      dt em h1 h2 h3 h4 h5 h6 i li
+      ol p pre strike strong table tbody td
+      tfoot th thead tr u ul
+    ],
+
+    :attributes => {
+      'td'         => ['colspan', 'rowspan'],
+      'th'         => ['colspan', 'rowspan']
+    }
+  }  
+
   private
 
   def parse_float str
@@ -77,9 +91,10 @@ class ProductVersion < ActiveRecord::Base
     return if self.description.nil?
     doc = Nokogiri::HTML(self.description)
     doc.search('style').each { |node| node.remove }
-    html = doc.to_s
-    
-    self.description = Sanitize.clean(html, Sanitize::Config::BASIC).gsub(/[\n\s]+/, " ").strip
+
+    html = Sanitize.clean(doc.to_s, SANITIZED_CONFIG).gsub(/[\n\s]+/, " ").strip
+
+    self.description = html
   end
    
 end
