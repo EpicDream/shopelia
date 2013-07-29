@@ -27,6 +27,7 @@ Shopelia::Application.routes.draw do
 
   namespace :admin do
     resources :developers, :only => [:index, :new, :create]
+    resources :incidents, :only => [:index, :update]
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
   end

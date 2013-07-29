@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="span12">
+    <h1>Incidents list</h1>
+    <table id="incidents" class="table table-striped" data-source="<%= admin_incidents_url(format: 'json') %>">
+      <thead>
+        <tr>
+          <th>Issue</th>
+          <th>Severity</th>
+          <th>Description</th>
+          <th>Created at</th>
+          <th>Res type</th>
+          <th>Res ID</th>
+          <th>&nbsp;</th>
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+  </div>
+</div>
