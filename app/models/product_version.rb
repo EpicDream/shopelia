@@ -9,12 +9,12 @@ class ProductVersion < ActiveRecord::Base
   attr_accessible :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
   attr_accessor :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
   
-  before_validation :parse_price
-  before_validation :parse_price_shipping
-  before_validation :parse_price_strikeout
-  before_validation :parse_available
+  before_validation :parse_price, :if => Proc.new { |v| v.price_text.present? }
+  before_validation :parse_price_shipping, :if => Proc.new { |v| v.price_shipping_text.present? }
+  before_validation :parse_price_strikeout, :if => Proc.new { |v| v.price_strikeout_text.present? }
+  before_validation :parse_available, :if => Proc.new { |v| v.availability_text.present? }
+  before_validation :sanitize_description, :if => Proc.new { |v| v.description.present? }
   before_validation :crop_shipping_info
-  before_validation :sanitize_description
 
   SANITIZED_CONFIG = {
     :elements => %w[
@@ -23,7 +23,6 @@ class ProductVersion < ActiveRecord::Base
       ol p pre strike strong table tbody td
       tfoot th thead tr u ul
     ],
-
     :attributes => {
       'td'         => ['colspan', 'rowspan'],
       'th'         => ['colspan', 'rowspan']
@@ -38,12 +37,7 @@ class ProductVersion < ActiveRecord::Base
       0.0
     else
       if m = str.match(/^[^\d]*(\d+)[^\d]*$/) || m = str.match(/^[^\d]*(\d+)[^\d]{1,2}(\d+)/)
-        result = m[1].to_f + m[2].to_f / 100
-        if result > 50
-          generate_incident "Shipping price too high : #{str}"
-        else
-          result
-        end
+        m[1].to_f + m[2].to_f / 100
       else 
         generate_incident "Cannot parse price : #{str}"
       end
@@ -65,19 +59,19 @@ class ProductVersion < ActiveRecord::Base
   end
 
   def parse_price
-    self.price = parse_float(self.price_text) unless self.price_text.blank?
+    self.price = parse_float(self.price_text)
   end
 
   def parse_price_shipping
-    self.price_shipping = parse_float(self.price_shipping_text) unless self.price_shipping_text.blank?
+    self.price_shipping = parse_float(self.price_shipping_text)
+    generate_incident "Shipping price too high : #{self.price_shipping_text}" if self.price_shipping.to_f > 50
   end
   
   def parse_price_strikeout
-    self.price_strikeout = parse_float(self.price_strikeout_text) unless self.price_strikeout_text.blank?
+    self.price_strikeout = parse_float(self.price_strikeout_text)
   end
   
   def parse_available
-    return if self.availability_text.nil?
     result = true
     a = self.availability_text.unaccent.downcase
     if a =~ /out of stock/
@@ -88,7 +82,6 @@ class ProductVersion < ActiveRecord::Base
   end
   
   def sanitize_description
-    return if self.description.nil?
     doc = Nokogiri::HTML(self.description)
     doc.search('style').each { |node| node.remove }
 
