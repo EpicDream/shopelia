@@ -19,10 +19,18 @@ class ProductVersion < ActiveRecord::Base
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else
-      r = str.gsub(/[^\d\.,]/, "").gsub(",", ".")
-      if r.length > 0 && r =~ /\d+/
-        r.to_f
-      else
+      if m = str.match(/^[^\d]*(\d+)[^\d]{1,2}(\d+)/)
+        result = m[1].to_f + m[2].to_f / 100
+        if result > 50
+          Incident.create(
+            :issue => "Viking",
+            :description => "Shipping price too high : #{str}",
+            :severity => Incident::IMPORTANT)
+          nil
+        else
+          result
+        end
+      else 
         Incident.create(
           :issue => "Viking",
           :description => "Cannot parse price : #{str}",
@@ -30,7 +38,6 @@ class ProductVersion < ActiveRecord::Base
         nil
       end
     end
-    
   end
 
   private

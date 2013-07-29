@@ -13,9 +13,11 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
   
   test "it should parse float" do
-    str = [ "2.79€", "2,79 EUR", "bla bla 2.79" ]
+    str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", 
+            "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
+            "2��79 6��30" ]
     str.each do |s|
-      assert_equal 2.79, ProductVersion.parse_float(s)
+      assert_equal 2.79, ProductVersion.parse_float(s), s
     end
   end
 
@@ -36,6 +38,12 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should generate incident if shipping is not correctly parsed" do
     assert_difference "Incident.count", 1 do
       ProductVersion.parse_float("Invalid string")
+    end
+  end
+
+  test "it should generate incident if shipping price is too high" do
+    assert_difference "Incident.count", 1 do
+      ProductVersion.parse_float("1000")
     end
   end
   
