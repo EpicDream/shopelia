@@ -42,6 +42,12 @@ class LinkerTest < ActiveSupport::TestCase
     end
   end
  
+  test "it should generate incident if link is not monetizable" do
+    assert_difference "Incident.count", 1 do
+      Linker.monetize "http://www.newshop.com/productA"
+    end
+  end
+ 
   test "it should monetize priceminister" do
     url = Linker.monetize "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html#sort=0&filter=10&s2m_exaffid=977275"
     assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html", url
@@ -114,6 +120,11 @@ class LinkerTest < ActiveSupport::TestCase
   test "it should monetize eveiletjeux link" do
     url = Linker.monetize "http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367"
     assert_equal "http://ad.zanox.com/ppc/?25424162C654654636&ulp=[[http://logc57.xiti.com/gopc.url?xts=425426&xtor=AL-146-1%5Btypologie%5D-REMPLACE-%5Bparam%5D&xtloc=http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367&url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm]]", url
+  end
+
+  test "it should monetize toysrus link" do
+    url = Linker.monetize "http://www.toysrus.fr/product/index.jsp?productId=11621761"
+    assert_equal "http://ad.zanox.com/ppc/?25465502C586468223&ulp=[[http://www.toysrus.fr/redirect_znx.jsp?url=http://www.toysrus.fr/product/index.jsp?productId=11621761&]]", url
   end
   
   test "it should monetize cdiscount link" do

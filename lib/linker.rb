@@ -50,11 +50,17 @@ class Linker
       self.rueducommerce(url)
     elsif url.match(/eveiletjeux/)
       self.eveiletjeux(url)
+    elsif url.match(/toysrus/)
+      self.toysrus(url)
     elsif url.match(/cdiscount/)
       self.cdiscount(url)
     elsif url.match(/darty/)
       self.darty(url)
     else
+      Incident.create(
+        :issue => "Linker",
+        :description => "Url not monetized : #{url}",
+        :severity => Incident::IMPORTANT)      
       url
     end
   end
@@ -107,4 +113,8 @@ class Linker
   def self.darty url
     "http://ad.zanox.com/ppc/?25424898C784334680&ulp=[[#{url.gsub("http://", "")}?dartycid=aff_zxpublisherid_lien-profond-libre_lientexte]]"
   end
+  
+  def self.toysrus url
+    "http://ad.zanox.com/ppc/?25465502C586468223&ulp=[[http://www.toysrus.fr/redirect_znx.jsp?url=#{url}&]]"
+  end  
 end
