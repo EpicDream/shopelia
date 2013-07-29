@@ -76,6 +76,7 @@ class ProductVersion < ActiveRecord::Base
     if a =~ /out of stock/ || \
        a =~ /aucun vendeur ne propose ce produit/ || \
        a =~ /en rupture de stock/ || \
+       a =~ /indisponible/ || \
        a =~ /sur commande/
       result = false
     elsif a =~ /en stock/ || a=~ /^\(\d+\)$/ || a=~ /expedie sous/
