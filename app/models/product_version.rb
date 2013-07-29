@@ -36,7 +36,11 @@ class ProductVersion < ActiveRecord::Base
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else
-      if m = str.match(/^[^\d]*(\d+)[^\d]*$/) || m = str.match(/^[^\d]*(\d+)[^\d]{1,2}(\d+)/)
+      if m = str.match(/^[^\d]*(\d+)[^\d](\d\d\d) ?[^\d] ?(\d+)/)
+        m[1].to_f * 1000 + m[2].to_f + m[3].to_f / 100
+      elsif m = str.match(/^[^\d]*(\d+)[^\d](\d\d\d)/)
+        m[1].to_f * 1000 + m[2].to_f
+      elsif m = str.match(/^[^\d]*(\d+)[^\d]*$/) || m = str.match(/^[^\d]*(\d+)[^\d]{1,2}(\d+)/)
         m[1].to_f + m[2].to_f / 100
       else 
         generate_incident "Cannot parse price : #{str}"

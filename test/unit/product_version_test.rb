@@ -26,25 +26,19 @@ class ProductVersionTest < ActiveSupport::TestCase
     str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", 
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
             "2��79 6��30" ]
-    str.each do |s|
-      @version.price_text = s
-      @version.price_strikeout_text = s
-      @version.price_shipping_text = s
-      @version.save
-      assert_equal 2.79, @version.price, s
-      assert_equal 2.79, @version.price_strikeout, s
-      assert_equal 2.79, @version.price_shipping, s
-    end
+    str.each { |s| check_price s, 2.79 }
+
     str = [ "2", "2€", "Bla bla 2 €" ]
-    str.each do |s|
-      @version.price_text = s
-      @version.price_strikeout_text = s
-      @version.price_shipping_text = s
-      @version.save
-      assert_equal 2, @version.price, s
-      assert_equal 2, @version.price_strikeout, s
-      assert_equal 2, @version.price_shipping, s
-    end
+    str.each { |s| check_price s, 2 }
+
+    str = [ "1 739,95 €", "1739€95", "1 739 € 95", "1 739€95", "1 739€ 95", "1739 €95", "1739.95", "bla 1 739.95 EUR" ]
+    str.each { |s| check_price s, 1739.95 }
+
+    str = [ "1 739€", "1739€", "bla bla 1739 E bla" ]
+    str.each { |s| check_price s, 1739 }
+
+    str = [ "12 739€", "12 739€", "bla 12739" ]
+    str.each { |s| check_price s, 12739 }
   end
 
   test "it should parse free shipping" do
@@ -307,5 +301,17 @@ __END
     @version.save
     assert_equal "<ul> <li> Fabricant : <em>Olympus</em> </li> <li> Référence fabricant : <em>V104080UE000 - TG320BLEU</em> </li> </ul><p></p> Achetez un appareil photo, c'est comme s'offrir une paire de lunettes de soleil; on a toujours peur de les casser la première fois qu'on les sort de leur étui! C'est pour éviter toutes ces craintes qu'Olympus a développé sa série de compacts, tout-terrain: résistants aux chocs, étanches, et au froid extrême. Une gamme quasi indestructible!<br>Le TG-320 dispose de nombreuses fonctionnalités automatiques qui permettent de photographier sans complexe toutes les situations, même les plus compliquées. Et afin de garantir la meilleure qualité des photos de groupe ou d'un sujet éloigné, celui-ci est équipé d'un zoom optique grand angle. Le TG-320 est le compagnon idéal des aventuriers. Avec cet appareil, pas besoin de prendre des précautions il suffit juste de s'amuser et de saisir l'instant!<br>Pour s'approcher au plus près de la réalité le TG-320 est doté de la fonction 3D utilisable même sous l'eau. Il est également équipé de filtres artistiques pour donner une touche de créativité à vos photos. Et pour revivre et partager les moments forts rien de plus simple via la carte Eye-Fi. Avec toutes ses fonctionnalités, ses performances technologiques et sa robustesse, le TG-320 est exceptionnel sans oublier son rapport qualité/prix.<br> <br><p></p> <p></p> <ul> <li>Zoom optique 3.6x grand angle</li> <li>14 méga pixels</li> <li>Ecran LCD 6.9cm/ 2.7\"</li> <li>Double stabilisation d'image</li> <li>Filtres artistiques pour les vidéos et photos</li> <li>Détection de visage et SAT</li> <li>Mode photo 3D</li> <li>Mode beauté</li> <li>Mode détection animaux</li> <li>Compatible carte Eye-Fi</li> <li>Chargeur de batterie via USB</li> </ul> <br><p></p> <p>Général</p> <table><tbody> <tr> <th>Type de Produit</th> <td>Appareil photo numérique - compact</td> </tr> <tr> <th>Couleur du boîtier</th> <td>Bleu</td> </tr> <tr> <th>Résolution du Capteur</th> <td>14.0 mégapixel</td> </tr> <tr> <th>Interfaces AV</th> <td>Audio/vidéo composite, HDMI</td> </tr> </tbody></table>", @version.description
   end
+   
+  private
+  
+  def check_price s, p
+    @version.price_text = s
+    @version.price_strikeout_text = s
+    @version.price_shipping_text = s
+    @version.save
+    assert_equal p, @version.price, s
+    assert_equal p, @version.price_strikeout, s
+    assert_equal p, @version.price_shipping, s
+  end  
     
 end
