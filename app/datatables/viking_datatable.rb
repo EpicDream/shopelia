@@ -32,7 +32,11 @@ class VikingDatatable
 
   def fetch_products
     products = Product.where(viking_failure:true).where("updated_at > ?", 1.day.ago).order("#{sort_column} #{sort_direction}")
-    products.page(page).per_page(per_page)
+    products = products.page(page).per_page(per_page)
+    if params[:sSearch].present?
+      products = products.where("url like :search or name like :search", search: "%#{params[:sSearch]}%")
+    end
+    products  
   end
 
   def page
