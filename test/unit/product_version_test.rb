@@ -92,14 +92,27 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
   
   test "it should set available info" do
+    array = ["Aucun vendeur ne propose ce produit", "out of stock"]
+    array.each do |str|
+      version = ProductVersion.create(
+        product_id:@product.id,
+        availability_text:str)
+      assert !version.available
+    end
+    
     version = ProductVersion.create(
       product_id:@product.id,
-      availability_text:"out of stock")
-    assert !version.available
-    version = ProductVersion.create(
-      product_id:@product.id,
-      availability_text:"stock")
+      availability_text:"en stock")
     assert version.available
+  end
+  
+  test "it should generate incident if unknown availability (and set as available by default)" do
+    assert_difference "Incident.count", 1 do
+      version = ProductVersion.create(
+        product_id:@product.id,
+        availability_text:"bla")
+      assert version.available
+    end
   end
   
   test "it should sanitize description (1)" do

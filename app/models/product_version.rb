@@ -5,7 +5,7 @@ class ProductVersion < ActiveRecord::Base
   
   attr_accessible :description, :size, :color, :price, :price_shipping
   attr_accessible :price_strikeout, :product_id, :shipping_info, :available
-  attr_accessible :image_url, :brand, :name, :availability, :reference
+  attr_accessible :image_url, :brand, :name, :available, :reference
   attr_accessible :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
   attr_accessor :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
   
@@ -72,10 +72,14 @@ class ProductVersion < ActiveRecord::Base
   end
   
   def parse_available
-    result = true
     a = self.availability_text.unaccent.downcase
-    if a =~ /out of stock/
+    if a =~ /out of stock/ || a =~ /aucun vendeur ne propose ce produit/
       result = false
+    elsif a =~ /en stock/ || a=~ /^\(\d+\)$/ || a=~ /habituellement expedie/
+      result = true
+    else
+      generate_incident "Cannot parse availability : #{a}"
+      result = true
     end
     self.available = result
     true
