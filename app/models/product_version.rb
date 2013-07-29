@@ -64,7 +64,7 @@ class ProductVersion < ActiveRecord::Base
 
   def parse_price_shipping
     self.price_shipping = parse_float(self.price_shipping_text)
-    generate_incident "Shipping price too high : #{self.price_shipping_text}" if self.price_shipping.to_f > 50
+    generate_incident "Shipping price too high : #{self.price_shipping_text}" if self.price_shipping.to_f > 100
   end
   
   def parse_price_strikeout
