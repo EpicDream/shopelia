@@ -7,5 +7,5 @@ class Incident < ActiveRecord::Base
   validates :description, :presence => true
   validates :severity, :presence => true, :inclusion => { :in => [ CRITICAL, IMPORTANT, INFORMATIVE ] }
 
-  attr_accessible :description, :issue, :severity
+  attr_accessible :description, :issue, :severity, :resource_type, :resource_id
 end
