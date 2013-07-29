@@ -65,15 +65,15 @@ class ProductVersion < ActiveRecord::Base
   end
 
   def parse_price
-    self.price = parse_float(self.price_text) unless self.price_text.nil?
+    self.price = parse_float(self.price_text) unless self.price_text.blank?
   end
 
   def parse_price_shipping
-    self.price_shipping = parse_float(self.price_shipping_text) unless self.price_shipping_text.nil?
+    self.price_shipping = parse_float(self.price_shipping_text) unless self.price_shipping_text.blank?
   end
   
   def parse_price_strikeout
-    self.price_strikeout = parse_float(self.price_strikeout_text) unless self.price_strikeout_text.nil?
+    self.price_strikeout = parse_float(self.price_strikeout_text) unless self.price_strikeout_text.blank?
   end
   
   def parse_available
