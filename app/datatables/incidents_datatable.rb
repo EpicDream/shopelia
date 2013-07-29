@@ -1,5 +1,5 @@
 class IncidentsDatatable
-  delegate :params, :h, :link_to, :button_to, :time_ago_in_words, :incident_severity_to_html, :admin_incident_path, to: :@view
+  delegate :params, :h, :link_to, :button_to, :time_ago_in_words, :incident_severity_to_html, :admin_incident_path, :truncate, to: :@view
 
   def initialize(view)
     @view = view
@@ -18,13 +18,13 @@ class IncidentsDatatable
 
   def data
     incidents.map do |incident|
+      res_url = incident.resource_type == 'Product' ? Product.find(incident.resource_id).try(:url) : ""
       [
         incident.issue,
         incident_severity_to_html(incident.severity),
         incident.description,
         time_ago_in_words(incident.created_at),
-        incident.resource_type,
-        incident.resource_id,
+        res_url.blank? ? "" : link_to(truncate(res_url, :length => 50), res_url),
         "<button type=\"button\" class=\"btn btn-danger\" data-loading-text=\"Please wait...\" data-update-url=\"#{admin_incident_path(incident)}\" style=\"visibility:hidden\">Mark as processed</button>"
       ]
     end
