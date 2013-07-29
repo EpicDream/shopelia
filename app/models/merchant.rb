@@ -1,4 +1,6 @@
 class Merchant < ActiveRecord::Base
+  audited
+
   has_many :products, :dependent => :destroy
   has_many :orders
 
