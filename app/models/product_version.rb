@@ -73,7 +73,9 @@ class ProductVersion < ActiveRecord::Base
   
   def parse_available
     a = self.availability_text.unaccent.downcase
-    if a =~ /out of stock/ || a =~ /aucun vendeur ne propose ce produit/
+    if a =~ /out of stock/ || \
+       a =~ /aucun vendeur ne propose ce produit/ || \
+       a =~ /en rupture de stock/
       result = false
     elsif a =~ /en stock/ || a=~ /^\(\d+\)$/ || a=~ /habituellement expedie/
       result = true

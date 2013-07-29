@@ -92,7 +92,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
   
   test "it should set available info" do
-    array = ["Aucun vendeur ne propose ce produit", "out of stock"]
+    array = ["Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock"]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
