@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130725193413) do
+ActiveRecord::Schema.define(:version => 20130729133734) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -151,9 +151,9 @@ ActiveRecord::Schema.define(:version => 20130725193413) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.text     "message",                       :limit => 255
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -175,6 +175,7 @@ ActiveRecord::Schema.define(:version => 20130725193413) do
     t.integer  "mangopay_contribution_id"
     t.string   "mangopay_contribution_status"
     t.integer  "mangopay_contribution_amount"
+    t.string   "payment_solution"
     t.string   "billing_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
@@ -217,20 +218,23 @@ ActiveRecord::Schema.define(:version => 20130725193413) do
     t.boolean  "available"
     t.text     "image_url"
     t.string   "brand"
+    t.string   "reference"
+    t.text     "images"
   end
 
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url"
+    t.text     "url",                 :limit => 255
     t.string   "image_url"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
     t.datetime "versions_expires_at"
     t.boolean  "viking_failure"
+    t.string   "reference"
   end
 
   create_table "states", :force => true do |t|

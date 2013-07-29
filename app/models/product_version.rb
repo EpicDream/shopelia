@@ -5,15 +5,31 @@ class ProductVersion < ActiveRecord::Base
   
   attr_accessible :description, :size, :color, :price, :price_shipping
   attr_accessible :price_strikeout, :product_id, :shipping_info, :available
-  attr_accessible :image_url, :brand, :name, :availability
-  attr_accessor :availability, :price, :price_shipping, :price_strikeout
+  attr_accessible :image_url, :brand, :name, :availability, :reference
+  attr_accessible :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
+  attr_accessor :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
   
   before_validation :parse_price
   before_validation :parse_price_shipping
   before_validation :parse_price_strikeout
   before_validation :parse_available
   before_validation :crop_shipping_info
-  
+  before_validation :sanitize_description
+
+  SANITIZED_CONFIG = {
+    :elements => %w[
+      b blockquote br dd dl
+      dt em h1 h2 h3 h4 h5 h6 i li
+      ol p pre strike strong table tbody td
+      tfoot th thead tr u ul
+    ],
+
+    :attributes => {
+      'td'         => ['colspan', 'rowspan'],
+      'th'         => ['colspan', 'rowspan']
+    }
+  }  
+
   private
 
   def parse_float str
@@ -49,26 +65,36 @@ class ProductVersion < ActiveRecord::Base
   end
 
   def parse_price
-    self.price = parse_float(self.price.to_s) unless self.price.nil?
+    self.price = parse_float(self.price_text) unless self.price_text.nil?
   end
 
   def parse_price_shipping
-    self.price_shipping = parse_float(self.price_shipping.to_s) unless self.price_shipping.nil?
+    self.price_shipping = parse_float(self.price_shipping_text) unless self.price_shipping_text.nil?
   end
   
   def parse_price_strikeout
-    self.price_strikeout = parse_float(self.price_strikeout.to_s) unless self.price_strikeout.nil?
+    self.price_strikeout = parse_float(self.price_strikeout_text) unless self.price_strikeout_text.nil?
   end
   
   def parse_available
-    return if self.availability.nil?
+    return if self.availability_text.nil?
     result = true
-    a = self.availability.unaccent.downcase
+    a = self.availability_text.unaccent.downcase
     if a =~ /out of stock/
       result = false
     end
     self.available = result
     true
+  end
+  
+  def sanitize_description
+    return if self.description.nil?
+    doc = Nokogiri::HTML(self.description)
+    doc.search('style').each { |node| node.remove }
+
+    html = Sanitize.clean(doc.to_s, SANITIZED_CONFIG).gsub(/[\n\s]+/, " ").strip
+
+    self.description = html
   end
    
 end
