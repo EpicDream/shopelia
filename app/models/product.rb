@@ -61,7 +61,6 @@ class Product < ActiveRecord::Base
     if self.merchant_id.nil? && self.url.present?
       merchant = Merchant.from_url(url)
       if merchant.nil?
-        puts url
         self.errors.add(:base, I18n.t('products.errors.invalid_url', :url => url))
       else
         self.merchant_id = merchant.id
