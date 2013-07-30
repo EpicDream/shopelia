@@ -20,7 +20,7 @@ class VikingDatatable
     products.map do |product|
       [
         link_to(truncate(product.url, :length => 50), product.url),
-        viking_failure_tags(product.product_versions.first),
+        viking_failure_tags(product),
         time_ago_in_words(product.updated_at)
       ]
     end
