@@ -14,6 +14,7 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal @product.id, hash[:product][:id]
     assert_equal @product.name, hash[:product][:name]
     assert_equal @product.brand, hash[:product][:brand]
+    assert_equal @product.reference, hash[:product][:reference]
     assert_equal @product.url, hash[:product][:url]
     assert_equal @product.image_url, hash[:product][:image_url]
     assert_equal @product.description, hash[:product][:description]

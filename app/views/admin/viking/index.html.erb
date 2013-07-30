@@ -1,0 +1,48 @@
+<div class="row">
+  <div class="span6">
+    <h2>Viking performance</h2>
+    <div class="span10">
+      Viking success rate for the last 24 hours is <strong><%= sprintf("%.2f", @performance) %>%</strong>
+      <div class="progress">
+        <div class="bar" style="width: <%= @performance.to_i %>%;"></div>
+      </div>
+      Total products processed : <strong><%= @total %></strong>
+    </div>
+  </div>
+  <div class="span6">
+    <h2>Viking success per merchant</h2>
+    <table class="table">
+      <tbody>
+<% @merchant_stats.each do |s| %>
+        <tr>
+          <td width="20%"><%= s[:name] %></td>
+          <td width="70%">
+            <div class="progress">
+              <div class="bar" style="width: <%= s[:rate].to_i %>%;"></div>
+            </div>
+          </td>
+          <td width="10%"><strong><%= s[:total].to_i %></strong></td>
+         </tr>
+<% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<p>&nbsp;<p>
+
+<div class="row">
+  <div class="span12">
+    <h2>Viking failures list</h2>
+    <table id="vikings" class="table table-striped" data-source="<%= admin_viking_index_url(format: 'json') %>">
+      <thead>
+        <tr>
+          <th>Product URL</th>
+          <th>Missing data</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+  </div>
+</div>

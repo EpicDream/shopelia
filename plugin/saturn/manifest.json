@@ -1,0 +1,28 @@
+{
+  "name": "Saturn",
+  "version": "0.3.0",
+  "manifest_version": 2,
+
+  "description": "Extrateur de donnée produit.",
+  "icons": {
+    "48": "img/saturn48.png",
+    "128": "img/saturn128.png"
+  },
+  // "default_locale": "fr",
+
+  "browser_action": {
+    "default_title": "Active Saturn",
+    "default_icon": "img/saturn48.png"
+  },
+
+  "background": {
+    "scripts": [
+      "lib/underscore-min.js",
+      "lib/jquery-1.9.1.min.js",
+      "lib/uri.js",
+      "controllers/background.js"
+    ]
+  },
+
+  "permissions": ["tabs", "cookies", "*://*/*"]
+}

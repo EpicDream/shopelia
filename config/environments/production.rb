@@ -23,7 +23,8 @@ Shopelia::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = false
 
-  config.assets.precompile += %w( admin/users.js admin/orders.js admin/orders.css admin/users.css )
+  config.assets.precompile += %w( admin/users.js  admin/orders.js   admin/developers.js  admin/incidents.js  admin/viking.js  )
+  config.assets.precompile += %w( admin/users.css admin/orders.css  admin/developers.css admin/incidents.css admin/viking.css )
 
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH
