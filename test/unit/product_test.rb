@@ -226,23 +226,27 @@ class ProductTest < ActiveSupport::TestCase
 
   test "it shouldn't set viking_failure if availability is false and prices are missing" do
     product = products(:usbkey)
+    
     product.update_attributes(versions:[
       { availability:"out of stock",
-        brand: "brand",
         description: "description",
         image_url: "http://www.amazon.fr/image.jpg",
         name: "name"
       }]);
-
     assert !product.viking_failure
 
     product.update_attributes(versions:[
       { availability:"out of stock",
-        brand: "brand",
         description: "description",
         name: "name"
       }]);
+    assert product.viking_failure
 
+    product.update_attributes(versions:[
+      { description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name"
+      }]);
     assert product.viking_failure
   end  
 
