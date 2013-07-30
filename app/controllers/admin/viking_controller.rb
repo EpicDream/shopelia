@@ -16,7 +16,7 @@ class Admin::VikingController < Admin::AdminController
       hash = {}
       hash[:name] = m[0]
       hash[:total] = m[1][false].to_f + m[1][true].to_f
-      hash[:rate] = m[1][false].to_f*100 / hash[:total]
+      hash[:rate] = hash[:total] > 0 ? m[1][false].to_f*100 / hash[:total] : 0
       stats << hash
     end
     

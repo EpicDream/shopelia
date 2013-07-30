@@ -31,6 +31,9 @@ Shopelia::Application.routes.draw do
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
     resources :viking, :only => :index
+    resources :products do
+      get :retry, :on => :member
+    end
   end
   
   namespace :zen do

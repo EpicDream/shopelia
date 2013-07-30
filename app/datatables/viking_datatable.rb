@@ -1,5 +1,5 @@
 class VikingDatatable
-  delegate :params, :h, :link_to, :time_ago_in_words, :truncate, :viking_failure_tags, to: :@view
+  delegate :params, :h, :link_to, :time_ago_in_words, :truncate, :viking_failure_tags, :retry_admin_product_path, to: :@view
 
   def initialize(view)
     @view = view
@@ -20,8 +20,10 @@ class VikingDatatable
     products.map do |product|
       [
         link_to(truncate(product.url, :length => 50), product.url),
+        product.id,
         viking_failure_tags(product),
-        time_ago_in_words(product.updated_at)
+        time_ago_in_words(product.updated_at),
+        "<button type=\"button\" class=\"btn btn-success\" data-loading-text=\"...\" data-retry-url=\"#{retry_admin_product_path(product)}\" style=\"visibility:hidden\">Retry</button>"
       ]
     end
   end

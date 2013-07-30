@@ -16,7 +16,7 @@ class Product < ActiveRecord::Base
   
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
-  attr_accessible :brand, :reference
+  attr_accessible :brand, :reference, :viking_failure
   attr_accessor :versions
   
   scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ?", Time.now, 6.hours.ago, 12.hours.ago) }
