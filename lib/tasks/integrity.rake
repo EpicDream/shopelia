@@ -13,7 +13,7 @@ namespace :shopelia do
       end
     end
     
-    desc "Verify integrity of Viking extraction for descriptions" do
+    desc "Verify integrity of Viking extraction for descriptions" 
     task :viking => :environment do
       stats = {}
       Product.where("updated_at > ? and viking_failure='f'", 1.day.ago).each do |product|
