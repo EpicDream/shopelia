@@ -1,10 +1,9 @@
-class Shopelia.Views.Loading extends Backbone.View
+class Shopelia.Views.Loading extends Shopelia.Views.ShopeliaView
   template: JST['loading']
   className: "loader"
 
   initialize:  ->
-    _.bindAll this
-    @parent = @options.parent
+    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
 
 
   render: ->

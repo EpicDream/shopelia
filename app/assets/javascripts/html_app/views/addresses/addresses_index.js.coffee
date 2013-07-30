@@ -7,7 +7,7 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
     "change input[name='address1']": "eraseAddressFields"
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.Form.prototype.initialize.call(this)
 
   render: ->
     $(@el).html(@template())

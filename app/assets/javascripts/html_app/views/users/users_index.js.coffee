@@ -6,19 +6,20 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
     "click #btn-register-user": "createUser"
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.Form.prototype.initialize.call(this)
 
 
 
   render: ->
     $(@el).html(@template())
     Tracker.onDisplay('Sign Up');
-    #console.log(@options.product)
-    @addressView =  new Shopelia.Views.AddressesIndex()
+    #console.log(@getProduct())
+    @addressView =  new Shopelia.Views.AddressesIndex(parent: this)
     @$("#btn-register-user").before(@addressView.render().el)
-    @paymentCardView =  new Shopelia.Views.PaymentCardsIndex()
+    @paymentCardView =  new Shopelia.Views.PaymentCardsIndex(parent: this)
     $(@addressView.render().el).after(@paymentCardView.render().el)
     @setFormVariables()
+    @parent.setHeaderLink("Déjà membre ?",@onActionClick)
     Shopelia.Views.Form.prototype.render.call(this)
     this
 
@@ -45,7 +46,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
-             that.parent.setContentView(new Shopelia.Views.SignIn(session: that.options.session,product: that.options.product,email:email))
+             that.parent.setContentView(new Shopelia.Views.SignIn(email:email))
            error: (jqXHR,textStatus,errorThrown) ->
              #console.log("user dosn't exist")
              #console.log(JSON.stringify(errorThrown))
@@ -59,7 +60,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
       eraseErrors()
       e.preventDefault()
       that = this
-      session = @options.session
+      session = @getSession()
       session.on("invalid", (model, errors) ->
          displayErrors(errors)
       )
@@ -78,7 +79,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
                                   #console.log("response user save: " + JSON.stringify(resp))
                                   session.saveCookies(resp)
                                   that.parent.addPasswordView()
-                                  that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: resp,product: that.options.product))
+                                  that.parent.setContentView(new Shopelia.Views.OrdersIndex(parent: that))
                                 error : (model, response) ->
                                   #console.log(JSON.stringify(response))
                                   enableButton($("#btn-register-user"))
@@ -110,9 +111,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
     #console.log loginFormObject
     loginFormObject
 
-  InitializeActionButton: (element) ->
-    element.text("Déjà membre ?")
-
   onActionClick: (e) ->
-    @parent.setContentView(new Shopelia.Views.SignIn(session: @options.session ,product: @options.product,email: @email.val()))
+    #console.log("users index action click")
+    @parent.setContentView(new Shopelia.Views.SignIn(email: @email.val()))
 

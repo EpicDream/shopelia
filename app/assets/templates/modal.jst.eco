@@ -11,9 +11,4 @@
          <div id='modal-right-top'></div>
      </div>
 </div>
-
-<div id='modal-footer'>
-    <div class="spacer15"></div>
-    <button id='btn-hide-product-infos' class='custom-btn offset2'>Continuer Mon Achat Sur Shopelia</button>
-</div>
 <a id="close">x</a>

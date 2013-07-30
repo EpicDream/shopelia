@@ -1,4 +1,4 @@
-class Shopelia.Views.Modal extends Backbone.View
+class Shopelia.Views.Modal extends Shopelia.Views.ShopeliaView
 
   template: JST['modal']
   id: 'modal'
@@ -6,10 +6,10 @@ class Shopelia.Views.Modal extends Backbone.View
 
   events:
     'click #close': 'close'
-    'click #link-header': 'onActionClick'
 
   initialize: ->
-    _.bindAll this
+    #console.log(Shopelia.Views.ShopeliaView)
+    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
     messageListener = (e) ->
       #console.log("set shopelia parent host")
       window.shopeliaParentHost = e.origin
@@ -38,8 +38,8 @@ class Shopelia.Views.Modal extends Backbone.View
     this
 
   open: (settings) ->
-    @productView = new Shopelia.Views.ProductsIndex(model:@options.product)
-    view = new Shopelia.Views.UsersIndex(product: @options.product)
+    @productView = new Shopelia.Views.ProductsIndex(model:@getProduct(),parent:this)
+    view = new Shopelia.Views.UsersIndex(parent:this)
     @$('#modal-left').append(@productView.render().el)
     @setContentView(view)
 
@@ -52,30 +52,22 @@ class Shopelia.Views.Modal extends Backbone.View
                     top.postMessage("deleteIframe",window.shopeliaParentHost)
                    })
 
-
-
-
-  onActionClick: (e)->
-    @contentView.onActionClick(e)
-
-
   setContentView: (backboneView) ->
-    if @contentView isnt undefined
-      @contentView.parent = undefined
     @contentView = backboneView
     @contentView.parent = this
     el = @contentView.render().el
     $(el).fadeIn(500)
     @$('#modal-right-top').html(el)
-    if @contentView.InitializeActionButton != undefined
-      @$("#link-header").show()
-      @contentView.InitializeActionButton(@$("#link-header"))
-    else
-      @$("#link-header").hide()
     center($(window),$("#modal"))
 
+  setHeaderLink: (text,target) ->
+    $("#link-header").text(text)
+    $("#link-header").unbind("click")
+    $("#link-header").click ->
+      target()
 
+  #ToREFACTO
   addPasswordView : ->
-    passwordView = new Shopelia.Views.NewPassword()
+    passwordView = new Shopelia.Views.NewPassword(parent:this)
     @$('#modal-right').append(passwordView.render().el)
     $(passwordView.render().el).hide()

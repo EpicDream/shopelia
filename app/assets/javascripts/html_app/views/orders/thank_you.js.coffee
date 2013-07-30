@@ -1,10 +1,10 @@
-class Shopelia.Views.ThankYou extends Backbone.View
+class Shopelia.Views.ThankYou extends Shopelia.Views.ShopeliaView
 
   template: JST['orders/thank_you']
   className: 'box'
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
 
 
   render: ->

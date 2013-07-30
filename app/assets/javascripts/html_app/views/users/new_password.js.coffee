@@ -7,7 +7,7 @@ class Shopelia.Views.NewPassword extends Shopelia.Views.Form
     "click button": "setNewPassword"
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.Form.prototype.initialize.call(this)
 
   render: ->
     $(@el).html(@template())

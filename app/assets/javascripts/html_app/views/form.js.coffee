@@ -1,6 +1,10 @@
-class Shopelia.Views.Form extends Backbone.View
+class Shopelia.Views.Form extends Shopelia.Views.ShopeliaView
+
+  initialize: ->
+    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
 
   render: ->
+    that = this
     @$('form :input').each(() ->
       $(this).focusout(() ->
         if $(this).attr('tracker-name') != undefined &&  $(this).parsley('validate')
@@ -56,7 +60,7 @@ class Shopelia.Views.Form extends Backbone.View
 
     @$('form :button').after(
       () ->
-        securityView = new Shopelia.Views.Security()
+        securityView = new Shopelia.Views.Security(parent: that)
         $(securityView.render().el)
     )
     this

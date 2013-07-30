@@ -11,13 +11,12 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
 
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.Form.prototype.initialize.call(this)
 
 
   render: ->
     $(@el).html(@template())
-    if @options.session is undefined
-      @$('#btn-register-payment').remove()
+    @$('#btn-register-payment').remove()
     @setCardFormVariables()
     Shopelia.Views.Form.prototype.render.call(this)
     this
@@ -47,11 +46,11 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
 
       card.save(cardJson,{
                           beforeSend : (xhr) ->
-                            xhr.setRequestHeader("X-Shopelia-AuthToken",that.options.session.get("auth_token"))
+                            xhr.setRequestHeader("X-Shopelia-AuthToken",that.getSession().get("auth_token"))
                           success : (resp) ->
                             #console.log('card success callback')
-                            that.options.session.get("user").payment_cards.push(resp.disableWrapping().toJSON())
-                            that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: that.options.session,product: that.options.product))
+                            that.getSession().get("user").payment_cards.push(resp.disableWrapping().toJSON())
+                            that.parent.setContentView(new Shopelia.Views.OrdersIndex())
                           error : (model, response) ->
                             #console.log('card error callback')
                             enableButton($("#btn-register-payment"))
@@ -79,8 +78,8 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
     "exp_year": year,
     "cvv": cvv
     }
-    if @options.session isnt undefined
-      userId = @options.session.get("user").id
+    if @getSession().authenticated()
+      userId = @getSession().get("user").id
       cardFormObject["user_id"] =  userId
     cardFormObject
 

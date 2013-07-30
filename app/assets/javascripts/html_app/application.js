@@ -23,6 +23,7 @@
 //= require html_app/shopelia
 //= require_tree ../../templates
 //= require_tree ./models
+//= require ./views/shopelia_view
 //= require ./views/form
 //= require_tree ./views
 //= require_tree ./routers

@@ -1,14 +1,15 @@
-class Shopelia.Views.Description extends Backbone.View
+class Shopelia.Views.Description extends Shopelia.Views.ShopeliaView
 
   template: JST['products/description']
   className: 'full-description'
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
+
 
   render: ->
     $(@el).html(@template(model: @model))
-    console.log("description view")
-    console.log(@options)
+    #console.log("description view")
+    #console.log(@options)
     $(@el).append(@model.get("description"))
     this

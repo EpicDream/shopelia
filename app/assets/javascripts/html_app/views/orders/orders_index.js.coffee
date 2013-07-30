@@ -1,4 +1,4 @@
-class Shopelia.Views.OrdersIndex extends Backbone.View
+class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
 
   template: JST['orders/index']
   className: 'box'
@@ -6,13 +6,13 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     "click #process-order": "processOrder"
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
     #@user = {"id":136,"email":"kf@glb.com","first_name":"lef","last_name":"pefh","addresses":[{"id":111,"address1":"4 Rue Chapon","address2":"","zip":"75003","city":"Paris","country":"FR","is_default":1,"phone":"0675198943"}],"payment_cards":[{"id":51,"number":"12XXXXXXXXXX3452","name":null,"exp_month":"11","exp_year":"2013"}],"has_pincode":0,"has_password":0}
     #@authToken = "34456666"
-    @user = @options.session.get("user")
-    @authToken = @options.session.get("auth_token")
+    @user = @getSession().get("user")
+    @authToken = @getSession().get("auth_token")
     #console.log("initialize processOrder View: ")
-    @product = @options.product
+    @product = @getProduct()
     @expected_price_product = @product.get('expected_price_product')
     @expected_price_shipping = @product.get('expected_price_shipping')
     #console.log(@expected_price_product)
@@ -20,10 +20,11 @@ class Shopelia.Views.OrdersIndex extends Backbone.View
     @expected_price_total = customParseFloat(parseFloat(@expected_price_product) + parseFloat(@expected_price_shipping))
 
   render: ->
+    that = this
     $(@el).html(@template(user: @user, product: @product, expected_price_total: @expected_price_total))
     @$("#process-order").after(
       () ->
-        securityView = new Shopelia.Views.Security()
+        securityView = new Shopelia.Views.Security(parent:that)
         $(securityView.render().el)
     )
     Tracker.onDisplay('Confirmation');

@@ -2,7 +2,7 @@ class Shopelia.Models.Product extends Backbone.Model
   name: "product"
 
   longPolling: false
-  intervalSeconds: 0.1
+  intervalSeconds: 1
 
   validate: (attrs, options) ->
     if attrs.shipping_info is undefined or attrs.shipping_info == ""
@@ -19,7 +19,7 @@ class Shopelia.Models.Product extends Backbone.Model
 
 
   initialize: (params) ->
-    console.log('Initializing Product with params')
+    #console.log('Initializing Product with params')
     _.bindAll(this, "startLongPolling", "stopLongPolling","onComplete")
     if this.isValid()
       @getMerchant()
@@ -34,7 +34,7 @@ class Shopelia.Models.Product extends Backbone.Model
     @getProduct()
 
   stopLongPolling: ->
-    console.log("stop polling")
+    #console.log("stop polling")
     @longPolling = false
 
   onComplete: ->
@@ -57,7 +57,7 @@ class Shopelia.Models.Product extends Backbone.Model
                       merchant_name:data.merchant.name,
                       allow_iframe: data.merchant.allow_iframe,
                       })
-             console.log(that.description)
+             #console.log(that.description)
              $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
            error: (jqXHR,textStatus,errorThrown) ->
              #console.log('error merchant callback')
@@ -78,8 +78,8 @@ class Shopelia.Models.Product extends Backbone.Model
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
              that.begin_time_request = new Date().getTime();
            success: (data,textStatus,jqXHR) ->
-             console.log("success retrieving product")
-             console.log(data)
+             #console.log("success retrieving product")
+             #console.log(data)
              that.set({
                       name: data.name,
                       image_url: data.image_url,
@@ -102,7 +102,7 @@ class Shopelia.Models.Product extends Backbone.Model
 
   foundProduct: ->
     if @redirectTime < 1000 * @intervalSeconds
-      console.log("found" +  this.isValid())
+      #console.log("found" +  this.isValid())
       if @isValid()
         @stopLongPolling()
         @set({
@@ -113,7 +113,7 @@ class Shopelia.Models.Product extends Backbone.Model
         @redirectTime += requestTime
         @onComplete()
     else
-      console.log("redirect")
+      #console.log("redirect")
       @set({
             found: false
           })

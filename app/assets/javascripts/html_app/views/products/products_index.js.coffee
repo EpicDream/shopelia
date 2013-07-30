@@ -1,4 +1,4 @@
-class Shopelia.Views.ProductsIndex extends Backbone.View
+class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
 
   template: JST['products/index']
   className: 'product box'
@@ -8,12 +8,9 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
     "click #full-description": "showDescription"
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
     @iframe = @createIframe()
     @model.on('change', @render, @)
-    $(@el).on('resize.product',() ->
-      child_el.centerLoader()
-    )
     view = new Shopelia.Views.Loading(parent: this)
     child_el = view.render().el
     $(@el).append(child_el)
@@ -28,11 +25,11 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
       @model.set('expected_price_shipping',expected_price_shipping)
       $(@el).html(@template(model: @model, merchant: @merchant))
       $('.description-content').append(@model.get('description'))
-      descriptionView = new Shopelia.Views.Description(model: @model)
+      descriptionView = new Shopelia.Views.Description(model: @model,parent: this)
       @description = $(descriptionView.render().el)
       this
     else if @model.get('found') isnt undefined and @model.get('found') is false
-      view = new Shopelia.Views.NotFound(model:@model)
+      view = new Shopelia.Views.NotFound(model:@model,parent: this)
       $(@el).html(view.render().el)
     else
       $(@el).html()
@@ -60,9 +57,9 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
 
   showProductInfos: ->
-    console.log("Show Product Infos")
+    #console.log("Show Product Infos")
     Tracker.onClick('Product Informations')
-    console.log(@model.get('allow_iframe'))
+    #console.log(@model.get('allow_iframe'))
     if @model.get('allow_iframe') == 0 or Shopelia.Adblock
       window.open(@model.get('url'))
     else
@@ -72,7 +69,6 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
       $iframe.animate({height:'550px'}, "slow")
       $("#modal-content").animate({height:'65px',opacity:0},"slow", () ->
         $(this).hide()
-        $("#modal-footer").show()
         $("#btn-hide-product-infos").click ->
           that.close(that.iframe)
       )
@@ -82,21 +78,17 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
   close: ($element) ->
     $element.animate({height:'0'}, "slow", () ->
       $(this).remove()
-      $("#modal-footer").fadeOut("slow", () ->
-        $("#modal-content").fadeIn("fast").animate({height:'100%',opacity:1},"slow")
-      )
-
+      $("#modal-content").fadeIn("fast").animate({height:'100%',opacity:1},"slow")
     )
 
   showDescription: ->
-    console.log("Show Product Infos")
+    #console.log("Show Product Infos")
     Tracker.onClick('Product Description')
     $("#modal-header").after(@description)
     that = this
     @description.animate({height:'100%'}, "slow")
     $("#modal-content").animate({height:'65px',opacity:0},"slow", () ->
       $(this).hide()
-      $("#modal-footer").show()
       $("#btn-hide-product-infos").click ->
         that.close(that.description)
     )

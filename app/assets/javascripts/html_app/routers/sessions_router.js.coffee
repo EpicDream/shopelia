@@ -18,7 +18,7 @@ class Shopelia.Routers.Sessions extends Backbone.Router
     @product = new Shopelia.Models.Product(params)
     @session = new Shopelia.Models.Session()
     @modal = @showModal()
-    console.log("check")
+    #console.log("check")
     if @session.authenticated()
       #console.log("authenticated")
       #console.log(@session)
@@ -31,17 +31,17 @@ class Shopelia.Routers.Sessions extends Backbone.Router
                     success : (resp) ->
                       #console.log("fetched user success callback: " + JSON.stringify(resp.disableWrapping()))
                       that.session.updateUserCookies(resp.disableWrapping())
-                      that.modal.setContentView(new Shopelia.Views.SignIn(session: that.session ,product: that.product, email: that.session.get("user").get('email')))
+                      that.modal.setContentView(new Shopelia.Views.SignIn(email: that.session.get("user").get('email')))
                       center($(window),$("#modal"))
                     error : (model, response) ->
                         that.session.deleteCookies()
                     })
     else
-      @modal.setContentView(new Shopelia.Views.UsersIndex(session: @session,product: @product))
+      @modal.setContentView(new Shopelia.Views.UsersIndex())
       center($(window),$("#modal"))
 
   showModal: ->
-    view = new Shopelia.Views.Modal(product: @product)
+    view = new Shopelia.Views.Modal(session: @session,product: @product)
     $('#container').append(view.render().el)
     center($(window),$("#modal"))
     view

@@ -6,13 +6,14 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     "click #btn-login-user": "loginUser"
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.Form.prototype.initialize.call(this)
 
 
   render: ->
     $(@el).html(@template())
     Tracker.onDisplay('Sign In');
     @setFormVariables()
+    @parent.setHeaderLink("Première Commande ?",@onActionClick)
     Shopelia.Views.Form.prototype.render.call(this)
     this
 
@@ -30,7 +31,7 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
       eraseErrors()
       e.preventDefault()
       that = this
-      session = @options.session
+      session = @getSession()
       session.on("invalid", (model, errors) ->
         displayErrors(errors)
       )
@@ -41,7 +42,7 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
           #console.log("response login success: " + JSON.stringify(resp))
           session.set(resp)
           session.saveCookies(session)
-          that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: that.options.session,product: that.options.product))
+          that.parent.setContentView(new Shopelia.Views.OrdersIndex(parent:that))
         error : (response) ->
           #console.log("callback error login")
           enableButton($("#btn-login-user"))
@@ -61,8 +62,7 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     #console.log loginFormObject
     loginFormObject
 
-  InitializeActionButton: (element) ->
-    element.text("Première Commande ?")
-
   onActionClick: (e) ->
-    @parent.setContentView(new Shopelia.Views.UsersIndex(session: @options.session,product: @options.product,email:@email.val() ))
+    #console.log("sign in action click")
+    #console.log(@parent)
+    @parent.setContentView(new Shopelia.Views.UsersIndex(email:@email.val()))
