@@ -71,30 +71,45 @@ function crawl(mapping) {
   for (var i in textFields) {
     var key = textFields[i];
     if (! mapping[key]) continue;
-    var path = mapping[key].path;
-    if (! path) continue;
-    var e = $(path);
-    if (e.length == 0) continue;
-    if (key != 'description')
-      option[key] = e.text().replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
-    else
-      option[key] = e.html().replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n");
-
+    if (mapping[key].default_value)
+      option[key] = mapping[key].default_value;
+    var pathes = mapping[key].path;
+    if (! pathes) continue;
+    if (! (pathes instanceof Array))
+      pathes = [pathes];
+    for (var j in pathes) {
+      var path = pathes[j];
+      var e = $(path);
+      if (e.length == 0) continue;
+      if (key != 'description')
+        option[key] = e.text().replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
+      else
+        option[key] = e.html().replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n");
+      break;
+    }
   }
   var imageFields = ['image_url', 'images'];
   for (var i in imageFields) {
     var key = imageFields[i];
     if (! mapping[key]) continue;
-    var path = mapping[key].path;
-    if (! path) continue;
-    var e = $(path);
-    if (e.length == 0) continue;
-    var images = e.add(e.find("img")).filter("img");
-    if (images.length == 0) continue;
-    var values = _.chain(images).map(function(img) {return img.getAttribute("src");}).uniq().value();
-    if (key == 'image_url')
-      values = values[0];
-    option[key] = values;
+    if (mapping[key].default_value)
+      option[key] = mapping[key].default_value;
+    var pathes = mapping[key].path;
+    if (! pathes) continue;
+    if (! (pathes instanceof Array))
+      pathes = [pathes];
+    for (var j in pathes) {
+      var path = pathes[j];
+      var e = $(path);
+      if (e.length == 0) continue;
+      var images = e.add(e.find("img")).filter("img");
+      if (images.length == 0) continue;
+      var values = _.chain(images).map(function(img) {return img.getAttribute("src");}).uniq().value();
+      if (key == 'image_url')
+        values = values[0];
+      option[key] = values;
+      break;
+    }
   }
   return option;
 };

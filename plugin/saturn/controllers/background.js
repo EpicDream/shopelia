@@ -3,15 +3,20 @@
 //                CONSTANT AND GLOBAL VARIABLE
 /////////////////////////////////////////////////////////////////
 
-TEST_ENV = false;
+TEST_ENV = navigator.appVersion.match(/chromium/i) !== null;
+LOCAL_ENV = false;
 
-if (TEST_ENV == true) {
+if (LOCAL_ENV) {
   SHOPELIA_DOMAIN = "http://localhost:3000"
+} else {
+  SHOPELIA_DOMAIN = "http://www.shopelia.fr"
+}
+
+if (LOCAL_ENV && TEST_ENV) {
   MAPPING_SHOPELIA_DOMAIN = SHOPELIA_DOMAIN + "/saturn/mapping/";
   PRODUCT_EXTRACT_SHIFT_URL = SHOPELIA_DOMAIN + "/saturn/products/shift";
   PRODUCT_EXTRACT_UPDATE = SHOPELIA_DOMAIN + "/saturn/options/create";
 } else {
-  SHOPELIA_DOMAIN = "http://www.shopelia.fr"
   PRODUCT_EXTRACT_SHIFT_URL = SHOPELIA_DOMAIN + "/api/viking/products/shift";
   MAPPING_SHOPELIA_DOMAIN = SHOPELIA_DOMAIN + "/api/viking/merchants/";
   PRODUCT_EXTRACT_UPDATE = SHOPELIA_DOMAIN + "/api/viking/products/";
@@ -83,7 +88,7 @@ function start(tabId) {
     console.debug("Get product_url to extract :", hash);
     loadMapping(hash.merchant_id).done(function(mapping) {
       if (mapping.data)
-        hash.mapping = chooseMapping(uri, mapping.data);
+        hash.mapping = buildMapping(uri, mapping.data);
       console.log("mapping choosen", mapping);
       hash.uri = uri;
       initTabVariables(tabId, hash);
@@ -100,7 +105,7 @@ function parseCurrentPage(tab) {
   hash.uri = new Uri(hash.url);
   loadMappingFromUri(hash.uri).done(function(maphash) {
     console.log("mapping-data received :", maphash);
-    hash.mapping = chooseMapping(hash.uri, maphash.data);
+    hash.mapping = buildMapping(hash.uri, maphash.data);
     console.log("mapping choosen", hash.mapping);
     initTabVariables(tab.id, hash);
     chrome.tabs.update(tab.id, {url: hash.url});
@@ -127,18 +132,16 @@ function reask_a_product(tabId, delay) {
   setTimeout(function() { start(tabId) }, delay); // 30s
 };
 
-function chooseMapping(uri, hash) {
+function buildMapping(uri, hash) {
   var host = uri.host();
   console.log("Going to search a mapping for host", host, "between", jQuery.map(hash,function(v, k){return k;}) );
-  if (hash[host])
-    return hash[host];
-  else
-    for (var i in hash) {
-      console.log(i, host.match(i));
-      if (host.match(i) !== null)
-        return hash[i];
-    }
-  return null;
+  var resMapping = {};
+  while (host !== "") {
+    if (hash[host])
+      resMapping = $.extend(true, {}, hash[host], resMapping);
+    host = host.replace(/^\w+(\.|$)/, '');
+  }
+  return resMapping;
 };
 
 function isParsable(url) {
@@ -322,7 +325,7 @@ function finish(tabId) {
     delete data[tabId];
     reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
   }).fail(function(err) {
-    console.error("Fail to send options to serverWhen getting product_url to extract for tab", tabId, ":", err);
+    console.error("Fail to send options to server for tab", tabId, ":", err);
     $e = data[tabId];
     console.log("$e =", $e);
     delete data[tabId];
