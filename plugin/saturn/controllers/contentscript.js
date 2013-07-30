@@ -1,3 +1,4 @@
+DELAY_BETWEEN_COLORS_OR_SIZES = 1000;
 
 function getColors(mapping) {
   if (! mapping.colors)
@@ -26,7 +27,7 @@ function setColor(mapping, color) {
   } else if (e[0].tagName == "SELECT") {
     var option = e.find("option:contains('"+color+"')");
     option[0].selected = true;
-    option.parent().change();
+    option.parent()[0].dispatchEvent(new CustomEvent("change", {"canBubble":false, "cancelable":true}));
   } else {
     e.find("img[src='"+color+"']").eq(0).click();
   }
@@ -40,12 +41,12 @@ function getSizes(mapping) {
   var e = $(path);
   if (e.length == 0)
     return [];
-  else if (e[0].tagName != "SELECT")
-    e = e.find("select");
+
+  e = e[0].tagName == "SELECT" ? e : e.find("select, ul");
   if (e.length == 0)
     return [];
 
-  var options = e.find("option:enabled");
+  var options = e.find("option:enabled, li");
   var sizes = _.chain(options).map(function(opt) {return opt.innerText}).filter(function(size) {return size.match(/choi|choo|s(é|e)lect/i) == null;}).value();
   return sizes;
 };
@@ -56,7 +57,7 @@ function setSize(mapping, size) {
   if (e.length > 0 && e[0].tagName == "SELECT") {
     var option = e.eq(0).find("option:contains('"+size+"')");
     option[0].selected = true;
-    option.parent().change();
+    option.parent()[0].dispatchEvent(new CustomEvent("change", {"canBubble":false, "cancelable":true}));
   } else {
     console.error("Unknow tagname for element", e, "and path", path);
     return false;
@@ -81,9 +82,13 @@ function crawl(mapping) {
       var path = pathes[j];
       var e = $(path);
       if (e.length == 0) continue;
-      if (key != 'description')
-        option[key] = e.text().replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
-      else
+      if (key != 'description') {
+        if (e.length == 1 && e[0].tagName == "IMG")
+          option[key] = [e.attr("alt"), e.attr("title")].join(', ');
+        else
+          option[key] = e.text();
+        option[key] = option[key].replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
+      } else
         option[key] = e.html().replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n");
       break;
     }
@@ -127,14 +132,14 @@ chrome.extension.onMessage.addListener(function(hash, sender, callback) {
       break;
     case "setColor":
       result = setColor(mapping, data);
-      return setTimeout(goNextStep, 500);
+      return setTimeout(goNextStep, DELAY_BETWEEN_COLORS_OR_SIZES);
       break;
     case "getSizes":
       result = getSizes(mapping);
       break;
     case "setSize":
       result = setSize(mapping, data);
-      return setTimeout(goNextStep, 500);
+      return setTimeout(goNextStep, DELAY_BETWEEN_COLORS_OR_SIZES);
       break;
     case "crawl":
       result = crawl(mapping);
