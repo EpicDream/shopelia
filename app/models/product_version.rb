@@ -68,7 +68,7 @@ class ProductVersion < ActiveRecord::Base
 
   def parse_price_shipping
     self.price_shipping = parse_float(self.price_shipping_text)
-    generate_incident "Shipping price too high : #{self.price_shipping_text}" if self.price_shipping.to_f > 100
+    generate_incident "Shipping price too high : #{self.price_shipping_text}" if self.price_shipping.to_f > self.price.to_f * 0.2 && self.price_shipping.to_f > 15
   end
   
   def parse_price_strikeout
@@ -81,6 +81,7 @@ class ProductVersion < ActiveRecord::Base
        a =~ /aucun vendeur ne propose ce produit/ || \
        a =~ /en rupture de stock/ || \
        a =~ /indisponible/ || \
+       a =~ /ce produit est epuise/ || \
        a =~ /sur commande/
       result = false
     elsif a =~ /en stock/ || a=~ /^\(\d+\)$/ || a=~ /expedie sous/
