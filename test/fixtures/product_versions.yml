@@ -9,6 +9,8 @@ usbkey:
   name: "Version"
   available: true
   brand: "Brand"
+  size: "5"
+  color: "blue"
   
 headphones:
   product: headphones

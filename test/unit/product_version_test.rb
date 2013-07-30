@@ -11,6 +11,34 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should create version" do
     assert @version.save, @version.errors.full_messages.join(",")
   end
+  
+  test "it shouldn't allow duplication for sizes and colors" do
+    v = ProductVersion.new(
+      product_id:@product.id,
+      color:"blue",
+      size:"32")
+    assert v.save
+    v = ProductVersion.new(
+      product_id:@product.id,
+      color:"red",
+      size:"32")
+    assert v.save
+    v = ProductVersion.new(
+      product_id:@product.id,
+      color:"red",
+      size:"30")    
+    assert v.save
+    v = ProductVersion.new(
+      product_id:@product.id,
+      color:"blue",
+      size:"32")    
+    assert !v.save
+    v = ProductVersion.new(
+      product_id:products(:headphones).id,
+      color:"blue",
+      size:"32")    
+    assert v.save
+  end
 
   test "it should create version with data" do
     version = ProductVersion.new(
@@ -115,6 +143,11 @@ class ProductVersionTest < ActiveSupport::TestCase
         availability_text:"bla")
       assert version.available
     end
+  end
+  
+  test "it shouldn't be destroyed if related to an order" do
+    assert @version.destroy
+    assert !product_versions(:usbkey).destroy
   end
   
   test "it should sanitize description (1)" do

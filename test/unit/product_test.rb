@@ -178,7 +178,7 @@ class ProductTest < ActiveSupport::TestCase
         shipping_info: "info shipping",
         price_shipping: "3.5",
         color: "blue",
-        size: "4"
+        size: "5"
       }]);
 
      assert_equal "name", product.name
@@ -190,6 +190,41 @@ class ProductTest < ActiveSupport::TestCase
      assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
      assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
      assert product.updated_at > 1.minute.ago
+  end
+  
+  test "it should set previous version as unavailable" do
+    product = products(:usbkey)
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        reference: "reference",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        color: "blue",
+        size: "4"
+      }])
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        reference: "reference",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        color: "red",
+        size: "4"
+      }])
+      
+    assert_equal 3, product.product_versions.count
+    assert_equal [false, true, false].to_set, product.product_versions.map(&:available).to_set
   end
   
   test "it should reset viking_failure if correct version is added" do
@@ -211,7 +246,7 @@ class ProductTest < ActiveSupport::TestCase
   end  
 
   test "it should use availability if shipping info is blank" do
-    product = products(:usbkey)
+    product = products(:headphones)
     product.update_attribute :viking_failure, true
     product.update_attributes(versions:[
       { availability:"in stock",
@@ -229,7 +264,7 @@ class ProductTest < ActiveSupport::TestCase
   end  
 
   test "it shouldn't set viking_failure if availability is false and prices are missing" do
-    product = products(:usbkey)
+    product = products(:headphones)
     
     product.update_attributes(versions:[
       { availability:"out of stock",
@@ -251,7 +286,7 @@ class ProductTest < ActiveSupport::TestCase
   end 
   
   test "it should clear viking_failure when muted" do
-     product = products(:usbkey)
+     product = products(:headphones)
      assert !product.mute?
      
      product.update_attributes(versions:[

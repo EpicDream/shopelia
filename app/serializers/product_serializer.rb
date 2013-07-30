@@ -12,6 +12,6 @@ class ProductSerializer < ActiveModel::Serializer
   end
   
   def versions
-    ActiveModel::ArraySerializer.new(object.product_versions).as_json
+    ActiveModel::ArraySerializer.new(object.product_versions.where(available:true)).as_json
   end
 end

@@ -21,6 +21,12 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal @product.merchant.name, hash[:product][:merchant][:name]
     assert_equal @product.product_master_id, hash[:product][:master_id]
     assert_equal 1, hash[:product][:versions].count
+    
+    product_versions(:usbkey).update_attribute :available, false
+    product_serializer = ProductSerializer.new(@product)
+    hash = product_serializer.as_json
+    
+    assert_equal 0, hash[:product][:versions].count
   end
 
 end

@@ -80,7 +80,7 @@ class Product < ActiveRecord::Base
   
   def create_versions
     if self.versions.present?
-      self.product_versions.destroy_all
+      self.product_versions.update_all "available='f'"
       self.versions.each do |version|
         version[:price_text] = version[:price]
         version[:price_shipping_text] = version[:price_shipping]
@@ -88,9 +88,25 @@ class Product < ActiveRecord::Base
         version[:availability_text] = version[:availability]
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
-        v = ProductVersion.create!(version.merge({product_id:self.id}))
+        v = self.product_versions.find_by_size_and_color(version[:size], version[:color])
+        if v.nil?
+          v = ProductVersion.create!(version.merge({product_id:self.id}))
+        else
+          # reset values
+          v.update_attributes(
+            :price => nil,
+            :price_shipping => nil,
+            :price_strikeout => nil,
+            :description => nil,
+            :image_url => nil,
+            :images => nil,
+            :available => nil,
+            :name => nil,
+            :shipping_info => nil)
+          v.update_attributes version
+        end
       end
-      version = self.reload.product_versions.first
+      version = self.reload.product_versions.order("updated_at").first
       self.update_column "name", version.name
       self.update_column "brand", version.brand
       self.update_column "reference", version.reference
@@ -101,7 +117,7 @@ class Product < ActiveRecord::Base
       self.assess_versions
       self.reload
     elsif self.product_versions.empty?
-      ProductVersion.create(product_id:self.id)
+      ProductVersion.create!(product_id:self.id,available:false)
     end
   end
   
