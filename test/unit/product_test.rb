@@ -233,7 +233,6 @@ class ProductTest < ActiveSupport::TestCase
     
     product.update_attributes(versions:[
       { availability:"out of stock",
-        description: "description",
         image_url: "http://www.amazon.fr/image.jpg",
         name: "name"
       }]);
@@ -241,15 +240,12 @@ class ProductTest < ActiveSupport::TestCase
 
     product.update_attributes(versions:[
       { availability:"out of stock",
-        description: "description",
-        name: "name"
       }]);
     assert product.viking_failure
 
     product.update_attributes(versions:[
-      { description: "description",
+      { name: "name",
         image_url: "http://www.amazon.fr/image.jpg",
-        name: "name"
       }]);
     assert product.viking_failure
   end 
@@ -260,7 +256,6 @@ class ProductTest < ActiveSupport::TestCase
      
      product.update_attributes(versions:[
       { availability:"out of stock",
-        description: "description",
         name: "name"
       }]);
      assert product.viking_failure

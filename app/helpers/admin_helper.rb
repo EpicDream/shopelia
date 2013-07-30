@@ -11,7 +11,7 @@ module AdminHelper
     elsif s == Incident::IMPORTANT 
       '<span class="label label-warning">Important</span>'
     elsif s == Incident::CRITICAL 
-      '<span class="label label-danger">Critical</span>'
+      '<span class="label label-important">Critical</span>'
     end
   end
   
