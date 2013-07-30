@@ -49,6 +49,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     if @versions.blank?
       @product.update_column "viking_failure", true
       @product.update_column "versions_expires_at", Product.versions_expiration_date
+      @product.update_column "updated_at", Time.now
       head :no_content
     elsif @product.update_attribute :versions, @versions
       head :no_content
