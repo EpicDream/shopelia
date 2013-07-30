@@ -2,8 +2,8 @@ class Admin::VikingController < Admin::AdminController
 
   def index
     result = Product.where("updated_at > ?", 1.day.ago).group(:viking_failure).count
-    @total = result[false].to_i + result[:true].to_i
-    @performance = @total > 0 ? result[false].to_f * 100 / (result[:false].to_f + result[true].to_f) : 0
+    @total = result[false].to_i + result[true].to_i
+    @performance = @total > 0 ? result[false].to_f * 100 / (result[false].to_f + result[true].to_f) : 0
     
     merchants = {}
     Product.where("products.updated_at > ?", 1.day.ago).joins(:merchant).group("merchants.name,products.viking_failure").select("count(*) as count,merchants.name,products.viking_failure").each do |s|
