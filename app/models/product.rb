@@ -13,13 +13,14 @@ class Product < ActiveRecord::Base
   before_validation :create_product_master
   before_save :truncate_name
   after_save :create_versions
+  after_save :clear_failure_if_mute, :if => Proc.new { |product| product.mute? }
   
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
-  attr_accessible :brand, :reference, :viking_failure
+  attr_accessible :brand, :reference, :viking_failure, :muted_until
   attr_accessor :versions
   
-  scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ?", Time.now, 6.hours.ago, 12.hours.ago) }
+  scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and (muted_until is null or muted_until < ?)", Time.now, 6.hours.ago, 12.hours.ago, Time.now) }
   scope :viking_failure, lambda { where(viking_failure:true).order("updated_at desc").limit(100) }
   
   def self.fetch url
@@ -36,6 +37,10 @@ class Product < ActiveRecord::Base
   
   def self.versions_expiration_date
     4.hours.from_now
+  end
+  
+  def mute?
+    self.muted_until.present? && self.muted_until > Time.now
   end
   
   def assess_versions
@@ -107,6 +112,11 @@ class Product < ActiveRecord::Base
   
   def set_viking_failure
     self.viking_failure = false if self.viking_failure.nil?
+  end
+  
+  def clear_failure_if_mute
+    self.update_column "viking_failure", false
+    self.update_column "versions_expires_at", nil
   end
   
 end

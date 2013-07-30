@@ -33,6 +33,7 @@ Shopelia::Application.routes.draw do
     resources :viking, :only => :index
     resources :products do
       get :retry, :on => :member
+      get :mute, :on => :member
     end
   end
   

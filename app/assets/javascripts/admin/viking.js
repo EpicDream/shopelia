@@ -11,12 +11,32 @@ $(document).ready(function() {
     "bAutoWidth": false,
     "sAjaxSource": $('#vikings').data('source'),
     "fnDrawCallback" : function() {
-      $('.btn').on("click", function(event) {
+      $('.btn.btn-success').on("click", function(event) {
         $(this).button('loading')
         var url = $(this).attr('data-retry-url');
         $.ajax({
           url: url,
           type: "get",
+          dataType: "script"
+        });
+      });
+      $('.btn.btn-warning').on("click", function(event) {
+        $(this).button('loading')
+        var url = $(this).attr('data-mute-url');
+        $.ajax({
+          url: url,
+          type: "get",
+          data: {"delay":0},
+          dataType: "script"
+        });
+      });
+      $('.btn.btn-danger').on("click", function(event) {
+        $(this).button('loading')
+        var url = $(this).attr('data-mute-url');
+        $.ajax({
+          url: url,
+          type: "get",
+          data: {"delay":1},
           dataType: "script"
         });
       });

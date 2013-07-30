@@ -116,6 +116,8 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 1, Product.viking_pending.count
     products(:headphones).update_attribute :versions_expires_at, 1.day.ago
     assert_equal 2, Product.viking_pending.count
+    products(:headphones).update_attribute :muted_until, 1.day.from_now
+    assert_equal 1, Product.viking_pending.count
   end  
   
   test "it should get last product needing a Viking check" do
@@ -250,6 +252,22 @@ class ProductTest < ActiveSupport::TestCase
         name: "name"
       }]);
     assert product.viking_failure
-  end  
+  end 
+  
+  test "it should clear viking_failure when muted" do
+     product = products(:usbkey)
+     assert !product.mute?
+     
+     product.update_attributes(versions:[
+      { availability:"out of stock",
+        description: "description",
+        name: "name"
+      }]);
+     assert product.viking_failure
+     
+     product.update_attribute :muted_until, 1.year.from_now
+     assert product.mute?
+     assert !product.viking_failure
+  end
 
 end
