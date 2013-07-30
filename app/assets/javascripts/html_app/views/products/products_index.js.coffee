@@ -5,6 +5,7 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
   events:
     "click #product-infos": "showProductInfos"
+    "click #full-description": "showDescription"
 
   initialize: ->
     _.bindAll this
@@ -26,6 +27,9 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
       expected_price_shipping  = customParseFloat(@model.get('expected_price_shipping'))
       @model.set('expected_price_shipping',expected_price_shipping)
       $(@el).html(@template(model: @model, merchant: @merchant))
+      $('.description-content').append(@model.get('description'))
+      descriptionView = new Shopelia.Views.Description(model: @model)
+      @description = $(descriptionView.render().el)
       this
     else if @model.get('found') isnt undefined and @model.get('found') is false
       view = new Shopelia.Views.NotFound(model:@model)
@@ -52,7 +56,6 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
     $iframe.attr('marginWidth',"0")
     $iframe.attr('height',"100%")
     $iframe.attr('width',"100%")
-    #console.log($iframe)
     $iframe
 
 
@@ -71,13 +74,13 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
         $(this).hide()
         $("#modal-footer").show()
         $("#btn-hide-product-infos").click ->
-          that.closeProducIframe()
+          that.close(that.iframe)
       )
 
 
 
-  closeProducIframe: ->
-    @iframe.animate({height:'0'}, "slow", () ->
+  close: ($element) ->
+    $element.animate({height:'0'}, "slow", () ->
       $(this).remove()
       $("#modal-footer").fadeOut("slow", () ->
         $("#modal-content").fadeIn("fast").animate({height:'100%',opacity:1},"slow")
@@ -85,6 +88,17 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
 
     )
 
-
+  showDescription: ->
+    console.log("Show Product Infos")
+    Tracker.onClick('Product Description')
+    $("#modal-header").after(@description)
+    that = this
+    @description.animate({height:'100%'}, "slow")
+    $("#modal-content").animate({height:'65px',opacity:0},"slow", () ->
+      $(this).hide()
+      $("#modal-footer").show()
+      $("#btn-hide-product-infos").click ->
+        that.close(that.description)
+    )
 
 

@@ -1,0 +1,2 @@
+<h2 class="green text-center">Description du <%= @model.get("name") %> : </h2>
+<div class="spacer15"></div>

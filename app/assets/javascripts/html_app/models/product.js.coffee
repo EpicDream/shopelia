@@ -9,7 +9,7 @@ class Shopelia.Models.Product extends Backbone.Model
       "Invalid Product: Missing Attrs"
     if attrs.expected_price_product is undefined or attrs.expected_price_product == ""
       "Invalid Product: Missing Attrs"
-    if attrs.expected_price_shipping is undefined or  attrs.expected_price_shipping == ""
+    if isNaN(attrs.expected_price_shipping) or  attrs.expected_price_shipping == ""
       "Invalid Product: Missing Attrs"
     if attrs.name is undefined or attrs.name == ""
       "Invalid Product: Missing Attrs"
@@ -55,9 +55,9 @@ class Shopelia.Models.Product extends Backbone.Model
            success: (data,textStatus,jqXHR) ->
              that.set({
                       merchant_name:data.merchant.name,
-                      allow_iframe: data.merchant.allow_iframe
+                      allow_iframe: data.merchant.allow_iframe,
                       })
-             console.log(data.merchant.allow_iframe)
+             console.log(that.description)
              $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
            error: (jqXHR,textStatus,errorThrown) ->
              #console.log('error merchant callback')
@@ -78,17 +78,18 @@ class Shopelia.Models.Product extends Backbone.Model
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
              that.begin_time_request = new Date().getTime();
            success: (data,textStatus,jqXHR) ->
-             #console.log("success retrieving product")
-             #console.log(data)
+             console.log("success retrieving product")
+             console.log(data)
              that.set({
                       name: data.name,
                       image_url: data.image_url,
+                      description: data.description,
                       expected_price_product: data.versions[0].price,
                       expected_price_shipping: data.versions[0].price_shipping,
                       shipping_info: data.versions[0].shipping_info
                       merchant_name: data.merchant.name,
                       allow_iframe: data.merchant.allow_iframe
-                      })
+                      },{validate : true})
              that.foundProduct()
              #console.log(that.redirectTime)
 
@@ -101,6 +102,7 @@ class Shopelia.Models.Product extends Backbone.Model
 
   foundProduct: ->
     if @redirectTime < 1000 * @intervalSeconds
+      console.log("found" +  this.isValid())
       if @isValid()
         @stopLongPolling()
         @set({

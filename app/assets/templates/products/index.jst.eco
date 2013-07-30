@@ -5,6 +5,7 @@
  <div class="clearfix hidden-phone"> </div>
   <div class="spacer5"></div>
   <div class="price-infos">
+      <div class="clearfix"></div>
       <div class="pull-right">
         <span class="price clearfix">
             <span class="green bold pull-left"> <%= @model.get('expected_price_product') %> € </span>
@@ -20,11 +21,13 @@
       <div class='merchant-infos pull-left'>
       </div>
    </div>
-  <div class="spacer5"></div>
-  <div class="clearfix"></div>
 
+  <div class="product-description">
+    <span class="pull-left green bold "> Description:</span>
+    <div class="description-content"></div>
+  </div>
   <div class="spacer20"></div>
-  <a id="product-infos" class="block text-center">Consulter la fiche du produit chez <%= @model.get('merchant_name') %></a>
+    <a id="full-description" class="block text-center">Plus de détails</a>
    <div class="spacer20"></div>
 
 
