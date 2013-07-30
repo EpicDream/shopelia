@@ -151,6 +151,7 @@ class ProductTest < ActiveSupport::TestCase
   
   test "it should update product and version" do
     product = products(:usbkey)
+    product.update_attribute :updated_at, 1.hour.ago
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",
@@ -186,6 +187,7 @@ class ProductTest < ActiveSupport::TestCase
      assert_equal 2, product.product_versions.count
      assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
      assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
+     assert product.updated_at > 1.minute.ago
   end
   
   test "it should reset viking_failure if correct version is added" do

@@ -1,5 +1,5 @@
 class ProductVersion < ActiveRecord::Base
-  belongs_to :product
+  belongs_to :product, :touch => true
   
   validates :product, :presence => true
   

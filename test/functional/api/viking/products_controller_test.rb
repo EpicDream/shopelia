@@ -98,6 +98,23 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_match /amazon.fr\/1/, json_response["url"]
   end
   
+  test "it should send alive data (for Viking monitoring)" do
+    populate_events
+    event = Event.last
+    event.update_attribute :created_at, 5.minutes.ago
+    event.product.update_attribute :updated_at, 10.minutes.ago
+    
+    get :alive
+    assert_response :success
+    assert_equal 0, json_response["alive"]
+    
+    event.product.update_attribute :updated_at, Time.now
+    
+    get :alive
+    assert_response :success
+    assert_equal 1, json_response["alive"]
+  end
+  
   private
   
   def populate_events

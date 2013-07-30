@@ -82,6 +82,7 @@ Shopelia::Application.routes.draw do
         get :shift
         get :failure
         get :failure_shift
+        get :alive
       end
       resources :merchants, :only => [:show, :update, :create]
     end

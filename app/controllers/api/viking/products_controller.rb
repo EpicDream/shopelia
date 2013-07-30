@@ -57,6 +57,13 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     end
   end
 
+  api :GET, "/viking/products/alive", "Monitor Viking activity for Nagios"
+  def alive
+    event = Event.where("created_at < ?", 1.minute.ago).order("created_at desc").first
+    alive = event.product.updated_at > event.created_at
+    render :json => {:alive => alive ? 1 : 0 }
+  end
+
   private
   
   def retrieve_product
