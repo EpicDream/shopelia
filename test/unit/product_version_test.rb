@@ -67,19 +67,14 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
 
   test "it should generate incident if shipping price is too high" do
-    assert_difference "Incident.count", 0 do
+    assert_difference "Incident.count", 1 do
       @version.price_text = "1000"
-      @version.price_shipping_text = "150"
+      @version.price_shipping_text = "151"
       @version.save
     end
     assert_difference "Incident.count", 0 do
       @version.price_text = "15"
       @version.price_shipping_text = "9"
-      @version.save
-    end
-    assert_difference "Incident.count", 1 do
-      @version.price_text = "100"
-      @version.price_shipping_text = "21"
       @version.save
     end
   end
@@ -99,7 +94,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should set available info" do
     array = [ "Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock", 
               "temporairement en rupture de stock.", "sur commande", "article indisponible",
-              "ce produit est epuise" ]
+              "ce produit est epuise", "sans stock pour vos criteres" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
