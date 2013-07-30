@@ -139,7 +139,7 @@ function buildMapping(uri, hash) {
   while (host !== "") {
     if (hash[host])
       resMapping = $.extend(true, {}, hash[host], resMapping);
-    host = host.replace(/^\w+(\.|$)/, '');
+    host = host.replace(/^[^\.]+(\.|$)/, '');
   }
   return resMapping;
 };

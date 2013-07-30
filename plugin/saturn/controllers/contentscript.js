@@ -46,7 +46,7 @@ function getSizes(mapping) {
     return [];
 
   var options = e.find("option:enabled");
-  var sizes = _.chain(options).map(function(opt) {return opt.innerText}).filter(function(size) {return size.match(/choi|choo/i) == null;}).value();
+  var sizes = _.chain(options).map(function(opt) {return opt.innerText}).filter(function(size) {return size.match(/choi|choo|s(é|e)lect/i) == null;}).value();
   return sizes;
 };
 
