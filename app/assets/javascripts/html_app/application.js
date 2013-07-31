@@ -17,6 +17,7 @@
 //= require bootstrap
 //= require underscore
 //= require backbone
+//= require backbone.marionette
 //= require html_app/backbone.rails
 //= require html_app/backbone.queryparams
 //= require html_app/tracker
@@ -26,6 +27,7 @@
 //= require ./views/shopelia_view
 //= require ./views/form
 //= require_tree ./views
+//= require_tree ./controllers
 //= require_tree ./routers
 //= require_directory .
 

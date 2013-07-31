@@ -41,6 +41,7 @@ group :assets do
   gem 'jquery-rails'
   gem 'jquery-datatables-rails', github: 'rweng/jquery-datatables-rails'
   gem 'uglifier', '>= 1.0.3'
+  gem 'marionette-rails'
 end
 
 # To use ActiveModel has_secure_password
