@@ -491,6 +491,7 @@ class OrderTest < ActiveSupport::TestCase
     assess_order_invalid
     
     assert_equal :pending_agent, @order.state
+    assert_equal false, @order.questions.first["answer"]
     assert_equal "shopelia", @order.error_code
     assert_match /Les prix des produits ne correspondent pas/, @order.message
   end
