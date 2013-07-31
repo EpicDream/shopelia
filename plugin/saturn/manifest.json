@@ -1,6 +1,6 @@
 {
   "name": "Saturn",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "manifest_version": 2,
 
   "description": "Extrateur de donnée produit.",
@@ -23,6 +23,16 @@
       "controllers/background.js"
     ]
   },
+
+  "content_scripts": [{
+    "matches": ["*://*/*"],
+    "js": [
+      "lib/underscore-min.js",
+      "lib/jquery-1.9.1.min.js",
+      "lib/html_utils.js",
+      "controllers/contentscript.js"
+    ]
+  }],
 
   "permissions": ["tabs", "cookies", "*://*/*"]
 }
