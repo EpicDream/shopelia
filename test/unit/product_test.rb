@@ -155,7 +155,7 @@ class ProductTest < ActiveSupport::TestCase
     product = products(:usbkey)
     product.update_attribute :updated_at, 1.hour.ago
     product.update_attributes(versions:[
-      { availability:"in stock",
+      { availability:"out of stock",
         brand: "brand",
         reference: "reference",
         description: "description",
@@ -168,9 +168,10 @@ class ProductTest < ActiveSupport::TestCase
         color: "blue",
         size: "4"
       },
-      { availability:"out of stock",
+      { availability:"in stock",
         brand: "brand",
         description: "description2",
+        reference: "reference4",
         image_url: "http://www.amazon.fr/image2.jpg",
         name: "name2",
         price: "12 EUR",
@@ -181,11 +182,11 @@ class ProductTest < ActiveSupport::TestCase
         size: "5"
       }]);
 
-     assert_equal "name", product.name
+     assert_equal "name2", product.name
      assert_equal "brand", product.brand
-     assert_equal "reference", product.reference
-     assert_equal "http://www.amazon.fr/image.jpg", product.image_url
-     assert_equal "<p>description</p>", product.description
+     assert_equal "reference4", product.reference
+     assert_equal "http://www.amazon.fr/image2.jpg", product.image_url
+     assert_equal "<p>description2</p>", product.description
      assert_equal 2, product.product_versions.count
      assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
      assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set

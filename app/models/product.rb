@@ -108,13 +108,15 @@ class Product < ActiveRecord::Base
           v.update_attributes version
         end
       end
-      version = self.reload.product_versions.order("updated_at").first
-      self.update_column "name", version.name
-      self.update_column "brand", version.brand
-      self.update_column "reference", version.reference
-      self.update_column "image_url", version.image_url
-      self.update_column "description", version.description
-      self.update_column "versions_expires_at", Product.versions_expiration_date
+      version = self.reload.product_versions.where(available:true).order("updated_at").first
+      if version.present?
+        self.update_column "name", version.name
+        self.update_column "brand", version.brand
+        self.update_column "reference", version.reference
+        self.update_column "image_url", version.image_url
+        self.update_column "description", version.description
+        self.update_column "versions_expires_at", Product.versions_expiration_date
+      end
       self.reload
       self.assess_versions
       self.reload
