@@ -182,18 +182,27 @@ class ProductTest < ActiveSupport::TestCase
         size: "5"
       }]);
 
-     assert_equal "name2", product.name
-     assert_equal "brand", product.brand
-     assert_equal "reference4", product.reference
-     assert_equal "http://www.amazon.fr/image2.jpg", product.image_url
-     assert_equal "<p>description2</p>", product.description
-     assert_equal 2, product.product_versions.count
-     assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
-     assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
-     assert_equal "blue".to_json, product.product_versions.first.color
-     assert_equal ["4".to_json, "5".to_json].to_set, product.product_versions.map(&:size).to_set
-     assert product.updated_at > 1.minute.ago
+    assert_equal "name2", product.name
+    assert_equal "brand", product.brand
+    assert_equal "reference4", product.reference
+    assert_equal "http://www.amazon.fr/image2.jpg", product.image_url
+    assert_equal "<p>description2</p>", product.description
+    assert_equal 2, product.product_versions.count
+    assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
+    assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
+    assert_equal "blue".to_json, product.product_versions.first.color
+    assert_equal ["4".to_json, "5".to_json].to_set, product.product_versions.map(&:size).to_set
+    assert product.updated_at > 1.minute.ago
+    assert product.versions_expires_at > Time.now
   end
+
+  test "it should set versions_expires_at even if versions are not available" do
+    product = products(:usbkey)
+    product.update_attribute :versions_expires_at, nil
+    product.update_attributes(versions:[{availability:"out of stock"}])
+
+    assert product.versions_expires_at > Time.now
+  end  
   
   test "it should set previous version as unavailable" do
     product = products(:usbkey)
