@@ -115,8 +115,8 @@ class Product < ActiveRecord::Base
         self.update_column "reference", version.reference
         self.update_column "image_url", version.image_url
         self.update_column "description", version.description
-        self.update_column "versions_expires_at", Product.versions_expiration_date
       end
+      self.update_column "versions_expires_at", Product.versions_expiration_date
       self.reload
       self.assess_versions
       self.reload
