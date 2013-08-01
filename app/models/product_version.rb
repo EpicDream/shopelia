@@ -86,9 +86,10 @@ class ProductVersion < ActiveRecord::Base
        a =~ /indisponible/ || \
        a =~ /ce produit est epuise/ || \
        a =~ /sans stock pour vos criteres/ || \
+       a =~ /bientot disponible/ || \
        a =~ /sur commande/
       result = false
-    elsif a =~ /en stock/ || a=~ /^\(\d+\)$/ || a=~ /expedie sous/
+    elsif a =~ /en stock/ || a=~ /^\(\d+\)$/ || a=~ /expedie sous/ || a =~ /voir les offres de ces vendeurs/
       result = true
     else
       generate_incident "Cannot parse availability : #{a}"
