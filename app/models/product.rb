@@ -88,7 +88,7 @@ class Product < ActiveRecord::Base
         version[:availability_text] = version[:availability]
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
         version[:color] = version[:color].to_json unless version[:color].nil?
-        version[:price] = version[:price].to_json unless version[:price].nil?
+        version[:size] = version[:size].to_json unless version[:size].nil?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
         v = self.product_versions.find_by_size_and_color(version[:size], version[:color])
         if v.nil?
