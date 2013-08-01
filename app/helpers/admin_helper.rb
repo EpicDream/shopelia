@@ -16,9 +16,9 @@ module AdminHelper
   end
   
   def viking_failure_tags product
-    split_versions = product.product_versions > 0
+    split_versions = product.product_versions.where(available:[nil,true]).count > 1 
     result = ""
-    product.product_versions.each do |v|
+    product.product_versions.where(available:[nil,true]).each do |v|
       tmp = ""
       tmp += '<span class="label">Price</span> ' if v.price.nil?
       tmp += '<span class="label">Shipping price</span> ' if v.price_shipping.nil?
@@ -27,9 +27,9 @@ module AdminHelper
       tmp += '<span class="label">Shipping info</span> ' if v.shipping_info.nil?
       tmp += '<span class="label">Description</span> ' if v.description.nil?
       tmp += '<span class="label">Availability</span> ' if v.available.nil?
-      result += split_versions ? "{#{v.id}} [ #{result} ] " : result
+      result += split_versions ? tmp.length > 0 ? "{#{v.id}} [ #{tmp} ] " : "" : tmp
     end
-    result
+    result.blank? ? "Empty data" : result
   end      
 
 end
