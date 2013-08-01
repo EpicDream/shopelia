@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130730163827) do
+ActiveRecord::Schema.define(:version => 20130801154805) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -211,8 +211,8 @@ ActiveRecord::Schema.define(:version => 20130730163827) do
     t.text     "description"
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
-    t.string   "color"
-    t.string   "size"
+    t.text     "color"
+    t.text     "size"
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
@@ -225,7 +225,7 @@ ActiveRecord::Schema.define(:version => 20130730163827) do
     t.string   "name"
     t.integer  "merchant_id"
     t.text     "url"
-    t.string   "image_url"
+    t.text     "image_url"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
     t.text     "description"
