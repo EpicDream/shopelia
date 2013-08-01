@@ -1,3 +1,6 @@
+String.prototype.capitalize = ->
+  this.charAt(0).toUpperCase() + this.slice(1)
+
 window.eraseErrors =  ->
   $(".control-group").removeClass('error')
   $('.help-inline').remove()

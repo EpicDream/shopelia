@@ -14,14 +14,9 @@ class Shopelia.Views.ShopeliaView extends Backbone.View
       #console.log("getSession is undefined kill pierre")
       undefined
 
-  getProduct: ->
-    if @options.product isnt undefined
-      @options.product
-    else if @parent isnt undefined
-      @parent.getProduct()
-    else
-      #console.log("getProduct is undefined kill pierre")
-      undefined
+  getProduct:  ->
+    console.log(Shopelia.Application.request("product"))
+    Shopelia.Application.request("product")
 
 
   setSession: (session) ->

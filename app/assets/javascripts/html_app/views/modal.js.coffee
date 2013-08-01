@@ -1,6 +1,13 @@
-class Shopelia.Views.Modal extends Shopelia.Views.ShopeliaView
+class Shopelia.Views.Modal extends Shopelia.Views.Layout
 
   template: JST['modal']
+  regions: {
+    header: "#modal-header",
+    top: "#modal-top",
+    left: "#modal-left"
+    right: "#modal-right"
+  }
+
   id: 'modal'
   className: 'span8'
 

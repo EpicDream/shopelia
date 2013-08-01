@@ -3,10 +3,16 @@ window.Shopelia =
   Models: {}
   Views: {}
   Routers: {}
+  Dispatchers: {}
   Application: new Backbone.Marionette.Application()
+  vent: new Backbone.Wreqr.EventAggregator()
   developerKey: $.cookie('developer_key') unless $.cookie('developer_key') is undefined
   SDKVersion: "0.1"
   SDK: "HTML"
+
+Shopelia.Application.addRegions({
+                 container: "#container"
+                 })
 
 Shopelia.Application.addInitializer (options) ->
   originalSync = Backbone.sync
@@ -21,12 +27,16 @@ Shopelia.Application.addInitializer (options) ->
                              })
 
     originalSync.call(this,method,model, options)
+  ###### Creating Custom Dipatcher#####
+  Shopelia.dispatcher =  new Shopelia.Dispatchers.Dispatcher(Shopelia.vent)
+  ###### Start Router #####
   new Shopelia.Routers.AppRouter()
   Backbone.history.start(pushState: true)
 
 
+
 $(document).ready ->
-  Shopelia.Application.start();
+  Shopelia.Application.start()
   Tracker.init()
   $.ajax({
          url: "/sdk/ads.js",

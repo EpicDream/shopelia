@@ -27,8 +27,10 @@
 //= require ./views/shopelia_view
 //= require ./views/form
 //= require_tree ./views
+//= require ./controllers/controller
 //= require_tree ./controllers
 //= require_tree ./routers
+//= require_tree ./dispatchers
 //= require_directory .
 
 
