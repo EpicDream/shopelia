@@ -266,7 +266,7 @@ class ProductTest < ActiveSupport::TestCase
      assert_equal "in stock", product.product_versions.first.shipping_info
   end  
 
-  test "it shouldn't set viking_failure if availability is false and prices are missing" do
+  test "it shouldn't set viking_failure if availability is false and anything is missing" do
     product = products(:headphones)
     
     product.update_attributes(versions:[
@@ -279,7 +279,7 @@ class ProductTest < ActiveSupport::TestCase
     product.update_attributes(versions:[
       { availability:"out of stock",
       }]);
-    assert product.viking_failure
+    assert !product.viking_failure
 
     product.update_attributes(versions:[
       { name: "name",
@@ -293,7 +293,7 @@ class ProductTest < ActiveSupport::TestCase
      assert !product.mute?
      
      product.update_attributes(versions:[
-      { availability:"out of stock",
+      { availability:"in stock",
         name: "name"
       }]);
      assert product.viking_failure

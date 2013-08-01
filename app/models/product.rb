@@ -50,8 +50,6 @@ class Product < ActiveRecord::Base
         ok = false
       elsif version.available?
         ok = false if version.name.nil? || version.price.nil? || version.price_shipping.nil? || version.shipping_info.nil? || version.image_url.nil?
-      else
-        ok = false if version.name.nil? || version.image_url.nil?
       end
     end
     self.update_column "viking_failure", !ok
