@@ -1,10 +1,10 @@
 class Shopelia.Views.Modal extends Shopelia.Views.Layout
 
-  template: JST['modal']
+  template: 'modal'
   regions: {
     header: "#modal-header",
     top: "#modal-top",
-    left: "#modal-left"
+    left: "#modal-left",
     right: "#modal-right"
   }
 
@@ -29,9 +29,7 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     window.addEventListener("DOMContentLoaded",DOMContentLoadedListener
     , false)
 
-  render: ->
-    $(@el).html(@template())
-    @open()
+  onRender: ->
     $(@el).fadeIn('slow')
     that = this
     $(@el).click (e) ->
@@ -43,13 +41,6 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
       else
         that.close()
     this
-
-  open: (settings) ->
-    @productView = new Shopelia.Views.ProductsIndex(model:@getProduct(),parent:this)
-    view = new Shopelia.Views.UsersIndex(parent:this)
-    @$('#modal-left').append(@productView.render().el)
-    @setContentView(view)
-
 
   close: ->
     #console.log("close please")

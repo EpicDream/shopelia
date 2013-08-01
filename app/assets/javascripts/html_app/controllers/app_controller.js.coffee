@@ -21,26 +21,26 @@ class Shopelia.Controllers.AppController extends Shopelia.Controllers.Controller
     Shopelia.vent.trigger("modal#open",params)
 
     #console.log("check")
-    if @session.authenticated()
-      console.log("authenticated")
+    #if @session.authenticated()
+      #console.log("authenticated")
       #console.log(@session)
-      authToken = @session.get("auth_token")
-      @user = @session.get("user")
-      that = this
-      @user.fetch({
-                  beforeSend: (xhr) ->
-                    xhr.setRequestHeader("X-Shopelia-AuthToken",authToken)
-                  success : (resp) ->
-                    #console.log("fetched user success callback: " + JSON.stringify(resp.disableWrapping()))
-                    that.session.updateUserCookies(resp.disableWrapping())
+      #authToken = @session.get("auth_token")
+      #@user = @session.get("user")
+      #that = this
+      #@user.fetch({
+      #            beforeSend: (xhr) ->
+      #              xhr.setRequestHeader("X-Shopelia-AuthToken",authToken)
+      #            success : (resp) ->
+      #              #console.log("fetched user success callback: " + JSON.stringify(resp.disableWrapping()))
+      #              that.session.updateUserCookies(resp.disableWrapping())
                     #that.modal.setContentView(new Shopelia.Views.SignIn(email: that.session.get("user").get('email')))
-                    center($(window),$("#modal"))
-                  error : (model, response) ->
-                    that.session.deleteCookies()
-                  })
-    else
+      #              center($(window),$("#modal"))
+      #            error : (model, response) ->
+      #              that.session.deleteCookies()
+      #            })
+    #else
       #@modal.setContentView(new Shopelia.Views.UsersIndex())
-      center($(window),$("#modal"))
+      #center($(window),$("#modal"))
 
   showModal: ->
     view = new Shopelia.Views.Modal(session: @session,product: @product)

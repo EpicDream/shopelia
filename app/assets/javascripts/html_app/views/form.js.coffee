@@ -3,7 +3,7 @@ class Shopelia.Views.Form extends Shopelia.Views.ShopeliaView
   initialize: ->
     Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
 
-  render: ->
+  onRender: ->
     that = this
     @$('form :input').each(() ->
       $(this).focusout(() ->
@@ -63,4 +63,3 @@ class Shopelia.Views.Form extends Shopelia.Views.ShopeliaView
         securityView = new Shopelia.Views.Security(parent: that)
         $(securityView.render().el)
     )
-    this

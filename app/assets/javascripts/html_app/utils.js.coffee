@@ -1,6 +1,14 @@
 String.prototype.capitalize = ->
   this.charAt(0).toUpperCase() + this.slice(1)
 
+String.prototype.normalizeName = ->
+  names = this.split('_')
+  res = ''
+  _.each(names,(name) ->
+      res += name.capitalize()
+    )
+  res
+
 window.eraseErrors =  ->
   $(".control-group").removeClass('error')
   $('.help-inline').remove()

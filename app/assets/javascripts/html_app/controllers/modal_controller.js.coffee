@@ -5,11 +5,19 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
 
 
   open: (params) ->
-    console.log('opening the modal in ' + JSON.stringify this )
-    console.log(params)
-    Shopelia.vent.trigger("modal#test")
+    console.log('opening the modal')
+    @view = new Shopelia.Views.Modal()
+    Shopelia.Application.container.show(@view)
+    @showSignUp()
 
-  test: ->
-    alert 'rjjtjtjtbnoergbekrmhfgeilz'
-    @dispose()
 
+  toto: (settings) ->
+    @productView = new Shopelia.Views.ProductsIndex(model:@getProduct(),parent:this)
+    view = new Shopelia.Views.UsersIndex(parent:this)
+    @$('#modal-left').append(@productView.render().el)
+    @setContentView(view)
+
+  showSignUp : ->
+    if @view is undefined
+      @open
+    Shopelia.vent.trigger("sign_up#show",@view.right)

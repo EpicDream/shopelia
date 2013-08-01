@@ -1,27 +1,28 @@
-class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
+class Shopelia.Views.SignUp extends Shopelia.Views.Layout
 
-  template: JST['users/index']
+  template: 'users/sign_up'
   className: "box"
+  regions: {
+    userFields: "#user-fields",
+    addressFields: "#address-fields",
+    cardFields: "#card-fields"
+  }
+
   events:
     "click #btn-register-user": "createUser"
 
-  initialize: ->
-    Shopelia.Views.Form.prototype.initialize.call(this)
-
-
-
-  render: ->
-    $(@el).html(@template())
+  onRender: ->
     Tracker.onDisplay('Sign Up');
     #console.log(@getProduct())
-    @addressView =  new Shopelia.Views.AddressesIndex(parent: this)
-    @$("#btn-register-user").before(@addressView.render().el)
-    @paymentCardView =  new Shopelia.Views.PaymentCardsIndex(parent: this)
-    $(@addressView.render().el).after(@paymentCardView.render().el)
-    @setFormVariables()
-    @parent.setHeaderLink("Déjà membre ?",@onActionClick)
-    Shopelia.Views.Form.prototype.render.call(this)
-    this
+    @userFieldsView = new Shopelia.Views.UserFields()
+    @addressFieldsView = new Shopelia.Views.AddressFields()
+    @cardFieldsView = new Shopelia.Views.CardFields()
+    console.log(@userFieldsView)
+    @userFields.show(@userFieldsView)
+    @addressFields.show(@addressFieldsView)
+    @cardFields.show(@cardFieldsView)
+
+
 
   setFormVariables: ->
     @fullName = @$('input[name="full_name"]')

@@ -12,7 +12,8 @@ class Shopelia.Dispatchers.Dispatcher
     console.log("begin dispatcher")
     if eventName.indexOf("#") != -1
       result = eventName.split("#")
-      controllerName = result[0].capitalize() + 'Controller'
+      controllerName = result[0].normalizeName() + 'Controller'
+      console.log(controllerName)
       args = Array.prototype.slice.call(arguments,1,arguments.length)
       action = result[1]
       if @controllers[controllerName] is undefined

@@ -1,6 +1,14 @@
-class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
+class Shopelia.Views.AddressFields extends Shopelia.Views.Form
 
-  template: JST['addresses/index']
+  template: 'addresses/address_fields'
+  ui: {
+    address1: 'input[name="address1"]'
+    zip: 'input[name="zip"]'
+    city: 'input[name="city"]'
+    country: 'input[name="country"]'
+    address2: 'input[name="address2"]'
+  }
+
 
   events:
     "keypress input[name='address1']": "getLocation"
@@ -9,21 +17,11 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
   initialize: ->
     Shopelia.Views.Form.prototype.initialize.call(this)
 
-  render: ->
-    $(@el).html(@template())
-    @setFormVariables()
-    @country.autocomplete({
+  onRender: ->
+    @ui.country.autocomplete({
                           source: _.values(countries),
                           });
-    Shopelia.Views.Form.prototype.render.call(this)
-    this
-
-  setFormVariables: ->
-    @address1 = @$('input[name="address1"]')
-    @zip = @$('input[name="zip"]')
-    @city = @$('input[name="city"]')
-    @country = @$('input[name="country"]')
-    @address2 = @$('input[name="address2"]')
+    #Shopelia.Views.Form.prototype.render.call(this)
 
   setAddress: ->
     country_iso =  @country.val()

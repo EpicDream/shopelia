@@ -15,6 +15,11 @@ Shopelia.Application.addRegions({
                  })
 
 Shopelia.Application.addInitializer (options) ->
+  Backbone.Marionette.Renderer.render = (template, data) ->
+    if !JST[template]
+      throw "Template '" + template + "' not found!"
+    JST[template](data)
+
   originalSync = Backbone.sync
   Backbone.sync = (method, model, options) ->
     #console.log("BACKBONE SYNC")
@@ -32,6 +37,7 @@ Shopelia.Application.addInitializer (options) ->
   ###### Start Router #####
   new Shopelia.Routers.AppRouter()
   Backbone.history.start(pushState: true)
+
 
 
 

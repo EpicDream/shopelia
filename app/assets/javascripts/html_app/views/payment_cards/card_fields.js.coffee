@@ -1,6 +1,6 @@
-class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
+class Shopelia.Views.CardFields extends Shopelia.Views.Form
 
-  template: JST['payment_cards/index']
+  template: 'payment_cards/card_fields'
   className: 'paiement-view'
 
   events:
@@ -14,12 +14,8 @@ class Shopelia.Views.PaymentCardsIndex extends Shopelia.Views.Form
     Shopelia.Views.Form.prototype.initialize.call(this)
 
 
-  render: ->
-    $(@el).html(@template())
-    @$('#btn-register-payment').remove()
-    @setCardFormVariables()
-    Shopelia.Views.Form.prototype.render.call(this)
-    this
+  onRender: ->
+    #Shopelia.Views.Form.prototype.render.call(this)
 
   setPaymentCard: ->
     cardJson = @cardFormSerializer()
