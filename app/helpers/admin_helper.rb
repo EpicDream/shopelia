@@ -16,15 +16,18 @@ module AdminHelper
   end
   
   def viking_failure_tags product
+    split_versions = product.product_versions > 0
     result = ""
     product.product_versions.each do |v|
-      result += '<span class="label">Price</span> ' if v.price.nil?
-      result += '<span class="label">Shipping price</span> ' if v.price_shipping.nil?
-      result += '<span class="label">Name</span> ' if v.name.nil?
-      result += '<span class="label">Image url</span> ' if v.image_url.nil?
-      result += '<span class="label">Shipping info</span> ' if v.shipping_info.nil?
-      result += '<span class="label">Description</span> ' if v.description.nil?
-      result += '<span class="label">Availability</span> ' if v.available.nil?
+      tmp = ""
+      tmp += '<span class="label">Price</span> ' if v.price.nil?
+      tmp += '<span class="label">Shipping price</span> ' if v.price_shipping.nil?
+      tmp += '<span class="label">Name</span> ' if v.name.nil?
+      tmp += '<span class="label">Image url</span> ' if v.image_url.nil?
+      tmp += '<span class="label">Shipping info</span> ' if v.shipping_info.nil?
+      tmp += '<span class="label">Description</span> ' if v.description.nil?
+      tmp += '<span class="label">Availability</span> ' if v.available.nil?
+      result += split_versions ? "{#{v.id}} [ #{result} ] " : result
     end
     result
   end      
