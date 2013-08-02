@@ -38,6 +38,7 @@ class Leftronic
   def notify_viking_stats
     result = Product.where("versions_expires_at>?", Time.now).group(:viking_failure).count
     push_number("viking_success_rate", (result[false].to_i + result[:true].to_i) > 0 ? result[false].to_f * 100 / (result[false].to_f + result[true].to_f) : 0)
+    push_number("saturn_status", Viking.saturn_alive? ? 0 : 100)
   end
 
   def clear_board

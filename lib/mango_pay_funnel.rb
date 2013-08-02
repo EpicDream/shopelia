@@ -70,8 +70,8 @@ module MangoPayFunnel
           'ReturnURL' => 'https://www.shopelia.fr/null'
       })
       if remote_card['ID'].present?
-        # If API is stubbed, skip card injectionapp/serializers/product_serializer.rb
-        unless Rails.env.test? && File.exist?("#{Rails.root}/test/cassettes/mangopay.yml")
+        # If API is stubbed, skip card injection
+        if !Rails.env.test? || !File.exist?("#{Rails.root}/test/cassettes/mangopay.yml") || ENV["ALLOW_PAYLINE_DRIVER"] == "1"
           begin
             PaylineDriver.inject(card,remote_card["RedirectURL"]) 
           rescue PaylineDriver::DriverError => e

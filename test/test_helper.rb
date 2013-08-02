@@ -24,6 +24,7 @@ class ActiveSupport::TestCase
   setup do
     ENV["ALLOW_REMOTE_API_CALLS"] = "0"
     ENV["API_KEY"] = developers(:prixing).api_key
+    ENV["ALLOW_PAYLINE_DRIVER"] = "0"
     ActionMailer::Base.deliveries.clear
   end
 

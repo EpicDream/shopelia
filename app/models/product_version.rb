@@ -1,7 +1,9 @@
 class ProductVersion < ActiveRecord::Base
-  belongs_to :product
+  belongs_to :product, :touch => true
+  has_many :order_items
   
   validates :product, :presence => true
+  validates :size, :uniqueness => {:scope => [:product_id, :color]}, :allow_nil => true
   
   attr_accessible :description, :size, :color, :price, :price_shipping
   attr_accessible :price_strikeout, :product_id, :shipping_info, :available
@@ -15,6 +17,7 @@ class ProductVersion < ActiveRecord::Base
   before_validation :parse_available, :if => Proc.new { |v| v.availability_text.present? }
   before_validation :sanitize_description, :if => Proc.new { |v| v.description.present? }
   before_validation :crop_shipping_info
+  before_destroy :check_not_related_to_any_order
 
   SANITIZED_CONFIG = {
     :elements => %w[
@@ -68,7 +71,7 @@ class ProductVersion < ActiveRecord::Base
 
   def parse_price_shipping
     self.price_shipping = parse_float(self.price_shipping_text)
-    generate_incident "Shipping price too high : #{self.price_shipping_text}" if self.price_shipping.to_f > 100
+    generate_incident "Shipping price too high : #{self.price_shipping_text}" if self.price_shipping.to_f > 150
   end
   
   def parse_price_strikeout
@@ -81,9 +84,12 @@ class ProductVersion < ActiveRecord::Base
        a =~ /aucun vendeur ne propose ce produit/ || \
        a =~ /en rupture de stock/ || \
        a =~ /indisponible/ || \
+       a =~ /ce produit est epuise/ || \
+       a =~ /sans stock pour vos criteres/ || \
+       a =~ /bientot disponible/ || \
        a =~ /sur commande/
       result = false
-    elsif a =~ /en stock/ || a=~ /^\(\d+\)$/ || a=~ /expedie sous/
+    elsif a =~ /en stock/ || a=~ /^\(\d+\)$/ || a=~ /expedie sous/ || a =~ /voir les offres de ces vendeurs/
       result = true
     else
       generate_incident "Cannot parse availability : #{a}"
@@ -100,6 +106,10 @@ class ProductVersion < ActiveRecord::Base
     html = Sanitize.clean(doc.to_s, SANITIZED_CONFIG).gsub(/[\n\s]+/, " ").strip
 
     self.description = html
+  end
+   
+  def check_not_related_to_any_order
+    self.order_items.empty?
   end
    
 end

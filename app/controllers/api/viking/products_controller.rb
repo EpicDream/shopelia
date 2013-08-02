@@ -49,12 +49,18 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     if @versions.blank?
       @product.update_column "viking_failure", true
       @product.update_column "versions_expires_at", Product.versions_expiration_date
+      @product.update_column "updated_at", Time.now
       head :no_content
     elsif @product.update_attribute :versions, @versions
       head :no_content
     else
       render json: @product.errors, status: :unprocessable_entity
     end
+  end
+
+  api :GET, "/viking/products/alive", "Monitor Viking activity for Nagios"
+  def alive
+    render :json => {:alive => Viking.saturn_alive? ? 1 : 0 }
   end
 
   private

@@ -125,15 +125,15 @@ class Order < ActiveRecord::Base
         item.update_attribute(:price, product["price"] || product["price_product"] || product["product_price"])
       end
 
-      prepared_price_product = content["billing"]["total"] - content["billing"]["shipping"]
+      prepared_price_product = content["billing"]["total"].to_f - content["billing"]["shipping"].to_f
 
       # Set product price if unique item and without price
       if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
         self.order_items.first.update_attribute :price, prepared_price_product
       end
 
-      self.prepared_price_total = content["billing"]["total"]
-      self.prepared_price_shipping = content["billing"]["shipping"]
+      self.prepared_price_total = content["billing"]["total"].to_f
+      self.prepared_price_shipping = content["billing"]["shipping"].to_f
       self.prepared_price_product = prepared_price_product
       self.save!
       
@@ -208,6 +208,7 @@ class Order < ActiveRecord::Base
     self.save!
     
     rescue Exception => e
+      callback_vulcain(false) if verb.eql?("assess")
       fail("Error during order Callback\n#{e.inspect}", :shopelia)
       self.update_attribute :prepared_price_product, 0 # allow save if price mismatch
       self.save!

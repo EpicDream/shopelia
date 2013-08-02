@@ -18,13 +18,18 @@ class IncidentsDatatable
 
   def data
     incidents.map do |incident|
-      res_url = incident.resource_type == 'Product' ? Product.find(incident.resource_id).try(:url) : ""
+      if incident.resource_type == 'Product'
+        res_url = Product.find(incident.resource_id).try(:url)
+        resource = res_url.blank? ? "" : link_to(truncate(res_url, :length => 50), res_url)
+      elsif incident.resource_type == 'Merchant'
+        resource = Merchant.find(incident.resource_id).name
+      end
       [
         incident.issue,
         incident_severity_to_html(incident.severity),
         incident.description,
         time_ago_in_words(incident.created_at),
-        res_url.blank? ? "" : link_to(truncate(res_url, :length => 50), res_url),
+        resource,
         "<button type=\"button\" class=\"btn btn-danger\" data-loading-text=\"Please wait...\" data-update-url=\"#{admin_incident_path(incident)}\" style=\"visibility:hidden\">Mark as processed</button>"
       ]
     end

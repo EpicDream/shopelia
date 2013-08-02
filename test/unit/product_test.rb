@@ -116,6 +116,8 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 1, Product.viking_pending.count
     products(:headphones).update_attribute :versions_expires_at, 1.day.ago
     assert_equal 2, Product.viking_pending.count
+    products(:headphones).update_attribute :muted_until, 1.day.from_now
+    assert_equal 1, Product.viking_pending.count
   end  
   
   test "it should get last product needing a Viking check" do
@@ -151,6 +153,59 @@ class ProductTest < ActiveSupport::TestCase
   
   test "it should update product and version" do
     product = products(:usbkey)
+    product.update_attribute :updated_at, 1.hour.ago
+    product.update_attributes(versions:[
+      { availability:"out of stock",
+        brand: "brand",
+        reference: "reference",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        color: "blue",
+        size: "4"
+      },
+      { availability:"in stock",
+        brand: "brand",
+        description: "description2",
+        reference: "reference4",
+        image_url: "http://www.amazon.fr/image2.jpg",
+        name: "name2",
+        price: "12 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        color: "blue",
+        size: "5"
+      }]);
+
+    assert_equal "name2", product.name
+    assert_equal "brand", product.brand
+    assert_equal "reference4", product.reference
+    assert_equal "http://www.amazon.fr/image2.jpg", product.image_url
+    assert_equal "<p>description2</p>", product.description
+    assert_equal 2, product.product_versions.count
+    assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
+    assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
+    assert_equal "blue".to_json, product.product_versions.first.color
+    assert_equal ["4".to_json, "5".to_json].to_set, product.product_versions.map(&:size).to_set
+    assert product.updated_at > 1.minute.ago
+    assert product.versions_expires_at > Time.now
+  end
+
+  test "it should set versions_expires_at even if versions are not available" do
+    product = products(:usbkey)
+    product.update_attribute :versions_expires_at, nil
+    product.update_attributes(versions:[{availability:"out of stock"}])
+
+    assert product.versions_expires_at > Time.now
+  end  
+  
+  test "it should set previous version as unavailable" do
+    product = products(:usbkey)
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",
@@ -164,28 +219,24 @@ class ProductTest < ActiveSupport::TestCase
         price_shipping: "3.5",
         color: "blue",
         size: "4"
-      },
-      { availability:"out of stock",
+      }])
+    product.update_attributes(versions:[
+      { availability:"in stock",
         brand: "brand",
-        description: "description2",
-        image_url: "http://www.amazon.fr/image2.jpg",
-        name: "name2",
-        price: "12 EUR",
+        reference: "reference",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         price_shipping: "3.5",
-        color: "blue",
+        color: "red",
         size: "4"
-      }]);
-
-     assert_equal "name", product.name
-     assert_equal "brand", product.brand
-     assert_equal "reference", product.reference
-     assert_equal "http://www.amazon.fr/image.jpg", product.image_url
-     assert_equal "<p>description</p>", product.description
-     assert_equal 2, product.product_versions.count
-     assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
-     assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
+      }])
+      
+    assert_equal 3, product.product_versions.count
+    assert_equal [false, true, false].to_set, product.product_versions.map(&:available).to_set
   end
   
   test "it should reset viking_failure if correct version is added" do
@@ -207,7 +258,7 @@ class ProductTest < ActiveSupport::TestCase
   end  
 
   test "it should use availability if shipping info is blank" do
-    product = products(:usbkey)
+    product = products(:headphones)
     product.update_attribute :viking_failure, true
     product.update_attributes(versions:[
       { availability:"in stock",
@@ -224,12 +275,11 @@ class ProductTest < ActiveSupport::TestCase
      assert_equal "in stock", product.product_versions.first.shipping_info
   end  
 
-  test "it shouldn't set viking_failure if availability is false and prices are missing" do
-    product = products(:usbkey)
+  test "it shouldn't set viking_failure if availability is false and anything is missing" do
+    product = products(:headphones)
     
     product.update_attributes(versions:[
       { availability:"out of stock",
-        description: "description",
         image_url: "http://www.amazon.fr/image.jpg",
         name: "name"
       }]);
@@ -237,17 +287,29 @@ class ProductTest < ActiveSupport::TestCase
 
     product.update_attributes(versions:[
       { availability:"out of stock",
-        description: "description",
-        name: "name"
       }]);
-    assert product.viking_failure
+    assert !product.viking_failure
 
     product.update_attributes(versions:[
-      { description: "description",
+      { name: "name",
         image_url: "http://www.amazon.fr/image.jpg",
-        name: "name"
       }]);
     assert product.viking_failure
-  end  
+  end 
+  
+  test "it should clear viking_failure when muted" do
+     product = products(:headphones)
+     assert !product.mute?
+     
+     product.update_attributes(versions:[
+      { availability:"in stock",
+        name: "name"
+      }]);
+     assert product.viking_failure
+     
+     product.update_attribute :muted_until, 1.year.from_now
+     assert product.mute?
+     assert !product.viking_failure
+  end
 
 end

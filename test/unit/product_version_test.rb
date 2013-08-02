@@ -11,6 +11,34 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should create version" do
     assert @version.save, @version.errors.full_messages.join(",")
   end
+  
+  test "it shouldn't allow duplication for sizes and colors" do
+    v = ProductVersion.new(
+      product_id:@product.id,
+      color:"blue",
+      size:"32")
+    assert v.save
+    v = ProductVersion.new(
+      product_id:@product.id,
+      color:"red",
+      size:"32")
+    assert v.save
+    v = ProductVersion.new(
+      product_id:@product.id,
+      color:"red",
+      size:"30")    
+    assert v.save
+    v = ProductVersion.new(
+      product_id:@product.id,
+      color:"blue",
+      size:"32")    
+    assert !v.save
+    v = ProductVersion.new(
+      product_id:products(:headphones).id,
+      color:"blue",
+      size:"32")    
+    assert v.save
+  end
 
   test "it should create version with data" do
     version = ProductVersion.new(
@@ -68,7 +96,13 @@ class ProductVersionTest < ActiveSupport::TestCase
 
   test "it should generate incident if shipping price is too high" do
     assert_difference "Incident.count", 1 do
-      @version.price_shipping_text = "1000"
+      @version.price_text = "1000"
+      @version.price_shipping_text = "151"
+      @version.save
+    end
+    assert_difference "Incident.count", 0 do
+      @version.price_text = "15"
+      @version.price_shipping_text = "9"
       @version.save
     end
   end
@@ -87,7 +121,8 @@ class ProductVersionTest < ActiveSupport::TestCase
   
   test "it should set available info" do
     array = [ "Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock", 
-              "temporairement en rupture de stock.", "sur commande", "article indisponible" ]
+              "temporairement en rupture de stock.", "sur commande", "article indisponible",
+              "ce produit est epuise", "sans stock pour vos criteres", "bientot disponible" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
@@ -108,6 +143,11 @@ class ProductVersionTest < ActiveSupport::TestCase
         availability_text:"bla")
       assert version.available
     end
+  end
+  
+  test "it shouldn't be destroyed if related to an order" do
+    assert @version.destroy
+    assert !product_versions(:usbkey).destroy
   end
   
   test "it should sanitize description (1)" do
