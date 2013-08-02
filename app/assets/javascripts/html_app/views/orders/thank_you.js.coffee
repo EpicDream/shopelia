@@ -1,10 +1,10 @@
-class Shopelia.Views.ThankYou extends Shopelia.Views.ShopeliaView
+class Shopelia.Views.ThankYou extends Shopelia.Views.Layout
 
   template: 'orders/thank_you'
   className: 'box'
-
-  initialize: ->
-    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
+  regions: {
+    bottom: "#thank-you-bottom"
+  }
 
   onRender: ->
     Tracker.onDisplay('Thank You');

@@ -1,7 +1,10 @@
 class Shopelia.Views.NewPassword extends Shopelia.Views.Form
 
-  template: JST['users/new_password']
+  template: 'users/new_password'
   className: 'box new_password'
+  ui: {
+    password: 'input[name="password"]'
+  }
 
   events:
     "click button": "setNewPassword"
@@ -9,16 +12,9 @@ class Shopelia.Views.NewPassword extends Shopelia.Views.Form
   initialize: ->
     Shopelia.Views.Form.prototype.initialize.call(this)
 
-  render: ->
-    $(@el).html(@template())
+  onRender: ->
     Tracker.onDisplay('Password');
-    @setFormVariables()
-    Shopelia.Views.Form.prototype.render.call(this)
-    #console.log()
-    this
-
-  setFormVariables: ->
-    @password = @$('input[name="password"]')
+    #Shopelia.Views.Form.prototype.render.call(this)
 
   setNewPassword:(e) ->
     e.preventDefault()

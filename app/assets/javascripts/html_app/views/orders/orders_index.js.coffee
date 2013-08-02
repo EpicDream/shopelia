@@ -52,12 +52,12 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
 
   getOrderJson: ->
     {
-      "expected_price_shipping": @model.get("expected_price_shipping")
-      "expected_price_product":  @model.get("expected_price_product")
-      "expected_price_total":@model.get("expected_price_total"),
-      "address_id": @model.get("user").addresses[0].id ,
-      "products":[@model.get("product")],
-      "payment_card_id": @model.get("user").payment_cards[0].id,
+      "expected_price_shipping": @model.get("product").expected_price_shipping
+      "expected_price_product":  @model.get("product").expected_price_product
+      "expected_price_total": customParseFloat(parseFloat(@model.get("product").expected_price_product) + parseFloat(@model.get("product").expected_price_shipping))
+      "address_id": @model.get("user").addresses[0].id
+      "products":[@model.get("product")]
+      "payment_card_id": @model.get("user").payment_cards[0].id
     }
 
   lockView: ->

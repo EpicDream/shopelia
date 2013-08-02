@@ -64,8 +64,3 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     $("#link-header").click ->
       target()
 
-  #ToREFACTO
-  addPasswordView : ->
-    passwordView = new Shopelia.Views.NewPassword(parent:this)
-    @$('#modal-right').append(passwordView.render().el)
-    $(passwordView.render().el).hide()
