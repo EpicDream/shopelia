@@ -1,5 +1,5 @@
 DELAY_BETWEEN_COLORS_OR_SIZES = 1500;
-OPTION_FILTER = /choi|choo|s(é|e)lect|toute|taille|couleur/i
+OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i
 
 function getOptions(path) {
   var elems = $(path);
