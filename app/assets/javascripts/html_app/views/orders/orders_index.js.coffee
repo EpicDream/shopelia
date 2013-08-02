@@ -6,14 +6,13 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
       console.log(@)
       @order.session.get('user').get(attr)
     product:(attr) ->
-      console.log(@order.product)
       @order.product.get(attr)
 
-    address:() ->
-      @order.session.get('user').get('addresses')[0]
+    address:(attr) ->
+      @order.session.get('user').get('addresses').getDefaultAddress().get(attr)
 
-    card: ->
-      @order.session.get('user').get('payment_cards')[0]
+    card:(attr) ->
+      @order.session.get('user').get('payment_cards').getDefaultPaymentCard().get(attr)
 
     total_price:() ->
       @order.product.getExpectedTotalPrice()
@@ -47,9 +46,9 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
       "expected_price_shipping": product.get('expected_price_shipping')
       "expected_price_product":  product.get('expected_price_product')
       "expected_price_total": product.getExpectedTotalPrice()
-      "address_id": user.get('addresses')[0].id
+      "address_id": user.get('addresses').getDefaultAddress().get('id')
       "products":[product.disableWrapping()]
-      "payment_card_id": user.get('payment_cards')[0].id
+      "payment_card_id": user.get('payment_cards').getDefaultPaymentCard().get('id')
     }
 
   lockView: ->

@@ -10,7 +10,7 @@
             <div class="spacer5"></div>
     <div class="infos clearfix offset1">
         <img class="pull-left" src="/assets/html_app/phone-icon.png">
-        <span class="pull-left" ><%= @address().phone %></span>
+        <span class="pull-left" ><%= @address('phone') %></span>
     </div>
             <div class="spacer10"></div>
 <div class="line"></div>
@@ -21,10 +21,10 @@
 </div>
     <div class="offset1">
         <%= @user("first_name") %> <%= @user("last_name") %><br>
-        <%= @address().address1 %>
-        <%= @address().address2 %> <br>
-        <%= @address().zip %> <%= @address().city %>
-         <%= countries[@address().country] %>
+        <%= @address('address1') %>
+        <%= @address('address2') %> <br>
+        <%= @address('zip') %> <%= @address('city') %>
+         <%= countries[@address('country')] %>
     </div>
 
         <div class="spacer10"></div>
@@ -36,7 +36,7 @@
 </div>
 
     <div class="offset1 clearfix">
-        <%= @card().number %>
+        <%= @card('number') %>
     </div>
         <div class="spacer10"></div>
         <div class="line"></div>

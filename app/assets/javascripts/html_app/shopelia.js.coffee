@@ -1,5 +1,6 @@
 window.Shopelia =
   Controllers: {}
+  Collections: {}
   Models: {}
   Views: {}
   Routers: {}

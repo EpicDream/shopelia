@@ -1,5 +1,25 @@
 class Shopelia.Models.User extends Backbone.RelationalModel
   urlRoot: "/api/users"
+  relations: [{
+              type: Backbone.HasMany,
+              key: 'addresses',
+              relatedModel: 'Shopelia.Models.Address'
+              collectionType: 'Shopelia.Collections.Addresses'
+              keySource: "addresses"
+              keyDestination: "addresses_attributes"
+              reverseRelation: {
+                }
+              },
+              {
+              type: Backbone.HasMany,
+              key: 'payment_cards',
+              relatedModel: 'Shopelia.Models.PaymentCard'
+              collectionType: 'Shopelia.Collections.PaymentCards'
+              keySource: "payment_cards"
+              keyDestination: "payment_cards_attributes"
+              reverseRelation: {
+                }
+              }]
 
 
   update: (attrs,callbacks) ->

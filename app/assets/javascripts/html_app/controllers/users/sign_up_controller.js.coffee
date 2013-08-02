@@ -8,13 +8,14 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
     @view = new Shopelia.Views.SignUp()
     region.show(@view)
 
-  createUser: (sessionJson) ->
+  createUser: (user) ->
     console.log("trigger createUser")
     that = this
-    if sessionJson isnt undefined
+    if user isnt undefined
       @view.lockView()
       session = @getSession()
-      session.save(sessionJson,{
+      session.set('user',user)
+      session.save({},{
         success : (resp) ->
           console.log('success callback')
           console.log("response user save: " + JSON.stringify(resp))
