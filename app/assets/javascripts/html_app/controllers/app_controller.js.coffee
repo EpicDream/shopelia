@@ -46,9 +46,3 @@ class Shopelia.Controllers.AppController extends Shopelia.Controllers.Controller
       #@modal.setContentView(new Shopelia.Views.UsersIndex())
       #center($(window),$("#modal"))
 
-  showModal: ->
-    view = new Shopelia.Views.Modal(session: @session,product: @product)
-    $('#container').append(view.render().el)
-    center($(window),$("#modal"))
-    view
-

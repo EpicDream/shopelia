@@ -1,5 +1,10 @@
 class Shopelia.Models.Session extends Backbone.RelationalModel
   urlRoot: "/api/users"
+  relations: [{
+              type: Backbone.HasOne,
+              key: 'user',
+              relatedModel: 'Shopelia.Models.User'
+              }]
   defaults:
     auth_token: null,
     user: null

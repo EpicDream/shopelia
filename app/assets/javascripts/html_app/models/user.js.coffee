@@ -1,5 +1,4 @@
 class Shopelia.Models.User extends Backbone.RelationalModel
-  name: "user"
   urlRoot: "/api/users"
 
 

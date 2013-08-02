@@ -4,22 +4,19 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
   templateHelpers: {
     user:(attr) ->
       console.log(@)
-      @order.user[attr]
+      @order.session.get('user').get(attr)
     product:(attr) ->
       console.log(@order.product)
-      @order.product[attr]
+      @order.product.get(attr)
 
-    #TODO Check which address to retrieve
     address:() ->
-      console.log(@order.user)
-      @order.user.addresses[0]
+      @order.session.get('user').get('addresses')[0]
 
     card: ->
-      @order.user.payment_cards[0]
+      @order.session.get('user').get('payment_cards')[0]
 
     total_price:() ->
-      #TODO add method to_price in Float.prototype
-      customParseFloat(parseFloat(@order.product.expected_price_product) + parseFloat(@order.product.expected_price_shipping))
+      @order.product.getExpectedTotalPrice()
   }
   className: 'box'
   ui: {
@@ -30,13 +27,6 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
 
   initialize: ->
     Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
-    #@user = {"id":136,"email":"kf@glb.com","first_name":"lef","last_name":"pefh","addresses":[{"id":111,"address1":"4 Rue Chapon","address2":"","zip":"75003","city":"Paris","country":"FR","is_default":1,"phone":"0675198943"}],"payment_cards":[{"id":51,"number":"12XXXXXXXXXX3452","name":null,"exp_month":"11","exp_year":"2013"}],"has_pincode":0,"has_password":0}
-    #@authToken = "34456666"
-    @user = @getSession().get("user")
-    @authToken = @getSession().get("auth_token")
-    #console.log("initialize processOrder View: ")
-    @product = @getProduct()
-
 
   onRender: ->
     @$("#process-order").after(
@@ -51,13 +41,15 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     Shopelia.vent.trigger("order#process_order",@getOrderJson())
 
   getOrderJson: ->
+    product = @model.get("product")
+    user = @model.get("session").get("user")
     {
-      "expected_price_shipping": @model.get("product").expected_price_shipping
-      "expected_price_product":  @model.get("product").expected_price_product
-      "expected_price_total": customParseFloat(parseFloat(@model.get("product").expected_price_product) + parseFloat(@model.get("product").expected_price_shipping))
-      "address_id": @model.get("user").addresses[0].id
-      "products":[@model.get("product")]
-      "payment_card_id": @model.get("user").payment_cards[0].id
+      "expected_price_shipping": product.get('expected_price_shipping')
+      "expected_price_product":  product.get('expected_price_product')
+      "expected_price_total": product.getExpectedTotalPrice()
+      "address_id": user.get('addresses')[0].id
+      "products":[product.disableWrapping()]
+      "payment_card_id": user.get('payment_cards')[0].id
     }
 
   lockView: ->

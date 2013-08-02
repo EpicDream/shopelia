@@ -124,3 +124,7 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
   formatPrice: (model,value) ->
     result =  customParseFloat(value)
     model.set(this.toString(),result)
+
+  getExpectedTotalPrice: ->
+    customParseFloat(parseFloat(@get('expected_price_product')) + parseFloat(@get('expected_price_shipping')))
+

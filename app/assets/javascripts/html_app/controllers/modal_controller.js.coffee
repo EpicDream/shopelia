@@ -21,8 +21,8 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
 
   order:(order) ->
     order = new Shopelia.Models.Order({
-                                      user: @getSession().get("user")
-                                      product: @getProduct().toJSON().product
+                                      session: @getSession()
+                                      product: @getProduct()
                                       })
     console.log(order)
     Shopelia.vent.trigger("order#show",@view.right,order)
