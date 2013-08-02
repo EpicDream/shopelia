@@ -1,9 +1,7 @@
-class Shopelia.Views.Form extends Shopelia.Views.ShopeliaView
+class Shopelia.Views.Form extends Shopelia.Views.Layout
 
-  initialize: ->
-    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
-
-  onRender: ->
+  initializeForm: ->
+    console.log($('form'))
     that = this
     @$('form :input').each(() ->
       $(this).focusout(() ->

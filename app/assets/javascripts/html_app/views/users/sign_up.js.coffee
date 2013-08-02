@@ -1,4 +1,4 @@
-class Shopelia.Views.SignUp extends Shopelia.Views.Layout
+class Shopelia.Views.SignUp extends Shopelia.Views.Form
 
   template: 'users/sign_up'
   className: "box"
@@ -22,10 +22,11 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Layout
     @userFieldsView = new Shopelia.Views.UserFields()
     @addressFieldsView = new Shopelia.Views.AddressFields()
     @cardFieldsView = new Shopelia.Views.CardFields()
-    console.log(@userFieldsView)
+
     @userFields.show(@userFieldsView)
     @addressFields.show(@addressFieldsView)
     @cardFields.show(@cardFieldsView)
+    @initializeForm()
 
 
   getFormResult: ->

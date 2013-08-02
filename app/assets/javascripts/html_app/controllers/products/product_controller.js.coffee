@@ -14,10 +14,6 @@ class Shopelia.Controllers.ProductController extends Shopelia.Controllers.Contro
     #  @description = $(descriptionView.render().el)
     #  this
 
-
-
-
-
   showDescription: ->
     #console.log("Show Product Infos")
     Tracker.onClick('Product Description')

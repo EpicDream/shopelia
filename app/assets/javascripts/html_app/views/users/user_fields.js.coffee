@@ -1,4 +1,4 @@
-class Shopelia.Views.UserFields extends Shopelia.Views.Form
+class Shopelia.Views.UserFields extends Shopelia.Views.ShopeliaView
 
   template: 'users/user_fields'
   className: "box"
@@ -8,9 +8,6 @@ class Shopelia.Views.UserFields extends Shopelia.Views.Form
   }
   events:
     "click #btn-register-user": "createUser"
-
-  initialize: ->
-    Shopelia.Views.Form.prototype.initialize.call(this)
 
   onRender: ->
     that = this

@@ -1,4 +1,4 @@
-class Shopelia.Views.AddressFields extends Shopelia.Views.Form
+class Shopelia.Views.AddressFields extends Shopelia.Views.ShopeliaView
 
   template: 'addresses/address_fields'
   ui: {
@@ -15,14 +15,12 @@ class Shopelia.Views.AddressFields extends Shopelia.Views.Form
     "keypress input[name='address1']": "getLocation"
     "change input[name='address1']": "eraseAddressFields"
 
-  initialize: ->
-    Shopelia.Views.Form.prototype.initialize.call(this)
+
 
   onRender: ->
     @ui.country.autocomplete({
                           source: _.values(countries),
                           });
-    #Shopelia.Views.Form.prototype.render.call(this)
 
   getFormResult: ->
     {

@@ -1,4 +1,4 @@
-class Shopelia.Views.CardFields extends Shopelia.Views.Form
+class Shopelia.Views.CardFields extends Shopelia.Views.ShopeliaView
 
   template: 'payment_cards/card_fields'
   className: 'paiement-view'
@@ -11,14 +11,6 @@ class Shopelia.Views.CardFields extends Shopelia.Views.Form
     'keydown input[name="number"]':'addSpaceToCardNumber'
     'keyup input[name="number"]': 'addCardType'
     'keyup input[name="exp_date"]': "formatExpDate"
-
-
-  initialize: ->
-    Shopelia.Views.Form.prototype.initialize.call(this)
-
-
-  onRender: ->
-    #Shopelia.Views.Form.prototype.render.call(this)
 
   getFormResult: ->
     cardFormObject = {};

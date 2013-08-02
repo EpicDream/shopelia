@@ -1,13 +1,9 @@
-class Shopelia.Views.SignIn extends Shopelia.Views.Form
+class Shopelia.Views.SignIn extends Shopelia.Views.ShopeliaView
 
-  template: JST['users/sign_in']
+  template: 'users/sign_in'
   className: "box"
   events:
     "click #btn-login-user": "loginUser"
-
-  initialize: ->
-    Shopelia.Views.Form.prototype.initialize.call(this)
-
 
   render: ->
     $(@el).html(@template())

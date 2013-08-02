@@ -1,4 +1,4 @@
-class Shopelia.Views.NewPassword extends Shopelia.Views.Form
+class Shopelia.Views.NewPassword extends Shopelia.Views.ShopeliaView
 
   template: 'users/new_password'
   className: 'box new_password'
@@ -9,12 +9,9 @@ class Shopelia.Views.NewPassword extends Shopelia.Views.Form
   events:
     "click button": "setNewPassword"
 
-  initialize: ->
-    Shopelia.Views.Form.prototype.initialize.call(this)
 
   onRender: ->
     Tracker.onDisplay('Password');
-    #Shopelia.Views.Form.prototype.render.call(this)
 
   setNewPassword:(e) ->
     e.preventDefault()
