@@ -2,14 +2,32 @@ class Shopelia.Views.UserFields extends Shopelia.Views.Form
 
   template: 'users/user_fields'
   className: "box"
+  ui: {
+    email: 'input[name="email"]'
+    phone: 'input[name="phone"]'
+  }
   events:
     "click #btn-register-user": "createUser"
 
   initialize: ->
     Shopelia.Views.Form.prototype.initialize.call(this)
 
+  onRender: ->
+    that = this
+    @ui.email.focusout(() ->
+      if that.ui.email.parsley("validate")
+        Shopelia.vent.trigger("sign_up#verify_email",that.ui.email.val())
+    )
+    #unless @options.email is undefined
+    #  @email.val(@options.email)
+
+  getFormResult: ->
+    {
+      email: @ui.email.val()
+      phone: @ui.phone.val()
+    }
+
   setFormVariables: ->
-    @fullName = @$('input[name="full_name"]')
     @email = @$('input[name="email"]')
     that = this
     @email.focusout(() ->
@@ -18,25 +36,6 @@ class Shopelia.Views.UserFields extends Shopelia.Views.Form
     )
     unless @options.email is undefined
       @email.val(@options.email)
-
-  verifyEmail: (email) ->
-    that = this
-    $.ajax({
-           type: 'POST'
-           url: 'api/users/exists',
-           data: {'email': email},
-           dataType: 'json',
-           beforeSend: (xhr) ->
-             xhr.setRequestHeader("Accept","application/json")
-             xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
-             xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
-           success: (data,textStatus,jqXHR) ->
-             that.parent.setContentView(new Shopelia.Views.SignIn(email:email))
-           error: (jqXHR,textStatus,errorThrown) ->
-             #console.log("user dosn't exist")
-             #console.log(JSON.stringify(errorThrown))
-           });
-
 
   createUser: (e) ->
     #console.log("trigger createUser")

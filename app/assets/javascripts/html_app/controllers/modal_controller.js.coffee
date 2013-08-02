@@ -9,13 +9,10 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     @view = new Shopelia.Views.Modal()
     Shopelia.Application.container.show(@view)
     @showSignUp()
+    @showProduct(@getProduct())
 
-
-  toto: (settings) ->
-    @productView = new Shopelia.Views.ProductsIndex(model:@getProduct(),parent:this)
-    view = new Shopelia.Views.UsersIndex(parent:this)
-    @$('#modal-left').append(@productView.render().el)
-    @setContentView(view)
+  showProduct: (product) ->
+    Shopelia.vent.trigger("product#show",@view.left,product)
 
   showSignUp : ->
     if @view is undefined

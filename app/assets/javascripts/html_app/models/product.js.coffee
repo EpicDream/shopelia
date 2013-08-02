@@ -21,6 +21,8 @@ class Shopelia.Models.Product extends Backbone.Model
   initialize: (params) ->
     #console.log('Initializing Product with params')
     _.bindAll(this, "startLongPolling", "stopLongPolling","onComplete")
+    @on("change:expected_price_product",@formatPrice,"expected_price_product")
+    @on("change:expected_price_shipping",@formatPrice,"expected_price_shipping")
     if this.isValid()
       @getMerchant()
     else
@@ -117,3 +119,7 @@ class Shopelia.Models.Product extends Backbone.Model
       @set({
             found: false
           })
+
+
+  formatPrice: (name,context) ->
+    console.log(name,context)

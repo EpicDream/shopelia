@@ -15,7 +15,8 @@ class Shopelia.Dispatchers.Dispatcher
       controllerName = result[0].normalizeName() + 'Controller'
       console.log(controllerName)
       args = Array.prototype.slice.call(arguments,1,arguments.length)
-      action = result[1]
+      action = result[1].normalizeName().uncapitalize()
+      console.log(action)
       if @controllers[controllerName] is undefined
         controller = new Shopelia.Controllers[controllerName]()
         @controllers[controllerName] = controller

@@ -1,6 +1,9 @@
 String.prototype.capitalize = ->
   this.charAt(0).toUpperCase() + this.slice(1)
 
+String.prototype.uncapitalize = ->
+  this.charAt(0).toLowerCase() + this.slice(1)
+
 String.prototype.normalizeName = ->
   names = this.split('_')
   res = ''

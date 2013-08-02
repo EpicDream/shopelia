@@ -7,3 +7,7 @@ class Shopelia.Views.ShopeliaView extends Backbone.Marionette.ItemView
     console.log(Shopelia.Application.request("product"))
     Shopelia.Application.request("product")
 
+  getSession:  ->
+    console.log(Shopelia.Application.request("session"))
+    Shopelia.Application.request("session")
+

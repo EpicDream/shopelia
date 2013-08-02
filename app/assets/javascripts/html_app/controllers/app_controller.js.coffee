@@ -9,9 +9,13 @@ class Shopelia.Controllers.AppController extends Shopelia.Controllers.Controller
 
   initializeReqRes: ->
     Shopelia.Application.reqres.setHandler("product", @getProduct)
+    Shopelia.Application.reqres.setHandler("session", @getSession)
 
   getProduct : ->
     return @product
+
+  getSession : ->
+    return @session
 
 
   checkSession: (params) ->
