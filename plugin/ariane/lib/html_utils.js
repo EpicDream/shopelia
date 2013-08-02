@@ -1,4 +1,6 @@
 // HTML Utils.
+// Author : Vincent Renaudineau
+
 hu = {};
 
 hu.getElementXPath = function(element) {
@@ -92,6 +94,9 @@ function fromParentSelector(jelement, complete) {
   return res;
 };
 
+hu.getFullElementCSSSelectors = function(jelement) {
+  return hu.getElementCSSSelectors(jelement, true);
+};
 hu.getElementCSSSelectors = function(jelement, complete) {
   var css = '';
   for ( ; jelement && jelement[0].nodeType == 1 ; jelement = jelement.parent() ) {
