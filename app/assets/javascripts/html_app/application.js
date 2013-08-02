@@ -17,6 +17,7 @@
 //= require bootstrap
 //= require underscore
 //= require backbone
+//= require html_app/backbone-relational
 //= require backbone.marionette
 //= require html_app/backbone.rails
 //= require html_app/backbone.queryparams

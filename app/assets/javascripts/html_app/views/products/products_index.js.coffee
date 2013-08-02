@@ -12,7 +12,6 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
     "click #full-description": "showDescription"
 
   initialize: ->
-    that = this
     @model.on('change', @render, @)
 
 

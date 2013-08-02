@@ -14,7 +14,18 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
   showProduct: (product) ->
     Shopelia.vent.trigger("product#show",@view.left,product)
 
-  showSignUp : ->
+  showSignUp: ->
     if @view is undefined
       @open
     Shopelia.vent.trigger("sign_up#show",@view.right)
+
+  order:(order) ->
+    order = new Shopelia.Models.Order({
+                                      user: @getSession().get("user")
+                                      product: @getProduct().toJSON().product
+                                      })
+    console.log(order)
+    Shopelia.vent.trigger("order#show",@view.right,order)
+
+  showThankYou: ->
+    Shopelia.vent.trigger("thank_you#show",@view.right)

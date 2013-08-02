@@ -1,4 +1,4 @@
-class Shopelia.Models.Session extends Backbone.Model
+class Shopelia.Models.Session extends Backbone.RelationalModel
   urlRoot: "/api/users"
   defaults:
     auth_token: null,

@@ -1,4 +1,4 @@
-class Shopelia.Models.Product extends Backbone.Model
+class Shopelia.Models.Product extends Backbone.RelationalModel
   name: "product"
 
   longPolling: false
@@ -121,5 +121,6 @@ class Shopelia.Models.Product extends Backbone.Model
           })
 
 
-  formatPrice: (name,context) ->
-    console.log(name,context)
+  formatPrice: (model,value) ->
+    result =  customParseFloat(value)
+    model.set(this.toString(),result)

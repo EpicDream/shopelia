@@ -1,9 +1,32 @@
 class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
 
-  template: JST['orders/index']
+  template: 'orders/index'
+  templateHelpers: {
+    user:(attr) ->
+      console.log(@)
+      @order.user[attr]
+    product:(attr) ->
+      console.log(@order.product)
+      @order.product[attr]
+
+    #TODO Check which address to retrieve
+    address:() ->
+      console.log(@order.user)
+      @order.user.addresses[0]
+
+    card: ->
+      @order.user.payment_cards[0]
+
+    total_price:() ->
+      #TODO add method to_price in Float.prototype
+      customParseFloat(parseFloat(@order.product.expected_price_product) + parseFloat(@order.product.expected_price_shipping))
+  }
   className: 'box'
+  ui: {
+    validation: '#process-order'
+  }
   events:
-    "click #process-order": "processOrder"
+    "click #process-order": "onProcessOrder"
 
   initialize: ->
     Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
@@ -13,46 +36,35 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     @authToken = @getSession().get("auth_token")
     #console.log("initialize processOrder View: ")
     @product = @getProduct()
-    @expected_price_product = @product.get('expected_price_product')
-    @expected_price_shipping = @product.get('expected_price_shipping')
-    #console.log(@expected_price_product)
-    #console.log(@expected_price_shipping)
-    @expected_price_total = customParseFloat(parseFloat(@expected_price_product) + parseFloat(@expected_price_shipping))
 
-  render: ->
-    that = this
-    $(@el).html(@template(user: @user, product: @product, expected_price_total: @expected_price_total))
+
+  onRender: ->
     @$("#process-order").after(
       () ->
-        securityView = new Shopelia.Views.Security(parent:that)
-        $(securityView.render().el)
+        #securityView = new Shopelia.Views.Security()
+        #$(securityView.render().el)
     )
     Tracker.onDisplay('Confirmation');
-    this
 
-
-  processOrder: (e) ->
+  onProcessOrder: (e) ->
     e.preventDefault()
-    disableButton($("#process-order"))
-    that = this
-    #console.log("processOrder")
-    order = new Shopelia.Models.Order()
-    order.save({
-               "expected_price_shipping": that.expected_price_shipping
-               "expected_price_product":  that.expected_price_product
-               "expected_price_total":that.expected_price_total,
-               "address_id": that.user.addresses[0].id ,
-               "products":[that.product.disableWrapping()],
-               "payment_card_id": that.user.payment_cards[0].id,
-               }, {
-               beforeSend : (xhr) ->
-                 xhr.setRequestHeader("X-Shopelia-AuthToken",that.authToken)
-               success: (resp) ->
-                 #console.log(resp)
-                 that.parent.setContentView(new Shopelia.Views.ThankYou())
-               error: (model, response) ->
-                 enableButton($("#process-order"))
-                 #console.log(JSON.stringify(response))
-    })
+    Shopelia.vent.trigger("order#process_order",@getOrderJson())
+
+  getOrderJson: ->
+    {
+      "expected_price_shipping": @model.get("expected_price_shipping")
+      "expected_price_product":  @model.get("expected_price_product")
+      "expected_price_total":@model.get("expected_price_total"),
+      "address_id": @model.get("user").addresses[0].id ,
+      "products":[@model.get("product")],
+      "payment_card_id": @model.get("user").payment_cards[0].id,
+    }
+
+  lockView: ->
+    disableButton(@ui.validation)
+
+  unlockView: ->
+    enableButton(@ui.validation)
+
 
 

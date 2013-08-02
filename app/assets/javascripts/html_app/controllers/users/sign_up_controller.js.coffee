@@ -10,6 +10,7 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
 
   createUser: (sessionJson) ->
     console.log("trigger createUser")
+    that = this
     if sessionJson isnt undefined
       @view.lockView()
       session = @getSession()
@@ -18,10 +19,10 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
           console.log('success callback')
           console.log("response user save: " + JSON.stringify(resp))
           session.saveCookies(resp)
-          Shopelia.vent.trigger("modal#on_user_authenticated")
+          Shopelia.vent.trigger("modal#order")
         error : (model, response) ->
           #console.log(JSON.stringify(response))
-          @view.unlockView()
+          that.view.unlockView()
           #TODO Display Errors
           #displayErrors($.parseJSON(response.responseText))
       })
