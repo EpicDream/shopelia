@@ -24,7 +24,5 @@ class Shopelia.Views.UserFields extends Shopelia.Views.ShopeliaView
       phone: @ui.phone.val()
     }
 
-  onActionClick: (e) ->
-    #console.log("users index action click")
-    @parent.setContentView(new Shopelia.Views.SignIn(email: @email.val()))
+
 
