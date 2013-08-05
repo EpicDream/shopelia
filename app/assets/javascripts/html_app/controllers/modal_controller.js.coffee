@@ -14,7 +14,7 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     @view.center()
 
   showProduct: (product) ->
-    Shopelia.vent.trigger("product#show",@view.left,product)
+    Shopelia.vent.trigger("products#show",@view.left,product)
 
   showSignIn: ->
     Shopelia.vent.trigger("sign_in#show",@view.right)

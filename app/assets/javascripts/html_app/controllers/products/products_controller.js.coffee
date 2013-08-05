@@ -1,4 +1,4 @@
-class Shopelia.Controllers.ProductController extends Shopelia.Controllers.Controller
+class Shopelia.Controllers.ProductsController extends Shopelia.Controllers.Controller
 
   show: (region,product) ->
     @view = new Shopelia.Views.ProductsIndex(model: product)
@@ -13,6 +13,21 @@ class Shopelia.Controllers.ProductController extends Shopelia.Controllers.Contro
     #  descriptionView = new Shopelia.Views.Description(model: @model,parent: this)
     #  @description = $(descriptionView.render().el)
     #  this
+
+    getProduct: (url) ->
+      $.ajax({
+             type: "GET",
+             url: "api/products",
+             data: { url: url }
+             dataType: 'json',
+             beforeSend: (xhr) ->
+               xhr.setRequestHeader("Accept","application/json")
+               xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
+               xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
+             success: (data,textStatus,jqXHR) ->
+               Shopelia.vent.trigger("change:product",data)
+             error: (jqXHR,textStatus,errorThrown) ->
+             });
 
   showDescription: ->
     #console.log("Show Product Infos")
