@@ -1,64 +1,42 @@
-class Shopelia.Views.SignIn extends Shopelia.Views.ShopeliaView
+class Shopelia.Views.SignIn extends Shopelia.Views.Form
 
   template: 'users/sign_in'
   className: "box"
+  ui: {
+    email: 'input[name="email"]'
+    password: 'input[name="password"]'
+    validation: '#btn-login-user'
+  }
   events:
-    "click #btn-login-user": "loginUser"
+    "click #btn-login-user": "onValidationClick"
 
-  render: ->
-    $(@el).html(@template())
+  onRender: ->
     Tracker.onDisplay('Sign In');
-    @setFormVariables()
-    @parent.setHeaderLink("Première Commande ?",@onActionClick)
-    Shopelia.Views.Form.prototype.render.call(this)
-    this
+    @initializeForm()
 
-  setFormVariables: ->
-    @email = @$('input[name="email"]')
-    @password = @$('input[name="password"]')
-    unless @options.email is undefined
-      @email.val(@options.email)
+  onValidationClick: (e) ->
+    e.preventDefault()
+    userJson = @getFormResult()
+    unless userJson is undefined
+      Shopelia.vent.trigger("sign_in#login",userJson)
 
-  loginUser: (e) ->
-    #console.log("trigger loginUser")
-    #console.log(@options.session)
+  getFormResult: ->
     if $('form').parsley( 'validate' )
-      disableButton($("#btn-login-user"))
-      eraseErrors()
-      e.preventDefault()
-      that = this
-      session = @getSession()
-      session.on("invalid", (model, errors) ->
-        displayErrors(errors)
-      )
-      sessionJson = @formSerializer()
-      session.login(sessionJson,{
-        success : (resp) ->
-          #console.log('login success callback')
-          #console.log("response login success: " + JSON.stringify(resp))
-          session.set(resp)
-          session.saveCookies(session)
-          that.parent.setContentView(new Shopelia.Views.OrdersIndex(parent:that))
-        error : (response) ->
-          #console.log("callback error login")
-          enableButton($("#btn-login-user"))
-          #console.log(JSON.stringify(response.responseText))
-          displayErrors($.parseJSON(response.responseText))
+       {
+        "email": @ui.email.val(),
+        "password": @ui.password.val()
+       }
+    else
+      undefined
 
-      })
-
-
-  formSerializer: ->
-    email = @email.val()
-    password = @password.val()
-    loginFormObject = {
-      "email": email,
-      "password": password
-    }
-    #console.log loginFormObject
-    loginFormObject
 
   onActionClick: (e) ->
     #console.log("sign in action click")
     #console.log(@parent)
-    @parent.setContentView(new Shopelia.Views.UsersIndex(email:@email.val()))
+    #@parent.setContentView(new Shopelia.Views.UsersIndex(email:@email.val()))
+
+  lockView: ->
+    disableButton(@ui.validation)
+
+  unlockView: ->
+    enableButton(@ui.validation)

@@ -8,18 +8,25 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     console.log('opening the modal')
     @view = new Shopelia.Views.Modal()
     Shopelia.Application.container.show(@view)
-    @showSignUp()
+    @showHeader()
+    @showSignIn()
     @showProduct(@getProduct())
 
   showProduct: (product) ->
     Shopelia.vent.trigger("product#show",@view.left,product)
+
+  showSignIn: ->
+    Shopelia.vent.trigger("sign_in#show",@view.right)
 
   showSignUp: ->
     if @view is undefined
       @open
     Shopelia.vent.trigger("sign_up#show",@view.right)
 
-  order:(order) ->
+  showHeader: ->
+    Shopelia.vent.trigger("header#show",@view.header)
+
+  order: ->
     order = new Shopelia.Models.Order({
                                       session: @getSession()
                                       product: @getProduct()
@@ -29,3 +36,9 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
 
   showThankYou: ->
     Shopelia.vent.trigger("thank_you#show",@view.right)
+
+  #setHeaderLink: (text,target) ->
+  #  $("#link-header").text(text)
+  #  $("#link-header").unbind("click")
+  #  $("#link-header").click ->
+  #    target()

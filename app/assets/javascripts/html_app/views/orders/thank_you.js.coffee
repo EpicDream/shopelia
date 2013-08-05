@@ -8,3 +8,5 @@ class Shopelia.Views.ThankYou extends Shopelia.Views.Layout
 
   onRender: ->
     Tracker.onDisplay('Thank You');
+
+

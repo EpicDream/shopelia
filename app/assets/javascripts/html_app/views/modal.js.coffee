@@ -50,17 +50,5 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
                     top.postMessage("deleteIframe",window.shopeliaParentHost)
                    })
 
-  setContentView: (backboneView) ->
-    @contentView = backboneView
-    @contentView.parent = this
-    el = @contentView.render().el
-    $(el).fadeIn(500)
-    @$('#modal-right-top').html(el)
-    center($(window),$("#modal"))
 
-  setHeaderLink: (text,target) ->
-    $("#link-header").text(text)
-    $("#link-header").unbind("click")
-    $("#link-header").click ->
-      target()
 

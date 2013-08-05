@@ -6,7 +6,8 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
 
   show: (region) ->
     @view = new Shopelia.Views.SignUp()
-    region.show(@view)
+    @region = region
+    @region.show(@view)
 
   create: (user) ->
     console.log("trigger createUser")
@@ -43,7 +44,7 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
-             Shopelia.vent.trigger("sign_in#show",email)
+             Shopelia.vent.trigger("sign_in#show",that.region)
            error: (jqXHR,textStatus,errorThrown) ->
              #console.log("user dosn't exist")
              #console.log(JSON.stringify(errorThrown))
