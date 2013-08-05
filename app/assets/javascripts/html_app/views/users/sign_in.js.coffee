@@ -12,6 +12,7 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
 
   onRender: ->
     Tracker.onDisplay('Sign In');
+    $(@el).fadeIn('slow')
     @initializeForm()
 
   onValidationClick: (e) ->
@@ -37,3 +38,6 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
 
   unlockView: ->
     enableButton(@ui.validation)
+
+  onClose: ->
+    $(@el).fadeOut('slow')

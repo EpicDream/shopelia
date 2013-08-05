@@ -24,21 +24,6 @@ window.enableButton = ($button) ->
   $button.removeAttr('disabled','disabled')
   $button.removeClass('disabled')
 
-window.center = ($parent,$elem) ->
-  top =undefined
-  left = undefined
-  top = Math.max($parent.height() - $elem.height(),0) / 2
-  left = Math.max($parent.width() - $elem.outerWidth(), 0) / 2
-  unless $parent[0] is window
-    top += $parent.outerHeight(true)
-
-  $elem.css
-    top: top
-    left: left
-
-window.customParseFloat = (float) ->
-  parseFloat(Math.round(float * 100) / 100).toFixed(2)
-
 window.displayErrors = (errors) ->
   keys = _.keys(errors)
   _.each(keys,(key) ->

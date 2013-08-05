@@ -19,6 +19,7 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
   onRender: ->
     Tracker.onDisplay('Sign Up');
     #console.log(@getProduct())
+    $(@el).fadeIn('slow')
     @userFieldsView = new Shopelia.Views.UserFields()
     @addressFieldsView = new Shopelia.Views.AddressFields()
     @cardFieldsView = new Shopelia.Views.CardFields()
@@ -63,3 +64,6 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
 
   unlockView: ->
     enableButton(@ui.validation)
+
+  onClose: ->
+    $(@el).fadeOut('slow')

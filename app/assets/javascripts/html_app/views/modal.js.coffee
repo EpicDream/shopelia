@@ -15,10 +15,7 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     'click #close': 'close'
 
   initialize: ->
-    #console.log(Shopelia.Views.ShopeliaView)
-    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
     messageListener = (e) ->
-      #console.log("set shopelia parent host")
       window.shopeliaParentHost = e.origin
       window.removeEventListener("message",messageListener)
     DOMContentLoadedListener = () ->
@@ -28,6 +25,10 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
       window.removeEventListener("DOMContentLoaded",DOMContentLoadedListener)
     window.addEventListener("DOMContentLoaded",DOMContentLoadedListener
     , false)
+    that = this
+    $(window).on('resize.modal',() ->
+      that.center()
+    )
 
   onRender: ->
     $(@el).fadeIn('slow')
@@ -40,7 +41,7 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
         that.productView.closeProducIframe()
       else
         that.close()
-    this
+    @center()
 
   close: ->
     #console.log("close please")
@@ -51,4 +52,12 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
                    })
 
 
+  center: ->
+    top = undefined
+    left = undefined
+    top = Math.max($(window).height() - $(@el).height(),0) / 2
+    left = Math.max($(window).width() - $(@el).outerWidth(), 0) / 2
 
+    $(@el).css
+      top: top
+      left: left
