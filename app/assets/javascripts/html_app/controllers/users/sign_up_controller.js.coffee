@@ -8,7 +8,7 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
     @view = new Shopelia.Views.SignUp()
     region.show(@view)
 
-  createUser: (user) ->
+  create: (user) ->
     console.log("trigger createUser")
     that = this
     if user isnt undefined

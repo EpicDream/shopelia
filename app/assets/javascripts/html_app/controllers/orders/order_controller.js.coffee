@@ -5,12 +5,11 @@ class Shopelia.Controllers.OrderController extends Shopelia.Controllers.Controll
     region.show(@view)
 
 
-  processOrder: (orderJson) ->
+  create: (order) ->
     @view.lockView()
     console.log(@getSession())
     that = this
-    order = new Shopelia.Models.Order()
-    order.save(orderJson, {
+    order.save({}, {
                beforeSend : (xhr) ->
                  xhr.setRequestHeader("X-Shopelia-AuthToken",that.getSession().get("auth_token"))
                success: (resp) ->

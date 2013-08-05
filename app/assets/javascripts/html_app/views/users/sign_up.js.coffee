@@ -29,7 +29,7 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
     @initializeForm()
 
 
-  getFormResult: ->
+  getUserFromForm: ->
     if @ui.form.parsley( 'validate' )
       userJson = @userFieldsView.getFormResult()
       address = new Shopelia.Models.Address(@addressFieldsView.getFormResult())
@@ -51,9 +51,9 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
 
   onValidationClick: (e) ->
     e.preventDefault()
-    session = @getFormResult()
-    unless session is undefined
-      Shopelia.vent.trigger("sign_up#create_user",session)
+    user = @getUserFromForm()
+    unless user is undefined
+      Shopelia.vent.trigger("sign_up#create",user)
 
 
   lockView: ->
