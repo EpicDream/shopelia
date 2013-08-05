@@ -29,11 +29,8 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     else
       undefined
 
-
-  onActionClick: (e) ->
-    #console.log("sign in action click")
-    #console.log(@parent)
-    #@parent.setContentView(new Shopelia.Views.UsersIndex(email:@email.val()))
+  setHeaderLink: (region) ->
+    Shopelia.vent.trigger("header#set_header_link","Première Commande ?","sign_up#show",region)
 
   lockView: ->
     disableButton(@ui.validation)

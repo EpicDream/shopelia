@@ -6,3 +6,6 @@ class Shopelia.Controllers.HeaderController extends Shopelia.Controllers.Control
   show: (region) ->
     @view = new Shopelia.Views.Header()
     region.show(@view)
+
+  setHeaderLink: (text,event,params) ->
+    @view.setHeaderLink(text,event,params)

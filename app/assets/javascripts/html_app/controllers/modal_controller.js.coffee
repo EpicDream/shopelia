@@ -9,7 +9,7 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     @view = new Shopelia.Views.Modal()
     Shopelia.Application.container.show(@view)
     @showHeader()
-    @showSignIn()
+    @showSignUp()
     @showProduct(@getProduct())
 
   showProduct: (product) ->
@@ -37,8 +37,3 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
   showThankYou: ->
     Shopelia.vent.trigger("thank_you#show",@view.right)
 
-  #setHeaderLink: (text,target) ->
-  #  $("#link-header").text(text)
-  #  $("#link-header").unbind("click")
-  #  $("#link-header").click ->
-  #    target()
