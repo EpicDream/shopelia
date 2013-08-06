@@ -1,14 +1,17 @@
 <style>
   body { margin: 0px; }
-  #toolbar { padding-left: 3px; }
-  #toolbar .ui-widget { font-size: 14px; }
-  #toolbar #step { z-index: 314159; }
-  #toolbar button.current-field:not(.extractor) span {background-color: lightGreen; color: red;}
-  #toolbar button.current-field.extractor span {background-color: red; color: lightGreen;}
-  #toolbar button[disabled] span {background-color: darkGrey; color: white;}
+  #ariane-toolbar { padding-left: 3px; }
+  #ariane-toolbar .ui-widget { font-size: 14px; }
+  #ariane-toolbar #ariane-step { z-index: 314159; }
+  #ariane-toolbar button.current-field:not(.extractor) span {background-color: lightGreen}
+  #ariane-toolbar button.current-field.extractor span {background-color: lightBlue;}
+  #ariane-toolbar button[disabled] span {background-color: darkGrey; color: white;}
+  #ariane-toolbar button.missing:not(.current-field) span {background-color: red;}
+  #ariane-toolbar button.missing.current-field span {color: red;}
+  #ariane-toolbar button.mapped span {color: green;}
 </style>
-<div id="toolbar" class="ui-widget-header">
-  <select id="step" class="styled-select">
+<div id="ariane-toolbar" class="ui-widget-header">
+  <select id="ariane-step" class="styled-select">
     <option value="account_creation">Créer compte</option>
     <option value="logout">Logout</option>
     <option value="login">Login</option>
@@ -18,57 +21,57 @@
     <option value="finalize">Finaliser</option>
     <option value="payment">Payer</option>
   </select>
-  <span id="ctrl" class="buttonset">
-    <button id="abort">Annuler</button>
-    <button id="next">Suivant</button>
-    <button id="finish">Terminer</button>
+  <span id="ariane-ctrl" class="buttonset">
+    <button id="ariane-abort">Annuler</button>
+    <button id="ariane-next">Suivant</button>
+    <button id="ariane-finish">Terminer</button>
   </span>
-  <span id="account" class="buttonset">
-    <button id="account-login">Email</button>
-    <button id="account-password">Password</button>
+  <span id="ariane-account" class="buttonset">
+    <button id="ariane-account-login">Email</button>
+    <button id="ariane-account-password">Password</button>
   </span>
-  <span id="user" class="buttonset">
-    <button id="user-address-last_name">Nom</button>
-    <button id="user-address-first_name">Prénom</button>
-    <button id="user-gender">Genre</button>
-    <button id="user-birthdate-day">Jour</button>
-    <button id="user-birthdate-month">Mois</button>
-    <button id="user-birthdate-year">Année</button>
-    <button id="birthdate">Anniversaire</button>
-    <button id="user-address-address_1">Adresse 1</button>
-    <button id="user-address-address_2">Adresse 2</button>
-    <button id="user-address-additionnal_address">More Adresse</button>
-    <button id="user-address-city">Ville</button>
-    <button id="user-address-zip">Code Postale</button>
-    <button id="user-address-country">Pays</button>
-    <button id="user-address-mobile_phone">Tél Portable</button>
-    <button id="user-address-land_phone">Tél Fixe</button>
+  <span id="ariane-user" class="buttonset">
+    <button id="ariane-user-address-last_name">Nom</button>
+    <button id="ariane-user-address-first_name">Prénom</button>
+    <button id="ariane-user-gender">Genre</button>
+    <button id="ariane-user-birthdate-day">Jour</button>
+    <button id="ariane-user-birthdate-month">Mois</button>
+    <button id="ariane-user-birthdate-year">Année</button>
+    <button id="ariane-birthdate">Anniversaire</button>
+    <button id="ariane-user-address-address_1">Adresse 1</button>
+    <button id="ariane-user-address-address_2">Adresse 2</button>
+    <button id="ariane-user-address-additionnal_address">More Adresse</button>
+    <button id="ariane-user-address-city">Ville</button>
+    <button id="ariane-user-address-zip">Code Postale</button>
+    <button id="ariane-user-address-country">Pays</button>
+    <button id="ariane-user-address-mobile_phone">Tél Portable</button>
+    <button id="ariane-user-address-land_phone">Tél Fixe</button>
   </span>
-  <span id="prod" class="buttonset">
-    <button id="product-name" class="extractor">Titre</button>
-    <button id="product-description" class="extractor">Description</button>
-    <button id="product-brand" class="extractor">Marque/Reférence</button>
-    <button id="product-image_url" class="extractor">Image Principale</button>
-    <button id="product-images" class="extractor">Autres images</button>
-    <button id="product-sizes" class="extractor">Taille</button>
-    <button id="product-colors" class="extractor">Couleur</button>
-    <button id="product-price" class="extractor">Prix</button>
-    <button id="product-price_strikeout" class="extractor">Prix Barré</button>
-    <button id="product-shipping_price" class="extractor">Shipping Price</button>
-    <button id="product-shipping_info" class="extractor">Shipping Info</button>
-    <button id="product-availability" class="extractor">Disponibilité</button>
+  <span id="ariane-prod" class="buttonset">
+    <button id="ariane-product-name" class="extractor">Titre</button>
+    <button id="ariane-product-description" class="extractor">Description</button>
+    <button id="ariane-product-brand" class="extractor">Marque/Reférence</button>
+    <button id="ariane-product-image_url" class="extractor">Image Principale</button>
+    <button id="ariane-product-images" class="extractor">Autres images</button>
+    <button id="ariane-product-sizes" class="extractor">Taille</button>
+    <button id="ariane-product-colors" class="extractor">Couleur</button>
+    <button id="ariane-product-price" class="extractor">Prix</button>
+    <button id="ariane-product-price_strikeout" class="extractor">Prix Barré</button>
+    <button id="ariane-product-price_shipping" class="extractor">Shipping Price</button>
+    <button id="ariane-product-shipping_info" class="extractor">Shipping Info</button>
+    <button id="ariane-product-availability" class="extractor">Disponibilité</button>
   </span>
-  <span id="tot" class="buttonset">
-    <button id="totPrice" class="extractor">Total</button>
-    <button id="totProdPrice" class="extractor">Total Products</button>
-    <button id="totShipPrice" class="extractor">Total Shipping</button>
+  <span id="ariane-tot" class="buttonset">
+    <button id="ariane-totPrice" class="extractor">Total</button>
+    <button id="ariane-totProdPrice" class="extractor">Total Products</button>
+    <button id="ariane-totShipPrice" class="extractor">Total Shipping</button>
   </span>
-  <span id="card" class="buttonset">
-    <button id="type">Type</button>
-    <button id="order-credentials-number">Numéro</button>
-    <button id="order-credentials-exp_month">Mois</button>
-    <button id="order-credentials-exp_year">Année</button>
-    <button id="order-credentials-cvv">CVV</button>
-    <button id="order-credentials-holder">Nom</button>
+  <span id="ariane-card" class="buttonset">
+    <button id="ariane-type">Type</button>
+    <button id="ariane-order-credentials-number">Numéro</button>
+    <button id="ariane-order-credentials-exp_month">Mois</button>
+    <button id="ariane-order-credentials-exp_year">Année</button>
+    <button id="ariane-order-credentials-cvv">CVV</button>
+    <button id="ariane-order-credentials-holder">Nom</button>
   </span>
 </div>

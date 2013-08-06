@@ -9,11 +9,7 @@ function onBodyClick(event) {
     return;
 
   event.preventDefault();
-  var e = $(event.target);
-  // var tmpColor = e.css("background-color");
-  // var tmpPad = e.css("padding");
-  // e.animate({backgroundColor: "#00dd00", padding: 1},100).delay(400).animate({backgroundColor: tmpColor, padding: tmpPad},100);
-  var path = hu.getElementCSSSelectors(e);
+  var path = pu.getMinimized(event.target);
   var fieldId = getCurrentFieldId();
   setMapping(fieldId, path);
 };
@@ -28,15 +24,49 @@ function setMapping(fieldId, path) {
   elems.effect("highlight", {color: "#00cc00" }, "slow");
   console.log("setMapping('"+fieldId+"', '"+path+"')", elems.length, "element(s) found.");
   var context = elems.length == 1 ? hu.getElementContext(elems[0]) : {};
+  buttons.filter("#ariane-product-"+fieldId).removeClass("missing").addClass("mapped");
   chrome.extension.sendMessage({setMapping: true, fieldId: fieldId, path: path, context: context});
+};
+
+function search(mapping) {
+  var res = {}
+  for (var key in mapping) {
+    var pathes = mapping[key].path;
+    if (! pathes) continue;
+    if (! (pathes instanceof Array))
+      pathes = [pathes];
+    for (var j in pathes) {
+      var path = pathes[j];
+      var elems = $(path);
+      if (elems.length == 0) continue;
+      res[key] = elems;
+      break;
+    }
+  }
+  return res;
 };
 
 /* ********************************************************** */
 /*                        Initialisation                      */
 /* ********************************************************** */
 
+var buttons = $("#ariane-toolbar button[id^='product-']");
+
 $(document).ready(function() {
   $("body").click(onBodyClick);
   $("body").on("contextmenu", onBodyClick);
+});
+
+chrome.extension.onMessage.addListener(function(msg, sender) {
+  if (sender.id != chrome.runtime.id || ! msg.mapping)
+    return;
+
+  console.log("Received mapping :", msg.mapping);
+  var res = search(msg.mapping);
+  console.log("Elements found :", res);
+  buttons.addClass("missing");
+  for (var key in res)
+    if (res[key].length > 0)
+      buttons.filter("#ariane-product-"+key).removeClass("missing").addClass("mapped");
   startHumanis(true);
 });

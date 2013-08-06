@@ -202,6 +202,7 @@ hu.getFormAttrs = function(e) {
 // h.form : input's form's attributes. See hu.getElementAttrs().
 hu.getElementContext = function(e) {
   var context = {};
+  context.url = location.href;
   context.xpath = hu.getElementXPath(e);
   context.fullXPath = hu.getElementCompleteXPath(e);
   context.css = hu.getElementCSSSelectors($(e));

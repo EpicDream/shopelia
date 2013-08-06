@@ -17,30 +17,30 @@ function loadHumanis() {
 
 function build() {
   // Init global variables
-  jToolbar = jHumanis.find("#toolbar");
-  jStep = jToolbar.find("#step");
-  jButtons = jToolbar.find("span:not(#ctrl) button");
+  jToolbar = jHumanis.find("#ariane-toolbar");
+  jStep = jToolbar.find("#ariane-step");
+  jButtons = jToolbar.find("span:not(#ariane-ctrl) button");
 
   // Initialize jQuery Elements
   jToolbar.find("button").button();
   jToolbar.find(".buttonset").buttonset();
-  jToolbar.find("#abort").button({
+  jToolbar.find("#ariane-abort").button({
     text: false,
     icons: {primary: "ui-icon-cancel"}
   });
-  jToolbar.find("#next").button({
+  jToolbar.find("#ariane-next").button({
     text: false,
     icons: {primary: "ui-icon-circle-arrow-e"}
   }).addClass("ui-corner-right");
-  jToolbar.find("#finish").button({
+  jToolbar.find("#ariane-finish").button({
     text: false,
     icons: {primary: "ui-icon-circle-check"}
   }).hide();
 
   // Link events
-  jToolbar.find("#next").click(onNext);
-  jToolbar.find("#finish").click(onFinished);
-  jToolbar.find("#abort").click(onAborted);
+  jToolbar.find("#ariane-next").click(onNext);
+  jToolbar.find("#ariane-finish").click(onFinished);
+  jToolbar.find("#ariane-abort").click(onAborted);
   jStep.change(onStepChanged);
   jButtons.click(onButtonClicked);
 }
@@ -51,24 +51,24 @@ function build() {
 
 function onStepChanged(event) {
   field_for_step = {
-    account_creation: "#account, #user",
+    account_creation: "#ariane-account, #ariane-user",
     logout: "",
-    login: "#account",
+    login: "#ariane-account",
     empty_cart: "",
-    extract: "#prod",
+    extract: "#ariane-prod",
     add_product: "",
-    finalize: "#user, #tot",
-    payment: "#card"
+    finalize: "#ariane-user, #ariane-tot",
+    payment: "#ariane-card"
   };
 
-  jToolbar.find(".buttonset").filter(":not(#ctrl)").hide();
+  jToolbar.find(".buttonset").filter(":not(#ariane-ctrl)").hide();
   jToolbar.find(field_for_step[jStep.val()]).show();
   if (jStep.val() == "payment" || jStep.val() == "extract") {
-    jToolbar.find("#next").hide();
-    jToolbar.find("#finish").show();
+    jToolbar.find("#ariane-next").hide();
+    jToolbar.find("#ariane-finish").show();
   } else {
-    jToolbar.find("#next").show();
-    jToolbar.find("#finish").hide();
+    jToolbar.find("#ariane-next").show();
+    jToolbar.find("#ariane-finish").hide();
   }
 };
 
@@ -109,7 +109,7 @@ function startHumanis(crawl_mode) {
 };
 
 function getCurrentFieldId() {
-  var fieldId = (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/product-/, '');
+  var fieldId = (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-/, '').replace(/product-/, '');
   if (! fieldId)
     fieldId = "other";
   return fieldId;

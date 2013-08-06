@@ -3,17 +3,26 @@
 //              SET CONTSTANTS AND GLOBOL VARIABLES
 /////////////////////////////////////////////////////////////////////
 
-TEST_ENV = true;
-if (TEST_ENV) {
+LOCAL_ENV = false;
+if (LOCAL_ENV) {
   SHOPELIA_DOMAIN = "http://localhost:3000"
 } else {
-  SHOPELIA_DOMAIN = "http://www.shopelia.fr"
+  SHOPELIA_DOMAIN = "https://www.shopelia.fr"
 }
-PRODUCT_SHIFT_URL = SHOPELIA_DOMAIN + "/humanis/products/shift";
-PRODUCT_UPDATE_URL = SHOPELIA_DOMAIN + "/humanis/products/";
+PRODUCT_SHIFT_URL = SHOPELIA_DOMAIN + "/api/viking/products/failure/shift";
+MAPPING_URL = SHOPELIA_DOMAIN + "/api/viking/merchants/";
 
-var tasks = {},
-    mappings = {};
+var tasks = {};
+
+var merchants = {
+  "rueducommerce.fr" : "1",
+  "amazon.fr" : "2",
+  "fnac.com" : "3",
+  "priceminister.com" : "4",
+  "cdiscount.com" : "5",
+  "darty.com" : "6",
+  "toysrus.fr" : "7"
+};
 
 /////////////////////////////////////////////////////////////////////
 //                      ON CHROME EVENTS
@@ -22,8 +31,7 @@ var tasks = {},
 // On extension button clicked, start Ariane on this page.
 chrome.browserAction.onClicked.addListener(function(tab) {
   console.log("Button pressed, going to load Ariane on tab", tab.id);
-  initTabVariables(tab.id, {url: tab.url});
-  load_ariane(tab.id);
+  load(tab.id, {url: tab.url});
 });
 
 // On page reload, restart Ariane if it was started before.
@@ -48,9 +56,9 @@ chrome.extension.onMessage.addListener(function(msg, sender, response) {
   var tabId = sender.tab.id;
   if (msg == "finish" || msg.abort != undefined) {
     send_finished_statement(tabId, msg.abort)
-    getProductUrlToExtract(tabId);
+    //getProductUrlToExtract(tabId);
   } else if (msg.setMapping != undefined) {
-    mappings[tabId][msg.fieldId] = {path: msg.path, context: msg.context};
+    tasks[tabId].currentMap[msg.fieldId] = msg;
   }
 });
 
@@ -59,6 +67,11 @@ chrome.commands.onCommand.addListener(function(command) {
   chrome.tabs.getSelected(function(tab) {
     chrome.tabs.sendMessage(tab.id, command);
   });
+});
+
+//
+chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
+  delete tasks[tabId];
 });
 
 
@@ -78,17 +91,20 @@ function start(tabId) {
       return;
     }
     console.debug("Get product_url to map for tab", tabId, ":", hash);
-    initTabVariables(tabId, hash);
-    chrome.tabs.update(tabId, {url: hash.url});
+    load(tabId, hash);
   });
 };
 
 //
 function initTabVariables(tabId, hash) {
-  var uri = new Uri(hash.url);
   tasks[tabId] = hash;
-  tasks[tabId].host = uri.host();
-  mappings[tabId] = {};
+  tasks[tabId].uri = new Uri(hash.url);
+  tasks[tabId].host = tasks[tabId].uri.host();
+  tasks[tabId].mapHost = tasks[tabId].host.replace(/w{3,}\./, '');
+  tasks[tabId].fullMapping = {};
+  tasks[tabId].fullMapping[tasks[tabId].mapHost] = {};
+  tasks[tabId].mapping = {};
+  tasks[tabId].currentMap = {};
 };
 
 // Get from Shopelia the next product url to map/extract.
@@ -104,33 +120,115 @@ function getProductUrlToExtract() {
 };
 
 //
-function send_finished_statement(tabId, reason) {
-  $.ajax({
-    type : "PUT",
-    url: PRODUCT_UPDATE_URL+tasks[tabId].id,
-    contentType: 'application/json',
-    data: JSON.stringify({
-      verb: reason ? 'bounce' : 'success',
-      mapping: mappings[tabId],
-      reason: reason
-    })
+function load(tabId, hash) {
+  initTabVariables(tabId, hash);
+  if (! tasks[tabId].merchant_id)
+    tasks[tabId].merchant_id = getMerchantId(tasks[tabId].uri);
+  loadMapping(tasks[tabId].merchant_id).done(function(mapping) {
+    if (mapping.data) {
+      tasks[tabId].fullMapping = mapping.data;
+      tasks[tabId].mapping = buildMapping(tabId, mapping.data);
+    }
+    console.log("mapping chosen", tasks[tabId].mapping);
+  }).always(function() {
+    chrome.tabs.update(tabId, {url: tasks[tabId].url});
   });
-  delete tasks[tabId];
-  delete mappings[tabId];
+};
+
+//
+function getMerchantId(uri) {
+  var host = uri.host();
+  while (host !== "") {
+    if (merchants[host])
+      return merchants[host];
+    else
+      host = host.replace(/^\w+(\.|$)/, '');
+  }
+  return undefined;
+};
+
+// GET mapping for merchant_id,
+// and return jqXHR object.
+function loadMapping(merchant_id) {
+  console.debug("Going to get mapping for merchant_id '"+merchant_id+"'");
+  return $.ajax({
+    type : "GET",
+    dataType: "json",
+    url: MAPPING_URL+merchant_id,
+  }).fail(function(err) {
+    console.error("Fail to retrieve mapping for merchant_id "+merchant_id, err);
+  });
 };
 
 // Inject libraries and contentscript into the page.
 function load_ariane(tabId) {
   chrome.tabs.executeScript(tabId, {file:"lib/underscore-min.js"});
+  chrome.tabs.executeScript(tabId, {file:"lib/css_struct.js"});
+  chrome.tabs.executeScript(tabId, {file:"lib/path_utils.js"});
   chrome.tabs.executeScript(tabId, {file:"lib/html_utils.js"});
   chrome.tabs.insertCSS(tabId, {file:"assets/contentscript.css"});
   chrome.tabs.executeScript(tabId, {file:"lib/jquery-1.9.1.min.js"}, function() {
     chrome.tabs.executeScript(tabId, {file:"lib/jquery-ui-1.10.3.custom.min.js"}, function() {
       chrome.tabs.executeScript(tabId, {file:"controllers/toolbar_contentscript.js"}, function() {
         chrome.tabs.executeScript(tabId, {file:"controllers/mapping_contentscript.js"}, function() {
+          chrome.tabs.sendMessage(tabId, {mapping: tasks[tabId].mapping});
           console.log("Ariane loaded !");
         });
       });
     });
   });
+};
+
+//
+function send_finished_statement(tabId, reason) {
+  if (! tasks[tabId].fullMapping[tasks[tabId].mapHost])
+    tasks[tabId].fullMapping[tasks[tabId].mapHost] = {};
+  var mapping = tasks[tabId].fullMapping[tasks[tabId].mapHost];
+  var currentMap = tasks[tabId].currentMap;
+  for (var key in jQuery.extend({}, mapping, currentMap)) {
+    if (! currentMap[key])
+      continue;
+    if (! mapping[key])
+      mapping[key] = {path: [currentMap[key].path]};
+    else if (mapping[key].path instanceof Array)
+      mapping[key].path.push(currentMap[key].path);
+    else
+      mapping[key].path = [mapping[key].path, currentMap[key].path];
+
+    if (! mapping[key].context)
+      mapping[key].context = [currentMap[key].context];
+    else if (mapping[key].context instanceof Array)
+      mapping[key].context.push(currentMap[key].context);
+    else
+      mapping[key].context = [mapping[key].context, currentMap[key].context];
+  }
+
+  $.ajax({
+    type : "PUT",
+    url: MAPPING_URL+tasks[tabId].merchant_id,
+    contentType: 'application/json',
+    data: JSON.stringify({
+      verb: reason ? 'bounce' : 'success',
+      data: tasks[tabId].fullMapping,
+      reason: reason
+    })
+  });
+  delete tasks[tabId];
+};
+
+/////////////////////////////////////////////////////////////////////
+//                      UTILITIES
+/////////////////////////////////////////////////////////////////////
+
+//
+function buildMapping(tabId, hash) {
+  var host = tasks[tabId].mapHost;
+  console.log("Going to search a mapping for host", host, "between", jQuery.map(hash,function(v, k){return k;}) );
+  var resMapping = {};
+  while (host !== "") {
+    if (hash[host])
+      resMapping = $.extend(true, {}, hash[host], resMapping);
+    host = host.replace(/^\w+(\.|$)/, '');
+  }
+  return resMapping;
 };
