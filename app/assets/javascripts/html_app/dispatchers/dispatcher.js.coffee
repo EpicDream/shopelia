@@ -28,7 +28,12 @@ class Shopelia.Dispatchers.Dispatcher
 
 
   dispose: (controller) ->
-    @controllers = _.filter(
+    temp = {}
+    @controllers = _.each(
         @controllers,(value,key) ->
-          controller != value
+          if controller != value
+            temp[key] = value
     )
+    @controllers = temp
+    console.log(@controllers)
+

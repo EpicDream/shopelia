@@ -5,8 +5,6 @@ class Shopelia.Views.Header extends Shopelia.Views.ShopeliaView
     link: "#link-header"
   }
 
-  initialize: ->
-    _.bindAll(this)
 
   setHeaderLink: (headerLink) ->
     @ui.link.text(headerLink.text)

@@ -50,3 +50,5 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
              #console.log("user dosn't exist")
              #console.log(JSON.stringify(errorThrown))
            });
+
+

@@ -3,6 +3,7 @@ class Shopelia.Controllers.HeaderController extends Shopelia.Controllers.Control
   initialize: ->
     _.bindAll this
     @linkStack = []
+    console.log('initi header')
 
   show: (region) ->
     @view = new Shopelia.Views.Header()
@@ -13,9 +14,8 @@ class Shopelia.Controllers.HeaderController extends Shopelia.Controllers.Control
     @linkStack.push(headerLink)
     @view.setHeaderLink(headerLink)
 
-  popHeaderLink: (event,text,params)  ->
-    headerLink = {text: text,event:event,params:params}
-    @linkStack.pop(headerLink)
+  popHeaderLink: ->
+    @linkStack.pop()
     length = @linkStack.length
     if length == 0
       @view.hideHeaderLink()
@@ -28,6 +28,8 @@ class Shopelia.Controllers.HeaderController extends Shopelia.Controllers.Control
     )
     length = @linkStack.length
     if length == 0
+      console.log(this)
+      console.log(@view)
       @view.hideHeaderLink()
     else
       @view.setHeaderLink(_.last(@linkStack))
