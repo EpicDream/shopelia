@@ -35,7 +35,8 @@ var merchants = {
   "priceminister.com" : "4",
   "cdiscount.com" : "5",
   "darty.com" : "6",
-  "toysrus.fr" : "7"
+  "toysrus.fr" : "7",
+  "eveiletjeux.com" : "8"
 };
 
 /////////////////////////////////////////////////////////////////
