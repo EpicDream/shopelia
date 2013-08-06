@@ -36,6 +36,8 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
                                       product: @getProduct()
                                       })
     console.log(order)
+    Shopelia.vent.trigger("sign_up#close")
+    Shopelia.vent.trigger("sign_in#close")
     Shopelia.vent.trigger("order#show",@view.right,order)
 
   showThankYou: ->
