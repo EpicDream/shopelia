@@ -1,8 +1,7 @@
 class Shopelia.Poller extends Backbone.Wreqr.EventAggregator
 
   constructor:(config) ->
-    console.log("initialize poller")
-    console.log(config)
+    _.bindAll(this)
     @intervalTime =  config.intervalTime or 200
     @method = config.method or 'GET'
     @url = config.url
@@ -15,12 +14,12 @@ class Shopelia.Poller extends Backbone.Wreqr.EventAggregator
       @isRunning = true
       @trigger("start")
       @redirectTime = 0
+      @begin_time_request = new Date().getTime();
       @callStart()
 
 
   callStart: ->
     that = this
-    @begin_time_request = 0
     if @isRunning
       $.ajax({
              type: that.method,
@@ -31,18 +30,21 @@ class Shopelia.Poller extends Backbone.Wreqr.EventAggregator
                xhr.setRequestHeader("Accept","application/json")
                xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
                xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
-               that.begin_time_request = new Date().getTime();
              success: (data,textStatus,jqXHR) ->
-               that.trigger("data_available",data)
+               if that.isRunning
+                that.trigger("data_available",data)
              error: (jqXHR,textStatus,errorThrown) ->
              complete: (jqXHR, textStatus) ->
-                requestTime  = new Date().getTime() - that.begin_time_request
-                that.redirectTime += requestTime
-                that.isRunning =  that.redirectTime < that.expiry
                 if that.isRunning
-                  setTimeout that.callStart, that.intervalTime
-                else
-                  that.trigger("expired")
+                  requestTime  = new Date().getTime() - that.begin_time_request
+                  that.begin_time_request = new Date().getTime()
+                  that.redirectTime += requestTime
+                  that.isRunning =  that.redirectTime < that.expiry
+                  if that.isRunning
+                    setTimeout(that.callStart, that.intervalTime)
+                  else
+                    that.trigger("expired")
+                    that.stop()
              });
 
 

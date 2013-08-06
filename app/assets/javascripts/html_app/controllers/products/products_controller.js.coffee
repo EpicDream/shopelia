@@ -17,6 +17,8 @@ class Shopelia.Controllers.ProductsController extends Shopelia.Controllers.Contr
     @poller.start()
 
   onPollerDataAvailable: (data) ->
+    console.log('data')
+    console.log(data)
     @product.setProduct(data)
     if @product.isValid()
       @poller.stop()

@@ -17,7 +17,6 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
 
 
   initialize: (params) ->
-    #console.log('Initializing Product with params')
     _.bindAll(this)
     @on("change:expected_price_product",@formatPrice,"expected_price_product")
     @on("change:expected_price_shipping",@formatPrice,"expected_price_shipping")
@@ -33,7 +32,8 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
 
 
   setProduct: (data) ->
-    @set({
+    try
+      @set({
            name: data.name,
            image_url: data.image_url,
            description: data.description,
@@ -42,7 +42,12 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
            shipping_info: data.versions[0].shipping_info
            merchant_name: data.merchant.name,
            allow_iframe: data.merchant.allow_iframe
-         })
+           })
+      console.log(@isValid())
+    catch error
+      console.log(error)
+
+
 
 
   customParseFloat: (float) ->
