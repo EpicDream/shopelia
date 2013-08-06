@@ -1,12 +1,12 @@
 class Shopelia.Views.NotFound extends Shopelia.Views.ShopeliaView
 
-  template: JST['products/not_found']
+  template: 'products/not_found'
   className: 'product'
+  templateHelpers: {
+    model: (attr) ->
+      console.log(@)
+      @product[attr]
+  }
 
-
-  initialize: ->
-    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
-
-  render: ->
-    $(@el).html(@template(model: @model))
-    this
+  onRender: ->
+    Tracker.onDisplay('Product Not Found');

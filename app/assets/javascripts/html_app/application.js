@@ -23,6 +23,7 @@
 //= require html_app/backbone.queryparams
 //= require html_app/tracker
 //= require html_app/shopelia
+//= require html_app/poller
 //= require_tree ../../templates
 //= require_tree ./models
 //= require_tree ./collections

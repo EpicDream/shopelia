@@ -1,5 +1,8 @@
 class Shopelia.Controllers.Controller extends Backbone.Marionette.Controller
 
+  initialize: ->
+    _.bindAll(this)
+
   getProduct:  ->
     Shopelia.Application.request("product")
 
