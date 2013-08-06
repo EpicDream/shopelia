@@ -3,48 +3,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
     <title>Shopelia - Votre commande a été acceptée par le marchand</title>
-    <style type="text/css">
-      .ReadMsgBody { width: 100%; background-color: #ffffff; }
-      .ExternalClass { width: 100%; background-color: #ffffff; }
-      .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div { line-height: 100%; }
-      html { width: 100%; }
-      body { -webkit-text-size-adjust: none; -ms-text-size-adjust: none; }
-      body { margin: 0; padding: 0; }
-      table { border-spacing: 0; }
-      img { display: block !important; }
-      table td { border-collapse: collapse; }
-      .yshortcuts a { border-bottom: none !important; }
-      a { color: #3498db; text-decoration: none; font-weight: bold; }
-      .hide { max-height: 0px; font-size: 0; display: none; }
-      @media only screen and (max-width: 640px) {
-      body { width: auto !important; }
-      table[class="table600"] { width: 450px !important; text-align: center !important; }
-      table[class="table550"] { width: 87% !important; float: none !important; }
-      table[class="table2-2"] { width: 47% !important; }
-      img[class="img1"] { width: 100% !important; height: auto !important; }
-      img[class="img2"] { width: 60% !important; height: auto !important; }
-      table[class="social"] { width: 100px !important; }
-      table[class="table1-3"] { width: 30% !important; }
-      table[class="table3-1"] { width: 64% !important; }
-      td[class="clear_pad"] { padding: 0px !important; }
-      /*space*/
-      table[class="space"] { display: none !important; }
-      }
-      @media only screen and (max-width: 479px) {
-      body { width: auto !important; }
-      img[class="top_fold"] { max-width: 0px !important; max-height: 0px !important;}
-      table[class="table600"] { width: 290px !important; }
-      table[class="table550"] { float: none !important; }
-      table[class="table2-2"] { width: 100% !important; text-align: center !important; }
-      img[class="img1"] { width: 100% !important; }
-      img[class="img2"] { width: 40% !important; height: auto !important; }
-      table[class="table1-3"] { width: 100% !important; }
-      table[class="table3-1"] { width: 100% !important; }
-      .hide { max-height: 26px !important; font-size: 0px !important; display: block !important; }
-      /*space*/
-      table[class="space"] { display: none !important; }
-      }
-    </style>
+    <%= render "order_style" %>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   </head>
   <body>
@@ -52,70 +11,7 @@
       <tr>
         <td valign="top">
           <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
-            <!--Header Bar-->
-            <tr>
-              <td valign="top">
-                <table width="100%" height="5" border="0" align="center" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td valign="top" style="border-top:5px solid #ffffff;">
-                      <table class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td height="20"></td>
-                        </tr>
-                        <tr>
-                          <td align="left" valign="top">
-                            <table width="600" border="0" align="left" cellpadding="0" cellspacing="0" bgcolor="#ffffff" class="table600">
-                              <tr>
-                                <td style="padding-left:0px; padding-right:0px;">
-                                  <!--Logo-->
-                                  <table class="table1-3" width="183" bgcolor="#ffffff" border="0" align="left" cellpadding="0" cellspacing="0">
-                                    <tr>
-                                      <td height="30" align="right" valign="top">
-                                        &nbsp;
-                                      </td>
-                                    </tr>                                    
-                                    <tr>
-                                      <td align="center">
-                                        <%= image_tag("emails/logo_shopelia.png", width:130) %>
-                                      </td>
-                                    </tr>
-                                  </table>
-                                  <!--End Logo-->
-                                  <!--Navigation-->
-                                  <table border="0" align="right" cellpadding="0" cellspacing="0" class="table3-1">
-                                    <tr>
-                                      <td height="30" align="right" valign="top">
-                                        <%= image_tag("emails/fold_top_right.jpg", width:15, height:27, class:"top_fold") %>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td class="clear_pad" valign="top" style="padding-right:25px;">
-                                        <table height="27" border="0" align="center" cellpadding="0" cellspacing="0">
-                                          <tr>
-                                            <td style=" font-family: Helvetica, Arial, sans-serif; font-size:14px; color:#95a5a6;">
-                                              &nbsp;
-                                            </td>
-                                          </tr>
-                                        </table>
-                                      </td>
-                                    </tr>
-                                    <tr>
-                                      <td height="30"></td>
-                                    </tr>
-                                  </table>
-                                  <!--End Navigation--> 
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <!--End Header Bar-->
+            <%= render "order_header" %>
             <!--Header Text-->
             <tr>
               <td valign="top">
@@ -158,144 +54,11 @@
               </td>
             </tr>
             <!--End Header Text-->
-            <!--1:3 Panel Icon  [Right Text]-->
 <% @order.order_items.each do |item| %>            
-            <tr>
-              <td valign="top">
-                <table bgcolor="#ffffff" class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td height="30"></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <table class="table550" width="550" border="0" align="center" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td valign="top">
-                            <!--image-->
-                            <table class="table2-2" width="167" border="0" align="left" cellpadding="0" cellspacing="0">
-                              <tr>
-                                <td align="center">
-                                  <%= image_tag(item.product.image_url, style: "max-width:112px; max_height:112px", class:"img2") %>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td align="left" valign="top" height="20"></td>
-                              </tr>
-                            </table>
-                            <!--End image-->
-                            <table width="358" border="0" align="right" cellpadding="0" cellspacing="0" class="table2-2">
-                              <tr></tr>
-                              <!--Article Title-->
-                              <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:18px; color:#34495e;"><%= item.product.name %></td>
-                              </tr>
-                              <!--End Article Title-->
-                              <tr>
-                                <td height="10" align="left" valign="top"></td>
-                              </tr>
-                              <!--Content-->
-                              <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px;"><br />
-                                  Commandé chez: <%= link_to @order.merchant.name, @order.merchant.url, style:"color: #3498db; text-decoration: none; font-weight: bold;" %><br />
-                                  <p style="font-family: Helvetica, Arial, sans-serif; font-size:17px; color:#46b758; line-height:24px; font-weight:bold; margin:0px;"><%= number_to_currency(item.product_price) %></p>
-                                </td>
-                              </tr>
-                              <!--End Content--> 
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td height="30" style="border-bottom:1px dashed #bdc3c7;"></td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <!--End 1:3 Panel Icon [Right Text]-->
+  <%= render "order_item", order_item:item %>
 <% end %>
             <!--2:2 Content-->
-            <tr>
-              <td valign="top">
-                <table class="table600" bgcolor="#ffffff" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
-                  <tr>
-                    <td height="30"></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <!--1:2 Content [Left]-->
-                      <table class="table2-2" width="287" border="0" align="left" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td valign="top">
-                            <table class="table550" width="237" border="0" align="center" cellpadding="0" cellspacing="0">
-                              <!--Article Title-->
-                              <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:18px; color:#34495e;">&nbsp;</td>
-                              </tr>
-                              <!--End Article Title-->
-                              <tr>
-                                <td height="10" align="left" valign="top"></td>
-                              </tr>
-                              <!--Content-->
-                              <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px;">&nbsp;</td>
-                              </tr>
-                              <!--End Content--> 
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                      <!--  End 1:2 Content [Left]-->
-                      <!--Space-->
-                      <table width="1" height="25" border="0" cellpadding="0" cellspacing="0" align="left">
-                        <tr>
-                          <td style="font-size: 0;line-height: 0;border-collapse: collapse;">
-                            <p style="padding-left: 24px;">&nbsp;</p>
-                          </td>
-                        </tr>
-                      </table>
-                      <!--End Space-->
-                      <!--1:2 Content [Right]-->
-                      <table class="table2-2" width="287" border="0" align="right" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td valign="top">
-                            <table class="table550" width="237" border="0" align="center" cellpadding="0" cellspacing="0">
-                              <tr>
-                                <td height="10" align="left" valign="top"></td>
-                                <td height="10" align="left" valign="top"></td>
-                              </tr>
-                              <!--Content-->
-                              <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
-                                  Prix Total<br />
-                                  Frais de livraison
-                                </td>
-                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
-                                  <strong><%= number_to_currency(@order.expected_price_product) %></strong><br />
-                                  <strong><%= number_to_currency(@order.expected_price_shipping) %></strong>
-                                </td>
-                              </tr>
-                              <!--Article Title-->
-                              <tr>
-                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;">Total à payer</td>
-                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;"><span style="font-family: Helvetica, Arial, sans-serif; color:#46b758; font-weight:bold;"><%= number_to_currency(@order.expected_price_total) %></span></td>
-                              </tr>
-                              <!--End Article Title-->
-                              <!--End Content--> 
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                      <!--End 1:2 Content [Right]--> 
-                    </td>
-                  </tr>
-                  <tr>
-                    <td height="30" style="border-bottom:1px dashed #bdc3c7;"></td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
+            <%= render "order_total" %>
             <!--End 2:2 Content-->
             <!--1:1 Content-->
             <tr>
@@ -317,15 +80,16 @@
                         </tr>
                         <!--Content-->
                         <tr>
-                          <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px;">
+                          <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666;">
                             Vous pouvez si vous le souhaitez voir l'état de votre commande à tout moment en pressant le bouton ci-dessous&nbsp;:
+                            <p>
                             <!--Button-->
-                            <table class="button" width="200" height="35" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#46b758" style="border-radius:4px;">
+                            <table class="button" width="300" height="35" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#46b758" style="border-radius:4px;">
                               <tr>
                                 <td align="center" valign="top">
-                                  <table width="200" height="32" border="0" cellspacing="0" cellpadding="0" bgcolor="#69bf6a" style="border-radius:4px;">
+                                  <table width="300" height="32" border="0" cellspacing="0" cellpadding="0" bgcolor="#69bf6a" style="border-radius:4px;">
                                     <tr>
-                                      <td align="center">
+                                      <td width="300" height="32" align="center" valign="center">
                                         <%= link_to "Suivre ma commande", zen_order_url(@order), style:"font-family: Arial, Helvetica, sans-serif; font-size:14px; color:#ffffff; text-decoration: none; font-weight: bold;" %>
                                       </td>
                                     </tr>
@@ -370,38 +134,7 @@
                       </table>
                     </td>
                   </tr>
-                  <tr>
-                    <td height="25"></td>
-                  </tr>
-                  <tr>
-                    <td height="20" bgcolor="#333333"></td>
-                  </tr>
-                  <tr>
-                    <td bgcolor="#58595b">
-                      <table class="table600" bgcolor="#414142" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
-                        <tr>
-                          <td>
-                            <table class="table550" width="550" border="0" align="center" cellpadding="0" cellspacing="0">
-                              <tr>
-                                <td align="center" valign="top" height="30"></td>
-                              </tr>
-                              <!--info-->
-                              <tr>
-                                <td align="center" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:12px; color:#ecf0f1; line-height:22px;">
-                                  Contactez-nous par mail sur <a href="mailto:support@shopelia.com" style="color:#ffffff; text-decoration: none; font-weight: bold;">support@shopelia.com</a> ou par téléphone au 01 82 09 15 44<br>
-                                  <span style="font-family: Helvetica, Arial, sans-serif; font-size:11px; color:#999999;">&copy; Shopelia <%= Time.now.year %> RCS 529991119 - SAS au capital de 291 676€</span>
-                                </td>
-                              </tr>
-                              <!--End info-->
-                              <tr>
-                                <td align="center" valign="top" height="20"></td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                      </table>
-                    </td>
-                  </tr>
+                  <%= render "order_footer" %>
                 </table>
               </td>
             </tr>

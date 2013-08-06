@@ -4,8 +4,10 @@ usbkey:
   merchant: rueducommerce
   url: http://www.rueducommerce.fr/productA
   image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
-  images: "[\"http://www.img.com/img.jpg\"]"
   description: "Description"
+  brand: "brand"
+  reference: "reference"
+  viking_failure: false
   
 headphones:
   product_master: headphones
@@ -13,3 +15,5 @@ headphones:
   merchant: rueducommerce
   url: http://www.rueducommerce.fr/productB
   image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
+  viking_failure: false
+  

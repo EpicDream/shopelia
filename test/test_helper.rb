@@ -7,10 +7,10 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
 class ActiveSupport::TestCase
-  fixtures :developers
+  fixtures :all
 
   VCR.configure do |c|
-    c.cassette_library_dir = 'test/fixtures/cassettes'
+    c.cassette_library_dir = 'test/cassettes'
     c.hook_into :webmock
     c.ignore_localhost = true
     c.default_cassette_options = {
@@ -24,6 +24,7 @@ class ActiveSupport::TestCase
   setup do
     ENV["ALLOW_REMOTE_API_CALLS"] = "0"
     ENV["API_KEY"] = developers(:prixing).api_key
+    ENV["ALLOW_PAYLINE_DRIVER"] = "0"
     ActionMailer::Base.deliveries.clear
   end
 

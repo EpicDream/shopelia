@@ -1,4 +1,6 @@
 class Merchant < ActiveRecord::Base
+  audited
+
   has_many :products, :dependent => :destroy
   has_many :orders
 
@@ -9,7 +11,7 @@ class Merchant < ActiveRecord::Base
   
   scope :accepting_orders, :conditions => ['accepting_orders = ?', true]
   
-  attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain
+  attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain, :viking_data
   
   before_validation :populate_name
   before_destroy :check_presence_of_orders

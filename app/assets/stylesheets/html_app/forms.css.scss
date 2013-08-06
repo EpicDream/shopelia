@@ -35,6 +35,19 @@ input[type="color"],
 }
 
 
+a.custom-btn {
+  color: white;
+  text-decoration: none;
+  height: auto;
+  min-height: 45px;
+  padding:4px 20px ;
+  padding-top: 10px;
+
+  &:focus {
+    color: darken(white,10%);
+  }
+}
+
 .custom-btn ,input[type="button"],input[type="submit"], input[type="reset"],{
   @include btn(1px,darken($green,15%),3px,$formsCellHeight,4px 20px,14px,#FFFFFF,$green,darken($green,10%),5%,3%);
 }

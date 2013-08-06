@@ -119,20 +119,22 @@ class Order < ActiveRecord::Base
       
       (content["products"] || []).each do |product|
         if product["id"].nil?
-          product["id"] = Product.find_by_url(product["url"]).product_versions.first.id
+          product["id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
         end
         item = self.order_items.where(:product_version_id => product["id"]).first
         item.update_attribute(:price, product["price"] || product["price_product"] || product["product_price"])
       end
-      
+
+      prepared_price_product = content["billing"]["total"].to_f - content["billing"]["shipping"].to_f
+
       # Set product price if unique item and without price
       if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
-        self.order_items.first.update_attribute :price, content["billing"]["product"]
+        self.order_items.first.update_attribute :price, prepared_price_product
       end
-      
-      self.prepared_price_total = content["billing"]["total"]
-      self.prepared_price_product = content["billing"]["product"]
-      self.prepared_price_shipping = content["billing"]["shipping"]
+
+      self.prepared_price_total = content["billing"]["total"].to_f
+      self.prepared_price_shipping = content["billing"]["shipping"].to_f
+      self.prepared_price_product = prepared_price_product
       self.save!
       
       if self.expected_price_total >= self.prepared_price_total
@@ -196,8 +198,8 @@ class Order < ActiveRecord::Base
       
     elsif verb.eql?("success")
       self.billed_price_total = content["billing"]["total"]
-      self.billed_price_product = content["billing"]["product"]
       self.billed_price_shipping = content["billing"]["shipping"]
+      self.billed_price_product = self.billed_price_total - self.billed_price_shipping
       self.shipping_info = content["billing"]["shipping_info"]
       complete
       
@@ -206,6 +208,7 @@ class Order < ActiveRecord::Base
     self.save!
     
     rescue Exception => e
+      callback_vulcain(false) if verb.eql?("assess")
       fail("Error during order Callback\n#{e.inspect}", :shopelia)
       self.update_attribute :prepared_price_product, 0 # allow save if price mismatch
       self.save!

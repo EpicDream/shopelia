@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::V1::AddressesControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users, :addresses, :countries
 
   setup do
     @user = users(:elarch)

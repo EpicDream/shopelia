@@ -48,7 +48,19 @@ class Linker
       self.fnac(url)
     elsif url.match(/rueducommerce/)
       self.rueducommerce(url)
+    elsif url.match(/eveiletjeux/)
+      self.eveiletjeux(url)
+    elsif url.match(/toysrus/)
+      self.toysrus(url)
+    elsif url.match(/cdiscount/)
+      self.cdiscount(url)
+    elsif url.match(/darty/)
+      self.darty(url)
     else
+      Incident.create(
+        :issue => "Linker",
+        :description => "Url not monetized : #{url}",
+        :severity => Incident::IMPORTANT)      
       url
     end
   end
@@ -88,5 +100,21 @@ class Linker
     url = CGI::escape(url.gsub("http://", ""))
     "http://ad.zanox.com/ppc/?25390102C2134048814&ulp=[[#{url}]]"
   end
-
+  
+  def self.eveiletjeux url
+    "http://ad.zanox.com/ppc/?25424162C654654636&ulp=[[http://logc57.xiti.com/gopc.url?xts=425426&xtor=AL-146-1%5Btypologie%5D-REMPLACE-%5Bparam%5D&xtloc=#{url}&url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm]]"
+  end
+  
+  def self.cdiscount url
+    url = CGI::escape(url)
+    "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(765856165)ttid(5)url(#{url})"
+  end
+  
+  def self.darty url
+    "http://ad.zanox.com/ppc/?25424898C784334680&ulp=[[#{url.gsub("http://", "")}?dartycid=aff_zxpublisherid_lien-profond-libre_lientexte]]"
+  end
+  
+  def self.toysrus url
+    "http://ad.zanox.com/ppc/?25465502C586468223&ulp=[[http://www.toysrus.fr/redirect_znx.jsp?url=#{url}&]]"
+  end  
 end

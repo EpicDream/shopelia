@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class Viking::ProductSerializerTest < ActiveSupport::TestCase
-  fixtures :products
   
   setup do
     @product = products(:usbkey)
@@ -14,6 +13,7 @@ class Viking::ProductSerializerTest < ActiveSupport::TestCase
       
     assert_equal @product.id, hash[:product][:id]
     assert_equal @product.url, hash[:product][:url]
+    assert_equal @product.merchant_id, hash[:product][:merchant_id]
   end
 
 end

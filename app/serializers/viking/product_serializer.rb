@@ -1,3 +1,3 @@
 class Viking::ProductSerializer < ActiveModel::Serializer
-  attributes :id, :url
+  attributes :id, :url, :merchant_id
 end

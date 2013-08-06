@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Shopelia Daily Report</title>
+  </head>
+  <body leftmargin="0" marginwidth="0" topmargin="0" marginheight="0" offset="0" style="background-color:#FAFAFA;">
+    <center>
+      <table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" style="background-color:#FAFAFA;">
+        <tr>
+          <td align="center" valign="top">
+            <table border="0" cellpadding="0" cellspacing="0" width="620" style="border: 1px solid #DDDDDD; background-color:#FFFFFF;">
+              <tr>
+                <td align="center" valign="top">
+                  <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color:#FFFFFF; border-bottom:0;">
+                    <tr>
+                      <td style="color:#202020; font-family:Arial; font-size:34px; font-weight:bold; line-height:100%; padding:20px; text-align:center; vertical-align:middle;">
+                        <%= image_tag("emails/logo_shopelia.png") %>
+                        <span style="font-size:15px; font-weight:normal; padding:20px 0px; float: right;"><%= @stats.date.to_s(:long) %></span>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td align="center" valign="top">
+                  <table border="0" cellpadding="0" cellspacing="0" width="600">
+                    <tr>
+                      <td valign="top">
+
+                        <!-- Start Main content -->
+
+                        <table border="0" cellpadding="0" cellspacing="0" width="600">
+                          <tr>
+                            <td valign="top" style="border-top:1px solid #ccc; border-right:1px solid #ccc; border-bottom:3px solid #ccc; border-left:1px solid #ccc; margin:5px 5px 30px 5px;">
+                              <table border="0" cellpadding="20" cellspacing="0" width="100%">
+                                <tr>
+                                  <td valign="top">                                   
+                                    <table width="100%" border="0" cellpadding="0" cellspacing="0" style="color:#333; font-family:Arial; font-size:22px; line-height:125%; text-align:center !important; margin-bottom:10px; padding-bottom: 10px; border-bottom:1px solid #ccc;">
+                                      <tr>
+                                        <td width="50%">Yesterday</td>
+                                        <td width="50%">This month</td>
+                                      </tr>
+                                    </table>
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:right; margin-bottom:20px; padding-bottom: 10px; border-bottom:1px solid #ccc;">
+                                      <tr>
+                                        <td width="25%">UNIQUE VIEWS</td>
+                                        <td width="25%">UNIQUE CLICKS</td>
+                                        <td width="25%">UNIQUE VIEWS</td>
+                                        <td width="25%">UNIQUE CLICKS</td>
+                                      </tr>
+                                      <tr>
+                                        <td style="color:#333; font-family:Arial; font-size:14px; line-height:125%; text-align:right;">
+                                          <%= @stats.daily_unique_views %>
+                                        </td>
+                                        <td style="color:#333; font-family:Arial; font-size:14px; line-height:125%; text-align:right;">
+                                          <%= @stats.daily_unique_clicks %>
+                                        </td>
+                                        <td style="color:#333; font-family:Arial; font-size:14px; line-height:125%; text-align:right;">
+                                          <%= @stats.monthly_unique_views %>
+                                        </td>
+                                        <td style="color:#333; font-family:Arial; font-size:14px; line-height:125%; text-align:right;">
+                                          <%= @stats.monthly_unique_clicks %>
+                                        </td>
+                                      </tr>
+                                    </table>
+
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0" style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; text-shadow: 1px 1px white; margin-bottom:30px; padding-bottom: 15px; border-bottom:1px solid #ccc;">
+                                      <tr>
+                                        <td colspan="2"><h4 style="color:#202020; display:block; font-family:Arial; font-size:22px; font-weight:bold; line-height:100%; margin-top:0; margin-right:0; margin-bottom:10px; margin-left:0; text-align:left;">&nbsp;</h4></td>
+                                        <td colspan="2"><h4 style="display:block; font-family:Arial; font-size:22px; font-weight:bold; line-height:100%; margin-top:0; margin-right:0; margin-bottom:10px; text-align:left; margin-left:15px; color:#888888;">&nbsp;</h4></td>
+                                      </tr>
+                                      <tr>
+                                        <td width="25%" valign="top">
+                                          <div style="border-top: 1px solid #D5D5D5; border-bottom: 3px solid #D5D5D5; border-right: 3px solid #D5D5D5; border-left: 1px solid #D5D5D5; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px; background: #fefefe; padding:5px; text-align:left; margin-right:10px;">
+                                            <span style="color:#707070; font-family:Arial; font-size:34px; font-weight: bold; line-height:125%; text-align:left; margin-bottom:30px; color:#669900 !important;"><%= @stats.daily_views %></span><br />
+                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_views %> this month)</span><br />
+                                            <span style="color:#333; font-family:Arial; font-size:12px; line-height:125%; text-align:left; margin-bottom:30px;">Button views</span>
+                                          </div>
+                                        </td>
+                                        <td width="25%" valign="top">
+                                          <div style="border-top: 1px solid #D5D5D5; border-bottom: 3px solid #D5D5D5; border-right: 3px solid #D5D5D5; border-left: 1px solid #D5D5D5; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px; background: #fefefe; padding:5px; text-align:left; margin-right:15px;">
+                                            <span style="color:#707070; font-family:Arial; font-size:34px; font-weight: bold; line-height:125%; text-align:left; margin-bottom:30px;color: #669900 !important;"><%= @stats.daily_clicks %></span><br />
+                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_clicks %> this month)</span><br />
+                                            <span style="color:#333; font-family:Arial; font-size:12px; line-height:125%; text-align:left; margin-bottom:30px;">Button clicks</span>
+                                          </div>
+                                        </td>
+                                        <td width="25%" valign="top">
+                                          <div style="border-top: 1px solid #D5D5D5; border-bottom: 3px solid #D5D5D5; border-right: 3px solid #D5D5D5; border-left: 1px solid #D5D5D5; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px; background: #fefefe; padding:5px; text-align:left; margin-left:10px;">
+                                            <span style="color:#707070; font-family:Arial; font-size:34px; font-weight: bold; line-height:125%; text-align:left; margin-bottom:30px; color: #669900 !important;"><%= @stats.daily_signups %></span><br />
+                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_signups %> this month)</span><br />
+                                            <span style="color:#333; font-family:Arial; font-size:12px; line-height:125%; text-align:left; margin-bottom:30px;">Sign ups</span>
+                                          </div>
+                                        </td>
+                                        <td width="25%" valign="top">
+                                           <div style="border-top: 1px solid #D5D5D5; border-bottom: 3px solid #D5D5D5; border-right: 3px solid #D5D5D5; border-left: 1px solid #D5D5D5; -webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px; background: #fefefe; padding:5px; text-align:left; margin-left:15px;">
+                                            <span style="color:#707070; font-family:Arial; font-size:34px; font-weight: bold; line-height:125%; text-align:left; margin-bottom:30px;color: #669900 !important;"><%= @stats.daily_orders %></span><br />
+                                            <span style="color:#707070; font-family:Arial; font-size:10px; line-height:125%; text-align:left; margin-bottom:30px;">(<%= @stats.monthly_orders %> this month)</span><br />
+                                            <span style="color:#333; font-family:Arial; font-size:12px; line-height:125%; text-align:left; margin-bottom:30px;">Orders</span>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    </table>
+                                    
+                                    <% @stats.rankings.each do |ranking| %>
+                                      <table width="100%" border="0" cellspacing="0" cellpadding="0" style="color:#333; font-family:Arial; font-size:12px; line-height:125%; text-align:center; margin-bottom:30px; padding-bottom: 15px;">
+                                        <tr>
+                                          <td colspan="3">
+                                            <h4 style="color:#202020; display:block; font-family:Arial; font-size:22px; font-weight:bold; line-height:100%; margin-top:0; margin-right:0; margin-bottom:10px; margin-left:0; text-align:left;">
+                                              <%= ranking[:name] %>
+                                            </h4>
+                                          </td>
+                                        </tr>
+                                        <tr>
+                                        <td width="60%" style="border-bottom:1px solid #cecece; background-color: #F3F3f3; padding: 5px 5px;"></td>
+                                        <td width="20%" style="border-bottom:1px solid #cecece; background-color: #F3F3f3; padding: 5px 5px; text-align:right">Views</td>
+                                        <td width="20%" style="border-bottom:1px solid #cecece; background-color: #F3F3f3; padding: 5px 5px; text-align:right">Clicks</td>
+                                        </tr>
+                                        <% ranking[:data].each do |rank| %>
+                                          <tr>
+                                            <td style="text-align: left; border-right:1px solid #F3F3f3; border-bottom:1px solid #F3F3f3; padding: 5px 5px;">
+                                              <%= rank[:name] %>
+                                            </td>
+                                            <td style="border-left:1px solid #F3F3f3; border-bottom:1px solid #F3F3f3; padding: 5px 5px 0px 55px; text-align:right">
+                                              <%= rank[:views] %>
+                                            </td>
+                                            <td style="border-left:1px solid #F3F3f3; border-bottom:1px solid #F3F3f3; padding: 5px 5px 0px 55px; text-align:right">
+                                              <%= rank[:clicks] %>
+                                            </td>
+                                          </tr>
+                                        <% end %>                                      
+                                      </table>
+                                    <% end %>
+
+                                  </td>
+                                </tr>
+                              </table>
+
+                            </td>
+                          </tr>
+                        </table>
+
+                        <p> </p>
+                            
+                      <!-- End Main Content -->
+                        
+                    </td>
+                  </tr>
+
+                </td>
+              </tr>
+            </table>
+          </td>
+         </tr>
+
+      </table>
+    </center>
+  </body>
+</html>

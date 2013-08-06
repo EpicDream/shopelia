@@ -1,0 +1,76 @@
+<tr>
+  <td valign="top">
+    <table class="table600" bgcolor="#ffffff" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+      <tr>
+        <td height="30"></td>
+      </tr>
+      <tr>
+        <td width="287">
+          <!--1:2 Content [Left]-->
+          <table class="table2-2" width="287" border="0" align="right" cellpadding="0" cellspacing="0">
+            <tr>
+              <td valign="top">
+                <table class="table550" width="237" border="0" align="center" cellpadding="0" cellspacing="0">
+                  <!--Content-->
+                  <tr>
+                    <td align="left" valign="top">
+                      &nbsp;
+                    </td>
+                    <td align="right" valign="top">
+                      &nbsp;
+                    </td>
+                  </tr>
+                  <!--Article Title-->
+                  <tr>
+                    <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;">&nbsp;</td>
+                    <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;">&nbsp;</td>
+                  </tr>
+                  <!--End Article Title-->
+                  <!--End Content--> 
+                </table>
+              </td>
+            </tr>
+          </table>
+          <!--End 1:2 Content [Left]--> 
+        </td>
+        <td width="26">
+          &nbsp;
+        </td>
+        <td width="287">
+          <!--End Space-->
+          <!--1:2 Content [Right]-->
+          <table class="table2-2" width="287" border="0" align="right" cellpadding="0" cellspacing="0">
+            <tr>
+              <td valign="top">
+                <table class="table550" width="237" border="0" align="center" cellpadding="0" cellspacing="0">
+                  <!--Content-->
+                  <tr>
+                    <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
+                      Prix Total<br />
+                      Frais de livraison
+                    </td>
+                    <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
+                      <strong><%= number_to_currency(@order.expected_price_product) %></strong><br />
+                      <strong><%= number_to_currency(@order.expected_price_shipping) %></strong>
+                    </td>
+                  </tr>
+                  <!--Article Title-->
+                  <tr>
+                    <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;">Total à payer</td>
+                    <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;"><span style="font-family: Helvetica, Arial, sans-serif; color:#46b758; font-weight:bold;"><%= number_to_currency(@order.expected_price_total) %></span></td>
+                  </tr>
+                  <!--End Article Title-->
+                  <!--End Content--> 
+                </table>
+              </td>
+            </tr>
+          </table>
+          <!--End 1:2 Content [Right]--> 
+        </td>
+      </tr>
+      <tr>
+        <td colspan="3" height="30" style="border-bottom:1px dashed #bdc3c7;"></td>
+      </tr>
+    </table>
+  </td>
+</tr>
