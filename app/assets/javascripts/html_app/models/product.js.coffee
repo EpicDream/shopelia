@@ -43,7 +43,6 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
            merchant_name: data.merchant.name,
            allow_iframe: data.merchant.allow_iframe
            })
-      console.log(@isValid())
     catch error
       console.log(error)
 

@@ -30,6 +30,18 @@ class Shopelia.Controllers.ProductsController extends Shopelia.Controllers.Contr
       @region.show(@view)
 
   onPollerExpired: ->
+    that = this
+    unless @product.get('merchant') is undefined
+      @showNotFound()
+    else
+      Shopelia.vent.once("change:merchant",(data) ->
+        that.product.set("merchant_name",data.merchant.name)
+        that.showNotFound()
+      )
+      Shopelia.vent.trigger("merchants#create",@product.get('url'))
+
+
+
+  showNotFound: ->
     view = new Shopelia.Views.NotFound(model: @product)
     @region.show(view)
-
