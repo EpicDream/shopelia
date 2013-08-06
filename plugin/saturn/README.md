@@ -47,8 +47,10 @@ Usage
 You have nothing to do, the extension ask itself for product to crawl.
   
 You can crawl the product on the current page by clicking on the extension's button at top-right of the window in TestMode.
-
+  
 We recommand you to use it in a private tab, to do not be tracked.
+  
+Click on the extension button in the toolbar to stop / restart the crawling.
 
 Developpers
 -----------
