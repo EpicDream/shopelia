@@ -25,6 +25,21 @@ class Leftronic
   def notify_users_count
     push_number("shopelia_users_count", User.count)
   end
+  
+  def notify_button_stats
+    stats = Event.where("created_at > ?", 1.day.ago).group(:action).count
+    push_number("button_views_count", stats[0])
+    push_number("button_clicks_count", stats[1])
+    stats = Event.where("created_at > ?", 1.day.ago).group(:action).count("distinct device_id")
+    push_number("button_unique_views_count", stats[0])
+    push_number("button_unique_clicks_count", stats[1])
+  end
+  
+  def notify_viking_stats
+    result = Product.where("versions_expires_at>?", Time.now).group(:viking_failure).count
+    push_number("viking_success_rate", (result[false].to_i + result[:true].to_i) > 0 ? result[false].to_f * 100 / (result[false].to_f + result[true].to_f) : 0)
+    push_number("saturn_status", Viking.saturn_alive? ? 0 : 100)
+  end
 
   def clear_board
     clear("shopelia_sound")

@@ -3,34 +3,88 @@ class Shopelia.Views.ProductsIndex extends Backbone.View
   template: JST['products/index']
   className: 'product'
 
+  events:
+    "click #product-infos": "showProductInfos"
+
   initialize: ->
     _.bindAll this
-    @getMerchant()
+    @iframe = @createIframe()
+    @model.on('change', @render, @)
+    $(@el).on('resize.product',() ->
+      child_el.centerLoader()
+    )
+    view = new Shopelia.Views.Loading(parent: this)
+    child_el = view.render().el
+    $(@el).append(child_el)
+
 
 
   render: ->
-    console.log(@model)
-    expected_price_product = customParseFloat(@model.get('expected_price_product'))
-    @model.set('expected_price_product',expected_price_product)
-    expected_price_shipping  = customParseFloat(@model.get('expected_price_shipping'))
-    @model.set('expected_price_shipping',expected_price_shipping)
-    $(@el).html(@template(model: @model, merchant: @merchant))
-    this
+    if @model.isValid()
+      expected_price_product = customParseFloat(@model.get('expected_price_product'))
+      @model.set('expected_price_product',expected_price_product)
+      expected_price_shipping  = customParseFloat(@model.get('expected_price_shipping'))
+      @model.set('expected_price_shipping',expected_price_shipping)
+      $(@el).html(@template(model: @model, merchant: @merchant))
+      this
+    else if @model.get('found') isnt undefined and @model.get('found') is false
+      view = new Shopelia.Views.NotFound(model:@model)
+      $(@el).html(view.render().el)
+    else
+      $(@el).html()
+      this
 
-  getMerchant: ->
-    that = this
-    $.ajax({
-           type: "POST",
-           url: "api/merchants",
-           data: { url: that.model.get("url") }
-           dataType: 'json',
-           beforeSend: (xhr) ->
-             xhr.setRequestHeader("Accept","application/json")
-             xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
-             xhr.setRequestHeader("X-Shopelia-ApiKey",window.Shopelia.developerKey)
-           success: (data,textStatus,jqXHR) ->
-             $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
-           error: (jqXHR,textStatus,errorThrown) ->
-             console.log('error merchant callback')
-             console.log(JSON.stringify(errorThrown))
-           });
+  createIframe: ->
+    #console.log("Create Iframe")
+    $iframe = $('<iframe></iframe>')
+    $iframe.attr('id','productInfosIframe')
+    #console.log(@model.get('url'))
+    $iframe.attr('src',@model.get('url'))
+    $iframe.attr('scrolling','yes')
+    $iframe.attr('frameborder','0')
+    $iframe.css({
+                border:"0px #FFFFFF none",
+                opacity: "1"
+                height: "0"
+                })
+    $iframe.attr('name',"shopeliaIframe")
+    $iframe.attr('marginHeight',"0")
+    $iframe.attr('marginWidth',"0")
+    $iframe.attr('height',"100%")
+    $iframe.attr('width',"100%")
+    #console.log($iframe)
+    $iframe
+
+
+  showProductInfos: ->
+    console.log("Show Product Infos")
+    Tracker.onClick('Product Informations')
+    console.log(@model.get('allow_iframe'))
+    if @model.get('allow_iframe') == 0 or Shopelia.Adblock
+      window.open(@model.get('url'))
+    else
+      $iframe = @iframe
+      $("#modal-header").after($iframe)
+      that = this
+      $iframe.animate({height:'550px'}, "slow")
+      $("#modal-content").animate({height:'65px',opacity:0},"slow", () ->
+        $(this).hide()
+        $("#modal-footer").show()
+        $("#btn-hide-product-infos").click ->
+          that.closeProducIframe()
+      )
+
+
+
+  closeProducIframe: ->
+    @iframe.animate({height:'0'}, "slow", () ->
+      $(this).remove()
+      $("#modal-footer").fadeOut("slow", () ->
+        $("#modal-content").fadeIn("fast").animate({height:'100%',opacity:1},"slow")
+      )
+
+    )
+
+
+
+

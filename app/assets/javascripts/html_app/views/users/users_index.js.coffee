@@ -13,7 +13,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
   render: ->
     $(@el).html(@template())
     Tracker.onDisplay('Sign Up');
-    console.log(@options.product)
+    #console.log(@options.product)
     @addressView =  new Shopelia.Views.AddressesIndex()
     @$("#btn-register-user").before(@addressView.render().el)
     @paymentCardView =  new Shopelia.Views.PaymentCardsIndex()
@@ -47,13 +47,13 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
            success: (data,textStatus,jqXHR) ->
              that.parent.setContentView(new Shopelia.Views.SignIn(session: that.options.session,product: that.options.product,email:email))
            error: (jqXHR,textStatus,errorThrown) ->
-             console.log("user dosn't exist")
-             console.log(JSON.stringify(errorThrown))
+             #console.log("user dosn't exist")
+             #console.log(JSON.stringify(errorThrown))
            });
 
 
   createUser: (e) ->
-    console.log("trigger createUser")
+    #console.log("trigger createUser")
     if $('form').parsley( 'validate' )
       disableButton($("#btn-register-user"))
       eraseErrors()
@@ -71,16 +71,16 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
 
       session.set(sessionJson)
 
-      console.log("Addresss MAAAAAN" + JSON.stringify(address))
+      #console.log("Addresss MAAAAAN" + JSON.stringify(address))
       session.save(sessionJson,{
                                 success : (resp) ->
-                                  console.log('success callback')
-                                  console.log("response user save: " + JSON.stringify(resp))
+                                  #console.log('success callback')
+                                  #console.log("response user save: " + JSON.stringify(resp))
                                   session.saveCookies(resp)
                                   that.parent.addPasswordView()
                                   that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: resp,product: that.options.product))
                                 error : (model, response) ->
-                                  console.log(JSON.stringify(response))
+                                  #console.log(JSON.stringify(response))
                                   enableButton($("#btn-register-user"))
                                   displayErrors($.parseJSON(response.responseText))
 
@@ -95,8 +95,8 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
     firstName =  split(fullName)[0]
     lastName =  split(fullName)[1]
     email = @email.val()
-    console.log("CARDDDDDDDDDDDD")
-    console.log(card)
+    #console.log("CARDDDDDDDDDDDD")
+    #console.log(card)
     loginFormObject = {
       "user":{
         "first_name": firstName,
@@ -107,7 +107,7 @@ class Shopelia.Views.UsersIndex extends Shopelia.Views.Form
       }
     }
 
-    console.log loginFormObject
+    #console.log loginFormObject
     loginFormObject
 
   InitializeActionButton: (element) ->

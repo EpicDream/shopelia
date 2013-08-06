@@ -1,0 +1,6 @@
+%h2 Add new developer
+
+= simple_form_for(Developer.new, :url => admin_developers_path) do |f|
+  = f.input :name, :required => true, :autofocus => true
+  = f.button :submit, "Créer", :class => 'btn-success'
+

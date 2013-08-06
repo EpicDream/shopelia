@@ -328,4 +328,82 @@ http_interactions:
       string: "{\"UserID\":346811,\"WalletID\":346812,\"Amount\":1600,\"IsSucceeded\":true,\"IsCompleted\":true,\"Error\":null,\"Store\":\"FR\",\"VoucherCode\":\"73UB-NFEQ4Q-JWNS\",\"ID\":372791,\"Tag\":\"uuid\",\"CreationDate\":1373462888,\"UpdateDate\":1373462890}"
     http_version: 
   recorded_at: Wed, 10 Jul 2013 13:28:10 GMT
+- request: 
+    method: head
+    uri: http://www.rueducommerce.fr/productA?key=toto
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      User-Agent: 
+      - Mozilla/4.0 (compatible; MSIE 7.0; Mac 6.0)
+      Accept: 
+      - "*/*"
+  response: 
+    status: 
+      code: 404
+      message: Not Found
+    headers: 
+      Server: 
+      - Microsoft-IIS/5.0
+      X-Rdc-F: 
+      - hb03-wwwcfm06
+      Content-Type: 
+      - text/html
+      Page-Completion-Status: 
+      - Normal
+      - Normal
+      Cache-Control: 
+      - max-age=14400
+      Date: 
+      - Mon, 29 Jul 2013 13:41:14 GMT
+      Content-Length: 
+      - "0"
+      Connection: 
+      - keep-alive
+    body: 
+      encoding: US-ASCII
+      string: ""
+    http_version: 
+  recorded_at: Mon, 29 Jul 2013 13:41:14 GMT
+- request: 
+    method: head
+    uri: http://www.rueducommerce.fr/productB
+    body: 
+      encoding: US-ASCII
+      string: ""
+    headers: 
+      User-Agent: 
+      - Mozilla/4.0 (compatible; MSIE 7.0; Mac 6.0)
+      Accept: 
+      - "*/*"
+  response: 
+    status: 
+      code: 404
+      message: Not Found
+    headers: 
+      Server: 
+      - Microsoft-IIS/5.0
+      X-Rdc-F: 
+      - hb03-wwcfm01
+      Surrogate-Control: 
+      - content="ESI/1.0"
+      Content-Type: 
+      - text/html
+      Page-Completion-Status: 
+      - Normal
+      - Normal
+      Cache-Control: 
+      - max-age=14400
+      Date: 
+      - Mon, 29 Jul 2013 13:41:14 GMT
+      Content-Length: 
+      - "0"
+      Connection: 
+      - keep-alive
+    body: 
+      encoding: US-ASCII
+      string: ""
+    http_version: 
+  recorded_at: Mon, 29 Jul 2013 13:41:14 GMT
 recorded_with: VCR 2.5.0

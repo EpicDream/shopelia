@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class Admin::OrdersControllerTest < ActionController::TestCase
-  fixtures :orders
 
   setup do
     @order = orders(:elarch_rueducommerce)

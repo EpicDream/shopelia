@@ -2,7 +2,7 @@ window.Shopelia =
   Models: {}
   Views: {}
   Routers: {}
-  developerKey: $.cookie('developer_key')
+  developerKey: $.cookie('developer_key') unless $.cookie('developer_key') is undefined
   SDKVersion: "0.1"
   SDK: "HTML"
 
@@ -23,7 +23,21 @@ window.Shopelia =
     Backbone.history.start(pushState: true)
 
 
-
 $(document).ready ->
   Shopelia.initialize()
   Tracker.init()
+  $.ajax({
+         url: "/sdk/ads.js",
+         dataType: "script",
+         success: (data,textStatus,jqxhr) ->
+            Shopelia.Adblock = false
+         error: ->
+            Shopelia.Adblock = true
+         });
+
+
+
+
+
+
+

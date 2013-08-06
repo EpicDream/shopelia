@@ -26,8 +26,15 @@ Shopelia::Application.routes.draw do
   resources :payment_cards
 
   namespace :admin do
+    resources :developers, :only => [:index, :new, :create]
+    resources :incidents, :only => [:index, :update]
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
+    resources :viking, :only => :index
+    resources :products do
+      get :retry, :on => :member
+      get :mute, :on => :member
+    end
   end
   
   namespace :zen do
@@ -77,7 +84,11 @@ Shopelia::Application.routes.draw do
       resources :products, :only => [:index, :update]
       namespace :products do
         get :shift
+        get :failure
+        get :failure_shift
+        get :alive
       end
+      resources :merchants, :only => [:show, :update, :create]
     end
   end
 

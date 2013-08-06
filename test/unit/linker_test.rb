@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class LinkerTest < ActiveSupport::TestCase
-  fixtures :merchants
  
   test "it should clean url" do
     array = [
@@ -40,6 +39,12 @@ class LinkerTest < ActiveSupport::TestCase
 
     assert_difference("UrlMatcher.count", 0) do
       assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4")
+    end
+  end
+ 
+  test "it should generate incident if link is not monetizable" do
+    assert_difference "Incident.count", 1 do
+      Linker.monetize "http://www.newshop.com/productA"
     end
   end
  
@@ -110,6 +115,26 @@ class LinkerTest < ActiveSupport::TestCase
   test "it should monetize rueducommerce link" do
     url = Linker.monetize "http://www.rueducommerce.fr/m/ps/mpid:MP-0006DM7671064"
     assert_equal "http://ad.zanox.com/ppc/?25390102C2134048814&ulp=[[www.rueducommerce.fr%2Fm%2Fps%2Fmpid%3AMP-0006DM7671064]]", url
+  end
+
+  test "it should monetize eveiletjeux link" do
+    url = Linker.monetize "http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367"
+    assert_equal "http://ad.zanox.com/ppc/?25424162C654654636&ulp=[[http://logc57.xiti.com/gopc.url?xts=425426&xtor=AL-146-1%5Btypologie%5D-REMPLACE-%5Bparam%5D&xtloc=http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367&url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm]]", url
+  end
+
+  test "it should monetize toysrus link" do
+    url = Linker.monetize "http://www.toysrus.fr/product/index.jsp?productId=11621761"
+    assert_equal "http://ad.zanox.com/ppc/?25465502C586468223&ulp=[[http://www.toysrus.fr/redirect_znx.jsp?url=http://www.toysrus.fr/product/index.jsp?productId=11621761&]]", url
+  end
+  
+  test "it should monetize cdiscount link" do
+    url = Linker.monetize "http://www.cdiscount.com/electromenager/aspirateur-nettoyeur-vapeur/dirt-devil-m2828-3/f-110140405-dirtm28283.html"
+    assert_equal "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(765856165)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Felectromenager%2Faspirateur-nettoyeur-vapeur%2Fdirt-devil-m2828-3%2Ff-110140405-dirtm28283.html)", url
+  end  
+
+  test "it should monetize darty link" do  
+    url = Linker.monetize "http://www.darty.com/nav/achat/gros_electromenager/refrigerateur_congelateur-refrigerateur-cong/refrigerateur_congelateur_bas/samsung_rl56gsbsw.html"
+    assert_equal "http://ad.zanox.com/ppc/?25424898C784334680&ulp=[[www.darty.com/nav/achat/gros_electromenager/refrigerateur_congelateur-refrigerateur-cong/refrigerateur_congelateur_bas/samsung_rl56gsbsw.html?dartycid=aff_zxpublisherid_lien-profond-libre_lientexte]]", url
   end
 
 end

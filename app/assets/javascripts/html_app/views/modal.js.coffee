@@ -10,12 +10,16 @@ class Shopelia.Views.Modal extends Backbone.View
 
   initialize: ->
     _.bindAll this
-    window.addEventListener("DOMContentLoaded", () ->
-      window.addEventListener("message", (e) ->
-        console.log("set shopelia parent host")
-        window.shopeliaParentHost = e.origin
+    messageListener = (e) ->
+      #console.log("set shopelia parent host")
+      window.shopeliaParentHost = e.origin
+      window.removeEventListener("message",messageListener)
+    DOMContentLoadedListener = () ->
+      window.addEventListener("message",messageListener
       , false)
       window.parent.postMessage("loaded", "*")
+      window.removeEventListener("DOMContentLoaded",DOMContentLoadedListener)
+    window.addEventListener("DOMContentLoaded",DOMContentLoadedListener
     , false)
 
   render: ->
@@ -27,18 +31,21 @@ class Shopelia.Views.Modal extends Backbone.View
       e.stopPropagation()
 
     $(document).click ->
-      that.close()
+      if $("#productInfosIframe").length > 0
+        that.productView.closeProducIframe()
+      else
+        that.close()
     this
 
   open: (settings) ->
-    productView = new Shopelia.Views.ProductsIndex(model:@options.product)
+    @productView = new Shopelia.Views.ProductsIndex(model:@options.product)
     view = new Shopelia.Views.UsersIndex(product: @options.product)
-    @$('#modal-left').append(productView.render().el)
+    @$('#modal-left').append(@productView.render().el)
     @setContentView(view)
 
 
   close: ->
-    console.log("close please")
+    #console.log("close please")
     $(@el).fadeOut({
                    duration: "fast",
                    complete: () ->
@@ -65,7 +72,7 @@ class Shopelia.Views.Modal extends Backbone.View
       @contentView.InitializeActionButton(@$("#link-header"))
     else
       @$("#link-header").hide()
-    center($("#modal"))
+    center($(window),$("#modal"))
 
 
   addPasswordView : ->

@@ -9,9 +9,14 @@ $borderRadius: 4px;
   z-index: 10000;
   border-radius:$borderRadius;
   background-color:rgba(0, 0, 0, 0.65);
-  min-height: $modalHeight;
+  //min-height: $modalHeight;
   min-width: $modalWidth ;
   margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+#modal-content {
+  margin-bottom: 25px;
 }
 
 #modal-header {
@@ -19,6 +24,15 @@ $borderRadius: 4px;
   height: 70px;
   background: $lightGrey;
   @include border-top-radius($borderRadius);
+}
+
+#modal-footer {
+  display: none;
+  padding: 10px;
+  height: 70px;
+  background: $lightGrey;
+  margin-top: -5px;
+  @include border-bottom-radius($borderRadius);
 }
 
 #modal-header .logo {
@@ -56,10 +70,6 @@ $borderRadius: 4px;
   &:hover {
     background:url("bt-fermer-hover.png") 0 0 no-repeat;
   }
-}
-
-.row-fluid {
-  margin-left: 4.35%;
 }
 
 .green {

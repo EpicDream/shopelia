@@ -2,8 +2,6 @@
 require 'test_helper'
 
 class OrderTest < ActiveSupport::TestCase
-  fixtures :users, :products, :merchants, :orders, :payment_cards, :order_items, :product_masters
-  fixtures :product_versions, :addresses, :merchant_accounts, :countries, :developers
   
   setup do
     @user = users(:elarch)
@@ -493,6 +491,7 @@ class OrderTest < ActiveSupport::TestCase
     assess_order_invalid
     
     assert_equal :pending_agent, @order.state
+    assert_equal false, @order.questions.first["answer"]
     assert_equal "shopelia", @order.error_code
     assert_match /Les prix des produits ne correspondent pas/, @order.message
   end
@@ -500,6 +499,10 @@ class OrderTest < ActiveSupport::TestCase
   test "it should send request to user if price it outside range" do
     start_order
     assess_order_with_higher_price
+
+    assert_equal 16, @order.prepared_price_total
+    assert_equal 14, @order.prepared_price_product
+    assert_equal 2, @order.prepared_price_shipping
 
     assert_equal :querying, @order.state
     assert_equal false, @order.questions.first["answer"]
@@ -921,17 +924,14 @@ class OrderTest < ActiveSupport::TestCase
         { "id" => "3" }
       ],
       "products" => [
-        { "url" => products(:usbkey).url,
-          "price" => 9,
-          "id" => product_versions(:usbkey).id 
+        { "url" => products(:usbkey).url + "?key=toto",
+          "price" => 9
         },
         { "url" => products(:headphones).url,
-          "price_product" => 5,
-          "id" => product_versions(:headphones).id 
+          "price_product" => 5
         }
       ],
       "billing" => {
-        "product" => 14,
         "shipping" => 2,
         "total" => 16
       }
@@ -949,7 +949,6 @@ class OrderTest < ActiveSupport::TestCase
         }
       ],
       "billing" => {
-        "product" => 14,
         "shipping" => 2,
         "total" => 16
       }
@@ -973,7 +972,6 @@ class OrderTest < ActiveSupport::TestCase
          }
       ],
       "billing" => {
-        "product" => 14,
         "shipping" => 2,
         "total" => 16
       }
@@ -997,7 +995,6 @@ class OrderTest < ActiveSupport::TestCase
          }
        ],
        "billing" => {
-         "product" => 300,
          "shipping" => 33.05,
          "total" => 333.05
        }
@@ -1054,7 +1051,6 @@ class OrderTest < ActiveSupport::TestCase
   def order_success
     @order.callback "success", {
       "billing" => {
-        "product" => 14,
         "shipping" => 2,
         "total" => 16,
         "shipping_info" => "info"

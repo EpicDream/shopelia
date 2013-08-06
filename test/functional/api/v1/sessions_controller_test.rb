@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::V1::SessionsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users
   
   setup do
     @user = users(:elarch)
@@ -17,7 +16,7 @@ class Api::V1::SessionsControllerTest < ActionController::TestCase
   end
   
   test "it shouldn't login a user with blank password" do
-    user = User.create!(email:"toto@toto.fr", first_name:"Eric", last_name:"Larch", ip_address:"192.168.1.1")
+    user = User.create!(email:"toto@toto.fr", first_name:"Eric", last_name:"Larch", ip_address:"192.168.1.1", developer_id:developers(:prixing).id)
     post :create, email: @user.email, password: "", format: :json
     
     assert_response :unauthorized

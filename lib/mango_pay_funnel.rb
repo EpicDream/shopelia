@@ -71,7 +71,7 @@ module MangoPayFunnel
       })
       if remote_card['ID'].present?
         # If API is stubbed, skip card injection
-        unless Rails.env.test? && File.exist?("#{Rails.root}/test/fixtures/cassettes/mangopay.yml")
+        if !Rails.env.test? || !File.exist?("#{Rails.root}/test/cassettes/mangopay.yml") || ENV["ALLOW_PAYLINE_DRIVER"] == "1"
           begin
             PaylineDriver.inject(card,remote_card["RedirectURL"]) 
           rescue PaylineDriver::DriverError => e

@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class ProductTest < ActiveSupport::TestCase
-  fixtures :merchants, :products, :developers
   
   test "it should create product" do
     product = Product.new(
@@ -71,20 +70,61 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 250, product.name.length
   end
   
+  test "it should assess versions quality" do
+    product = products(:usbkey)
+    product.assess_versions
+    assert !product.viking_failure
+    product.product_versions.first.update_attribute :price, nil    
+    product.assess_versions
+    assert product.viking_failure
+  end
+  
   test "it should get all products needing a Viking check" do
     Event.from_urls(
       :urls => [products(:headphones).url,products(:usbkey).url],
       :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
       :action => Event::VIEW)
     assert_equal 2, Product.viking_pending.count
     products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
     assert_equal 1, Product.viking_pending.count
   end
+
+  test "it should get all products which failed Viking extraction" do
+    Event.from_urls(
+      :urls => [products(:headphones).url],
+      :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
+      :action => Event::VIEW)
+    products(:headphones).update_attribute :viking_failure, true
+    assert_equal 1, Product.viking_failure.count
+  end
+
+  test "it should get all products needing a Viking check and without failure" do
+    Event.from_urls(
+      :urls => [products(:headphones).url,products(:usbkey).url],
+      :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
+      :action => Event::VIEW)
+    products(:headphones).update_attribute :versions_expires_at, Time.now
+    assert_equal 2, Product.viking_pending.count
+    products(:headphones).update_attribute :viking_failure, true
+    assert_equal 1, Product.viking_pending.count
+    products(:headphones).update_attribute :versions_expires_at, nil
+    assert_equal 2, Product.viking_pending.count
+    products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
+    assert_equal 1, Product.viking_pending.count
+    products(:headphones).update_attribute :versions_expires_at, 1.day.ago
+    assert_equal 2, Product.viking_pending.count
+    products(:headphones).update_attribute :muted_until, 1.day.from_now
+    assert_equal 1, Product.viking_pending.count
+  end  
   
   test "it should get last product needing a Viking check" do
     Event.from_urls(
       :urls => [products(:headphones).url,products(:usbkey).url],
       :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
       :action => Event::VIEW)
     assert_equal products(:usbkey), Product.viking_shift
     products(:usbkey).update_attribute :versions_expires_at, 1.hour.from_now
@@ -98,6 +138,178 @@ class ProductTest < ActiveSupport::TestCase
     assert product.versions_expired?
     product.update_attribute :versions_expires_at, 4.hours.from_now
     assert !product.versions_expired?
+  end
+
+  test "it should destroy all related events when a product is destroyed" do
+    Event.from_urls(
+      :urls => [products(:headphones).url],
+      :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
+      :action => Event::VIEW)
+    assert_difference("Event.count",-1) do
+      products(:headphones).destroy
+    end
+  end
+  
+  test "it should update product and version" do
+    product = products(:usbkey)
+    product.update_attribute :updated_at, 1.hour.ago
+    product.update_attributes(versions:[
+      { availability:"out of stock",
+        brand: "brand",
+        reference: "reference",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        color: "blue",
+        size: "4"
+      },
+      { availability:"in stock",
+        brand: "brand",
+        description: "description2",
+        reference: "reference4",
+        image_url: "http://www.amazon.fr/image2.jpg",
+        name: "name2",
+        price: "12 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        color: "blue",
+        size: "5"
+      }]);
+
+    assert_equal "name2", product.name
+    assert_equal "brand", product.brand
+    assert_equal "reference4", product.reference
+    assert_equal "http://www.amazon.fr/image2.jpg", product.image_url
+    assert_equal "<p>description2</p>", product.description
+    assert_equal 2, product.product_versions.count
+    assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
+    assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
+    assert_equal "blue".to_json, product.product_versions.first.color
+    assert_equal ["4".to_json, "5".to_json].to_set, product.product_versions.map(&:size).to_set
+    assert product.updated_at > 1.minute.ago
+    assert product.versions_expires_at > Time.now
+  end
+
+  test "it should set versions_expires_at even if versions are not available" do
+    product = products(:usbkey)
+    product.update_attribute :versions_expires_at, nil
+    product.update_attributes(versions:[{availability:"out of stock"}])
+
+    assert product.versions_expires_at > Time.now
+  end  
+  
+  test "it should set previous version as unavailable" do
+    product = products(:usbkey)
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        reference: "reference",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        color: "blue",
+        size: "4"
+      }])
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        reference: "reference",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        color: "red",
+        size: "4"
+      }])
+      
+    assert_equal 3, product.product_versions.count
+    assert_equal [false, true, false].to_set, product.product_versions.map(&:available).to_set
+  end
+  
+  test "it should reset viking_failure if correct version is added" do
+    product = products(:usbkey)
+    product.update_attribute :viking_failure, true
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "free shipping",
+        price_shipping: "3.5"
+      }]);
+
+     assert !product.viking_failure
+  end  
+
+  test "it should use availability if shipping info is blank" do
+    product = products(:headphones)
+    product.update_attribute :viking_failure, true
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        price_shipping: "3.5"
+      }]);
+
+     assert !product.viking_failure
+     assert_equal "in stock", product.product_versions.first.shipping_info
+  end  
+
+  test "it shouldn't set viking_failure if availability is false and anything is missing" do
+    product = products(:headphones)
+    
+    product.update_attributes(versions:[
+      { availability:"out of stock",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name"
+      }]);
+    assert !product.viking_failure
+
+    product.update_attributes(versions:[
+      { availability:"out of stock",
+      }]);
+    assert !product.viking_failure
+
+    product.update_attributes(versions:[
+      { name: "name",
+        image_url: "http://www.amazon.fr/image.jpg",
+      }]);
+    assert product.viking_failure
+  end 
+  
+  test "it should clear viking_failure when muted" do
+     product = products(:headphones)
+     assert !product.mute?
+     
+     product.update_attributes(versions:[
+      { availability:"in stock",
+        name: "name"
+      }]);
+     assert product.viking_failure
+     
+     product.update_attribute :muted_until, 1.year.from_now
+     assert product.mute?
+     assert !product.viking_failure
   end
 
 end

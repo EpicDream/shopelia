@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class MerchantSerializerTest < ActiveSupport::TestCase
-  fixtures :merchants
   
   setup do
     @merchant = merchants(:rueducommerce)
@@ -16,7 +15,9 @@ class MerchantSerializerTest < ActiveSupport::TestCase
     assert_equal @merchant.name, hash[:merchant][:name]
     assert_equal @merchant.logo, hash[:merchant][:logo]
     assert_equal @merchant.url, hash[:merchant][:url]
+    assert_equal @merchant.domain, hash[:merchant][:domain]
     assert_equal 1, hash[:merchant][:accepting_orders]
+    assert_equal 1, hash[:merchant][:allow_iframe]
   end
 
 end

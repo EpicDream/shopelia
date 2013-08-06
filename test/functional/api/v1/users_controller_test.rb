@@ -2,7 +2,6 @@ require 'test_helper'
 
 class Api::V1::UsersControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  fixtures :users
 
   setup do
     @user = users(:elarch)
@@ -32,7 +31,7 @@ class Api::V1::UsersControllerTest < ActionController::TestCase
 
   test "it should initialize password" do
     sign_out @user
-    user = User.create!(email:"toto@toto.fr", first_name:"Eric", last_name:"Larch", ip_address:"192.168.1.1")
+    user = User.create!(email:"toto@toto.fr", first_name:"Eric", last_name:"Larch", ip_address:"192.168.1.1", developer_id:developers(:prixing).id)
     sign_in user
     put :update, id: user, user: { password:"tititi", password_confirmation:"tititi" }, format: :json
     assert_response 204

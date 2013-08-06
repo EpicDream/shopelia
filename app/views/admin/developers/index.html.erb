@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="span12">
+    <h1>Developers list</h1>
+    <a type="button" class="btn btn-success" href="<%= new_admin_developer_path %>">
+      Add a new developer
+    </a>
+    <table id="developers" class="table table-striped" data-source="<%= admin_developers_url(format: 'json') %>">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>API key</th>
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+  </div>
+</div>

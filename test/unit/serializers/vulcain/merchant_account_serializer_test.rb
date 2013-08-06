@@ -2,7 +2,6 @@
 require 'test_helper'
 
 class Vulcain::MerchantAccountSerializerTest < ActiveSupport::TestCase
-  fixtures :users, :merchants, :merchant_accounts
   
   setup do
     @account = merchant_accounts(:manu_rueducommerce)
