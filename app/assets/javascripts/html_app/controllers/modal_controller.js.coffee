@@ -30,11 +30,6 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
   showProductDescription:(product) ->
     Shopelia.vent.trigger("description#show",@view.top,product)
 
-  notFound: ->
-    view = new Shopelia.Views.NotFound(model: @getProduct())
-    @view.left.show(view)
-
-
   order: ->
     order = new Shopelia.Models.Order({
                                       session: @getSession()
