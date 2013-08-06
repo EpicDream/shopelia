@@ -39,6 +39,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
   if (changeInfo.status == "loading" && changeInfo.url) {
     var uri = new Uri(changeInfo.url);
     if (tasks[tabId] && uri.host() != tasks[tabId].host) {
+      clean(tabId);
       console.log("Quit Ariane. Good bye !", tabId);
     }
   } else if (changeInfo.status == "complete" && tasks[tabId]) {
@@ -54,11 +55,12 @@ chrome.extension.onMessage.addListener(function(msg, sender, response) {
   }
   console.debug("Message received", msg);
   var tabId = sender.tab.id;
-  if (msg == "finish" || msg.abort != undefined) {
-    send_finished_statement(tabId, msg.abort)
-    //getProductUrlToExtract(tabId);
-  } else if (msg.setMapping != undefined) {
-    tasks[tabId].currentMap[msg.fieldId] = msg;
+  if (msg == "finish" || msg.abort !== undefined) {
+    send_finished_statement(tabId, msg.abort);
+  } else if (msg.act == 'setMapping') {
+    tasks[tabId].currentMap[msg.fieldId] = msg.value;
+  } else if (msg.act == 'setSearchResult') {
+    tasks[tabId].searchResult = msg.value;
   }
 });
 
@@ -71,7 +73,7 @@ chrome.commands.onCommand.addListener(function(command) {
 
 //
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
-  delete tasks[tabId];
+  clean(tabId);
 });
 
 
@@ -179,30 +181,9 @@ function load_ariane(tabId) {
   });
 };
 
-//
+// Send new mapping to shopelia
 function send_finished_statement(tabId, reason) {
-  if (! tasks[tabId].fullMapping[tasks[tabId].mapHost])
-    tasks[tabId].fullMapping[tasks[tabId].mapHost] = {};
-  var mapping = tasks[tabId].fullMapping[tasks[tabId].mapHost];
-  var currentMap = tasks[tabId].currentMap;
-  for (var key in jQuery.extend({}, mapping, currentMap)) {
-    if (! currentMap[key])
-      continue;
-    if (! mapping[key])
-      mapping[key] = {path: [currentMap[key].path]};
-    else if (mapping[key].path instanceof Array)
-      mapping[key].path.push(currentMap[key].path);
-    else
-      mapping[key].path = [mapping[key].path, currentMap[key].path];
-
-    if (! mapping[key].context)
-      mapping[key].context = [currentMap[key].context];
-    else if (mapping[key].context instanceof Array)
-      mapping[key].context.push(currentMap[key].context);
-    else
-      mapping[key].context = [mapping[key].context, currentMap[key].context];
-  }
-
+  mergeMappings(tabId);
   $.ajax({
     type : "PUT",
     url: MAPPING_URL+tasks[tabId].merchant_id,
@@ -213,6 +194,12 @@ function send_finished_statement(tabId, reason) {
       reason: reason
     })
   });
+  clean(tabId);
+};
+
+// Clean variables
+function clean(tabId) {
+  $e = tasks[tabId];
   delete tasks[tabId];
 };
 
@@ -231,4 +218,38 @@ function buildMapping(tabId, hash) {
     host = host.replace(/^\w+(\.|$)/, '');
   }
   return resMapping;
+};
+
+//
+function mergeMappings(tabId) {
+  // GOING TO MERGE NEW MAPPING WITH OLD ONES
+  // create new host rule if it did not exist.
+  if (! tasks[tabId].fullMapping[tasks[tabId].mapHost])
+    tasks[tabId].fullMapping[tasks[tabId].mapHost] = {};
+
+  // for each field key
+  var mapping = tasks[tabId].fullMapping[tasks[tabId].mapHost];
+  var currentMap = tasks[tabId].currentMap;
+  for (var key in jQuery.extend({}, mapping, currentMap)) {
+    // if no new map, continue
+    if (! currentMap[key])
+      continue;
+    // if it did not exist, just create it and continue.
+    if (! mapping[key]) {
+      mapping[key] = currentMap[key];
+      continue;
+    }
+    // if old version, update it.
+    if (! mapping[key].path instanceof Array)
+      mapping[key] = {path: [mapping[key].path], context: [mapping[key].context]};
+    // if some elements where already found, unshift new rafinement.
+    if (tasks[tabId].searchResult[key]) {
+      mapping[key].path.splice(0,0,currentMap[key].path);
+      mapping[key].context.splice(0,0,currentMap[key].context);
+    // else, if nothing matched, push it behind.
+    } else {
+      mapping[key].path.push(currentMap[key].path);
+      mapping[key].context.push(currentMap[key].context);
+    }
+  }
 };

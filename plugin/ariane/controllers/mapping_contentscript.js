@@ -25,18 +25,18 @@ function setMapping(fieldId, path) {
   console.log("setMapping('"+fieldId+"', '"+path+"')", elems.length, "element(s) found.");
   var context = elems.length == 1 ? hu.getElementContext(elems[0]) : {};
   buttons.filter("#ariane-product-"+fieldId).removeClass("missing").addClass("mapped");
-  chrome.extension.sendMessage({setMapping: true, fieldId: fieldId, path: path, context: context});
+  chrome.extension.sendMessage({act: 'setMapping', fieldId: fieldId, value: {path: path, context: context}});
 };
 
 function search(mapping) {
   var res = {}
   for (var key in mapping) {
-    var pathes = mapping[key].path;
-    if (! pathes) continue;
-    if (! (pathes instanceof Array))
-      pathes = [pathes];
-    for (var j in pathes) {
-      var path = pathes[j];
+    var paths = mapping[key].path;
+    if (! paths) continue;
+    if (! (paths instanceof Array))
+      paths = [paths];
+    for (var j in paths) {
+      var path = paths[j];
       var elems = $(path);
       if (elems.length == 0) continue;
       res[key] = elems;
@@ -68,5 +68,10 @@ chrome.extension.onMessage.addListener(function(msg, sender) {
   for (var key in res)
     if (res[key].length > 0)
       buttons.filter("#ariane-product-"+key).removeClass("missing").addClass("mapped");
+
+  for (var key in res)
+    res[key] = res[key].length;
+  chrome.extension.sendMessage({act: 'setSearchResult', value: res});
+
   startHumanis(true);
 });
