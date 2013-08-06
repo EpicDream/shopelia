@@ -26,7 +26,6 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
 
   initialize: ->
     Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
-    Shopelia.vent.trigger("hide:header_link");
 
   onRender: ->
     Tracker.onDisplay('Confirmation');

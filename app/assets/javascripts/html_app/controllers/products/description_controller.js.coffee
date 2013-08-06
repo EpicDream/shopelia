@@ -3,3 +3,8 @@ class Shopelia.Controllers.DescriptionController extends Shopelia.Controllers.Co
   show: (region,product) ->
     @view = new Shopelia.Views.Description(model: product)
     region.show(@view)
+    @pushHeaderLink("description#close",'Retour')
+
+  close: ->
+    @view.close()
+    @popAll()

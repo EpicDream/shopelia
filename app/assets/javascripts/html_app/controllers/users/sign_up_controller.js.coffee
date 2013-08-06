@@ -8,7 +8,7 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
     @view = new Shopelia.Views.SignUp()
     @region = region
     @region.show(@view)
-    @view.setHeaderLink(region)
+    @pushHeaderLink("sign_in#show","Déjà membre?",region)
 
   create: (user) ->
     console.log("trigger createUser")

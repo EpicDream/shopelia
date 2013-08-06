@@ -30,9 +30,6 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     else
       undefined
 
-  setHeaderLink: (region) ->
-    Shopelia.vent.trigger("header#set_header_link","Première Commande ?","sign_up#show",region)
-
   lockView: ->
     disableButton(@ui.validation)
 

@@ -9,3 +9,5 @@ class Shopelia.Views.Description extends Shopelia.Views.ShopeliaView
   }
 
 
+
+

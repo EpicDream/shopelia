@@ -56,9 +56,6 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
     unless user is undefined
       Shopelia.vent.trigger("sign_up#create",user)
 
-  setHeaderLink: (region) ->
-    Shopelia.vent.trigger("header#set_header_link","Déjà membre?","sign_in#show",region)
-
   lockView: ->
     disableButton(@ui.validation)
 
