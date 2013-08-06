@@ -59,14 +59,14 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 // On page reloaded.
 chrome.tabs.onUpdated.addListener(function(tabId, info) {
-  if (! data[tabId] || info.status != "complete" || info.url == "chrome://newtab/")
+  if (! data[tabId] || info.status != "complete" || info.url == "chrome://newtab/" || ! data[tabId])
     return;
-  loadContentScript(tabId);
+  next_step(tabId);
 });
 
 // On contentscript ask next step (next color/size tuple).
 chrome.extension.onMessage.addListener(function(msg, sender, response) {
-  if (sender.id != chrome.runtime.id)
+  if (sender.id != chrome.runtime.id || ! sender.tab || ! data[sender.tab.id])
     return;
   if (msg == "nextStep")
     next_step(sender.tab.id);
@@ -134,12 +134,12 @@ function reask_a_product(tabId, delay) {
 
 function buildMapping(uri, hash) {
   var host = uri.host();
-  console.log("Going to search a mapping for host", host, "between", jQuery.map(hash,function(v, k){return k;}) );
+  console.log("Going to build a mapping for host", host, "between", jQuery.map(hash,function(v, k){return k;}) );
   var resMapping = {};
   while (host !== "") {
     if (hash[host])
       resMapping = $.extend(true, {}, hash[host], resMapping);
-    host = host.replace(/^\w+(\.|$)/, '');
+    host = host.replace(/^[^\.]+(\.|$)/, '');
   }
   return resMapping;
 };
@@ -202,12 +202,6 @@ function loadMapping(merchant_id) {
   });
 };
 
-function loadContentScript(tabId) {
-  chrome.tabs.executeScript(tabId, {file:"lib/jquery-1.9.1.min.js"});
-  chrome.tabs.executeScript(tabId, {file:"lib/underscore-min.js"});
-  chrome.tabs.executeScript(tabId, {file:"controllers/contentscript.js"});
-};
-
 /////////////////////////////////////////////////////////////////
 //                      CRAWLER METHODS
 /////////////////////////////////////////////////////////////////
@@ -227,10 +221,11 @@ function next_step(tabId) {
 };
 
 function getColors(tabId) {
-  console.log("Going to get colors");
   data[tabId].last_action = "getColors";
   chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
-    if (! result) return;
+    if (! result)
+      return sendError(tabId, "No result return for getColors");
+
     if (result.length > 0)
       data[tabId].colors = result;
     else
@@ -247,7 +242,6 @@ function setNextColor(tabId) {
     lastColorIdx += 1;
   data[tabId].lastColorIdx = lastColorIdx;
 
-  if (! data) return;
   var color = data[tabId].colors[lastColorIdx];
   if (color === undefined) {
     data[tabId].lastColorIdx = lastColorIdx;
@@ -261,10 +255,11 @@ function setNextColor(tabId) {
 };
 
 function getSizes(tabId) {
-  console.log("Going to get sizes");
   data[tabId].last_action = "getSizes";
   chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
-    if (! result) return;
+    if (! result)
+      return sendError(tabId, "No result return for getSizes");
+
     if (result.length > 0)
       data[tabId].sizes = result;
     else
@@ -281,8 +276,6 @@ function setNextSize(tabId) {
     lastSizeIdx += 1;
   data[tabId].lastSizeIdx = lastSizeIdx;
 
-  if (! data) return;
-  if (! data[tabId].sizes) return;
   var size = data[tabId].sizes[lastSizeIdx];
   if (size === undefined) {
     data[tabId].lastSizeIdx = undefined;
@@ -296,11 +289,11 @@ function setNextSize(tabId) {
 };
 
 function crawl(tabId) {
-  console.log("Going to crawl");
   data[tabId].last_action = "crawl";
   chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(option) {
     if (! option)
-      return;
+      return sendError(tabId, "No result return for crawl");
+
     option.color = data[tabId].colors[data[tabId].lastColorIdx];
     option.size = data[tabId].sizes[data[tabId].lastSizeIdx];
     // Il faut autre chose que color ou size.
@@ -313,7 +306,7 @@ function crawl(tabId) {
 function finish(tabId) {
   console.log("finished !", data[tabId].results);
   if (! data[tabId] || ! data[tabId].id) // Stop pushed or Local Test
-    return;
+    return delete data[tabId];
 
   $.ajax({
     type : "PUT",
@@ -333,6 +326,19 @@ function finish(tabId) {
   });
 };
 
+function sendError(tabId, msg) {
+  if (data[tabId] && data[tabId].id) // Stop pushed or Local Test
+    $.ajax({
+      type : "PUT",
+      url: PRODUCT_EXTRACT_UPDATE+data[tabId].id,
+      contentType: 'application/json',
+      data: JSON.stringify({versions: []}) //, errorMsg: msg
+    });
+  $e = data[tabId];
+  console.log(msg, "\n$e =", $e);
+  delete data[tabId];
+  reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
+};
 
 /////////////////////////////////////////////////////////////////
 //                            TESTS
