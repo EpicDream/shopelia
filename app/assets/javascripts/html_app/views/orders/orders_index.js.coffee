@@ -29,11 +29,6 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     Shopelia.vent.trigger("hide:header_link");
 
   onRender: ->
-    @$ui.validation.after(
-      () ->
-        #securityView = new Shopelia.Views.Security()
-        #$(securityView.render().el)
-    )
     Tracker.onDisplay('Confirmation');
 
   onProcessOrder: (e) ->

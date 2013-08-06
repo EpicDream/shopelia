@@ -25,7 +25,7 @@
 
   <div class="product-description">
     <span class="pull-left green bold "> Description:</span>
-    <div class="description-content"></div>
+    <div  class="description-content" > <%- @model('description') %></div>
   </div>
   <div class="spacer20"></div>
     <a id="full-description" class="block text-center">Plus de détails</a>

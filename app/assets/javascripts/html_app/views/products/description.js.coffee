@@ -1,15 +1,11 @@
 class Shopelia.Views.Description extends Shopelia.Views.ShopeliaView
 
-  template: JST['products/description']
+  template: 'products/description'
   className: 'full-description'
+  templateHelpers: {
+    model: (attr) ->
+      console.log(this)
+      @product[attr]
+  }
 
-  initialize: ->
-    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
 
-
-  render: ->
-    $(@el).html(@template(model: @model))
-    #console.log("description view")
-    #console.log(@options)
-    $(@el).append(@model.get("description"))
-    this

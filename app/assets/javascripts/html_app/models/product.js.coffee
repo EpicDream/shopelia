@@ -1,9 +1,6 @@
 class Shopelia.Models.Product extends Backbone.RelationalModel
   name: "product"
 
-  longPolling: false
-  intervalSeconds: 1
-
   validate: (attrs, options) ->
     if attrs.shipping_info is undefined or attrs.shipping_info == ""
       "Invalid Product: Missing Attrs"
@@ -18,21 +15,17 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
 
 
 
+
   initialize: (params) ->
     #console.log('Initializing Product with params')
     _.bindAll(this)
     @on("change:expected_price_product",@formatPrice,"expected_price_product")
     @on("change:expected_price_shipping",@formatPrice,"expected_price_shipping")
-    if this.isValid()
-      Shopelia.vent.on("change:merchant",@addMerchantInfosToProduct)
-      Shopelia.vent.trigger("merchants#create",@get("url"))
-    else
-      Shopelia.vent.on("change:product",@setProduct)
-      Shopelia.vent.trigger("products#create",@get("url"))
-
 
 
   addMerchantInfosToProduct: (data) ->
+    console.log('in add merchant')
+    console.log(data)
     @set({
           merchant_name:data.merchant.name,
           allow_iframe: data.merchant.allow_iframe,
@@ -40,6 +33,7 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
 
 
   setProduct: (data) ->
+    console.log(data)
     @set({
            name: data.name,
            image_url: data.image_url,

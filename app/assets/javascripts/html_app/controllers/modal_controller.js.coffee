@@ -27,6 +27,9 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
   showHeader: ->
     Shopelia.vent.trigger("header#show",@view.header)
 
+  showProductDescription:(product) ->
+    Shopelia.vent.trigger("description#show",@view.top,product)
+
   order: ->
     order = new Shopelia.Models.Order({
                                       session: @getSession()

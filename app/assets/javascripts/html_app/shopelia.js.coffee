@@ -16,9 +16,10 @@ Shopelia.Application.addRegions({
                  })
 
 Shopelia.Application.addInitializer (options) ->
+  originalRender = Backbone.Marionette.Renderer.render
   Backbone.Marionette.Renderer.render = (template, data) ->
     if !JST[template]
-      throw "Template '" + template + "' not found!"
+      return originalRender.call(this,template, data)
     JST[template](data)
 
   originalSync = Backbone.sync

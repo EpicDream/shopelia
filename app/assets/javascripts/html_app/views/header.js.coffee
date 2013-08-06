@@ -7,7 +7,7 @@ class Shopelia.Views.Header extends Shopelia.Views.ShopeliaView
 
   initialize: ->
     _.bindAll(this)
-    Shopelia.vent.on( "hide:header_link",  @hideHeaderLink)
+    Shopelia.vent.on( "hide:header_link", @hideHeaderLink)
 
   setHeaderLink: (text,event,params) ->
     @ui.link.text(text)
