@@ -136,4 +136,11 @@ chrome.extension.onMessage.addListener(function(msg, sender) {
   }
 });
 
-loadAriane();
+function loadToolbarOnJQuery() {
+  if (window.jQuery)
+    return loadAriane();
+  else
+    return setTimeout(loadToolbarOnJQuery, 100);
+};
+
+loadToolbarOnJQuery();
