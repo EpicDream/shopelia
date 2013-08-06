@@ -51,6 +51,8 @@ function search(mapping) {
 /* ********************************************************** */
 
 var buttons = $("#ariane-toolbar button[id^='product-']");
+buttons.addClass("missing");
+var started = false;
 
 $(document).ready(function() {
   $("body").click(onBodyClick);
@@ -58,13 +60,12 @@ $(document).ready(function() {
 });
 
 chrome.extension.onMessage.addListener(function(msg, sender) {
-  if (sender.id != chrome.runtime.id || ! msg.mapping)
+  if (sender.id != chrome.runtime.id || msg.mapping === undefined || started)
     return;
 
   console.log("Received mapping :", msg.mapping);
   var res = search(msg.mapping);
   console.log("Elements found :", res);
-  buttons.addClass("missing");
   for (var key in res)
     if (res[key].length > 0)
       buttons.filter("#ariane-product-"+key).removeClass("missing").addClass("mapped");
@@ -73,5 +74,6 @@ chrome.extension.onMessage.addListener(function(msg, sender) {
     res[key] = res[key].length;
   chrome.extension.sendMessage({act: 'setSearchResult', value: res});
 
-  startHumanis(true);
+  startAriane(true);
+  started = true;
 });

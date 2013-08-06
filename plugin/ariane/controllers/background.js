@@ -21,7 +21,8 @@ var merchants = {
   "priceminister.com" : "4",
   "cdiscount.com" : "5",
   "darty.com" : "6",
-  "toysrus.fr" : "7"
+  "toysrus.fr" : "7",
+  "eveiletjeux.com" : "8"
 };
 
 /////////////////////////////////////////////////////////////////////
@@ -107,6 +108,7 @@ function initTabVariables(tabId, hash) {
   tasks[tabId].fullMapping[tasks[tabId].mapHost] = {};
   tasks[tabId].mapping = {};
   tasks[tabId].currentMap = {};
+  tasks[tabId].searchResult = {};
 };
 
 // Get from Shopelia the next product url to map/extract.
@@ -164,21 +166,8 @@ function loadMapping(merchant_id) {
 
 // Inject libraries and contentscript into the page.
 function load_ariane(tabId) {
-  chrome.tabs.executeScript(tabId, {file:"lib/underscore-min.js"});
-  chrome.tabs.executeScript(tabId, {file:"lib/css_struct.js"});
-  chrome.tabs.executeScript(tabId, {file:"lib/path_utils.js"});
-  chrome.tabs.executeScript(tabId, {file:"lib/html_utils.js"});
-  chrome.tabs.insertCSS(tabId, {file:"assets/contentscript.css"});
-  chrome.tabs.executeScript(tabId, {file:"lib/jquery-1.9.1.min.js"}, function() {
-    chrome.tabs.executeScript(tabId, {file:"lib/jquery-ui-1.10.3.custom.min.js"}, function() {
-      chrome.tabs.executeScript(tabId, {file:"controllers/toolbar_contentscript.js"}, function() {
-        chrome.tabs.executeScript(tabId, {file:"controllers/mapping_contentscript.js"}, function() {
-          chrome.tabs.sendMessage(tabId, {mapping: tasks[tabId].mapping});
-          console.log("Ariane loaded !");
-        });
-      });
-    });
-  });
+  chrome.tabs.sendMessage(tabId, {mapping: tasks[tabId].mapping});
+  console.log("Ariane loaded !");
 };
 
 // Send new mapping to shopelia

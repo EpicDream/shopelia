@@ -1,13 +1,13 @@
 
-function loadHumanis() {
+function loadAriane() {
   // Create DIV
   var div = document.createElement('div');
-  div.id = "humanisDiv"
+  div.id = "arianeDiv"
   document.documentElement.appendChild(div);
-  jHumanis = $(div);
+  jAriane = $(div);
 
   // Import HTML into DIV
-  jHumanis.hide().load(chrome.runtime.getURL('views/toolbar.html'), build);
+  jAriane.hide().load(chrome.runtime.getURL('views/toolbar.html'), build);
 
   // Import CSS
   css_link = document.createElement('link');
@@ -17,7 +17,7 @@ function loadHumanis() {
 
 function build() {
   // Init global variables
-  jToolbar = jHumanis.find("#ariane-toolbar");
+  jToolbar = jAriane.find("#ariane-toolbar");
   jStep = jToolbar.find("#ariane-step");
   jButtons = jToolbar.find("span:not(#ariane-ctrl) button");
 
@@ -99,12 +99,12 @@ function onFinished() {
 /*                           Utilities                        */
 /* ********************************************************** */
 
-function startHumanis(crawl_mode) {
+function startAriane(crawl_mode) {
   if (crawl_mode)
     jStep.val("extract").prop("disabled", true);
   document.head.appendChild(css_link);
   $(document.body).addClass("ariane");
-  jHumanis.show();
+  jAriane.show();
   onStepChanged();
 };
 
@@ -136,4 +136,4 @@ chrome.extension.onMessage.addListener(function(msg, sender) {
   }
 });
 
-loadHumanis();
+loadAriane();

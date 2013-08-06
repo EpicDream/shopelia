@@ -26,15 +26,16 @@
     }
   },
 
-  // "content_scripts": [
-  //   {
-  //     "matches" : ["*://*/*"],
-  //     "js": ["lib/underscore-min.js", "lib/jquery-1.9.1.min.js", "lib/css_struct.js", "lib/html_utils.js", "lib/path_utils.js"]
-    // },{
-    //   "matches" : ["*://*/*"],
-    //   "js": ["controllers/toolbar_contentscript.js", "controllers/mapping_contentscript.js"]
-  //   }
-  // ],
+  "content_scripts": [
+    {
+      "matches" : ["*://*/*"],
+      "js": ["lib/underscore-min.js", "lib/jquery-1.9.1.min.js", "lib/jquery-ui-1.10.3.custom.min.js", "lib/css_struct.js", "lib/html_utils.js", "lib/path_utils.js"]
+    },{
+      "matches" : ["*://*/*"],
+      "js": ["controllers/toolbar_contentscript.js", "controllers/mapping_contentscript.js"],
+      "css": ["assets/contentscript.css"]
+    }
+  ],
 
   "web_accessible_resources": [
     "views/toolbar.html",
