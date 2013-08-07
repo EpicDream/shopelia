@@ -1,69 +1,47 @@
+DELAY_BETWEEN_COLORS_OR_SIZES = 1500;
+OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i
 
-function getColors(mapping) {
-  if (! mapping.colors)
+function getOptions(path) {
+  var elems = $(path);
+  var options = [];
+  if (elems.length == 0) {
     return [];
-  var path = mapping.colors.path;
-  var e = $(path);
-  if (e.length == 0)
-    return [];
-  else if (e[0].tagName == "SELECT") {
-    var options = e.eq(0).find("option:enabled");
-    var colors = _.map(options, function(opt) {return opt.innerText});
-  } else {
-    var images = e.find("img");
-    if (images.length == 0) return [];
-    var colors = _.chain(images).map(function(img) {return img.getAttribute("src");}).uniq().value();
-  }
-  return colors;
+  // Le cas facile
+  } else if (elems[0].tagName == "SELECT")
+    elems = elems.eq(0).find("option:enabled");
+  return _.chain(elems).map(function(elem) {return hu.getElementAttrs(elem)}).
+    filter(function(elem) {return elem.text.match(OPTION_FILTER) == null;}).value(); // .uniq()
 };
 
-function setColor(mapping, color) {
-  var path = mapping.colors.path;
-  var e = $(path);
-  if (e.length == 0) {
-    console.error("Unknow tagname for element", e, "and path", path);
-    return false;
-  } else if (e[0].tagName == "SELECT") {
-    var option = e.find("option:contains('"+color+"')");
-    option[0].selected = true;
-    option.parent().change();
-  } else {
-    e.find("img[src='"+color+"']").eq(0).click();
-  }
-  return true;
-};
-
-function getSizes(mapping) {
-  if (! mapping.sizes)
-    return [];
-  var path = mapping.sizes.path;
-  var e = $(path);
-  if (e.length == 0)
-    return [];
-  else if (e[0].tagName != "SELECT")
-    e = e.find("select");
-  if (e.length == 0)
-    return [];
-
-  var options = e.find("option:enabled");
-  var sizes = _.chain(options).map(function(opt) {return opt.innerText}).filter(function(size) {return size.match(/choi|choo/i) == null;}).value();
-  return sizes;
-};
-
-function setSize(mapping, size) {
-  var path = mapping.sizes.path;
-  var e = $(path);
-  if (e.length > 0 && e[0].tagName == "SELECT") {
-    var option = e.eq(0).find("option:contains('"+size+"')");
-    option[0].selected = true;
-    option.parent().change();
-  } else {
-    console.error("Unknow tagname for element", e, "and path", path);
+function chooseOption(path, option) {
+  var elems = $(path);
+  if (elems.length == 0) {
+    console.error("No element found for path", path);
     return false;
   }
+  var elem = undefined;
+  if (elems[0].tagName == "SELECT")
+    elem = $xf(".//*[text()='"+option.text+"']", elems[0]);
+
+  if (! elem && option.id)
+    elem = elems.filter("#"+option.id)[0];
+  if (! elem && option.text)
+    elem = $xf(".//*[text()='"+option.text+"']", elems.commonAncestor()[0])
+  if (! elem && option.src)
+    elem = elems.filter("[src='"+option.src+"']")[0];
+  if (! elem && option.href)
+    elem = elems.filter("[href='"+option.href+"']")[0];
+  if (! elem) {
+    console.error("No option found in", elems, "for option", elem);
+    return false;
+  }
+  if (elem.tagName == "OPTION") {
+    elem.selected = true;
+    elem.parentNode.dispatchEvent(new CustomEvent("change", {"canBubble":false, "cancelable":true}));
+  } else
+    elem.click();
   return true;
 };
-
 
 function crawl(mapping) {
   var option = {};
@@ -81,11 +59,16 @@ function crawl(mapping) {
       var path = pathes[j];
       var e = $(path);
       if (e.length == 0) continue;
-      if (key != 'description')
-        option[key] = e.text().replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
-      else
+      if (key != 'description') {
+        if (e.length == 1 && e[0].tagName == "IMG")
+          option[key] = [e.attr("alt"), e.attr("title")].join(', ');
+        else
+          option[key] = e.text();
+        option[key] = option[key].replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
+      } else
         option[key] = e.html().replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n");
-      break;
+      if (option[key] != "")
+        break;
     }
   }
   var imageFields = ['image_url', 'images'];
@@ -123,18 +106,18 @@ chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   console.debug("ProductCrawl task received", hash);
   switch(action) {
     case "getColors":
-      result = getColors(mapping);
+      result = mapping.colors ? getOptions(mapping.colors.path) : [];
       break;
     case "setColor":
-      result = setColor(mapping, data);
-      return setTimeout(goNextStep, 500);
+      result = chooseOption(mapping.colors.path, data);
+      return setTimeout(goNextStep, DELAY_BETWEEN_COLORS_OR_SIZES);
       break;
     case "getSizes":
-      result = getSizes(mapping);
+      result = mapping.sizes ? getOptions(mapping.sizes.path) : [];
       break;
     case "setSize":
-      result = setSize(mapping, data);
-      return setTimeout(goNextStep, 500);
+      result = chooseOption(mapping.sizes.path, data);
+      return setTimeout(goNextStep, DELAY_BETWEEN_COLORS_OR_SIZES);
       break;
     case "crawl":
       result = crawl(mapping);
@@ -151,4 +134,30 @@ function goNextStep() {
   chrome.extension.sendMessage("nextStep");
 };
 
-goNextStep();
+jQuery.fn.commonAncestor = function() {
+  var parents = [];
+  var minlen = Infinity;
+
+  $(this).each(function() {
+    var curparents = $(this).parents();
+    parents.push(curparents);
+    minlen = Math.min(minlen, curparents.length);
+  });
+
+  for (var i in parents) {
+    parents[i] = parents[i].slice(parents[i].length - minlen);
+  }
+
+  // Iterate until equality is found
+  for (var i = 0; i < parents[0].length; i++) {
+    var equal = true;
+    for (var j in parents) {
+      if (parents[j][i] != parents[0][i]) {
+        equal = false;
+        break;
+      }
+    }
+    if (equal) return $(parents[0][i]);
+  }
+  return $([]);
+};
