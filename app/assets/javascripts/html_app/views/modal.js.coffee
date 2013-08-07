@@ -3,6 +3,7 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
   template: 'modal'
   regions: {
     header: "#modal-header",
+    content: "#modal-content"
     top: "#modal-top",
     left: "#modal-left",
     right: "#modal-right"

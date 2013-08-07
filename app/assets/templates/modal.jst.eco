@@ -1,10 +1,11 @@
 <div id='modal-header'>
 </div>
 <div id="modal-top"></div>
-<div id='modal-content' class='row-fluid'>
-    <div class="spacer25"></div>
-    <div id='modal-left' class='span6'></div>
-    <div id='modal-right' class='span5'>
-     </div>
+<div class="spacer25"></div>
+<div id='modal-content' class='container-fluid'>
+    <div class="row-fluid">
+        <div id='modal-left' class='span6'></div>
+        <div id='modal-right' class='span5'></div>
+    </div>
 </div>
 <a id="close">x</a>

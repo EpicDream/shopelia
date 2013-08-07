@@ -41,7 +41,5 @@ class Shopelia.Controllers.ProductsController extends Shopelia.Controllers.Contr
       Shopelia.vent.trigger("merchants#create",@product.get('url'))
 
 
-
   showNotFound: ->
-    view = new Shopelia.Views.NotFound(model: @product)
-    @region.show(view)
+    Shopelia.vent.trigger("modal#show_not_found",@product)

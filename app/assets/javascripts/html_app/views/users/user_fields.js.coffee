@@ -1,7 +1,6 @@
 class Shopelia.Views.UserFields extends Shopelia.Views.ShopeliaView
 
   template: 'users/user_fields'
-  className: "box"
   ui: {
     email: 'input[name="email"]'
     phone: 'input[name="phone"]'
