@@ -1,7 +1,7 @@
-<div class="text-center ">
+<div class="span6 center ">
     <h3>Oooops! Ce produit n'existe pas sur Shopelia!</h3>
     <div class="spacer15"></div>
     <p>Nous ne parvenons pas à trouver ce produit. Vous pouvez continuer votre achat sur le site <%= @model('merchant_name') %></p>
     <div class="spacer15"></div>
-    <a href="<%= @model('url') %>" target="_blank" class="custom-btn btn-block"> Continuer Mon Achat sur <%= @model('merchant_name') %>  </a>
+    <a href="<%= @model('url') %>" target="_blank" class="custom-btn span3 center btn-block"> Continuer Mon Achat sur <%= @model('merchant_name') %>  </a>
 </div>

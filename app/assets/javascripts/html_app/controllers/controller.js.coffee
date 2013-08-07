@@ -26,7 +26,6 @@ class Shopelia.Controllers.Controller extends Backbone.Marionette.Controller
 
 
   close: ->
-    console.log(Backbone.Marionette.Controller)
     Backbone.Marionette.Controller.prototype.close.call(this)
     @dispose()
     @popAll()

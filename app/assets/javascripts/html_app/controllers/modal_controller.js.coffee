@@ -32,7 +32,11 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
 
   showNotFound:(product) ->
     view = new Shopelia.Views.NotFound(model: product)
+    @view.content.once("show", (view) ->
+      Shopelia.vent.trigger("sign_up#close")
+    )
     @view.content.show(view)
+
 
   order: ->
     order = new Shopelia.Models.Order({
