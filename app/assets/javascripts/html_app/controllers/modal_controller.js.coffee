@@ -9,8 +9,8 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     @view = new Shopelia.Views.Modal()
     Shopelia.Application.container.show(@view)
     @showHeader()
-    @showSignUp()
     @showProduct(@getProduct())
+    @showUserForm()
     @view.center()
 
   showProduct: (product) ->
@@ -18,6 +18,27 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
 
   showSignIn: ->
     Shopelia.vent.trigger("sign_in#show",@view.right)
+
+  showUserForm: ->
+    @session = @getSession()
+    if @session.authenticated()
+      console.log("authenticated")
+      console.log(@session)
+      authToken = @session.get("auth_token")
+      @user = @session.get("user")
+      that = this
+      @user.fetch({
+                  beforeSend: (xhr) ->
+                    xhr.setRequestHeader("X-Shopelia-AuthToken",authToken)
+                  success : (resp) ->
+                    console.log(resp)
+                    that.session.updateUserCookies(resp)
+                    that.showSignIn()
+                  error : (model, response) ->
+                    that.session.deleteCookies()
+                  })
+    else
+      @showSignUp()
 
   showSignUp: ->
     if @view is undefined

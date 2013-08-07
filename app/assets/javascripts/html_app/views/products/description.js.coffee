@@ -7,7 +7,3 @@ class Shopelia.Views.Description extends Shopelia.Views.ShopeliaView
       console.log(this)
       @product[attr]
   }
-
-
-
-
