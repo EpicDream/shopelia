@@ -15,27 +15,28 @@
 
 .price {
   display: block;
-  width: 130px;
+  text-align: right;
 }
 
-.price-infos > .pull-left {
+.price-infos > span {
   padding-top: 7px;
   line-height: 1.1em;
 }
 
 .price-infos > .pull-right {
-  width: 160px;
+  width: 200px;
+  text-align: right;
 }
 
 .pull-right > .price > span.green.bold {
    font-size: 200%;
+   margin-right: 28px;
 }
 
 .pull-right > .price > span.taxes {
   font-size: 120%;
   display: block;
-  margin-top: -10px;
-  margin-left: 3px;
+  margin-bottom: -10px;
 }
 
 .product-description {
