@@ -1,4 +1,3 @@
-
 /////////////////////////////////////////////////////////////////////
 //              SET CONTSTANTS AND GLOBOL VARIABLES
 /////////////////////////////////////////////////////////////////////
@@ -22,7 +21,14 @@ var merchants = {
   "cdiscount.com" : "5",
   "darty.com" : "6",
   "toysrus.fr" : "7",
-  "eveiletjeux.com" : "8"
+  "conforama.fr" : "8",
+  "eveiletjeux.com" : "9",
+  "sephora.fr" : "10",
+  "thebodyshop.fr" : "11",
+  "zalando.fr" : "12",
+  "jcrew.com" : "13",
+  "overstock.com" : "14",
+  "effiliation.com" : "15"
 };
 
 /////////////////////////////////////////////////////////////////////
