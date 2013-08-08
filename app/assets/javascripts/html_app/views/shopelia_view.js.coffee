@@ -11,3 +11,6 @@ class Shopelia.Views.ShopeliaView extends Backbone.Marionette.ItemView
     console.log(Shopelia.Application.request("session"))
     Shopelia.Application.request("session")
 
+
+  superClose: ->
+    Backbone.Marionette.ItemView.prototype.close.call(this)

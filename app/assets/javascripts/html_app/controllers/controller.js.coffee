@@ -25,10 +25,14 @@ class Shopelia.Controllers.Controller extends Backbone.Marionette.Controller
       Shopelia.vent.trigger("header#pop_all",@_event)
 
 
-  close: ->
+  close:  ->
+    if @onBeforeClose isnt undefined
+      @onBeforeClose()
     Backbone.Marionette.Controller.prototype.close.call(this)
     @dispose()
     @popAll()
     unless @view is undefined
       @view.close()
+
+
 

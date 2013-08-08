@@ -5,8 +5,6 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     header: "#modal-header",
     content: "#modal-content"
     top: "#modal-top",
-    left: "#modal-left",
-    right: "#modal-right"
   }
 
   id: 'modal'
@@ -38,11 +36,7 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
       e.stopPropagation()
 
     $(document).click ->
-      if $("#productInfosIframe").length > 0
-        that.productView.closeProducIframe()
-      else
         that.close()
-    @center()
 
   close: ->
     #console.log("close please")
