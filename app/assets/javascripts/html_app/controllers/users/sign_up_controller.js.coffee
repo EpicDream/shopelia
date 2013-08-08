@@ -22,7 +22,7 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
           console.log('success callback')
           console.log("response user save: " + JSON.stringify(resp))
           session.saveCookies(resp)
-          Shopelia.vent.trigger("modal#order")
+          Shopelia.vent.trigger("modal_content#order")
         error : (model, response) ->
           #console.log(JSON.stringify(response))
           that.view.unlockView()
@@ -45,7 +45,7 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
-             Shopelia.vent.trigger("sign_in#show",that.region)
+             Shopelia.vent.trigger("sign_in#show",that.region,email)
            error: (jqXHR,textStatus,errorThrown) ->
              #console.log("user dosn't exist")
              #console.log(JSON.stringify(errorThrown))

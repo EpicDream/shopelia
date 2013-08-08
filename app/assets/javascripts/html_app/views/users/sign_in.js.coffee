@@ -1,6 +1,14 @@
 class Shopelia.Views.SignIn extends Shopelia.Views.Form
 
   template: 'users/sign_in'
+  templateHelpers: {
+    getEmail: ->
+      console.log(@)
+      if @
+        @email
+      else
+        ""
+  }
   className: "box"
   ui: {
     email: 'input[name="email"]'

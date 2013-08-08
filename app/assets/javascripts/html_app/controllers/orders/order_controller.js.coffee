@@ -14,7 +14,7 @@ class Shopelia.Controllers.OrderController extends Shopelia.Controllers.Controll
                  xhr.setRequestHeader("X-Shopelia-AuthToken",that.getSession().get("auth_token"))
                success: (resp) ->
                  #console.log(resp)
-                 Shopelia.vent.trigger("modal#show_thank_you")
+                 Shopelia.vent.trigger("modal_content#show_thank_you")
                error: (model, response) ->
                  that.view.unlockView()
                  console.log(JSON.stringify(response))
