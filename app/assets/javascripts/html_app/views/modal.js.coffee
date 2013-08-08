@@ -14,6 +14,7 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     'click #close': 'close'
 
   initialize: ->
+    _.bindAll(this)
     messageListener = (e) ->
       window.shopeliaParentHost = e.origin
       window.removeEventListener("message",messageListener)
@@ -28,6 +29,8 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     $(window).on('resize.modal',() ->
       that.center()
     )
+    $(window).on('load',@center)
+
 
   onRender: ->
     $(@el).fadeIn('slow')

@@ -48,11 +48,12 @@ class Shopelia.Controllers.ModalContentController extends Shopelia.Controllers.C
       @showSignUp()
 
   order: ->
+    session = @getSession().clone()
+    product = @getProduct().clone()
     order = new Shopelia.Models.Order({
-                                      session: @getSession()
-                                      product: @getProduct()
+                                      session: session
+                                      product: product
                                       })
-    console.log(order)
     Shopelia.vent.trigger("sign_up#close")
     Shopelia.vent.trigger("sign_in#close")
     Shopelia.vent.trigger("order#show",@view.right,order)
