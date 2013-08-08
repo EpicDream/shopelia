@@ -10,6 +10,11 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     Shopelia.Application.container.show(@view)
     @showHeader()
     @showContent()
+    Shopelia.Notification.Error({
+                                title: "Over Here",
+                                text: "Check me out. I'm in a different stack."
+                                })
+
     @view.center()
 
   showContent: ->

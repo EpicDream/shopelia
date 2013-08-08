@@ -44,6 +44,7 @@ Shopelia.Application.addInitializer (options) ->
 
 
 $(document).ready ->
+  $.pnotify.defaults.history = false
   Shopelia.Application.start()
   Tracker.init()
   $.ajax({

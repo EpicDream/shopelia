@@ -3,10 +3,10 @@ $modalWidth: 622px;
 $borderRadius: 4px;
 
 #modal {
-  display: block;
+  display: none;
   position: absolute;
   opacity: 1;
-  z-index: 10000;
+  //z-index: 10000;
   border-radius:$borderRadius;
   background-color:rgba(0, 0, 0, 0.65);
   //min-height: $modalHeight;

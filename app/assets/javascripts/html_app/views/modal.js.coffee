@@ -29,11 +29,13 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     $(window).on('resize.modal',() ->
       that.center()
     )
-    $(window).on('load',@center)
+    $(window).on('load',() ->
+      that.center()
+      $(that.el).fadeIn('slow')
+    )
 
 
   onRender: ->
-    $(@el).fadeIn('slow')
     that = this
     $(@el).click (e) ->
       e.stopPropagation()
