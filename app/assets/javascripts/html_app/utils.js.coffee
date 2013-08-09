@@ -26,7 +26,10 @@ window.enableButton = ($button) ->
 
 window.displayErrors = (errors) ->
   keys = _.keys(errors)
+  $errors = $('<ul/>')
   _.each(keys,(key) ->
+    console.log($errors.html())
+    $errors.append("<li>" + errors[key] + "</li>")
     if  (key == "first_name" || key == "last_name")
       errorField =  $("input[name=full_name]")
     else if key == "error" && errors[key] == "Email ou mot de passe incorrect."
@@ -50,6 +53,7 @@ window.displayErrors = (errors) ->
                        'content': errors[key]
                        })
   )
+  Shopelia.Notification.Error({title: "Erreurs", text: " "+ $errors.html() + " "})
 
 window.split =  (fullName) ->
   firstName =  fullName.substr(0,fullName.indexOf(' '))

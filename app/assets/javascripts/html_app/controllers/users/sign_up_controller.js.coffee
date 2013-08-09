@@ -24,10 +24,10 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
           session.saveCookies(resp)
           Shopelia.vent.trigger("modal_content#order")
         error : (model, response) ->
-          #console.log(JSON.stringify(response))
           that.view.unlockView()
-          #TODO Display Errors
-          #displayErrors($.parseJSON(response.responseText))
+          Shopelia.Notification.Error({ text: $.parseJSON(response.responseText)['error'] })
+          console.log(response.responseText)
+          displayErrors($.parseJSON(response.responseText))
       })
     else
       console.log("session is undefined in sign_up controller")
@@ -46,6 +46,7 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
              Shopelia.vent.trigger("sign_in#show",that.region,email)
+             Shopelia.Notification.Info({text: "Cet email existe déjà. Veuillez vous connectez ou récupérer votre mot de passe."})
            error: (jqXHR,textStatus,errorThrown) ->
              #console.log("user dosn't exist")
              #console.log(JSON.stringify(errorThrown))

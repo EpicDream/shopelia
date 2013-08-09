@@ -28,8 +28,8 @@ class Shopelia.Controllers.SignInController extends Shopelia.Controllers.Control
         error : (response) ->
           #console.log("callback error login")
           that.view.unlockView()
-          #TODO display errors
-          #console.log(JSON.stringify(response.responseText))
+          displayErrors($.parseJSON(response.responseText))
+          #Shopelia.Notification.Error({ text: $.parseJSON(response.responseText)['error'] })
       })
     else
       console.log("userJson is undefined in sign_in controller")

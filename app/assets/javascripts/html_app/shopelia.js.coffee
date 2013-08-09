@@ -47,14 +47,6 @@ $(document).ready ->
   $.pnotify.defaults.history = false
   Shopelia.Application.start()
   Tracker.init()
-  $.ajax({
-         url: "/sdk/ads.js",
-         dataType: "script",
-         success: (data,textStatus,jqxhr) ->
-            Shopelia.Adblock = false
-         error: ->
-            Shopelia.Adblock = true
-         });
 
 
 
