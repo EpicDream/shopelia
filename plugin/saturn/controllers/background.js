@@ -64,13 +64,6 @@ chrome.browserAction.onClicked.addListener(function(tab) {
   }
 });
 
-// On page reloaded.
-chrome.tabs.onUpdated.addListener(function(tabId, info) {
-  if (! data[tabId] || info.status != "complete" || info.url == "chrome://newtab/" || ! data[tabId])
-    return;
-  next_step(tabId);
-});
-
 // On contentscript ask next step (next color/size tuple).
 chrome.extension.onMessage.addListener(function(msg, sender, response) {
   if (sender.id != chrome.runtime.id || ! sender.tab || ! data[sender.tab.id])
@@ -96,7 +89,7 @@ function start(tabId) {
     loadMapping(hash.merchant_id).done(function(mapping) {
       if (mapping.data)
         hash.mapping = buildMapping(uri, mapping.data);
-      console.log("mapping choosen", mapping);
+      console.log("mapping choosen", hash.mapping);
       hash.uri = uri;
       initTabVariables(tabId, hash);
       if (mapping.data)
