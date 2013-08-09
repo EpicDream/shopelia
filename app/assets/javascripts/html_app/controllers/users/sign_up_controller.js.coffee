@@ -46,7 +46,7 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
              Shopelia.vent.trigger("sign_in#show",that.region,email)
-             Shopelia.Notification.Info({text: "Cet email existe déjà. Veuillez vous connectez ou récupérer votre mot de passe."})
+             Shopelia.Notification.Info({center:true,text: "Cet email existe déjà. Veuillez vous connectez ou récupérer votre mot de passe."})
            error: (jqXHR,textStatus,errorThrown) ->
              #console.log("user dosn't exist")
              #console.log(JSON.stringify(errorThrown))

@@ -1,3 +1,10 @@
-<h2 class="green text-center">Description du <%= @model("name") %> : </h2>
-<div class="spacer15"></div>
+<div class="span2 center">
+    <img src= <%= @model('image_url') %> />
+      <div class="spacer10 hidden-phone"></div>
+</div>
+<h5 class="text-center"><%= @model('name') %> </h5>
+
+<div class="spacer15 clearfix"></div>
+<h5 class="green">Description: </h5>
+<div class="spacer15 clearfix"></div>
 <%- @model("description") %>
