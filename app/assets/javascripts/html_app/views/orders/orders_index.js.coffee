@@ -1,57 +1,58 @@
-class Shopelia.Views.OrdersIndex extends Backbone.View
+class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
 
-  template: JST['orders/index']
+  template: 'orders/index'
+  templateHelpers: {
+    user:(attr) ->
+      console.log(@)
+      @order.session.get('user').get(attr)
+    product:(attr) ->
+      @order.product.get(attr)
+
+    address:(attr) ->
+      @order.session.get('user').get('addresses').getDefaultAddress().get(attr)
+
+    card:(attr) ->
+      @order.session.get('user').get('payment_cards').getDefaultPaymentCard().get(attr)
+
+    total_price:() ->
+      @order.product.getExpectedTotalPrice()
+  }
   className: 'box'
+  ui: {
+    validation: '#process-order'
+  }
   events:
-    "click #process-order": "processOrder"
+    "click #process-order": "onProcessOrder"
 
   initialize: ->
-    _.bindAll this
-    #@user = {"id":136,"email":"kf@glb.com","first_name":"lef","last_name":"pefh","addresses":[{"id":111,"address1":"4 Rue Chapon","address2":"","zip":"75003","city":"Paris","country":"FR","is_default":1,"phone":"0675198943"}],"payment_cards":[{"id":51,"number":"12XXXXXXXXXX3452","name":null,"exp_month":"11","exp_year":"2013"}],"has_pincode":0,"has_password":0}
-    #@authToken = "34456666"
-    @user = @options.session.get("user")
-    @authToken = @options.session.get("auth_token")
-    #console.log("initialize processOrder View: ")
-    @product = @options.product
-    @expected_price_product = @product.get('expected_price_product')
-    @expected_price_shipping = @product.get('expected_price_shipping')
-    #console.log(@expected_price_product)
-    #console.log(@expected_price_shipping)
-    @expected_price_total = customParseFloat(parseFloat(@expected_price_product) + parseFloat(@expected_price_shipping))
+    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
 
-  render: ->
-    $(@el).html(@template(user: @user, product: @product, expected_price_total: @expected_price_total))
-    @$("#process-order").after(
-      () ->
-        securityView = new Shopelia.Views.Security()
-        $(securityView.render().el)
-    )
+  onRender: ->
     Tracker.onDisplay('Confirmation');
-    this
 
-
-  processOrder: (e) ->
+  onProcessOrder: (e) ->
     e.preventDefault()
-    disableButton($("#process-order"))
-    that = this
-    #console.log("processOrder")
-    order = new Shopelia.Models.Order()
-    order.save({
-               "expected_price_shipping": that.expected_price_shipping
-               "expected_price_product":  that.expected_price_product
-               "expected_price_total":that.expected_price_total,
-               "address_id": that.user.addresses[0].id ,
-               "products":[that.product.disableWrapping()],
-               "payment_card_id": that.user.payment_cards[0].id,
-               }, {
-               beforeSend : (xhr) ->
-                 xhr.setRequestHeader("X-Shopelia-AuthToken",that.authToken)
-               success: (resp) ->
-                 #console.log(resp)
-                 that.parent.setContentView(new Shopelia.Views.ThankYou())
-               error: (model, response) ->
-                 enableButton($("#process-order"))
-                 #console.log(JSON.stringify(response))
+    order = @preparedOrder()
+    Shopelia.vent.trigger("order#create",order)
+
+  preparedOrder: ->
+    product = @model.get("product")
+    user = @model.get("session").get("user")
+    order = new Shopelia.Models.Order({
+      "expected_price_shipping": product.get('expected_price_shipping')
+      "expected_price_product":  product.get('expected_price_product')
+      "expected_price_total": product.getExpectedTotalPrice()
+      "address_id": user.get('addresses').getDefaultAddress().get('id')
+      "products":[product.disableWrapping()]
+      "payment_card_id": user.get('payment_cards').getDefaultPaymentCard().get('id')
     })
+    order
+
+  lockView: ->
+    disableButton(@ui.validation)
+
+  unlockView: ->
+    enableButton(@ui.validation)
+
 
 

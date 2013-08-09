@@ -1,12 +1,12 @@
-class Shopelia.Views.NotFound extends Backbone.View
+class Shopelia.Views.NotFound extends Shopelia.Views.ShopeliaView
 
-  template: JST['products/not_found']
-  className: 'product'
+  template: 'products/not_found'
+  className: 'box product'
+  templateHelpers: {
+    model: (attr) ->
+      console.log(@)
+      @product[attr]
+  }
 
-
-  initialize: ->
-    _.bindAll this
-
-  render: ->
-    $(@el).html(@template(model: @model))
-    this
+  onRender: ->
+    Tracker.onDisplay('Product Not Found');
