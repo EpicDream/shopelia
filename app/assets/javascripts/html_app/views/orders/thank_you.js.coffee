@@ -1,15 +1,11 @@
-class Shopelia.Views.ThankYou extends Backbone.View
+class Shopelia.Views.ThankYou extends Shopelia.Views.Layout
 
-  template: JST['orders/thank_you']
-  className: 'box'
+  template: 'orders/thank_you'
+  regions: {
+    bottom: "#thank-you-bottom"
+  }
 
-  initialize: ->
-    _.bindAll this
-
-
-  render: ->
-    $(@el).html(@template())
+  onRender: ->
     Tracker.onDisplay('Thank You');
-    unless $(".new_password").length == 0
-      $(".new_password").fadeIn(500)
-    this
+
+

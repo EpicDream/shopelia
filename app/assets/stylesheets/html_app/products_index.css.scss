@@ -13,22 +13,48 @@
   margin: auto;
 }
 
-.price-infos > .pull-left {
+.price {
+  display: block;
+  text-align: right;
+}
+
+.price-infos > span {
   padding-top: 7px;
   line-height: 1.1em;
 }
 
 .price-infos > .pull-right {
-  max-width: 40%;
+  width: 200px;
+  text-align: right;
 }
 
 .pull-right > .price > span.green.bold {
    font-size: 200%;
+   margin-right: 28px;
 }
 
 .pull-right > .price > span.taxes {
   font-size: 120%;
   display: block;
-  margin-top: -10px;
-  margin-left: 3px;
+  margin-bottom: -10px;
+}
+
+.product-description {
+  span:first-of-type {
+    clear: both;
+    margin-top: 20px;
+  }
+}
+
+.description-content {
+  height: 90px;
+  display: block;
+  overflow: hidden;
+  clear:both;
+  text-overflow: ellipsis;
+}
+
+.full-description {
+  padding: 30px;
+  background-color: #fff;
 }

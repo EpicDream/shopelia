@@ -17,9 +17,11 @@ a {
   margin-left: 0;
 }
 
-.row-fluid {
-  margin-left: 2%;
+.row-fluid [class*="span"].center, .center {
+  margin: 0 auto;
+  float: none;
 }
+
 
 .control-group {
   margin-bottom: 0;

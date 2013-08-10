@@ -5,12 +5,12 @@
 
     <div class="infos clearfix offset1">
         <img class="pull-left" src="/assets/html_app/email-icon.png">
-        <span class="pull-left" ><%= @user.email %></span>
+        <span class="pull-left" ><%= @user('email') %></span>
     </div>
             <div class="spacer5"></div>
     <div class="infos clearfix offset1">
         <img class="pull-left" src="/assets/html_app/phone-icon.png">
-        <span class="pull-left" ><%= @user.addresses[0].phone %></span>
+        <span class="pull-left" ><%= @address('phone') %></span>
     </div>
             <div class="spacer10"></div>
 <div class="line"></div>
@@ -20,11 +20,11 @@
    <h5 class="pull-left">ADRESSE DE LIVRAISON</h5>
 </div>
     <div class="offset1">
-        <%= @user.first_name %> <%= @user.last_name %><br>
-        <%= @user.addresses[0].address1 %>
-        <%= @user.addresses[0].address2 %> <br>
-        <%= @user.addresses[0].zip %> <%= @user.addresses[0].city %>
-         <%= countries[@user.addresses[0].country] %>
+        <%= @user("first_name") %> <%= @user("last_name") %><br>
+        <%= @address('address1') %>
+        <%= @address('address2') %> <br>
+        <%= @address('zip') %> <%= @address('city') %>
+         <%= countries[@address('country')] %>
     </div>
 
         <div class="spacer10"></div>
@@ -36,7 +36,7 @@
 </div>
 
     <div class="offset1 clearfix">
-        <%= @user.payment_cards[0].number %>
+        <%= @card('number') %>
     </div>
         <div class="spacer10"></div>
         <div class="line"></div>
@@ -44,16 +44,16 @@
 
         <table class="table table-borderless" id="total-parice-table">
             <tr>
-                <td><%= @product.get('name') %></td>
-                <td><%= @product.get('expected_price_product') %>€</td>
+                <td><%= @product('name') %></td>
+                <td><%= @product('expected_price_product') %>€</td>
             </tr>
             <tr>
                 <td>Frais de livraison : </td>
-                <td><%= @product.get('expected_price_shipping') %>€</td>
+                <td><%= @product('expected_price_shipping') %>€</td>
             </tr>
             <tr>
                 <td>Total</td>
-                <td><%= @expected_price_total %>€</td>
+                <td><%= @total_price() %>€</td>
             </tr>
         </table>
 
