@@ -9,3 +9,6 @@ class Shopelia.Views.NotFound extends Shopelia.Views.ShopeliaView
 
   onRender: ->
     Tracker.onDisplay('Product Not Found');
+
+  onShow: ->
+    Shopelia.vent.trigger("modal#center")
