@@ -85,12 +85,12 @@ function start(tabId) {
     var uri = new Uri(hash.url);
     console.debug((new Date()).toLocaleTimeString(), "Get product_url to extract :", hash, "on tab_id :", tabId);
     loadMapping(hash.merchant_id).done(function(mapping) {
-      if (mapping.data)
-        hash.mapping = buildMapping(uri, mapping.data);
+      if (mapping.data && mapping.data.viking)
+        hash.mapping = buildMapping(uri, mapping.data.viking);
       console.log("mapping choosen", hash.mapping);
       hash.uri = uri;
       initTabVariables(tabId, hash);
-      if (mapping.data)
+      if (hash.mapping)
         chrome.tabs.update(tabId, {url: hash.url});
       else
         finish(tabId);
@@ -104,7 +104,7 @@ function parseCurrentPage(tab) {
   hash.uri = new Uri(hash.url);
   loadMappingFromUri(hash.uri).done(function(maphash) {
     console.log("mapping-data received :", maphash);
-    hash.mapping = buildMapping(hash.uri, maphash.data);
+    hash.mapping = buildMapping(hash.uri, maphash.data.viking);
     console.log("mapping choosen", hash.mapping);
     initTabVariables(tab.id, hash);
     chrome.tabs.update(tab.id, {url: hash.url});
@@ -366,7 +366,7 @@ function sendError(tabId, msg) {
 function initTest(tabId) {
   var uri = new Uri("http://m.zalando.fr/polo-ralph-lauren-polo-jaune-po222d02u-202.html");
   loadMappingFromUri(uri).done(function(mapping) {
-    var hash = {uri: uri, url: uri.href(), mapping: mapping.data};
+    var hash = {uri: uri, url: uri.href(), mapping: mapping.data.viking};
     initTabVariables(tabId, hash);
     chrome.tabs.update(tabId, {url: uri.href()});
   });
