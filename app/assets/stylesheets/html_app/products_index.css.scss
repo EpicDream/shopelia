@@ -56,5 +56,13 @@
 
 .full-description {
   padding: 30px;
-  background-color: #fff;
+  overflow: auto !important;
+
+}
+
+.full-description > div:first-of-type {
+  background-color: #ffffff;
+  border: 1px solid darken($lightGrey,10%);
+  border-radius:$borderRadius;
+  padding: 10px;
 }

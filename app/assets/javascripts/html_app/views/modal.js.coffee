@@ -52,11 +52,17 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
                    })
 
 
-  center: ->
+  center: (animate) ->
     top = undefined
     left = undefined
     top = Math.max($(window).height() - $(@el).height(),0) / 2
     left = Math.max($(window).width() - $(@el).outerWidth(), 0) / 2
+
+    if animate
+      $(@el).animate({
+                     top: top
+                     left: left
+                           },500,"easeOutQuint")
 
     $(@el).css
       top: top

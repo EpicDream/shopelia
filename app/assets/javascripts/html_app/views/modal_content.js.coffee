@@ -7,7 +7,7 @@ class Shopelia.Views.ModalContent extends Shopelia.Views.Layout
   }
 
   hide: ->
-    $(@el).slideUp('slow')
+    $(@el).fadeOut('slow')
 
   show :->
     $(@el).fadeIn('slow')
