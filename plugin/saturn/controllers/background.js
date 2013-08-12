@@ -1,4 +1,3 @@
-
 /////////////////////////////////////////////////////////////////
 //                CONSTANT AND GLOBAL VARIABLE
 /////////////////////////////////////////////////////////////////
@@ -35,7 +34,15 @@ var merchants = {
   "priceminister.com" : "4",
   "cdiscount.com" : "5",
   "darty.com" : "6",
-  "toysrus.fr" : "7"
+  "toysrus.fr" : "7",
+  "conforama.fr" : "8",
+  "eveiletjeux.com" : "9",
+  "sephora.fr" : "10",
+  "thebodyshop.fr" : "11",
+  "zalando.fr" : "12",
+  "jcrew.com" : "13",
+  "overstock.com" : "14",
+  "effiliation.com" : "15"
 };
 
 /////////////////////////////////////////////////////////////////
@@ -55,13 +62,6 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     else
       start(tab.id);
   }
-});
-
-// On page reloaded.
-chrome.tabs.onUpdated.addListener(function(tabId, info) {
-  if (! data[tabId] || info.status != "complete" || info.url == "chrome://newtab/" || ! data[tabId])
-    return;
-  next_step(tabId);
 });
 
 // On contentscript ask next step (next color/size tuple).
@@ -89,7 +89,7 @@ function start(tabId) {
     loadMapping(hash.merchant_id).done(function(mapping) {
       if (mapping.data)
         hash.mapping = buildMapping(uri, mapping.data);
-      console.log("mapping choosen", mapping);
+      console.log("mapping choosen", hash.mapping);
       hash.uri = uri;
       initTabVariables(tabId, hash);
       if (mapping.data)
