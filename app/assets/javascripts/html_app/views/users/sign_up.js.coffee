@@ -29,7 +29,6 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
     @cardFields.show(@cardFieldsView)
     @initializeForm()
 
-
   getUserFromForm: ->
     if @ui.form.parsley( 'validate' )
       userJson = @userFieldsView.getFormResult()

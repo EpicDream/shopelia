@@ -12,6 +12,7 @@ class Shopelia.Controllers.SignInController extends Shopelia.Controllers.Control
     region.show(@view)
     @pushHeaderLink("sign_up#show","Première Commande ?",region)
 
+
   login: (userJson) ->
     console.log("trigger login")
     that = this

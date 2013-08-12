@@ -1,7 +1,6 @@
 class Shopelia.Views.NotFound extends Shopelia.Views.ShopeliaView
 
   template: 'products/not_found'
-  className: 'box product'
   templateHelpers: {
     model: (attr) ->
       console.log(@)
@@ -10,3 +9,6 @@ class Shopelia.Views.NotFound extends Shopelia.Views.ShopeliaView
 
   onRender: ->
     Tracker.onDisplay('Product Not Found');
+
+  onShow: ->
+    Shopelia.vent.trigger("modal#center")

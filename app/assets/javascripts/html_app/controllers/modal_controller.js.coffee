@@ -10,7 +10,7 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     Shopelia.Application.container.show(@view)
     @showHeader()
     @showContent()
-    @view.center()
+    @center()
 
   showContent: ->
     if @view is undefined
@@ -21,8 +21,8 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     Shopelia.vent.trigger("header#show",@view.header)
 
   showProductDescription:(product) ->
-    Shopelia.vent.trigger("description#show",@view.top,product)
     Shopelia.vent.trigger("modal_content#hide")
+    Shopelia.vent.trigger("description#show",@view.top,product)
 
 
   showNotFound:(product) ->
@@ -32,6 +32,8 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     )
     @view.content.show(view)
 
-
+  center: (animate) ->
+    animate = (animate == undefined  or animate)
+    @view.center(animate)
 
 
