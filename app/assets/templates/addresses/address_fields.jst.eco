@@ -18,14 +18,14 @@
     </div>
 </div>
 <div id="manual_address row-fluid">
-    <div class="control-group span6 pull-left">
-        <div class="controls">
-            <input rel="popover" tracker-name="City" type="text" data-required="true" data-trigger="change focusout" class="input-block-level" placeholder= "Ville" name="city">
-        </div>
-    </div>
-    <div class="control-group span6 pull-right ">
+    <div class="control-group span6 pull-left ">
         <div class="controls">
             <input rel="popover" tracker-name="Zip" type="text" data-required="true" data-trigger="change focusout" data-type="number" class="input-block-level" placeholder= "Code Postal" name="zip">
+            </div>
+        </div>
+    <div class="control-group span6 pull-right">
+        <div class="controls">
+            <input rel="popover" tracker-name="City" type="text" data-required="true" data-trigger="change focusout" class="input-block-level" placeholder= "Ville" name="city">
         </div>
     </div>
     <div class="control-group">

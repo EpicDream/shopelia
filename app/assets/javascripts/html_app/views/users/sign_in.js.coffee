@@ -23,6 +23,9 @@ class Shopelia.Views.SignIn extends Shopelia.Views.Form
     $(@el).fadeIn('slow')
     @initializeForm()
 
+  onShow : ->
+    Shopelia.vent.trigger("modal#center")
+
   onValidationClick: (e) ->
     e.preventDefault()
     userJson = @getFormResult()

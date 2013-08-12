@@ -18,7 +18,7 @@
 
       </div>
       <div class='merchant-infos pull-left'>
-        Proposé par <br> <b><%= @model('merchant_name') %></b>
+        Vendu et expédié par <br> <b><%= @model('merchant_name') %></b>
       </div>
    </div>
 
