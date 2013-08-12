@@ -24,6 +24,7 @@ if (LOCAL_ENV && TEST_ENV) {
 DELAY_BEFORE_START = 5000; // 5s
 DELAY_BETWEEN_PRODUCTS = 500; // 500ms
 DELAY_AFTER_NO_PRODUCT = 1000; // 1s
+DELAY_RESCUE = 60000; // 60s
 
 var data = {};
 var reask = ! TEST_ENV;
@@ -39,10 +40,7 @@ var merchants = {
   "eveiletjeux.com" : "9",
   "sephora.fr" : "10",
   "thebodyshop.fr" : "11",
-  "zalando.fr" : "12",
-  "jcrew.com" : "13",
-  "overstock.com" : "14",
-  "effiliation.com" : "15"
+  "zalando.fr" : "12"
 };
 
 /////////////////////////////////////////////////////////////////
@@ -51,7 +49,7 @@ var merchants = {
 
 // On extension button clicked.
 chrome.browserAction.onClicked.addListener(function(tab) {
-  console.log("Button pressed, going to load Saturn..", tab.id);
+  console.log("Button pressed, going to load Saturn..");
   if (! TEST_ENV) {
     reask = ! reask;
     if (reask)
@@ -85,7 +83,7 @@ function start(tabId) {
   loadProductUrlToExtract(tabId).done(function(hash) {
     hash = preProcessData(hash);
     var uri = new Uri(hash.url);
-    console.debug("Get product_url to extract :", hash);
+    console.debug((new Date()).toLocaleTimeString(), "Get product_url to extract :", hash, "on tab_id :", tabId);
     loadMapping(hash.merchant_id).done(function(mapping) {
       if (mapping.data)
         hash.mapping = buildMapping(uri, mapping.data);
@@ -101,6 +99,7 @@ function start(tabId) {
 };
 
 function parseCurrentPage(tab) {
+  console.debug((new Date()).toLocaleTimeString(), "Get product_url to extract :", {url: tab.url}, "on tab_id :", tab.id);
   var hash = preProcessData({url: tab.url});
   hash.uri = new Uri(hash.url);
   loadMappingFromUri(hash.uri).done(function(maphash) {
@@ -129,7 +128,7 @@ function reask_a_product(tabId, delay) {
   if (! reask)
     return;
   delay = delay || 3000;
-  setTimeout(function() { start(tabId) }, delay); // 30s
+  setTimeout(function() { start(tabId) }, delay);
 };
 
 function buildMapping(uri, hash) {
@@ -158,6 +157,26 @@ function preProcessData(data) {
   return data;
 };
 
+// Send the message with chrome.tabs.sendMessage
+// plus add a rescue system if something went wrong and no response is sent.
+function sendMsg(tabId, msg, callback) {
+  // Message is going to be sent to contentscript, active rescue.
+  data[tabId].rescueTimer = setTimeout(rescueFunction(tabId), DELAY_RESCUE);
+  chrome.tabs.sendMessage(tabId, msg, function(result) {
+    // Contentscript just respond to us, clear rescue.
+    clearTimeout(data[tabId].rescueTimer);
+    if (callback) callback(result);
+  });
+};
+
+// If something went wrong, respond with an error message,
+// clear data, and reask a product to crawl.
+function rescueFunction(tabId) {
+  return function() {
+    sendError(tabId, "something went wrong");
+  };
+};
+
 /////////////////////////////////////////////////////////////////
 //                        LOAD INFORMATION
 /////////////////////////////////////////////////////////////////
@@ -169,7 +188,7 @@ function loadProductUrlToExtract(tabId) {
     dataType: "json",
     url: PRODUCT_EXTRACT_SHIFT_URL
   }).fail(function(err) {
-    console.error("When getting product_url to extract :", err);
+    // console.error("When getting product_url to extract :", err);
     reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
   });
 };
@@ -192,7 +211,7 @@ function loadMappingFromUri(uri) {
 // GET mapping for url's host,
 // and return jqXHR object.
 function loadMapping(merchant_id) {
-  console.debug("Going to get mapping for merchant_id '"+merchant_id+"'");
+  console.log("Going to get mapping for merchant_id '"+merchant_id+"'");
   return $.ajax({
     type : "GET",
     dataType: "json",
@@ -207,22 +226,21 @@ function loadMapping(merchant_id) {
 /////////////////////////////////////////////////////////////////
 
 function next_step(tabId) {
+  // Contentscript just respond to us, clear rescue.
+  clearTimeout(data[tabId].rescueTimer);
+
   var last_action = data[tabId].last_action;
   if (! last_action)
     getColors(tabId);
-  else if (last_action == "getColors")
-    setNextColor(tabId);
   else if (last_action == "setColor")
     getSizes(tabId);
-  else if (last_action == "getSizes")
-    setNextSize(tabId);
   else if (last_action == "setSize")
     crawl(tabId);
 };
 
 function getColors(tabId) {
   data[tabId].last_action = "getColors";
-  chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
+  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
     if (! result)
       return sendError(tabId, "No result return for getColors");
 
@@ -251,12 +269,12 @@ function setNextColor(tabId) {
   }
 
   data[tabId].last_action = "setColor";
-  chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping, data: color});//, function() { getSizes(tabId); });
+  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping, data: color});
 };
 
 function getSizes(tabId) {
   data[tabId].last_action = "getSizes";
-  chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
+  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
     if (! result)
       return sendError(tabId, "No result return for getSizes");
 
@@ -285,12 +303,12 @@ function setNextSize(tabId) {
   }
 
   data[tabId].last_action = "setSize";
-  chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping, data: size});//, function() {crawl(tabId);});
+  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping, data: size});
 };
 
 function crawl(tabId) {
   data[tabId].last_action = "crawl";
-  chrome.tabs.sendMessage(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(option) {
+  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(option) {
     if (! option)
       return sendError(tabId, "No result return for crawl");
 
@@ -304,7 +322,7 @@ function crawl(tabId) {
 };
 
 function finish(tabId) {
-  console.log("finished !", data[tabId].results);
+  console.debug((new Date()).toLocaleTimeString(), "Finished !", data[tabId].results);
   if (! data[tabId] || ! data[tabId].id) // Stop pushed or Local Test
     return delete data[tabId];
 
@@ -335,7 +353,7 @@ function sendError(tabId, msg) {
       data: JSON.stringify({versions: []}) //, errorMsg: msg
     });
   $e = data[tabId];
-  console.log(msg, "\n$e =", $e);
+  console.log((new Date()).toLocaleTimeString(), msg, "\n$e =", $e);
   delete data[tabId];
   reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
 };

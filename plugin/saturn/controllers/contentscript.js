@@ -164,5 +164,5 @@ jQuery.fn.commonAncestor = function() {
 
 // To handle redirection, that throws false 'complete' state.
 $(document).ready(function() {
-  setTimeout(goNextStep, 100)
+  setTimeout(goNextStep, 100);
 });
