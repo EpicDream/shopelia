@@ -30,11 +30,11 @@ function compArray(t1,t2) {
 //
 function minimize(cssString, elems, commonAncestor) {
   var css = new Css(cssString),
-      founded = [];
+      found = [];
   // minimized it.
   while (css.simplify()) {
-    founded = $(css.toCss(), commonAncestor);
-    if (founded.length != elems.length || ! compArray(founded, elems))
+    found = $(css.toCss(), commonAncestor);
+    if (found.length != elems.length || ! compArray(found, elems))
       css.undo();
   }
   return css.toCss();
@@ -94,10 +94,10 @@ pu.get = function(elems, commonAncestor) {
   } else if (! commonAncestor)
     commonAncestor = pu.commonAncestor(elems);
   // compute full CSS
-  var fullPathes = [];
+  var fullPaths = [];
   for (var i = 0, l = elems.length ; i < l ; i++)
-    fullPathes.push( pu.pathFrom(commonAncestor, elems[i]) );
-  return fullPathes.join(", ");
+    fullPaths.push( pu.pathFrom(commonAncestor, elems[i]) );
+  return fullPaths.join(", ");
 };
 
 // Get the minimized CSS path.
@@ -110,10 +110,38 @@ pu.getMinimized = function(elems, commonAncestor) {
 };
 
 // Get minimum CSS path that identifie elements and only them.
-// /contextes/ allows to see how page can change,
+// /contexts/ allows to see how page can change,
 // which allow to be less specific to the current page.
-pu.getMinimumWithContextes = function(elems, contextes) {
+pu.getMinimumWithContexts = function(elems, contexts) {
   return console.log("Not implemented yet");
+
+  // var matchable = [];
+  // for (var i in contexts) {
+  //   var c = contexts[i];
+  //   var found = $(c.css);
+  //   if (found.length > 0)
+  //     matchable.push(c.fullCSS)
+  // }
+
+  // on a css
+  // on minimize
+    // si on ne trouve pas le même élément => on undo
+    // si le nouveau css ne match plus dans la liste des fullCSS => on undo
+
+
+  // ==> un css match un autre (full) css ??? ça veut dire qu'il couvre (mathématiquement) l'autre.
+  // ==> tous les ééments qui matche le full, match le court.
+  // ==> c'est le long avec moins d'éléments.
+  // algo backtrack
+  // aCss.cover?(anOtherCss) =>
+    // aCss.phrases.one? phrase1
+      // anOtherCss.find phrase2
+        // phrase1.cover?(phrase2)
+  // aPhrase.cover?(anOtherPhrase) =>
+
+
+  // Comment gérer les changements d'éléments matchés ? (span#id => span#id p)
+  // On a l'info dans context.outerHtml
 
 /*
 Dans les contextes on a des fullCssPath

@@ -756,6 +756,56 @@ var CssStruct = (function() {
     return res.slice(0,-1);
   };
 
+  // CssStruct.parseFromCss = function(css) {
+  //   return new CssStruct(css);
+  // };
+
+  // CssStruct.parseDomElement = function(e) {
+  //   var res = new CssPrase();
+
+  //   for ( ; e && e.nodeType == 1 ; e = e.parentNode ) {
+  //     var cssElem = new CssElement();
+  //     var tag = e.tagName;
+  //     cssElem.tag = tag.toLowerCase();
+  //     cssElem.id = e.id;
+
+  //     // Si il n'y a qu'un élément de ce type en enfant, on s'arrête
+  //     var sameTagSiblings = $(e).siblings().filter(function(index) { return this.tagName == tag; });
+  //     if (sameTagSiblings.length == 0)
+  //       continue;
+
+  //     // CLASSES
+  //     var elementClasses = getClasses(jelement);
+  //     if (! complete) {
+  //       var siblingsClasses = _.map(sameTagSiblings.filter("*[class]"), function(sibling) { return getClasses($(sibling)); });
+  //       var classes = _.difference(elementClasses, [].concat(_.flatten(siblingsClasses)));
+  //       res += _.map(classes, function(c){return "."+c;}).join('');
+  //       if (classes.length > 0)
+  //         return res;
+  //     } else {
+  //       res += _.map(elementClasses, function(c){return "."+c;}).join('');
+  //     }
+
+  //     // ATTRIBUTES
+  //     if (tag == "INPUT")
+  //       cssElem.attributes.push(new CssAttribute("[type='"+e.getAttribute("type")+"']"));
+  //     if (tag == "INPUT" || tag == "SELECT" || tag == "TEXTAREA")
+  //       cssElem.attributes.push(new CssAttribute("[name='"+e.getAttribute("name")+"']"));
+
+  //     // POSITION
+  //     var pos = $(e).parent().children(tag).index(e) + 1;
+  //     cssElem.functions.push(new CssFunction(":nth-of-type(" + pos + ")");
+
+  //     if (res.length > 0)
+  //       res.splice(0,0,new CssSeparator('>'));
+  //     res.splice(0,0,cssElem);
+
+  //     if (e.tagName == 'HTML')
+  //       break;
+  //   }
+  //   return res;
+  // };
+
   return CssStruct;
 })();
 

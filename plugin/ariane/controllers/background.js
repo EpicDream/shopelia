@@ -2,6 +2,7 @@
 //              SET CONTSTANTS AND GLOBOL VARIABLES
 /////////////////////////////////////////////////////////////////////
 
+// Where to get products and merchants.
 LOCAL_ENV = false;
 if (LOCAL_ENV) {
   SHOPELIA_DOMAIN = "http://localhost:3000"
@@ -13,6 +14,7 @@ MAPPING_URL = SHOPELIA_DOMAIN + "/api/viking/merchants/";
 
 var tasks = {};
 
+// Deprecated : will be replaced by an viking api call.
 var merchants = {
   "rueducommerce.fr" : "1",
   "amazon.fr" : "2",
@@ -25,23 +27,21 @@ var merchants = {
   "eveiletjeux.com" : "9",
   "sephora.fr" : "10",
   "thebodyshop.fr" : "11",
-  "zalando.fr" : "12",
-  "jcrew.com" : "13",
-  "overstock.com" : "14",
-  "effiliation.com" : "15"
+  "zalando.fr" : "12"
 };
 
 /////////////////////////////////////////////////////////////////////
 //                      ON CHROME EVENTS
 /////////////////////////////////////////////////////////////////////
 
-// On extension button clicked, start Ariane on this page.
+// On extension button clicked, start Ariane on this tab and url.
 chrome.browserAction.onClicked.addListener(function(tab) {
   console.log("Button pressed, going to load Ariane on tab", tab.id);
   load(tab.id, {url: tab.url});
 });
 
-// On page reload, restart Ariane if it was started before.
+// On page reload, restart Ariane if it was started on this tab and host before.
+// Clean the data for this tab if host has changed.
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
   if (changeInfo.status == "loading" && changeInfo.url) {
     var uri = new Uri(changeInfo.url);
@@ -54,7 +54,7 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
   }
 });
 
-// On contentscript message.
+// On contentscript message to background.
 chrome.extension.onMessage.addListener(function(msg, sender, response) {
   if (sender.id != chrome.runtime.id) {
     console.warn("Message rejected", msg, "from sender", sender);
@@ -66,8 +66,6 @@ chrome.extension.onMessage.addListener(function(msg, sender, response) {
     send_finished_statement(tabId, msg.abort);
   } else if (msg.act == 'setMapping') {
     tasks[tabId].currentMap[msg.fieldId] = msg.value;
-  } else if (msg.act == 'setSearchResult') {
-    tasks[tabId].searchResult = msg.value;
   }
 });
 
@@ -78,7 +76,7 @@ chrome.commands.onCommand.addListener(function(command) {
   });
 });
 
-//
+// When the tab is removed, clean the data for this tab.
 chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
   clean(tabId);
 });
@@ -88,8 +86,9 @@ chrome.tabs.onRemoved.addListener(function(tabId, removeInfo) {
 //                      LOAD PLUGIN
 /////////////////////////////////////////////////////////////////////
 
-//
-function start(tabId) {
+// Start to get site to map from Shopelia.
+// Like a main loop that iterates over sites.
+function startWorking(tabId) {
   if (tabId === undefined) {
     // TODO : Create a new tab. Copy-Paste from Saturn.
     return;
@@ -104,20 +103,8 @@ function start(tabId) {
   });
 };
 
-//
-function initTabVariables(tabId, hash) {
-  tasks[tabId] = hash;
-  tasks[tabId].uri = new Uri(hash.url);
-  tasks[tabId].host = tasks[tabId].uri.host();
-  tasks[tabId].mapHost = tasks[tabId].host.replace(/w{3,}\./, '');
-  tasks[tabId].fullMapping = {};
-  tasks[tabId].fullMapping[tasks[tabId].mapHost] = {};
-  tasks[tabId].mapping = {};
-  tasks[tabId].currentMap = {};
-  tasks[tabId].searchResult = {};
-};
-
-// Get from Shopelia the next product url to map/extract.
+// Get the next product url to map/extract from Shopelia.
+// Return a jqXHR object. See jQuery.Deferred().
 function getProductUrlToExtract() {
   console.debug("Going to get product_url to map");
   return $.ajax({
@@ -129,36 +116,39 @@ function getProductUrlToExtract() {
   });
 };
 
-//
+// Load Ariane for this tabId and host to map.
 function load(tabId, hash) {
   initTabVariables(tabId, hash);
   if (! tasks[tabId].merchant_id)
     tasks[tabId].merchant_id = getMerchantId(tasks[tabId].uri);
-  loadMapping(tasks[tabId].merchant_id).done(function(mapping) {
-    if (mapping.data) {
-      tasks[tabId].fullMapping = mapping.data;
-      tasks[tabId].mapping = buildMapping(tabId, mapping.data);
-    }
+  loadMapping(tasks[tabId].merchant_id).done(function(merchant) {
+    tasks[tabId].merchant = merchant;
+    if (merchant.data && merchant.data.viking)
+      tasks[tabId].mapping = buildMapping(tabId, merchant.data.viking);
+    else if (! tasks[tabId].merchant.data)
+        tasks[tabId].merchant.data = {viking: {}};
+    else if (! tasks[tabId].merchant.data.viking)
+        tasks[tabId].merchant.data.viking = {};
     console.log("mapping chosen", tasks[tabId].mapping);
   }).always(function() {
     chrome.tabs.update(tabId, {url: tasks[tabId].url});
   });
 };
 
-//
-function getMerchantId(uri) {
-  var host = uri.host();
-  while (host !== "") {
-    if (merchants[host])
-      return merchants[host];
-    else
-      host = host.replace(/^\w+(\.|$)/, '');
-  }
-  return undefined;
+// Initialize all variables for this tab and host.
+function initTabVariables(tabId, hash) {
+  tasks[tabId] = hash;
+  tasks[tabId].uri = new Uri(hash.url);
+  tasks[tabId].host = tasks[tabId].uri.host();
+  tasks[tabId].mapHost = tasks[tabId].host.replace(/w{3,}\./, '');
+  tasks[tabId].merchant = {data: {viking: {}}};
+  tasks[tabId].merchant.data.viking[tasks[tabId].mapHost] = {};
+  tasks[tabId].mapping = {};
+  tasks[tabId].currentMap = {};
 };
 
-// GET mapping for merchant_id,
-// and return jqXHR object.
+// GET mapping for merchant_id.
+// Return a jqXHR object. See jQuery.Deferred().
 function loadMapping(merchant_id) {
   console.debug("Going to get mapping for merchant_id '"+merchant_id+"'");
   return $.ajax({
@@ -176,23 +166,25 @@ function load_ariane(tabId) {
   console.log("Ariane loaded !");
 };
 
-// Send new mapping to shopelia
+// Merge the new mapping with the old, send it to shopelia, and clean data for this tab.
 function send_finished_statement(tabId, reason) {
-  mergeMappings(tabId);
-  $.ajax({
-    type : "PUT",
-    url: MAPPING_URL+tasks[tabId].merchant_id,
-    contentType: 'application/json',
-    data: JSON.stringify({
-      verb: reason ? 'bounce' : 'success',
-      data: tasks[tabId].fullMapping,
-      reason: reason
-    })
+  var mapHost = tasks[tabId].mapHost;
+  var previous = tasks[tabId].merchant.data.viking[mapHost];
+  var currentMap = tasks[tabId].currentMap;
+  chrome.tabs.sendMessage(tabId, {act: 'merge', current: currentMap, previous: previous}, function(res) {
+    tasks[tabId].merchant.data.viking[mapHost] = res;
+    $.ajax({
+      type : "PUT",
+      url: MAPPING_URL+tasks[tabId].merchant_id,
+      contentType: 'application/json',
+      data: JSON.stringify(tasks[tabId].merchant)
+    });
+    clean(tabId);
   });
-  clean(tabId);
 };
 
-// Clean variables
+// Clean data for this tab.
+// All data are saved in global variable $e for debugging purpose.
 function clean(tabId) {
   $e = tasks[tabId];
   delete tasks[tabId];
@@ -202,7 +194,20 @@ function clean(tabId) {
 //                      UTILITIES
 /////////////////////////////////////////////////////////////////////
 
-//
+// Deprecated : Get merchant_id from uri.
+// Will be replaced by an api call on Shopelia/viking.
+function getMerchantId(uri) {
+  var host = uri.host();
+  while (host !== "") {
+    if (merchants[host])
+      return merchants[host];
+    else
+      host = host.replace(/^\w+(\.|$)/, '');
+  }
+  return undefined;
+};
+
+// Build a single host agnostic mapping by merging different host mapping.
 function buildMapping(tabId, hash) {
   var host = tasks[tabId].mapHost;
   console.log("Going to search a mapping for host", host, "between", jQuery.map(hash,function(v, k){return k;}) );
@@ -213,38 +218,4 @@ function buildMapping(tabId, hash) {
     host = host.replace(/^\w+(\.|$)/, '');
   }
   return resMapping;
-};
-
-//
-function mergeMappings(tabId) {
-  // GOING TO MERGE NEW MAPPING WITH OLD ONES
-  // create new host rule if it did not exist.
-  if (! tasks[tabId].fullMapping[tasks[tabId].mapHost])
-    tasks[tabId].fullMapping[tasks[tabId].mapHost] = {};
-
-  // for each field key
-  var mapping = tasks[tabId].fullMapping[tasks[tabId].mapHost];
-  var currentMap = tasks[tabId].currentMap;
-  for (var key in jQuery.extend({}, mapping, currentMap)) {
-    // if no new map, continue
-    if (! currentMap[key])
-      continue;
-    // if it did not exist, just create it and continue.
-    if (! mapping[key]) {
-      mapping[key] = currentMap[key];
-      continue;
-    }
-    // if old version, update it.
-    if (! mapping[key].path instanceof Array)
-      mapping[key] = {path: [mapping[key].path], context: [mapping[key].context]};
-    // if some elements where already found, unshift new rafinement.
-    if (tasks[tabId].searchResult[key]) {
-      mapping[key].path.splice(0,0,currentMap[key].path);
-      mapping[key].context.splice(0,0,currentMap[key].context);
-    // else, if nothing matched, push it behind.
-    } else {
-      mapping[key].path.push(currentMap[key].path);
-      mapping[key].context.push(currentMap[key].context);
-    }
-  }
 };
