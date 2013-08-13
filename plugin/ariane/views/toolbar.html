@@ -1,6 +1,26 @@
 <style>
   body { margin: 0px; }
+  body.ariane { -webkit-transform: translateY(35px); }
+
+  #arianeDiv {
+    width: 100%;
+    height: 35px;
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    z-index: 31415;
+  }
   #ariane-toolbar { padding-left: 3px; }
+  #ariane-toolbar .styled-select {
+    background: transparent;
+    padding: 5px;
+    font-size: 16px;
+    line-height: 1;
+    border: 0;
+    border-radius: 0;
+    height: 34px;
+    margin: 0;
+  }
   #ariane-toolbar .ui-widget { font-size: 14px; }
   #ariane-toolbar #ariane-step { z-index: 314159; }
   #ariane-toolbar button.current-field:not(.extractor) span {background-color: lightGreen}
@@ -22,9 +42,9 @@
     <option value="payment">Payer</option>
   </select>
   <span id="ariane-ctrl" class="buttonset">
-    <button id="ariane-abort">Annuler</button>
-    <button id="ariane-next">Suivant</button>
-    <button id="ariane-finish">Terminer</button>
+    <button class="ari-abort">Annuler</button>
+    <button class="ari-next">Suivant</button>
+    <button class="ari-finish">Terminer</button>
   </span>
   <span id="ariane-account" class="buttonset">
     <button id="ariane-account-login">Email</button>

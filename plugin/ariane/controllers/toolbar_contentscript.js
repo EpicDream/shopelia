@@ -13,6 +13,7 @@ function loadAriane() {
   css_link = document.createElement('link');
   css_link.rel = "stylesheet";
   css_link.href = chrome.runtime.getURL("assets/smoothness/jquery-ui-1.10.3.custom.min.css");
+
 };
 
 function build() {
@@ -24,23 +25,23 @@ function build() {
   // Initialize jQuery Elements
   jToolbar.find("button").button();
   jToolbar.find(".buttonset").buttonset();
-  jToolbar.find("#ariane-abort").button({
+  jToolbar.find(".ari-abort").button({
     text: false,
     icons: {primary: "ui-icon-cancel"}
   });
-  jToolbar.find("#ariane-next").button({
+  jToolbar.find(".ari.-next").button({
     text: false,
     icons: {primary: "ui-icon-circle-arrow-e"}
   }).addClass("ui-corner-right");
-  jToolbar.find("#ariane-finish").button({
+  jToolbar.find(".ari-finish").button({
     text: false,
     icons: {primary: "ui-icon-circle-check"}
   }).hide();
 
   // Link events
-  jToolbar.find("#ariane-next").click(onNext);
-  jToolbar.find("#ariane-finish").click(onFinished);
-  jToolbar.find("#ariane-abort").click(onAborted);
+  jToolbar.find(".ari-next").click(onNext);
+  jToolbar.find(".ari-finish").click(onFinished);
+  jToolbar.find(".ari-abort").click(onAborted);
   jStep.change(onStepChanged);
   jButtons.click(onButtonClicked);
 }
@@ -64,11 +65,11 @@ function onStepChanged(event) {
   jToolbar.find(".buttonset").filter(":not(#ariane-ctrl)").hide();
   jToolbar.find(field_for_step[jStep.val()]).show();
   if (jStep.val() == "payment" || jStep.val() == "extract") {
-    jToolbar.find("#ariane-next").hide();
-    jToolbar.find("#ariane-finish").show();
+    jToolbar.find(".ari-next").hide();
+    jToolbar.find(".ari-finish").show();
   } else {
-    jToolbar.find("#ariane-next").show();
-    jToolbar.find("#ariane-finish").hide();
+    jToolbar.find(".ari-next").show();
+    jToolbar.find(".ari-finish").hide();
   }
 };
 
@@ -102,8 +103,8 @@ function onFinished() {
 function startAriane(crawl_mode) {
   if (crawl_mode)
     jStep.val("extract").prop("disabled", true);
-  document.head.appendChild(css_link);
   $(document.body).addClass("ariane");
+  document.head.appendChild(css_link);
   jAriane.show();
   onStepChanged();
 };
@@ -137,7 +138,7 @@ chrome.extension.onMessage.addListener(function(msg, sender) {
 });
 
 function loadToolbarOnJQuery() {
-  if (window.jQuery)
+  if (window.jQuery && window.jQuery.ui)
     return loadAriane();
   else
     return setTimeout(loadToolbarOnJQuery, 100);
