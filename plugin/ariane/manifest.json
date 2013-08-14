@@ -1,6 +1,6 @@
 {
   "name": "Ariane",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "manifest_version": 2,
 
   "description": "Outil de mapping de page produit pour Viking/Saturn.",
@@ -38,7 +38,7 @@
 
   "web_accessible_resources": [
     "views/toolbar.html",
-    "assets/smoothness/*"
+    "assets/*"
   ],
   "permissions": ["tabs", "contextMenus", "*://*/*"]
 }

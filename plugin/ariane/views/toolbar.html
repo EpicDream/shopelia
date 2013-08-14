@@ -1,35 +1,4 @@
 <style>
-  body { margin: 0px; }
-  body.ariane { -webkit-transform: translateY(35px); }
-  body.ariane .ari-surround { outline: red dashed 1px;}
-
-  #arianeDiv {
-    width: 100%;
-    height: 35px;
-    position: fixed;
-    right: 0px;
-    top: 0px;
-    z-index: 31415;
-  }
-  #ariane-toolbar { padding-left: 3px; }
-  #ariane-toolbar .styled-select {
-    background: transparent;
-    padding: 5px;
-    font-size: 16px;
-    line-height: 1;
-    border: 0;
-    border-radius: 0;
-    height: 34px;
-    margin: 0;
-  }
-  #ariane-toolbar .ui-button-text { font-size: 14px; }
-  #ariane-toolbar #ariane-step { z-index: 314159; }
-  #ariane-toolbar button.current-field:not(.extractor) span {background-color: lightGreen}
-  #ariane-toolbar button.current-field.extractor span {background-color: lightBlue;}
-  #ariane-toolbar button[disabled] span {background-color: darkGrey; color: white;}
-  #ariane-toolbar button.missing:not(.current-field) span {background-color: red;}
-  #ariane-toolbar button.missing.current-field span {color: red;}
-  #ariane-toolbar button.mapped span {color: green;}
 </style>
 <div id="ariane-toolbar" class="ui-widget-header">
   <select id="ariane-step" class="styled-select">
