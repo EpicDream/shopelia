@@ -1,6 +1,6 @@
 {
   "name": "Ariane",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "manifest_version": 2,
 
   "description": "Outil de mapping de page produit pour Viking/Saturn.",
@@ -25,6 +25,16 @@
       "description": "Go to next step"
     }
   },
+
+  "content_scripts": [
+    {
+      "matches" : ["*://*/*"],
+      "js": ["lib/underscore-min.js", "lib/jquery-1.9.1.min.js", "lib/jquery-ui-1.10.3.custom.min.js", "lib/css_struct.js", "lib/html_utils.js", "lib/path_utils.js"]
+    },{
+      "matches" : ["*://*/*"],
+      "js": ["controllers/toolbar_contentscript.js", "controllers/mapping_contentscript.js"]
+    }
+  ],
 
   "web_accessible_resources": [
     "views/toolbar.html",
