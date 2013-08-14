@@ -1,68 +1,51 @@
 class Shopelia.Views.SignIn extends Shopelia.Views.Form
 
-  template: JST['users/sign_in']
+  template: 'users/sign_in'
+  templateHelpers: {
+    getEmail: ->
+      console.log(@)
+      if @
+        @email
+      else
+        ""
+  }
   className: "box"
+  ui: {
+    email: 'input[name="email"]'
+    password: 'input[name="password"]'
+    validation: '#btn-login-user'
+  }
   events:
-    "click #btn-login-user": "loginUser"
+    "click #btn-login-user": "onValidationClick"
 
-  initialize: ->
-    _.bindAll this
-
-
-  render: ->
-    $(@el).html(@template())
+  onRender: ->
     Tracker.onDisplay('Sign In');
-    @setFormVariables()
-    Shopelia.Views.Form.prototype.render.call(this)
-    this
+    $(@el).fadeIn('slow')
+    @initializeForm()
 
-  setFormVariables: ->
-    @email = @$('input[name="email"]')
-    @password = @$('input[name="password"]')
-    unless @options.email is undefined
-      @email.val(@options.email)
+  onShow : ->
+    Shopelia.vent.trigger("modal#center")
 
-  loginUser: (e) ->
-    #console.log("trigger loginUser")
-    #console.log(@options.session)
+  onValidationClick: (e) ->
+    e.preventDefault()
+    userJson = @getFormResult()
+    unless userJson is undefined
+      Shopelia.vent.trigger("sign_in#login",userJson)
+
+  getFormResult: ->
     if $('form').parsley( 'validate' )
-      disableButton($("#btn-login-user"))
-      eraseErrors()
-      e.preventDefault()
-      that = this
-      session = @options.session
-      session.on("invalid", (model, errors) ->
-        displayErrors(errors)
-      )
-      sessionJson = @formSerializer()
-      session.login(sessionJson,{
-        success : (resp) ->
-          #console.log('login success callback')
-          #console.log("response login success: " + JSON.stringify(resp))
-          session.set(resp)
-          session.saveCookies(session)
-          that.parent.setContentView(new Shopelia.Views.OrdersIndex(session: that.options.session,product: that.options.product))
-        error : (response) ->
-          #console.log("callback error login")
-          enableButton($("#btn-login-user"))
-          #console.log(JSON.stringify(response.responseText))
-          displayErrors($.parseJSON(response.responseText))
+       {
+        "email": @ui.email.val(),
+        "password": @ui.password.val()
+       }
+    else
+      undefined
 
-      })
+  lockView: ->
+    disableButton(@ui.validation)
 
+  unlockView: ->
+    enableButton(@ui.validation)
 
-  formSerializer: ->
-    email = @email.val()
-    password = @password.val()
-    loginFormObject = {
-      "email": email,
-      "password": password
-    }
-    #console.log loginFormObject
-    loginFormObject
-
-  InitializeActionButton: (element) ->
-    element.text("Première Commande ?")
-
-  onActionClick: (e) ->
-    @parent.setContentView(new Shopelia.Views.UsersIndex(session: @options.session,product: @options.product,email:@email.val() ))
+  onClose: ->
+    $(@el).fadeOut('slow')

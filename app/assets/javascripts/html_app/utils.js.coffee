@@ -1,3 +1,17 @@
+String.prototype.capitalize = ->
+  this.charAt(0).toUpperCase() + this.slice(1)
+
+String.prototype.uncapitalize = ->
+  this.charAt(0).toLowerCase() + this.slice(1)
+
+String.prototype.normalizeName = ->
+  names = this.split('_')
+  res = ''
+  _.each(names,(name) ->
+      res += name.capitalize()
+    )
+  res
+
 window.eraseErrors =  ->
   $(".control-group").removeClass('error')
   $('.help-inline').remove()
@@ -10,24 +24,12 @@ window.enableButton = ($button) ->
   $button.removeAttr('disabled','disabled')
   $button.removeClass('disabled')
 
-window.center = ($parent,$elem) ->
-  top =undefined
-  left = undefined
-  top = Math.max($parent.height() - $elem.height(),0) / 2
-  left = Math.max($parent.width() - $elem.outerWidth(), 0) / 2
-  unless $parent[0] is window
-    top += $parent.outerHeight(true)
-
-  $elem.css
-    top: top
-    left: left
-
-window.customParseFloat = (float) ->
-  parseFloat(Math.round(float * 100) / 100).toFixed(2)
-
 window.displayErrors = (errors) ->
   keys = _.keys(errors)
+  $errors = $('<ul/>')
   _.each(keys,(key) ->
+    console.log($errors.html())
+    $errors.append("<li>" + errors[key] + "</li>")
     if  (key == "first_name" || key == "last_name")
       errorField =  $("input[name=full_name]")
     else if key == "error" && errors[key] == "Email ou mot de passe incorrect."
@@ -51,6 +53,7 @@ window.displayErrors = (errors) ->
                        'content': errors[key]
                        })
   )
+  Shopelia.Notification.Error({title: "Erreurs", text: " "+ $errors.html() + " "})
 
 window.split =  (fullName) ->
   firstName =  fullName.substr(0,fullName.indexOf(' '))

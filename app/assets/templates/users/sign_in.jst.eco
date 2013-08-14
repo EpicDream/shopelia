@@ -5,7 +5,7 @@
         </div>
         <div class="control-group">
             <div class="controls">
-                <input rel="popover" type="text" tracker-name="Email" data-required="true" data-trigger="focusout" data-type="email" class="input-block-level" placeholder= "Email" name="email">
+                <input rel="popover" type="text" tracker-name="Email" data-required="true" data-trigger="focusout" data-type="email" class="input-block-level" placeholder= "Email" name="email" value="<%= @getEmail() %>">
              </div>
         </div>
         <div class="control-group">

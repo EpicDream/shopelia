@@ -1,4 +1,3 @@
-
 Saturn Chromium Extension
 =========================
 
@@ -33,13 +32,19 @@ In Chromium extensions' tab :
 
 #### Automatically, in prod
 
-Just run
+To launch google-chrome and install the extension, just run
 
     google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn
 
-or, on a server
+To unload the extension after utilisation, add 
 
-    DISPLAY=:0 google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn
+    && google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
+
+with **nhledioladlcecbcfenmdibnnndlfikf** the extension id, that you can find in Chrome's extensions tab.
+  
+On a server :
+
+    DISPLAY=:0 google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn && google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
 
 Usage
 -----
