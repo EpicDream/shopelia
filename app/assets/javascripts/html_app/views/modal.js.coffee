@@ -7,11 +7,15 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     top: "#modal-top",
   }
 
+  ui:{
+    close:"#close"
+  }
+
   id: 'modal'
   className: 'span8'
 
   events:
-    'click #close': 'close'
+    'click #close': 'onBeforeClose'
 
   initialize: ->
     _.bindAll(this)
@@ -41,7 +45,25 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
       e.stopPropagation()
 
     $(document).click ->
-        that.close()
+        that.onBeforeClose()
+
+  showCloseButton: ->
+    @ui.close.fadeIn("fast")
+
+  hideCloseButton: ->
+    @ui.close.fadeOut("fast")
+
+  onBeforeClose: ->
+    that = this
+    Shopelia.vent.trigger("description#close")
+    Shopelia.vent.trigger("modal_content#close")
+    Shopelia.vent.trigger('survey#show',@top)
+    $(document).unbind('click')
+    @ui.close.unbind('click')
+    @ui.close.click ->
+      that.close()
+    $(document).click ->
+      that.close()
 
   close: ->
     #console.log("close please")

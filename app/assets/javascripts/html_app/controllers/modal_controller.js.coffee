@@ -16,11 +16,13 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     if @view is undefined
       @open
     Shopelia.vent.trigger("modal_content#show",@view.content)
+    @view.showCloseButton()
 
   showHeader: ->
     Shopelia.vent.trigger("header#show",@view.header)
 
   showProductDescription:(product) ->
+    @view.hideCloseButton()
     Shopelia.vent.trigger("modal_content#hide")
     Shopelia.vent.trigger("description#show",@view.top,product)
 
