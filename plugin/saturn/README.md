@@ -44,7 +44,7 @@ with **nhledioladlcecbcfenmdibnnndlfikf** the extension id, that you can find in
   
 On a server :
 
-    DISPLAY=:0 google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn && google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
+    DISPLAY=:0 google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn ; google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
 
 Usage
 -----
