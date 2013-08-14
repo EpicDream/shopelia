@@ -1,58 +1,50 @@
-class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
+class Shopelia.Views.AddressFields extends Shopelia.Views.ShopeliaView
 
-  template: JST['addresses/index']
+  template: 'addresses/address_fields'
+  ui: {
+    address1: 'input[name="address1"]'
+    zip: 'input[name="zip"]'
+    city: 'input[name="city"]'
+    country: 'input[name="country"]'
+    address2: 'input[name="address2"]'
+    fullName:'input[name="full_name"]'
+  }
+
 
   events:
     "keypress input[name='address1']": "getLocation"
     "change input[name='address1']": "eraseAddressFields"
 
-  initialize: ->
-    _.bindAll this
 
-  render: ->
-    $(@el).html(@template())
-    @setFormVariables()
-    @country.autocomplete({
+
+  onRender: ->
+    @ui.country.autocomplete({
                           source: _.values(countries),
                           });
-    Shopelia.Views.Form.prototype.render.call(this)
-    this
 
-  setFormVariables: ->
-    @address1 = @$('input[name="address1"]')
-    @zip = @$('input[name="zip"]')
-    @city = @$('input[name="city"]')
-    @country = @$('input[name="country"]')
-    @address2 = @$('input[name="address2"]')
+  getFormResult: ->
+    {
+      first_name:  split(@ui.fullName.val())[0],
+      last_name:   split(@ui.fullName.val())[1],
+      address1: @ui.address1.val(),
+      zip:@ui.zip.val(),
+      city: @ui.city.val(),
+      country: @getCountryIso(@ui.country.val()),
+      address2: @ui.address2.val()
+    }
 
-  setAddress: ->
-    country_iso =  @country.val()
+  getCountryIso : (country_iso) ->
     _.each(countries, (value,key) ->
       if(value.toLowerCase()  == country_iso.toLowerCase())
         country_iso = key
     )
-    address = new Shopelia.Models.Address()
-    address.on("invalid", (model, errors) ->
-      #console.log("displaying address Errors" + JSON.stringify(errors))
-      displayErrors(errors)
-    )
-    address.set({
-                first_name:  split($('input[name="full_name"]').val())[0],
-                last_name:   split($('input[name="full_name"]').val())[1],
-                phone: $('input[name="phone"]').val(),
-                address1: @address1.val(),
-                zip:@zip.val(),
-                city: @city.val(),
-                country: country_iso,
-                address2: @address2.val()
-                })
-    address
+
 
   eraseAddressFields: ->
     #console.log("eraseAddressFields")
-    @zip.val("")
-    @city.val("")
-    @country.val("")
+    @ui.zip.val("")
+    @ui.city.val("")
+    @ui.country.val("")
 
   getLocation: ->
     if (navigator.geolocation)
@@ -63,7 +55,7 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
   showPosition: (position) ->
     lat = position.coords.latitude.toString()
     lng = position.coords.longitude.toString()
-    input = @address1
+    input = @ui.address1
     that = this
     placesData = {}
     input.typeahead(
@@ -113,8 +105,8 @@ class Shopelia.Views.AddressesIndex extends Shopelia.Views.Form
 
   populateAddressFields: (address) ->
     @eraseAddressFields()
-    @address1.val(address.address1).parsley( 'validate' )
-    @zip.val(address.zip).parsley( 'validate' )
-    @city.val(address.city).parsley( 'validate' )
-    @country.val(countries[address.country]).parsley( 'validate' )
+    @ui.address1.val(address.address1).parsley( 'validate' )
+    @ui.zip.val(address.zip).parsley( 'validate' )
+    @ui.city.val(address.city).parsley( 'validate' )
+    @ui.country.val(countries[address.country]).parsley( 'validate' )
 
