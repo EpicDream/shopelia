@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class ProductVersion < ActiveRecord::Base
   belongs_to :product, :touch => true
   has_many :order_items
@@ -102,10 +103,13 @@ class ProductVersion < ActiveRecord::Base
   def sanitize_description
     doc = Nokogiri::HTML(self.description)
     doc.search('style').each { |node| node.remove }
+    doc.search('noscript').each { |node| node.remove }
 
-    html = Sanitize.clean(doc.to_s, SANITIZED_CONFIG).gsub(/[\n\s]+/, " ").strip
+    html = Sanitize.clean(doc.to_s, SANITIZED_CONFIG).gsub(/[\n\s]+/, " ")
+    html = html.gsub("Afficher plus", "")
+    html = html.gsub("Réduire", "")
 
-    self.description = html
+    self.description = html.strip
   end
    
   def check_not_related_to_any_order
