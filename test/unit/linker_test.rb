@@ -20,7 +20,9 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(717215663)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Fdp.asp%3Fsku%3DROSITRIPLE10M%26refer%3D*)",
         :out => "http://www.cdiscount.com/electromenager/lave-vaisselle/rosieres-triple-10m/f-11025-rositriple10m.html" },
       { :in  => "http://ad.zanox.com/ppc/?18920697C1372641144&ULP=%5B%5Bhttp://www.toysrus.fr/redirect_znx.jsp?url=http%3A%2F%2Fwww.toysrus.fr%2Fproduct%2Findex.jsp%3FproductId%3D10863181%5D%5D#toysrus.fr",
-        :out => "http://www.toysrus.fr/product/index.jsp?productId=10863181" }
+        :out => "http://www.toysrus.fr/product/index.jsp?productId=10863181" },
+      { :in  => "http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm?xts=425426&xtor=AL-146-[typologie]-[1532882]-[flux]&xtloc=http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068&xtdt=22932563",
+        :out => "http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])

@@ -5,7 +5,7 @@ class Linker
   def self.clean url
     count = 0
     url = url.unaccent
-    canonical = UrlMatcher.find_by_url(canonical).try(:canonical) || UrlMatcher.find_by_url(url).try(:canonical)
+    canonical = self.by_rule(url) || UrlMatcher.find_by_url(canonical).try(:canonical) || UrlMatcher.find_by_url(url).try(:canonical)
     if canonical.nil?
       orig = url
       begin
@@ -67,6 +67,14 @@ class Linker
   
   private
   
+  def self.by_rule url
+    if m = url.match(/Xiti_Redirect.htm.*xtloc=([^&]+)/)
+      m[1]
+    else
+      nil
+    end
+  end
+
   def self.amazon url
     if url.match(/tag=[a-z0-9\-]+/)
       url.gsub(/tag=[a-z0-9\-]+/, "tag=shopelia-21")
