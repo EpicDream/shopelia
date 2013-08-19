@@ -17,6 +17,7 @@ Shopelia::Application.routes.draw do
 
   resources :home, :only => :index
   resources :contact, :only => :create
+  resources :gateway, :only => :index
   
   resources :addresses
   resources :orders, :only => [:show, :update] do
@@ -24,6 +25,7 @@ Shopelia::Application.routes.draw do
     get :cancel, :on => :member
   end
   resources :payment_cards
+
 
   namespace :admin do
     resources :developers, :only => [:index, :new, :create]
