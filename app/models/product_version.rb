@@ -1,5 +1,8 @@
 # -*- encoding : utf-8 -*-
 class ProductVersion < ActiveRecord::Base
+
+  AVAILABILITY = "#{Rails.root}/lib/data/availability.yml"
+
   belongs_to :product, :touch => true
   has_many :order_items
   
@@ -80,27 +83,11 @@ class ProductVersion < ActiveRecord::Base
   end
   
   def parse_available
+    result = nil
     a = self.availability_text.unaccent.downcase
-    if a =~ /out of stock/ || \
-       a =~ /aucun vendeur ne propose ce produit/ || \
-       a =~ /en rupture de stock/ || \
-       a =~ /indisponible/ || \
-       a =~ /ce produit est epuise/ || \
-       a =~ /sans stock pour vos criteres/ || \
-       a =~ /bientot disponible/ || \
-       a =~ /produit epuise/ || \
-       a =~ /retrait gratuit en magasin/ || \
-       a =~ /inscrivez-vous pour etre prevenu lorsque cet article sera disponible/ || \
-       a =~ /sur commande/
-      result = false
-    elsif a =~ /en stock/ || \
-          a=~ /^\(\d+\)$/ || \
-          a=~ /expedie sous/ || \
-          a =~ /voir les offres de ces vendeurs/ || \
-          a =~ /article en pre-commande/ || \
-          a =~ / cet article paraitra le/ 
-      result = true
-    else
+    dic = YAML.load(File.open(AVAILABILITY))
+    dic.keys.each {|key| result = dic[key] if a =~ /#{key}/ }
+    if result.nil?
       generate_incident "Cannot parse availability : #{a}"
       result = true
     end
