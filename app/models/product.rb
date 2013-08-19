@@ -88,6 +88,15 @@ class Product < ActiveRecord::Base
         version[:color] = version[:color].to_json unless version[:color].nil?
         version[:size] = version[:size].to_json unless version[:size].nil?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
+
+        # Default shipping values
+        if version[:price_shipping_text].blank?
+          m = MerchantConjurer.from_url(self.url)
+          if m.present? && m.respond_to?('shipping_price')
+            version[:price_shipping_text] = m.shipping_price(version[:price_text])
+          end
+        end
+
         v = self.product_versions.find_by_size_and_color(version[:size], version[:color])
         if v.nil?
           v = ProductVersion.create!(version.merge({product_id:self.id}))
