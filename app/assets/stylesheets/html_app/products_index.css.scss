@@ -18,13 +18,19 @@
   text-align: right;
 }
 
+.price-infos {
+  overflow: auto;
+  padding-top: 5px;
+  margin-bottom: 10px;
+}
+
 .price-infos > span {
   padding-top: 7px;
   line-height: 1.1em;
 }
 
 .price-infos > .pull-right {
-  width: 200px;
+  max-width: 200px;
   text-align: right;
 }
 
@@ -40,10 +46,8 @@
 }
 
 .product-description {
-  span:first-of-type {
-    clear: both;
-    margin-top: 20px;
-  }
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .description-content {
@@ -55,9 +59,10 @@
 }
 
 .full-description {
+  margin-left: 3%;
+  margin-right: 3%;
   padding: 30px;
   overflow: auto !important;
-
 }
 
 .full-description > div:first-of-type {
@@ -65,4 +70,13 @@
   border: 1px solid darken($lightGrey,10%);
   border-radius:$borderRadius;
   padding: 10px;
+}
+
+.shipping > p {
+  margin: 0;
+}
+
+#full-description {
+  display: block;
+  clear:both;
 }
