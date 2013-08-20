@@ -15,15 +15,17 @@ Shopelia::Application.configure do
   config.serve_static_assets = false
 
   # Compress JavaScripts and CSS
-  config.assets.compress = false
+  config.assets.compress = true
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
   config.assets.compile = false
 
   # Generate digests for assets URLs
-  config.assets.digest = false
+  config.assets.digest = true
 
+  config.assets.precompile += %w( home.js )
   config.assets.precompile += %w( admin/users.js  admin/orders.js   admin/developers.js  admin/incidents.js  admin/viking.js  )
+  config.assets.precompile += %w( addresses.css application.css home.css errors.css orders.css variables.css )
   config.assets.precompile += %w( admin/users.css admin/orders.css  admin/developers.css admin/incidents.css admin/viking.css )
 
   # Defaults to Rails.root.join("public/assets")

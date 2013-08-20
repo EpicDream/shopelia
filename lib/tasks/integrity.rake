@@ -24,7 +24,7 @@ namespace :shopelia do
         stats[product.merchant_id][:missing] += 1 if product.description.blank?
       end
       stats.keys.each do |merchant_id|
-        if stats[merchant_id][:missing] > stats[merchant_id][:total] / 5 && stats[merchant_id][:total] > 10
+        if stats[merchant_id][:missing] > stats[merchant_id][:total] / 3 && stats[merchant_id][:total] > 50 
           Incident.create(
             :issue => "Viking",
             :description => "#{stats[merchant_id][:missing]} missing descriptions over #{stats[merchant_id][:total]}",
