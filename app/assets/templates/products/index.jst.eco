@@ -2,18 +2,18 @@
       <img class="product-image" src= <%= @model('image_url') %> />
       <div class="spacer10 hidden-phone"></div>
       <h4><%= @model('name') %> </h4>
- <div class="clearfix hidden-phone"> </div>
   <div class="spacer5"></div>
   <div class="price-infos">
       <div class="pull-right">
-        <span class="price clearfix">
+        <span class="price">
             <span class="taxes bold">TTC</span>
             <span class="green bold"> <%= @model('expected_price_product') %> € </span>
         </span>
         <span class="shipping">
-            frais de livraison
+            <p> frais de livraison
             <span class="green"><%= @model('expected_price_shipping') %> €</span>
-            <span class="green bold clearfix"><%= @model('shipping_info') %></span>
+            </p>
+            <p class="green bold clearfix"><%= @model('shipping_info') %></p>
         </span>
 
       </div>
@@ -26,9 +26,7 @@
     <span class="pull-left green bold "> Description:</span>
     <div  class="description-content" > <%- @model('description') %></div>
   </div>
-  <div class="spacer20"></div>
-    <a id="full-description" class="block text-center">Plus de détails</a>
-   <div class="spacer20"></div>
+  <a id="full-description" class="block text-center">Plus de détails</a>
 
 
 
