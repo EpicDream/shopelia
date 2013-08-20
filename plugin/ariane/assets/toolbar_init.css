@@ -1,0 +1,26 @@
+
+body { margin: 0px; }
+body.ariane { -webkit-transform: translateY(35px); }
+body.ariane .ari-surround { outline: red dashed 1px;}
+
+#arianeDiv {
+  width: 100%;
+  height: 35px;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  z-index: 31415;
+}
+
+#arianeDiv * {
+  background: initial;
+  font: initial;
+  color: initial;
+  margin: initial;
+  padding: initial;
+  border: initial;
+}
+
+#ariane-toolbar {
+  padding-left: 3px;
+}

@@ -180,6 +180,19 @@ function loadMappingOnJQuery() {
       $("body").click(onBodyClick);
       $("body").on("contextmenu", onBodyClick);
 
+      // on body elemments hover, border them.
+      $("body *").hover(function(event) {
+        if (event.target != this) return;
+        // on ajoute le border à l'élément sur lequel on arrive et l'enlève à celui qu'on quitte
+        $(this).addClass("ari-surround");
+        $(event.relatedTarget).removeClass("ari-surround");
+      }, function(event) {
+        if (event.target != this) return;
+        // on enlève le border de l'élément qu'on quitte et l'ajoute à celui sur lequel on arrive
+        $(this).removeClass("ari-surround");
+        $(event.relatedTarget).addClass("ari-surround");
+      });
+
       startAriane(true);
     });
   } else

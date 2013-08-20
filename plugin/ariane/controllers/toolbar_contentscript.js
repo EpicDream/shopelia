@@ -12,7 +12,7 @@ function loadAriane() {
   // Import CSS
   css_link = document.createElement('link');
   css_link.rel = "stylesheet";
-  css_link.href = chrome.runtime.getURL("assets/smoothness/jquery-ui-1.10.3.custom.min.css");
+  css_link.href = chrome.runtime.getURL("assets/main.css");
 
 };
 
