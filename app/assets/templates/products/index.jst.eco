@@ -10,10 +10,6 @@
             <span class="green bold"> <%= @model('expected_price_product') %> € </span>
         </span>
         <span class="shipping">
-            <p> frais de livraison
-            <span class="green" id="shipping-price"></span>
-            </p>
-            <p class="green bold clearfix"><%= @model('shipping_info') %></p>
         </span>
 
       </div>

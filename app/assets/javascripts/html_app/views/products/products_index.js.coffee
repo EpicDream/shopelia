@@ -23,10 +23,11 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
     if @model.get('expected_price_shipping') == "Livraison gratuite"
       $res.html('<span class="green">Livraison gratuite</span>')
     else
-      $res.append('<span class="green">'+@model.get("expected_price_shipping")+'</span>')
+      $res.append('<span class="green">'+@model.get("expected_price_shipping")+' € </span>')
 
-    $res.after('<p class="green bold clearfix">'+@model.get('shipping_info')+'</p>')
-    @ui.shipping.append($res)
+    @ui.shipping.html($res)
+    @ui.shipping.append('<p class="green bold clearfix">'+@model.get('shipping_info')+'</p>')
+
     unless @model.get('description')
       @ui.description.remove()
       @ui.description_link.remove()
