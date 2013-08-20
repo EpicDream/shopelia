@@ -49,7 +49,12 @@
             </tr>
             <tr>
                 <td>Frais de livraison : </td>
-                <td><%= @product('expected_price_shipping') %>€</td>
+                <td>
+                   <%= @product('expected_price_shipping')%>
+                    <% if !isNaN(@product('expected_price_shipping')): %>
+                      €
+                    <% end %>
+                 </td>
             </tr>
             <tr>
                 <td>Total</td>

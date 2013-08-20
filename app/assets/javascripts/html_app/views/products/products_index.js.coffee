@@ -26,7 +26,8 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
       $res.append('<span class="green">'+@model.get("expected_price_shipping")+' € </span>')
 
     @ui.shipping.html($res)
-    @ui.shipping.append('<p class="green bold clearfix">'+@model.get('shipping_info')+'</p>')
+    if @model.get('shipping_info')
+      @ui.shipping.append('<p class="green bold clearfix">'+@model.get('shipping_info')+'</p>')
 
     unless @model.get('description')
       @ui.description.remove()
