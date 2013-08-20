@@ -1,5 +1,5 @@
 <div class="spacer25 clearfix"></div>
-<div class="full-description box span7 center">
+<div class="full-description box center">
 
 <div class="span3 pull-right  text-center">
    <img src= <%= @model('image_url') %> />

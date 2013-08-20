@@ -18,8 +18,8 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
 
   initialize: (params) ->
     _.bindAll(this)
-    @on("change:expected_price_product",@formatPrice,"expected_price_product")
-    @on("change:expected_price_shipping",@formatPrice,"expected_price_shipping")
+    @on("change:expected_price_product",@setExpectedPrice)
+    @on("change:expected_price_shipping",@setExpectedShipping)
 
 
   addMerchantInfosToProduct: (data) ->
@@ -52,9 +52,17 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
   customParseFloat: (float) ->
     parseFloat(Math.round(float * 100) / 100).toFixed(2)
 
-  formatPrice: (model,value) ->
-    result =  model.customParseFloat(value)
-    model.set(this.toString(),result)
+
+  setExpectedPrice: (model,value) ->
+    model.set("expected_price_product",model.customParseFloat(value))
+
+  setExpectedShipping: (model,value) ->
+    console.log(value)
+    unless isNaN(value)
+      if parseFloat(value) isnt 0
+        model.set("expected_price_shipping",model.customParseFloat(value))
+      else
+        model.set("expected_price_shipping","Livraison gratuite")
 
   getExpectedTotalPrice: ->
     @customParseFloat(parseFloat(@get('expected_price_product')) + parseFloat(@get('expected_price_shipping')))
