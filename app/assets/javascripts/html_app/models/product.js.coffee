@@ -57,13 +57,10 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
     model.set("expected_price_product",model.customParseFloat(value))
 
   setExpectedShipping: (model,value) ->
-    console.log(value)
-    unless isNaN(value)
-      if parseFloat(value) isnt 0
-        model.set("expected_price_shipping",model.customParseFloat(value))
-      else
-        model.set("expected_price_shipping","Livraison gratuite")
+    model.set("expected_price_shipping",model.customParseFloat(value))
+
 
   getExpectedTotalPrice: ->
     @customParseFloat(parseFloat(@get('expected_price_product')) + parseFloat(@get('expected_price_shipping')))
+
 
