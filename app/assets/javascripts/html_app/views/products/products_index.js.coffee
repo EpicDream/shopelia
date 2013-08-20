@@ -20,10 +20,12 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
 
   onRender: ->
     $res = $('<p> frais de livraison </p>')
-    if @model.get('expected_price_shipping') == "Livraison gratuite"
-      $res.html('<span class="green">Livraison gratuite</span>')
-    else
-      $res.append('<span class="green">'+@model.get("expected_price_shipping")+' € </span>')
+    value = @model.get("expected_price_shipping")
+    unless isNaN(value)
+      if parseFloat(value) isnt 0
+        $res.html('<span class="green">Livraison gratuite</span>')
+      else
+        $res.append('<span class="green">'+@model.get("expected_price_shipping")+' € </span>')
 
     @ui.shipping.html($res)
     if @model.get('shipping_info')

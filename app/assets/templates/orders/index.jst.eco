@@ -50,9 +50,10 @@
             <tr>
                 <td>Frais de livraison : </td>
                 <td>
-                   <%= @product('expected_price_shipping')%>
-                    <% if !isNaN(@product('expected_price_shipping')): %>
-                      €
+                    <% if parseFloat(@product('expected_price_shipping')) == 0 : %>
+                     Livraison gratuite
+                    <% else: %>
+                      <%= @product('expected_price_shipping') %> €
                     <% end %>
                  </td>
             </tr>
