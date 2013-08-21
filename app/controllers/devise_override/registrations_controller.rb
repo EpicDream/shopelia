@@ -10,7 +10,7 @@ class DeviseOverride::RegistrationsController < Devise::RegistrationsController
     if self.resource.nil?
       self.resource = resource_class.new_with_session(hash, session)
     else
-      self.resource.update_attributes(hash.merge({"visitor":false}))
+      self.resource.update_attributes(hash.merge({"visitor" => false}))
     end
   end
   
