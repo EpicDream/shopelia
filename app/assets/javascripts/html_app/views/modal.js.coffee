@@ -57,7 +57,7 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     that = this
     Shopelia.vent.trigger("description#close")
     Shopelia.vent.trigger("modal_content#close")
-    Shopelia.vent.trigger('survey#show',@top)
+    Shopelia.vent.trigger('add_to_cart#show',@top)
     $(document).unbind('click')
     @ui.close.unbind('click')
     @ui.close.click ->
