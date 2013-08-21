@@ -55,6 +55,7 @@ Shopelia::Application.routes.draw do
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
+      resources :cart_items, :only => :create
       resources :events, :only => [:index, :create]
       resources :payment_cards, :only => [:index, :create, :show, :destroy]
       resources :phone_lookup, :only => :show

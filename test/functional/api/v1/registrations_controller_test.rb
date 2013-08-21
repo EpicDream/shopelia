@@ -24,6 +24,24 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
     assert_equal 1, json_response["user"]["addresses"].count
   end
 
+  test "it should register a user in visitor mode" do
+    User.create(
+      :email => "user@gmail.com",
+      :visitor => true,
+      :developer_id => developers(:prixing).id)
+      
+    assert_difference('User.count', 0) do
+      post :create, user: { 
+        email: "user@gmail.com", 
+        first_name: "John",
+        last_name: "Doe"
+      }, format: :json
+    end
+    
+    assert_response 201
+    assert json_response["auth_token"].present?
+  end
+
   test "it should fail bad user registration" do
     post :create, user:{}, format: :json
     assert_response 422

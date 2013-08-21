@@ -5,6 +5,7 @@ class ProductVersion < ActiveRecord::Base
 
   belongs_to :product, :touch => true
   has_many :order_items
+  has_many :cart_items
   
   validates :product, :presence => true
   validates :size, :uniqueness => {:scope => [:product_id, :color]}, :allow_nil => true
