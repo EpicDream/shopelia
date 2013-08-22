@@ -10,6 +10,7 @@ window.Shopelia =
   developerKey: $.cookie('developer_key') unless $.cookie('developer_key') is undefined
   SDKVersion: "0.1"
   SDK: "HTML"
+  AbbaShowSpam: true
 
 Shopelia.Application.addRegions({
                  container: "#container"
@@ -47,10 +48,6 @@ $(document).ready ->
   $.pnotify.defaults.history = false
   Shopelia.Application.start()
   Tracker.init()
-
-
-
-
-
-
-
+  Abba("SPAM information").control("Show SPAM information").variant("Do not show SPAM information", ->
+    window.Shopelia.AbbaShowSpam = false
+  ).start()

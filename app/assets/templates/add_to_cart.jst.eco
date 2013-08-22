@@ -1,7 +1,7 @@
-<h5>Suivez ce produit</h5>
+<h4>Suivez ce produit</h4>
 
 <div class="small">
-  Entrez votre email afin d'ajouter ce produit à votre liste de suivi. Non seulement vous retrouverez votre lien d'achat direct, mais vous serez prévenu automatiquement d'une baisse de prix afin de ne pas rater la meilleure occasion d'achat !
+  Entrez votre email afin d'ajouter ce produit à votre liste de suivi. Non seulement vous retrouverez votre <strong>lien d'achat direct</strong>, mais vous serez prévenu automatiquement d'une <strong>baisse de prix</strong> afin de ne pas rater la meilleure occasion d'achat !
 </div>
 
 <div class="spacer20"></div>
@@ -17,6 +17,6 @@
   </div>
 </form>
 
-<div class="extra-small">
+<div id="spam" class="extra-small">
   Vous n'aimez pas le SPAM ? Nous non plus ! Shopelia s'engage à ne vous envoyer un email que pour vous informer sur ce produit. Votre email ne sera ni utilisé pour autre chose, ni cédé à un tiers.
 </div>

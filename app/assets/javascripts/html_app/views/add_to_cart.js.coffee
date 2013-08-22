@@ -20,6 +20,8 @@ class Shopelia.Views.AddToCart extends Shopelia.Views.Form
     @initializeForm()
 
   onShow: ->
+    if window.Shopelia.AbbaShowSpam == false
+      $("#spam").hide()
     $(@el).fadeIn('slow',() ->
       Shopelia.vent.trigger("modal#center")
     )
