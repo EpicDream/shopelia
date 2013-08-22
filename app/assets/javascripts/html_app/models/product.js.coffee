@@ -32,8 +32,11 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
 
 
   setProduct: (data) ->
+    console.log("setData")
+    console.log(data)
     try
       @set({
+           product_version_id:data.versions[0].id,
            name: data.name,
            image_url: data.image_url,
            description: data.description,

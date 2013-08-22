@@ -1,4 +1,3 @@
-<div class="spacer25 clearfix"></div>
 <div class="full-description box center">
 
 <div class="span3 pull-right  text-center">
@@ -12,4 +11,3 @@
 <div class="spacer10 clearfix"></div>
 <%- @model("description") %>
 </div>
-<div class="spacer25 clearfix"></div>

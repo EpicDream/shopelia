@@ -1,0 +1,14 @@
+<form data-validate="parsley" accept-charset="UTF-8" class="clearfix">
+  <div class="field-title">
+    <h5 class="pull-left">Suivez ce produit</h5>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <input rel="popover" type="text" tracker-name="Email" data-required="true" data-trigger="focusout" data-type="email" class="input-block-level" placeholder= "Email" name="email" value="">
+    </div>
+  </div>
+  <div class="spacer30"></div>
+  <button id="btn-add" class="custom-btn btn-block">SUIVRE CE PRODUIT</button>
+</form>
+
+
