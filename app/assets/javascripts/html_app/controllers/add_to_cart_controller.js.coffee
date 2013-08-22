@@ -20,6 +20,7 @@ class Shopelia.Controllers.AddToCartController extends Shopelia.Controllers.Cont
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
+             Abba('SPAM information').complete();
              Shopelia.Notification.Success({
                                            center: true
                                            title: "Ce produit a bien été rajouté !",
