@@ -61,7 +61,6 @@ class Shopelia.Controllers.ModalContentController extends Shopelia.Controllers.C
   showThankYou: ->
     Shopelia.vent.trigger("thank_you#show",@view.right)
 
-
   onBeforeClose: ->
     Shopelia.vent.trigger("sign_up#close")
     Shopelia.vent.trigger("sign_in#close")
