@@ -1,9 +1,11 @@
-<div class="span2 extra-small logo">
-  Votre commande va être préparée<br />
-  automatiquement avec <strong>Shopelia</strong><br />
-  sur le site du marchand
+<div class="span2 visible-phone" >
+  <img class="pull-left logo"  src= "/assets/html_app/logo-black.png">
 </div>
-<div class="span3 extra-small logo">
+<div class="span2 small logo hidden-phone">
+  <strong>Shopelia</strong> va préparer votre commande sur
+  le site du marchand
+</div>
+<div class="span3 extra-small logo hidden-phone">
   <div class="phone-header">
     <img src="/assets/html_app/phone-icon.png">
     Une question, un problème ?<br />
