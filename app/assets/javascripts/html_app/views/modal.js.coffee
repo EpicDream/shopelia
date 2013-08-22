@@ -56,12 +56,7 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
   onBeforeClose: ->
     that = this
     Shopelia.vent.trigger("description#close")
-<<<<<<< Updated upstream
-    Shopelia.vent.trigger("modal_content#close")
-    Shopelia.vent.trigger('survey#show',@top)
-=======
     Shopelia.vent.trigger("modal_content#show_add_to_cart")
->>>>>>> Stashed changes
     $(document).unbind('click')
     @ui.close.unbind('click')
     @ui.close.click ->
