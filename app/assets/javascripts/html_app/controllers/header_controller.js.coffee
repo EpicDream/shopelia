@@ -33,3 +33,6 @@ class Shopelia.Controllers.HeaderController extends Shopelia.Controllers.Control
       @view.hideHeaderLink()
     else
       @view.setHeaderLink(_.last(@linkStack))
+
+  hideAll: ->
+    @view.hideAll()

@@ -26,6 +26,8 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
     Shopelia.vent.trigger("modal_content#hide")
     Shopelia.vent.trigger("description#show",@view.top,product)
 
+  showAddToCart: ->
+    Shopelia.vent.trigger('add_to_cart#show',@view.content)
 
   showNotFound:(product) ->
     view = new Shopelia.Views.NotFound(model: product)
