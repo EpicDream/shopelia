@@ -15,6 +15,10 @@ class CartItemTest < ActiveSupport::TestCase
     assert_equal @product_version.price, item.price
     assert_equal @product_version.price_shipping, item.price_shipping
     assert @cart.reload.updated_at > updated_at
+
+    assert_equal 1, ActionMailer::Base.deliveries.count
+    mail = ActionMailer::Base.deliveries.last
+    assert_match /#{@product_version.product.name}/, mail.decoded
   end
 
   test "it shouldn't allow creation of duplicate item" do

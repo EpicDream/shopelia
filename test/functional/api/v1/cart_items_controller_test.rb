@@ -32,6 +32,5 @@ class Api::V1::CartItemsControllerTest < ActionController::TestCase
 
     assert item.reload.monitor
   end
-
 end
 

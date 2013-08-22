@@ -56,8 +56,10 @@ class UserTest < ActiveSupport::TestCase
   test "it should create user with just email" do
     user = User.new(
       :email => "user@gmail.com",
+      :visitor => true,
       :developer_id => developers(:prixing).id)
     assert user.save
+    assert_equal 0, ActionMailer::Base.deliveries.count
   end
 
   test "it should fail user creation with a bad address" do

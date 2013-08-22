@@ -157,7 +157,7 @@ class User < ActiveRecord::Base
   end
 
   def notify_creation_to_admin
-    Emailer.notify_admin_user_creation(self).deliver unless self.email =~ /shopelia/
+    Emailer.notify_admin_user_creation(self).deliver unless self.email =~ /shopelia/ || self.visitor?
   end
 
   def check_absence_of_completed_orders

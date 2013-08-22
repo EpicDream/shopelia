@@ -10,6 +10,7 @@ class CartItem < ActiveRecord::Base
   
   before_validation :initialize_uuid
   after_create :save_prices
+  after_create :notify_creation_to_admin
   
   private
   
@@ -23,4 +24,7 @@ class CartItem < ActiveRecord::Base
     self.uuid = SecureRandom.hex(16) if self.uuid.nil?
   end
   
+  def notify_creation_to_admin
+    Emailer.notify_admin_cart_item_creation(self).deliver
+  end
 end

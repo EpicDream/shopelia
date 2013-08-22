@@ -67,6 +67,13 @@ class Emailer < ActionMailer::Base
           :from => "Admin Shopelia <contact@shopelia.fr>")
   end
 
+  def notify_admin_cart_item_creation item
+    @item = item
+    mail( :to => "Shopelia <contact@shopelia.fr>",
+          :subject => "Nouveau produit suivi #{@item.product_version.product.name}",
+          :from => "Admin Shopelia <contact@shopelia.fr>")
+  end
+
   def notify_admin_order_creation order
     @order = order
     @user_agent = ENV['HTTP_USER_AGENT']
