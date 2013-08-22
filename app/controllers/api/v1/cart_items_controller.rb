@@ -12,7 +12,7 @@ class Api::V1::CartItemsController < Api::V1::BaseController
     if @item
       @item.monitor = true
     else
-      @item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id)
+      @item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
     end
     
     if @item.save

@@ -5,11 +5,12 @@ class CartItemTest < ActiveSupport::TestCase
   setup do
     @cart = Cart.create(user_id:users(:elarch).id)
     @product_version = product_versions(:usbkey)
+    @developer = developers(:prixing)
   end
   
   test "it should create cart item" do
     updated_at = @cart.updated_at
-    item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id)
+    item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
 
     assert item.save, item.errors.full_messages.join(",")
     assert_equal @product_version.price, item.price
@@ -24,28 +25,28 @@ class CartItemTest < ActiveSupport::TestCase
   end
 
   test "it shouldn't allow creation of duplicate item" do
-    CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id)
-    item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id)
+    CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
+    item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
 
     assert !item.save
   end
 
   test "it should allow same item for different carts" do
-    CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id)
-    item = CartItem.new(cart_id:Cart.create(user_id:users(:elarch).id).id, product_version_id:@product_version.id)  
+    CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
+    item = CartItem.new(cart_id:Cart.create(user_id:users(:elarch).id).id, product_version_id:@product_version.id, developer_id:@developer.id)  
 
     assert item.save
   end
 
   test "it should stop monitoring" do
-    item = CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id)
+    item = CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
     item.unsubscribe
 
     assert !item.monitor?
   end
 
   test "it should parametrize" do
-    item = CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id)
+    item = CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
 
     assert_equal item.uuid, item.to_param
   end
