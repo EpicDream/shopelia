@@ -1,4 +1,18 @@
-<div class="span2" >
-  <img class="pull-left logo"  src= "/assets/html_app/logo-black.png">
+<div class="span2 extra-small logo">
+  Votre commande va être préparée<br />
+  automatiquement avec <strong>Shopelia</strong><br />
+  sur le site du marchand
+</div>
+<div class="span4 extra-small logo">
+  <div class="phone-header">
+    <img src="/assets/html_app/phone-icon.png">
+    Une question, un problème ?<br />
+    Appelez nous au 01 82 09 15 44
+  </div>
+  <div class="spacer5"></div>
+  <img class="pull-left" src="/assets/html_app/logo-small.png">
+  <div class="grey" style="line-height: 13px;">
+    &nbsp;&nbsp;SAS au capital de 291 676€
+  </div>
 </div>
 <a id="link-header" class="pull-right"></a>

@@ -40,3 +40,21 @@ body {
   background-position: center;
 }
 
+.extra-small {
+  font-size: 10px;
+  line-height: 12px;
+}
+
+.grey {
+  color: #8c8c8c;
+}
+
+.phone-header {
+  padding: 0 0 0 16px; 
+  position: relative;
+}
+.phone-header img {
+  left: 0;
+  position: absolute;
+  top: 0;
+}
