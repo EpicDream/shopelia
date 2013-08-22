@@ -51,6 +51,15 @@ class Emailer < ActionMailer::Base
           :from => "Shopelia <contact@shopelia.fr>")
   end
 
+  def notify_cart_item_creation item
+    @item = item
+    @product = @item.product_version.product
+    @user = @item.cart.user
+    mail( :to => @user.email,
+          :subject => "Suivi de produit activé pour #{@product.name}",
+          :from => "Shopelia <contact@shopelia.fr>")
+  end
+
   ##################################################################################
 
   def admin_daily_report stats

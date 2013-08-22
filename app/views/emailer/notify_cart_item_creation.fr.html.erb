@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
+    <title>Shopelia - Suivi de produit</title>
+    <%= render "order_style" %>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  </head>
+  <body>
+    <table width="100%" border="0" cellspacing="0" cellpadding="0" bgcolor="#ecf0f1">
+      <tr>
+        <td valign="top">
+          <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+            <%= render "order_header" %>
+            <!--Header Text-->
+            <tr>
+              <td valign="top">
+                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                  <tr>
+                    <td bgcolor="#69bf6a">
+                      <table class="table600" bgcolor="#46b758" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td>
+                            <table class="table550" width="550" border="0" align="center" cellpadding="0" cellspacing="0">
+                              <tr>
+                                <td height="25" colspan="2"></td>
+                              </tr>
+                              <!--Article Title-->
+                              <tr>
+                                <td width="42" align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:24px; color:#ffffff;"><%= image_tag("emails/icon_check.png", width:32, height:32) %></td>
+                                <td align="left" valign="middle" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:24px; color:#ffffff;">Suivi de produit</td>
+                              </tr>
+                              <!--End Article Title-->
+                              <tr>
+                                <td height="10" colspan="2" align="left" valign="top"></td>
+                              </tr>
+                              <!--Content-->
+                              <tr>
+                                <td colspan="2" align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:14px; color:#fefefe; line-height:24px;">
+                                  Nous avons bien reçu votre demande de suivi de produit. Vous recevrez un email de notification
+                                  dès que son prix aura baissé !
+                                </td>
+                              </tr>
+                              <!--End Content-->
+                              <tr>
+                                <td height="35" colspan="2" align="left" valign="top"></td>
+                              </tr>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!--End Header Text-->
+
+            <tr>
+              <td valign="top">
+                <table bgcolor="#ffffff" class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td height="30"></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <table class="table550" width="550" border="0" align="center" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td valign="top" width="167" border="0" align="left" cellpadding="0" cellspacing="0">
+                            <%= image_tag(@product.image_url, style: "max-width:112px; max_height:112px", class:"img2") %>
+                          </td>
+                          <td valign="top" width="383" border="0" align="left" cellpadding="0" cellspacing="0">
+                            <table width="383" border="0" align="right" cellpadding="0" cellspacing="0" class="table2-2">
+                              <!--Article Title-->
+                              <tr>
+                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:18px; color:#34495e;"><%= @product.name %></td>
+                              </tr>
+                              <!--End Article Title-->
+                              <tr>
+                                <td height="10" align="left" valign="top"></td>
+                              </tr>
+                              <!--Content-->
+                              <tr>
+                                <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666;"><br />
+                                  Suivi chez: <strong><%= @product.merchant.name %></strong><br /><br />
+                                  <p style="font-family: Helvetica, Arial, sans-serif; font-size:17px; color:#46b758; line-height:24px; font-weight:bold; margin:0px;"><%= number_to_currency(@item.price) %></p>
+                                  <p style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#46b758; line-height:21px; margin:0px;">Livraison: <%= number_to_currency(@item.price_shipping) %></p>
+                                </td>
+                              </tr>
+                              <!--End Content--> 
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td height="30" style="border-bottom:1px dashed #bdc3c7;"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+
+            <!--1:1 Content-->
+            <tr>
+              <td valign="top">
+                <table bgcolor="#FFFFFF" class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td height="30"></td>
+                  </tr>
+                  <tr>
+                    <td valign="top">
+                      <table class="table550" width="550" border="0" align="center" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666;">
+                            <!--Button-->
+                            <table class="button" width="300" height="35" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#46b758" style="border-radius:4px;">
+                              <tr>
+                                <td align="center" valign="top">
+                                  <table width="300" height="32" border="0" cellspacing="0" cellpadding="0" bgcolor="#69bf6a" style="border-radius:4px;">
+                                    <tr>
+                                      <td width="300" height="32" align="center" valign="center">
+                                        <%= link_to "Acheter ce produit maintenant", "http://www.toto.fr", style:"font-family: Arial, Helvetica, sans-serif; font-size:14px; color:#ffffff; text-decoration: none; font-weight: bold;" %>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </table>
+                            <!--End Button-->
+                          </td>
+                        </tr>
+                        <!--End Content--> 
+                      </table>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td height="30" style="border-bottom:1px dashed #bdc3c7;"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <!--End 1:1 Content-->
+            <!--Footer-->
+            <tr>
+              <td valign="top">
+                <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
+                  <tr>
+                    <td height="25">
+                      <table bgcolor="#FFFFFF" class="table600" width="600" border="0" align="center" cellpadding="0" cellspacing="0">
+                        <tr>
+                          <td height="20"></td>
+                        </tr>
+                        <tr>
+                          <td align="justify" style="font-family: Helvetica, Arial, sans-serif; font-size:12px; font-weight: italic; color:#95a5a6; padding: 10px;">
+                            <%= link_to "Me désinscrire des notifications de ce produit", unsubscribe_cart_item_url(@item) %>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td height="30" align="left" valign="bottom">
+                            <%= image_tag("emails/fold_bottom_left.jpg", width:15, height:27, style:"float:left;") %>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                  <%= render "order_footer" %>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <!--End Footer--> 
+    </table>
+  </body>
+</html>
