@@ -20,17 +20,21 @@ class Shopelia.Controllers.AddToCartController extends Shopelia.Controllers.Cont
              xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
              xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
            success: (data,textStatus,jqXHR) ->
-             Abba('SPAM information').complete();
+             #Abba('SPAM information').complete();
+             Abba("Product sign-up position").complete();
              Shopelia.Notification.Success({
                                            center: true
-                                           title: "Ce produit a bien été rajouté !",
-                                           text: "Vous allez recevoir un email pour pouvoir retrouver ce produit ultérieurement et l'acheter. Merci d'avoir utilisé Shopelia. A très bientôt !"
+                                           title: "Suivi du produit activé !",
+                                           text: "Vous allez recevoir un email pour pouvoir retrouver ce produit facilement"
                                            after_close: () ->
-                                             Shopelia.vent.trigger("modal#close")
+                                             if window.Shopelia.AbbaCartPosition == 'popup'
+                                               Shopelia.vent.trigger("modal#close")
+                                             else
+                                               Shopelia.vent.trigger("add_to_cart#close")
                                            })
            error: (jqXHR,textStatus,errorThrown) ->
              Shopelia.Notification.Error({
                                            center: true,
                                            title: "Erreur",
-                                           text: "Nous ne sommes pas parvenu à rajouter ce produit. Veuillez essayer ultérieurement."})
+                                           text: "Nous ne sommes pas parvenu à suivre ce produit. Vérifiez votre email ou veuillez essayer ultérieurement."})
            })

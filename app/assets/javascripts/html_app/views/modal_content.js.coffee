@@ -5,6 +5,8 @@ class Shopelia.Views.ModalContent extends Shopelia.Views.Layout
   regions: {
     left: "#modal-left",
     right: "#modal-right"
+    top: "#modal-top-bar"
+    bottom: "#modal-bottom-bar"
   }
 
   hide: ->
