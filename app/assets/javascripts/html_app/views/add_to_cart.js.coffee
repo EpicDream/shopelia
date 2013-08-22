@@ -1,7 +1,12 @@
-class Shopelia.Views.AddToCart extends Shopelia.Views.Layout
+class Shopelia.Views.AddToCart extends Shopelia.Views.Form
 
   template: 'add_to_cart'
   className: "box"
+  templateHelpers: {
+    model: (attr) ->
+      @product[attr]
+  }
+
   ui: {
     email: 'input[name="email"]'
     validation: '#btn-add'
@@ -21,13 +26,15 @@ class Shopelia.Views.AddToCart extends Shopelia.Views.Layout
 
   onValidationClick: (e) ->
     e.preventDefault()
-    Shopelia.vent.trigger("add_to_cart#close",userJson)
+    data =  @getFormResult()
+    if data
+      Shopelia.vent.trigger("add_to_cart#add_product_to_cart",data)
 
   getFormResult: ->
     if $('form').parsley( 'validate' )
        {
         "email": @ui.email.val(),
-        "password": @ui.password.val()
+        "product_version_id": @model.get('product_version_id')
        }
     else
       undefined
@@ -37,8 +44,3 @@ class Shopelia.Views.AddToCart extends Shopelia.Views.Layout
 
   unlockView: ->
     enableButton(@ui.validation)
-
-
-
-
-

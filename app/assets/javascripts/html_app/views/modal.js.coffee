@@ -56,8 +56,7 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
   onBeforeClose: ->
     that = this
     Shopelia.vent.trigger("description#close")
-    Shopelia.vent.trigger("modal_content#close")
-    Shopelia.vent.trigger('add_to_cart#show',@top)
+    Shopelia.vent.trigger("modal_content#show_add_to_cart")
     $(document).unbind('click')
     @ui.close.unbind('click')
     @ui.close.click ->

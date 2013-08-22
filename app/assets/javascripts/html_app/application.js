@@ -30,6 +30,7 @@
 //= require_tree ./collections
 //= require ./views/layout
 //= require ./views/shopelia_view
+//= require ./views/form
 //= require_tree ./views
 //= require ./controllers/controller
 //= require_tree ./controllers
