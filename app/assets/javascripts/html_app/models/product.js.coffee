@@ -45,6 +45,7 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
            expected_price_shipping: data.versions[0].price_shipping,
            shipping_info: data.versions[0].shipping_info
            merchant_name: data.merchant.name,
+           merchant_logo: data.merchant.logo,
            allow_iframe: data.merchant.allow_iframe
            })
     catch error
