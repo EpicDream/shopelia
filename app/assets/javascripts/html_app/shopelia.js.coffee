@@ -11,6 +11,7 @@ window.Shopelia =
   SDKVersion: "0.1"
   SDK: "HTML"
   AbbaShowSpam: true
+  AbbaCartPosition: 'popup'
 
 Shopelia.Application.addRegions({
                  container: "#container"
@@ -41,13 +42,15 @@ Shopelia.Application.addInitializer (options) ->
   new Shopelia.Routers.AppRouter()
   Backbone.history.start(pushState: true)
 
-
-
-
 $(document).ready ->
+  Abba("Product sign-up position").control("Popup").variant("Front top", ->
+    window.Shopelia.AbbaCartPosition = 'top'
+  ).variant("Front bottom", ->
+    window.Shopelia.AbbaCartPosition = 'bottom'
+  ).start()  
   $.pnotify.defaults.history = false
   Shopelia.Application.start()
   Tracker.init()
-  Abba("SPAM information").control("Show SPAM information").variant("Do not show SPAM information", ->
-    window.Shopelia.AbbaShowSpam = false
-  ).start()
+  #Abba("SPAM information").control("Show SPAM information").variant("Do not show SPAM information", ->
+  #  window.Shopelia.AbbaShowSpam = false
+  #).start()

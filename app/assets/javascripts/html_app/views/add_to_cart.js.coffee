@@ -13,7 +13,7 @@ class Shopelia.Views.AddToCart extends Shopelia.Views.Form
   }
   events:
     "click #btn-add": "onValidationClick"
-
+    
   onRender: ->
     Tracker.onDisplay('AddToCart');
     $(@el).fadeIn('slow')
@@ -26,20 +26,16 @@ class Shopelia.Views.AddToCart extends Shopelia.Views.Form
       Shopelia.vent.trigger("modal#center")
     )
 
+  onClose: ->
+    $("#modal-top-wrapper").hide()
+    $("#modal-bottom-wrapper").hide()
+
   onValidationClick: (e) ->
     e.preventDefault()
-    data =  @getFormResult()
-    if data
-      Shopelia.vent.trigger("add_to_cart#add_product_to_cart",data)
-
-  getFormResult: ->
-    if $('form').parsley( 'validate' )
-       {
-        "email": @ui.email.val(),
-        "product_version_id": @model.get('product_version_id')
-       }
-    else
-      undefined
+    Shopelia.vent.trigger("add_to_cart#add_product_to_cart", {
+      "email": @ui.email.val(),
+      "product_version_id": @model.get('product_version_id')
+    })
 
   lockView: ->
     disableButton(@ui.validation)
