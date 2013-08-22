@@ -4,7 +4,7 @@ class CartItem < ActiveRecord::Base
 
   validates :cart, :presence => true
   validates :uuid, :presence => true, :uniqueness => true
-  validates :product_version, :presence => true
+  validates :product_version_id, :presence => true, :uniqueness => { :scope => :cart_id }
 
   attr_accessible :cart_id, :product_version_id
   

@@ -16,5 +16,18 @@ class CartItemTest < ActiveSupport::TestCase
     assert_equal @product_version.price_shipping, item.price_shipping
     assert @cart.reload.updated_at > updated_at
   end
-  
+
+  test "it shouldn't allow creation of duplicate item" do
+    CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id)
+    item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id)
+
+    assert !item.save
+  end
+
+  test "it should allow same item for different carts" do
+    CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id)
+    item = CartItem.new(cart_id:Cart.create(user_id:users(:elarch).id).id, product_version_id:@product_version.id)  
+
+    assert item.save
+  end
 end
