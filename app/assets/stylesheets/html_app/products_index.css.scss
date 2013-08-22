@@ -13,6 +13,17 @@
   margin: auto;
 }
 
+.merchant-image {
+  width: 90%;
+  max-width: 100px;
+  background-color: #ffffff;
+  border: 1px solid darken($lightGrey,10%);
+  border-radius:$borderRadius;
+  padding: 5%;
+  display: block;
+  margin: auto;
+}
+
 .price {
   display: block;
   text-align: right;

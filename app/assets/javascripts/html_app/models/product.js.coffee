@@ -26,7 +26,8 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
     console.log('in add merchant')
     console.log(data)
     @set({
-          merchant_name:data.merchant.name,
+          merchant_name: data.merchant.name,
+          merchant_logo: data.merchant.logo,
           allow_iframe: data.merchant.allow_iframe,
           })
 
