@@ -1,11 +1,11 @@
-<div class="span2 visible-phone" >
+<div class="span2 visible-phone">
   <img class="pull-left logo"  src= "/assets/html_app/logo-black.png">
 </div>
-<div class="span2 small logo hidden-phone">
+<div class="span2 small logo hidden-phone" id="info">
   <strong>Shopelia</strong> va préparer votre commande sur
   le site du marchand
 </div>
-<div class="span3 extra-small logo hidden-phone">
+<div class="span3 extra-small logo hidden-phone" id="phone">
   <div class="phone-header">
     <img src="/assets/html_app/phone-icon.png">
     Une question, un problème ?<br />

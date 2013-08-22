@@ -27,7 +27,7 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
     @userFields.show(@userFieldsView)
     @addressFields.show(@addressFieldsView)
     @cardFields.show(@cardFieldsView)
-    @initializeForm()
+    @initializeForm({'security':true})
 
   getUserFromForm: ->
     if @ui.form.parsley( 'validate' )
