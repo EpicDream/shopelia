@@ -1,0 +1,38 @@
+%section.header
+  %header
+    %h1 Incidents
+    %h2 Monitoring of Shopelia
+
+.container-fluid
+  .row-fluid
+    .span2
+      %article.coolbox
+        %h3 Severity
+        %select#severityFilter
+          %option{value:""}
+            All
+          %option{value:"#{Incident::INFORMATIVE}"}
+            Informative
+          %option{value:"#{Incident::IMPORTANT}"}
+            Important
+          %option{value:"#{Incident::CRITICAL}"}
+            Critical
+    .span10
+      %article.coolbox
+        %h3 Full list
+        %table.table.table-striped#incidents{data:{source:"#{admin_incidents_url(format: 'json')}"}}
+          %thead
+            %tr
+              %th
+                Issue
+              %th
+                Severity
+              %th
+                Description
+              %th
+                Created at
+              %th
+                Resource
+              %th
+                &nbsp;
+          %tbody

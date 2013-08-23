@@ -22,8 +22,8 @@ class UsersDatatable
         link_to(user.email, admin_user_path(user)),
         user.name,
         time_ago_in_words(user.created_at),
-        user.confirmed_at.nil? ? "no" : "yes",
         user.orders.completed.count,
+        user.cart_items.count,
         "<button type=\"button\" class=\"btn btn-danger\" data-destroy-url=\"#{admin_user_path(user)}\" data-username=\"#{user.name}\" style=\"visibility:hidden\">Destroy the user</button>"
       ]
     end
