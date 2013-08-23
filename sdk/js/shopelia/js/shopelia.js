@@ -10,24 +10,32 @@ var ShopeliaCheckout = {
         }
 
     },
-    bindClickWith: function ($elements) {
-        $elements.click(function(){
+    bindClickWith: function ($element) {
+        $element.click(function(){
             $(this).unbind('click');
             var clickedParams = {type: "click"};
             ShopeliaCheckout.sendUrls($(this),clickedParams);
             ShopeliaCheckout.getProduct($(this));
         });
     },
+
+    update: function() {
+        var $shopelia_buttons = $("[data-shopelia-url]");
+        if($shopelia_buttons.length > 0) {
+            var params = {type: "view"};
+            this.sendUrls($shopelia_buttons,params);
+        }
+    },
     sendUrls: function($elements,params) {
         that = this;
         urlsTempArray = [];
         params = this.extend(this.options,params);
         //console.log(params);
-        this.bindClickWith($elements);
         $.each($elements,function(){
             var url = $(this).attr("data-shopelia-url");
             if((!that.contains(that.urlsArray,url) && !that.contains(urlsTempArray,url)) || (params.type == 'click')) {
-                urlsTempArray.push(url)
+                urlsTempArray.push(url);
+                that.bindClickWith($(this))
             }
         });
 
