@@ -3,13 +3,9 @@ var ShopeliaCheckout = {
         this.base = "https://www.shopelia.com";
         this.options = options;
         this.urlsArray = [];
-        var $shopelia_buttons = $("[data-shopelia-url]");
-        if($shopelia_buttons.length > 0) {
-            var params = {type: "view"};
-            this.sendUrls($shopelia_buttons,params);
-        }
-
+        this.update();
     },
+
     bindClickWith: function ($element) {
         $element.click(function(){
             $(this).unbind('click');
@@ -20,6 +16,7 @@ var ShopeliaCheckout = {
     },
 
     update: function() {
+        $("[data-shopelia-url]").unbind('click');
         var $shopelia_buttons = $("[data-shopelia-url]");
         if($shopelia_buttons.length > 0) {
             var params = {type: "view"};
@@ -30,12 +27,11 @@ var ShopeliaCheckout = {
         that = this;
         urlsTempArray = [];
         params = this.extend(this.options,params);
-        //console.log(params);
         $.each($elements,function(){
             var url = $(this).attr("data-shopelia-url");
+            that.bindClickWith($(this));
             if((!that.contains(that.urlsArray,url) && !that.contains(urlsTempArray,url)) || (params.type == 'click')) {
                 urlsTempArray.push(url);
-                that.bindClickWith($(this))
             }
         });
 
