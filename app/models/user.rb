@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   has_many :user_verification_failures, :dependent => :destroy
   has_many :orders, :dependent => :destroy
   has_many :carts, :dependent => :destroy
+  has_many :cart_items, :through => :carts
   belongs_to :nationality, :class_name => "Country"
   belongs_to :developer
 
@@ -67,7 +68,7 @@ class User < ActiveRecord::Base
   end
   
   def name
-    "#{self.first_name} #{self.last_name}"
+    self.last_name.blank? ? "Guest" : "#{self.first_name} #{self.last_name}"
   end
   
   def male?
