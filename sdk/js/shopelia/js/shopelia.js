@@ -2,6 +2,7 @@ var ShopeliaCheckout = {
     init: function(options) {
         this.base = "https://www.shopelia.com";
         this.options = options;
+        this.urlsArray = [];
         var $shopelia_buttons = $("[data-shopelia-url]");
         if($shopelia_buttons.length > 0) {
             var params = {type: "view"};
@@ -18,28 +19,48 @@ var ShopeliaCheckout = {
         });
     },
     sendUrls: function($elements,params) {
+        that = this;
+        urlsTempArray = [];
         params = this.extend(this.options,params);
-        console.log(params);
+        //console.log(params);
         this.bindClickWith($elements);
-        var urls = "";
         $.each($elements,function(){
-            if(urls != ""){
-                urls += "||"
+            var url = $(this).attr("data-shopelia-url");
+            if((!that.contains(that.urlsArray,url) && !that.contains(urlsTempArray,url)) || (params.type == 'click')) {
+                urlsTempArray.push(url)
             }
-            urls += $(this).attr("data-shopelia-url");
         });
+
+        var urls =  urlsTempArray.join('||');
+        console.log(urls);
         this.extend(params,{urls: urls});
-        var url = this.generateEncodedUri(this.base,"/api/events",params);
         if(urls != "") {
-            $.ajax({
-                type: 'GET',
-                url: url ,
-                async: false,
-                jsonpCallback: 'jsonCallback',
-                contentType: "application/json",
-                dataType: 'jsonp'
+            this.sendEvents(params).always(function() {
+                if (params.type == "view") {
+                    that.urlsArray = that.urlsArray.concat(urlsTempArray);
+                }
+                console.log(that.urlsArray.length)
+
             });
         }
+    },
+    sendEvents: function(params) {
+        return $.ajax({
+            type: 'GET',
+            url: this.generateEncodedUri(this.base,"/api/events",params) ,
+            async: false,
+            jsonpCallback: 'jsonCallback',
+            contentType: "application/json",
+            dataType: 'jsonp'
+        });
+    },
+    contains: function(array,url) {
+        for(var i = 0; i < array.length; i++) {
+            if(array[i] === url) {
+                return true;
+            }
+        }
+        return false;
     },
     getProduct: function($element) {
         var options= {};
