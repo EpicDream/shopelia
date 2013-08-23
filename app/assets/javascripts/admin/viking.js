@@ -2,7 +2,7 @@ $(document).ready(function() {
   vikingsTable = $('#vikings').dataTable( {
     "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
     "bServerSide": true,
-    "bLengthChange": false,
+    "bLengthChange": true,
     "bFilter": true,
     "bPaginate": true,
     "sPaginationType": "bootstrap",
@@ -51,5 +51,28 @@ $(document).ready(function() {
 
     },
   } );
+
+  $('.successKnob').knob({
+    'width': 370,
+    'height': 300,
+    'fgColor': "#66cc66",
+    'bgColor': "#cc6666",
+    'inputColor': "#666666",
+    'angleOffset': -125,
+    'angleArc': 250,
+    'readOnly': true    
+  });
+
+  $('.merchantKnob').knob({
+    'width': 150,
+    'height': 120,
+    'fgColor': "#66cc66",
+    'bgColor': "#cc6666",
+    'inputColor': "#666666",
+    'angleOffset': -125,
+    'angleArc': 250,
+    'readOnly': true    
+  });  
+
 } );
 
