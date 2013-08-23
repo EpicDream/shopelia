@@ -2,7 +2,7 @@ $(document).ready(function() {
   incidentsTable = $('#incidents').dataTable( {
     "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
     "bServerSide": true,
-    "bLengthChange": false,
+    "bLengthChange": true,
     "bFilter": true,
     "bPaginate": true,
     "sPaginationType": "bootstrap",
@@ -10,6 +10,12 @@ $(document).ready(function() {
     "bSort": false,
     "bAutoWidth": false,
     "sAjaxSource": $('#incidents').data('source'),
+    "fnServerData": function ( sSource, aoData, fnCallback ) {
+      aoData.push( { "name":"severity", "value":$('#severityFilter').val() } );
+      $.getJSON( sSource, aoData, function (json) { 
+        fnCallback(json)
+      } );
+    },
     "fnDrawCallback" : function() {
       $('.btn').on("click", function(event) {
         $(this).button('loading')
@@ -35,5 +41,9 @@ $(document).ready(function() {
       return nRow;
     }
   } );
+
+  $("#severityFilter").on('change', function() {
+    incidentsTable.fnReloadAjax();
+  })
 } );
 

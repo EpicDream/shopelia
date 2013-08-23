@@ -12,6 +12,10 @@
   height: 50px;
 }
 
+.alert {
+  margin: 30px;
+}
+
 section.header header {
   background-color: #3d3d45;
   background-image: -webkit-linear-gradient(#3d3d45, #29292f);
@@ -84,4 +88,11 @@ section.header header h2 {
   -o-user-select: none;
   user-select: none;
   -webkit-font-smoothing: antialiased;
+}
+
+.dataTables_info {
+  margin-left: 30px;
+}
+.dataTables_length {
+  margin-left: 30px;
 }

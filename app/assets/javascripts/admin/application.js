@@ -5,3 +5,4 @@
 //= require admin/datatables.reload_ajax
 //= require admin/morris.min
 //= require admin/raphael.min
+//= require admin/jquery.knob
