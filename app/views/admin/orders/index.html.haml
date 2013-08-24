@@ -1,0 +1,52 @@
+%section.header
+  %header
+    %h1 Orders
+    %h2 Present & past orders
+
+.container-fluid
+  .row-fluid
+    .span2
+      %article.coolbox
+        %h3 State filter
+        %select.filter-option#stateFilter
+          %option{value:""} All
+          = Order::STATES.each do |s|
+            %option{value:s} #{s.camelize}
+    .span4
+      %article.coolbox
+        %h3 Time period
+        From
+        %input.filter-option#date-start{type:"text",value:"#{@date_start.strftime("%Y-%m-%d")}"}
+        to
+        %input.filter-option#date-end{type:"text",value:"#{@date_end.strftime("%Y-%m-%d")}"}
+  .row-fluid
+    .span12
+      %article.coolbox
+        %h3 Orders list
+        %table.table.table-striped#orders{data:{source:"#{admin_orders_url(format: 'json')}"}}
+          %thead
+            %tr
+              %th State
+              %th Product
+              %th Merchant
+              %th Price
+              %th User
+              %th Updated_at
+              %th Message
+              %th Error
+              %th &nbsp;
+          %tbody
+
+.modal.hide.fade#confirmModal{tabindex:"-1",role:"dialog"}
+  .modal-header
+    %button.close{type:"button",data:{dismiss:"modal"}} &times;
+    %h3 Warning !
+  .modal-body
+    %p
+      Do you really want to 
+      %strong
+        %span#confirmModelState
+      the order&nbsp;?
+  .modal-footer
+    %a.btn{href:"#",data:{dismiss:"modal"}} Close
+    %a.btn.btn-danger#confirmDestruction{href:"#"} Confirmation
