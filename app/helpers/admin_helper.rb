@@ -30,6 +30,14 @@ module AdminHelper
       result += split_versions ? tmp.length > 0 ? "{#{v.id}} [ #{tmp} ] " : "" : tmp
     end
     result.blank? ? "Empty data" : result
-  end      
+  end
+
+  def number_to_knob n
+    if n.to_i == 100
+      100
+    else
+      sprintf("%.2f", n)
+    end
+  end 
 
 end
