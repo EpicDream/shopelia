@@ -14,6 +14,16 @@ module AdminHelper
       '<span class="label label-important">Critical</span>'
     end
   end
+
+  def order_state_to_html state
+    klass = case state
+    when "pending_agent" then "label-important"
+    when "failed" then "label-warning"
+    when "completed" then "label-success"
+    when "querying" then "label-info"
+    end
+    "<span class='label #{klass}'>#{state.camelize}</span>"
+  end
   
   def viking_failure_tags product
     split_versions = product.product_versions.where(available:[nil,true]).count > 1 
@@ -30,6 +40,14 @@ module AdminHelper
       result += split_versions ? tmp.length > 0 ? "{#{v.id}} [ #{tmp} ] " : "" : tmp
     end
     result.blank? ? "Empty data" : result
-  end      
+  end
+
+  def number_to_knob n
+    if n.to_i == 100
+      100
+    else
+      sprintf("%.2f", n)
+    end
+  end 
 
 end
