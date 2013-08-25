@@ -3,8 +3,8 @@ class Shopelia.Views.Header extends Shopelia.Views.ShopeliaView
   template: 'header'
   ui: {
     link: "#link-header"
-    info: "#info"
-    phone: "#phone"
+    info: "#info-header"
+    logo: "#logo-header"
   }
 
   setHeaderLink: (headerLink) ->
@@ -20,5 +20,5 @@ class Shopelia.Views.Header extends Shopelia.Views.ShopeliaView
   hideAll: ->
     @ui.link.hide()
     @ui.info.hide()
-    @ui.phone.hide()
+    @ui.logo.hide()
     $("#modal-header").css "height", "30px"
