@@ -29,8 +29,9 @@ Shopelia::Application.routes.draw do
   end
   resources :payment_cards
 
-
   namespace :admin do
+    match "/", to: "dashboard#index"
+    resources :dashboard, :only => :index
     resources :developers, :only => [:index, :new, :create]
     resources :incidents, :only => [:index, :update]
     resources :orders, :only => [:index, :show, :update]
