@@ -1,6 +1,7 @@
 class Developer < ActiveRecord::Base
   has_many :orders
   has_many :users
+  has_many :events
   has_many :cart_items
 
   validates :name, :presence => true, :uniqueness => true
