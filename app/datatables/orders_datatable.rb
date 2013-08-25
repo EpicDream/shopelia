@@ -22,7 +22,7 @@ class OrdersDatatable
       product = order.order_items.first.product
       [
         order_state_to_html(order.state_name),
-        link_to(product.name, "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
+        link_to(product.nil? ? "-" : product.name, "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
         order.merchant.name,
         number_to_currency(order.state == :completed ? order.billed_price_total : order.expected_price_total),
         h(order.user.name),
