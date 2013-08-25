@@ -50,4 +50,9 @@ module AdminHelper
     end
   end 
 
+  def conversion_rate target, total
+    p = target.to_f * 100 / (total == 0 ? 1 : total)
+    sprintf("%.2f", p) + "%"
+  end
+
 end

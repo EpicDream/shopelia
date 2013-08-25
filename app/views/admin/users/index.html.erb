@@ -11,16 +11,17 @@
     <div class="span2">
       <article class="coolbox">
         <h3>Time period</h3>
-        <input type="text" class="graph-option" id="date-start" value="<%= @date_start.strftime("%Y-%m-%d") %>">
-        <input type="text" class="graph-option" id="date-end" value="<%= @date_end.strftime("%Y-%m-%d") %>">
+        <input type="text" class="graph-option input-small" id="date-start" value="<%= @date_start.strftime("%Y-%m-%d") %>">
+        <input type="text" class="graph-option input-small" id="date-end" value="<%= @date_end.strftime("%Y-%m-%d") %>">
       </article>
       <article class="coolbox">
         <h3>Sign ups & Guests</h3>
-        <select id="visitor" class="graph-option">
+        <select id="visitor" class="graph-option input-small">
           <option default value="">All</option>
           <option value="0">Sign ups only</option>
           <option value="1">Guests only</option>
         </select>
+        <br>
         <small>
           Sign ups are when user register with all information in order to buy a product,
           guests are when only email is entered to follow a product.
@@ -30,7 +31,7 @@
     <div class="span10">
       <article class="coolbox">
         <h3>Sign-ups evolution over time</h3>
-        <div id="signUpChart" style="height: 500px;"></div>
+        <div id="signUpChart"></div>
         <div id="signUpData" data-json="<%= @chart.to_json %>"></div>
       </article>
     </div>
