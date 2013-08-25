@@ -21,6 +21,7 @@ class DevelopersDatatable
       [
         developer.name,
         "<tt>#{developer.api_key}</tt>",
+        developer.events.count,
         developer.orders.count,
         developer.users.count,
         developer.cart_items.count

@@ -33,6 +33,7 @@ Shopelia::Application.routes.draw do
     match "/", to: "dashboard#index"
     resources :dashboard, :only => :index
     resources :developers, :only => [:index, :new, :create]
+    resources :events, :only => :index
     resources :incidents, :only => [:index, :update]
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
