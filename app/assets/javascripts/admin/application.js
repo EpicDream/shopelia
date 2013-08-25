@@ -6,3 +6,4 @@
 //= require admin/morris.min
 //= require admin/raphael.min
 //= require admin/jquery.knob
+//= require admin/jquery.sparkline.min
