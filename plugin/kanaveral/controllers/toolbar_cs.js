@@ -99,14 +99,12 @@ define(['jquery', 'jquery-ui'], function($, jui) {
     if (! initialized)
       return setTimeout(that.create, 100);
 
-    // Update style with toolbar id.
-    jToolbar.find("style").text(jToolbar.find("style").text().replace(/toolbarid-/g,id));
-
     jToolbar.attr("id", id+"toolbar");
     $(document.documentElement).prepend(jToolbar);
+    $(document.body).addClass(that.id);
 
     // Add jQuery-UI CSS
-    var link = $("<link>").attr("rel","stylesheet").attr("href", chrome.runtime.getURL("assets/smoothness/jquery-ui-1.10.3.custom.min.css"));
+    var link = $("<link>").attr("rel","stylesheet").attr("href", chrome.runtime.getURL("assets/main.css"));
     $(document.head).append(link);
 
     // Call all listeners
