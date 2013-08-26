@@ -32,7 +32,7 @@ class EventsDatatable
         developer.name,
         event.tracker,
         number_with_delimiter(event.count),
-        raw("#{number_with_delimiter(clicks)} <div class='rate'>#{conversion_rate(clicks, event.count)}</div>")
+        raw("#{number_with_delimiter(clicks)} <div class='rate'>#{conversion_rate(clicks.to_i, event.count.to_i)}</div>")
       ]
     end
   end
