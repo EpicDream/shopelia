@@ -14,16 +14,9 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
     that.launchOnUrl(tab.id, tab.url);
   });
 
-  // On page reload.
+  // On page reload, reload the toolbar.
   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
-    var state = states[tabId];
-    if (changeInfo.status == "loading" && changeInfo.url) {
-      var uri = new Uri(changeInfo.url);
-      if (state && uri.host().match(state.host)) {
-        that.clean(tabId);
-        console.log("Quit Kanaveral. Good bye ! (tab="+tabId+")");
-      }
-    } else if (changeInfo.status == "complete" && state) {
+    if (changeInfo.status == "complete" && states[tabId]) {
       that.load_contentscript(tabId);
     }
   });
