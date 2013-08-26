@@ -55,7 +55,20 @@ define(['jquery', 'uri'], function($, Uri) {
   // Lunch Kanaveral into 'order' mode with the host url of the products loaded.
   function initOrder(tabId, order) {
     orders[tabId] = order;
-    orders[tabId].billing = {};    
+    orders[tabId].billing = {};
+    orders[tabId].product_idx = -1;
+  };
+
+  // Try to load the next product.
+  // Return false if there is no next product.
+  that.loadNextProduct = function(tabId) {
+    orders[tabId].product_idx += 1;
+    var idx = orders[tabId].product_idx;
+    if (! orders[tabId].order.products[idx])
+      return false;
+    var url = orders[tabId].order.products[idx].url;
+    chrome.tabs.update(tabId, {url: url});
+    return true;
   };
 
   //
@@ -77,7 +90,7 @@ define(['jquery', 'uri'], function($, Uri) {
     var hash = { 
       'account': {'login': 'timmy001@yopmail.com', 'password': 'shopelia2013', new_account: false},
       'order': {
-        'products_urls': [],
+        'products': [],
         'credentials': {
           'holder': 'TIMMY DUPONT',
           'number': '401290129019201',

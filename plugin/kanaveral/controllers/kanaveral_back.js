@@ -32,6 +32,8 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
       response(states[tabId]);
     } else if (msg.action == "set") {
       states[tabId] = msg.state;
+    } else if (msg.action == 'next_product') {
+      states[tabId].currentStep = od.loadNextProduct(tabId) ? 'add_product' : 'finalize';
     }
   });
 
@@ -45,7 +47,7 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
   that.launch = function(tabId) {
     states[tabId] = {};
     od.getNewOrder(tabId).done(function(order) {
-      var urls = order.order.products_urls;
+      var urls = order.order.products;
       if (urls.length == 0)
         return console.error("No url in this order");
       that.launchOrder(tabId, order);
@@ -55,7 +57,7 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
   //
   that.launchOnUrl = function(tabId, url) {
     var order = od.getTestOrder(tabId);
-    order.order.products_urls = [url];
+    order.order.products = [{url: url}];
     af.getMerchantId(url).done(function(hash) {
       order.merchant_id = hash.id;
       that.launchOrder(tabId, order);
@@ -65,11 +67,12 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
   //
   that.launchOrder = function(tabId, order) {
     states[tabId] = {};
-    var uri = new Uri(order.order.products_urls[0]);
+    var uri = new Uri(order.order.products[0].url);
     states[tabId].host = uri.host().replace(/^www./, '');
     af.loadAutofill(tabId, order.merchant_id).always(function() {
       // Load merchant's BASE_URL
-      that.load_contentscript(tabId);
+      // that.load_contentscript(tabId);
+      chrome.tabs.update({url: uri.origin()});
     });
   };
 

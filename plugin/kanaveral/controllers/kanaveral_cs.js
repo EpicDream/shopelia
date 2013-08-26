@@ -39,8 +39,13 @@ function($, tb, af) {
   };
 
   function onStepChanged(event) {
-    that.state.currentStep = jStep.val()
-    chrome.extension.sendMessage({dest: 'kanaveral', action: 'set', state: that.state});
+    var val = jStep.val();
+    that.state.currentStep = val;
+    if (val == "add_product" || val == "finalize") {
+      chrome.extension.sendMessage({dest: 'kanaveral', action: 'next_product'});
+    } else {
+      chrome.extension.sendMessage({dest: 'kanaveral', action: 'set', state: that.state});
+    }
     // af.autofill();
   };
 
