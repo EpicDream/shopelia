@@ -5,31 +5,17 @@ define(['jquery'], function($) {
   "use strict";
 
   var TEST_ENV = navigator.appVersion.match(/chromium/i) !== null;
-  var LOCAL_ENV = true;
+  var LOCAL_ENV = false;
 
   if (LOCAL_ENV)
     var SHOPELIA_DOMAIN = "http://localhost:3000";
   else
     var SHOPELIA_DOMAIN = "https://www.shopelia.fr";
 
-  var MAPPING_URL = "https://www.shopelia.fr/api/viking/merchants/";
+  var MAPPING_URL = SHOPELIA_DOMAIN + "/api/viking/merchants/";
 
   var that = {autofills: {}},
-      autofills = that.autofills,
-      merchants = {
-        "rueducommerce.fr" : "1",
-        "amazon.fr" : "2",
-        "fnac.com" : "3",
-        "priceminister.com" : "4",
-        "cdiscount.com" : "5",
-        "darty.com" : "6",
-        "toysrus.fr" : "7",
-        "conforama.fr" : "8",
-        "eveiletjeux.com" : "9",
-        "sephora.fr" : "10",
-        "thebodyshop.fr" : "11",
-        "zalando.fr" : "12"
-      };
+      autofills = that.autofills;
 
   // On contentscript message.
   chrome.extension.onMessage.addListener(function(msg, sender, response) {
@@ -50,7 +36,9 @@ define(['jquery'], function($) {
 
   that.loadAutofill = function(tabId, merchant_id) {
     if (typeof merchant_id == 'string' && isNaN(parseInt(merchant_id)))
-      merchant_id = that.getMerchantId(merchant_id)
+      return that.getMerchantId(merchant_id).done(function(hash) {
+        that.loadAutofill(hash.id);
+      });
     if (! merchant_id)
       return console.log("Cannot retrieve merchant with id", merchant_id);
 
@@ -132,19 +120,14 @@ define(['jquery'], function($) {
     delete autofills[tabId];
   };
 
-  // Deprecated : Get merchant_id from uri.
-  // Will be replaced by an api call on Shopelia/viking.
-  that.getMerchantId = function(uri) {
-    if (! (uri instanceof Uri))
-      uri = new Uri(uri);
-    var host = uri.host();
-    while (host !== "") {
-      if (merchants[host])
-        return merchants[host];
-      else
-        host = host.replace(/^\w+(\.|$)/, '');
-    }
-    return undefined;
+  // Get merchant_id from url.
+  // Return an ajax object (see jqXHR on jQuery doc).
+  that.getMerchantId = function(url) {
+    return $.ajax({
+      type: "GET",
+      dataType: "json",
+      url: MAPPING_URL.slice(0,-1) + "?url=" + url
+    });
   };
 
   console.log("Autofill module loaded !");

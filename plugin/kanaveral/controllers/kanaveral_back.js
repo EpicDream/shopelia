@@ -63,8 +63,10 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
   that.launchOnUrl = function(tabId, url) {
     var order = od.getTestOrder(tabId);
     order.order.products_urls = [url];
-    order.merchant_id = af.getMerchantId(url);
-    that.launchOrder(tabId, order);
+    af.getMerchantId(url).done(function(hash) {
+      order.merchant_id = hash.id;
+      that.launchOrder(tabId, order);
+    });
   };
 
   //
