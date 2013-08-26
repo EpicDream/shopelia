@@ -25,7 +25,8 @@ class OrderTest < ActiveSupport::TestCase
       :address_id => @address.id,
       :expected_price_total => 100,
       :expected_price_product => 90,
-      :expected_price_shipping => 10)
+      :expected_price_shipping => 10,
+      :tracker => 'toto')
     assert order.persisted?, order.errors.full_messages.join(",")
     assert_equal :preparing, order.state
     assert order.merchant_account.present?
@@ -34,6 +35,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 90, order.expected_price_product
     assert_equal 10, order.expected_price_shipping
     assert_equal 100, order.expected_price_total
+    assert_equal "toto", order.tracker
     
     item = order.order_items.first
     assert_equal 1, item.quantity

@@ -8,7 +8,7 @@ class CartItem < ActiveRecord::Base
   validates :uuid, :presence => true, :uniqueness => true
   validates :product_version_id, :presence => true, :uniqueness => { :scope => :cart_id }
 
-  attr_accessible :cart_id, :product_version_id, :developer_id
+  attr_accessible :cart_id, :product_version_id, :developer_id, :tracker
   
   before_validation :initialize_uuid
   after_create :save_prices

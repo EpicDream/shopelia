@@ -1,9 +1,9 @@
 class CartItemsController < ApplicationController
-  layout 'zen'
   before_filter :retrieve_item
 
   def unsubscribe
     @item.unsubscribe
+    render layout: "zen"
   end
   
   private
