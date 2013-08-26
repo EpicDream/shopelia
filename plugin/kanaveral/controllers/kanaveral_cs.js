@@ -53,11 +53,11 @@ function($, tb, af) {
     res = prompt("Pour quelle raison annule-t-on ?");
     if (!res)
       return;
-    chrome.extension.sendMessage({abort: res});
+    chrome.extension.sendMessage({dest: 'kanaveral', action: "finish", value: res});
   };
 
   function onFinished() {
-    chrome.extension.sendMessage('finish');
+    chrome.extension.sendMessage({dest: 'kanaveral', action: 'finish'});
   };
 
   tb.ready(function() {

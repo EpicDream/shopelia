@@ -116,6 +116,7 @@ define(['jquery'], function($) {
 
   //
   that.clean = function(tabId) {
+    if (! autofills[tabId]) return;
     window.$lastAutofill = autofills[tabId];
     delete autofills[tabId];
   };

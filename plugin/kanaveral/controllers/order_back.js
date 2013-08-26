@@ -15,7 +15,7 @@ define(['jquery', 'uri'], function($, Uri) {
   else
     var SHOPELIA_DOMAIN = "https://www.shopelia.fr";
 
-  var ORDER_SHIFT_URL = SHOPELIA_DOMAIN + "/humanis/orders/shift";
+  var ORDER_URL = SHOPELIA_DOMAIN + "/humanis/orders/"
 
   // On contentscript message.
   chrome.extension.onMessage.addListener(function(msg, sender, response) {
@@ -26,9 +26,6 @@ define(['jquery', 'uri'], function($, Uri) {
     var tabId = sender.tab.id;
     if (msg.action == "get") {
       response(orders[tabId]);
-    } else if (msg.action == "finish") {
-      sendFinished(tabId, msg.reason);
-      getNewOrder(tabId);
     } else if (msg.action == 'set_value') {
       orders[tabId].billing[msg.for] = msg.with;      
       // add_event(tabId, {step: "extract", context: msg.context, key: msg.for});
@@ -36,13 +33,15 @@ define(['jquery', 'uri'], function($, Uri) {
   });
 
   // Get from Shopelia the next order to process.
-  that.getNewOrder = function(tabId) {
-    console.debug("Going to get order for tab", tabId);
-    // if (TEST_ENV)
-    //   return that.getTestOrder(tabId);
+  // If order_id is provided, get this one,
+  // shift the next else.
+  that.getNewOrder = function(tabId, order_id) {
+    if (! order_id)
+      order_id = "shift";
+    console.debug("Going to get order", order_id, "for tab", tabId);
     return $.ajax({
       type : "GET",
-      url: ORDER_SHIFT_URL,
+      url: ORDER_URL + order_id,
       dataType: "json"
     }).done(function(hash) {
       console.debug("Get order for tab", tabId, ":", hash);
@@ -82,6 +81,7 @@ define(['jquery', 'uri'], function($, Uri) {
   };
 
   that.clean = function(tabId) {
+    if (! orders[tabId]) return;
     window.$lastOrder = orders[tabId];
     delete orders[tabId];
   };

@@ -18,6 +18,9 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
     if (changeInfo.status == "complete" && states[tabId]) {
       that.load_contentscript(tabId);
+    } else if (changeInfo.status == "loading" && changeInfo.url == "https://www.shopelia.fr/admin/orders") {
+      console.log(">> load admin_cs");
+      chrome.tabs.executeScript(tabId, {file: "controllers/admin_cs.js"});
     }
   });
 
@@ -32,8 +35,13 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
       response(states[tabId]);
     } else if (msg.action == "set") {
       states[tabId] = msg.state;
+    } else if (msg.action == "launch") {
+      that.launch(tab.id, msg.order_id);
+      console.debug("order", msg.order_id, "launched !");
     } else if (msg.action == 'next_product') {
       states[tabId].currentStep = od.loadNextProduct(tabId) ? 'add_product' : 'finalize';
+    } else if (msg.action == "finish") {
+      that.finish(tabId, msg.value);
     }
   });
 
@@ -43,10 +51,16 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
     that.clean(tabId);
   });
 
-  //
-  that.launch = function(tabId) {
-    states[tabId] = {};
-    od.getNewOrder(tabId).done(function(order) {
+  // tabId and order_id are optional.
+  // If tabId is not provided, open a new tab.
+  // If order_id is not provided, shift a new order.
+  that.launch = function(tabId, order_id) {
+    if (tabId === undefined)
+      return chrome.tabs.create({}, function(tab) {
+        that.launch(tab.id, order_id);
+      });
+
+    od.getNewOrder(tabId, order_id).done(function(order) {
       var urls = order.order.products;
       if (urls.length == 0)
         return console.error("No url in this order");
@@ -86,7 +100,13 @@ define(['toolbar', 'copy', 'autofill', 'order'], function(tb, cp, af, od) {
     console.log("Kanaveral started !");
   };
 
+  that.finish = function(tabId, reason) {
+    od.sendFinished(tabId, reason);
+    that.clean(tabId);
+  };
+
   that.clean = function(tabId) {
+    if (! states[tabId]) return;
     window.$lastState = states[tabId];
     delete states[tabId];
     af.clean(tabId);
