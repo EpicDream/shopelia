@@ -22,7 +22,7 @@ class Admin::DashboardController < Admin::AdminController
     @stats[:orders] = Order.completed.count
     @stats[:users] = User.where(visitor:false).count
     @stats[:guests] = User.where(visitor:true).count
-    @stats[:items] = CartItem.where(monitor:true).count
+    @stats[:items] = CartItem.count
     @stats[:developers] = Developer.count
 
     @chart = Rails.env.development? ? 
@@ -40,7 +40,7 @@ class Admin::DashboardController < Admin::AdminController
         clicks:events[Event::CLICK],
         users:User.where(visitor:false).where("created_at >= ? and created_at < ?", date.at_beginning_of_month, date.at_end_of_month).count,
         guests:User.where(visitor:true).where("created_at >= ? and created_at < ?", date.at_beginning_of_month, date.at_end_of_month).count,
-        follows:CartItem.where(monitor:true).where("created_at >= ? and created_at < ?", date.at_beginning_of_month, date.at_end_of_month).count,
+        follows:CartItem.where("created_at >= ? and created_at < ?", date.at_beginning_of_month, date.at_end_of_month).count,
         orders:Order.completed.where("created_at >= ? and created_at < ?", date.at_beginning_of_month, date.at_end_of_month).count
       }
     end
