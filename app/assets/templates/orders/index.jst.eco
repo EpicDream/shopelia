@@ -49,7 +49,13 @@
             </tr>
             <tr>
                 <td>Frais de livraison : </td>
-                <td><%= @product('expected_price_shipping') %>€</td>
+                <td>
+                    <% if parseFloat(@product('expected_price_shipping')) == 0 : %>
+                     Livraison gratuite
+                    <% else: %>
+                      <%= @product('expected_price_shipping') %> €
+                    <% end %>
+                 </td>
             </tr>
             <tr>
                 <td>Total</td>

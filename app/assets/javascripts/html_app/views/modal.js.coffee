@@ -7,11 +7,15 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     top: "#modal-top",
   }
 
+  ui:{
+    close:"#close"
+  }
+
   id: 'modal'
   className: 'span8'
 
   events:
-    'click #close': 'close'
+    'click #close': 'onBeforeClose'
 
   initialize: ->
     _.bindAll(this)
@@ -41,7 +45,29 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
       e.stopPropagation()
 
     $(document).click ->
+        that.onBeforeClose()
+
+  showCloseButton: ->
+    @ui.close.fadeIn("fast")
+
+  hideCloseButton: ->
+    @ui.close.fadeOut("fast")
+
+  onBeforeClose: ->
+    if window.Shopelia.AbbaCartPosition == 'popup'
+      that = this
+      Shopelia.vent.trigger("description#close")
+      Shopelia.vent.trigger("products#close")
+      Shopelia.vent.trigger("header#hide_all")
+      Shopelia.vent.trigger("modal#show_add_to_cart")
+      $(document).unbind('click')
+      @ui.close.unbind('click')
+      @ui.close.click ->
         that.close()
+      $(document).click ->
+        that.close()
+    else
+      this.close();
 
   close: ->
     #console.log("close please")
@@ -50,7 +76,6 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
                    complete: () ->
                     top.postMessage("deleteIframe",window.shopeliaParentHost)
                    })
-
 
   center: (animate) ->
     top = undefined

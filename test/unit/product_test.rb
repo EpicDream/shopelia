@@ -312,4 +312,35 @@ class ProductTest < ActiveSupport::TestCase
      assert !product.viking_failure
   end
 
+  test "it should use default shipping price if shipping price is blank" do
+    product = products(:nounours)
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR"
+      }]);
+
+     assert !product.viking_failure
+     assert_equal 7.20, product.product_versions.first.price_shipping
+  end  
+
+  test "it should fail viking if shipping price is blank and no default shipping price is set for merchant" do
+    product = products(:headphones)
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR"
+      }]);
+
+     assert product.viking_failure
+  end  
+
 end

@@ -25,7 +25,7 @@ class Order < ActiveRecord::Base
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :mangopay_contribution_id, :mangopay_contribution_amount, :mangopay_contribution_status
   attr_accessible :mangopay_contribution_message, :mangopay_amazon_voucher_id, :mangopay_amazon_voucher_code
-  attr_accessible :billing_solution, :injection_solution, :cvd_solution
+  attr_accessible :billing_solution, :injection_solution, :cvd_solution, :tracker
   attr_accessor :products, :confirmation
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }

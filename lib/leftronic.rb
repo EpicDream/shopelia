@@ -22,6 +22,10 @@ class Leftronic
     push_number("shopelia_orders_count", Order.completed.count)
   end
   
+  def notify_vulcain_test_semaphore merchant
+    push_number("vulcain_#{merchant.vendor}_status", merchant.vulcain_test_pass? ? 0 : 100)
+  end
+
   def notify_users_count
     push_number("shopelia_users_count", User.count)
   end
