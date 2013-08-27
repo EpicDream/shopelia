@@ -91,9 +91,14 @@ function mergeMappings(host, currentMap, previous) {
       }
     } else
       var goodHost = possibleHosts[0];
+
+    // On initialize la structure si elle n'existant pas.
     if (! previous[goodHost])
       previous[goodHost] = {};
     var mapping = previous[goodHost];
+    if (! mapping[key]) mapping[key] = {path: [], context: []};
+    if (! mapping[key].path) mapping[key].path = [];
+    if (! mapping[key].context) mapping[key].context = [];
 
     var newPath = currentMap[key].path;
     var oldPath = mapping[key].path;
@@ -142,35 +147,18 @@ function mergeMappings(host, currentMap, previous) {
         break;
       } else {
         console.log("concat ? before ? after ?", previousMatch, newMatch);
-        if (confirm(newMatch.length+" éléments capturés avec le nouveau path, "+previousMatch.length+" avec l'ancien : concaténer les paths ?")) {
+        if (confirm("Pour la clé "+key+": "+newMatch.length+" éléments capturés avec le nouveau path, "+previousMatch.length+" avec l'ancien n°"+i+" ("+oldPath[i]+"): concaténer les paths ?")) {
           oldPath[i] += ", "+newPath;
           mapping[key].context.splice(i,0,currentMap[key].context);
           break;
         }
-        // previousMatch.length < newMatch.length
-          // concaténer ?
-          // remplacer ?
-        // OU previousMatch != newMatch
-          // concaténer ?
-          // remplacer ?
-          // placer avant ?
-          // placer après ?
       }
     }
+    // Par défaut on rajoute à la suite
     if (i == l) {
       oldPath.push(newPath);
       mapping[key].context.push(currentMap[key].context);
     }
-
-    // // if some elements where already found, unshift new rafinement.
-    // if (tasks[tabId].searchResult[key]) {
-    //   mapping[key].path.splice(0,0,currentMap[key].path);
-    //   mapping[key].context.splice(0,0,currentMap[key].context);
-    // // else, if nothing matched, push it behind.
-    // } else {
-    //   mapping[key].path.push(currentMap[key].path);
-    //   mapping[key].context.push(currentMap[key].context);
-    // }
   }
 
   return previous;
