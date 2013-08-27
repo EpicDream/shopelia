@@ -1,0 +1,29 @@
+%section.header
+  %header
+    %h1 Merchants
+    %h2 Making business
+
+.container-fluid
+  .row-fluid
+    .span2
+      %article.coolbox
+        %h3 Actions
+        %a.btn.btn-large.btn-success{type:"button",href:"#{new_admin_merchant_path}"}
+          %i.icon-plus.icon-white
+          add a merchant
+    .span10
+      %article.coolbox
+        %h3 Merchants list
+        %table.table.table-striped#merchants{data:{source:"#{admin_merchants_url(format: 'json')}"}}
+          %thead
+            %tr
+              %th ID
+              %th Name
+              %th Logo
+              %th Views
+              %th Clicks
+              %th Orders
+              %th Turnover
+              %th Vendor
+              %th Vulcain
+          %tbody
