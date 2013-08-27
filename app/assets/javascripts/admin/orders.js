@@ -20,8 +20,8 @@ $(document).ready(function() {
         var url = $(this).attr('data-url');
         var state = $(this).attr('data-state');
         $('#confirmModelState').html(state);
-        $('#confirmDestruction').off();
-        $('#confirmDestruction').on("click", function(event){
+        $('#confirmModalAction').off();
+        $('#confirmModalAction').on("click", function(event){
           $.ajax({
             url: url,
             dataType: "json",
@@ -32,7 +32,7 @@ $(document).ready(function() {
               $('#confirmModal').modal('hide');
             },
             success: function(data) {
-              pendingTable.fnReloadAjax();
+              ordersTable.fnReloadAjax();
               $('#confirmModal').modal('hide');
             }
           });
