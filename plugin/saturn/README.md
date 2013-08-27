@@ -21,7 +21,11 @@ He can extract for example :
 Installation
 ------------
 
-#### Manually, for tests
+#### From packaged extension
+
+Download the saturn.crx file, and drop it in the Google-Chrome window.
+
+#### From sources
 
 In Chromium extensions' tab :
 
