@@ -59,16 +59,16 @@ class Api::V1::EventsController < Api::V1::BaseController
         @device = Device.fetch(cookies[:visitor], ua)
       else
         @device = Device.create(user_agent:ua)
-        cookies[:visitor] = { :value => @device.uuid, :expires => 10.years.from_now }
+        cookies[:visitor] = { :value => @device.uuid, :expires => 10.years.from_now, :domain => :all }
       end
     end
   end
   
   def set_developer_cookie
-    cookies[:developer_key] = { :value => @developer.api_key, :expires => 10.years.from_now }
+    cookies[:developer_key] = { :value => @developer.api_key, :expires => 10.years.from_now, :domain => :all }
   end
 
   def set_tracker_cookie
-    cookies[:tracker] = { :value => @tracker, :expires => 10.years.from_now }
+    cookies[:tracker] = { :value => @tracker, :expires => 10.years.from_now, :domain => :all }
   end  
 end
