@@ -50,22 +50,54 @@ function search(mapping) {
   return res;
 };
 
+// Return compatible hosts in hash.
+// Result contains at least one host, the host given in argument.
+function compatibleHosts(host, hash) {
+  var result = [host];
+  host = host.replace(/^\w+(\.|$)/, '');
+  while (host !== "") {
+    if (hash[host])
+      result.push(host);
+    host = host.replace(/^\w+(\.|$)/, '');
+  }
+  return result;
+};
+
 // Merge new mapping in the previous one.
 // Try to know if a mapping must be added before (it is more specific)
 // or after (it is less specific) existing ones.
-function mergeMappings(currentMap, mapping) {
+function mergeMappings(host, currentMap, previous) {
   // GOING TO MERGE NEW MAPPING WITH OLD ONES
   // create new host rule if it did not exist.
-  console.log('Going to merge', currentMap, 'in', mapping);
+  console.log('Going to merge', currentMap, 'in', previous);
+  var keys = jQuery.extend({}, currentMap);
+  for (var mapHost in previous)
+    jQuery.extend(keys, previous[mapHost])
 
-  for (var key in jQuery.extend({}, mapping, currentMap)) {
+  //
+  var possibleHosts = compatibleHosts(host, previous, key);
+
+  for (var key in keys) {
     // if no new map, continue
     if (! currentMap[key])
       continue;
 
+    // On choisit le bon host, général ou spécific.
+    if (possibleHosts.length > 1) {
+      var goodHost = prompt("Pour quel host ce chemin est-il valide ?\n"+possibleHosts.join("\n"));
+      if (! goodHost) {
+        console.warn("key '"+key+"' with new path '"+newPath+"' skiped.");
+        continue;
+      }
+    } else
+      var goodHost = possibleHosts[0];
+    if (! previous[goodHost])
+      previous[goodHost] = {};
+    var mapping = previous[goodHost];
+
     var newPath = currentMap[key].path;
     var oldPath = mapping[key].path;
-    console.log('Merge key', key, newPath, oldPath);
+    console.log('Merge for key "'+key+'", "'+newPath+'" in "'+oldPath+'"');
 
     // if it did not exist, just create it and continue.
     if (! oldPath) {
@@ -141,7 +173,7 @@ function mergeMappings(currentMap, mapping) {
     // }
   }
 
-  return mapping;
+  return previous;
 };
 
 /* ********************************************************** */
@@ -162,7 +194,7 @@ chrome.extension.onMessage.addListener(function(msg, sender, response) {
     mapping = msg.mapping;
     started = true;
   } else if (msg.act == 'merge') {
-    var res = mergeMappings(msg.current, msg.previous);
+    var res = mergeMappings(msg.host, msg.current, msg.previous);
     response(res);
   }
 });
