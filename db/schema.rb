@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130826073157) do
+ActiveRecord::Schema.define(:version => 20130827084142) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -144,17 +144,19 @@ ActiveRecord::Schema.define(:version => 20130826073157) do
     t.string   "logo"
     t.string   "url"
     t.string   "tc_url"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.string   "vendor"
-    t.boolean  "accepting_orders",   :default => true
+    t.boolean  "accepting_orders",    :default => true
     t.string   "billing_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
     t.string   "domain"
-    t.boolean  "should_clean_args",  :default => false
+    t.boolean  "should_clean_args",   :default => false
     t.text     "viking_data"
-    t.boolean  "allow_iframe",       :default => true
+    t.boolean  "allow_iframe",        :default => true
+    t.boolean  "vulcain_test_pass"
+    t.string   "vulcain_test_output"
   end
 
   create_table "order_items", :force => true do |t|

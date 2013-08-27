@@ -98,6 +98,9 @@ Shopelia::Application.routes.draw do
       end
       resources :merchants, :only => [:show, :update, :create, :index]
     end
+    namespace :vulcain do
+      resources :merchants, :only => :update
+    end
   end
 
   match '*not_found', to: 'errors#error_404'

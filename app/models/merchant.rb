@@ -15,6 +15,7 @@ class Merchant < ActiveRecord::Base
   
   before_validation :populate_name
   before_destroy :check_presence_of_orders
+  after_update :notify_leftronic_vulcain_test_semaphore
   
   def self.from_url url, create=true
     domain = Utils.extract_domain(Linker.clean(url))
@@ -35,5 +36,11 @@ class Merchant < ActiveRecord::Base
   
   def check_presence_of_orders
     self.orders.count == 0
+  end
+
+  def notify_leftronic_vulcain_test_semaphore
+    if self.vulcain_test_pass_changed?
+      Leftronic.new.notify_vulcain_test_semaphore(self)
+    end
   end
 end
