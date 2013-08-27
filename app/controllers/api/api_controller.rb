@@ -4,6 +4,7 @@ class Api::ApiController < ActionController::Base
   before_filter :authenticate_user!
   after_filter :remove_session_cookie
   before_filter :set_navigator_properties
+  before_filter :retrieve_tracker
 
   rescue_from ActiveRecord::RecordNotFound do |e|
     render :json => {:error => "Object not found"}, :status => :not_found
@@ -26,6 +27,10 @@ class Api::ApiController < ActionController::Base
   
   def set_navigator_properties
     ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
+  end
+
+  def retrieve_tracker
+    @tracker = cookies[:tracker]
   end
 
 end

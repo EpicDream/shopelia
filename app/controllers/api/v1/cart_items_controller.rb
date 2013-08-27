@@ -12,7 +12,11 @@ class Api::V1::CartItemsController < Api::V1::BaseController
     if @item
       @item.monitor = true
     else
-      @item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
+      @item = CartItem.new(
+        cart_id:@cart.id, 
+        product_version_id:@product_version.id, 
+        developer_id:@developer.id, 
+        tracker:@tracker)
     end
     
     if @item.save
@@ -34,8 +38,10 @@ class Api::V1::CartItemsController < Api::V1::BaseController
     if @user.nil?
       @user = User.create(
         :email => @email,
+        :ip_address => request.remote_ip,
         :visitor => true,
-        :developer_id => @developer.id)
+        :developer_id => @developer.id,
+        :tracker => @tracker)
     end
   end
   

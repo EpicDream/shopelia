@@ -24,6 +24,7 @@ class Api::V1::RegistrationsController < Api::V1::BaseController
   def prepare_user_hash
     @user_hash = params[:user].merge({
       :developer_id => @developer.id,
+      :tracker => @tracker,
       :ip_address => request.remote_ip,
       :visitor => false
     })
