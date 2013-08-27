@@ -10,11 +10,12 @@ class CartItemTest < ActiveSupport::TestCase
   
   test "it should create cart item" do
     updated_at = @cart.updated_at
-    item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
+    item = CartItem.new(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id, tracker:'toto')
 
     assert item.save, item.errors.full_messages.join(",")
     assert_equal @product_version.price, item.price
     assert_equal @product_version.price_shipping, item.price_shipping
+    assert_equal "toto", item.tracker
     assert @cart.reload.updated_at > updated_at
 
     assert_equal 2, ActionMailer::Base.deliveries.count

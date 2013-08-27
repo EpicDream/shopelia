@@ -47,5 +47,10 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     end
   end  
 
+  test "it should set cookie with tracker" do
+    post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/1"], tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key, format: :json
+    assert_equal "toto", cookies[:tracker]
+  end
+
 end
 

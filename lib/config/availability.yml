@@ -13,5 +13,5 @@ en stock: true
 ^\(\d+\)$: true
 expedie sous: true
 voir les offres de ces vendeurs: true
-article en pre\-commande: true
+en pre\-?commande: true
 cet article paraitra le: true

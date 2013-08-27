@@ -5,6 +5,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   before_filter :prepare_params
   before_filter :set_visitor_cookie
   before_filter :set_developer_cookie
+  before_filter :set_tracker_cookie
 
   api :GET, "/api/events", "Create events"
   param :urls, String, "Urls of the products separated by ||", :required => true
@@ -66,5 +67,8 @@ class Api::V1::EventsController < Api::V1::BaseController
   def set_developer_cookie
     cookies[:developer_key] = { :value => @developer.api_key, :expires => 10.years.from_now }
   end
-  
+
+  def set_tracker_cookie
+    cookies[:tracker] = { :value => @tracker, :expires => 10.years.from_now }
+  end  
 end
