@@ -24,7 +24,7 @@ class MerchantsDatatable
       [
         merchant.id,
         link_to(merchant.name, merchant.url),
-        image_tag(merchant.logo, class:"merchant-logo"),
+        image_tag(merchant.logo.blank? ? "empty.png" : merchant.logo, class:"merchant-logo"),
         views,
         raw("#{number_with_delimiter(clicks)} <div class='rate'>#{conversion_rate(clicks, views)}</div>"),
         raw("#{number_with_delimiter(orders)} <div class='rate'>#{conversion_rate(orders, clicks)}</div>"),
