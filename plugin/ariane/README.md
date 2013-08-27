@@ -6,6 +6,11 @@ Ariane is a Chromium plugin used to indicate where to find information on a prod
 Indeed, Viking/Saturn need a mapping to extract information.
 For the moment this mapping have to be precise by a humain operator, via Ariane.
 
+Installation
+------------
+
+Download the ariane.crx extension file, and drop it in the Google-Chrome window.
+
 Usage
 -----
 
