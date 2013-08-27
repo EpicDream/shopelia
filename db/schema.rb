@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130827114255) do
+ActiveRecord::Schema.define(:version => 20130827150231) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -110,7 +110,6 @@ ActiveRecord::Schema.define(:version => 20130827114255) do
     t.string   "ip_address"
     t.integer  "developer_id"
     t.integer  "product_id"
-    t.integer  "user_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
     t.boolean  "monetizable"
@@ -174,9 +173,9 @@ ActiveRecord::Schema.define(:version => 20130827114255) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.text     "message",                       :limit => 255
+    t.datetime "created_at",                                   :null => false
+    t.datetime "updated_at",                                   :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "address_id"
@@ -233,10 +232,10 @@ ActiveRecord::Schema.define(:version => 20130827114255) do
     t.float    "price_strikeout"
     t.string   "shipping_info"
     t.text     "description"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
-    t.text     "color"
-    t.text     "size"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+    t.text     "color",           :limit => 255
+    t.text     "size",            :limit => 255
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
@@ -248,10 +247,10 @@ ActiveRecord::Schema.define(:version => 20130827114255) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url"
-    t.text     "image_url"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.text     "url",                 :limit => 255
+    t.text     "image_url",           :limit => 255
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
