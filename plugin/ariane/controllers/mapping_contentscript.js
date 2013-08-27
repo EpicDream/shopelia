@@ -9,9 +9,13 @@ function onBodyClick(event) {
     return;
 
   event.preventDefault();
+  // On enlève le ari-surround
+  $(event.target).removeClass("ari-surround")
   var path = pu.getMinimized(event.target);
   var fieldId = getCurrentFieldId();
   setMapping(fieldId, path);
+  // On remet le ari-surround
+  $(event.target).addClass("ari-surround")
 };
 
 /* ********************************************************** */
@@ -46,22 +50,59 @@ function search(mapping) {
   return res;
 };
 
+// Return compatible hosts in hash.
+// Result contains at least one host, the host given in argument.
+function compatibleHosts(host, hash) {
+  var result = [host];
+  host = host.replace(/^\w+(\.|$)/, '');
+  while (host !== "") {
+    if (hash[host])
+      result.push(host);
+    host = host.replace(/^\w+(\.|$)/, '');
+  }
+  return result;
+};
+
 // Merge new mapping in the previous one.
 // Try to know if a mapping must be added before (it is more specific)
 // or after (it is less specific) existing ones.
-function mergeMappings(currentMap, mapping) {
+function mergeMappings(host, currentMap, previous) {
   // GOING TO MERGE NEW MAPPING WITH OLD ONES
   // create new host rule if it did not exist.
-  console.log('Going to merge', currentMap, 'in', mapping);
+  console.log('Going to merge', currentMap, 'in', previous);
+  var keys = jQuery.extend({}, currentMap);
+  for (var mapHost in previous)
+    jQuery.extend(keys, previous[mapHost])
 
-  for (var key in jQuery.extend({}, mapping, currentMap)) {
+  //
+  var possibleHosts = compatibleHosts(host, previous, key);
+
+  for (var key in keys) {
     // if no new map, continue
     if (! currentMap[key])
       continue;
 
+    // On choisit le bon host, général ou spécific.
+    if (possibleHosts.length > 1) {
+      var goodHost = prompt("Pour quel host ce chemin est-il valide ?\n"+possibleHosts.join("\n"));
+      if (! goodHost) {
+        console.warn("key '"+key+"' with new path '"+newPath+"' skiped.");
+        continue;
+      }
+    } else
+      var goodHost = possibleHosts[0];
+
+    // On initialize la structure si elle n'existant pas.
+    if (! previous[goodHost])
+      previous[goodHost] = {};
+    var mapping = previous[goodHost];
+    if (! mapping[key]) mapping[key] = {path: [], context: []};
+    if (! mapping[key].path) mapping[key].path = [];
+    if (! mapping[key].context) mapping[key].context = [];
+
     var newPath = currentMap[key].path;
     var oldPath = mapping[key].path;
-    console.log('Merge key', key, newPath, oldPath);
+    console.log('Merge for key "'+key+'", "'+newPath+'" in "'+oldPath+'"');
 
     // if it did not exist, just create it and continue.
     if (! oldPath) {
@@ -106,38 +147,21 @@ function mergeMappings(currentMap, mapping) {
         break;
       } else {
         console.log("concat ? before ? after ?", previousMatch, newMatch);
-        if (confirm(newMatch.length+" éléments capturés avec le nouveau path, "+previousMatch.length+" avec l'ancien : concaténer les paths ?")) {
+        if (confirm("Pour la clé "+key+": "+newMatch.length+" éléments capturés avec le nouveau path, "+previousMatch.length+" avec l'ancien n°"+i+" ("+oldPath[i]+"): concaténer les paths ?")) {
           oldPath[i] += ", "+newPath;
           mapping[key].context.splice(i,0,currentMap[key].context);
           break;
         }
-        // previousMatch.length < newMatch.length
-          // concaténer ?
-          // remplacer ?
-        // OU previousMatch != newMatch
-          // concaténer ?
-          // remplacer ?
-          // placer avant ?
-          // placer après ?
       }
     }
+    // Par défaut on rajoute à la suite
     if (i == l) {
       oldPath.push(newPath);
       mapping[key].context.push(currentMap[key].context);
     }
-
-    // // if some elements where already found, unshift new rafinement.
-    // if (tasks[tabId].searchResult[key]) {
-    //   mapping[key].path.splice(0,0,currentMap[key].path);
-    //   mapping[key].context.splice(0,0,currentMap[key].context);
-    // // else, if nothing matched, push it behind.
-    // } else {
-    //   mapping[key].path.push(currentMap[key].path);
-    //   mapping[key].context.push(currentMap[key].context);
-    // }
   }
 
-  return mapping;
+  return previous;
 };
 
 /* ********************************************************** */
@@ -158,7 +182,7 @@ chrome.extension.onMessage.addListener(function(msg, sender, response) {
     mapping = msg.mapping;
     started = true;
   } else if (msg.act == 'merge') {
-    var res = mergeMappings(msg.current, msg.previous);
+    var res = mergeMappings(msg.host, msg.current, msg.previous);
     response(res);
   }
 });
