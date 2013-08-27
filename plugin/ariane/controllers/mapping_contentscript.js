@@ -9,9 +9,13 @@ function onBodyClick(event) {
     return;
 
   event.preventDefault();
+  // On enlève le ari-surround
+  $(event.target).removeClass("ari-surround")
   var path = pu.getMinimized(event.target);
   var fieldId = getCurrentFieldId();
   setMapping(fieldId, path);
+  // On remet le ari-surround
+  $(event.target).addClass("ari-surround")
 };
 
 /* ********************************************************** */
