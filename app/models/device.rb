@@ -2,6 +2,7 @@ class Device < ActiveRecord::Base
   attr_accessible :user_agent, :uuid, :email
 
   belongs_to :user
+  has_many :devices
   
   validates :uuid, :presence => true, :uniqueness => true
   validates :user_agent, :presence => true

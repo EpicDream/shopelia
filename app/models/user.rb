@@ -14,7 +14,8 @@ class User < ActiveRecord::Base
   has_many :carts, :dependent => :destroy
   has_many :cart_items, :through => :carts
   has_many :devices
-  
+  has_many :events
+
   belongs_to :nationality, :class_name => "Country"
   belongs_to :developer
 
