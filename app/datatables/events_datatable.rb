@@ -27,12 +27,20 @@ class EventsDatatable
   def data
     events.map do |event|
       developer = Developer.find(event.developer_id)
-      clicks = Event.where("created_at>=? and created_at<=?", @options[:date_start], @options[:date_end]).where(developer_id:developer.id,tracker:event.tracker).clicks.count
+      clicks = Event.where("created_at>=? and created_at<=?", @options[:date_start], @options[:date_end]).where(developer_id:developer.id,tracker:event.tracker).clicks.count.to_i
+      orders = Order.completed.where("created_at>=? and created_at<=?", @options[:date_start], @options[:date_end]).where(developer_id:developer.id,tracker:event.tracker).count.to_i
+      follows = CartItem.where("created_at>=? and created_at<=?", @options[:date_start], @options[:date_end]).where(developer_id:developer.id,tracker:event.tracker).count.to_i
+      users = User.where("created_at>=? and created_at<=?", @options[:date_start], @options[:date_end]).where(developer_id:developer.id,tracker:event.tracker,visitor:false).count.to_i
+      guests = User.where("created_at>=? and created_at<=?", @options[:date_start], @options[:date_end]).where(developer_id:developer.id,tracker:event.tracker,visitor:true).count.to_i
       [
         developer.name,
         event.tracker,
         number_with_delimiter(event.count),
-        raw("#{number_with_delimiter(clicks)} <div class='rate'>#{conversion_rate(clicks.to_i, event.count.to_i)}</div>")
+        raw("#{number_with_delimiter(clicks)} <div class='rate'>#{conversion_rate(clicks, event.count.to_i)}</div>"),
+        raw("#{number_with_delimiter(users)} <div class='rate'>#{conversion_rate(users, clicks)}</div>"),
+        raw("#{number_with_delimiter(guests)} <div class='rate'>#{conversion_rate(guests, clicks)}</div>"),
+        raw("#{number_with_delimiter(follows)} <div class='rate'>#{conversion_rate(follows, clicks)}</div>"),
+        raw("#{number_with_delimiter(orders)} <div class='rate'>#{conversion_rate(orders, clicks)}</div>"),
       ]
     end
   end
