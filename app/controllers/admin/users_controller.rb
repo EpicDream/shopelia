@@ -21,6 +21,27 @@ class Admin::UsersController < Admin::AdminController
 
   def show
     @user = User.find(params[:id])
+    orders = @user.orders.count
+    views = @user.events.views.count
+    clicks = @user.events.clicks.count
+    @stats = [
+      { name:"orders", value:orders, type: :number },
+      { name:"follows", value:@user.cart_items.where(monitor:true).count, type: :number },
+      { name:"views", value:views, type: :number },
+      { name:"clicks", value:clicks, type: :number }
+    ]
+    if orders > 0 && clicks > 0
+      @stats << { 
+        name:"time before first order", 
+        value: @user.orders.order(:created_at).first.created_at - @user.events.order(:created_at).first.created_at,
+        type: :time 
+      }
+    end
+
+    respond_to do |format|
+      format.html
+      format.json { render json: Users::EventsDatatable.new(view_context, @user) }
+    end
   end
   
   def destroy
