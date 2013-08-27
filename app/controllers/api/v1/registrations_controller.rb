@@ -13,6 +13,7 @@ class Api::V1::RegistrationsController < Api::V1::BaseController
     end
     
     if @user.persisted?
+      @device.update_attribute :user_id, @user.id unless @device.nil?
       render json: UserSerializer.new(@user).as_json.merge({:auth_token => @user.authentication_token}), status: :created
     else
       render json: @user.errors, status: :unprocessable_entity

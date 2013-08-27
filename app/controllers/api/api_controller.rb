@@ -5,6 +5,7 @@ class Api::ApiController < ActionController::Base
   after_filter :remove_session_cookie
   before_filter :set_navigator_properties
   before_filter :retrieve_tracker
+  before_filter :retrieve_device
 
   rescue_from ActiveRecord::RecordNotFound do |e|
     render :json => {:error => "Object not found"}, :status => :not_found
@@ -31,6 +32,11 @@ class Api::ApiController < ActionController::Base
 
   def retrieve_tracker
     @tracker = cookies[:tracker]
+  end
+
+  def retrieve_device
+    visitor = cookies[:visitor] || params[:visitor]
+    @device = Device.find_by_uuid(visitor) unless visitor.blank?
   end
 
 end

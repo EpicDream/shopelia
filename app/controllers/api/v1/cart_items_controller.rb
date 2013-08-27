@@ -43,6 +43,7 @@ class Api::V1::CartItemsController < Api::V1::BaseController
         :developer_id => @developer.id,
         :tracker => @tracker)
     end
+    @device.update_attribute :user_id, @user.id unless @device.nil?
   end
   
   def retrieve_cart

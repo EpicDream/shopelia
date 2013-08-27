@@ -47,5 +47,16 @@ class Api::V1::RegistrationsControllerTest < ActionController::TestCase
     assert_response 422
   end
 
+  test "it should set device with user after registration" do
+    device = devices(:web)
+    @request.cookies['visitor'] = device.uuid
+    post :create, user: { 
+      email: "user@gmail.com", 
+      visitor: true,
+    }, format: :json
+
+    assert_not_nil device.reload.user_id
+  end
+
 end
 
