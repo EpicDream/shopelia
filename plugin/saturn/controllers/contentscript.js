@@ -1,64 +1,77 @@
 DELAY_BETWEEN_COLORS_OR_SIZES = 1500;
 OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i
 
-function getOptions(path) {
-  var elems = $(path);
-  var options = [];
-  if (elems.length == 0) {
-    return [];
-  // SELECT, le cas facile
-  } else if (elems[0].tagName == "SELECT") {
-    elems = elems.eq(0).find("option:enabled");
-  // UL, le cas pas trop compliqué
-  } else if (elems[0].tagName == "UL") {
-    // cherche d'abord les li
-    var lis = elems.eq(0).find("li:visible");
-    if (lis.length > 0) {
-      var imgs = lis.find("img:visible");
-      // ensuite on cherche si chaque li contient des images
-      if (imgs.length == lis.length)
+function getOptions(pathes) {
+  if (! pathes) return [];
+  if (! (pathes instanceof Array))
+    pathes = [pathes];
+  for (var i in pathes) {
+    var path = pathes[i];
+    var elems = $(path);
+    var options = [];
+    if (elems.length == 0) {
+      continue;
+    // SELECT, le cas facile
+    } else if (elems[0].tagName == "SELECT") {
+      elems = elems.eq(0).find("option:enabled");
+    // UL, le cas pas trop compliqué
+    } else if (elems[0].tagName == "UL") {
+      // cherche d'abord les li
+      var lis = elems.eq(0).find("li:visible");
+      if (lis.length > 0) {
+        var imgs = lis.find("img:visible");
+        // ensuite on cherche si chaque li contient des images
+        if (imgs.length == lis.length)
+          elems = imgs;
+        else
+          elems = lis;
+      }
+    // If a single element is found, search images inside.
+    } else if (elems.length == 1) {
+      var imgs = elems.find("img:visible");
+      if (imgs.length > 0)
         elems = imgs;
-      else
-        elems = lis;
     }
-  // If a single element is found, search images inside.
-  } else if (elems.length == 1) {
-    var imgs = elems.find("img:visible");
-    if (imgs.length > 0)
-      elems = imgs;
+    return _.chain(elems).map(function(elem) {return hu.getElementAttrs(elem)}).
+      filter(function(elem) {return elem.text.match(OPTION_FILTER) == null;}).value(); // .uniq()
   }
-  return _.chain(elems).map(function(elem) {return hu.getElementAttrs(elem)}).
-    filter(function(elem) {return elem.text.match(OPTION_FILTER) == null;}).value(); // .uniq()
+  return [];
 };
 
-function chooseOption(path, option) {
-  var elems = $(path);
-  if (elems.length == 0) {
-    console.error("No element found for path", path);
-    return false;
-  }
-  var elem = undefined;
-  if (elems[0].tagName == "SELECT")
-    elem = $xf(".//*[text()='"+option.text+"']", elems[0]);
+function chooseOption(pathes, option) {
+  if (! pathes) return [];
+  if (! (pathes instanceof Array))
+    pathes = [pathes];
+  for (var i in pathes) {
+    var path = pathes[i];
+    var elems = $(path);
+    if (elems.length == 0)
+      continue;
+    var elem = undefined;
+    if (elems[0].tagName == "SELECT")
+      elem = $xf(".//*[text()='"+option.text+"']", elems[0]);
 
-  if (! elem && option.id)
-    elem = elems.filter("#"+option.id)[0];
-  if (! elem && option.text)
-    elem = $xf(".//*[text()='"+option.text+"']", elems.commonAncestor()[0])
-  if (! elem && option.src)
-    elem = elems.filter("[src='"+option.src+"']")[0];
-  if (! elem && option.href)
-    elem = elems.filter("[href='"+option.href+"']")[0];
-  if (! elem) {
-    console.error("No option found in", elems, "for option", elem);
-    return false;
+    if (! elem && option.id)
+      elem = elems.filter("#"+option.id)[0];
+    if (! elem && option.text)
+      elem = $xf(".//*[text()='"+option.text+"']", elems.commonAncestor()[0])
+    if (! elem && option.src)
+      elem = elems.filter("[src='"+option.src+"']")[0];
+    if (! elem && option.href)
+      elem = elems.filter("[href='"+option.href+"']")[0];
+    if (! elem) {
+      console.warning("No option found in", elems, "for option", elem);
+      continue;
+    }
+    if (elem.tagName == "OPTION") {
+      elem.selected = true;
+      elem.parentNode.dispatchEvent(new CustomEvent("change", {"canBubble":false, "cancelable":true}));
+    } else
+      elem.click();
+    return true;
   }
-  if (elem.tagName == "OPTION") {
-    elem.selected = true;
-    elem.parentNode.dispatchEvent(new CustomEvent("change", {"canBubble":false, "cancelable":true}));
-  } else
-    elem.click();
-  return true;
+  console.error("No element found for pathes", pathes);
+  return false;
 };
 
 function crawl(mapping) {
