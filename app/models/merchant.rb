@@ -2,6 +2,7 @@ class Merchant < ActiveRecord::Base
   audited
 
   has_many :products, :dependent => :destroy
+  has_many :events, :through => :products
   has_many :orders
 
   validates :name, :presence => true, :uniqueness => true

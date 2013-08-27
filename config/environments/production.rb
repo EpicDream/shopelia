@@ -24,8 +24,10 @@ Shopelia::Application.configure do
   config.assets.digest = true
 
   config.assets.precompile += %w( addresses.css application.css home.css errors.css orders.css variables.css )
-  config.assets.precompile += %w( admin/users.css admin/orders.css  admin/developers.css admin/incidents.css admin/viking.css admin/dashboard.css admin/events.css)
-  config.assets.precompile += %w( admin/users.js  admin/orders.js   admin/developers.js  admin/incidents.js  admin/viking.js  admin/dashboard.js  admin/events.js )
+  config.assets.precompile += %w( admin/users.css admin/orders.css  admin/developers.css admin/incidents.css )
+  config.assets.precompile += %w( admin/users.js  admin/orders.js   admin/developers.js  admin/incidents.js )
+  config.assets.precompile += %w( admin/viking.css admin/dashboard.css admin/events.css admin/merchants.css )
+  config.assets.precompile += %w( admin/viking.js  admin/dashboard.js  admin/events.js  admin/merchants.js)
   config.assets.precompile += %w( home.js )
 
   # Defaults to Rails.root.join("public/assets")

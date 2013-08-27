@@ -62,4 +62,13 @@ module AdminHelper
     sprintf("%.2f", p) + "%"
   end
 
+  def semaphore success
+    image_tag(
+      case success
+      when nil then "empty.png"
+      when true then "admin/green_light.png"
+      when false then "admin/red_light.png"
+      end)      
+  end
+
 end
