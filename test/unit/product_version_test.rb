@@ -145,6 +145,15 @@ class ProductVersionTest < ActiveSupport::TestCase
       assert version.available
     end
   end
+
+  test "it shouldnt generate incident if availability is known and mapped to true" do
+    assert_difference "Incident.count", 0 do
+      version = ProductVersion.create(
+        product_id:@product.id,
+        availability_text:"en precommande")
+      assert version.available
+    end
+  end
   
   test "it shouldn't be destroyed if related to an order" do
     assert @version.destroy
