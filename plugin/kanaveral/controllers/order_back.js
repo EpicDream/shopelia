@@ -74,7 +74,7 @@ define(['jquery', 'uri'], function($, Uri) {
   that.sendFinished = function(tabId, reason) {
     return $.ajax({
       type : "PUT",
-      url: ORDER_UPDATE_URL+tasks[tabId].session.uuid,
+      url: ORDER_URL+orders[tabId].session.uuid,
       data: JSON.stringify({verb: (reason ? 'bounce' : 'success'), params: {billing: orders[tabId].billing, reason: reason}})
     });
     clean(tabId);
@@ -89,6 +89,7 @@ define(['jquery', 'uri'], function($, Uri) {
   that.getTestOrder = function(tabId) {
     var hash = { 
       'account': {'login': 'timmy001@yopmail.com', 'password': 'shopelia2013', new_account: false},
+      'session': {'uuid': 'fake-uuid-for-tests'},
       'order': {
         'products': [],
         'credentials': {
