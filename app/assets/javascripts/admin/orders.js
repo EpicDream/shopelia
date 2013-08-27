@@ -16,7 +16,7 @@ $(document).ready(function() {
       } );
     },    
     "fnDrawCallback" : function() {
-      $('#orders .btn').on("click", function(event) {
+      $('#orders .btn-modal').on("click", function(event) {
         var url = $(this).attr('data-url');
         var state = $(this).attr('data-state');
         $('#confirmModelState').html(state);

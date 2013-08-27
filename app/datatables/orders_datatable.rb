@@ -29,7 +29,7 @@ class OrdersDatatable
         time_ago_in_words(order.updated_at),
         order.message,
         order.error_code,
-        order.state_name == "pending_agent" ? "<button type=\"button\" class=\"btn btn-warning\" data-url=\"#{admin_order_path(order)}\" data-state=\"retry\" style=\"visibility:hidden\">Retry the order</button> <button type=\"button\" class=\"btn btn-danger\" data-url=\"#{admin_order_path(order)}\" data-state=\"cancel\" style=\"visibility:hidden\">Cancel the order</button>" : ""
+        order.state_name == "pending_agent" ? "<button type=\"button\" class=\"btn btn-success\" data-uuid=\"#{order.uuid}\" style=\"visibility:hidden\">Kanaveral</button> <button type=\"button\" class=\"btn btn-warning btn-modal\" data-url=\"#{admin_order_path(order)}\" data-state=\"retry\" style=\"visibility:hidden\">Vulcain</button> <button type=\"button\" class=\"btn btn-danger btn-modal\" data-url=\"#{admin_order_path(order)}\" data-state=\"cancel\" style=\"visibility:hidden\">Cancel</button>" : ""
       ]
     end
   end
