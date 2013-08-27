@@ -30,17 +30,6 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
     end
   end
 
-  api :POST, "/viking/merchants/:id", "Merge merchant information"
-  param_group :merchant
-  def create
-    data = merge_viking_data(JSON.parse(@merchant.viking_data), params[:data])
-    if @merchant.update_attribute :viking_data, data.to_json
-      head :no_content
-    else
-      render json: @merchant.errors, status: :unprocessable_entity
-    end
-  end
-
   private
   
   def retrieve_merchant
@@ -49,9 +38,5 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
 
   def retrieve_merchant_by_url
     @merchant = Merchant.from_url(params[:url])
-  end
-
-  def merge_viking_data(previous, incoming)
-    return previous || incoming
   end
 end
