@@ -45,6 +45,13 @@ class Api::V1::SessionsControllerTest < ActionController::TestCase
     
     assert_response :unauthorized
   end
-  
+
+  test "it should set device with user after login" do
+    device = devices(:web)
+    @request.cookies['visitor'] = device.uuid
+    post :create, email: @user.email, password: "tototo", format: :json
+
+    assert_not_nil device.reload.user_id
+  end  
 end
 

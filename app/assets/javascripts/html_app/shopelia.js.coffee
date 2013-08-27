@@ -8,6 +8,7 @@ window.Shopelia =
   Application: new Backbone.Marionette.Application()
   vent: new Backbone.Wreqr.EventAggregator()
   developerKey: $.cookie('developer_key') unless $.cookie('developer_key') is undefined
+  tracker: $.cookie('tracker') unless $.cookie('tracker') is undefined
   SDKVersion: "0.1"
   SDK: "HTML"
   AbbaShowSpam: true
@@ -43,11 +44,14 @@ Shopelia.Application.addInitializer (options) ->
   Backbone.history.start(pushState: true)
 
 $(document).ready ->
-  Abba("Product sign-up position").control("Popup").variant("Front top", ->
-    window.Shopelia.AbbaCartPosition = 'top'
-  ).variant("Front bottom", ->
-    window.Shopelia.AbbaCartPosition = 'bottom'
-  ).start()  
+  if window.Shopelia.tracker == 'product-follow'
+    window.Shopelia.AbbaCartPosition = 'none'
+  else
+    Abba("Product sign-up position").control("Popup").variant("Front top", ->
+      window.Shopelia.AbbaCartPosition = 'top'
+    ).variant("Front bottom", ->
+      window.Shopelia.AbbaCartPosition = 'bottom'
+    ).start()  
   $.pnotify.defaults.history = false
   Shopelia.Application.start()
   Tracker.init()
