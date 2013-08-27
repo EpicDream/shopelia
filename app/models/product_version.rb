@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class ProductVersion < ActiveRecord::Base
 
-  AVAILABILITY = "#{Rails.root}/lib/data/availability.yml"
+  AVAILABILITY = "#{Rails.root}/lib/config/availability.yml"
 
   belongs_to :product, :touch => true
   has_many :order_items
