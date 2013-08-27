@@ -25,6 +25,13 @@ module AdminHelper
     "<span class='label #{klass}'>#{state.camelize}</span>"
   end
   
+  def event_action_to_html action
+    case action
+    when Event::VIEW then "<span class='label label-warning'>view</span>"
+    when Event::CLICK then "<span class='label label-success'>click</span>"
+    end
+  end
+
   def viking_failure_tags product
     split_versions = product.product_versions.where(available:[nil,true]).count > 1 
     result = ""
