@@ -33,3 +33,8 @@ cdiscount:
   name: "Cdiscount"
   domain: "cdiscount.com"
   should_clean_args: true
+
+toysrus:
+  name: "Toysrus"
+  domain: "toysrus.fr"
+  should_clean_args: false

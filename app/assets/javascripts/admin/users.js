@@ -2,7 +2,7 @@ $(document).ready(function() {
   usersTable = $('#users').dataTable( {
     "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
     "bServerSide": true,
-    "bLengthChange": false,
+    "bLengthChange": true,
     "bFilter": true,
     "bPaginate": true,
     "sPaginationType": "bootstrap",
@@ -45,5 +45,35 @@ $(document).ready(function() {
       return nRow;
     }
   } );
+
+  var graph = new Morris.Line({
+    element: 'signUpChart',
+    data: [],
+    xkey: 'date',
+    ykeys: ['value'],
+    labels: ['Registrations']
+  });
+
+  function updateGraph() {
+    $.ajax({
+      url: '/admin/users.json',
+      type: "get",
+      dataType: "json",
+      data: {
+        "graph":"1",
+        "date_start":$('#date-start').val(),
+        "date_end":$('#date-end').val(),
+        "visitor":$('#visitor').val()
+      },
+      success: function(data) {
+        graph.setData(data);
+      }
+    });    
+  }
+  updateGraph();
+  $('.graph-option').on('change', function(){
+    updateGraph();
+  });
+
 } );
 

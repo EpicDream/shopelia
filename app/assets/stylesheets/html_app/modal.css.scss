@@ -22,6 +22,11 @@ $borderRadius: 4px;
   @include border-top-radius($borderRadius);
 }
 
+.top-bottom-margin {
+   margin-top: 25px;
+   margin-bottom: 25px;
+}
+
 
 .logo {
   margin-top: 20px;

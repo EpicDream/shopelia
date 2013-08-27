@@ -20,7 +20,11 @@ class DevelopersDatatable
     developers.map do |developer|
       [
         developer.name,
-        "<tt>#{developer.api_key}</tt>"
+        "<tt>#{developer.api_key}</tt>",
+        developer.events.count,
+        developer.orders.count,
+        developer.users.count,
+        developer.cart_items.count
       ]
     end
   end

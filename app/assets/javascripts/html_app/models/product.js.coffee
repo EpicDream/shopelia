@@ -18,22 +18,26 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
 
   initialize: (params) ->
     _.bindAll(this)
-    @on("change:expected_price_product",@formatPrice,"expected_price_product")
-    @on("change:expected_price_shipping",@formatPrice,"expected_price_shipping")
+    @on("change:expected_price_product",@setExpectedPrice)
+    @on("change:expected_price_shipping",@setExpectedShipping)
 
 
   addMerchantInfosToProduct: (data) ->
     console.log('in add merchant')
     console.log(data)
     @set({
-          merchant_name:data.merchant.name,
+          merchant_name: data.merchant.name,
+          merchant_logo: data.merchant.logo,
           allow_iframe: data.merchant.allow_iframe,
           })
 
 
   setProduct: (data) ->
+    console.log("setData")
+    console.log(data)
     try
       @set({
+           product_version_id:data.versions[0].id,
            name: data.name,
            image_url: data.image_url,
            description: data.description,
@@ -41,6 +45,7 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
            expected_price_shipping: data.versions[0].price_shipping,
            shipping_info: data.versions[0].shipping_info
            merchant_name: data.merchant.name,
+           merchant_logo: data.merchant.logo,
            allow_iframe: data.merchant.allow_iframe
            })
     catch error
@@ -52,10 +57,15 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
   customParseFloat: (float) ->
     parseFloat(Math.round(float * 100) / 100).toFixed(2)
 
-  formatPrice: (model,value) ->
-    result =  model.customParseFloat(value)
-    model.set(this.toString(),result)
+
+  setExpectedPrice: (model,value) ->
+    model.set("expected_price_product",model.customParseFloat(value))
+
+  setExpectedShipping: (model,value) ->
+    model.set("expected_price_shipping",model.customParseFloat(value))
+
 
   getExpectedTotalPrice: ->
     @customParseFloat(parseFloat(@get('expected_price_product')) + parseFloat(@get('expected_price_shipping')))
+
 

@@ -204,6 +204,24 @@ class ApiTest < ActionDispatch::IntegrationTest
     assert_equal 5, order.billed_price_shipping
     assert_equal 55, order.billed_price_total    
   end  
+
+  test "add products to list and sign up" do
+    post "/api/cart_items", email:"eric@shopelia.fr", product_version_id:product_versions(:usbkey).id
+    assert_response :success
+
+    post "/api/cart_items", email:"eric@shopelia.fr", product_version_id:product_versions(:headphones).id
+    assert_response :success
+  
+    post "/api/users", user:@user, format: :json
+    assert_response :success
+    
+    assert json_response["user"]
+    assert json_response["auth_token"]
+    
+    user = User.find_by_id(json_response["user"]["id"])
+    assert_equal 1, user.carts.count 
+    assert_equal 2, user.carts.first.cart_items.count 
+  end
   
 end
 

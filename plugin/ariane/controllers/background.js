@@ -169,10 +169,10 @@ function load_ariane(tabId) {
 // Merge the new mapping with the old, send it to shopelia, and clean data for this tab.
 function send_finished_statement(tabId, reason) {
   var mapHost = tasks[tabId].mapHost;
-  var previous = tasks[tabId].merchant.data.viking[mapHost];
+  var previousMaps = tasks[tabId].merchant.data.viking;
   var currentMap = tasks[tabId].currentMap;
-  chrome.tabs.sendMessage(tabId, {act: 'merge', current: currentMap, previous: previous}, function(res) {
-    tasks[tabId].merchant.data.viking[mapHost] = res;
+  chrome.tabs.sendMessage(tabId, {act: 'merge', host: mapHost, current: currentMap, previous: previousMaps}, function(res) {
+    tasks[tabId].merchant.data.viking = res;
     $.ajax({
       type : "PUT",
       url: MAPPING_URL+tasks[tabId].merchant_id,

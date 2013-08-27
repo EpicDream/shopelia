@@ -2,6 +2,7 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_developer!
   before_filter :retrieve_merchant, :only => [:show, :update, :create]
+  before_filter :retrieve_merchant_by_url, :only => [:index]
 
   def_param_group :merchant do
     param :merchant, Hash, :required => true, :action_aware => true do
@@ -9,6 +10,11 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
     end
   end
   
+  api :GET, "/viking/merchants", "Get merchant by url"
+  def index
+    render json: Object::Viking::MerchantSerializer.new(@merchant).as_json[:merchant]
+  end 
+
   api :GET, "/viking/merchants/:id", "Get merchant information"
   def show
     render json: Object::Viking::MerchantSerializer.new(@merchant).as_json[:merchant]
@@ -24,24 +30,13 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
     end
   end
 
-  api :POST, "/viking/merchants/:id", "Merge merchant information"
-  param_group :merchant
-  def create
-    data = merge_viking_data(JSON.parse(@merchant.viking_data), params[:data])
-    if @merchant.update_attribute :viking_data, data.to_json
-      head :no_content
-    else
-      render json: @merchant.errors, status: :unprocessable_entity
-    end
-  end
-
   private
   
   def retrieve_merchant
     @merchant = Merchant.find(params[:id])
   end
 
-  def merge_viking_data(previous, incoming)
-    return previous || incoming
+  def retrieve_merchant_by_url
+    @merchant = Merchant.from_url(params[:url])
   end
 end

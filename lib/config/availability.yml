@@ -1,0 +1,17 @@
+out of stock: false
+aucun vendeur ne propose ce produit: false
+en rupture de stock: false
+indisponible: false
+ce produit est epuise: false
+sans stock pour vos criteres: false
+bientot disponible: false
+produit epuise: false
+retrait gratuit en magasin: false
+inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
+sur commande: false
+en stock: true
+^\(\d+\)$: true
+expedie sous: true
+voir les offres de ces vendeurs: true
+en pre\-?commande: true
+cet article paraitra le: true

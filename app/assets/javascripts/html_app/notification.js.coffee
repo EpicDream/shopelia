@@ -1,9 +1,12 @@
 class Shopelia.Notification
 
   constructor: (params) ->
-    params.icon =  false
-    params.sticker = false
-    params.closer_hover = false
+    _.extend(params,{
+            icon:  false
+            sticker: false
+            closer_hover : false
+    })
+
     if params.center
       params = @center(params)
     $.pnotify(params).click( (e) ->

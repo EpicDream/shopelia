@@ -17,6 +17,11 @@ class Event < ActiveRecord::Base
 
   attr_accessible :url, :product_id, :developer_id, :device_id, :action, :tracker, :ip_address
   attr_accessor :url
+
+  scope :for_developer, lambda { |developer| where(developer_id:developer.id) }
+  scope :for_tracker, lambda { |tracker| where(tracker:tracker) }
+  scope :views, where(action:VIEW)
+  scope :clicks, where(action:CLICK)
   
   def self.from_urls data
     data[:urls].each do |url|
