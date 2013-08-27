@@ -96,7 +96,7 @@ Shopelia::Application.routes.draw do
         get :failure_shift
         get :alive
       end
-      resources :merchants, :only => [:show, :update, :create, :index]
+      resources :merchants, :only => [:show, :update, :index]
     end
     namespace :vulcain do
       resources :merchants, :only => :update
