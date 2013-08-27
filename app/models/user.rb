@@ -30,7 +30,7 @@ class User < ActiveRecord::Base
   attr_accessible :email, :remember_me, :first_name, :last_name
   attr_accessible :birthdate, :civility, :nationality_id, :ip_address, :pincode
   attr_accessible :addresses_attributes, :payment_cards_attributes
-  attr_accessible :developer_id, :visitor
+  attr_accessible :developer_id, :visitor, :tracker
   attr_accessor :addresses_attributes, :payment_cards_attributes
 
   before_validation :reset_test_account

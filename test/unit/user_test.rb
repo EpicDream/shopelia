@@ -13,6 +13,7 @@ class UserTest < ActiveSupport::TestCase
       :first_name => "John",
       :last_name => "Doe",
       :developer_id => developers(:prixing).id,
+      :tracker => "toto",
       :ip_address => '127.0.0.1',
       :addresses_attributes => [ {
         :code_name => "Office",
@@ -34,6 +35,9 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "John", user.first_name
     assert_equal "Doe", user.last_name
   
+    assert_equal developers(:prixing).id, user.developer_id
+    assert_equal "toto", user.tracker
+
     assert_equal 1, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
     assert_equal "contact@shopelia.fr", ActionMailer::Base.deliveries.first.to[0]
     
