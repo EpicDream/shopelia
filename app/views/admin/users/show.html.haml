@@ -25,7 +25,7 @@
         = @user.civility
         %br
         %strong Nationality :
-        = @user.nationality.name
+        = @user.nationality.try(:name)
         %hr
         %strong Developer :
         = @user.developer.name
@@ -74,9 +74,9 @@
                 %td
                   = raw(order_state_to_html(order.state_name))
                 %td
-                  = product.name
+                  = product.try(:name)
                 %td
-                  = product.merchant.name
+                  = product.merchant.name unless product.nil?
                 %td 
                   = number_to_currency(order.state == :completed ? order.billed_price_total : order.expected_price_total)
                 %td
