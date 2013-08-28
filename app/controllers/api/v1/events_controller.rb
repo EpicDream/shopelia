@@ -46,7 +46,8 @@ class Api::V1::EventsController < Api::V1::BaseController
   
   def prepare_params
     @tracker = params[:tracker]
-    @action = params[:type].eql?("click") ? Event::CLICK : Event::VIEW
+    @action = params[:shadow] ? Event::REQUEST :
+      params[:type] == 'click' ? Event::CLICK : Event::VIEW
   end
     
   def set_visitor_cookie 

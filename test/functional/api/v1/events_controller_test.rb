@@ -14,7 +14,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_equal developers(:prixing).api_key, cookies[:developer_key]
     
     event = Event.all.first
-    assert_equal 0, event.action
+    assert_equal Event::VIEW, event.action
     assert_equal developers(:prixing).id, event.developer_id
     assert_equal "0.0.0.0", event.ip_address
     assert_equal "toto", event.tracker
@@ -30,13 +30,23 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_equal ["http://www.prout.fr/1","http://www.prout.fr/1"].to_set, Event.all.map(&:product).map(&:url).to_set
   end
 
-  test "it should create events from list of urls and with action type" do
+  test "it should create events from list of urls and with action click" do
     assert_difference(["Event.count","Product.count"], 2) do
-      post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/2"], type:"click", developer:developers(:prixing).api_key, format: :json
+      post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/2"], type:"click", shadow:false, developer:developers(:prixing).api_key, format: :json
     end
     assert_equal 32, cookies[:visitor].length
     event = Event.all.first
-    assert_equal 1, event.action
+    assert_equal Event::CLICK, event.action
+    assert_equal 32, event.device.uuid.length
+  end
+
+  test "it should create events from list of urls and in shadow mode" do
+    assert_difference(["Event.count","Product.count"], 2) do
+      post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/2"], type:"click", shadow:true, developer:developers(:prixing).api_key, format: :json
+    end
+    assert_equal 32, cookies[:visitor].length
+    event = Event.all.first
+    assert_equal Event::REQUEST, event.action
     assert_equal 32, event.device.uuid.length
   end
   

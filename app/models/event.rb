@@ -6,11 +6,12 @@ class Event < ActiveRecord::Base
   
   VIEW = 0
   CLICK = 1
+  REQUEST = 2
   
   validates :product, :presence => true
   validates :developer, :presence => true
   validates :device, :presence => true
-  validates :action, :presence => true, :inclusion => { :in => [ VIEW, CLICK ] }
+  validates :action, :presence => true, :inclusion => { :in => [ VIEW, CLICK, REQUEST ] }
 
   before_validation :find_or_create_product
   before_validation :set_monetizable
