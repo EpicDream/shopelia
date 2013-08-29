@@ -49,7 +49,17 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert_equal 10, version.price
     assert_equal "reference", version.reference
   end
-  
+
+  test "it should truncate name to 250 chars" do
+    version = ProductVersion.new(
+      product_id:@product.id,
+      name: "0" * 500
+    )
+    assert version.save
+    
+    assert_equal 250, version.name.length
+  end
+
   test "it should parse float" do
     str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", 
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 

@@ -6,7 +6,7 @@ rueducommerce:
   vendor: "RueDuCommerce"
   accepting_orders: true
   domain: "rueducommerce.fr"
-  should_clean_args: true
+  should_clean_args: false
 
 amazon:
   name: "Amazon"
