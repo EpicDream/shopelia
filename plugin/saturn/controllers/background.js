@@ -187,7 +187,7 @@ function loadProductUrlToExtract(tabId) {
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: PRODUCT_EXTRACT_SHIFT_URL+"?batch="+(batchTabs[tabId] === true)
+    url: PRODUCT_EXTRACT_SHIFT_URL+((batchTabs[tabId] === true) ? "?batch=true" : "")
   }).fail(function(err) {
     // console.error("When getting product_url to extract :", err);
     reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
