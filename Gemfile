@@ -2,9 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
-# Bundle edge Rails instead:
-# gem 'rails',     :git => 'git://github.com/rails/rails.git'
-
+gem 'therubyracer'
+gem 'execjs'
 gem 'maildir'
 gem 'gpgme'
 gem 'pg'
@@ -26,10 +25,11 @@ gem 'client_side_validations'
 gem 'client_side_validations-simple_form'
 gem 'devise-i18n-views'
 gem 'rails-i18n'
-gem 'backbone-on-rails'
+gem 'backbone-on-rails', '1.0.0.0'
 gem 'http_accept_language'
 gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
+gem 'sanitize'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -40,6 +40,7 @@ group :assets do
   gem 'jquery-rails'
   gem 'jquery-datatables-rails', github: 'rweng/jquery-datatables-rails'
   gem 'uglifier', '>= 1.0.3'
+  gem 'marionette-rails'
 end
 
 # To use ActiveModel has_secure_password

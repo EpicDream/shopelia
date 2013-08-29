@@ -1,4 +1,6 @@
 // HTML Utils.
+// Author : Vincent Renaudineau
+
 hu = {};
 
 hu.getElementXPath = function(element) {
@@ -92,6 +94,9 @@ function fromParentSelector(jelement, complete) {
   return res;
 };
 
+hu.getFullElementCSSSelectors = function(jelement) {
+  return hu.getElementCSSSelectors(jelement, true);
+};
 hu.getElementCSSSelectors = function(jelement, complete) {
   var css = '';
   for ( ; jelement && jelement[0].nodeType == 1 ; jelement = jelement.parent() ) {
@@ -197,6 +202,7 @@ hu.getFormAttrs = function(e) {
 // h.form : input's form's attributes. See hu.getElementAttrs().
 hu.getElementContext = function(e) {
   var context = {};
+  context.url = location.href;
   context.xpath = hu.getElementXPath(e);
   context.fullXPath = hu.getElementCompleteXPath(e);
   context.css = hu.getElementCSSSelectors($(e));

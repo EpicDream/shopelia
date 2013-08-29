@@ -1,7 +1,5 @@
 @media (min-width: 768px) and (max-width: 979px) {
-  #modal {
 
-  }
 }
 
 @media (max-width: 767px) {
@@ -10,79 +8,69 @@
   }
 
   #modal {
-    min-width: 319px;
+    min-width: 300px;
     border-radius: 0;
-  }
-
-  #modal-header {
-    height: 40px;
-    @include border-top-radius(0);
-    img {
-      width: 100px;
-      margin-top: -10px;
-    }
-  }
-
-  #modal-header .logo {
-    margin-top: 10px;
-  }
-
-  #link-header {
-    margin-top: 10px;
-  }
-
-  .box, #modal-left {
-    display: block;
-    margin: auto;
-    width: 50%;
-    min-width: 310px;
-    margin-bottom: 20px;
-    border-radius:$borderRadius;
-    padding:20px;
-    background: $lightGrey;
-  }
-//Product
-  .product-image {
-    width: 30%;
-    margin-right: 10px;
-    float: left;
-  }
-
-  .product > h4 {
-    font-size: 100%;
     margin: 0;
   }
 
-  .price-infos{
-     float: left;
+  #close {
+    opacity: 0;
+    pointer-events: none;
   }
 
-  .price-infos > .pull-left {
-    clear: both;
+  #modal-header {
+    position: fixed;
+    height: 30px;
+    @include border-top-radius(0);
+    img {
+      width: 100px;
+      margin-top: 5px;
+    }
+    width: 100%;
+    z-index: 10;
   }
 
+  #link-header {
+    margin-top: 4px;
+  }
+
+  .box {
+    display: block;
+    margin: auto;
+    width: 50%;
+    padding:5%;
+    min-width: 260px;
+    margin-bottom: 20px;
+    border-radius:$borderRadius;
+    background: $lightGrey;
+  }
+
+  #modal-content, .full-description {
+    margin-top: 45px !important;
+  }
+
+//Product
+
+  .product > h4 {
+    font-size: 100%;
+  }
+  .merchant-infos {
+    max-width: 100px;
+  }
   .pull-right > .price > span.green.bold {
     font-size: 150%;
   }
-
+//
   .pull-right > .price > span.taxes {
     font-size: 100%;
-    display: block;
-    margin-top: -10px;
+//    display: block;
+    margin-top: -8px;
     margin-left: 3px;
   }
 
-  //Paiement Card Fields
 
-  .paiement-view > .control-group > .controls > input {
-    width: 31%;
-  }
-  .paiement-view > .control-group > .controls > input:nth-child(1) {
-    width: 100%;
-  }
-
-  h5 {
-    //text-rendering: optimizeSpeed;
+  .product-description {
+    display: none;
   }
 
 }

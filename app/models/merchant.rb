@@ -1,5 +1,8 @@
 class Merchant < ActiveRecord::Base
+  audited
+
   has_many :products, :dependent => :destroy
+  has_many :events, :through => :products
   has_many :orders
 
   validates :name, :presence => true, :uniqueness => true
@@ -7,12 +10,13 @@ class Merchant < ActiveRecord::Base
   validates :vendor, :uniqueness => true, :allow_nil => true
   validates :url, :uniqueness => true, :allow_nil => true
   
-  scope :accepting_orders, :conditions => ['accepting_orders = ?', true]
+  scope :accepting_orders, :conditions => ['accepting_orders = ? and vendor is not null', true]
   
   attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain, :viking_data
   
   before_validation :populate_name
   before_destroy :check_presence_of_orders
+  after_update :notify_leftronic_vulcain_test_semaphore
   
   def self.from_url url, create=true
     domain = Utils.extract_domain(Linker.clean(url))
@@ -33,5 +37,11 @@ class Merchant < ActiveRecord::Base
   
   def check_presence_of_orders
     self.orders.count == 0
+  end
+
+  def notify_leftronic_vulcain_test_semaphore
+    if self.vulcain_test_pass_changed?
+      Leftronic.new.notify_vulcain_test_semaphore(self)
+    end
   end
 end

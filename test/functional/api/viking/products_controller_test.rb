@@ -68,12 +68,60 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert product.reload.viking_failure
   end
 
+  test "it should set product as viking failed if empty versions" do
+    populate_events
+    product = Product.first
+    put :update, id:product.id, versions:nil, format: :json
+    assert_response 204
+    
+    assert product.reload.viking_failure
+    assert !product.versions_expires_at.nil?
+  end
+
+  test "it should send all failed viking products" do
+    populate_events
+    product = Product.find_by_url("http://www.amazon.fr/1")
+    product.update_attribute :viking_failure, true
+    get :failure
+    
+    assert_response :success
+    assert_equal 1, json_response.count
+  end
+
+  test "it should send next failed viking products" do
+    populate_events
+    product = Product.find_by_url("http://www.amazon.fr/1")
+    product.update_attribute :viking_failure, true
+    get :failure_shift
+    
+    assert_response :success
+    assert_match /amazon.fr\/1/, json_response["url"]
+  end
+  
+  test "it should send alive data (for Viking monitoring)" do
+    populate_events
+    event = Event.last
+    event.update_attribute :created_at, 5.minutes.ago
+    event.product.update_attribute :updated_at, 10.minutes.ago
+    
+    get :alive
+    assert_response :success
+    assert_equal 0, json_response["alive"]
+    
+    event.product.update_attribute :updated_at, Time.now
+    
+    get :alive
+    assert_response :success
+    assert_equal 1, json_response["alive"]
+  end
+  
   private
   
   def populate_events
     Event.from_urls(
       :urls => ["http://www.amazon.fr/1","http://www.amazon.fr/2"],
       :developer_id => @developer.id,
+      :device_id => devices(:web).id,
       :action => Event::VIEW)
   end
   

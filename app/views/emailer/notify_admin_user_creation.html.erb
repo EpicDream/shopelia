@@ -1,5 +1,8 @@
 <b>Nouvel utilisateur enregistré sur Shopelia !</b>
 <p>
-<%= @user.name %><br>
+<% if @user.visitor? %>
+  GUEST
+<% else %>
+  <%= @user.name %><br>
+<% end %>
 <%= @user.email %>
-

@@ -16,7 +16,7 @@ class Api::V1::SessionsControllerTest < ActionController::TestCase
   end
   
   test "it shouldn't login a user with blank password" do
-    user = User.create!(email:"toto@toto.fr", first_name:"Eric", last_name:"Larch", ip_address:"192.168.1.1")
+    user = User.create!(email:"toto@toto.fr", first_name:"Eric", last_name:"Larch", ip_address:"192.168.1.1", developer_id:developers(:prixing).id)
     post :create, email: @user.email, password: "", format: :json
     
     assert_response :unauthorized
@@ -45,6 +45,13 @@ class Api::V1::SessionsControllerTest < ActionController::TestCase
     
     assert_response :unauthorized
   end
-  
+
+  test "it should set device with user after login" do
+    device = devices(:web)
+    @request.cookies['visitor'] = device.uuid
+    post :create, email: @user.email, password: "tototo", format: :json
+
+    assert_not_nil device.reload.user_id
+  end  
 end
 
