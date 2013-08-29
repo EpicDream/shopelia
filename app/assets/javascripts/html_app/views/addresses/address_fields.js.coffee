@@ -2,12 +2,12 @@ class Shopelia.Views.AddressFields extends Shopelia.Views.ShopeliaView
 
   template: 'addresses/address_fields'
   ui: {
+    fullName: 'input[name="full_name"]'
     address1: 'input[name="address1"]'
+    address2: 'input[name="address2"]'
     zip: 'input[name="zip"]'
     city: 'input[name="city"]'
     country: 'input[name="country"]'
-    address2: 'input[name="address2"]'
-    fullName: 'input[name="full_name"]'
   }
 
   events:
@@ -16,7 +16,8 @@ class Shopelia.Views.AddressFields extends Shopelia.Views.ShopeliaView
   onRender: ->
     @ui.country.autocomplete({
       source: _.values(countries),
-    });
+    })
+    @ui.country.data("inlist", _.values(countries).join(",").toLowerCase())
 
   getFormResult: ->
     {

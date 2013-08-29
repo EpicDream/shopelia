@@ -30,7 +30,7 @@
     </div>
     <div class="control-group">
         <div class="controls">
-            <input rel="popover" tracker-name="Country" type="text" data-required="true" data-trigger="change focusout" class="input-block-level" placeholder= "Pays" name="country">
+            <input rel="popover" tracker-name="Country" type="text" data-required="true" data-trigger="change focusout" class="input-block-level" placeholder="Pays" name="country">
         </div>
     </div>
 </div>
