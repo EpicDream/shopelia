@@ -85,9 +85,28 @@ class ProductTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
       :action => Event::VIEW)
+    Event.create!(
+      :url => "http://www.toto.fr/productA",
+      :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
+      :action => Event::REQUEST)
     assert_equal 2, Product.viking_pending.count
     products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
     assert_equal 1, Product.viking_pending.count
+  end
+
+  test "it should get all products needing a Viking check in batch mode" do
+    Event.from_urls(
+      :urls => [products(:headphones).url,products(:usbkey).url],
+      :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
+      :action => Event::VIEW)
+    Event.create!(
+      :url => "http://www.toto.fr/productA",
+      :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
+      :action => Event::REQUEST)
+    assert_equal 1, Product.viking_pending_batch.count
   end
 
   test "it should get all products which failed Viking extraction" do
@@ -131,6 +150,19 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal products(:headphones), Product.viking_shift
     products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
     assert Product.viking_shift.nil?
+  end
+
+  test "it should get last product needing a Viking check in batch mode" do
+    Event.from_urls(
+      :urls => [products(:headphones).url,products(:usbkey).url],
+      :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
+      :action => Event::REQUEST)
+    assert_equal products(:usbkey), Product.viking_shift_batch
+    products(:usbkey).update_attribute :versions_expires_at, 1.hour.from_now
+    assert_equal products(:headphones), Product.viking_shift_batch
+    products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
+    assert Product.viking_shift_batch.nil?
   end
 
   test "it should expires versions" do

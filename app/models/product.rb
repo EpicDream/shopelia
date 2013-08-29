@@ -20,15 +20,30 @@ class Product < ActiveRecord::Base
   attr_accessible :brand, :reference, :viking_failure, :muted_until
   attr_accessor :versions
   
-  scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and (muted_until is null or muted_until < ?)", Time.now, 6.hours.ago, 12.hours.ago, Time.now) }
+  scope :viking_pending, lambda { 
+    joins(:events).merge(Event.buttons) \
+      .where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') " + 
+      "or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and " +
+      "(muted_until is null or muted_until < ?)", Time.now, 6.hours.ago, 12.hours.ago, Time.now)
+  }
+  scope :viking_pending_batch, lambda { 
+    joins(:events).merge(Event.requests) \
+      .where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') " +
+      "or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and " +
+      "(muted_until is null or muted_until < ?)", Time.now, 6.hours.ago, 12.hours.ago, Time.now) 
+  }
   scope :viking_failure, lambda { where(viking_failure:true).order("updated_at desc").limit(100) }
   
   def self.fetch url
     Product.find_or_create_by_url(Linker.clean(url)) unless url.nil?
   end
   
-  def self.viking_shift
+  def self.viking_shift 
     Product.viking_pending.order("events.created_at desc").first
+  end
+
+  def self.viking_shift_batch
+    Product.viking_pending_batch.order("events.created_at desc").first
   end
 
   def versions_expired?

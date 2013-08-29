@@ -14,6 +14,14 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_response :success   
     assert_equal 2, json_response.count
   end
+
+  test "it should send back first 100 products requiring a Viking check in batch mode" do
+    populate_events
+    get :index, batch:true
+    
+    assert_response :success   
+    assert_equal 1, json_response.count
+  end
   
   test "it should send back first product in queue waiting for a Viking check" do
     populate_events
@@ -21,6 +29,14 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     
     assert_response :success   
     assert_match /amazon.fr\/2/, json_response["url"]
+  end
+
+  test "it should send back first product in queue waiting for a Viking check in batch mode" do
+    populate_events
+    get :shift, batch:true
+    
+    assert_response :success   
+    assert_match /priceminister/, json_response["url"]
   end
   
   test "it should send 404 if not product waiting" do
@@ -123,6 +139,11 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
       :developer_id => @developer.id,
       :device_id => devices(:web).id,
       :action => Event::VIEW)
+    Event.from_urls(
+      :urls => ["http://www.priceminister.com/my_product"],
+      :developer_id => @developer.id,
+      :device_id => devices(:web).id,
+      :action => Event::REQUEST)
   end
   
 end

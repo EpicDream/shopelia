@@ -23,6 +23,8 @@ class Event < ActiveRecord::Base
   scope :for_tracker, lambda { |tracker| where(tracker:tracker) }
   scope :views, where(action:VIEW)
   scope :clicks, where(action:CLICK)
+  scope :requests, where(action:REQUEST)
+  scope :buttons, where(action:[VIEW, CLICK])
   
   def self.from_urls data
     data[:urls].each do |url|

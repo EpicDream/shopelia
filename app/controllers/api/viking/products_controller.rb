@@ -15,7 +15,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   
   api :GET, "/viking/products", "Get all products pending check"
   def index
-    render json: Product.viking_pending, each_serializer: Viking::ProductSerializer
+    render json: params[:batch] ? Product.viking_pending_batch : Product.viking_pending, each_serializer: Viking::ProductSerializer
   end
  
   api :GET, "/viking/products/failure", "Get all products which failed with Viking extraction"
@@ -35,7 +35,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
 
   api :GET, "/viking/products/shift", "Get next product pending check"
   def shift
-    product = Product.viking_shift
+    product = params[:batch] ? Product.viking_shift_batch : Product.viking_shift
     if product.present? 
       render json: Viking::ProductSerializer.new(product).as_json[:product]
     else
