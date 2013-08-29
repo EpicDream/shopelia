@@ -54,7 +54,7 @@ window.ParsleyConfig = window.ParsleyConfig || {};
                 var delimiter = self.options.inlistDelimiter || ',';
                 var listItems = (list + "").split(new RegExp("\\s*\\" + delimiter + "\\s*"));
 
-                return (listItems.indexOf(val.trim()) !== -1);
+                return (listItems.indexOf(val.trim().toLowerCase()) !== -1);
             }
 
             , luhn: function ( val, elem, self) {
