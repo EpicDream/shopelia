@@ -95,7 +95,12 @@ function start(tabId) {
         chrome.tabs.update(tabId, {url: hash.url});
       else
         finish(tabId);
+    }).fail(function(err) {
+      console.error("When getting mapping to extract :", err);
+      setTimeout(function() {start(tabId);}, 1000);
     });
+  }).fail(function(err) {
+    reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
   });
 };
 
@@ -188,9 +193,6 @@ function loadProductUrlToExtract(tabId) {
     type : "GET",
     dataType: "json",
     url: PRODUCT_EXTRACT_SHIFT_URL+((batchTabs[tabId] === true) ? "?batch=true" : "")
-  }).fail(function(err) {
-    // console.error("When getting product_url to extract :", err);
-    reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
   });
 };
 
@@ -216,9 +218,7 @@ function loadMapping(merchant_id) {
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: MAPPING_SHOPELIA_DOMAIN+merchant_id,
-  }).fail(function(err) {
-    console.error("When getting mapping to extract :", err);
+    url: MAPPING_SHOPELIA_DOMAIN+merchant_id
   });
 };
 
