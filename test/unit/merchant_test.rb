@@ -14,11 +14,13 @@ class MerchantTest < ActiveSupport::TestCase
   
   test "it should destroy merchant if it hasn't any order" do
     populate_merchant
+    @merchant.save
     assert @merchant.destroy
   end
   
   test "merchant should accept order" do
     populate_merchant
+    @merchant.save
     assert @merchant.accepting_orders?
   end
   

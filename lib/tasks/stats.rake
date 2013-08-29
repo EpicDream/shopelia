@@ -5,6 +5,7 @@ namespace :shopelia do
     task :leftronic => :environment do
       l = Leftronic.new
       l.notify_button_stats
+      l.notify_viking_stats
     end
     
     desc "Send daily global stats email"

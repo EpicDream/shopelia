@@ -12,6 +12,8 @@ class UserTest < ActiveSupport::TestCase
       :email => "user@gmail.com",
       :first_name => "John",
       :last_name => "Doe",
+      :developer_id => developers(:prixing).id,
+      :tracker => "toto",
       :ip_address => '127.0.0.1',
       :addresses_attributes => [ {
         :code_name => "Office",
@@ -33,9 +35,11 @@ class UserTest < ActiveSupport::TestCase
     assert_equal "John", user.first_name
     assert_equal "Doe", user.last_name
   
-    assert_equal 2, ActionMailer::Base.deliveries.count, "a confirmation email should have been sent"
-    assert_equal ["user@gmail.com", "contact@shopelia.fr"].to_a, [ActionMailer::Base.deliveries.first.to[0], ActionMailer::Base.deliveries.second.to[0]].to_a
-    assert user.confirmation_sent_at
+    assert_equal developers(:prixing).id, user.developer_id
+    assert_equal "toto", user.tracker
+
+    assert_equal 1, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
+    assert_equal "contact@shopelia.fr", ActionMailer::Base.deliveries.first.to[0]
     
     assert user.authentication_token.present?, "user should have an authentication token"
     assert !user.confirmed?, "user shouldn't be confirmed"
@@ -53,11 +57,21 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 0, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
   end
 
+  test "it should create user with just email" do
+    user = User.new(
+      :email => "user@gmail.com",
+      :visitor => true,
+      :developer_id => developers(:prixing).id)
+    assert user.save
+    assert_equal 0, ActionMailer::Base.deliveries.count
+  end
+
   test "it should fail user creation with a bad address" do
     user = User.create(
       :email => "user@gmail.com", 
       :first_name => "John",
       :last_name => "Doe",
+      :developer_id => developers(:prixing).id,
       :ip_address => '127.0.0.1',
       :addresses_attributes => [ {
         :code_name => "Office",
@@ -76,11 +90,13 @@ class UserTest < ActiveSupport::TestCase
       :email => "test@shopelia.fr", 
       :first_name => "John",
       :last_name => "Doe",
+      :developer_id => developers(:prixing).id,
       :ip_address => '127.0.0.1')
     user = User.new(
       :email => "test@shopelia.fr", 
       :first_name => "John",
       :last_name => "Doe",
+      :developer_id => developers(:prixing).id,
       :ip_address => '127.0.0.1')
     assert user.save
   end
@@ -90,6 +106,7 @@ class UserTest < ActiveSupport::TestCase
       :email => "user@gmail.com", 
       :password => "password", 
       :password_confirmation => "password",
+      :developer_id => developers(:prixing).id,
       :first_name => "John",
       :last_name => "Doe",
       :civility => User::CIVILITY_MR,
@@ -173,6 +190,7 @@ class UserTest < ActiveSupport::TestCase
         :email => "willfail@gmail.com",
         :password => "",
         :password_confirmation => "",
+        :developer_id => developers(:prixing).id,
         :first_name => "Joe",
         :last_name => "Fail",
         :civility => User::CIVILITY_MR,
@@ -190,6 +208,7 @@ class UserTest < ActiveSupport::TestCase
         :email => "willfail@gmail.com",
         :password => "toto",
         :password_confirmation => "merguez",
+        :developer_id => developers(:prixing).id,
         :first_name => "Joe",
         :last_name => "Fail",
         :civility => User::CIVILITY_MR,
@@ -206,6 +225,7 @@ class UserTest < ActiveSupport::TestCase
         :email => "willpass@gmail.com",
         :password => "merguez",
         :password_confirmation => "merguez",
+        :developer_id => developers(:prixing).id,
         :first_name => "Joe",
         :last_name => "Fail",
         :civility => User::CIVILITY_MR,

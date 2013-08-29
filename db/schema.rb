@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130724145151) do
+ActiveRecord::Schema.define(:version => 20130827150231) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -53,6 +53,26 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
   add_index "audits", ["created_at"], :name => "index_audits_on_created_at"
   add_index "audits", ["user_id", "user_type"], :name => "user_index"
 
+  create_table "cart_items", :force => true do |t|
+    t.string   "uuid"
+    t.integer  "cart_id"
+    t.integer  "product_version_id"
+    t.float    "price_shipping"
+    t.float    "price"
+    t.boolean  "monitor",            :default => true
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
+    t.integer  "developer_id"
+    t.string   "tracker"
+  end
+
+  create_table "carts", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "countries", :force => true do |t|
     t.string   "iso"
     t.string   "name"
@@ -67,6 +87,16 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "devices", :force => true do |t|
+    t.string   "uuid"
+    t.text     "user_agent"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "user_id"
+  end
+
+  add_index "devices", ["uuid"], :name => "index_devices_on_uuid"
+
   create_table "email_redirections", :force => true do |t|
     t.string   "user_name"
     t.string   "destination"
@@ -77,15 +107,24 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
   create_table "events", :force => true do |t|
     t.integer  "action"
     t.string   "tracker"
-    t.string   "user_agent"
     t.string   "ip_address"
-    t.string   "visitor"
     t.integer  "developer_id"
     t.integer  "product_id"
-    t.integer  "user_id"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
     t.boolean  "monetizable"
+    t.integer  "device_id"
+  end
+
+  create_table "incidents", :force => true do |t|
+    t.integer  "severity"
+    t.string   "issue"
+    t.text     "description"
+    t.boolean  "processed",     :default => false
+    t.string   "resource_type"
+    t.integer  "resource_id"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
   end
 
   create_table "merchant_accounts", :force => true do |t|
@@ -105,17 +144,19 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.string   "logo"
     t.string   "url"
     t.string   "tc_url"
-    t.datetime "created_at",                            :null => false
-    t.datetime "updated_at",                            :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.string   "vendor"
-    t.boolean  "accepting_orders",   :default => true
+    t.boolean  "accepting_orders",    :default => true
     t.string   "billing_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
     t.string   "domain"
-    t.boolean  "should_clean_args",  :default => false
+    t.boolean  "should_clean_args",   :default => false
     t.text     "viking_data"
-    t.boolean  "allow_iframe",       :default => true
+    t.boolean  "allow_iframe",        :default => true
+    t.boolean  "vulcain_test_pass"
+    t.string   "vulcain_test_output"
   end
 
   create_table "order_items", :force => true do |t|
@@ -163,6 +204,7 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.integer  "mangopay_amazon_voucher_id"
     t.string   "mangopay_amazon_voucher_code"
     t.integer  "developer_id"
+    t.string   "tracker"
   end
 
   create_table "payment_cards", :force => true do |t|
@@ -192,19 +234,21 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.text     "description"
     t.datetime "created_at",      :null => false
     t.datetime "updated_at",      :null => false
-    t.string   "color"
-    t.string   "size"
+    t.text     "color"
+    t.text     "size"
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
     t.string   "brand"
+    t.string   "reference"
+    t.text     "images"
   end
 
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
     t.text     "url"
-    t.string   "image_url"
+    t.text     "image_url"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
     t.text     "description"
@@ -212,6 +256,8 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.string   "brand"
     t.datetime "versions_expires_at"
     t.boolean  "viking_failure"
+    t.string   "reference"
+    t.datetime "muted_until"
   end
 
   create_table "states", :force => true do |t|
@@ -245,8 +291,8 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
   end
 
   create_table "users", :force => true do |t|
-    t.string   "email",                  :default => "", :null => false
-    t.string   "encrypted_password",     :default => "", :null => false
+    t.string   "email",                  :default => "",    :null => false
+    t.string   "encrypted_password",     :default => "",    :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
@@ -262,8 +308,8 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.integer  "failed_attempts",        :default => 0
     t.datetime "locked_at"
     t.string   "authentication_token"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.string   "first_name"
     t.string   "last_name"
     t.integer  "civility"
@@ -272,6 +318,9 @@ ActiveRecord::Schema.define(:version => 20130724145151) do
     t.string   "ip_address"
     t.string   "pincode"
     t.integer  "mangopay_id"
+    t.integer  "developer_id"
+    t.boolean  "visitor",                :default => false
+    t.string   "tracker"
   end
 
   add_index "users", ["authentication_token"], :name => "index_users_on_authentication_token", :unique => true

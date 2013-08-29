@@ -1,4 +1,4 @@
-class Shopelia.Models.Product extends Backbone.Model
+class Shopelia.Models.Product extends Backbone.RelationalModel
   name: "product"
 
   validate: (attrs, options) ->
@@ -6,7 +6,7 @@ class Shopelia.Models.Product extends Backbone.Model
       "Invalid Product: Missing Attrs"
     if attrs.expected_price_product is undefined or attrs.expected_price_product == ""
       "Invalid Product: Missing Attrs"
-    if attrs.expected_price_shipping is undefined or  attrs.expected_price_shipping == ""
+    if isNaN(attrs.expected_price_shipping) or  attrs.expected_price_shipping == ""
       "Invalid Product: Missing Attrs"
     if attrs.name is undefined or attrs.name == ""
       "Invalid Product: Missing Attrs"
@@ -15,56 +15,57 @@ class Shopelia.Models.Product extends Backbone.Model
 
 
 
+
   initialize: (params) ->
-    #console.log('Initializing Product with params')
-    if this.isValid()
-      @getMerchant()
-    else
-      @getProduct()
+    _.bindAll(this)
+    @on("change:expected_price_product",@setExpectedPrice)
+    @on("change:expected_price_shipping",@setExpectedShipping)
 
 
-  getMerchant: ->
-    that = this
-    $.ajax({
-           type: "POST",
-           url: "api/merchants",
-           data: { url: that.get("url") }
-           dataType: 'json',
-           beforeSend: (xhr) ->
-             xhr.setRequestHeader("Accept","application/json")
-             xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
-             xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
-           success: (data,textStatus,jqXHR) ->
-             that.set({merchant_name:data.merchant.name})
-             $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
-           error: (jqXHR,textStatus,errorThrown) ->
-             #console.log('error merchant callback')
-             #console.log(JSON.stringify(errorThrown))
-           });
+  addMerchantInfosToProduct: (data) ->
+    console.log('in add merchant')
+    console.log(data)
+    @set({
+          merchant_name: data.merchant.name,
+          merchant_logo: data.merchant.logo,
+          allow_iframe: data.merchant.allow_iframe,
+          })
 
-  getProduct: ->
-    that = this
-    $.ajax({
-           type: "GET",
-           url: "api/products",
-           data: { url: that.get("url") }
-           dataType: 'json',
-           beforeSend: (xhr) ->
-             xhr.setRequestHeader("Accept","application/json")
-             xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
-             xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
-           success: (data,textStatus,jqXHR) ->
-             #console.log("success retrieving product")
-             that.set({
-                      name: data.name,
-                      image_url: data.image_url,
-                      expected_price_product: data.versions[0].price,
-                      expected_price_shipping: data.versions[0].price_shipping,
-                      shipping_info: data.versions[0].shipping_info
-                      merchant_name: data.merchant.name
-                      })
-             $(".merchant-infos").append("Proposé par <br> <b>" +  data.merchant.name + "</b>")
-           error: (jqXHR,textStatus,errorThrown) ->
-             #console.log('error callback getting Product ')
-             #console.log(JSON.stringify(errorThrown))
-           });
+
+  setProduct: (data) ->
+    console.log("setData")
+    console.log(data)
+    try
+      @set({
+           product_version_id:data.versions[0].id,
+           name: data.name,
+           image_url: data.image_url,
+           description: data.description,
+           expected_price_product: data.versions[0].price,
+           expected_price_shipping: data.versions[0].price_shipping,
+           shipping_info: data.versions[0].shipping_info
+           merchant_name: data.merchant.name,
+           merchant_logo: data.merchant.logo,
+           allow_iframe: data.merchant.allow_iframe
+           })
+    catch error
+      console.log(error)
+
+
+
+
+  customParseFloat: (float) ->
+    parseFloat(Math.round(float * 100) / 100).toFixed(2)
+
+
+  setExpectedPrice: (model,value) ->
+    model.set("expected_price_product",model.customParseFloat(value))
+
+  setExpectedShipping: (model,value) ->
+    model.set("expected_price_shipping",model.customParseFloat(value))
+
+
+  getExpectedTotalPrice: ->
+    @customParseFloat(parseFloat(@get('expected_price_product')) + parseFloat(@get('expected_price_shipping')))
+
+

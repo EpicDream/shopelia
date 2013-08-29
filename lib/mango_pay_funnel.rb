@@ -70,8 +70,8 @@ module MangoPayFunnel
           'ReturnURL' => 'https://www.shopelia.fr/null'
       })
       if remote_card['ID'].present?
-        # If API is stubbed, skip card injectionapp/serializers/product_serializer.rb
-        unless Rails.env.test? && File.exist?("#{Rails.root}/test/cassettes/mangopay.yml")
+        # If API is stubbed, skip card injection
+        if !Rails.env.test? || !File.exist?("#{Rails.root}/test/cassettes/mangopay.yml") || ENV["ALLOW_PAYLINE_DRIVER"] == "1"
           begin
             PaylineDriver.inject(card,remote_card["RedirectURL"]) 
           rescue PaylineDriver::DriverError => e
@@ -105,7 +105,7 @@ module MangoPayFunnel
         'UserID' => order.user.mangopay_id,
         'WalletID' => order.mangopay_wallet_id,
         'PaymentCardID' => order.payment_card.mangopay_id,
-        'Amount' => (order.prepared_price_total*100).to_i
+        'Amount' => (order.prepared_price_total*100).round
       })
       if contribution['ID'].present?
         order.update_attributes(
@@ -140,7 +140,7 @@ module MangoPayFunnel
     end
     
     # Check that wallet has exactly the needed amount
-    amount = (order.prepared_price_total*100).to_i
+    amount = (order.prepared_price_total*100).round
     wallet = MangoPay::Wallet.details(order.mangopay_wallet_id)
     if wallet['Amount'] != amount
       return error "Wallet must have exactly the requested amount (has #{wallet['Amount']} but need #{amount}"

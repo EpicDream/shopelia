@@ -10,6 +10,8 @@
 @import "users_index.css.scss";
 @import "orders_index.css.scss";
 @import "responsive.css.scss";
+@import "jquery.pnotify.default.css.scss";
+@import "jquery.pnotify.default.icons.css.scss";
 
 body {
   background-color: transparent;
@@ -17,6 +19,10 @@ body {
 
 .text-center {
   text-align: center;
+}
+
+.block {
+  display: block;
 }
 
 .loader {
@@ -34,3 +40,30 @@ body {
   background-position: center;
 }
 
+.small {
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.extra-small {
+  font-size: 10px;
+  line-height: 12px;
+}
+
+.grey {
+  color: #8c8c8c;
+}
+
+#footer-info {
+  text-align: center;
+  color: $lightGrey;
+  font-size: 16px;
+  line-height: 18px;
+}
+
+#modal-top-wrapper {
+  margin-bottom: 20px;
+}
+#modal-bottom-wrapper {
+  margin-top: 20px;
+}

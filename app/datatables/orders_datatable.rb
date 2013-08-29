@@ -1,14 +1,15 @@
 class OrdersDatatable
-  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :time_ago_in_words, :truncate, :admin_order_path, to: :@view
+  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :time_ago_in_words, :truncate, :admin_order_path, :order_state_to_html, to: :@view
 
-  def initialize(view)
+  def initialize(view, filters = {})
     @view = view
+    @filters = filters
   end
 
   def as_json(options = {})
     {
       sEcho: params[:sEcho].to_i,
-      iTotalRecords: Order.count,
+      iTotalRecords: orders.count,
       iTotalDisplayRecords: orders.total_entries,
       aaData: data
     }
@@ -18,14 +19,17 @@ class OrdersDatatable
 
   def data
     orders.map do |order|
+      product = order.order_items.first.product
       [
-        link_to(image_tag(order.order_items.first.product.image_url, style:"max-width:100px;max-height:40px"), "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
-        image_tag(order.merchant.logo, style:"max-width:100px;max-height:40px"),
+        order_state_to_html(order.state_name),
+        link_to(product.nil? ? "-" : product.name, "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
+        order.merchant.name,
         number_to_currency(order.state == :completed ? order.billed_price_total : order.expected_price_total),
         h(order.user.name),
         time_ago_in_words(order.updated_at),
+        order.message,
         order.error_code,
-        "<button type=\"button\" class=\"btn btn-warning\" data-url=\"#{admin_order_path(order)}\" data-state=\"retry\" style=\"visibility:hidden\">Retry the order</button> <button type=\"button\" class=\"btn btn-danger\" data-url=\"#{admin_order_path(order)}\" data-state=\"cancel\" style=\"visibility:hidden\">Cancel the order</button> "
+        order.state_name == "pending_agent" ? "<button type=\"button\" class=\"btn btn-success\" data-uuid=\"#{order.uuid}\" style=\"visibility:hidden\">Kanaveral</button> <button type=\"button\" class=\"btn btn-warning btn-modal\" data-url=\"#{admin_order_path(order)}\" data-state=\"retry\" style=\"visibility:hidden\">Vulcain</button> <button type=\"button\" class=\"btn btn-danger btn-modal\" data-url=\"#{admin_order_path(order)}\" data-state=\"cancel\" style=\"visibility:hidden\">Cancel</button>" : ""
       ]
     end
   end
@@ -35,7 +39,7 @@ class OrdersDatatable
   end
 
   def fetch_orders
-    orders = Order.where(state_name:params[:state]).order("#{sort_column} #{sort_direction}")
+    orders = Order.where("created_at>=? and created_at<=?", @filters[:date_start], @filters[:date_end]).where(state_name:@filters[:state]).order("#{sort_column} #{sort_direction}")
     orders = orders.page(page).per_page(per_page)
     orders
   end

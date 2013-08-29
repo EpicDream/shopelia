@@ -73,6 +73,20 @@ Merchant.create(
   :logo=>'http://www.prixing.fr/images/logos/eb0376551c3ef012b416b626ecb8be4a.jpg',
   :vendor=>'Sephora',
   :domain=>'sephora.fr')  
+Merchant.create(
+  :id=>11,
+  :name=>"The Body Shop",
+  :url=>'http://www.thebodyshop.fr',
+  :logo=>'https://www.shopelia.fr/images/logos/thebodyshop.jpg',
+  :vendor=>'TheBodyShopFrance',
+  :domain=>'thebodyshop.fr')
+Merchant.create(
+  :id=>12,
+  :name=>"Zalando",
+  :url=>'http://www.zalando.fr',
+  :logo=>'https://www.shopelia.fr/images/logos/zalando.jpg',
+  :vendor=>'ZalandoFR',
+  :domain=>'zalando.fr')
 Developer.delete_all
 Developer.create(:name=>'Prixing',:api_key=>'52953f1868a7545011d979a8c1d0acbc310dcb5a262981bd1a75c1c6f071ffb4')
 Country.delete_all

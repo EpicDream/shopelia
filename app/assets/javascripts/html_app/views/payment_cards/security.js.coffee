@@ -1,10 +1,10 @@
-class Shopelia.Views.Security extends Backbone.View
+class Shopelia.Views.Security extends Shopelia.Views.ShopeliaView
 
   template: JST['payment_cards/security']
   className: 'security'
 
   initialize: ->
-    _.bindAll this
+    Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
 
 
   render: ->

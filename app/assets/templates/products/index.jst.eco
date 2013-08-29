@@ -1,29 +1,29 @@
 
-      <img class="product-image" src= <%= @model.get('image_url') %> />
+      <img class="product-image" src= <%= @model('image_url') %> />
       <div class="spacer10 hidden-phone"></div>
-      <h4><%= @model.get('name') %> </h4>
- <div class="clearfix hidden-phone"> </div>
+      <h4><%= @model('name') %> </h4>
   <div class="spacer5"></div>
   <div class="price-infos">
       <div class="pull-right">
-        <span class="price clearfix">
-            <span class="green bold pull-left"> <%= @model.get('expected_price_product') %> € </span>
-            <span class="taxes bold pull-left">TTC</span>
+        <span class="price">
+            <span class="taxes bold">TTC</span>
+            <span class="green bold"> <%= @model('expected_price_product') %> € </span>
         </span>
         <span class="shipping">
-            frais de livraison
-            <span class="green"><%= @model.get('expected_price_shipping') %> €</span>
-            <span class="green bold clearfix"><%= @model.get('shipping_info') %></span>
         </span>
 
       </div>
       <div class='merchant-infos pull-left'>
+        Vendu et expédié par <br />
+        <img class="merchant-image" src="<%= @model('merchant_logo') %>">
       </div>
    </div>
-  <div class="spacer5"></div>
-  <div class="clearfix"></div>
 
-  <div class="spacer20"></div>
-  <button id="btn-product-infos" class="custom-btn btn-block">Informations sur le Produit</button>
+  <div class="product-description">
+    <span class="pull-left green bold "> Description:</span>
+    <div  class="description-content" > <%- @model('description') %></div>
+  </div>
+  <a id="full-description" class="block text-center">Plus de détails</a>
+
 
 

@@ -3,20 +3,16 @@ $modalWidth: 622px;
 $borderRadius: 4px;
 
 #modal {
-  display: block;
+  display: none;
   position: absolute;
   opacity: 1;
-  z-index: 10000;
+  //z-index: 10000;
   border-radius:$borderRadius;
   background-color:rgba(0, 0, 0, 0.65);
   //min-height: $modalHeight;
   min-width: $modalWidth ;
   margin-top: 10px;
   margin-bottom: 20px;
-}
-
-#modal-content {
-  margin-bottom: 25px;
 }
 
 #modal-header {
@@ -26,16 +22,13 @@ $borderRadius: 4px;
   @include border-top-radius($borderRadius);
 }
 
-#modal-footer {
-  display: none;
-  padding: 10px;
-  height: 70px;
-  background: $lightGrey;
-  margin-top: -5px;
-  @include border-bottom-radius($borderRadius);
+.top-bottom-margin {
+   margin-top: 25px;
+   margin-bottom: 25px;
 }
 
-#modal-header .logo {
+
+.logo {
   margin-top: 20px;
 }
 
@@ -50,7 +43,7 @@ $borderRadius: 4px;
   padding-right: 10px;
 }
 
-#modal-left, .box {
+.box {
   border-radius:$borderRadius;
   padding: 10px;
   background: $lightGrey;
@@ -65,15 +58,11 @@ $borderRadius: 4px;
   height:30px;
   display:block;
   text-indent:-9999px;
-  top:0;
-  right:0;
+  top:5px;
+  right:5px;
   &:hover {
     background:url("bt-fermer-hover.png") 0 0 no-repeat;
   }
-}
-
-.row-fluid {
-  margin-left: 4.35%;
 }
 
 .green {

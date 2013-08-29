@@ -1,2 +1,2 @@
-class Shopelia.Models.Address extends Backbone.Model
+class Shopelia.Models.Address extends Backbone.RelationalModel
 

@@ -1,0 +1,7 @@
+web:
+  uuid: "uuid"
+  user_agent: "web"
+
+mobile:
+  uuid: "uuid2"
+  user_agent: "mobile"

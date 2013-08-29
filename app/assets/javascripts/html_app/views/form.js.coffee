@@ -1,6 +1,9 @@
-class Shopelia.Views.Form extends Backbone.View
+class Shopelia.Views.Form extends Shopelia.Views.Layout
 
-  render: ->
+  initializeForm: (params) ->
+    console.log($('form'))
+    that = this
+    showSecurity = params && params.security
     @$('form :input').each(() ->
       $(this).focusout(() ->
         if $(this).attr('tracker-name') != undefined &&  $(this).parsley('validate')
@@ -15,12 +18,10 @@ class Shopelia.Views.Form extends Backbone.View
       )
     )
 
-
-    @$( 'form' ).parsley
+    @$('form').parsley
       showErrors: false
 
-
-    @$('form' ).parsley('addListener',{
+    @$('form').parsley('addListener',{
       onFieldValidate: ( elem, ParsleyField ) ->
         return
       onFieldError: (elem, constraints, ParsleyField) ->
@@ -56,7 +57,7 @@ class Shopelia.Views.Form extends Backbone.View
 
     @$('form :button').after(
       () ->
-        securityView = new Shopelia.Views.Security()
-        $(securityView.render().el)
+        if showSecurity
+          securityView = new Shopelia.Views.Security(parent: that)
+          $(securityView.render().el)
     )
-    this

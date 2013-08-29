@@ -13,22 +13,79 @@
   margin: auto;
 }
 
-.price-infos > .pull-left {
+.merchant-image {
+  width: 90%;
+  max-width: 100px;
+  background-color: #ffffff;
+  border: 1px solid darken($lightGrey,10%);
+  border-radius:$borderRadius;
+  padding: 5%;
+  display: block;
+  margin: auto;
+}
+
+.price {
+  display: block;
+  text-align: right;
+}
+
+.price-infos {
+  overflow: auto;
+  padding-top: 5px;
+  margin-bottom: 10px;
+}
+
+.price-infos > span {
   padding-top: 7px;
   line-height: 1.1em;
 }
 
 .price-infos > .pull-right {
-  max-width: 40%;
+  max-width: 200px;
+  text-align: right;
 }
 
 .pull-right > .price > span.green.bold {
    font-size: 200%;
+   margin-right: 28px;
 }
 
 .pull-right > .price > span.taxes {
   font-size: 120%;
   display: block;
-  margin-top: -10px;
-  margin-left: 3px;
+  margin-bottom: -10px;
+}
+
+.product-description {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.description-content {
+  height: 90px;
+  display: block;
+  overflow: hidden;
+  clear:both;
+  text-overflow: ellipsis;
+}
+
+.full-description {
+  padding: 30px;
+  overflow: auto !important;
+}
+
+.full-description > div:first-of-type {
+  background-color: #ffffff;
+  border: 1px solid darken($lightGrey,10%);
+  border-radius:$borderRadius;
+  padding: 10px;
+}
+
+.shipping > p {
+  margin: 0;
+}
+
+#full-description {
+  display: block;
+  clear:both;
 }

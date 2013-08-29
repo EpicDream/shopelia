@@ -1,5 +1,10 @@
-class Shopelia.Models.Session extends Backbone.Model
+class Shopelia.Models.Session extends Backbone.RelationalModel
   urlRoot: "/api/users"
+  relations: [{
+              type: Backbone.HasOne,
+              key: 'user',
+              relatedModel: 'Shopelia.Models.User'
+              }]
   defaults:
     auth_token: null,
     user: null
@@ -13,19 +18,17 @@ class Shopelia.Models.Session extends Backbone.Model
   # Saves session information to cookie
   saveCookies:(session) ->
     if session isnt undefined
-      if session.user isnt undefined
-        @user = new Shopelia.Models.User(session.user)
-      if session.auth_token isnt undefined
-        @auth_token = session.auth_token
-    #console.log("save cookies")
-    #console.log(this)
+      if session.get('user') isnt undefined
+        @user = session.get('user')
+      if session.get('auth_token') isnt undefined
+        @auth_token = session.get('auth_token')
     $.cookie.json = true;
     $.cookie('session', this)
 
   updateUserCookies: (user) ->
     #console.log("updating cookies")
     $.cookie.json = true;
-    @user = new Shopelia.Models.User(user)
+    @user = user
     @saveCookies()
 
   deleteCookies: ->
@@ -36,12 +39,12 @@ class Shopelia.Models.Session extends Backbone.Model
   load: ->
     #console.log("load")
     $.cookie.json = true;
-    session = $.cookie('session')
-    unless session is undefined
+    cookie = $.cookie('session')
+    unless cookie is undefined
       #console.log(session.user)
       @set
-        user: new Shopelia.Models.User(session.user)
-        auth_token: session.auth_token
+        user: cookie.user
+        auth_token: cookie.auth_token
 
     #console.log("load finished")
     #console.log(session)

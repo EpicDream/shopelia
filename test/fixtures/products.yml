@@ -6,6 +6,7 @@ usbkey:
   image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
   description: "Description"
   brand: "brand"
+  reference: "reference"
   viking_failure: false
   
 headphones:
@@ -16,3 +17,9 @@ headphones:
   image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
   viking_failure: false
   
+nounours:
+  name: "Nounours"
+  merchant: toysrus
+  url: "http://www.toysrus.fr/nounours"
+  image_url: "http://www.toysrus.fr/nounours.jpg"
+  viking_failure: false

@@ -12,7 +12,7 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY",
         :out => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY" },
       { :in  => "http://tracking.lengow.com/shortUrl/53-1110-2759446/",
-        :out => "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4" },
+        :out => "http://www.fnac.com" },
       { :in  => "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www.fnac.com%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4%23bl%3DMMtvh]]",
         :out => "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4" },
       { :in  => "http://ad.zanox.com/ppc/?19436175C242487251&ULP=%5B%5Bm/ps/mpid:MP-0006DM7671064%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d%5D%5D#rueducommerce.fr",
@@ -20,7 +20,11 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(717215663)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Fdp.asp%3Fsku%3DROSITRIPLE10M%26refer%3D*)",
         :out => "http://www.cdiscount.com/electromenager/lave-vaisselle/rosieres-triple-10m/f-11025-rositriple10m.html" },
       { :in  => "http://ad.zanox.com/ppc/?18920697C1372641144&ULP=%5B%5Bhttp://www.toysrus.fr/redirect_znx.jsp?url=http%3A%2F%2Fwww.toysrus.fr%2Fproduct%2Findex.jsp%3FproductId%3D10863181%5D%5D#toysrus.fr",
-        :out => "http://www.toysrus.fr/product/index.jsp?productId=10863181" }
+        :out => "http://www.toysrus.fr/product/index.jsp?productId=10863181" },
+      { :in  => "http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm?xts=425426&xtor=AL-146-[typologie]-[1532882]-[flux]&xtloc=http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068&xtdt=22932563",
+        :out => "http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068" },
+      { :in  => "http://action.metaffiliation.com/trk.php?mclic=P3138544D2D222S1UC431296294177V3",
+        :out => "http://www.avenuedesjeux.com/playmobil-playmobil-5302-maison-de-ville.36324.html" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])
@@ -29,51 +33,32 @@ class LinkerTest < ActiveSupport::TestCase
   
   test "it should use url matcher" do
     assert_difference("UrlMatcher.count", 1) do
-      assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
+      assert_equal "http://www.fnac.com", Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
     end
-    assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", UrlMatcher.first.canonical
+    assert_equal "http://www.fnac.com", UrlMatcher.first.canonical
     
     assert_difference("UrlMatcher.count", 0) do
       Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
     end   
 
     assert_difference("UrlMatcher.count", 0) do
-      assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4")
+      assert_equal "http://www.fnac.com", Linker.clean("http://www.fnac.com")
     end
   end
  
-  test "it should monetize priceminister" do
-    url = Linker.monetize "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html#sort=0&filter=10&s2m_exaffid=977275"
-    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html", url
-  end
-
-  test "it should replace priceminister tag" do
-    url = Linker.monetize "http://track.effiliation.com/servlet/effi.redir?id_compteur=12345&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html"
-    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html", url
-  end
-  
-  test "it shouldn't remonetize already tracked priceminister" do
-    url = "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html"
-    assert_equal url, Linker.monetize(url)
+  test "it should generate incident if link is not monetizable" do
+    assert_difference "Incident.count", 1 do
+      Linker.monetize "http://www.newshop.com/productA"
+    end
+    assert_difference "Incident.count", 0 do
+      Linker.monetize "http://www.newshop.com/productB"
+    end
+    Incident.last.update_attribute :processed, true
+    assert_difference "Incident.count", 1 do
+      Linker.monetize "http://www.newshop.com/productC"
+    end
   end
  
-  test "it should replace tag in amazon link" do
-    url = Linker.monetize "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY"
-    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY", url
-  end 
-  
-  test "it should add tag in amazon link" do
-    url = Linker.monetize "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY"
-    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?tag=shopelia-21", url  
-    url = Linker.monetize "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY"
-    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY&tag=shopelia-21", url
-  end 
-
-  test "it shouldn't change already monetized amazon url" do
-    url = "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=shopelia-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY"
-    assert_equal url, Linker.monetize(url)
-  end
-
   test "it should not change non monetizable link" do
     url = "http://www.prixing.fr"
     assert_equal url, Linker.monetize(url)
@@ -90,20 +75,22 @@ class LinkerTest < ActiveSupport::TestCase
     url = Linker.monetize nil
     assert url.nil?
   end  
+
+  test "it should monetize amazon" do
+    url = Linker.monetize "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY"
+    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?tag=shopelia-21", url  
+    url = Linker.monetize "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY"
+    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY&tag=shopelia-21", url
+  end 
   
+  test "it should monetize priceminister" do
+    url = Linker.monetize "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html#sort=0&filter=10&s2m_exaffid=977275"
+    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html", url
+  end
+
   test "it should monetize fnac url" do
     url = Linker.monetize "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4#bl=MMtvh"
     assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www.fnac.com%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4%23bl%3DMMtvh]]", url
-  end
-  
-  test "it should monetize zanox fnac url" do
-    url = Linker.monetize "http://ad.zanox.com/ppc/?19054231C2048768278&ULP=[[jeux-jouets.fnac.com/a5782285/DOUETCIE-FND-LAPIN-BONBON-PM-TAUPE]]"
-    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[jeux-jouets.fnac.com/a5782285/DOUETCIE-FND-LAPIN-BONBON-PM-TAUPE]]", url
-  end
-  
-  test "it shouldn't change already correctly monetized fnac url" do
-    url = "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=%5B%5Blivre.fnac.com/a1000650/H-Kohler-Les-enfants-agites-anxieux-tristes%5D%5D"
-    assert_equal url, Linker.monetize(url)
   end
   
   test "it should monetize rueducommerce link" do
@@ -114,6 +101,11 @@ class LinkerTest < ActiveSupport::TestCase
   test "it should monetize eveiletjeux link" do
     url = Linker.monetize "http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367"
     assert_equal "http://ad.zanox.com/ppc/?25424162C654654636&ulp=[[http://logc57.xiti.com/gopc.url?xts=425426&xtor=AL-146-1%5Btypologie%5D-REMPLACE-%5Bparam%5D&xtloc=http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367&url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm]]", url
+  end
+
+  test "it should monetize toysrus link" do
+    url = Linker.monetize "http://www.toysrus.fr/product/index.jsp?productId=11621761"
+    assert_equal "http://ad.zanox.com/ppc/?25465502C586468223&ulp=[[http://www.toysrus.fr/redirect_znx.jsp?url=http://www.toysrus.fr/product/index.jsp?productId=11621761&]]", url
   end
   
   test "it should monetize cdiscount link" do
