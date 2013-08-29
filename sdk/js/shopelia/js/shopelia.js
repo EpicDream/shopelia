@@ -38,11 +38,10 @@ var ShopeliaCheckout = {
     var urls =  urlsTempArray.join('||');
     this.extend(params,{urls: urls});
     if(urls != "") {
-      this.sendEvents(params).always(function() {
-        if (params.type == "view") {
-          that.urlsArray = that.urlsArray.concat(urlsTempArray);
-        }
-      });
+      if (params.type != "click") {
+        that.urlsArray = that.urlsArray.concat(urlsTempArray);
+      }
+      this.sendEvents(params);
     }
   },
   sendEvents: function(params) {
