@@ -4,7 +4,7 @@ voir les offres de ces vendeurs: true
 expedie sous: true
 ^\(\d+\)$: true
 en stock: true
-disponibilite immediate:true
+disponibilite immediate: true
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
 retrait gratuit en magasin: false
