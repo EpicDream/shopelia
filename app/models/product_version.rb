@@ -87,12 +87,9 @@ class ProductVersion < ActiveRecord::Base
     result = nil
     a = self.availability_text.unaccent.downcase
     dic = YAML.load(File.open(AVAILABILITY))
-    dic.keys.each {|key| result = dic[key] if a =~ /#{key}/ }
-    if result.nil?
-      generate_incident "Cannot parse availability : #{a}"
-      result = true
-    end
-    self.available = result
+    key = dic.keys.detect {|key| key if a =~ /#{key}/ }
+    generate_incident "Cannot parse availability : #{a}" if key.nil?
+    self.available = key.nil? ? true : dic[key]
     true
   end
   
