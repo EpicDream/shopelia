@@ -12,7 +12,7 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY",
         :out => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY" },
       { :in  => "http://tracking.lengow.com/shortUrl/53-1110-2759446/",
-        :out => "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4" },
+        :out => "http://www.fnac.com" },
       { :in  => "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www.fnac.com%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4%23bl%3DMMtvh]]",
         :out => "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4" },
       { :in  => "http://ad.zanox.com/ppc/?19436175C242487251&ULP=%5B%5Bm/ps/mpid:MP-0006DM7671064%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d%5D%5D#rueducommerce.fr",
@@ -22,7 +22,9 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://ad.zanox.com/ppc/?18920697C1372641144&ULP=%5B%5Bhttp://www.toysrus.fr/redirect_znx.jsp?url=http%3A%2F%2Fwww.toysrus.fr%2Fproduct%2Findex.jsp%3FproductId%3D10863181%5D%5D#toysrus.fr",
         :out => "http://www.toysrus.fr/product/index.jsp?productId=10863181" },
       { :in  => "http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm?xts=425426&xtor=AL-146-[typologie]-[1532882]-[flux]&xtloc=http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068&xtdt=22932563",
-        :out => "http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068" }
+        :out => "http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068" },
+      { :in  => "http://action.metaffiliation.com/trk.php?mclic=P3138544D2D222S1UC431296294177V3",
+        :out => "http://www.avenuedesjeux.com/playmobil-playmobil-5302-maison-de-ville.36324.html" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])
@@ -31,16 +33,16 @@ class LinkerTest < ActiveSupport::TestCase
   
   test "it should use url matcher" do
     assert_difference("UrlMatcher.count", 1) do
-      assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
+      assert_equal "http://www.fnac.com", Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
     end
-    assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", UrlMatcher.first.canonical
+    assert_equal "http://www.fnac.com", UrlMatcher.first.canonical
     
     assert_difference("UrlMatcher.count", 0) do
       Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
     end   
 
     assert_difference("UrlMatcher.count", 0) do
-      assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4")
+      assert_equal "http://www.fnac.com", Linker.clean("http://www.fnac.com")
     end
   end
  

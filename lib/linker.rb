@@ -5,14 +5,14 @@ class Linker
   def self.clean url
     count = 0
     url = url.unaccent
-    canonical = self.by_rule(url) || UrlMatcher.find_by_url(canonical).try(:canonical) || UrlMatcher.find_by_url(url).try(:canonical)
+    canonical = self.by_rule(url) ||  UrlMatcher.find_by_url(url).try(:canonical) || UrlMatcher.find_by_canonical(url).try(:canonical)
     if canonical.nil?
       orig = url
       begin
         uri = URI.parse(url)
         req = Net::HTTP::Head.new(uri.request_uri, {'User-Agent' => UA })
         res = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
-        if res.code.to_i == 405
+        if res.code.to_i == 405 || (res.code.to_i == 200 && res['location'].blank?)
           req = Net::HTTP::Get.new(uri.request_uri, {'User-Agent' => UA })
           res = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
         end   
