@@ -43,8 +43,10 @@ class Event < ActiveRecord::Base
   end
   
   def set_monetizable
-    mlink = Linker.monetize(self.product.url)
-    self.monetizable = !mlink.eql?(self.product.url)
-    true
+    if self.product.present?
+      mlink = Linker.monetize(self.product.url)
+      self.monetizable = !mlink.eql?(self.product.url)
+      true
+    end
   end
 end

@@ -39,12 +39,17 @@ class Linker
   def self.monetize url
     return nil if url.blank?
     url = url.unaccent
-    MerchantConjurer.from_url(url).monetize
+    m = MerchantConjurer.from_url(url).monetize
   rescue
-    Incident.create(
-      :issue => "Linker",
-      :description => "Url not monetized : #{url}",
-      :severity => Incident::IMPORTANT)      
+    merchant = Merchant.find_or_create_by_domain(Utils.extract_domain(url))
+    if Incident.where(issue:"Linker",resource_type:"Merchant",resource_id:merchant.id,processed:false).where("description like 'Url not monetized%'").count == 0
+      Incident.create(
+        :issue => "Linker",
+        :resource_type => "Merchant",
+        :resource_id => merchant.id,
+        :description => "Url not monetized : #{url}",
+        :severity => Incident::IMPORTANT)      
+    end
     url
   end
   

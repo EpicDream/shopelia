@@ -50,6 +50,13 @@ class LinkerTest < ActiveSupport::TestCase
     assert_difference "Incident.count", 1 do
       Linker.monetize "http://www.newshop.com/productA"
     end
+    assert_difference "Incident.count", 0 do
+      Linker.monetize "http://www.newshop.com/productB"
+    end
+    Incident.last.update_attribute :processed, true
+    assert_difference "Incident.count", 1 do
+      Linker.monetize "http://www.newshop.com/productC"
+    end
   end
  
   test "it should not change non monetizable link" do

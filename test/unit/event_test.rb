@@ -18,7 +18,7 @@ class EventTest < ActiveSupport::TestCase
       event = Event.new(
         :action => Event::VIEW,
         :url => "http://www.amazon.fr/my_product",
-      :device_id => devices(:web).id,
+        :device_id => devices(:web).id,
         :developer_id => developers(:prixing).id)
       assert event.save, event.errors.full_messages.join(",")
     end
@@ -41,5 +41,14 @@ class EventTest < ActiveSupport::TestCase
         :developer_id => developers(:prixing).id,
         :urls => [ "http://www.amazon.fr/product1", "http://www.amazon.fr/product2" ])
     end
+  end
+
+  test "it shouldn't create event without valid product" do
+    event = Event.new(
+      :action => Event::CLICK,
+      :url => "",
+      :device_id => devices(:web).id,
+      :developer_id => developers(:prixing).id)
+    assert !event.save
   end
 end
