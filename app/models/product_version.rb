@@ -15,7 +15,8 @@ class ProductVersion < ActiveRecord::Base
   attr_accessible :image_url, :brand, :name, :available, :reference
   attr_accessible :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
   attr_accessor :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
-  
+
+  before_save :truncate_name  
   before_validation :parse_price, :if => Proc.new { |v| v.price_text.present? }
   before_validation :parse_price_shipping, :if => Proc.new { |v| v.price_shipping_text.present? }
   before_validation :parse_price_strikeout, :if => Proc.new { |v| v.price_strikeout_text.present? }
@@ -108,5 +109,8 @@ class ProductVersion < ActiveRecord::Base
   def check_not_related_to_any_order
     self.order_items.empty?
   end
-   
+
+  def truncate_name
+    self.name = self.name[0..249] if self.name && self.name.length > 250
+  end   
 end
