@@ -95,7 +95,7 @@ window.countries =
 "BD":"Bangladesh",
 "BB":"Barbados",
 "BY":"Belarus",
-"BE":"Belgium",
+"BE":"Belgique",
 "BZ":"Belize",
 "BJ":"Benin",
 "BM":"Bermuda",

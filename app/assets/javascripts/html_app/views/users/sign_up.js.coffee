@@ -43,7 +43,6 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
                                       })
       user.get('addresses').add(address)
       user.get("payment_cards").add(card.disableWrapping())
-      console.log(user)
       user
     else
       undefined

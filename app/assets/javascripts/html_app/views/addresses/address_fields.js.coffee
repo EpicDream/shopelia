@@ -7,41 +7,37 @@ class Shopelia.Views.AddressFields extends Shopelia.Views.ShopeliaView
     city: 'input[name="city"]'
     country: 'input[name="country"]'
     address2: 'input[name="address2"]'
-    fullName:'input[name="full_name"]'
+    fullName: 'input[name="full_name"]'
   }
-
 
   events:
     "keypress input[name='address1']": "getLocation"
-    "change input[name='address1']": "eraseAddressFields"
-
-
 
   onRender: ->
     @ui.country.autocomplete({
-                          source: _.values(countries),
-                          });
+      source: _.values(countries),
+    });
 
   getFormResult: ->
     {
       first_name:  split(@ui.fullName.val())[0],
       last_name:   split(@ui.fullName.val())[1],
       address1: @ui.address1.val(),
-      zip:@ui.zip.val(),
+      address2: @ui.address2.val(),
+      zip: @ui.zip.val(),
       city: @ui.city.val(),
-      country: @getCountryIso(@ui.country.val()),
-      address2: @ui.address2.val()
+      country_iso: @getCountryIso(@ui.country.val()),
     }
 
-  getCountryIso : (country_iso) ->
+  getCountryIso : (country) ->
+    country_iso = "XX"
     _.each(countries, (value,key) ->
-      if(value.toLowerCase()  == country_iso.toLowerCase())
+      if(value.toLowerCase() == country.toLowerCase())
         country_iso = key
     )
-
+    country_iso
 
   eraseAddressFields: ->
-    #console.log("eraseAddressFields")
     @ui.zip.val("")
     @ui.city.val("")
     @ui.country.val("")
