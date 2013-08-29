@@ -76,7 +76,7 @@ class ProductVersion < ActiveRecord::Base
 
   def parse_price_shipping
     self.price_shipping = parse_float(self.price_shipping_text)
-    generate_incident "Shipping price too high : #{self.price_shipping_text}" if self.price_shipping.to_f > 150
+    generate_incident "Shipping price too high : #{self.price_shipping_text}" if self.price_shipping.to_f > 150 && self.price_shipping.to_f > self.price.to_f / 3.0
   end
   
   def parse_price_strikeout
@@ -87,12 +87,9 @@ class ProductVersion < ActiveRecord::Base
     result = nil
     a = self.availability_text.unaccent.downcase
     dic = YAML.load(File.open(AVAILABILITY))
-    dic.keys.each {|key| result = dic[key] if a =~ /#{key}/ }
-    if result.nil?
-      generate_incident "Cannot parse availability : #{a}"
-      result = true
-    end
-    self.available = result
+    key = dic.keys.detect {|key| key if a =~ /#{key}/ }
+    generate_incident "Cannot parse availability : #{a}" if key.nil?
+    self.available = key.nil? ? true : dic[key]
     true
   end
   

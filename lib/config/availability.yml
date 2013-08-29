@@ -1,17 +1,17 @@
-out of stock: false
-aucun vendeur ne propose ce produit: false
-en rupture de stock: false
-indisponible: false
-ce produit est epuise: false
-sans stock pour vos criteres: false
-bientot disponible: false
-produit epuise: false
-retrait gratuit en magasin: false
-inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
-sur commande: false
-en stock: true
-^\(\d+\)$: true
-expedie sous: true
-voir les offres de ces vendeurs: true
-en pre\-?commande: true
 cet article paraitra le: true
+en pr.\-?commande: true
+voir les offres de ces vendeurs: true
+expedie sous: true
+^\(\d+\)$: true
+en stock: true
+sur commande: false
+inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
+retrait gratuit en magasin: false
+produit epuise: false
+bientot disponible: false
+sans stock pour vos criteres: false
+ce produit est epuise: false
+indisponible: false
+en rupture de stock: false
+aucun vendeur ne propose ce produit: false
+out of stock: false
