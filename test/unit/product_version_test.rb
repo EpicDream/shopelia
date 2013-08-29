@@ -95,14 +95,34 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
 
   test "it should generate incident if shipping price is too high" do
-    assert_difference "Incident.count", 1 do
+    assert_difference "Incident.count", 0, "price=1000 and shipping_price=151 should pass" do
       @version.price_text = "1000"
       @version.price_shipping_text = "151"
       @version.save
     end
-    assert_difference "Incident.count", 0 do
+    assert_difference "Incident.count", 0, "price=15 and shipping_price=9 should pass" do
       @version.price_text = "15"
       @version.price_shipping_text = "9"
+      @version.save
+    end
+    assert_difference "Incident.count", 0, "price=15 and shipping_price=149 should pass" do
+      @version.price_text = "15"
+      @version.price_shipping_text = "149"
+      @version.save
+    end
+    assert_difference "Incident.count", 0, "price=300 and shipping_price=149 should pass" do
+      @version.price_text = "300"
+      @version.price_shipping_text = "149"
+      @version.save
+    end
+    assert_difference "Incident.count", 1, "price=15 and shipping_price=151 should not pass" do
+      @version.price_text = "15"
+      @version.price_shipping_text = "151"
+      @version.save
+    end
+    assert_difference "Incident.count", 1, "price=300 and shipping_price=151 should not pass" do
+      @version.price_text = "300"
+      @version.price_shipping_text = "151"
       @version.save
     end
   end
