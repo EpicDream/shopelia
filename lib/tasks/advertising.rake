@@ -26,14 +26,15 @@ namespace :shopelia do
           links.each do |link|
             link = URI.unescape(link.to_s.gsub(/\A.+?"/,'').gsub(/".+\Z/,''))
             product_urls << link if link =~ /\S/
-            Event.create(:url => link, :action => Event::REQUEST, :developer_id => 1)
+            Event.create!(:url => link, :action => Event::REQUEST, :developer_id => 1, :device_id => 1)
           end
-          File.open("#{Rails.root}/tmp/amazon_bestsellers.txt", 'w') do |f|
-            f.puts product_urls.join('')
-          end
-          exit
         end
       end
+
+      File.open("#{Rails.root}/tmp/amazon_bestsellers.txt", 'w') do |f|
+        f.puts product_urls.join('')
+      end
+
     end
   
   end
