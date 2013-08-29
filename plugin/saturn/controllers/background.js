@@ -26,7 +26,8 @@ DELAY_BETWEEN_PRODUCTS = 500; // 500ms
 DELAY_AFTER_NO_PRODUCT = 1000; // 1s
 DELAY_RESCUE = 60000; // 60s
 
-var data = {};
+var data = {},
+    batchTabs = {};
 var reask = ! TEST_ENV;
 var merchants = {
   "rueducommerce.fr" : "1",
@@ -186,7 +187,7 @@ function loadProductUrlToExtract(tabId) {
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: PRODUCT_EXTRACT_SHIFT_URL
+    url: PRODUCT_EXTRACT_SHIFT_URL+"?batch="+(batchTabs[tabId] === true)
   }).fail(function(err) {
     // console.error("When getting product_url to extract :", err);
     reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
@@ -394,5 +395,13 @@ function assertTest(tabId) {
   delete data[tabId];
 };
 
-if (! TEST_ENV)
-  reask_a_product(undefined, DELAY_BEFORE_START);
+if (! TEST_ENV) {
+  chrome.tabs.create({}, function(tab) {
+    batchTabs[tab.id] = false;
+    reask_a_product(tab.id, DELAY_BEFORE_START);
+  });
+  chrome.tabs.create({}, function(tab) {
+    batchTabs[tab.id] = true;
+    reask_a_product(tab.id, DELAY_BEFORE_START);
+  });
+}
