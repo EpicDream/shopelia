@@ -63,5 +63,13 @@ module Shopelia
 
     # Compile assets
     config.assets.compile = true
+
+    config.redis_config = {
+      :host => '127.0.0.1',
+      :port => 6379,
+      :timeout => 20,
+      :password => '2MrzbUdwumyEYzF3SaJkeZEZ'
+    }
+
   end
 end
