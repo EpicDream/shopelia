@@ -2,6 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
+gem 'redis'
+gem 'redis-rails', '=3.2.1'
 gem 'therubyracer'
 gem 'execjs'
 gem 'maildir'
