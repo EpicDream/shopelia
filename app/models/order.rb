@@ -4,6 +4,7 @@ class Order < ActiveRecord::Base
   STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "pending_injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
   ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "mangopay"]
 
+  belongs_to :meta_order
   belongs_to :user
   belongs_to :merchant
   belongs_to :address
@@ -18,6 +19,7 @@ class Order < ActiveRecord::Base
   validates :address, :presence => true
   validates :expected_price_total, :presence => true
   validates :developer, :presence => true
+  validates :meta_order, :presence => true
 
   attr_accessible :user_id, :address_id, :merchant_account_id, :payment_card_id, :developer_id
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
@@ -25,7 +27,7 @@ class Order < ActiveRecord::Base
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :mangopay_contribution_id, :mangopay_contribution_amount, :mangopay_contribution_status
   attr_accessible :mangopay_contribution_message, :mangopay_amazon_voucher_id, :mangopay_amazon_voucher_code
-  attr_accessible :billing_solution, :injection_solution, :cvd_solution, :tracker
+  attr_accessible :billing_solution, :injection_solution, :cvd_solution, :tracker, :meta_order_id
   attr_accessor :products, :confirmation
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
@@ -45,6 +47,7 @@ class Order < ActiveRecord::Base
   before_validation :initialize_uuid
   before_validation :initialize_state
   before_validation :initialize_merchant_account
+  before_validation :initialize_meta_order
   before_validation :verify_prices_integrity
   before_save :serialize_questions
   before_create :validates_products
@@ -340,6 +343,10 @@ class Order < ActiveRecord::Base
     self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
   end
   
+  def initialize_meta_order
+    self.meta_order_id = MetaOrder.create(user_id:self.user_id).id if self.meta_order.nil?
+  end
+
   def mirror_solutions_from_merchant
     self.billing_solution = self.merchant.billing_solution if self.billing_solution.nil?
     self.injection_solution = self.merchant.injection_solution if self.injection_solution.nil?

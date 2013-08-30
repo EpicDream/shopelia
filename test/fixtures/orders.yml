@@ -1,4 +1,5 @@
 elarch_rueducommerce:
+  meta_order: elarch
   uuid: uuid
   user: elarch
   developer: prixing
@@ -13,6 +14,7 @@ elarch_rueducommerce:
   created_at: <%= 10.minutes.ago %>
   
 elarch_amazon:
+  meta_order: elarch
   uuid: orderamazon
   user: elarch
   developer: prixing

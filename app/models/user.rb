@@ -10,6 +10,7 @@ class User < ActiveRecord::Base
   has_many :payment_cards, :dependent => :destroy
   has_many :merchant_accounts, :dependent => :destroy
   has_many :user_verification_failures, :dependent => :destroy
+  has_many :meta_orders, :dependent => :destroy
   has_many :orders, :dependent => :destroy
   has_many :carts, :dependent => :destroy
   has_many :cart_items, :through => :carts

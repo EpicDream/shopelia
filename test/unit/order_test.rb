@@ -926,7 +926,7 @@ class OrderTest < ActiveSupport::TestCase
         { "id" => "3" }
       ],
       "products" => [
-        { "url" => products(:usbkey).url + "?key=toto",
+        { "url" => products(:usbkey).url,
           "price" => 9
         },
         { "url" => products(:headphones).url,
