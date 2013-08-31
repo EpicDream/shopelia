@@ -15,3 +15,5 @@ usbkey:
 headphones:
   product: headphones
 
+dvd:
+  product: dvd

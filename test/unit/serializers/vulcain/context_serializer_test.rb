@@ -2,12 +2,9 @@
 require 'test_helper'
 
 class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
-  
-  setup do
-    @order = orders(:elarch_rueducommerce)
-  end
-  
+    
   test "it should correctly serialize context" do
+    @order = orders(:elarch_rueducommerce)
     order_serializer = Vulcain::ContextSerializer.new(@order)
     context = order_serializer.as_json[:context]
 
@@ -31,6 +28,7 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
   end
 
   test "it should correctly serialize context when answering" do
+    @order = orders(:elarch_rueducommerce)
     @order.questions = [
       { "id" => "1",
         "text" => "Color?",
@@ -55,12 +53,14 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
   end
   
   test "it should send back amazon voucher" do
-    @order.update_attributes(
-      :cvd_solution => "amazon",
-      :mangopay_amazon_voucher_code => "JTUJ-SC5P4S-6N3F"
+    @order = orders(:elarch_amazon_billing)
+    t = PaymentTransaction.create!(
+      order_id:@order.id,
+      mangopay_amazon_voucher_code:"JTUJ-SC5P4S-6N3F"
     )
-    order_serializer = Vulcain::ContextSerializer.new(@order)
+    order_serializer = Vulcain::ContextSerializer.new(@order.reload)
     context = order_serializer.as_json[:context]
+
     assert_equal "JTUJ-SC5P4S-6N3F", context[:order][:credentials][:voucher]
   end
 

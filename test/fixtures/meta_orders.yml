@@ -1,2 +1,16 @@
-elarch:
+elarch_rdc:
   user: elarch
+  address: elarch_neuilly
+  payment_card: elarch_hsbc
+
+elarch_amz:
+  user: elarch
+  address: elarch_neuilly
+  payment_card: elarch_hsbc
+  billing_solution: mangopay
+
+elarch_billing:
+  user: elarch
+  address: elarch_neuilly
+  payment_card: elarch_hsbc
+  billing_solution: mangopay

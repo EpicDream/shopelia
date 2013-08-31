@@ -16,6 +16,8 @@ class User < ActiveRecord::Base
   has_many :cart_items, :through => :carts
   has_many :devices
   has_many :events, :through => :devices
+  has_many :billing_transactions
+  has_many :payment_transactions, :through => :orders
 
   belongs_to :nationality, :class_name => "Country"
   belongs_to :developer
@@ -129,6 +131,29 @@ class User < ActiveRecord::Base
     password == password_confirmation && !password.blank?
   end
   
+  def create_mangopay_user
+    return { status:"error", message:"mangopay user already created" } unless self.mangopay_id.nil?
+    remote_user = MangoPay::User.create({
+        'Tag' => Rails.env.test? ? "User test" : self.id.to_s,
+        'Email' => self.email,
+        'FirstName' => self.first_name,
+        'LastName' => self.last_name,
+        'Nationality' => self.nationality.nil? ? "fr" : self.nationality.iso,
+        'Birthday' => self.birthdate.nil? ? 30.years.ago.to_i : self.birthdate.to_i,
+        'PersonType' => 'NATURAL_PERSON',
+        'CanRegisterMeanOfPayment' => true,
+        'IP' => self.ip_address
+    })
+    if remote_user["ID"].present?
+      self.update_attribute :mangopay_id, remote_user["ID"].to_i
+    else
+      { status:"error", message:"Impossible to create mangopay user object: #{remote_user.inspect}" }
+    end
+    
+    self.reload
+    { status:"success" }
+  end    
+
   private
   
   def skip_confirmation_email

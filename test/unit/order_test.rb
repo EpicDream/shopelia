@@ -36,6 +36,12 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 10, order.expected_price_shipping
     assert_equal 100, order.expected_price_total
     assert_equal "toto", order.tracker
+
+    meta = order.meta_order
+    assert meta.present?
+    assert_equal @address.id, meta.address_id
+    assert_equal @card.id, meta.payment_card_id
+    assert_equal "mangopay", meta.billing_solution
     
     item = order.order_items.first
     assert_equal 1, item.quantity
@@ -46,7 +52,6 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
     
-    assert_equal "mangopay", order.billing_solution
     assert_equal "vulcain", order.injection_solution
     assert_equal "amazon", order.cvd_solution
   end
@@ -322,7 +327,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it shouldn't start order if missing payment card" do
-    @order.payment_card_id = nil
+    @order.meta_order.update_attribute :payment_card_id, nil
     start_order
     
     assert_equal :initialized, @order.state
@@ -709,8 +714,8 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     assess_order
     order_success
-    
-    assert_equal :completed, @order.state
+
+    assert_equal :completed, @order.state, @order.inspect
     assert_equal 14, @order.billed_price_product
     assert_equal 2, @order.billed_price_shipping
     assert_equal 16, @order.billed_price_total
@@ -725,12 +730,9 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "[beta] it should complete order" do
-    allow_remote_api_calls    
     configuration_beta
-    VCR.use_cassette('mangopay') do
-      start_order
-      assess_order
-    end
+    start_order
+    assess_order
 
     assert_equal :pending_injection, @order.state
     assert_equal true, @order.questions.first["answer"]
@@ -752,10 +754,8 @@ class OrderTest < ActiveSupport::TestCase
     @order.expected_price_total = 333.05
     @order.expected_price_shipping = 33.05
     @order.expected_price_product = 300
-    VCR.use_cassette('mangopay') do
-      start_order
-      assess_order_billing_failure
-    end
+    start_order
+    assess_order_billing_failure
 
     assert_equal :failed, @order.state
     assert_equal "billing", @order.error_code
@@ -766,19 +766,25 @@ class OrderTest < ActiveSupport::TestCase
   test "[amazon] it should complete order" do
     allow_remote_api_calls
     configuration_amazon
-    VCR.use_cassette('mangopay') do
-      start_order
-      assess_order
+    start_order
+    assess_order
 
-      assert @order.mangopay_wallet_id.present?
-      assert @order.mangopay_contribution_id.present?
-      assert_equal "success", @order.mangopay_contribution_status
-      assert_equal 1600, @order.mangopay_contribution_amount
-      assert @order.mangopay_amazon_voucher_id.present?
-      assert @order.mangopay_amazon_voucher_code.present?    
-      
-      order_success
-    end
+    assert @order.meta_order.mangopay_wallet_id.present?
+    assert_equal 1, @order.meta_order.billing_transactions.count
+
+    billing_transaction = @order.meta_order.billing_transactions.first
+    assert billing_transaction.mangopay_contribution_id.present?
+    assert billing_transaction.success?
+    assert_equal 1600, billing_transaction.amount
+    assert_equal 1600, billing_transaction.mangopay_contribution_amount
+
+    payment_transaction = @order.payment_transaction
+    assert payment_transaction.present?
+    assert_equal "amazon", payment_transaction.processor
+    assert payment_transaction.mangopay_amazon_voucher_id.present?
+    assert payment_transaction.mangopay_amazon_voucher_code.present?    
+    
+    order_success
     
     assert_equal :completed, @order.state
     assert_equal 14, @order.billed_price_product
@@ -789,14 +795,13 @@ class OrderTest < ActiveSupport::TestCase
   test "[amazon] it should complete order with lower price than expected" do
     allow_remote_api_calls
     configuration_amazon
-    VCR.use_cassette('mangopay') do
-      start_order
-      assess_order_with_lower_price
+    start_order
+    assess_order_with_lower_price
 
-      assert_equal 1600, @order.mangopay_contribution_amount
+    billing_transaction = @order.meta_order.billing_transactions.first
+    assert_equal 1600, billing_transaction.amount
 
-      order_success
-    end
+    order_success
 
     assert_equal :completed, @order.state
     assert_equal 14, @order.billed_price_product
@@ -876,20 +881,21 @@ class OrderTest < ActiveSupport::TestCase
   private
   
   def configuration_alpha
+    @order.meta_order.update_attribute :billing_solution, nil
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "user"
     @order.save
   end
   
   def configuration_beta
-    @order.billing_solution = "mangopay"
+    @order.meta_order.update_attribute :billing_solution, "mangopay"
     @order.injection_solution = "limonetik"
     @order.cvd_solution = "limonetik"  
     @order.save
   end
 
   def configuration_amazon
-    @order.billing_solution = "mangopay"
+    @order.meta_order.update_attribute :billing_solution, "mangopay"
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "amazon"
     @order.save

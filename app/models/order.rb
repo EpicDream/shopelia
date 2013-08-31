@@ -7,16 +7,14 @@ class Order < ActiveRecord::Base
   belongs_to :meta_order
   belongs_to :user
   belongs_to :merchant
-  belongs_to :address
   belongs_to :merchant_account
-  belongs_to :payment_card
   belongs_to :developer
   has_many :order_items, :dependent => :destroy
+  has_one :payment_transaction
   
   validates :user, :presence => true
   validates :state_name, :presence => true, :inclusion => { :in => STATES }
   validates :uuid, :presence => true, :uniqueness => true
-  validates :address, :presence => true
   validates :expected_price_total, :presence => true
   validates :developer, :presence => true
   validates :meta_order, :presence => true
@@ -25,10 +23,8 @@ class Order < ActiveRecord::Base
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
-  attr_accessible :mangopay_contribution_id, :mangopay_contribution_amount, :mangopay_contribution_status
-  attr_accessible :mangopay_contribution_message, :mangopay_amazon_voucher_id, :mangopay_amazon_voucher_code
-  attr_accessible :billing_solution, :injection_solution, :cvd_solution, :tracker, :meta_order_id
-  attr_accessor :products, :confirmation
+  attr_accessible :injection_solution, :cvd_solution, :tracker, :meta_order_id
+  attr_accessor :products, :confirmation, :payment_card_id, :address_id
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
   scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 12.hours ) }
@@ -46,8 +42,8 @@ class Order < ActiveRecord::Base
   
   before_validation :initialize_uuid
   before_validation :initialize_state
+  before_validation :initialize_meta_order, :if => Proc.new { |order| order.meta_order_id.nil? }
   before_validation :initialize_merchant_account
-  before_validation :initialize_meta_order
   before_validation :verify_prices_integrity
   before_save :serialize_questions
   before_create :validates_products
@@ -62,7 +58,7 @@ class Order < ActiveRecord::Base
   end
   
   def start
-    return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.payment_card_id.present? && self.order_items.count > 0
+    return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.meta_order.payment_card_id.present? && self.order_items.count > 0
     if self.merchant.vendor.nil?
       fail("unsupported", "vulcain")
       self.save
@@ -143,18 +139,21 @@ class Order < ActiveRecord::Base
       if self.expected_price_total >= self.prepared_price_total
       
         # Basic user payment
-        if self.billing_solution.nil?
+        if self.meta_order.billing_solution.nil?
           callback_vulcain(true)
           
         # MangoPay billing
-        elsif self.billing_solution == "mangopay"
-          self.state = :billing
-          billing_result = MangoPayFunnel.bill(self)
-          if billing_result["Status"] == "success"
+        elsif self.meta_order.billing_solution == "mangopay"
+          self.update_attribute :state_name, "billing"
+          
+          billing_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id)
+          billing_result = billing_transaction.process
+
+          if billing_result[:status] == "processed"
           
             # Billing success
-            if self.reload.mangopay_contribution_status == "success"              
-            
+            if billing_transaction.success
+
               # Limonetik CVD & injection
               if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
                 callback_vulcain(true)
@@ -163,30 +162,32 @@ class Order < ActiveRecord::Base
               # Amazon vouchers
               elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
                 self.state = :preparing
-                
-                voucher_result = MangoPayFunnel.voucher(self)
-                if voucher_result["Status"] == "success"
+               
+                payment_transaction = PaymentTransaction.create!(order_id:self.id) 
+                payment_result = payment_transaction.process
+
+                if payment_result[:status] == "created"
                   callback_vulcain(true)
                 else
                   callback_vulcain(false)
-                  fail(voucher_result["Error"], :shopelia)
+                  fail(payment_result[:message], :shopelia)
                 end
                 
               # Invalid CVD solution
               else
                 callback_vulcain(false)
-                fail("invalid_cvd_solution", :shopelia)
+                fail("invalid_cvd_solution_#{self.cvd_solution}", :shopelia)
               end
               
             # Billing failure
             else
               callback_vulcain(false)
-              abort(self.mangopay_contribution_message, :billing)
+              abort(billing_transaction.mangopay_contribution_message, :billing)
             end
             
           else
             callback_vulcain(false)
-            fail(billing_result["Error"], :shopelia)
+            fail(billing_result[:message], :shopelia)
           end
           
         # Invalid billing solution
@@ -344,11 +345,19 @@ class Order < ActiveRecord::Base
   end
   
   def initialize_meta_order
-    self.meta_order_id = MetaOrder.create(user_id:self.user_id).id if self.meta_order.nil?
+    meta = MetaOrder.new(
+      user_id:self.user_id,
+      payment_card_id:self.payment_card_id,
+      address_id:self.address_id)
+    if meta.save
+      self.meta_order_id = meta.id
+    else
+      self.errors.add(:base, meta.errors.full_messages.join(","))
+    end
   end
 
   def mirror_solutions_from_merchant
-    self.billing_solution = self.merchant.billing_solution if self.billing_solution.nil?
+    self.meta_order.update_attribute :billing_solution, self.merchant.billing_solution if self.meta_order.billing_solution.nil?
     self.injection_solution = self.merchant.injection_solution if self.injection_solution.nil?
     self.cvd_solution = self.merchant.cvd_solution if self.cvd_solution.nil?
   end

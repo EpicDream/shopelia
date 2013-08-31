@@ -17,14 +17,14 @@ module Integrity
           mp_user_id = data[3].to_i
           mp_amount = data[6].to_i
           mp_wallet_id = data[11].to_i
-          order = Order.where(mangopay_contribution_id:mp_contribution_id).first
-          if order.nil?
+          t = BillingTransaction.where(mangopay_contribution_id:mp_contribution_id).first
+          if t.nil?
             log << "Impossible to find order with transaction_id #{mp_contribution_id} -- #{line}"
-          elsif order.user.mangopay_id != mp_user_id
+          elsif t.user.mangopay_id != mp_user_id
             log << "User ID doesn't match -- #{line}"
-          elsif order.mangopay_wallet_id != mp_wallet_id
+          elsif t.mangopay_destination_wallet_id != mp_wallet_id
             log << "Wallet ID doesn't match -- #{line}"
-          elsif (order.billed_price_total*100).round != mp_amount || (order.prepared_price_total*100).round != mp_amount || order.mangopay_contribution_amount != mp_amount
+          elsif t.amount != mp_amount
             log << "Amounts not consistent -- #{line}"
           end
           contribution_ids_A << mp_contribution_id
@@ -32,7 +32,7 @@ module Integrity
           log << "Unexpected TypeTransaction -- #{line}"
         end
       end
-      contribution_ids_B = Order.completed.where("created_at >= ? and created_at < ?", 31.days.ago.to_date.to_s, Time.now.to_date.to_s).where(billing_solution:'mangopay').map(&:mangopay_contribution_id)
+      contribution_ids_B = BillingTransaction.successfull.where("created_at >= ? and created_at < ?", 31.days.ago.to_date.to_s, Time.now.to_date.to_s).where(processor:'mangopay').map(&:mangopay_contribution_id)
       if contribution_ids_A.to_set != contribution_ids_B.to_set
         log << "Inconsistent contribution_ids ! REPORT:#{contribution_ids_A} vs DB:#{contribution_ids_B}"
       end

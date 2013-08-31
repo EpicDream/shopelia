@@ -8,3 +8,17 @@ item2:
   product_version: headphones
   quantity: 1
 
+item3:
+  order: elarch_rueducommerce_billing
+  product_version: usbkey
+  quantity: 1
+
+item4:
+  order: elarch_rueducommerce_biling
+  product_version: headphones
+  quantity: 1
+
+item5:
+  order: elarch_amazon_billing
+  product_version: dvd
+  quantity: 1

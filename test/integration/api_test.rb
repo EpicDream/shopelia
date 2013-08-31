@@ -182,12 +182,18 @@ class ApiTest < ActionDispatch::IntegrationTest
 
     assert_equal :preparing, order.reload.state
     
-    assert order.mangopay_wallet_id.present?
-    assert order.mangopay_contribution_id.present?
-    assert_equal "success", order.mangopay_contribution_status
-    assert_equal 5500, order.mangopay_contribution_amount
-    assert order.mangopay_amazon_voucher_id.present?
-    assert order.mangopay_amazon_voucher_code.present? 
+    assert order.meta_order.mangopay_wallet_id.present?
+    assert_equal 1, order.meta_order.billing_transactions.count
+
+    t = order.meta_order.billing_transactions.first
+    assert t.mangopay_contribution_id.present?
+    assert t.success
+    assert_equal 5500, t.mangopay_contribution_amount
+
+    v = order.payment_transaction
+    assert v.present?
+    assert v.mangopay_amazon_voucher_id.present?
+    assert v.mangopay_amazon_voucher_code.present? 
     
     # Finalizing order
     put "/api/callback/orders/#{order.uuid}", verb:"success", content:{

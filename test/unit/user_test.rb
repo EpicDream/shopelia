@@ -259,5 +259,16 @@ class UserTest < ActiveSupport::TestCase
     assert User.exists?(@user)
     assert_equal "Impossible de supprimer un utilisateur avec des commandes déjà effectuées", @user.errors.full_messages.first
   end
+
+  test "it should create mangopay user" do
+    result = @user.create_mangopay_user
+
+    assert_equal "success", result[:status]
+    assert @user.mangopay_id.present?
+
+    result = @user.create_mangopay_user
+    assert_equal "error", result[:status]
+    assert_equal "mangopay user already created", result[:message]
+  end
   
 end
