@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130831154659) do
+ActiveRecord::Schema.define(:version => 20130831211104) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -86,6 +86,17 @@ ActiveRecord::Schema.define(:version => 20130831154659) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "cashfront_rules", :force => true do |t|
+    t.integer  "merchant_id"
+    t.integer  "category_id"
+    t.integer  "developer_id"
+    t.integer  "user_id"
+    t.float    "rebate_percentage"
+    t.float    "max_rebate_value"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
   create_table "countries", :force => true do |t|
@@ -216,7 +227,6 @@ ActiveRecord::Schema.define(:version => 20130831154659) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
-    t.string   "payment_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
     t.integer  "developer_id"

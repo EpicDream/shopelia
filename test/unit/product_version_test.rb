@@ -189,7 +189,25 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert @version.destroy
     assert !product_versions(:usbkey).destroy
   end
+
+  test "it should send 0 for cashfront value if no rule" do
+    version = ProductVersion.create!(
+      product_id:@product.id,
+      price:"100",
+      price_shipping:"10")
+
+    assert_equal 0, version.cashfront_value(developer:developers(:prixing))
+  end
   
+  test "it should compute cashfront value" do
+    version = ProductVersion.create!(
+      product_id:products(:dvd).id,
+      price:"100",
+      price_shipping:"10")
+
+    assert_equal 3, version.cashfront_value(developer:developers(:prixing))
+  end
+
   test "it should sanitize description (1)" do
     @version.description = <<__END
 

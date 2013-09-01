@@ -1,0 +1,5 @@
+amazon:
+  merchant: amazon
+  developer: prixing  
+  rebate_percentage: 3
+  max_rebate_value: 10
