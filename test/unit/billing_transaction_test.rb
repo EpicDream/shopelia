@@ -81,4 +81,15 @@ class BillingTransactionTest < ActiveSupport::TestCase
     assert_equal "error", result[:status]
     assert_equal "transaction already processed", result[:message]
   end
+
+  test "it should create cashfront transaction" do
+    billing = BillingTransaction.new(
+      meta_order_id:@meta.id,
+      processor:"cashfront")
+    
+    assert billing.save, billing.errors.full_messages.join(",")
+    assert_equal "cashfront", billing.processor
+    assert_equal 30, billing.amount
+  end
+
 end

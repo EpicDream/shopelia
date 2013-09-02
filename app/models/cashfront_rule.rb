@@ -10,7 +10,7 @@ class CashfrontRule < ActiveRecord::Base
   scope :for_developer, lambda { |developer| where(developer_id:developer.id) }
 
   def rebate price
-    r = price * self.rebate_percentage / 100.0
+    r = price.to_f * self.rebate_percentage / 100.0
     if self.max_rebate_value.present?
       r > self.max_rebate_value ? self.max_rebate_value : r
     else

@@ -17,3 +17,5 @@ headphones:
 
 dvd:
   product: dvd
+  price: 10
+  price_shipping: 0
