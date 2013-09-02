@@ -90,6 +90,13 @@ class BillingTransactionTest < ActiveSupport::TestCase
     assert billing.save, billing.errors.full_messages.join(",")
     assert_equal "cashfront", billing.processor
     assert_equal 30, billing.amount
+
+    billing = BillingTransaction.new(
+      meta_order_id:@meta.id,
+      processor:"cashfront")
+
+    assert !billing.save
+    assert_equal I18n.t('billing_transactions.errors.cashfront_already_exists'), billing.errors.full_messages.first
   end
 
 end

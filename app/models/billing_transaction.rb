@@ -14,6 +14,7 @@ class BillingTransaction < ActiveRecord::Base
   scope :active, where(success:[true,nil])
   scope :successfull, where(success:true)
   scope :failed, where(success:false)
+  scope :cashfront, where(processor:"cashfront")
 
   def process
     if self.processor == "mangopay"
@@ -94,6 +95,7 @@ class BillingTransaction < ActiveRecord::Base
       if self.processor == "mangopay"
         self.amount = prepare_billing_amount
       elsif self.processor == "cashfront"
+        self.errors.add(:base, I18n.t('billing_transactions.errors.cashfront_already_exists')) unless self.meta_order.billing_transactions.cashfront.empty?
         self.amount = prepare_cashfront_amount
       end
     end
