@@ -8,4 +8,8 @@ class OrderItem < ActiveRecord::Base
   
   alias_attribute :price_product, :price
   alias_attribute :product_price, :price
+
+  def cashfront_value options={}
+    (self.product_version.cashfront_value(price, options) * quantity).round(2)
+  end
 end

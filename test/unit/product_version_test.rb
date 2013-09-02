@@ -205,7 +205,7 @@ class ProductVersionTest < ActiveSupport::TestCase
       price:"100",
       price_shipping:"10")
 
-    assert_equal 3, version.cashfront_value(developer:developers(:prixing))
+    assert_equal 3, version.cashfront_value(100, developer:developers(:prixing))
   end
 
   test "it should sanitize description (1)" do

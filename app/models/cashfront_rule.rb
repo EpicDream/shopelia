@@ -7,7 +7,7 @@ class CashfrontRule < ActiveRecord::Base
 
   attr_accessible :category_id, :developer_id, :max_rebate_value, :merchant_id, :rebate_percentage, :user_id
 
-  scope :for_developer, lambda { |developer| where(developer_id:developer.id) }
+  scope :for_developer, lambda { |developer| where(developer_id:developer.try(:id)) }
 
   def rebate price
     r = price.to_f * self.rebate_percentage / 100.0

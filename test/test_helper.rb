@@ -22,19 +22,19 @@ class ActiveSupport::TestCase
   end
 
   setup do
-    ENV["ALLOW_REMOTE_API_CALLS"] = "0"
     ENV["API_KEY"] = developers(:prixing).api_key
-    ENV["ALLOW_PAYLINE_DRIVER"] = "0"
     ActionMailer::Base.deliveries.clear
+    File.delete(MangoPayDriver::CONFIG) if File.exist?(MangoPayDriver::CONFIG)
   end
 
   def json_response
     JSON.parse @response.body
   end
-  
-  def allow_remote_api_calls
-   ENV["ALLOW_REMOTE_API_CALLS"] = "1"
-  end
 
+  def prepare_master_cashfront_account
+    MangoPayDriver.create_master_account  
+    card = { number:"4970100000000154", exp_month:"12", exp_year:"2020", cvv:"123" }
+    contribution = MangoPayDriver.credit_master_account card, 10000    
+  end
 end
 

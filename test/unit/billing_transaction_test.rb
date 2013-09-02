@@ -64,6 +64,8 @@ class BillingTransactionTest < ActiveSupport::TestCase
   end
 
   test "it should process billing for mangopay processor" do
+    @meta.create_mangopay_wallet
+
     billing = BillingTransaction.create!(meta_order_id:@meta.id)
     result = billing.process
 
@@ -99,4 +101,25 @@ class BillingTransactionTest < ActiveSupport::TestCase
     assert_equal I18n.t('billing_transactions.errors.cashfront_already_exists'), billing.errors.full_messages.first
   end
 
+  test "it should process cashfront transaction" do
+    @meta.create_mangopay_wallet
+
+    prepare_master_cashfront_account
+
+    billing = BillingTransaction.create!(
+      meta_order_id:@meta.id,
+      processor:"cashfront")
+    result = billing.process
+
+    assert_equal "processed", result[:status]
+    assert billing.success
+    assert billing.mangopay_transfer_id.present?
+    assert_equal @meta.reload.mangopay_wallet_id, billing.mangopay_destination_wallet_id
+
+    wallet = MangoPay::Wallet.details(@meta.mangopay_wallet_id)
+    assert_equal billing.amount, wallet['Amount']
+
+    result = billing.process
+    assert_equal "error", result[:status]
+  end
 end

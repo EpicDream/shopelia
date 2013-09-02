@@ -684,6 +684,9 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "preparing_stale", @order.message
   end
  
+  test "it should compute cashback value" do
+    assert_equal 0.30, orders(:elarch_amazon_billing).cashfront_value
+  end
   
   test "[alpha] it should continue order if target price is same than expected" do
     configuration_alpha
@@ -749,7 +752,6 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "[beta] it should fail order if billing failed" do
-    allow_remote_api_calls    
     configuration_beta
     @order.expected_price_total = 333.05
     @order.expected_price_shipping = 33.05
@@ -764,7 +766,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "[amazon] it should complete order" do
-    allow_remote_api_calls
+    CashfrontRule.destroy_all
     configuration_amazon
     start_order
     assess_order
@@ -793,7 +795,7 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "[amazon] it should complete order with lower price than expected" do
-    allow_remote_api_calls
+    CashfrontRule.destroy_all
     configuration_amazon
     start_order
     assess_order_with_lower_price
@@ -807,6 +809,46 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 14, @order.billed_price_product
     assert_equal 2, @order.billed_price_shipping
     assert_equal 16, @order.billed_price_total    
+  end
+
+  test "[amazon] it should complete order with cashfront" do
+    configuration_amazon
+    prepare_master_cashfront_account
+
+    start_order
+    assess_order_cashfront
+
+    assert_equal 16, @order.prepared_price_total
+    assert_equal 2, @order.prepared_price_shipping
+    assert_equal 14, @order.prepared_price_product
+    assert_equal 0.42, @order.cashfront_value
+
+    assert @order.meta_order.mangopay_wallet_id.present?
+    assert_equal 2, @order.meta_order.billing_transactions.count
+
+    billing_transaction_mp = @order.meta_order.billing_transactions.mangopay.first
+    assert billing_transaction_mp.mangopay_contribution_id.present?
+    assert billing_transaction_mp.success?
+    assert_equal 1558, billing_transaction_mp.amount
+    assert_equal 1558, billing_transaction_mp.mangopay_contribution_amount
+    assert_equal @order.meta_order.mangopay_wallet_id, billing_transaction_mp.mangopay_destination_wallet_id
+
+    billing_transaction_cf = @order.meta_order.billing_transactions.cashfront.first
+    assert_equal 42, billing_transaction_cf.amount
+
+    payment_transaction = @order.payment_transaction
+    assert payment_transaction.present?
+    assert_equal "amazon", payment_transaction.processor
+    assert_equal 1600, payment_transaction.amount
+    assert payment_transaction.mangopay_amazon_voucher_id.present?
+    assert payment_transaction.mangopay_amazon_voucher_code.present?    
+    
+    order_success
+    
+    assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total
   end
 
 =begin
@@ -895,6 +937,7 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   def configuration_amazon
+    @order.order_items.each { |item| item.product_version.product.update_attribute :merchant_id, merchants(:amazon).id }
     @order.meta_order.update_attribute :billing_solution, "mangopay"
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "amazon"
@@ -1025,7 +1068,15 @@ class OrderTest < ActiveSupport::TestCase
     @order.save
     assess_order
   end
-    
+
+  def assess_order_cashfront
+    @order.expected_price_total = 15.58
+    @order.expected_price_shipping = 2
+    @order.expected_price_product = 13.58
+    @order.save
+    assess_order
+  end
+
   def reject_order
     @order.reject "price_rejected"
     @order.reload

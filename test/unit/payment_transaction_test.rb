@@ -36,6 +36,7 @@ class PaymentTransactionTest < ActiveSupport::TestCase
   end 
 
   test "it should process amazon payment" do
+    @meta.create_mangopay_wallet
     billing = BillingTransaction.create!(meta_order_id:@meta.id)
     result = billing.process
 

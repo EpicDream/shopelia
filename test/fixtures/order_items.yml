@@ -22,3 +22,4 @@ item5:
   order: elarch_amazon_billing
   product_version: dvd
   quantity: 1
+  price: 10

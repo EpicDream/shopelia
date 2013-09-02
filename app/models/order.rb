@@ -136,7 +136,7 @@ class Order < ActiveRecord::Base
       self.prepared_price_product = prepared_price_product
       self.save!
       
-      if self.expected_price_total >= self.prepared_price_total
+      if self.expected_price_total >= self.prepared_price_total - self.cashfront_value
       
         # Basic user payment
         if self.meta_order.billing_solution.nil?
@@ -146,48 +146,70 @@ class Order < ActiveRecord::Base
         elsif self.meta_order.billing_solution == "mangopay"
           self.update_attribute :state_name, "billing"
           
-          billing_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id)
-          billing_result = billing_transaction.process
+          # Prepare wallet
+          wallet_result = self.meta_order.create_mangopay_wallet
+          if wallet_result[:status] == "created"
 
-          if billing_result[:status] == "processed"
-          
-            # Billing success
-            if billing_transaction.success
+            # Cashfront
+            if self.cashfront_value > 0
+              cashfront_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id, processor:"cashfront")
+              cashfront_result = cashfront_transaction.process
 
-              # Limonetik CVD & injection
-              if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
-                callback_vulcain(true)
-                self.state = :pending_injection
-                
-              # Amazon vouchers
-              elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
-                self.state = :preparing
-               
-                payment_transaction = PaymentTransaction.create!(order_id:self.id) 
-                payment_result = payment_transaction.process
+              if cashfront_result[:status] != "processed"
+                callback_vulcain(false)
+                fail(cashfront_result[:message], :shopelia)
+                self.save!
+                return
+              end
+            end
 
-                if payment_result[:status] == "created"
+            billing_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id)
+            billing_result = billing_transaction.process
+
+            if billing_result[:status] == "processed"
+            
+              # Billing success
+              if billing_transaction.success
+
+                # Limonetik CVD & injection
+                if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
                   callback_vulcain(true)
+                  self.state = :pending_injection
+                  
+                # Amazon vouchers
+                elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
+                  self.state = :preparing
+                 
+                  payment_transaction = PaymentTransaction.create!(order_id:self.id) 
+                  payment_result = payment_transaction.process
+
+                  if payment_result[:status] == "created"
+                    callback_vulcain(true)
+                  else
+                    callback_vulcain(false)
+                    fail(payment_result[:message], :shopelia)
+                  end
+                  
+                # Invalid CVD solution
                 else
                   callback_vulcain(false)
-                  fail(payment_result[:message], :shopelia)
+                  fail("invalid_cvd_solution_#{self.cvd_solution}", :shopelia)
                 end
                 
-              # Invalid CVD solution
+              # Billing failure
               else
                 callback_vulcain(false)
-                fail("invalid_cvd_solution_#{self.cvd_solution}", :shopelia)
+                abort(billing_transaction.mangopay_contribution_message, :billing)
               end
               
-            # Billing failure
             else
               callback_vulcain(false)
-              abort(billing_transaction.mangopay_contribution_message, :billing)
+              fail(billing_result[:message], :shopelia)
             end
-            
+
           else
             callback_vulcain(false)
-            fail(billing_result[:message], :shopelia)
+            fail(wallet_result[:message], :shopelia)
           end
           
         # Invalid billing solution
@@ -291,6 +313,15 @@ class Order < ActiveRecord::Base
     return unless self.notification_email_sent_at.nil?
     Emailer.notify_order_creation(self).deliver
     self.update_attribute :notification_email_sent_at, Time.now
+  end
+
+  def cashfront_value
+    v = 0.0
+    options = { developer:self.developer }
+    self.order_items.each do |item|
+      v += item.cashfront_value(options)
+    end
+    v.round(2)
   end
   
   private

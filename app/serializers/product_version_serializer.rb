@@ -8,4 +8,8 @@ class ProductVersionSerializer < ActiveModel::Serializer
   def available
     object.available? ? 1 : 0
   end
+
+  def cashfront_value
+    object.cashfront_value object.price, scope ? { developer:scope[:developer] } : nil
+  end
 end

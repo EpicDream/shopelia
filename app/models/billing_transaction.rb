@@ -3,11 +3,11 @@ class BillingTransaction < ActiveRecord::Base
   belongs_to :meta_order
 
   validates :meta_order, :presence => true
-  validates :amount, :inclusion => 0..40000
+  validates :amount, :inclusion => 1..40000
   validates :processor, :inclusion => [ "mangopay", "cashfront" ]
 
   attr_accessible :amount, :mangopay_contribution_amount, :mangopay_contribution_id, :mangopay_contribution_message
-  attr_accessible :meta_order_id, :processor, :user_id, :success, :mangopay_destination_wallet_id
+  attr_accessible :meta_order_id, :processor, :user_id, :success, :mangopay_destination_wallet_id, :mangopay_transfer_id
 
   before_validation :initialize_transaction
 
@@ -15,16 +15,13 @@ class BillingTransaction < ActiveRecord::Base
   scope :successfull, where(success:true)
   scope :failed, where(success:false)
   scope :cashfront, where(processor:"cashfront")
+  scope :mangopay, where(processor:"mangopay")
 
   def process
     if self.processor == "mangopay"
       return { status:"error", message:"transaction already processed" } unless self.mangopay_contribution_id.nil?
       return { status:"error", message:"missing payment card" } if self.meta_order.payment_card.nil?
-
-      if self.meta_order.mangopay_wallet_id.nil?
-        result = self.meta_order.create_mangopay_wallet 
-        return result if result[:status] == "error"
-      end
+      return { status:"error", message:"missing meta order wallet" } if self.meta_order.mangopay_wallet_id.nil?
 
       if self.meta_order.payment_card.mangopay_id.nil?
         result = self.meta_order.payment_card.create_mangopay_card 
@@ -58,6 +55,35 @@ class BillingTransaction < ActiveRecord::Base
       self.reload
       { status:"processed" }
 
+    elsif self.processor == "cashfront"
+      return { status:"error", message:"transaction already processed" } unless self.mangopay_transfer_id.nil?
+      return { status:"error", message:"missing meta order wallet" } if self.meta_order.mangopay_wallet_id.nil?
+
+      master_id = MangoPayDriver.get_master_account_id
+      return { status:"error", message:"missing master cashfront account" } if master_id.nil?
+
+      user = MangoPay::User.details(master_id)
+      return { status:"error", message:"not enough money on cashfront account (required #{self.amount}, has #{user['PersonalWalletAmount']}" } if user['PersonalWalletAmount'] < self.amount
+
+      transfert = MangoPay::Transfer.create({
+        'Tag' => self.id.to_s,
+        'PayerID' => master_id,
+        'BeneficiaryWalletID' => self.meta_order.mangopay_wallet_id,
+        'Amount' => self.amount
+      })
+      if transfert['ID'].present?
+        self.update_attributes(
+          :mangopay_transfer_id => transfert['ID'],
+          :mangopay_destination_wallet_id => self.meta_order.mangopay_wallet_id,
+          :success => true
+        )
+      else
+        return { status:"error", message:"Impossible to transfer cashfront value to order wallet : #{transfert}" }
+      end   
+
+      self.reload
+      { status:"processed" }
+
     else
       { status:"error", message:"Invalid processor : #{self.processor}" }
     end
@@ -65,13 +91,10 @@ class BillingTransaction < ActiveRecord::Base
 
   private
 
-  def prepare_cashfront_amount
+  def cashfront_value
     v = 0.0
     self.meta_order.orders.each do |order|
-      options = { developer:order.developer }
-      order.order_items.each do |item|
-        v += item.product_version.cashfront_value(options)
-      end
+      v += order.cashfront_value
     end
     (v * 100).round
   end
@@ -96,11 +119,11 @@ class BillingTransaction < ActiveRecord::Base
         self.amount = prepare_billing_amount
       elsif self.processor == "cashfront"
         self.errors.add(:base, I18n.t('billing_transactions.errors.cashfront_already_exists')) unless self.meta_order.billing_transactions.cashfront.empty?
-        self.amount = prepare_cashfront_amount
+        self.amount = cashfront_value
       end
     end
     self.errors.add(:base, I18n.t('billing_transactions.errors.invalid_state')) if self.meta_order.orders.map(&:state_name).uniq != [ "billing"]
-    self.errors.add(:base, I18n.t('billing_transactions.errors.price_inconsistency')) if orders_expected_total < orders_prepared_total
+    self.errors.add(:base, I18n.t('billing_transactions.errors.price_inconsistency')) if orders_expected_total < orders_prepared_total - cashfront_value
     self.errors.add(:base, I18n.t('billing_transactions.errors.already_fulfilled')) if !self.persisted? && self.amount + self.meta_order.billed_amount > orders_prepared_total
   end
 end

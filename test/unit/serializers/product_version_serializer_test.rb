@@ -5,6 +5,7 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
   
   setup do
     @product = product_versions(:usbkey)
+    @developer = developers(:prixing)
   end
   
   test "it should correctly serialize product version" do
@@ -26,7 +27,7 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
   end
 
   test "it should serialize cashfront value" do
-    product_serializer = ProductVersionSerializer.new(product_versions(:dvd))
+    product_serializer = ProductVersionSerializer.new(product_versions(:dvd), scope:{developer:@developer})
     hash = product_serializer.as_json
       
     assert_equal 0.30, hash[:product_version][:cashfront_value]

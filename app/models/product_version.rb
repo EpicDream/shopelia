@@ -38,11 +38,12 @@ class ProductVersion < ActiveRecord::Base
     }
   }  
 
-  def cashfront_value options={}
+  def cashfront_value price, options={}
+    options ||= {}
     rule_req = self.product.merchant.cashfront_rules
-    rule_req = rule_req.send(:for_developer, options[:developer]) if options[:developer].present?
+    rule_req = rule_req.send(:for_developer, options[:developer])
     rule = rule_req.first
-    rule ? rule.rebate(self.price) : 0.0
+    rule ? rule.rebate(price) : 0.0
   end
 
   private
