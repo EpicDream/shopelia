@@ -3,6 +3,7 @@ require 'test_helper'
 class EventTest < ActiveSupport::TestCase
 
   setup do
+    meta_orders(:elarch_billing).destroy # cleanup
     @developer = developers(:prixing)
     @date = Date.today
     populate_data
@@ -49,7 +50,7 @@ class EventTest < ActiveSupport::TestCase
     assert_equal 0, @stats.daily_orders
   end
 
-  test "it should count daily montlhy orders" do
+  test "it should count monthly completed orders" do
     assert_equal 1, @stats.monthly_orders
   end
 
@@ -151,7 +152,7 @@ class EventTest < ActiveSupport::TestCase
       :device_id => devices(:mobile).id,
       :action => Event::CLICK,
       :developer_id => @developer.id)
-    Order.first.update_attribute :state_name, "completed"
+    Order.order(:created_at).second.update_attribute :state_name, "completed"
     users(:elarch).update_attribute :created_at, @date.at_beginning_of_month + 1.day
   end
 end
