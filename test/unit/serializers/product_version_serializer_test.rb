@@ -21,7 +21,15 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
     assert_equal @product.price_shipping, hash[:product_version][:price_shipping]
     assert_equal @product.price_strikeout, hash[:product_version][:price_strikeout]
     assert_equal @product.shipping_info, hash[:product_version][:shipping_info]
+    assert_equal 0, hash[:product_version][:cashfront_value]
     assert_equal 1, hash[:product_version][:available]    
+  end
+
+  test "it should serialize cashfront value" do
+    product_serializer = ProductVersionSerializer.new(product_versions(:dvd))
+    hash = product_serializer.as_json
+      
+    assert_equal 0.30, hash[:product_version][:cashfront_value]
   end
 
 end
