@@ -16,3 +16,4 @@ indisponible: false
 en rupture de stock: false
 aucun vendeur ne propose ce produit: false
 out of stock: false
+\d+ d'occasion: false
