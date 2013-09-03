@@ -13,5 +13,10 @@ class Api::V1::ProductsControllerTest < ActionController::TestCase
     assert_response :not_found
   end
 
-end
+  test "it should send developer scope to product versions in order to compute cashfront value" do
+    get :index, url:products(:dvd).url
+    assert_response :success
 
+    assert_equal 0.30, json_response["versions"][0]["cashfront_value"], json_response.inspect
+  end
+end

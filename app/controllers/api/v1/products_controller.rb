@@ -7,7 +7,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   param :url, String, "Url of the product to get", :required => true
   def index
     if @product
-      render :json => ProductSerializer.new(@product, @scope).as_json[:product]
+      render :json => ProductSerializer.new(@product, scope:@scope).as_json[:product]
     else
       head :not_found
     end
