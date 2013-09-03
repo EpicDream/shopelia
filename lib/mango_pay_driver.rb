@@ -49,7 +49,7 @@ class MangoPayDriver
         return { status:"error", message:"Impossible to inject payment card in Payline form: #{e.inspect}" }
       end
     else
-      return { status:"error", message:"Impossible to create mangopay contribution object: #{contribution.inpect}" }
+      return { status:"error", message:"Impossible to create mangopay contribution object: #{contribution.inspect}" }
     end
       
     attempts = 0
