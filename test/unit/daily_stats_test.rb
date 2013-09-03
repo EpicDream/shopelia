@@ -5,7 +5,7 @@ class EventTest < ActiveSupport::TestCase
   setup do
     meta_orders(:elarch_billing).destroy # cleanup
     @developer = developers(:prixing)
-    @date = Date.today
+    @date = Date.parse("2013-08-15")
     populate_data
     @stats = DailyStats.new(@date)
   end
@@ -47,15 +47,15 @@ class EventTest < ActiveSupport::TestCase
   end
   
   test "it should count daily completed orders" do
-    assert_equal 0, @stats.daily_orders
+    assert_equal 1, @stats.daily_orders
   end
 
   test "it should count monthly completed orders" do
-    assert_equal 1, @stats.monthly_orders
+    assert_equal 2, @stats.monthly_orders
   end
 
   test "it should count daily signups" do
-    assert_equal 2, @stats.daily_signups
+    assert_equal 3, @stats.daily_signups
   end
 
   test "it should count monthly signups" do
@@ -141,7 +141,7 @@ class EventTest < ActiveSupport::TestCase
       :action => Event::CLICK,
       :device_id => devices(:web).id,
       :developer_id => @developer.id)
-    Event.update_all "created_at='#{@date.at_beginning_of_month}'"
+    Event.update_all "created_at='2013-08-01 10:00'"
     Event.from_urls(
       :urls => [ "http://www.amazon.fr/productA", "http://www.amazon.fr/productB" ],
       :action => Event::VIEW,
@@ -152,7 +152,10 @@ class EventTest < ActiveSupport::TestCase
       :device_id => devices(:mobile).id,
       :action => Event::CLICK,
       :developer_id => @developer.id)
+    Event.where("created_at > '2013-08-02'").update_all "created_at='2013-08-15 10:00'"
+    Order.all[0].update_attribute :created_at, '2013-08-01 10:00'
+    Order.all[1].update_attribute :created_at, '2013-08-15 10:00'
     Order.order(:created_at).second.update_attribute :state_name, "completed"
-    users(:elarch).update_attribute :created_at, @date.at_beginning_of_month + 1.day
+    User.update_all "created_at='2013-08-15 10:00'"
   end
 end
