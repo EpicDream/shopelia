@@ -45,9 +45,13 @@
         <table class="table table-borderless" id="total-parice-table">
             <tr>
                 <td><%= @product('name') %></td>
-                <td><%= @product('expected_price_product') %>€</td>
+                <td><%= @product('expected_price_product_original') %>€</td>
             </tr>
-            <tr>
+            <tr id="order-cashfront">
+                <td>Avantage exclusif Shopelia</td>
+                <td>-<%= @product('expected_cashfront_value') %>€</td>
+            </tr>
+            <tr id="order-shipping">
                 <td>Frais de livraison : </td>
                 <td>
                     <% if parseFloat(@product('expected_price_shipping')) == 0 : %>
@@ -55,9 +59,9 @@
                     <% else: %>
                       <%= @product('expected_price_shipping') %> €
                     <% end %>
-                 </td>
+                </td>
             </tr>
-            <tr>
+            <tr id="order-total">
                 <td>Total</td>
                 <td><%= @total_price() %>€</td>
             </tr>

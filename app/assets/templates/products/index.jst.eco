@@ -5,9 +5,15 @@
   <div class="spacer5"></div>
   <div class="price-infos">
       <div class="pull-right">
+        <span class="price-strikeout black">
+          <%= @model('expected_price_strikeout') %> €
+        </span>        
         <span class="price">
             <span class="taxes bold">TTC</span>
             <span class="green bold"> <%= @model('expected_price_product') %> € </span>
+        </span>
+        <span class="cashfront">
+          Uniquement via Shopelia
         </span>
         <span class="shipping">
         </span>

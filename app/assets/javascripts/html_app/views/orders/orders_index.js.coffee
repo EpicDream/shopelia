@@ -20,6 +20,7 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
   className: 'box'
   ui: {
     validation: '#process-order'
+    cashfront: '#order-cashfront'
   }
   events:
     "click #process-order": "onProcessOrder"
@@ -28,7 +29,9 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
 
   onRender: ->
-    Tracker.onDisplay('Confirmation');
+    Tracker.onDisplay('Confirmation')
+    if @model.get("product").get('expected_cashfront_value') > 0
+      @ui.cashfront.show()
 
   onProcessOrder: (e) ->
     e.preventDefault()
@@ -41,6 +44,7 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     order = new Shopelia.Models.Order({
       "expected_price_shipping": product.get('expected_price_shipping')
       "expected_price_product":  product.get('expected_price_product')
+      "expected_cashfront_value": product.get('expected_cashfront_value')
       "expected_price_total": product.getExpectedTotalPrice()
       "address_id": user.get('addresses').getDefaultAddress().get('id')
       "products":[product.disableWrapping()]
