@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130902200404) do
+ActiveRecord::Schema.define(:version => 20130903151419) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -233,6 +233,7 @@ ActiveRecord::Schema.define(:version => 20130902200404) do
     t.integer  "developer_id"
     t.string   "tracker"
     t.integer  "meta_order_id"
+    t.float    "expected_cashfront_value"
   end
 
   create_table "payment_cards", :force => true do |t|

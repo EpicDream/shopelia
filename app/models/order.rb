@@ -23,7 +23,7 @@ class Order < ActiveRecord::Base
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
-  attr_accessible :injection_solution, :cvd_solution, :tracker, :meta_order_id
+  attr_accessible :injection_solution, :cvd_solution, :tracker, :meta_order_id, :expected_cashfront_value
   attr_accessor :products, :confirmation, :payment_card_id, :address_id
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
@@ -131,11 +131,18 @@ class Order < ActiveRecord::Base
         self.order_items.first.update_attribute :price, prepared_price_product
       end
 
+      if self.expected_cashfront_value.to_i > 0 && self.expected_cashfront_value.round(2) != self.cashfront_value.round(2)
+        callback_vulcain(false)
+        fail("cashfront_value_inconsistency", :shopelia)
+        save!
+        return
+      end
+
       self.prepared_price_total = content["billing"]["total"].to_f
       self.prepared_price_shipping = content["billing"]["shipping"].to_f
       self.prepared_price_product = prepared_price_product
       self.save!
-      
+
       if self.expected_price_total >= self.prepared_price_total - self.cashfront_value
       
         # Basic user payment
@@ -236,7 +243,9 @@ class Order < ActiveRecord::Base
     rescue Exception => e
       callback_vulcain(false) if verb.eql?("assess")
       fail("Error during order Callback\n#{e.inspect}", :shopelia)
-      self.update_attribute :prepared_price_product, 0 # allow save if price mismatch
+      # allow save if price mismatch
+      self.prepared_price_product = 0
+      self.expected_cashfront_value = 0
       self.save!
   end
 

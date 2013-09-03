@@ -851,6 +851,18 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 16, @order.billed_price_total
   end
 
+  test "[amazon] it shouldn't complete order if expected cashfront value is not meet" do
+    configuration_amazon
+    @order.update_attribute :expected_cashfront_value, 1.0
+
+    start_order
+    assess_order_cashfront
+
+    assert_equal :pending_agent, @order.state
+    assert_equal "shopelia", @order.error_code
+    assert_equal "cashfront_value_inconsistency", @order.message
+  end
+
 =begin
   test "[beta] it should process order if billing has been accepted" do
     configuration_beta
@@ -939,6 +951,7 @@ class OrderTest < ActiveSupport::TestCase
   def configuration_amazon
     @order.order_items.each { |item| item.product_version.product.update_attribute :merchant_id, merchants(:amazon).id }
     @order.meta_order.update_attribute :billing_solution, "mangopay"
+    @order.expected_cashfront_value = 0.42
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "amazon"
     @order.save

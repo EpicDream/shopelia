@@ -253,6 +253,7 @@ class ApiTest < ActionDispatch::IntegrationTest
       expected_price_shipping:0,
       expected_price_product:9.70,
       expected_price_total:9.70,
+      expected_cashfront_value:0.30,
       address_id:user.addresses.first.id,
       payment_card_id:user.payment_cards.first.id }, format: :json
 
