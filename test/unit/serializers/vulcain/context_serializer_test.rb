@@ -54,6 +54,11 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
   
   test "it should send back amazon voucher" do
     @order = orders(:elarch_amazon_billing)
+    order_serializer = Vulcain::ContextSerializer.new(@order.reload)
+    context = order_serializer.as_json[:context]
+
+    assert_not_nil context[:order][:credentials][:number]
+
     t = PaymentTransaction.create!(
       order_id:@order.id,
       mangopay_amazon_voucher_code:"JTUJ-SC5P4S-6N3F"
