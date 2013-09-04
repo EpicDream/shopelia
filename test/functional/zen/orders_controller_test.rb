@@ -5,8 +5,8 @@ class Zen::OrdersControllerTest < ActionController::TestCase
 
   setup do
     @order = orders(:elarch_rueducommerce)
-    @order.order_items.first.update_attribute :price, 10
-    @order.order_items.second.update_attribute :price, 10
+    order_items(:item1).update_attribute :price, 10
+    order_items(:item2).update_attribute :price, 10
     @order.prepared_price_total = 20
     @order.prepared_price_shipping = 0
     @order.prepared_price_product = 20

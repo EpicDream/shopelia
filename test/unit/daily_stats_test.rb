@@ -153,8 +153,8 @@ class EventTest < ActiveSupport::TestCase
       :action => Event::CLICK,
       :developer_id => @developer.id)
     Event.where("created_at > '2013-08-02'").update_all "created_at='2013-08-15 10:00'"
-    Order.all[0].update_attribute :created_at, '2013-08-01 10:00'
-    Order.all[1].update_attribute :created_at, '2013-08-15 10:00'
+    Order.order(:created_at).first.update_attribute :created_at, '2013-08-01 10:00'
+    Order.order(:created_at).second.update_attribute :created_at, '2013-08-15 10:00'
     Order.order(:created_at).second.update_attribute :state_name, "completed"
     User.update_all "created_at='2013-08-15 10:00'"
   end

@@ -486,6 +486,7 @@ class OrderTest < ActiveSupport::TestCase
   
   test "it should set missing product price if only one item" do
     @order.order_items.first.destroy # keep only one item
+    assert_equal 1, @order.order_items.count
     start_order
     assess_order_with_missing_price
     

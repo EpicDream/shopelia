@@ -111,7 +111,7 @@ class BillingTransactionTest < ActiveSupport::TestCase
       processor:"cashfront")
     result = billing.process
 
-    assert_equal "processed", result[:status]
+    assert_equal "processed", result[:status], result[:message]
     assert billing.success
     assert billing.mangopay_transfer_id.present?
     assert_equal @meta.reload.mangopay_wallet_id, billing.mangopay_destination_wallet_id
