@@ -253,7 +253,6 @@ class ApiTest < ActionDispatch::IntegrationTest
       expected_price_shipping:0,
       expected_price_product:9.70,
       expected_price_total:9.70,
-      expected_cashfront_value:0.30,
       address_id:user.addresses.first.id,
       payment_card_id:user.payment_cards.first.id }, format: :json
 
@@ -318,6 +317,92 @@ class ApiTest < ActionDispatch::IntegrationTest
     assert_equal 0, order.billed_price_shipping
     assert_equal 10, order.billed_price_total    
   end  
+
+  test "it should register and complete an amazon order with multiple quantities" do
+    CashfrontRule.destroy_all
+    product_versions(:dvd).update_attribute :price_shipping, 5
+
+    # Create user
+    post "/api/users", user:@user, format: :json
+    assert_response :success
+    
+    assert json_response["user"]
+    assert json_response["auth_token"]
+    
+    user = User.find_by_id(json_response["user"]["id"])
+    auth_token = json_response["auth_token"]
+    assert_equal developers(:prixing).id, user.developer_id
+
+    # Create order
+    post "/api/orders", auth_token:auth_token, order: { 
+      products: [ {
+        url:products(:dvd).url,
+        price:10,
+        quantity:4
+      } ], 
+      expected_price_shipping:5,
+      expected_price_product:40,
+      expected_price_total:45,
+      address_id:user.addresses.first.id,
+      payment_card_id:user.payment_cards.first.id }, format: :json
+
+    assert json_response["order"]
+    uuid = json_response["order"]["uuid"]
+    assert uuid.present?
+    
+    order = Order.find_by_uuid(uuid)
+    assert_equal developers(:prixing).id, order.developer_id
+    assert_equal :preparing, order.state
+    assert_equal 45, order.expected_price_total
+    assert_equal 40, order.expected_price_product
+    assert_equal 5, order.expected_price_shipping
+    
+    assert_equal 1, order.order_items.count
+    item = order.order_items.first
+    assert_equal 4, item.quantity
+    assert_equal 10, item.price
+    
+    # Assess order
+    put "/api/callback/orders/#{order.uuid}", verb:"assess", content:{
+      questions: [
+        { id:1 }
+      ],
+      products: [
+        { id:products(:dvd).id,
+          price: 10
+        }
+      ],
+      billing: {
+        shipping: 5,
+        total: 45
+      }
+    }, format: :json
+
+    assert_equal :preparing, order.reload.state
+    
+    assert order.meta_order.mangopay_wallet_id.present?
+    assert_equal 1, order.meta_order.billing_transactions.count
+
+    t = order.meta_order.billing_transactions.mangopay.first
+    assert t.mangopay_contribution_id.present?
+    assert t.success
+    assert_equal 4500, t.mangopay_contribution_amount
+    
+    # Finalizing order
+    put "/api/callback/orders/#{order.uuid}", verb:"success", content:{
+      billing: {
+        shipping: 5,
+        total: 45,
+        shipping_info: "info"
+      }
+    }, format: :json
+    
+    assert_equal :completed, order.reload.state
+    
+    assert_equal 40, order.billed_price_product
+    assert_equal 5, order.billed_price_shipping
+    assert_equal 45, order.billed_price_total    
+  end    
   
 end
 

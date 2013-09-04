@@ -432,7 +432,7 @@ class Order < ActiveRecord::Base
       end
       self.merchant_id = product.merchant_id
       self.save
-      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price].to_i*p[:quantity].to_i, quantity:p[:quantity].to_i)
+      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price].to_f, quantity:p[:quantity].to_i)
     end
     if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
       item = self.order_items.first
@@ -441,7 +441,7 @@ class Order < ActiveRecord::Base
   end
   
   def verify_prices_integrity
-    if self.prepared_price_product.to_i > 0 && self.prepared_price_product.round(2) != self.order_items.map(&:price).sum.round(2)
+    if self.prepared_price_product.to_i > 0 && self.prepared_price_product.round(2) != self.order_items.map{ |e| e.price * e.quantity}.sum.round(2)
       self.errors.add(:base, I18n.t('orders.errors.price_inconsistency'))
     elsif self.expected_price_total.to_i > 0 && self.expected_price_product.to_i == 0
       self.expected_price_product = self.expected_price_total
