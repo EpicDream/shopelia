@@ -121,29 +121,24 @@ class Order < ActiveRecord::Base
           product["id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
         end
         item = self.order_items.where(:product_version_id => product["id"]).first
-        item.update_attribute(:price, product["price"] || product["price_product"] || product["product_price"])
+        p = product["price"] || product["price_product"] || product["product_price"]
+        item.update_attribute(:price, p.to_f.round(2))
       end
 
-      prepared_price_product = content["billing"]["total"].to_f - content["billing"]["shipping"].to_f
+      prepared_price_product = content["billing"]["total"].to_f.round(2) - content["billing"]["shipping"].to_f.round(2)
 
       # Set product price if unique item and without price
       if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
         self.order_items.first.update_attribute :price, prepared_price_product
       end
 
-      if self.expected_cashfront_value.to_i > 0 && self.expected_cashfront_value.round(2) != self.cashfront_value.round(2)
-        callback_vulcain(false)
-        fail("cashfront_value_inconsistency", :shopelia)
-        save!
-        return
-      end
-
-      self.prepared_price_total = content["billing"]["total"].to_f
-      self.prepared_price_shipping = content["billing"]["shipping"].to_f
+      self.prepared_price_total = content["billing"]["total"].to_f.round(2)
+      self.prepared_price_shipping = content["billing"]["shipping"].to_f.round(2)
       self.prepared_price_product = prepared_price_product
+      self.expected_cashfront_value = self.cashfront_value
       self.save!
 
-      if self.expected_price_total >= self.prepared_price_total - self.cashfront_value
+      if self.expected_price_total >= self.prepared_price_total
       
         # Basic user payment
         if self.meta_order.billing_solution.nil?
@@ -230,9 +225,9 @@ class Order < ActiveRecord::Base
       end
       
     elsif verb.eql?("success")
-      self.billed_price_total = content["billing"]["total"]
-      self.billed_price_shipping = content["billing"]["shipping"]
-      self.billed_price_product = self.billed_price_total - self.billed_price_shipping
+      self.billed_price_total = content["billing"]["total"].to_f.round(2)
+      self.billed_price_shipping = content["billing"]["shipping"].to_f.round(2)
+      self.billed_price_product = (self.billed_price_total - self.billed_price_shipping).round(2)
       self.shipping_info = content["billing"]["shipping_info"]
       complete
       
@@ -432,15 +427,24 @@ class Order < ActiveRecord::Base
       end
       self.merchant_id = product.merchant_id
       self.save
-      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price].to_f, quantity:p[:quantity].to_i)
+      OrderItem.create!(
+        order_id:self.id, 
+        product_version:product.product_versions.first, 
+        price:p[:price].to_f.round(2),
+        quantity:p[:quantity].to_i)
     end
     if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
       item = self.order_items.first
       item.update_attribute :price, self.expected_price_product / item.quantity
     end
+    self.reload
   end
   
   def verify_prices_integrity
+    self.expected_price_product = self.expected_price_product.to_f.round(2)
+    self.expected_price_total = self.expected_price_total.to_f.round(2)
+    self.expected_price_shipping = self.expected_price_shipping.to_f.round(2)
+    self.expected_cashfront_value = self.expected_cashfront_value.to_f.round(2)
     if self.prepared_price_product.to_i > 0 && self.prepared_price_product.round(2) != self.order_items.map{ |e| e.price * e.quantity}.sum.round(2)
       self.errors.add(:base, I18n.t('orders.errors.price_inconsistency'))
     elsif self.expected_price_total.to_i > 0 && self.expected_price_product.to_i == 0
@@ -450,6 +454,9 @@ class Order < ActiveRecord::Base
       self.expected_price_total = self.expected_price_product.to_i + self.expected_price_shipping.to_i
     elsif self.expected_price_total.round(2) != (self.expected_price_product + self.expected_price_shipping).round(2)
       self.errors.add(:base, I18n.t('orders.errors.price_inconsistency'))
+    end
+    if self.order_items.count > 0 && self.expected_cashfront_value != self.cashfront_value
+      self.errors.add(:base, I18n.t('orders.errors.cashfront_inconsistency'))
     end
   end
   

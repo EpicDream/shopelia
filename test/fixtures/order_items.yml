@@ -2,11 +2,13 @@ item1:
   order: elarch_rueducommerce
   product_version: usbkey
   quantity: 1
+  price: 9
 
 item2:
   order: elarch_rueducommerce
   product_version: headphones
   quantity: 1
+  price: 5
 
 item3:
   order: elarch_rueducommerce_billing
@@ -14,7 +16,7 @@ item3:
   quantity: 1
 
 item4:
-  order: elarch_rueducommerce_biling
+  order: elarch_rueducommerce_billing
   product_version: headphones
   quantity: 1
 

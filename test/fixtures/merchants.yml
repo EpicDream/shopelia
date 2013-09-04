@@ -33,7 +33,11 @@ fnac:
 cdiscount:
   name: "Cdiscount"
   domain: "cdiscount.com"
+  vendor: "cdiscount"
   should_clean_args: true
+  billing_solution: "mangopay"
+  injection_solution: "vulcain"
+  cvd_solution: "virtualis"  
 
 toysrus:
   name: "Toysrus"

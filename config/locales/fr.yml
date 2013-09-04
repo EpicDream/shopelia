@@ -294,6 +294,7 @@ fr:
       invalid_product: "Produit invalide %{error}"
       duplicate_order: "Vous ne pouvez pas commander deux fois le même produit dans un délai de 5 minutes"
       price_inconsistency: "Les prix des produits ne correspondent pas au total de la commande"
+      cashfront_inconsistency: "Le cashfront attendu de cette commande n'est pas égal au cashfront disponible"
       cannot_initialize_meta_order: "Impossible d'initialiser la commande. Le service Shopelia est en maintenance"
   
   products:

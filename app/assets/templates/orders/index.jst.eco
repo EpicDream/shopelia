@@ -53,7 +53,7 @@
                     <option value="4">4</option>
                   </select>
                 </td>
-                <td><%- @format(@product('expected_price_product_original')) %></td>
+                <td><%- @format(@product('expected_price_product')) %></td>
             </tr>
             <tr id="order-cashfront">
                 <td>Avantage exclusif Shopelia</td>
@@ -67,7 +67,7 @@
             </tr>
             <tr id="order-total">
                 <td>Total</td>
-                <td colspan=2><%- @format(@total_price()) %></td>
+                <td colspan=2><%- @format(@total_price() - @product('expected_cashfront_value') * @product('quantity')) %></td>
             </tr>
         </table>
 

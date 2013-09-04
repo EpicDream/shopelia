@@ -18,23 +18,23 @@ class OrderTest < ActiveSupport::TestCase
       :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
-        :price => 90,
-        :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
+        :price => 90.356,
+        :url => "http://www.cdiscount.com/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
         :name => "Papier normal Fax T102 Brother FAXT102G1",
         :image_url => "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg" } ],
       :address_id => @address.id,
-      :expected_price_total => 100,
-      :expected_price_product => 90,
-      :expected_price_shipping => 10,
+      :expected_price_total => 100.356,
+      :expected_price_product => 90.356,
+      :expected_price_shipping => 10.001,
       :tracker => 'toto')
     assert order.persisted?, order.errors.full_messages.join(",")
     assert_equal :preparing, order.state
     assert order.merchant_account.present?
     assert order.uuid.present?
     assert_equal 1, order.reload.order_items.count
-    assert_equal 90, order.expected_price_product
+    assert_equal 90.36, order.expected_price_product
     assert_equal 10, order.expected_price_shipping
-    assert_equal 100, order.expected_price_total
+    assert_equal 100.36, order.expected_price_total
     assert_equal "toto", order.tracker
 
     meta = order.meta_order
@@ -45,15 +45,15 @@ class OrderTest < ActiveSupport::TestCase
     
     item = order.order_items.first
     assert_equal 1, item.quantity
-    assert_equal 90, item.reload.price
+    assert_equal 90.36, item.reload.price
     
     product = item.product
-    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
+    assert_equal "http://www.cdiscount.com/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
     
     assert_equal "vulcain", order.injection_solution
-    assert_equal "amazon", order.cvd_solution
+    assert_equal "virtualis", order.cvd_solution
   end
   
   test "it should create multiple order items with quantities" do
@@ -812,7 +812,7 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "[amazon] it should complete order with cashfront" do
-    configuration_amazon
+    configuration_amazon_cashfront
     prepare_master_cashfront_account
 
     start_order
@@ -851,16 +851,22 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 16, @order.billed_price_total
   end
 
-  test "[amazon] it shouldn't complete order if expected cashfront value is not meet" do
-    configuration_amazon
-    @order.update_attribute :expected_cashfront_value, 1.0
+  test "[amazon] it should update cashfront with lower price" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account
 
     start_order
-    assess_order_cashfront
+    assess_order_with_lower_price_cashfront
 
-    assert_equal :pending_agent, @order.state
-    assert_equal "shopelia", @order.error_code
-    assert_equal "cashfront_value_inconsistency", @order.message
+    assert_equal 0.42, @order.expected_cashfront_value
+  end
+
+  test "[amazon] it shouldn't complete order if expected cashfront value is not meet" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account
+    
+    @order.expected_cashfront_value = 1.0
+    assert !@order.save
   end
 
 =begin
@@ -951,10 +957,14 @@ class OrderTest < ActiveSupport::TestCase
   def configuration_amazon
     @order.order_items.each { |item| item.product_version.product.update_attribute :merchant_id, merchants(:amazon).id }
     @order.meta_order.update_attribute :billing_solution, "mangopay"
-    @order.expected_cashfront_value = 0.42
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "amazon"
     @order.save
+  end
+
+  def configuration_amazon_cashfront
+    @order.expected_cashfront_value = 0.42
+    configuration_amazon
   end
   
   def start_order
@@ -1083,11 +1093,15 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   def assess_order_cashfront
-    @order.expected_price_total = 15.58
-    @order.expected_price_shipping = 2
-    @order.expected_price_product = 13.58
+    @order.expected_cashfront_value = 0.42
     @order.save
     assess_order
+  end
+
+  def assess_order_with_lower_price_cashfront
+    @order.expected_cashfront_value = 0.60
+    @order.save
+    assess_order_with_lower_price
   end
 
   def reject_order
