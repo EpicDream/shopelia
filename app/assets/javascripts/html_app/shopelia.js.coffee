@@ -46,6 +46,8 @@ Shopelia.Application.addInitializer (options) ->
 $(document).ready ->
   if window.Shopelia.tracker == 'product-follow'
     window.Shopelia.AbbaCartPosition = 'none'
+  else if window.Shopelia.developerKey == 'e35c8cbbcfd7f83e4bb09eddb5a3f4c461c8d30a71dc498a9fdefe217e0fcd44'
+    window.Shopelia.AbbaCartPosition = 'popup'
   else
     Abba("Product sign-up position").control("Popup").variant("Front top", ->
       window.Shopelia.AbbaCartPosition = 'top'
