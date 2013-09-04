@@ -432,7 +432,7 @@ class Order < ActiveRecord::Base
       end
       self.merchant_id = product.merchant_id
       self.save
-      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price].to_i*p[:quantity], quantity:p[:quantity])
+      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price].to_i*p[:quantity].to_i, quantity:p[:quantity].to_i)
     end
     if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
       item = self.order_items.first

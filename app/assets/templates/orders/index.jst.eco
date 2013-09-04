@@ -42,28 +42,32 @@
         <div class="line"></div>
         <div class="spacer5"></div>
 
-        <table class="table table-borderless" id="total-parice-table">
+        <table class="table table-borderless" id="total-price-table">
             <tr>
                 <td><%= @product('name') %></td>
-                <td><%= @product('expected_price_product_original') %>€</td>
+                <td>
+                  <select id="quantity">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>
+                </td>
+                <td><%- @format(@product('expected_price_product_original')) %></td>
             </tr>
             <tr id="order-cashfront">
                 <td>Avantage exclusif Shopelia</td>
-                <td>-<%= @product('expected_cashfront_value') %>€</td>
+                <td colspan=2>-<%- @format(@product('expected_cashfront_value') * @product('quantity')) %></td>
             </tr>
             <tr id="order-shipping">
                 <td>Frais de livraison : </td>
-                <td>
-                    <% if parseFloat(@product('expected_price_shipping')) == 0 : %>
-                     Livraison gratuite
-                    <% else: %>
-                      <%= @product('expected_price_shipping') %> €
-                    <% end %>
+                <td colspan=2>
+                  <%- @format(@product('expected_price_shipping')) %>
                 </td>
             </tr>
             <tr id="order-total">
                 <td>Total</td>
-                <td><%= @total_price() %>€</td>
+                <td colspan=2><%- @format(@total_price()) %></td>
             </tr>
         </table>
 

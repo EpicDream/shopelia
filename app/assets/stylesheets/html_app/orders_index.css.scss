@@ -2,9 +2,11 @@
   border: 1px solid darken($lightGrey,10%);
 }
 
-#total-parice-table {
+#total-price-table {
   td:nth-child(2) {
-    float: right;
+    text-align: right;
+  }
+  td:nth-child(3) {
     text-align: right;
   }
 }
@@ -40,4 +42,9 @@
   display: none;
   font-weight: bold;
   color: $red;
+}
+
+select {
+  max-width: 50px;
+  height: 30px;
 }

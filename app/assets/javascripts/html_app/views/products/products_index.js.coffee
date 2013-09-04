@@ -4,6 +4,10 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
   templateHelpers: {
     model: (attr) ->
       @product[attr]
+    format: (v) ->
+      window.formatCurrency(v)
+    formatShipping: (v) ->
+      window.formatShipping(v)
   }
   className: 'product box'
   events:
@@ -11,6 +15,7 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
 
   ui: {
     shipping: ".shipping"
+    shipping_info: "#shipping-info"
     description: ".product-description"
     description_link: "#full-description"
     cashfront: ".cashfront"
@@ -21,17 +26,8 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
     @model.on('change', @render, @)
 
   onRender: ->
-    $res = $('<p> frais de livraison </p>')
-    value = @model.get("expected_price_shipping")
-    unless isNaN(value)
-      if parseFloat(value) isnt 0
-        $res.append('<span class="green">'+@model.get("expected_price_shipping")+' € </span>')
-      else
-        $res.html('<span class="green">Livraison gratuite</span>')
-
-    @ui.shipping.html($res)
     if @model.get('shipping_info')
-      @ui.shipping.append('<p class="green bold clearfix">'+@model.get('shipping_info')+'</p>')
+      @ui.shipping_info.show()
 
     if @model.get('expected_price_strikeout') > 0
       @ui.strikeout.show()

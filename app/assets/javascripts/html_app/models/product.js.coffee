@@ -13,21 +13,19 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
     if attrs.image_url is undefined or attrs.image_url == ""
       "Invalid Product: Missing Attrs"
 
-  initialize: (params) ->
-    _.bindAll(this)
-    @on("change:expected_price_product",@setExpectedPrice)
-    @on("change:expected_price_strikeout",@setExpectedPriceStrikeout)
-    @on("change:expected_cashfront_value",@setExpectedCashfront)
-    @on("change:expected_price_shipping",@setExpectedShipping)
-
   addMerchantInfosToProduct: (data) ->
     console.log('in add merchant')
     console.log(data)
     @set({
-          merchant_name: data.merchant.name,
-          merchant_logo: data.merchant.logo,
-          allow_iframe: data.merchant.allow_iframe,
-          })
+      merchant_name: data.merchant.name,
+      merchant_logo: data.merchant.logo,
+      allow_iframe: data.merchant.allow_iframe,
+      allow_quantities: data.merchant.allow_quantities
+    })
+
+  setQuantity: (data) ->
+    console.log("Quantity " + data)
+    @set("quantity", data)
 
   setProduct: (data) ->
     console.log("setData")
@@ -43,7 +41,9 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
         shipping_info: data.versions[0].shipping_info
         merchant_name: data.merchant.name,
         merchant_logo: data.merchant.logo,
-        allow_iframe: data.merchant.allow_iframe
+        allow_iframe: data.merchant.allow_iframe,
+        allow_quantities: data.merchant.allow_quantities,
+        quantity: 1
       })
       if data.versions[0].cashfront_value > 0
         @set({
@@ -59,22 +59,5 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
     catch error
       console.log(error)
 
-  customParseFloat: (float) ->
-    parseFloat(Math.round(float * 100) / 100).toFixed(2)
-
-  setExpectedPrice: (model,value) ->
-    model.set("expected_price_product",model.customParseFloat(value))
-
-  setExpectedPriceStrikeout: (model,value) ->
-    model.set("expected_price_strikeout",model.customParseFloat(value))
-
-  setExpectedShipping: (model,value) ->
-    model.set("expected_price_shipping",model.customParseFloat(value))
-
-  setExpectedCashfront: (model,value) ->
-    model.set("expected_cashfront_value", model.customParseFloat(value))
-
   getExpectedTotalPrice: ->
-    @customParseFloat(parseFloat(@get('expected_price_product')) + parseFloat(@get('expected_price_shipping')))
-
-
+    @get('expected_price_product') * @get('quantity') + @get('expected_price_shipping')

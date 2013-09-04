@@ -6,18 +6,19 @@
   <div class="price-infos">
       <div class="pull-right">
         <span class="price-strikeout black">
-          <%= @model('expected_price_strikeout') %> €
+          <%- @format(@model('expected_price_strikeout')) %>
         </span>        
         <span class="price">
             <span class="taxes bold">TTC</span>
-            <span class="green bold"> <%= @model('expected_price_product') %> € </span>
+            <span class="green bold"> <%- @format(@model('expected_price_product')) %></span>
         </span>
         <span class="cashfront">
-          Uniquement via Shopelia
+          Prix Shopelia<br>
         </span>
         <span class="shipping">
-        </span>
-
+          <%- @formatShipping(@model('expected_price_shipping')) %>
+          <p id="shipping-info" class="green bold clearfix"><%= @model('shipping_info') %></p>
+        </span>        
       </div>
       <div class='merchant-infos pull-left'>
         Vendu et expédié par <br />

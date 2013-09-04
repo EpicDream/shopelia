@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130903151419) do
+ActiveRecord::Schema.define(:version => 20130904121156) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -183,6 +183,7 @@ ActiveRecord::Schema.define(:version => 20130903151419) do
     t.boolean  "allow_iframe",        :default => true
     t.boolean  "vulcain_test_pass"
     t.string   "vulcain_test_output"
+    t.boolean  "allow_quantities",    :default => true
   end
 
   create_table "meta_orders", :force => true do |t|
