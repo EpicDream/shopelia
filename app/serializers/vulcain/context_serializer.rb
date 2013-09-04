@@ -10,8 +10,12 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   def order
     if object.cvd_solution.nil?
       credentials = Vulcain::PaymentCardSerializer.new(object.meta_order.payment_card).as_json[:payment_card]
-    elsif object.cvd_solution == "amazon" && object.payment_transaction.present?
-      credentials = { :voucher => object.payment_transaction.mangopay_amazon_voucher_code }
+    elsif object.cvd_solution == "amazon" 
+      if object.payment_transaction.present?
+        credentials = { :voucher => object.payment_transaction.mangopay_amazon_voucher_code }
+      else
+        credentials = { :number => "", :exp_date => "", :exp_year => "", :cvv => "", :holder => "" }
+      end
     else
       credentials = nil
     end
