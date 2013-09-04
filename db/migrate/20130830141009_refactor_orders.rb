@@ -5,7 +5,9 @@ class RefactorOrders < ActiveRecord::Migration
     add_column :meta_orders, :mangopay_wallet_id, :integer
     add_column :meta_orders, :billing_solution, :string
     Order.all.each do |order|
-      order.save # generate meta_order
+      next if order.address_id.nil?
+      order.save! # generate meta_order
+      puts order.meta_order
       meta = order.meta_order
       meta.address_id = order.address_id
       meta.payment_card_id = order.payment_card_id
