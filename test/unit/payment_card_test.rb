@@ -11,8 +11,11 @@ class PaymentCardTest < ActiveSupport::TestCase
       :cvv => "123")
     assert card.save, card.errors.full_messages.join(",")
 
+    puts card.inspect
+  
     connection = ActiveRecord::Base.connection
     result = ActiveRecord::Base.connection.execute("select number, cvv from payment_cards where id = #{card.id}")
+    puts result.inspect
     card_data = result[0]
     assert_equal("4XXXXXXXXXXX0154", card_data[0])
     assert_equal('XXX', card_data[1])
