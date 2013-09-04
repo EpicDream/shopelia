@@ -66,4 +66,9 @@ class MangoPayDriver
 
     c
   end
+
+  def self.get_master_account_balance
+    u = MangoPay::User.details(MangoPayDriver.get_master_account_id)
+    u['PersonalWalletAmount'].to_f / 100
+  end
 end

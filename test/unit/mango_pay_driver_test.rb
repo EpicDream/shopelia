@@ -20,10 +20,9 @@ class MangoPayDriverTest < ActiveSupport::TestCase
     contribution = MangoPayDriver.credit_master_account card, 1000
 
     u = MangoPay::User.details(MangoPayDriver.get_master_account_id)
-    assert_equal 1000, u['PersonalWalletAmount']
+    assert_equal 10.0, MangoPayDriver.get_master_account_balance
 
     config = YAML.load(File.open(MangoPayDriver::CONFIG))
     assert_equal 1, config["contributions"].count
   end
-  
 end
