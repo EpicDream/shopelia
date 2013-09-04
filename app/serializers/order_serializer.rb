@@ -20,11 +20,11 @@ class OrderSerializer < ActiveModel::Serializer
   end
 
   def address
-    AddressSerializer.new(object.address).as_json[:address]
+    AddressSerializer.new(object.meta_order.address).as_json[:address]
   end
 
   def payment_card
-    PaymentCardSerializer.new(object.payment_card).as_json[:payment_card]
+    PaymentCardSerializer.new(object.meta_order.payment_card).as_json[:payment_card]
   end
     
   def include_questions?

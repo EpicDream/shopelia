@@ -1,7 +1,7 @@
 %h1 Commande 
 %h3= @order.uuid
 %h1 Adresse de livraison
-%h3= @order.address.inspect
+%h3= @order.meta_order.address.inspect
 %h1 Produit
 %h3= @order.products.inspect
 %h1 Prix

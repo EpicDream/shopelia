@@ -4,29 +4,27 @@ class Order < ActiveRecord::Base
   STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "pending_injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
   ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "mangopay"]
 
+  belongs_to :meta_order
   belongs_to :user
   belongs_to :merchant
-  belongs_to :address
   belongs_to :merchant_account
-  belongs_to :payment_card
   belongs_to :developer
   has_many :order_items, :dependent => :destroy
+  has_one :payment_transaction
   
   validates :user, :presence => true
   validates :state_name, :presence => true, :inclusion => { :in => STATES }
   validates :uuid, :presence => true, :uniqueness => true
-  validates :address, :presence => true
   validates :expected_price_total, :presence => true
   validates :developer, :presence => true
+  validates :meta_order, :presence => true
 
   attr_accessible :user_id, :address_id, :merchant_account_id, :payment_card_id, :developer_id
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
-  attr_accessible :mangopay_contribution_id, :mangopay_contribution_amount, :mangopay_contribution_status
-  attr_accessible :mangopay_contribution_message, :mangopay_amazon_voucher_id, :mangopay_amazon_voucher_code
-  attr_accessible :billing_solution, :injection_solution, :cvd_solution, :tracker
-  attr_accessor :products, :confirmation
+  attr_accessible :injection_solution, :cvd_solution, :tracker, :meta_order_id, :expected_cashfront_value
+  attr_accessor :products, :confirmation, :payment_card_id, :address_id
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
   scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 12.hours ) }
@@ -44,6 +42,7 @@ class Order < ActiveRecord::Base
   
   before_validation :initialize_uuid
   before_validation :initialize_state
+  before_validation :initialize_meta_order, :if => Proc.new { |order| order.meta_order_id.nil? }
   before_validation :initialize_merchant_account
   before_validation :verify_prices_integrity
   before_save :serialize_questions
@@ -59,7 +58,7 @@ class Order < ActiveRecord::Base
   end
   
   def start
-    return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.payment_card_id.present? && self.order_items.count > 0
+    return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.meta_order.payment_card_id.present? && self.order_items.count > 0
     if self.merchant.vendor.nil?
       fail("unsupported", "vulcain")
       self.save
@@ -132,58 +131,92 @@ class Order < ActiveRecord::Base
         self.order_items.first.update_attribute :price, prepared_price_product
       end
 
+      if self.expected_cashfront_value.to_i > 0 && self.expected_cashfront_value.round(2) != self.cashfront_value.round(2)
+        callback_vulcain(false)
+        fail("cashfront_value_inconsistency", :shopelia)
+        save!
+        return
+      end
+
       self.prepared_price_total = content["billing"]["total"].to_f
       self.prepared_price_shipping = content["billing"]["shipping"].to_f
       self.prepared_price_product = prepared_price_product
       self.save!
-      
-      if self.expected_price_total >= self.prepared_price_total
+
+      if self.expected_price_total >= self.prepared_price_total - self.cashfront_value
       
         # Basic user payment
-        if self.billing_solution.nil?
+        if self.meta_order.billing_solution.nil?
           callback_vulcain(true)
           
         # MangoPay billing
-        elsif self.billing_solution == "mangopay"
-          self.state = :billing
-          billing_result = MangoPayFunnel.bill(self)
-          if billing_result["Status"] == "success"
+        elsif self.meta_order.billing_solution == "mangopay"
+          self.update_attribute :state_name, "billing"
           
-            # Billing success
-            if self.reload.mangopay_contribution_status == "success"              
+          # Prepare wallet
+          wallet_result = self.meta_order.create_mangopay_wallet
+          if wallet_result[:status] == "created"
+
+            # Cashfront
+            if self.cashfront_value > 0
+              cashfront_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id, processor:"cashfront")
+              cashfront_result = cashfront_transaction.process
+
+              if cashfront_result[:status] != "processed"
+                callback_vulcain(false)
+                fail(cashfront_result[:message], :shopelia)
+                self.save!
+                return
+              end
+            end
+
+            billing_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id)
+            billing_result = billing_transaction.process
+
+            if billing_result[:status] == "processed"
             
-              # Limonetik CVD & injection
-              if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
-                callback_vulcain(true)
-                self.state = :pending_injection
-                
-              # Amazon vouchers
-              elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
-                self.state = :preparing
-                
-                voucher_result = MangoPayFunnel.voucher(self)
-                if voucher_result["Status"] == "success"
+              # Billing success
+              if billing_transaction.success
+
+                # Limonetik CVD & injection
+                if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
                   callback_vulcain(true)
+                  self.state = :pending_injection
+                  
+                # Amazon vouchers
+                elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
+                  self.state = :preparing
+                 
+                  payment_transaction = PaymentTransaction.create!(order_id:self.id) 
+                  payment_result = payment_transaction.process
+
+                  if payment_result[:status] == "created"
+                    callback_vulcain(true)
+                  else
+                    callback_vulcain(false)
+                    fail(payment_result[:message], :shopelia)
+                  end
+                  
+                # Invalid CVD solution
                 else
                   callback_vulcain(false)
-                  fail(voucher_result["Error"], :shopelia)
+                  fail("invalid_cvd_solution_#{self.cvd_solution}", :shopelia)
                 end
                 
-              # Invalid CVD solution
+              # Billing failure
               else
                 callback_vulcain(false)
-                fail("invalid_cvd_solution", :shopelia)
+                abort(billing_transaction.mangopay_contribution_message, :billing)
               end
               
-            # Billing failure
             else
               callback_vulcain(false)
-              abort(self.mangopay_contribution_message, :billing)
+              fail(billing_result[:message], :shopelia)
             end
-            
+
           else
             callback_vulcain(false)
-            fail(billing_result["Error"], :shopelia)
+            fail(wallet_result[:message], :shopelia)
           end
           
         # Invalid billing solution
@@ -210,7 +243,9 @@ class Order < ActiveRecord::Base
     rescue Exception => e
       callback_vulcain(false) if verb.eql?("assess")
       fail("Error during order Callback\n#{e.inspect}", :shopelia)
-      self.update_attribute :prepared_price_product, 0 # allow save if price mismatch
+      # allow save if price mismatch
+      self.prepared_price_product = 0
+      self.expected_cashfront_value = 0
       self.save!
   end
 
@@ -288,6 +323,15 @@ class Order < ActiveRecord::Base
     Emailer.notify_order_creation(self).deliver
     self.update_attribute :notification_email_sent_at, Time.now
   end
+
+  def cashfront_value
+    v = 0.0
+    options = { developer:self.developer }
+    self.order_items.each do |item|
+      v += item.cashfront_value(options)
+    end
+    v.round(2)
+  end
   
   private
  
@@ -340,8 +384,20 @@ class Order < ActiveRecord::Base
     self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
   end
   
+  def initialize_meta_order
+    meta = MetaOrder.new(
+      user_id:self.user_id,
+      payment_card_id:self.payment_card_id,
+      address_id:self.address_id)
+    if meta.save
+      self.meta_order_id = meta.id
+    else
+      self.errors.add(:base, meta.errors.full_messages.join(","))
+    end
+  end
+
   def mirror_solutions_from_merchant
-    self.billing_solution = self.merchant.billing_solution if self.billing_solution.nil?
+    self.meta_order.update_attribute :billing_solution, self.merchant.billing_solution if self.meta_order.billing_solution.nil?
     self.injection_solution = self.merchant.injection_solution if self.injection_solution.nil?
     self.cvd_solution = self.merchant.cvd_solution if self.cvd_solution.nil?
   end
@@ -376,7 +432,7 @@ class Order < ActiveRecord::Base
       end
       self.merchant_id = product.merchant_id
       self.save
-      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price].to_i*p[:quantity], quantity:p[:quantity])
+      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price].to_i*p[:quantity].to_i, quantity:p[:quantity].to_i)
     end
     if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
       item = self.order_items.first

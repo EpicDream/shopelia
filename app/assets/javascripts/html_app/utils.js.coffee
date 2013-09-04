@@ -12,6 +12,16 @@ String.prototype.normalizeName = ->
     )
   res
 
+window.formatCurrency = (price) ->
+  parseFloat(Math.round(price * 100) / 100).toFixed(2) + "&nbsp;€"
+
+window.formatShipping = (value) ->
+  unless isNaN(value)
+    if parseFloat(value) isnt 0
+      '<p>frais de livraison <span class="green">' + window.formatCurrency(value) + '</span></p>'
+    else
+      '<span class="green">Livraison gratuite</span>'
+
 window.eraseErrors =  ->
   $(".control-group").removeClass('error')
   $('.help-inline').remove()

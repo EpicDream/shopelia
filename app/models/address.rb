@@ -2,7 +2,7 @@ class Address < ActiveRecord::Base
   belongs_to :user
   belongs_to :country
   belongs_to :state
-  belongs_to :order
+  has_many :meta_orders
   
   validates :user, :presence => true
   validates :country_id, :presence => true
@@ -45,8 +45,10 @@ class Address < ActiveRecord::Base
       default_address = record.user.addresses.where("id<>?", record.id).first
       default_address.update_attribute :is_default, true unless default_address.nil?
     end
-    Order.running.where(address_id:record.id).each do |order|
-      order.reject "address_destroyed"
+    MetaOrder.where(address_id:self.id).each do |meta|
+      meta.orders.running.each do |order|
+        order.reject "address_destroyed"
+      end
     end
   end
 
