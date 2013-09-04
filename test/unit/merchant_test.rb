@@ -6,6 +6,7 @@ class MerchantTest < ActiveSupport::TestCase
   test "it should create merchant" do
     populate_merchant
     assert @merchant.save, @merchant.errors.full_messages.join(",")
+    assert @merchant.allow_quantities?
   end
 
   test "it shouldn't destroy merchant if it has any order" do

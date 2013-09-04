@@ -2,17 +2,19 @@
   border: 1px solid darken($lightGrey,10%);
 }
 
-#total-parice-table {
+#total-price-table {
   td:nth-child(2) {
-    float: right;
     text-align: right;
   }
-  tr:nth-child(3) {
-    font-size: 24px;
-    font-weight: bold;
-    td:nth-child(2) {
-      color: $red;
-    }
+  td:nth-child(3) {
+    text-align: right;
+  }
+}
+#order-total {
+  font-size: 24px;
+  font-weight: bold;
+  td:nth-child(2) {
+    color: $red;
   }
 }
 
@@ -36,3 +38,13 @@
    padding:  4px;
  }
 
+#order-cashfront {
+  display: none;
+  font-weight: bold;
+  color: $red;
+}
+
+select {
+  max-width: 50px;
+  height: 30px;
+}

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130827150231) do
+ActiveRecord::Schema.define(:version => 20130904121156) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -53,6 +53,21 @@ ActiveRecord::Schema.define(:version => 20130827150231) do
   add_index "audits", ["created_at"], :name => "index_audits_on_created_at"
   add_index "audits", ["user_id", "user_type"], :name => "user_index"
 
+  create_table "billing_transactions", :force => true do |t|
+    t.integer  "meta_order_id"
+    t.integer  "user_id"
+    t.string   "processor"
+    t.integer  "amount"
+    t.boolean  "success"
+    t.integer  "mangopay_contribution_id"
+    t.integer  "mangopay_contribution_amount"
+    t.string   "mangopay_contribution_message"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+    t.integer  "mangopay_destination_wallet_id"
+    t.integer  "mangopay_transfer_id"
+  end
+
   create_table "cart_items", :force => true do |t|
     t.string   "uuid"
     t.integer  "cart_id"
@@ -71,6 +86,17 @@ ActiveRecord::Schema.define(:version => 20130827150231) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "cashfront_rules", :force => true do |t|
+    t.integer  "merchant_id"
+    t.integer  "category_id"
+    t.integer  "developer_id"
+    t.integer  "user_id"
+    t.float    "rebate_percentage"
+    t.float    "max_rebate_value"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
   end
 
   create_table "countries", :force => true do |t|
@@ -157,6 +183,17 @@ ActiveRecord::Schema.define(:version => 20130827150231) do
     t.boolean  "allow_iframe",        :default => true
     t.boolean  "vulcain_test_pass"
     t.string   "vulcain_test_output"
+    t.boolean  "allow_quantities",    :default => true
+  end
+
+  create_table "meta_orders", :force => true do |t|
+    t.integer  "user_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+    t.integer  "address_id"
+    t.integer  "payment_card_id"
+    t.integer  "mangopay_wallet_id"
+    t.string   "billing_solution"
   end
 
   create_table "order_items", :force => true do |t|
@@ -173,15 +210,13 @@ ActiveRecord::Schema.define(:version => 20130827150231) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.text     "message",                    :limit => 255
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.string   "questions_json"
     t.string   "error_code"
-    t.integer  "address_id"
     t.integer  "retry_count"
     t.integer  "merchant_account_id"
-    t.integer  "payment_card_id"
     t.float    "expected_price_product"
     t.float    "expected_price_shipping"
     t.float    "expected_price_total"
@@ -193,18 +228,13 @@ ActiveRecord::Schema.define(:version => 20130827150231) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
-    t.integer  "mangopay_wallet_id"
-    t.integer  "mangopay_contribution_id"
-    t.string   "mangopay_contribution_status"
-    t.integer  "mangopay_contribution_amount"
-    t.string   "billing_solution"
+    t.string   "payment_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
-    t.string   "mangopay_contribution_message"
-    t.integer  "mangopay_amazon_voucher_id"
-    t.string   "mangopay_amazon_voucher_code"
     t.integer  "developer_id"
     t.string   "tracker"
+    t.integer  "meta_order_id"
+    t.float    "expected_cashfront_value"
   end
 
   create_table "payment_cards", :force => true do |t|
@@ -220,6 +250,17 @@ ActiveRecord::Schema.define(:version => 20130827150231) do
     t.text     "crypted"
   end
 
+  create_table "payment_transactions", :force => true do |t|
+    t.integer  "order_id"
+    t.string   "processor"
+    t.integer  "mangopay_amazon_voucher_id"
+    t.string   "mangopay_amazon_voucher_code"
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+    t.integer  "amount"
+    t.integer  "mangopay_source_wallet_id"
+  end
+
   create_table "product_masters", :force => true do |t|
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
@@ -232,10 +273,10 @@ ActiveRecord::Schema.define(:version => 20130827150231) do
     t.float    "price_strikeout"
     t.string   "shipping_info"
     t.text     "description"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
-    t.text     "color"
-    t.text     "size"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+    t.text     "color",           :limit => 255
+    t.text     "size",            :limit => 255
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
@@ -247,10 +288,10 @@ ActiveRecord::Schema.define(:version => 20130827150231) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url"
-    t.text     "image_url"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.text     "url",                 :limit => 255
+    t.text     "image_url",           :limit => 255
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"

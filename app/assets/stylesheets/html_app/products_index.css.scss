@@ -89,3 +89,24 @@
   display: block;
   clear:both;
 }
+
+.price-strikeout {
+  display: none;
+  text-align: right;
+}
+
+.price-strikeout {
+   font-size: 120%;
+   text-decoration: line-through;
+}
+
+.cashfront {
+  display: none;
+  color: $red;
+  font-size: 100%;
+  font-weight: bold;
+}
+
+#shipping-info {
+  display: none;
+}

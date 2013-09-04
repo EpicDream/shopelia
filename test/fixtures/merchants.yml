@@ -21,6 +21,7 @@ amazon:
   domain: "amazon.fr"
   should_clean_args: true
   viking_data: "{\"bla\":\"boo\"}"
+  allow_quantities: true
   
 fnac:
   name: "Fnac"

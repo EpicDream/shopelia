@@ -125,7 +125,7 @@
                                 <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;">Total payé</td>
                                 <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;"><span style="font-family: Helvetica, Arial, sans-serif; color:#46b758; font-weight:bold;"><%= number_to_currency(@order.billed_price_total) %></span></td>
                               </tr>
-<% if @order.billing_solution.eql?("mangopay") %>
+<% if @order.meta_order.billing_solution.eql?("mangopay") %>
                               <tr>
                                 <td colspan="2" align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:10px; color:#666666; line-height:12px;">
                                   <br>

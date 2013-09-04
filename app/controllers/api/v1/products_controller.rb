@@ -1,12 +1,13 @@
 class Api::V1::ProductsController < Api::V1::BaseController
   skip_before_filter :authenticate_user!
   before_filter :prepare_params, :only => :index
+  before_filter :prepare_scope
   
   api :GET, "/api/products", "Get product information"
   param :url, String, "Url of the product to get", :required => true
   def index
     if @product
-      render :json => ProductSerializer.new(@product).as_json[:product]
+      render :json => ProductSerializer.new(@product, scope:@scope).as_json[:product]
     else
       head :not_found
     end
@@ -22,6 +23,10 @@ class Api::V1::ProductsController < Api::V1::BaseController
     else
       @product = nil 
     end
+  end
+
+  def prepare_scope
+    @scope = { developer:@developer }
   end
   
 end

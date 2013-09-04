@@ -54,10 +54,10 @@
           %p Vous serez livré à l'adresse suivante :
           %b.span10
             %ul.unstyled
-              %li #{@order.address.first_name} #{@order.address.last_name}
-              %li= "#{@order.address.address1} #{@order.address.address2}"
-              %li= " #{@order.address.city}, #{@order.address.zip}  #{@order.address.state} "
-              %li= @order.address.country.name
+              %li #{@order.meta_order.address.first_name} #{@order.meta_order.address.last_name}
+              %li= "#{@order.meta_order.address.address1} #{@order.meta_order.address.address2}"
+              %li= " #{@order.meta_order.address.city}, #{@order.meta_order.address.zip}  #{@order.meta_order.address.state} "
+              %li= @order.meta_order.address.country.name
         - if order_completed?
           %p
             Pour suivre votre commande chez #{link_to(@order.merchant.name,@order.merchant.url)}, 
