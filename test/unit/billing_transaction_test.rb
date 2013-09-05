@@ -11,7 +11,7 @@ class BillingTransactionTest < ActiveSupport::TestCase
     
     assert billing.save, billing.errors.full_messages.join(",")
     assert_equal users(:elarch).id, billing.user_id
-    assert_equal (@meta.orders.map(&:prepared_price_total).sum*100).round, billing.amount
+    assert_equal 2570, billing.amount
     assert_equal "mangopay", billing.processor
   end
 
@@ -43,7 +43,7 @@ class BillingTransactionTest < ActiveSupport::TestCase
     b = BillingTransaction.create!(meta_order_id:@meta.id,amount:1000)
     b.update_attribute :success, true
     b = BillingTransaction.create!(meta_order_id:@meta.id)
-    assert_equal b.amount, 1600
+    assert_equal b.amount, 1570
   end
 
   test "it should fail creation if there are already successful transactions bigger or equal of prepared_billing_total" do

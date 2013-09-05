@@ -100,7 +100,7 @@ class BillingTransaction < ActiveRecord::Base
   end
 
   def prepare_billing_amount
-    (orders_prepared_total - self.meta_order.billed_amount).round
+    (orders_prepared_total - self.meta_order.billed_amount - cashfront_value).round
   end
 
   def orders_expected_total
