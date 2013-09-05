@@ -47,11 +47,20 @@ class BillingTransactionTest < ActiveSupport::TestCase
   end
 
   test "it should fail creation if there are already successful transactions bigger or equal of prepared_billing_total" do
-    BillingTransaction.create!(meta_order_id:@meta.id)
+    billing = BillingTransaction.create!(meta_order_id:@meta.id)
+    billing.update_attribute :success, true
     billing = BillingTransaction.new(meta_order_id:@meta.id,amount:1000)
     
     assert !billing.save
     assert_equal I18n.t('billing_transactions.errors.already_fulfilled'), billing.errors.full_messages.first
+  end
+
+  test "it should allow creation of cashfront transaction even if order is fullfilled" do
+    billing = BillingTransaction.create!(meta_order_id:@meta.id)
+    billing.update_attribute :success, true
+    billing = BillingTransaction.new(meta_order_id:@meta.id,amount:30,processor:"cashfront")
+    
+    assert billing.save
   end
 
   test "it shouldn't process billing if meta order doesn't have payment card" do
@@ -89,6 +98,7 @@ class BillingTransactionTest < ActiveSupport::TestCase
     assert_equal "cashfront", billing.processor
     assert_equal 30, billing.amount
 
+    billing.update_attribute :success, true
     billing = BillingTransaction.new(
       meta_order_id:@meta.id,
       processor:"cashfront")

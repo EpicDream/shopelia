@@ -78,6 +78,7 @@ class BillingTransaction < ActiveRecord::Base
           :success => true
         )
       else
+        self.update_attributes(:success => false)
         return { status:"error", message:"Impossible to transfer cashfront value to order wallet : #{transfert}" }
       end   
 
@@ -92,15 +93,11 @@ class BillingTransaction < ActiveRecord::Base
   private
 
   def cashfront_value
-    v = 0.0
-    self.meta_order.orders.each do |order|
-      v += order.cashfront_value
-    end
-    (v * 100).round
+    (self.meta_order.cashfront_value * 100).round
   end
 
   def prepare_billing_amount
-    (orders_prepared_total - self.meta_order.billed_amount - cashfront_value).round
+    (orders_prepared_total - self.meta_order.billed_amount * 100 - cashfront_value).round
   end
 
   def orders_expected_total
@@ -108,7 +105,7 @@ class BillingTransaction < ActiveRecord::Base
   end
 
   def orders_prepared_total
-    (self.meta_order.orders.map(&:prepared_price_total).sum * 100).round
+    (self.meta_order.prepared_price_total * 100).round
   end
 
   def initialize_transaction
@@ -118,12 +115,12 @@ class BillingTransaction < ActiveRecord::Base
       if self.processor == "mangopay"
         self.amount = prepare_billing_amount
       elsif self.processor == "cashfront"
-        self.errors.add(:base, I18n.t('billing_transactions.errors.cashfront_already_exists')) unless self.meta_order.billing_transactions.cashfront.empty?
+        self.errors.add(:base, I18n.t('billing_transactions.errors.cashfront_already_exists')) unless self.meta_order.billing_transactions.cashfront.successfull.empty?
         self.amount = cashfront_value
       end
     end
     self.errors.add(:base, I18n.t('billing_transactions.errors.invalid_state')) if self.meta_order.orders.map(&:state_name).uniq != [ "billing"]
     self.errors.add(:base, I18n.t('billing_transactions.errors.price_inconsistency')) if orders_expected_total < orders_prepared_total - cashfront_value
-    self.errors.add(:base, I18n.t('billing_transactions.errors.already_fulfilled')) if !self.persisted? && self.amount + self.meta_order.billed_amount > orders_prepared_total
+    self.errors.add(:base, I18n.t('billing_transactions.errors.already_fulfilled')) if !self.persisted? && self.meta_order.fullfilled? && self.processor != "cashfront"
   end
 end

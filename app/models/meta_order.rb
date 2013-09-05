@@ -12,12 +12,24 @@ class MetaOrder < ActiveRecord::Base
   attr_accessible :user_id, :address_id, :payment_card_id, :billing_solution, :mangopay_wallet_id
 
   def billed_amount
-    self.billing_transactions.active.map(&:amount).sum
+    (self.billing_transactions.mangopay.active.map(&:amount).sum.to_f / 100).round(2)
+  end
+
+  def cashfront_value
+    self.orders.map{ |e| e.cashfront_value }.sum.round(2)
+  end
+
+  def prepared_price_total
+    self.orders.map(&:prepared_price_total).sum.round(2)
+  end
+
+  def fullfilled?
+    (self.prepared_price_total - self.billed_amount - self.cashfront_value).round(2) == 0
   end
 
   def create_mangopay_wallet
     return { status:"error", message:"billing solution must be mangopay" } unless self.billing_solution == "mangopay"
-    return { status:"error", message:"wallet already exists" } unless self.mangopay_wallet_id.nil?
+    return { status:"created" } unless self.mangopay_wallet_id.nil?
 
     if self.user.mangopay_id.nil?
       result = self.user.create_mangopay_user

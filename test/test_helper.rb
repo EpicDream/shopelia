@@ -31,10 +31,10 @@ class ActiveSupport::TestCase
     JSON.parse @response.body
   end
 
-  def prepare_master_cashfront_account
+  def prepare_master_cashfront_account value=10000
     MangoPayDriver.create_master_account  
     card = { number:"4970100000000154", exp_month:"12", exp_year:"2020", cvv:"123" }
-    contribution = MangoPayDriver.credit_master_account card, 10000    
+    contribution = MangoPayDriver.credit_master_account card, value if value > 0
   end
 end
 
