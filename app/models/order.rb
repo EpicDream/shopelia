@@ -239,7 +239,7 @@ class Order < ActiveRecord::Base
     
     rescue Exception => e
       callback_vulcain(false) if verb.eql?("assess")
-      fail("Error during order Callback\n#{e.inspect}", :shopelia)
+      fail("Error in Callback #{e.inspect}", :shopelia)
       # allow save if price mismatch
       self.prepared_price_product = 0
       self.save!
