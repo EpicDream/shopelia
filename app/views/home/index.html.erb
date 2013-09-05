@@ -33,14 +33,16 @@
 <script type="text/javascript">
     $("#shopelia-form").submit(function(e) {
         e.preventDefault();
+        var $button = $('#btn-order');
         var url = $("[name='url']").val();
         if(url){
-            $(this).attr("data-shopelia-url",url);
-            ShopeliaCheckout.sendUrls($(this),{type: "click"});
-            ShopeliaCheckout.getProduct($(this));
+            $button.attr("data-shopelia-url",url);
+            ShopeliaCheckout.update();
+            $button.click();
+            $button.unbind('click');
         }
-
     });
+
 </script>
 
 

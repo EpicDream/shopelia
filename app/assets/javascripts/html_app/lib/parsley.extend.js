@@ -86,6 +86,11 @@ window.ParsleyConfig = window.ParsleyConfig || {};
                 var fullExpirationYear = 2000 + year;
                 return year != 0 && month != 0 && currentDate.getFullYear() <= fullExpirationYear &&  month <= 12
             }
+            ,minlengthcard: function(val,min){
+               var card =  val.replace(" ", "" );
+               return val.length >= min;
+
+            }
 
             , americandate: function ( val, elem, self) {
                 if(!/^([01]?[0-9])[\.\/-]([0-3]?[0-9])[\.\/-]([0-9]{4}|[0-9]{2})$/.test(val)) {
@@ -115,6 +120,7 @@ window.ParsleyConfig = window.ParsleyConfig || {};
             , afterdate:      "This date should be after %s."
             , luhn:           "This value should pass the luhn test."
             , americandate:	"This value should be a valid date (MM/DD/YYYY)."
+            , minlengthcard: "This value should have %s characters "
             , expirationdate: "This value should be a valid date (MM/YY)"
         }
     });
