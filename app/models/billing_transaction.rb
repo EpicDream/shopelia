@@ -11,7 +11,6 @@ class BillingTransaction < ActiveRecord::Base
 
   before_validation :initialize_transaction
 
-  scope :active, where(success:[true,nil])
   scope :successfull, where(success:true)
   scope :failed, where(success:false)
   scope :cashfront, where(processor:"cashfront")
