@@ -158,13 +158,16 @@ class ProductVersionTest < ActiveSupport::TestCase
       version = ProductVersion.create(
         product_id:@product.id,
         availability_text:str)
-      assert !version.available
+      assert !version.available, "#{str.inspect} failed !"
     end
     
-    version = ProductVersion.create(
-      product_id:@product.id,
-      availability_text:"en stock")
-    assert version.available
+    array = [ "en stock", "8 offres", "en vente sur" ]
+    array.each do |str|
+      version = ProductVersion.create(
+        product_id:@product.id,
+        availability_text:str)
+      assert version.available, "#{str.inspect} failed !"
+    end
   end
   
   test "it should generate incident if unknown availability (and set as available by default)" do
