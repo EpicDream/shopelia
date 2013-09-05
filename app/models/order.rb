@@ -27,7 +27,7 @@ class Order < ActiveRecord::Base
   attr_accessor :products, :confirmation, :payment_card_id, :address_id
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
-  scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 12.hours ) }
+  scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 18.hours ) }
   scope :canceled, lambda { where("state_name='querying' and updated_at < ?", Time.zone.now - 2.hours ) }
   scope :preparing_stale, lambda { where("state_name='preparing' and updated_at < ?", Time.zone.now - 5.minutes ) }
   
@@ -152,26 +152,15 @@ class Order < ActiveRecord::Base
           wallet_result = self.meta_order.create_mangopay_wallet
           if wallet_result[:status] == "created"
 
-            # Cashfront
-            if self.cashfront_value > 0
-              cashfront_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id, processor:"cashfront")
-              cashfront_result = cashfront_transaction.process
-
-              if cashfront_result[:status] != "processed"
-                callback_vulcain(false)
-                fail(cashfront_result[:message], :shopelia)
-                self.save!
-                return
-              end
+            if !self.meta_order.fullfilled?
+              billing_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id)
+              billing_result = billing_transaction.process
             end
 
-            billing_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id)
-            billing_result = billing_transaction.process
-
-            if billing_result[:status] == "processed"
+            if self.meta_order.fullfilled? || billing_result[:status] == "processed"
             
               # Billing success
-              if billing_transaction.success
+              if self.meta_order.fullfilled? || billing_transaction.success
 
                 # Limonetik CVD & injection
                 if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
@@ -181,6 +170,19 @@ class Order < ActiveRecord::Base
                 # Amazon vouchers
                 elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
                   self.state = :preparing
+
+                  # Cashfront
+                  if self.cashfront_value > 0
+                    cashfront_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id, processor:"cashfront")
+                    cashfront_result = cashfront_transaction.process
+
+                    if cashfront_result[:status] != "processed"
+                      callback_vulcain(false)
+                      fail(cashfront_result[:message], :shopelia)
+                      self.save!
+                      return
+                    end
+                  end
                  
                   payment_transaction = PaymentTransaction.create!(order_id:self.id) 
                   payment_result = payment_transaction.process
@@ -240,7 +242,6 @@ class Order < ActiveRecord::Base
       fail("Error during order Callback\n#{e.inspect}", :shopelia)
       # allow save if price mismatch
       self.prepared_price_product = 0
-      self.expected_cashfront_value = 0
       self.save!
   end
 

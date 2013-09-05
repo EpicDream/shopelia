@@ -11,7 +11,7 @@ class BillingTransactionTest < ActiveSupport::TestCase
     
     assert billing.save, billing.errors.full_messages.join(",")
     assert_equal users(:elarch).id, billing.user_id
-    assert_equal (@meta.orders.map(&:prepared_price_total).sum*100).round, billing.amount
+    assert_equal 2570, billing.amount
     assert_equal "mangopay", billing.processor
   end
 
@@ -43,15 +43,24 @@ class BillingTransactionTest < ActiveSupport::TestCase
     b = BillingTransaction.create!(meta_order_id:@meta.id,amount:1000)
     b.update_attribute :success, true
     b = BillingTransaction.create!(meta_order_id:@meta.id)
-    assert_equal b.amount, 1600
+    assert_equal b.amount, 1570
   end
 
   test "it should fail creation if there are already successful transactions bigger or equal of prepared_billing_total" do
-    BillingTransaction.create!(meta_order_id:@meta.id)
+    billing = BillingTransaction.create!(meta_order_id:@meta.id)
+    billing.update_attribute :success, true
     billing = BillingTransaction.new(meta_order_id:@meta.id,amount:1000)
     
     assert !billing.save
     assert_equal I18n.t('billing_transactions.errors.already_fulfilled'), billing.errors.full_messages.first
+  end
+
+  test "it should allow creation of cashfront transaction even if order is fullfilled" do
+    billing = BillingTransaction.create!(meta_order_id:@meta.id)
+    billing.update_attribute :success, true
+    billing = BillingTransaction.new(meta_order_id:@meta.id,amount:30,processor:"cashfront")
+    
+    assert billing.save
   end
 
   test "it shouldn't process billing if meta order doesn't have payment card" do
@@ -78,10 +87,6 @@ class BillingTransactionTest < ActiveSupport::TestCase
 
     wallet = MangoPay::Wallet.details(@meta.mangopay_wallet_id)
     assert_equal billing.amount, wallet['Amount']
-
-    result = billing.process
-    assert_equal "error", result[:status]
-    assert_equal "transaction already processed", result[:message]
   end
 
   test "it should create cashfront transaction" do
@@ -93,6 +98,7 @@ class BillingTransactionTest < ActiveSupport::TestCase
     assert_equal "cashfront", billing.processor
     assert_equal 30, billing.amount
 
+    billing.update_attribute :success, true
     billing = BillingTransaction.new(
       meta_order_id:@meta.id,
       processor:"cashfront")
@@ -118,8 +124,5 @@ class BillingTransactionTest < ActiveSupport::TestCase
 
     wallet = MangoPay::Wallet.details(@meta.mangopay_wallet_id)
     assert_equal billing.amount, wallet['Amount']
-
-    result = billing.process
-    assert_equal "error", result[:status]
   end
 end

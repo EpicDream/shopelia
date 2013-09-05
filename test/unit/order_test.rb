@@ -636,7 +636,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 1, Order.delayed.count
     assert_equal 0, Order.expired.count
 
-    @order.update_attribute :created_at, Time.now - 13.hours
+    @order.update_attribute :created_at, Time.now - 21.hours
     assert_equal 1, Order.delayed.count
     assert_equal 1, Order.expired.count
   end
@@ -835,6 +835,8 @@ class OrderTest < ActiveSupport::TestCase
 
     billing_transaction_cf = @order.meta_order.billing_transactions.cashfront.first
     assert_equal 42, billing_transaction_cf.amount
+    assert billing_transaction_cf.mangopay_transfer_id.present?
+    assert billing_transaction_cf.success
 
     payment_transaction = @order.payment_transaction
     assert payment_transaction.present?
@@ -867,6 +869,53 @@ class OrderTest < ActiveSupport::TestCase
     
     @order.expected_cashfront_value = 1.0
     assert !@order.save
+  end
+
+  test "[amazon] it should complete order with cashfront in two times, in case master balance is negative" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account(0)
+
+    start_order
+    assess_order_cashfront
+
+    assert @order.meta_order.mangopay_wallet_id.present?
+    assert_equal 2, @order.meta_order.billing_transactions.count
+
+    billing_transaction_mp = @order.meta_order.billing_transactions.mangopay.first
+    assert billing_transaction_mp.mangopay_contribution_id.present?
+    assert billing_transaction_mp.success?
+    assert_equal 1558, billing_transaction_mp.amount
+    assert_equal 1558, billing_transaction_mp.mangopay_contribution_amount
+    assert_equal @order.meta_order.mangopay_wallet_id, billing_transaction_mp.mangopay_destination_wallet_id
+
+    billing_transaction_cf = @order.meta_order.billing_transactions.cashfront.first
+    assert_equal 42, billing_transaction_cf.amount
+    assert !billing_transaction_cf.success
+    assert billing_transaction_cf.mangopay_transfer_id.nil?
+
+    assert_equal :pending_agent, @order.state
+    assert_equal "shopelia", @order.error_code
+    assert_match /cashfront/, @order.message
+  
+    assert @order.payment_transaction.nil?
+
+    prepare_master_cashfront_account(10000)
+    start_order
+    assess_order_cashfront
+
+    payment_transaction = @order.payment_transaction
+    assert payment_transaction.present?
+    assert_equal "amazon", payment_transaction.processor
+    assert_equal 1600, payment_transaction.amount
+    assert payment_transaction.mangopay_amazon_voucher_id.present?
+    assert payment_transaction.mangopay_amazon_voucher_code.present?    
+    
+    order_success
+    
+    assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total
   end
 
 =begin
