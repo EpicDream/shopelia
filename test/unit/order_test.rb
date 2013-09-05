@@ -636,7 +636,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 1, Order.delayed.count
     assert_equal 0, Order.expired.count
 
-    @order.update_attribute :created_at, Time.now - 13.hours
+    @order.update_attribute :created_at, Time.now - 21.hours
     assert_equal 1, Order.delayed.count
     assert_equal 1, Order.expired.count
   end
