@@ -1,5 +1,8 @@
 // HTML Utils.
-hu = {};
+(function(){
+// "use strict";
+
+var hu = {}
 
 hu.getElementXPath = function(element) {
   var xpath = '';
@@ -358,24 +361,40 @@ function $x(p, c) {
   var i, r = [], x = document.evaluate(p, c || document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
   while(i=x.iterateNext()) r.push(i);
   return r;
-}
+};
 // xpath unordered nodes
 function $xu(p, c) {
   var i, r = [], x = document.evaluate(p, c || document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
   while(i=x.iterateNext()) r.push(i);
   return r;
-}
+};
 // xpath ordered nodes
 function $xo(p, c) {
   var i, r = [], x = document.evaluate(p, c || document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
   while(i=x.iterateNext()) r.push(i);
   return r;
-}
+};
 // xpath single first node
 function $xf(p, c) {
   return document.evaluate(p, c || document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
-}
+};
 // xpath single any node
 function $xa(p, c) {
   return document.evaluate(p, c || document, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
-}
+};
+
+if ("object" == typeof module && module && "object" == typeof module.exports)
+  exports = module.exports = hu;
+else if ("function" == typeof define && define.amd)
+  define("html_utils",["jquery","underscore"],function(){return hu});
+else
+  this.hu = hu
+
+if ("object" == typeof module && module && "object" == typeof module.exports)
+  exports = module.exports = hu;
+else if ("function" == typeof define && define.amd)
+  define("html_utils",[],function(){return hu});
+else
+  this.hu = hu;
+
+})();
