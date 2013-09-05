@@ -42,7 +42,7 @@ class Api::V2::Users::VerifyControllerTest < ActionController::TestCase
     
     post :create, pincode:"1234", format: :json
     assert_response 503
-    assert_equal [59,60].include?(json_response["delay"])
+    assert [59,60].include?(json_response["delay"])
   end
 
 end
