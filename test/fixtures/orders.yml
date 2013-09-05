@@ -23,7 +23,7 @@ elarch_amazon:
   expected_price_total: 10.0
   expected_price_product: 10.0
   expected_price_shipping: 0.0
-  expected_cashfront_value: 0.0
+  expected_cashfront_value: 0.3
   prepared_price_total: 10.0
   billed_price_total: 10.0
   created_at: <%= 2.days.ago %>
@@ -55,6 +55,6 @@ elarch_amazon_billing:
   expected_price_product: 10.0
   expected_price_shipping: 0.0
   prepared_price_total: 10.0
-  expected_cashfront_value: 0.0
+  expected_cashfront_value: 0.3
   created_at: <%= 2.days.ago %>
   cvd_solution: "amazon"

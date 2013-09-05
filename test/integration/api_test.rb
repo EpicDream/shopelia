@@ -419,6 +419,7 @@ class ApiTest < ActionDispatch::IntegrationTest
   end    
 
   test "it should register and complete an amazon order with multiple quantities and cashfront" do
+    prepare_master_cashfront_account
     product_versions(:dvd).update_attribute :price_shipping, 5
 
     # Create user
@@ -442,7 +443,7 @@ class ApiTest < ActionDispatch::IntegrationTest
       expected_price_shipping:5,
       expected_price_product:40,
       expected_price_total:45,
-      expected_cashfront_value:1.20
+      expected_cashfront_value:1.20,
       address_id:user.addresses.first.id,
       payment_card_id:user.payment_cards.first.id }, format: :json
 
