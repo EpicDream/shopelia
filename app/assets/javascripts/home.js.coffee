@@ -17,6 +17,9 @@ window.shopeliaFastClick = (buttonArray) ->
     new FastClick(button)
   )
 
-$ ->
-  shopeliaFastClick($('.btn'))
-  shopeliaFastClick($('.close'))
+$(document).ready ->
+  ShopeliaCheckout.init
+    developer: "e35c8cbbcfd7f83e4bb09eddb5a3f4c461c8d30a71dc498a9fdefe217e0fcd44"
+    tracker: "shopelia-web"
+
+

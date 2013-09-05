@@ -1,0 +1,28 @@
+@mixin btn($borderWidth,$borderRadius,$height,$padding,$fontSize,$fontColor,$color){
+  border-bottom: $borderWidth solid  darken($color,10%);
+  @include border-radius($borderRadius);
+  height: $height;
+  padding: $padding;
+  color: $fontColor;
+  text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+  font-size: $fontSize;
+  font-weight:bold;
+  text-align: center;
+  background: $color;
+
+  display: inline-block;
+  *display: inline;
+  margin-bottom: 0;
+  vertical-align: middle;
+
+  &:hover{
+    border-bottom:$borderWidth solid darken($color,14%);
+    background: darken($color,4%);
+    color: $fontColor;
+  }
+  &:active {
+    border-bottom:$borderWidth solid lighten($color,4%);
+    background: lighten($color,2%);
+    color: $fontColor;
+  }
+}

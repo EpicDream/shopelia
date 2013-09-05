@@ -104,8 +104,12 @@ Shopelia::Application.routes.draw do
     end
   end
 
+  match "about" => "home#about"
+
+
   match '*not_found', to: 'errors#error_404'
   get "errors/error_404"
   get "errors/error_500"
+  root to: 'home#index'
 
 end
