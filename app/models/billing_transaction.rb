@@ -19,7 +19,7 @@ class BillingTransaction < ActiveRecord::Base
 
   def process
     if self.processor == "mangopay"
-      return { status:"error", message:"transaction already processed" } unless self.mangopay_contribution_id.nil?
+      return { status:"processed" } unless self.mangopay_contribution_id.nil?
       return { status:"error", message:"missing payment card" } if self.meta_order.payment_card.nil?
       return { status:"error", message:"missing meta order wallet" } if self.meta_order.mangopay_wallet_id.nil?
 
@@ -46,17 +46,17 @@ class BillingTransaction < ActiveRecord::Base
       elsif contribution['Type'] == "PaymentSystem"
         self.update_attributes(
           :success => false,
-          :mangopay_contribution_message => "#{contribution['UserMessage']} #{contribution['TechnicalMessage']}"
+          :mangopay_contribution_message => "Billing failed: #{contribution.inspect}"
         )
       else
-        return { status:"error", message:"Impossible to create mangopay immediate contribution object: #{contribution}" }
+        return { status:"error", message:"Impossible to create mangopay immediate contribution object: #{contribution.inspect}" }
       end   
 
       self.reload
       { status:"processed" }
 
     elsif self.processor == "cashfront"
-      return { status:"error", message:"transaction already processed" } unless self.mangopay_transfer_id.nil?
+      return { status:"processed" } unless self.mangopay_transfer_id.nil?
       return { status:"error", message:"missing meta order wallet" } if self.meta_order.mangopay_wallet_id.nil?
 
       master_id = MangoPayDriver.get_master_account_id

@@ -78,10 +78,6 @@ class BillingTransactionTest < ActiveSupport::TestCase
 
     wallet = MangoPay::Wallet.details(@meta.mangopay_wallet_id)
     assert_equal billing.amount, wallet['Amount']
-
-    result = billing.process
-    assert_equal "error", result[:status]
-    assert_equal "transaction already processed", result[:message]
   end
 
   test "it should create cashfront transaction" do
@@ -118,8 +114,5 @@ class BillingTransactionTest < ActiveSupport::TestCase
 
     wallet = MangoPay::Wallet.details(@meta.mangopay_wallet_id)
     assert_equal billing.amount, wallet['Amount']
-
-    result = billing.process
-    assert_equal "error", result[:status]
   end
 end
