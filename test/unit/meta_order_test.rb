@@ -45,7 +45,7 @@ class MetaOrderTest < ActiveSupport::TestCase
     b.update_attribute :success, true
     BillingTransaction.create!(meta_order_id:@meta.id,amount:1000)
 
-    assert_equal 20.0, @meta.billed_amount
+    assert_equal 10.0, @meta.billed_amount
   end
 
   test "it should set fullfilled" do
