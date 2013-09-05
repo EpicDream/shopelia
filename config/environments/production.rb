@@ -28,6 +28,8 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( admin/users.js  admin/orders.js   admin/developers.js  admin/incidents.js )
   config.assets.precompile += %w( admin/viking.css admin/dashboard.css admin/events.css admin/merchants.css )
   config.assets.precompile += %w( admin/viking.js  admin/dashboard.js  admin/events.js  admin/merchants.js)
+  config.assets.precompile += %w( devise/passwords.css devise/sessions.js )
+  config.assets.precompile += %w( devise/passwords.js  devise/sessions.js )
   config.assets.precompile += %w( home.js )
 
   # Defaults to Rails.root.join("public/assets")
