@@ -742,7 +742,8 @@ class OrderTest < ActiveSupport::TestCase
     
     injection_success
     assert_equal :pending_clearing, @order.state
-    
+
+    @order.update_attribute :billed_price_total, 16
     clearing_success
     assert_equal :completed, @order.state
     
