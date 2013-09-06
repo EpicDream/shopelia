@@ -414,7 +414,7 @@ function finish(tabId) {
 
   var deferred = $.ajax({
     type : "PUT",
-    url: "http://localhost:3000/api/viking/products/"+d.id,
+    url: PRODUCT_EXTRACT_UPDATE+d.id,
     contentType: 'application/json',
     data: JSON.stringify({versions: versions, options_completed: versions.length == 1 || d.strategy != 'normal'})
   }).done(function() {
