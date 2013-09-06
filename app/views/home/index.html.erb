@@ -35,24 +35,6 @@
 
 <link href="https://www.shopelia.com/sdk/shopelia.css" media="screen" rel="stylesheet" type="text/css" />
 <script src="https://www.shopelia.com/sdk/shopelia.js" type="text/javascript"></script>
-<script type="text/javascript">
-  $("#product-bar").on("change", function() {
-    $(this).popover('hide');
-  })
-  $("#shopelia-form").submit(function(e) {
-    e.preventDefault();
-    var $button = $('#btn-order');
-    var url = $("[name='url']").val();
-    if (url.match(/amazon.fr/)) {
-      $button.attr("data-shopelia-url",url);
-      ShopeliaCheckout.update();
-      $button.click();
-      $button.unbind('click');
-    } else {
-      $("#product-bar").popover('show');
-    }
-  });
-</script>
 
 <!-- begin olark code -->
 <script data-cfasync="false" type='text/javascript'>/*<![CDATA[*/window.olark||(function(c){var f=window,d=document,l=f.location.protocol=="https:"?"https:":"http:",z=c.name,r="load";var nt=function(){
