@@ -159,6 +159,7 @@ class ProductVersionTest < ActiveSupport::TestCase
         product_id:@product.id,
         availability_text:str)
       assert !version.available, "#{str.inspect} failed !"
+      assert_equal str, version.availability_info
     end
     
     array = [ "en stock", "8 offres", "en vente sur" ]
@@ -167,6 +168,7 @@ class ProductVersionTest < ActiveSupport::TestCase
         product_id:@product.id,
         availability_text:str)
       assert version.available, "#{str.inspect} failed !"
+      assert_equal str, version.availability_info
     end
   end
   

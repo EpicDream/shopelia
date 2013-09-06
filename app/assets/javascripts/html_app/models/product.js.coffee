@@ -39,7 +39,8 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
         expected_price_shipping: data.versions[0].price_shipping,
         expected_price_product_original: data.versions[0].price,
         expected_price_product: data.versions[0].price,
-        shipping_info: data.versions[0].shipping_info
+        shipping_info: data.versions[0].shipping_info,
+        availability_info: data.versions[0].availability_info,
         merchant_name: data.merchant.name,
         merchant_logo: data.merchant.logo,
         allow_iframe: data.merchant.allow_iframe,
@@ -55,6 +56,10 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
         @set({
           expected_cashfront_value: 0
         })
+      r = @get('shipping_info') 
+      if @get('availability_info') && @get('availability_info') != r
+        r += "<br><small>" + @get('availability_info') + "</small>"
+      @set({shipping_info_full: r})
     catch error
       console.log(error)
 
