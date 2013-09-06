@@ -413,7 +413,7 @@ function finish(tabId) {
     type : "PUT",
     url: "http://localhost:3000/api/viking/products/"+d.id,
     contentType: 'application/json',
-    data: JSON.stringify({versions: versions, finished: d.strategy != 'normal'})
+    data: JSON.stringify({versions: versions, options_completed: versions.length == 1 || d.strategy != 'normal'})
   }).done(function() {
     console.debug("Options for", d.url, "sended (", versions.length,")");
   }).fail(function(err) {
