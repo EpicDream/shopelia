@@ -2,7 +2,7 @@
 //                CONSTANT AND GLOBAL VARIABLE
 /////////////////////////////////////////////////////////////////
 
-TEST_ENV = true;//navigator.appVersion.match(/chromium/i) !== null;
+TEST_ENV = navigator.appVersion.match(/chromium/i) !== null;
 LOCAL_ENV = false;
 
 if (LOCAL_ENV) {
