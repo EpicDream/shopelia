@@ -80,6 +80,8 @@ function start(tabId) {
       start(tab.id);
     });
   loadProductUrlToExtract(tabId).done(function(hash) {
+    if (! hash)
+      return reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
     hash = preProcessData(hash);
     var uri = new Uri(hash.url);
     console.debug((new Date()).toLocaleTimeString(), "Get product_url to extract :", hash, "on tab_id :", tabId);
@@ -94,10 +96,11 @@ function start(tabId) {
       else
         finish(tabId);
     }).fail(function(err) {
-      console.error("When getting mapping to extract :", err);
+      console.error("When getting mapping for crawling :", err);
       setTimeout(function() {start(tabId);}, 1000);
     });
   }).fail(function(err) {
+    console.error("When getting product to crawl :", err);
     reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
   });
 };
