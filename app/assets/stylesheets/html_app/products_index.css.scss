@@ -1,5 +1,6 @@
 .product-image {
-  width: 90%;
+  max-width: 90%;
+  max-height: 300px;
   background-color: #ffffff;
   border: 1px solid darken($lightGrey,10%);
   border-radius:$borderRadius;
