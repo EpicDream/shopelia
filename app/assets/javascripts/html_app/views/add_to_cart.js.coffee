@@ -15,7 +15,7 @@ class Shopelia.Views.AddToCart extends Shopelia.Views.Form
     "click #btn-add": "onValidationClick"
     
   onRender: ->
-    Tracker.onDisplay('AddToCart');
+    Tracker.onDisplay('Add To Cart');
     $(@el).fadeIn('slow')
     @initializeForm()
 
