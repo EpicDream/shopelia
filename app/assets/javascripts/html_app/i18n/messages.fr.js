@@ -23,6 +23,7 @@ window.ParsleyConfig = window.ParsleyConfig || {};
             , range:          "Cette valeur doit être comprise entre %s et %s."
             , minlength:      "Cette chaîne est trop courte. Elle doit avoir au minimum %s caractères."
             , maxlength:      "Cette chaîne est trop longue. Elle doit avoir au maximum %s caractères."
+            , minlengthcard:  "Cette valeur doit contenir %s caractères. "
             , rangelength:    "Cette valeur doit contenir entre %s et %s caractères."
             , equalto:        "Cette valeur devrait être identique."
             , mincheck:       "Vous devez sélectionner au moins %s choix."

@@ -78,7 +78,6 @@
                                 <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#aaaaaa; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
                                   Prix Total<br />
                                   Frais de livraison
-                                </td>
                                 <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#aaaaaa; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
                                   <strong><%= number_to_currency(@order.expected_price_product) %></strong>
                                     <br />
@@ -113,16 +112,23 @@
                                 <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
                                   Prix Total<br />
                                   Frais de livraison
+                                  <% if @order.expected_cashfront_value > 0 %>
+                                    <br /><font color="red"><strong>Avantages</strong></font>
+                                  <% end %>                                  
+                                </td>
                                 </td>
                                 <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
                                   <strong><%= number_to_currency(@order.prepared_price_product) %></strong><br />
                                   <strong><%= number_to_currency(@order.prepared_price_shipping) %></strong>
+                                  <% if @order.expected_cashfront_value > 0 %>
+                                    <br /><strong><font color="red">- <%= number_to_currency(@order.expected_cashfront_value) %></font></strong>
+                                  <% end %>
                                 </td>
                               </tr>
                               <!--Article Title-->
                               <tr>
                                 <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;">Total à payer</td>
-                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;"><span style="font-family: Helvetica, Arial, sans-serif; color:#46b758; font-weight:bold;"><%= number_to_currency(@order.prepared_price_total) %></span></td>
+                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;"><span style="font-family: Helvetica, Arial, sans-serif; color:#46b758; font-weight:bold;"><%= number_to_currency(@order.prepared_price_total - @order.expected_cashfront_value) %></span></td>
                               </tr>
                               <!--End Article Title-->
                               <!--End Content--> 
