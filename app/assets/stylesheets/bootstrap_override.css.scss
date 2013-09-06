@@ -93,6 +93,13 @@ input[type="color"],
   }
 }
 
+.popover-title {
+  color: #ffffff;
+}
+.popover {
+  padding: 0px;
+}
+
 @media (min-width: 768px) and (max-width: 979px) {
   .dl-horizontal.dl-custom dt {
     text-align: left !important;
@@ -108,4 +115,3 @@ input[type="color"],
 @media (max-width: 767px) {
 
 }
-
