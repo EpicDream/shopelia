@@ -12,3 +12,4 @@ gpg/random_seed
 gpg/pubring.gpg~
 keys/mango_pay/production
 lib/config/mangopay_test.yml
+lib/config/mangopay_production.yml

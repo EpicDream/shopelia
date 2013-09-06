@@ -46,6 +46,3 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
 
 
 
-
-
-

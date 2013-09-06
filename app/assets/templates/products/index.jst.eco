@@ -17,7 +17,7 @@
         </span>
         <span class="shipping">
           <%- @formatShipping(@model('expected_price_shipping')) %>
-          <p id="shipping-info" class="green bold clearfix"><%= @model('shipping_info') %></p>
+          <p id="shipping-info" class="green bold clearfix"><%- @model('shipping_info_full') %></p>
         </span>        
       </div>
       <div class='merchant-infos pull-left'>

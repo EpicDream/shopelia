@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130904121156) do
+ActiveRecord::Schema.define(:version => 20130906121941) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -272,8 +272,8 @@ ActiveRecord::Schema.define(:version => 20130904121156) do
     t.float    "price_strikeout"
     t.string   "shipping_info"
     t.text     "description"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
     t.text     "color"
     t.text     "size"
     t.string   "name"
@@ -282,6 +282,7 @@ ActiveRecord::Schema.define(:version => 20130904121156) do
     t.string   "brand"
     t.string   "reference"
     t.text     "images"
+    t.string   "availability_info"
   end
 
   create_table "products", :force => true do |t|

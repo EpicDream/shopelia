@@ -12,7 +12,7 @@ class MetaOrder < ActiveRecord::Base
   attr_accessible :user_id, :address_id, :payment_card_id, :billing_solution, :mangopay_wallet_id
 
   def billed_amount
-    (self.billing_transactions.mangopay.active.map(&:amount).sum.to_f / 100).round(2)
+    (self.billing_transactions.mangopay.successfull.map(&:amount).sum.to_f / 100).round(2)
   end
 
   def cashfront_value

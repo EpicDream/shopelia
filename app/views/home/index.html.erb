@@ -6,7 +6,12 @@
       <form accept-charset="UTF-8" id="shopelia-form">
         <div class="row-fluid">
           <div class="span7 offset1">
-              <input rel="popover" id="product-bar" autofocus="true" type="text" class="input-block-level" placeholder= "Saisissez le lien du produit que vous souhaitez commander" name="url">
+              <input rel="popover" 
+                data-title="Attention !" 
+                data-content="Vous devez entrer l'adresse internet (URL) du produit souhaité chez Amazon France (par exemple http://www.amazon.fr/mon-produit)"
+                data-placement="top"
+                data-trigger="manual"
+                id="product-bar" autofocus="true" type="text" class="input-block-level" placeholder= "Saisissez le lien du produit que vous souhaitez commander" name="url">
           </div>
           <button id="btn-order" class="btn span3">Voir la réduction</button>
         </div>
@@ -21,7 +26,7 @@
       <tr>
         <td>Marchands éligibles : </td>
         <td>
-          <%= link_to image_tag('amazon-logo.png'), "http://amazon.fr", target: "_blank", class:"merchant-logo",:'data-toggle' => "tooltip",'data-original-title'=>"Tooltip on right" %>
+          <%= link_to image_tag('amazon-logo.png'), "http://www.amazon.fr", target: "_blank", class:"merchant-logo",:'data-toggle' => "tooltip",'data-original-title'=>"Aller sur Amazon France" %>
         </td>
       </tr>
     </table>
@@ -31,18 +36,22 @@
 <link href="https://www.shopelia.com/sdk/shopelia.css" media="screen" rel="stylesheet" type="text/css" />
 <script src="https://www.shopelia.com/sdk/shopelia.js" type="text/javascript"></script>
 <script type="text/javascript">
-    $("#shopelia-form").submit(function(e) {
-        e.preventDefault();
-        var $button = $('#btn-order');
-        var url = $("[name='url']").val();
-        if(url){
-            $button.attr("data-shopelia-url",url);
-            ShopeliaCheckout.update();
-            $button.click();
-            $button.unbind('click');
-        }
-    });
-
+  $("#product-bar").on("change", function() {
+    $(this).popover('hide');
+  })
+  $("#shopelia-form").submit(function(e) {
+    e.preventDefault();
+    var $button = $('#btn-order');
+    var url = $("[name='url']").val();
+    if (url.match(/amazon.fr/)) {
+      $button.attr("data-shopelia-url",url);
+      ShopeliaCheckout.update();
+      $button.click();
+      $button.unbind('click');
+    } else {
+      $("#product-bar").popover('show');
+    }
+  });
 </script>
 
 <!-- begin olark code -->
@@ -63,8 +72,5 @@
         b[k]=o+'d.write("'+p().replace(/"/g,String.fromCharCode(92)+'"')+'");d.close();'}a.P(2)};ld()};nt()})({
     loader: "static.olark.com/jsclient/loader0.js",name:"olark",methods:["configure","extend","declare","identify"]});
 /* custom configuration goes here (www.olark.com/documentation) */
-olark.identify('4547-215-10-7903');/*]]>*/</script><noscript><a href="https://www.olark.com/site/4547-215-10-7903/contact" title="Contact us" target="_blank">Questions? Feedback?</a> powered by <a href="http://www.olark.com?welcome" title="Olark live chat software">Olark live chat software</a></noscript>
+olark.identify('4547-215-10-7903');/*]]>*/</script><noscript><a href="https://www.olark.com/site/4547-215-10-7903/contact" title="Nous contacter" target="_blank">Besoin d'aide ?</a></noscript>
 <!-- end olark code -->
-
-
-
