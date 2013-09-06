@@ -1,6 +1,6 @@
 {
   "name": "Saturn",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "manifest_version": 2,
 
   "description": "Extrateur de donnée produit.",
@@ -17,7 +17,6 @@
 
   "background": {
     "scripts": [
-      "lib/underscore-min.js",
       "lib/jquery-1.9.1.min.js",
       "lib/uri.js",
       "controllers/background.js"

@@ -2,7 +2,7 @@
 //                CONSTANT AND GLOBAL VARIABLE
 /////////////////////////////////////////////////////////////////
 
-TEST_ENV = navigator.appVersion.match(/chromium/i) !== null;
+TEST_ENV = true;//navigator.appVersion.match(/chromium/i) !== null;
 LOCAL_ENV = false;
 
 if (LOCAL_ENV) {
@@ -11,20 +11,18 @@ if (LOCAL_ENV) {
   SHOPELIA_DOMAIN = "http://www.shopelia.fr"
 }
 
-if (LOCAL_ENV && TEST_ENV) {
-  MAPPING_SHOPELIA_DOMAIN = SHOPELIA_DOMAIN + "/saturn/mapping/";
-  PRODUCT_EXTRACT_SHIFT_URL = SHOPELIA_DOMAIN + "/saturn/products/shift";
-  PRODUCT_EXTRACT_UPDATE = SHOPELIA_DOMAIN + "/saturn/options/create";
-} else {
-  PRODUCT_EXTRACT_SHIFT_URL = SHOPELIA_DOMAIN + "/api/viking/products/shift";
-  MAPPING_SHOPELIA_DOMAIN = SHOPELIA_DOMAIN + "/api/viking/merchants/";
-  PRODUCT_EXTRACT_UPDATE = SHOPELIA_DOMAIN + "/api/viking/products/";
-}
+PRODUCT_EXTRACT_SHIFT_URL = SHOPELIA_DOMAIN + "/api/viking/products/shift";
+MAPPING_SHOPELIA_DOMAIN = SHOPELIA_DOMAIN + "/api/viking/merchants/";
+PRODUCT_EXTRACT_UPDATE = SHOPELIA_DOMAIN + "/api/viking/products/";
 
 DELAY_BEFORE_START = 5000; // 5s
 DELAY_BETWEEN_PRODUCTS = 500; // 500ms
 DELAY_AFTER_NO_PRODUCT = 1000; // 1s
 DELAY_RESCUE = 60000; // 60s
+
+MAX_COLORS_TO_FULL_CRAWL = 10
+MAX_SIZES_TO_FULL_CRAWL = 10
+MAX_VERSIONS_TO_FULL_CRAWL = 30
 
 var data = {},
     batchTabs = {};
@@ -113,7 +111,10 @@ function parseCurrentPage(tab) {
     hash.mapping = buildMapping(hash.uri, maphash.data.viking);
     console.log("mapping choosen", hash.mapping);
     initTabVariables(tab.id, hash);
-    chrome.tabs.update(tab.id, {url: hash.url});
+    chrome.tabs.update(tab.id, {url: hash.url}, function() {
+      if (hash.url.match(new RegExp(tab.url+"#\\w+(=\\w+)?$")))
+        chrome.tabs.update(tab.id, {url: hash.url});
+    });
   });
 };
 
@@ -121,7 +122,8 @@ function initTabVariables(tabId, hash) {
   var uri = hash.uri || new Uri(hash.url);
   data[tabId] = hash;
   data[tabId].host = uri.host();
-  data[tabId].results = [];
+  data[tabId].versions = [];
+  data[tabId].options = {};
   // Remove all previous cookies
   chrome.cookies.getAll({},function(cooks){cookies=cooks;for (var i in cookies) {chrome.cookies.remove({name: cookies[i].name, url: "http://"+cookies[i].domain+cookies[i].path, storeId: cookies[i].storeId})}})
 };
@@ -160,6 +162,14 @@ function preProcessData(data) {
   if (data.url.match(/priceminister/) !== null && data.url.match(/filter=10/) === null) {
     data.url += (data.url.match(/#/) !== null ? "&filter=10" : "#filter=10");
   }
+  if (data.color)
+    try{data.color = JSON.parse(data.color);}
+    catch(err){console.error(err);data.color = undefined};
+  if (data.size)
+    try{data.size = JSON.parse(data.size);}
+    catch(err){console.error(err);data.size = undefined};
+  if (! data.strategy)
+    data.strategy = 'normal'
   return data;
 };
 
@@ -227,122 +237,216 @@ function loadMapping(merchant_id) {
 /////////////////////////////////////////////////////////////////
 
 function next_step(tabId) {
+  var d = data[tabId];
   // Contentscript just respond to us, clear rescue.
-  clearTimeout(data[tabId].rescueTimer);
+  clearTimeout(d.rescueTimer);
 
-  var last_action = data[tabId].last_action;
-  if (! last_action)
-    getColors(tabId);
-  else if (last_action == "setColor")
-    getSizes(tabId);
-  else if (last_action == "setSize")
-    crawl(tabId);
+  var last_action = d.last_action;
+  if (! last_action) {
+    return getColors(tabId);
+  } else if (last_action == "setColor") {
+    if (d.size)
+      return setSize(tabId, d.size);
+    else
+      return getSizes(tabId);
+  } else if (last_action == "setSize")
+    return crawl(tabId);
 };
 
 function getColors(tabId) {
   data[tabId].last_action = "getColors";
   sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
+    var d = data[tabId];
     if (! result)
       return sendError(tabId, "No result return for getColors");
-
-    if (result.length > 0)
-      data[tabId].colors = result;
     else
-      data[tabId].colors = [null];
-    setNextColor(tabId);
+      d.colors = result;
+
+    if (d.colors.length == 0) {
+      if (d.size)
+        return setSize(tabId, d.size);
+      else
+        return getSizes(tabId);
+    } else {
+      d.options.colors = d.colors;
+      if (d.strategy == 'fast') {
+        return finish(tabId);
+      } else // strategy == 'options' || strategy == 'full'
+        return setNextColor(tabId)
+    }
   });
 };
 
 function setNextColor(tabId) {
-  lastColorIdx = data[tabId].lastColorIdx;
-  if (lastColorIdx === undefined)
-    lastColorIdx = 0;
+  var d = data[tabId];
+  if (d.lastColorIdx === undefined)
+    d.lastColorIdx = 0;
   else
-    lastColorIdx += 1;
-  data[tabId].lastColorIdx = lastColorIdx;
-
-  var color = data[tabId].colors[lastColorIdx];
-  if (color === undefined) {
-    data[tabId].lastColorIdx = lastColorIdx;
+    d.lastColorIdx += 1;
+  var color = d.colors[d.lastColorIdx]
+  if (color === undefined)
     return finish(tabId);
-  } else if (color === null) {
-    return getSizes(tabId);
-  }
+  setColor(tabId, color);
+};
 
+function setColor(tabId, color) {
   data[tabId].last_action = "setColor";
+  data[tabId].currentColor = color;
   sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping, data: color});
 };
 
 function getSizes(tabId) {
   data[tabId].last_action = "getSizes";
   sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
+    var d = data[tabId];
     if (! result)
       return sendError(tabId, "No result return for getSizes");
-
-    if (result.length > 0)
-      data[tabId].sizes = result;
     else
-      data[tabId].sizes = [null];
-    setNextSize(tabId);
+      d.sizes = result;
+
+    if (d.sizes.length > 0) {
+      if (! d.currentColor) {
+        d.options.sizes = d.sizes;
+      } else {
+        if (! d.options.sizes)
+          d.options.sizes = {};
+        d.options.sizes[JSON.stringify(d.currentColor)] = d.sizes;
+      }
+    }
+
+    if (d.strategy == 'options')
+      return setNextColor(tabId);
+    else if (d.sizes.length == 0)
+      return crawl(tabId);
+    else {
+      if (d.strategy == 'fast')
+        return finish(tabId);
+      else
+        return setNextSize(tabId);
+    }
   });
 };
 
 function setNextSize(tabId) {
-  lastSizeIdx = data[tabId].lastSizeIdx;
-  if (lastSizeIdx === undefined)
-    lastSizeIdx = 0;
+  var d = data[tabId];
+  if (d.lastSizeIdx === undefined)
+    d.lastSizeIdx = 0;
   else
-    lastSizeIdx += 1;
-  data[tabId].lastSizeIdx = lastSizeIdx;
-
-  var size = data[tabId].sizes[lastSizeIdx];
+    d.lastSizeIdx += 1;
+  var size = d.sizes[d.lastSizeIdx];
   if (size === undefined) {
-    data[tabId].lastSizeIdx = undefined;
+    d.lastSizeIdx = undefined;
     return setNextColor(tabId);
-  } else if (size === null) {
-    return crawl(tabId);
   }
+  setSize(tabId, size);
+};
 
+function setSize(tabId, size) {
   data[tabId].last_action = "setSize";
+  data[tabId].currentSize = size;
   sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping, data: size});
 };
 
 function crawl(tabId) {
   data[tabId].last_action = "crawl";
   sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(option) {
+    var d = data[tabId];
     if (! option)
       return sendError(tabId, "No result return for crawl");
 
-    option.color = data[tabId].colors[data[tabId].lastColorIdx];
-    option.size = data[tabId].sizes[data[tabId].lastSizeIdx];
+    option.color = d.currentColor;
+    option.size = d.currentSize;
+
     // Il faut autre chose que color ou size.
-    if ((_.size(option) - 2) > 0)
-      data[tabId].results.push(option);
-    setNextSize(tabId);
+    if ((Object.keys(option).length - 2) > 0)
+      d.versions.push(option);
+
+    if (d.strategy == 'full')
+      return setNextSize(tabId);
+    else if (d.strategy == 'options')
+      return setNextColor(tabId);
+    else
+      return finish(tabId);
   });
 };
 
 function finish(tabId) {
-  console.debug((new Date()).toLocaleTimeString(), "Finished !", data[tabId].results);
-  if (! data[tabId] || ! data[tabId].id) // Stop pushed or Local Test
-    return delete data[tabId];
+  var d = data[tabId];
 
-  $.ajax({
+  // Crée une version vide pour chaque option (sauf celle crawlée).
+  var versions = [].concat(d.versions);
+  if (d.strategy == 'full') {
+    console.debug((new Date()).toLocaleTimeString(), "Finished full crawling !", versions);
+  } else if (d.options.colors && d.options.sizes) {
+    var colors = d.options.colors, 
+        sizes = d.options.sizes[JSON.stringify(d.currentColor)],
+        colorSizes;
+    for (var i = 0, li = colors.length ; i < li ; i++) {
+      var color = colors[i];
+      if (d.strategy == 'options' && (colorSizes = d.options.sizes[JSON.stringify(color)]))
+        sizes = colorSizes;
+      for (var j = (i == 0 ? 1 : 0), lj = sizes.length ; j < lj ; j++)
+        versions.push({color: color, size: sizes[j]});
+    }
+    console.debug((new Date()).toLocaleTimeString(), "Finished with colors and sizes !", versions);
+  } else if (d.options.colors) {
+    var colors = d.options.colors;
+    for (var i = 1, li = colors.length ; i < li ; i++)
+      versions.push({color: colors[i]});
+    console.debug((new Date()).toLocaleTimeString(), "Finished with only colors !", versions);
+  } else if (d.options.sizes) {
+    var sizes = d.options.sizes;
+    for (var i = 1, li = sizes.length ; i < li ; i++)
+      versions.push({size: sizes[i]});
+    console.debug((new Date()).toLocaleTimeString(), "Finished with only sizes !", versions);
+  } else
+    console.debug((new Date()).toLocaleTimeString(), "Finished with no color nor size !", versions);
+
+  if (TEST_ENV && ! d.id) {
+    d.id = "test"; 
+  } else if (! d.id) {
+    $e = d;
+    return delete data[tabId];
+  }
+
+  var deferred = $.ajax({
     type : "PUT",
-    url: PRODUCT_EXTRACT_UPDATE+data[tabId].id,
+    url: "http://localhost:3000/api/viking/products/"+d.id,
     contentType: 'application/json',
-    data: JSON.stringify({versions: data[tabId].results})
+    data: JSON.stringify({versions: versions, finished: d.strategy != 'normal'})
   }).done(function() {
-    console.debug("Options for", data[tabId].url, "sended (", data[tabId].results.length,")");
-    delete data[tabId];
-    reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
+    console.debug("Options for", d.url, "sended (", versions.length,")");
   }).fail(function(err) {
     console.error("Fail to send options to server for tab", tabId, ":", err);
-    $e = data[tabId];
+    $e = d;
     console.log("$e =", $e);
-    delete data[tabId];
-    reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
   });
+
+  if (d.strategy == 'normal' && d.options.colors && d.options.sizes) {
+    console.log("Continue to crawl options");
+    d.strategy = 'options';
+    setNextColor(tabId);
+  } else if (d.strategy == 'normal' && d.options.colors && d.options.colors.length < MAX_COLORS_TO_FULL_CRAWL) {
+    console.log("Continue to full crawl colors");
+    d.strategy = 'full';
+    setNextColor(tabId);
+  } else if (d.strategy == 'normal' && d.options.sizes && d.options.sizes.length < MAX_SIZES_TO_FULL_CRAWL) {
+    console.log("Continue to full crawl sizes");
+    d.strategy = 'full';
+    setNextSize(tabId);
+  } else if (d.strategy == 'options' && versions.length < MAX_VERSIONS_TO_FULL_CRAWL) {
+    console.log("Continue to full crawl");
+    d.strategy = 'full';
+    d.lastColorIdx = d.lastSizeIdx = undefined;
+    d.versions = [];
+    setNextColor(tabId);
+  } else
+    deferred.always(function() {
+      delete data[tabId];
+      reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
+    });
+
+  return deferred;
 };
 
 function sendError(tabId, msg) {
@@ -378,15 +482,15 @@ function initTest(tabId) {
 function assertTest(tabId) {
   PRODUCT_EXTRACT_UPDATE = oldPRODUCT_EXTRACT_UPDATE;
   if (! data[tabId]) console.error("Missing data !");
-  if (! data[tabId].results.length >= 10) console.error("Not enought options", data[tabId].results.length);
-  var o = data[tabId].results[0];
+  if (! data[tabId].versions.length >= 10) console.error("Not enought options", data[tabId].versions.length);
+  var o = data[tabId].versions[0];
   if (! o.name || ! o.name.match(/Polo Ralph Lauren/)) console.error("Bad name", o.name);
   if (! o.description || ! o.description.match(/100% coton/)) console.error("Bad description", o.description);
   if (! o.brand || ! o.brand.match(/Ralph Lauren/)) console.error("Bad brand", o.brand);
   if (! o.image_url || ! o.image_url.match(/http:.*\.jpe?g/)) console.error("Bad image_url", o.image_url);
   if (! o.images || ! o.images.length >= 2 || ! o.images[0].match(/http:.*\.je?pg/)) console.error("Bad images", o.images);
-  if (! o.results.size || ! o.results.size.match(/../)) console.error("Bad size", o.results.size);
-  if (! o.results.color || ! o.results.color.length >= 5) console.error("Bad color", o.results.color);
+  if (! o.versions.size || ! o.versions.size.match(/../)) console.error("Bad size", o.versions.size);
+  if (! o.versions.color || ! o.versions.color.length >= 5) console.error("Bad color", o.versions.color);
   if (! o.price || ! o.price.match(/\d+,\d+/)) console.error("Bad price", o.price);
   if (! o.price_strikeout) console.error("Bad price_strikeout", o.price_strikeout);
   if (! o.price_shipping || ! o.price_shipping.match(/Gratuite/)) console.error("Bad price_shipping", o.price_shipping);

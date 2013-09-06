@@ -1,11 +1,15 @@
+var saturn = {};
+
+(function(that) {
+
 DELAY_BETWEEN_COLORS_OR_SIZES = 1500;
 OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i
 
-function getOptions(pathes) {
+that.getOptions = function(pathes) {
   if (! pathes) return [];
   if (! (pathes instanceof Array))
     pathes = [pathes];
-  for (var i in pathes) {
+  for (var i = 0, l = pathes.length; i < l ; i++) {
     var path = pathes[i];
     var elems = $(path);
     var options = [];
@@ -38,11 +42,11 @@ function getOptions(pathes) {
   return [];
 };
 
-function chooseOption(pathes, option) {
+that.chooseOption = function(pathes, option) {
   if (! pathes) return [];
   if (! (pathes instanceof Array))
     pathes = [pathes];
-  for (var i in pathes) {
+  for (var i = 0, l = pathes.length; i < l ; i++) {
     var path = pathes[i];
     var elems = $(path);
     if (elems.length == 0)
@@ -74,10 +78,10 @@ function chooseOption(pathes, option) {
   return false;
 };
 
-function crawl(mapping) {
+that.crawl = function(mapping) {
   var option = {};
   var textFields = ['name', 'brand', 'description', 'price', 'price_strikeout', 'price_shipping', 'shipping_info', 'availability'];
-  for (var i in textFields) {
+  for (var i = 0, li=textFields.length ; i < li ; i++) {
     var key = textFields[i];
     if (! mapping[key]) continue;
     if (mapping[key].default_value)
@@ -86,7 +90,7 @@ function crawl(mapping) {
     if (! pathes) continue;
     if (! (pathes instanceof Array))
       pathes = [pathes];
-    for (var j in pathes) {
+    for (var j = 0, lj=pathes.length ; j < lj ; j++) {
       var path = pathes[j];
       var e = $(path);
       if (e.length == 0) continue;
@@ -103,7 +107,7 @@ function crawl(mapping) {
     }
   }
   var imageFields = ['image_url', 'images'];
-  for (var i in imageFields) {
+  for (var i = 0, li=imageFields.length ; i < li ; i++) {
     var key = imageFields[i];
     if (! mapping[key]) continue;
     if (mapping[key].default_value)
@@ -128,36 +132,40 @@ function crawl(mapping) {
   return option;
 };
 
-chrome.extension.onMessage.addListener(function(hash, sender, callback) {
-  if (sender.id != chrome.runtime.id) return;
-  action = hash.action;
-  mapping = hash.mapping;
-  data = hash.data;
-  result = undefined;
-  console.debug("ProductCrawl task received", hash);
+that.doNext = function(action, mapping, data) {
+  var result;
   switch(action) {
     case "getColors":
-      result = mapping.colors ? getOptions(mapping.colors.path) : [];
+      result = mapping.colors ? that.getOptions(mapping.colors.path) : [];
       break;
     case "setColor":
-      result = chooseOption(mapping.colors.path, data);
-      return setTimeout(goNextStep, DELAY_BETWEEN_COLORS_OR_SIZES);
+      result = that.chooseOption(mapping.colors.path, data);
       break;
     case "getSizes":
-      result = mapping.sizes ? getOptions(mapping.sizes.path) : [];
+      result = mapping.sizes ? that.getOptions(mapping.sizes.path) : [];
       break;
     case "setSize":
-      result = chooseOption(mapping.sizes.path, data);
-      return setTimeout(goNextStep, DELAY_BETWEEN_COLORS_OR_SIZES);
+      result = that.chooseOption(mapping.sizes.path, data);
       break;
     case "crawl":
-      result = crawl(mapping);
+      result = that.crawl(mapping);
       break;
     default:
       console.error("Unknow command", action);
       result = false;
   }
-  if (callback)
+  return result;
+};
+
+})(saturn);
+
+chrome.extension.onMessage.addListener(function(hash, sender, callback) {
+  if (sender.id != chrome.runtime.id) return;
+  console.debug("ProductCrawl task received", hash);
+  var result = saturn.doNext(hash.action, hash.mapping, hash.data);
+  if (hash.action == "setColor" || hash.action == "setSize")
+    setTimeout(goNextStep, DELAY_BETWEEN_COLORS_OR_SIZES);
+  else if (callback)
     callback(result);
 });
 

@@ -458,6 +458,6 @@ if ("object" == typeof module && module && "object" == typeof module.exports)
 else if ("function" == typeof define && define.amd)
   define("Uri",[],function(){return Uri});
 else
-  this.Uri = Uri
+  this.Uri = Uri;
 
 })();

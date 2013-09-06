@@ -355,6 +355,22 @@ hu.cookies.removeAll = function() {
     this.remove(keys[i]);
 };
 
+if ("object" == typeof module && module && "object" == typeof module.exports)
+  exports = module.exports = hu;
+else if ("function" == typeof define && define.amd)
+  define("html_utils",["jquery","underscore"],function(){return hu});
+else
+  this.hu = hu
+
+if ("object" == typeof module && module && "object" == typeof module.exports)
+  exports = module.exports = hu;
+else if ("function" == typeof define && define.amd)
+  define("html_utils",[],function(){return hu});
+else
+  this.hu = hu;
+
+})();
+
 //bravo's xpath function shortcut
 // if you don't have $x already
 function $x(p, c) {
@@ -382,19 +398,3 @@ function $xf(p, c) {
 function $xa(p, c) {
   return document.evaluate(p, c || document, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
 };
-
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = hu;
-else if ("function" == typeof define && define.amd)
-  define("html_utils",["jquery","underscore"],function(){return hu});
-else
-  this.hu = hu
-
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = hu;
-else if ("function" == typeof define && define.amd)
-  define("html_utils",[],function(){return hu});
-else
-  this.hu = hu;
-
-})();
