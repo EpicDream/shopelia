@@ -104,6 +104,7 @@ class Order < ActiveRecord::Base
       when "driver_failed" then fail("driver_failed", :vulcain)
       when "order_timeout" then fail("order_timeout", :vulcain)
       when "uuid_conflict" then fail("uuid_conflict", :vulcain)
+      when "cart_amount_error" then fail("cart_amount_error", :vulcain)
       when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
       when "no_product_available" then abort("stock", :merchant)
       when "out_of_stock" then abort("stock", :merchant)
