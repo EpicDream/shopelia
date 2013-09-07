@@ -430,6 +430,15 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "uuid_conflict", @order.message
   end
 
+  test "it should pause order with vulcain cart amount error" do
+    start_order
+    callback_order "failure", { "status" => "cart_amount_error" }
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "cart_amount_error", @order.message
+  end
+
   test "it should pause order with vulcain product not found" do
     start_order
     callback_order "failure", { "status" => "no_product_available" }
@@ -742,8 +751,7 @@ class OrderTest < ActiveSupport::TestCase
     
     injection_success
     assert_equal :pending_clearing, @order.state
-
-    @order.update_attribute :billed_price_total, 16
+    
     clearing_success
     assert_equal :completed, @order.state
     
@@ -1175,6 +1183,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   def clearing_success
+    @order.update_attribute :billed_price_total, 16
     @order.clearing_success
     @order.reload
   end
