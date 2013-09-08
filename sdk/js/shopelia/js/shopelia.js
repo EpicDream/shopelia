@@ -1,6 +1,6 @@
 var ShopeliaCheckout = {
   init: function(options) {
-    this.base = "http://zola.epicdream.fr:4444";
+    this.base = "https://www.shopelia.com";
     this.options = options;
     this.urlsArray = [];
     this.update();
