@@ -11,36 +11,8 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should create version" do
     assert @version.save, @version.errors.full_messages.join(",")
   end
-  
-  test "it shouldn't allow duplication for sizes and colors" do
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"blue",
-      size:"32")
-    assert v.save
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"red",
-      size:"32")
-    assert v.save
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"red",
-      size:"30")    
-    assert v.save
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"blue",
-      size:"32")    
-    assert !v.save
-    v = ProductVersion.new(
-      product_id:products(:headphones).id,
-      color:"blue",
-      size:"32")    
-    assert v.save
-  end
 
-  test "it should create version with data" do
+  test "it should create version with attributes" do
     version = ProductVersion.new(
        product_id:@product.id,
        price:"10€",
@@ -48,6 +20,7 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert version.save, version.errors.full_messages.join(",")
     assert_equal 10, version.price
     assert_equal "reference", version.reference
+    assert version.option1_md5.nil?
   end
 
   test "it should truncate name to 250 chars" do
@@ -58,6 +31,25 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert version.save
     
     assert_equal 250, version.name.length
+  end
+
+  test "it should prepare options md5" do
+    version = ProductVersion.create(
+       product_id:@product.id,
+       option1:{ "src" => 1, "text" => 2 },
+       option2:{ "text" => 2, "src" => 1 })
+
+    assert_equal ({"src" => 1, "text" => 2}.to_json), version.option1
+    assert_equal version.option1_md5, version.option2_md5
+  end
+
+  test "it should generate incident if one option is invalid" do
+    assert_difference "Incident.count", 1 do
+      version = ProductVersion.create(
+        product_id:@product.id,
+        option1:{ "a" => 1, "b" => 2 })
+      assert version.option1.nil?
+    end
   end
 
   test "it should parse float" do
