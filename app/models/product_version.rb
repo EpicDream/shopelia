@@ -29,6 +29,8 @@ class ProductVersion < ActiveRecord::Base
   before_validation :prepare_options
   before_destroy :check_not_related_to_any_order
 
+  scope :available, where(available:true)
+
   SANITIZED_CONFIG = {
     :elements => %w[
       b blockquote br dd dl
@@ -70,6 +72,24 @@ class ProductVersion < ActiveRecord::Base
         self.option2 = Hash[self.option2.sort].to_json
       end
       self.option2_md5 = self.option2.nil? ? nil : Digest::MD5.hexdigest(self.option2)
+    end
+    if self.option3.is_a?(Hash)
+      if self.option3["text"].nil? && self.option3["src"].nil?
+        generate_incident "Missing text or src for option3 : #{self.option3}"
+        self.option3 = nil
+      else
+        self.option3 = Hash[self.option3.sort].to_json
+      end
+      self.option3_md5 = self.option3.nil? ? nil : Digest::MD5.hexdigest(self.option3)
+    end
+    if self.option4.is_a?(Hash)
+      if self.option4["text"].nil? && self.option4["src"].nil?
+        generate_incident "Missing text or src for option4 : #{self.option4}"
+        self.option4 = nil
+      else
+        self.option4 = Hash[self.option4.sort].to_json
+      end
+      self.option4_md5 = self.option4.nil? ? nil : Digest::MD5.hexdigest(self.option4)
     end
   end
 

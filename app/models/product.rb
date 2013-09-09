@@ -18,6 +18,7 @@ class Product < ActiveRecord::Base
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
   attr_accessible :brand, :reference, :viking_failure, :muted_until
+  attr_accessible :options_completed
   attr_accessor :versions
   
   scope :viking_pending, lambda { 
@@ -58,6 +59,10 @@ class Product < ActiveRecord::Base
     self.muted_until.present? && self.muted_until > Time.now
   end
   
+  def ready?
+    !self.viking_failure && self.versions_expires_at.present? && self.versions_expires_at > Time.now
+  end
+
   def assess_versions
     ok = self.product_versions.count > 0
     self.product_versions.each do |version|
@@ -91,6 +96,10 @@ class Product < ActiveRecord::Base
     end
   end
   
+  def md5 hash
+    hash.nil? ? nil : Digest::MD5.hexdigest(Hash[hash.sort].to_json)
+  end
+
   def create_versions
     if self.versions.present?
       self.product_versions.update_all "available='f'"
@@ -100,8 +109,6 @@ class Product < ActiveRecord::Base
         version[:price_strikeout_text] = version[:price_strikeout]
         version[:availability_text] = version[:availability]
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
-        version[:color] = version[:color].to_json unless version[:color].nil?
-        version[:size] = version[:size].to_json unless version[:size].nil?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
 
         # Default shipping values
@@ -112,7 +119,12 @@ class Product < ActiveRecord::Base
           end
         end
 
-        v = self.product_versions.find_by_size_and_color(version[:size], version[:color])
+        md5(version[:option1])
+        v = self.product_versions.where(
+          option1_md5:md5(version[:option1]),
+          option2_md5:md5(version[:option2]),
+          option3_md5:md5(version[:option3]),
+          option4_md5:md5(version[:option4])).first
         if v.nil?
           v = ProductVersion.create!(version.merge({product_id:self.id}))
         else
@@ -130,7 +142,7 @@ class Product < ActiveRecord::Base
           v.update_attributes version
         end
       end
-      version = self.reload.product_versions.where(available:true).order("updated_at").first
+      version = self.reload.product_versions.where(available:true).order(:updated_at).first
       if version.present?
         self.update_column "name", version.name
         self.update_column "brand", version.brand

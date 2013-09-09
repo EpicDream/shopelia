@@ -8,6 +8,7 @@ usbkey:
   brand: "brand"
   reference: "reference"
   viking_failure: false
+  options_completed: true
   
 headphones:
   product_master: headphones
