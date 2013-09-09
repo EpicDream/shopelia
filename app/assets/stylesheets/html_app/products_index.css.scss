@@ -22,7 +22,6 @@
   border-radius:$borderRadius;
   padding: 5%;
   display: block;
-  margin: auto;
 }
 
 .price {
@@ -110,4 +109,17 @@
 
 #shipping-info {
   display: none;
+}
+
+.option-select {
+  max-width: 100%;
+}
+
+.option-img {
+  max-width: 50px;
+  max-height: 50px;
+  cursor: pointer;
+}
+.option-img-selected {
+  border: 1px solid $red;
 }
