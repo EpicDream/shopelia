@@ -14,4 +14,20 @@ class ProductVersionSerializer < ActiveModel::Serializer
   def cashfront_value
     object.cashfront_value object.price, scope ? { developer:scope[:developer] } : nil
   end
+
+  def option1
+    JSON.parse(object.option1) unless object.option1.nil?
+  end
+
+  def option2
+    JSON.parse(object.option2) unless object.option2.nil?
+  end
+
+  def option3
+    JSON.parse(object.option3) unless object.option3.nil?
+  end
+
+  def option4
+    JSON.parse(object.option4) unless object.option4.nil?
+  end
 end

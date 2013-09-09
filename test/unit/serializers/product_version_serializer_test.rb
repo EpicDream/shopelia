@@ -19,8 +19,8 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
     assert_equal @product.name, hash[:product_version][:name]
     assert_equal @product.image_url, hash[:product_version][:image_url]
     assert_equal @product.description, hash[:product_version][:description]
-    assert hash[:product_version][:option1].present?
-    assert hash[:product_version][:option2].present?
+    assert_equal "Rouge", hash[:product_version][:option1]["text"]
+    assert_equal "34", hash[:product_version][:option2]["text"]
     assert hash[:product_version][:option2_md5].present?
     assert hash[:product_version][:option2_md5].present?
     assert hash[:product_version][:option3].nil?
