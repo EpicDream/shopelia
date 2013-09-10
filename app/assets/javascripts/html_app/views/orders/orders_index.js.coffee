@@ -59,7 +59,7 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
       "expected_price_total": product.getExpectedTotalPrice()
       "address_id": user.get('addresses').getDefaultAddress().get('id')
       "payment_card_id": user.get('payment_cards').getDefaultPaymentCard().get('id')
-      "product_versions":[product.get('product_version_id')]
+      "products":[{"id":product.get('product_version_id')}]
     })
     order
 

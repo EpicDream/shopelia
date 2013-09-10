@@ -8,21 +8,24 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
   setProduct: (data) ->
     console.log("setData")
     console.log(data)
-    @set({
-      available: data.versions.length > 0
-      merchant_name: data.merchant.name,
-      merchant_logo: data.merchant.logo,
-      allow_quantities: data.merchant.allow_quantities,
-      quantity: 1,
-      ready: data.ready,
-      options_completed: data.options_completed,
-      versions: data.versions
-    })
-    if @get('available')
-      if @get('version_index') > 0
-        @setVersionByIndex(@get('version_index'))
-      else
-        @setVersionByIndex(0)
+    jsonData = JSON.stringify(data)
+    if @get('lastData') == null || @get('lastData') != jsonData
+      @set({
+        lastData: jsonData,
+        available: data.versions.length > 0,
+        merchant_name: data.merchant.name,
+        merchant_logo: data.merchant.logo,
+        allow_quantities: data.merchant.allow_quantities,
+        quantity: 1,
+        ready: data.ready,
+        options_completed: data.options_completed,
+        versions: data.versions
+      })
+      if @get('available')
+        if @get('version_index') > 0
+          @setVersionByIndex(@get('version_index'))
+        else
+          @setVersionByIndex(0)
 
   setVersionByIndex: (index) ->
     if index == -1
