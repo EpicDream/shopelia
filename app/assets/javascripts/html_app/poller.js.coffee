@@ -2,11 +2,11 @@ class Shopelia.Poller extends Backbone.Wreqr.EventAggregator
 
   constructor:(config) ->
     _.bindAll(this)
-    @intervalTime =  config.intervalTime or 200
+    @intervalTime =  config.intervalTime or 500
     @method = config.method or 'GET'
     @url = config.url
     @userData = config.userData
-    @expiry = config.expiry or 10000
+    @expiry = config.expiry or 20000
     @isRunning = false
 
   start: ->

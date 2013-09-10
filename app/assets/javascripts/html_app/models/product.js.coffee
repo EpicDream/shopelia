@@ -15,10 +15,14 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
       allow_quantities: data.merchant.allow_quantities,
       quantity: 1,
       ready: data.ready,
+      options_completed: data.options_completed,
       versions: data.versions
     })
     if @get('available')
-      @setVersionByIndex(0)
+      if @get('version_index') > 0
+        @setVersionByIndex(@get('version_index'))
+      else
+        @setVersionByIndex(0)
 
   setVersionByIndex: (index) ->
     if index == -1
