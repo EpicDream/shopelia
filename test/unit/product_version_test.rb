@@ -209,7 +209,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should sanitize description (1)" do
     @version.description = <<__END
 
-<h3 class="productDescriptionSource"></h3> <div class="productDescriptionWrapper"> <p>filtre à eau.</p><p>compatible avec tous les modèles de frigo lg</p> <div class="emptyClear"> </div> </div>
+<h3>Amazon.fr</h3><h3 class="productDescriptionSource"></h3> <div class="productDescriptionWrapper"> <p>filtre à eau.</p><p>compatible avec tous les modèles de frigo lg</p> <div class="emptyClear"> </div> </div>
 
 __END
     @version.save
