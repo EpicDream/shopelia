@@ -4,6 +4,9 @@ class Shopelia.Controllers.OrderController extends Shopelia.Controllers.Controll
     @view = new Shopelia.Views.OrdersIndex(model: order)
     region.show(@view)
 
+  refresh: ->
+    if @view
+      @view.render()
 
   create: (order) ->
     @view.lockView()
