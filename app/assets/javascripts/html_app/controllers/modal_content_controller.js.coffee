@@ -59,10 +59,9 @@ class Shopelia.Controllers.ModalContentController extends Shopelia.Controllers.C
 
   order: ->
     session = @getSession().clone()
-    product = @getProduct().clone()
     order = new Shopelia.Models.Order({
                                       session: session
-                                      product: product
+                                      product: @getProduct()
                                       })
     Shopelia.vent.trigger("sign_up#close")
     Shopelia.vent.trigger("sign_in#close")

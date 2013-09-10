@@ -58,8 +58,8 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         shipping_price: "3.5",
-        color: "blue",
-        size: "4"
+        option1: {"text" => "rouge"},
+        option2: {"text" => "34"}
       }], format: :json
     
     assert_response 204
@@ -147,4 +147,3 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
   end
   
 end
-

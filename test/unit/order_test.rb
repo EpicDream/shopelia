@@ -80,6 +80,26 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 8, order.order_items.map(&:quantity).sum
   end
 
+  test "it should create order from product version id" do
+    order = Order.create!(
+      :user_id => @user.id,
+      :developer_id => @developer.id,
+      :payment_card_id => @card.id,
+      :products => [
+        { :product_version_id => product_versions(:usbkey).id, :quantity => 1 }
+      ],
+      :address_id => @address.id,
+      :expected_price_total => 100,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10)
+
+    assert order.persisted?, order.errors.full_messages.join(",")
+    item = order.order_items.first
+    assert_equal 1, item.quantity
+    assert_equal product_versions(:usbkey).id, item.product_version_id
+    assert_equal 5, item.price
+  end
+
   test "it should prepare item price from quantity" do
     order = Order.create!(
       :user_id => @user.id,
@@ -745,6 +765,9 @@ class OrderTest < ActiveSupport::TestCase
     configuration_beta
     start_order
     assess_order
+
+    puts @order.reload.inspect
+    puts @order.message
 
     assert_equal :pending_injection, @order.state
     assert_equal true, @order.questions.first["answer"]

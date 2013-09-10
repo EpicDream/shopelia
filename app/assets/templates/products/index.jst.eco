@@ -20,9 +20,16 @@
           <p id="shipping-info" class="green bold clearfix"><%- @model('shipping_info_full') %></p>
         </span>        
       </div>
-      <div class='merchant-infos pull-left'>
-        Vendu et expédié par <br />
-        <img class="merchant-image" src="<%= @model('merchant_logo') %>">
+      <div class="pull-left">
+        <div id="option1-box"></div>
+        <div id="option2-box"></div>
+        <div id="option3-box"></div>
+        <div id="option4-box"></div>
+        <div class="spacer15"></div>
+        <div class='merchant-infos'>
+          Vendu et expédié par <br />
+          <img class="merchant-image" src="<%= @model('merchant_logo') %>">
+        </div>
       </div>
    </div>
 

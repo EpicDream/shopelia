@@ -27,9 +27,12 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     "change #quantity": "onChangeQuantity"
 
   initialize: ->
+    @model.get("product").on('change', @render, @)
     Shopelia.Views.ShopeliaView.prototype.initialize.call(this)
 
   onRender: ->
+    console.log("Render")
+    console.log(@model.get("product").get("product_version_id"))
     Tracker.onDisplay('Confirmation')
     @ui.quantity.val(@model.get("product").get("quantity"))
     if @model.get("product").get('expected_cashfront_value') > 0
@@ -55,8 +58,8 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
       "expected_cashfront_value": product.get('expected_cashfront_value') * product.get('quantity')
       "expected_price_total": product.getExpectedTotalPrice()
       "address_id": user.get('addresses').getDefaultAddress().get('id')
-      "products":[product.disableWrapping()]
       "payment_card_id": user.get('payment_cards').getDefaultPaymentCard().get('id')
+      "product_versions":[product.product_version_id]
     })
     order
 

@@ -8,9 +8,11 @@ class ProductTest < ActiveSupport::TestCase
       :name => 'Product',
       :merchant_id => merchants(:rueducommerce).id,
       :url => 'http://www.rueducommerce.fr/product',
-      :image_url => 'http://www.rueducommerce.fr/image')
+      :image_url => 'http://www.rueducommerce.fr/image',
+      :options_completed => true)
     assert product.save, product.errors.full_messages.join(",")
     assert_equal 1, product.product_versions.count
+    assert product.options_completed?
     
     product.name = "New name"
     assert product.save, product.errors.full_messages.join(",")
@@ -197,8 +199,8 @@ class ProductTest < ActiveSupport::TestCase
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         price_shipping: "3.5",
-        color: "blue",
-        size: "4"
+        option1: {"text" => "rouge"},
+        option2: {"text" => "34"}
       },
       { availability:"in stock",
         brand: "brand",
@@ -210,8 +212,8 @@ class ProductTest < ActiveSupport::TestCase
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         price_shipping: "3.5",
-        color: "blue",
-        size: "5"
+        option1: {"text" => "blue"},
+        option2: {"text" => "34"}
       }]);
 
     assert_equal "name2", product.name
@@ -219,11 +221,8 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal "reference4", product.reference
     assert_equal "http://www.amazon.fr/image2.jpg", product.image_url
     assert_equal "<p>description2</p>", product.description
-    assert_equal 2, product.product_versions.count
-    assert_equal [10.0,12.0].to_set, product.product_versions.map(&:price).to_set
-    assert_equal [true, false].to_set, product.product_versions.map(&:available).to_set
-    assert_equal "blue".to_json, product.product_versions.first.color
-    assert_equal ["4".to_json, "5".to_json].to_set, product.product_versions.map(&:size).to_set
+    assert_equal 1, product.product_versions.available.count
+    assert_equal 12, product.product_versions.available.first.price
     assert product.updated_at > 1.minute.ago
     assert product.versions_expires_at > Time.now
   end
@@ -249,8 +248,8 @@ class ProductTest < ActiveSupport::TestCase
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         price_shipping: "3.5",
-        color: "blue",
-        size: "4"
+        option1: {"text" => "rouge"},
+        option2: {"text" => "34"}
       }])
     product.update_attributes(versions:[
       { availability:"in stock",
@@ -263,8 +262,8 @@ class ProductTest < ActiveSupport::TestCase
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         price_shipping: "3.5",
-        color: "red",
-        size: "4"
+        option1: {"text" => "bleu"},
+        option2: {"text" => "34"}
       }])
       
     assert_equal 3, product.product_versions.count
@@ -373,6 +372,17 @@ class ProductTest < ActiveSupport::TestCase
       }]);
 
      assert product.viking_failure
-  end  
+  end
 
+  test "it should set ready" do
+    product = products(:usbkey)
+    product.viking_failure = true
+    assert !product.ready?
+
+    product.viking_failure = false
+    assert !product.ready?
+
+    product.versions_expires_at = 1.hour.from_now
+    assert product.ready?
+  end
 end
