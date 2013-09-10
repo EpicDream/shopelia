@@ -60,10 +60,11 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
         shipping_price: "3.5",
         option1: {"text" => "rouge"},
         option2: {"text" => "34"}
-      }], format: :json
+      }], options_completed:1, format: :json
     
     assert_response 204
     assert !product.viking_failure
+    assert product.versions_completed
   end
   
   test "it should set product as viking failed if missing any main element" do
