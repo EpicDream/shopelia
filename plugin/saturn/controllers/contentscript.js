@@ -5,13 +5,40 @@ var saturn = {};
 DELAY_BETWEEN_OPTIONS = 1500;
 OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i
 
+function getFromSelectOptions(elem) {
+  return elem.find("option:enabled");
+};
+
+function getFromUlOptions(elem) {
+  return elem.find("li:visible");
+};
+
+function searchImagesOptions(elems) {
+  var res = elems.find("img:visible");
+  return res.length > 0 ? res : null;
+};
+
+function searchBackgroudImagesOptions(elems) {
+  // Cas spécifique à Amazon
+  if (location.host.match("amazon")) {
+    var res = elems.find(".swatchInnerImage[style]").filter(function(i, e) {
+      return $(this).css("background-image").search(/url\(.*\)/) !== -1;
+    }).each(function() {
+      var url = $(this).css("background-image").match(/url\((.*)\)/)[1];
+      $(this).parent().parent().attr("src", url);
+    }).parent().parent();
+    return res.length > 0 ? res : null;
+  } else
+    return null;
+};
+
 that.getOptions = function(pathes) {
   if (! pathes) return [];
   if (! (pathes instanceof Array))
     pathes = [pathes];
   for (var i = 0, l = pathes.length; i < l ; i++) {
     var path = pathes[i];
-    var elems = $(path);
+    var elems = $(path), tmp_elems;
     var options = [];
     if (elems.length == 0) {
       continue;
@@ -21,20 +48,17 @@ that.getOptions = function(pathes) {
     // UL, le cas pas trop compliqué
     } else if (elems[0].tagName == "UL") {
       // cherche d'abord les li
-      var lis = elems.eq(0).find("li:visible");
-      if (lis.length > 0) {
-        var imgs = lis.find("img:visible");
-        // ensuite on cherche si chaque li contient des images
-        if (imgs.length == lis.length)
-          elems = imgs;
-        else
-          elems = lis;
+      if (tmp_elems = getFromUlOptions(elems)) {
+        elems = tmp_elems;
+        tmp_elems = searchImagesOptions(elems);
+        if (tmp_elems.length == elems.length)
+          elems = tmp_elems;
       }
     // If a single element is found, search images inside.
     } else if (elems.length == 1) {
-      var imgs = elems.find("img:visible");
-      if (imgs.length > 0)
-        elems = imgs;
+      if (tmp_elems = searchImagesOptions(elems)) elems = tmp_elems;
+    } else {;
+      if (tmp_elems = searchBackgroudImagesOptions(elems)) elems = tmp_elems;
     }
     return $.makeArray(elems).filter(function(elem) {
       return elem.innerText.match(OPTION_FILTER) == null;

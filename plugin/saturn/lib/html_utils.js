@@ -160,7 +160,7 @@ hu.getElementAttrs = function(e) {
     tagName: e.tagName,
     id: attrs['id'],
     class: attrs['class'],
-    text: e.innerText,
+    text: e.innerText.trim(),
     location: e.ownerDocument.location.href
   };
   if (e.tagName == "INPUT" || e.tagName == "SELECT" || e.tagName == "TEXTAREA") data.value = e.value;
