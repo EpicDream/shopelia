@@ -2,7 +2,7 @@ var saturn = {};
 
 (function(that) {
 
-DELAY_BETWEEN_COLORS_OR_SIZES = 1500;
+DELAY_BETWEEN_OPTIONS = 1500;
 OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i
 
 that.getOptions = function(pathes) {
@@ -36,13 +36,20 @@ that.getOptions = function(pathes) {
       if (imgs.length > 0)
         elems = imgs;
     }
-    return _.chain(elems).map(function(elem) {return hu.getElementAttrs(elem)}).
-      filter(function(elem) {return elem.text.match(OPTION_FILTER) == null;}).value(); // .uniq()
+    return $.makeArray(elems).filter(function(elem) {
+      return elem.innerText.match(OPTION_FILTER) == null;
+    }).map(function(elem) {
+      var h = hu.getElementAttrs(elem);
+      h.xpath = hu.getElementXPath(elem);
+      h.cssPath = hu.getElementCSSSelectors($(elem));
+      h.saturnPath = path;
+      return h;
+    });
   }
   return [];
 };
 
-that.chooseOption = function(pathes, option) {
+that.setOption = function(pathes, option) {
   if (! pathes) return [];
   if (! (pathes instanceof Array))
     pathes = [pathes];
@@ -64,7 +71,7 @@ that.chooseOption = function(pathes, option) {
     if (! elem && option.href)
       elem = elems.filter("[href='"+option.href+"']")[0];
     if (! elem) {
-      console.warning("No option found in", elems, "for option", elem);
+      console.warn("No option found in", elems, "for option", elem);
       continue;
     }
     if (elem.tagName == "OPTION") {
@@ -132,20 +139,15 @@ that.crawl = function(mapping) {
   return option;
 };
 
-that.doNext = function(action, mapping, data) {
-  var result;
+that.doNext = function(action, mapping, level, option) {
+  var result,
+      key = "option"+(level+1);
   switch(action) {
-    case "getColors":
-      result = mapping.colors ? that.getOptions(mapping.colors.path) : [];
+    case "getOptions":
+      result = mapping[key] ? that.getOptions(mapping[key].path) : [];
       break;
-    case "setColor":
-      result = that.chooseOption(mapping.colors.path, data);
-      break;
-    case "getSizes":
-      result = mapping.sizes ? that.getOptions(mapping.sizes.path) : [];
-      break;
-    case "setSize":
-      result = that.chooseOption(mapping.sizes.path, data);
+    case "setOption":
+      result = that.setOption(mapping[key].path, option);
       break;
     case "crawl":
       result = that.crawl(mapping);
@@ -162,9 +164,9 @@ that.doNext = function(action, mapping, data) {
 chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   if (sender.id != chrome.runtime.id) return;
   console.debug("ProductCrawl task received", hash);
-  var result = saturn.doNext(hash.action, hash.mapping, hash.data);
-  if (hash.action == "setColor" || hash.action == "setSize")
-    setTimeout(goNextStep, DELAY_BETWEEN_COLORS_OR_SIZES);
+  var result = saturn.doNext(hash.action, hash.mapping, hash.level, hash.option);
+  if (hash.action == "setOption")
+    setTimeout(goNextStep, DELAY_BETWEEN_OPTIONS);
   else if (callback)
     callback(result);
 });

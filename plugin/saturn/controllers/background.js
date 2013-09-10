@@ -20,9 +20,7 @@ DELAY_BETWEEN_PRODUCTS = 500; // 500ms
 DELAY_AFTER_NO_PRODUCT = 1000; // 1s
 DELAY_RESCUE = 60000; // 60s
 
-MAX_COLORS_TO_FULL_CRAWL = 10
-MAX_SIZES_TO_FULL_CRAWL = 10
-MAX_VERSIONS_TO_FULL_CRAWL = 30
+MAX_VERSIONS_TO_FULL_CRAWL = 100;
 
 var data = {},
     batchTabs = {};
@@ -66,7 +64,7 @@ chrome.extension.onMessage.addListener(function(msg, sender, response) {
   if (sender.id != chrome.runtime.id || ! sender.tab || ! data[sender.tab.id])
     return;
   if (msg == "nextStep")
-    next_step(sender.tab.id);
+    nextStep(sender.tab.id);
 });
 
 /////////////////////////////////////////////////////////////////
@@ -81,7 +79,7 @@ function start(tabId) {
     });
   loadProductUrlToExtract(tabId).done(function(hash) {
     if (! hash)
-      return reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
+      return reaskProduct(tabId, DELAY_AFTER_NO_PRODUCT);
     hash = preProcessData(hash);
     var uri = new Uri(hash.url);
     console.debug((new Date()).toLocaleTimeString(), "Get product_url to extract :", hash, "on tab_id :", tabId);
@@ -101,7 +99,7 @@ function start(tabId) {
     });
   }).fail(function(err) {
     console.error("When getting product to crawl :", err);
-    reask_a_product(tabId, DELAY_AFTER_NO_PRODUCT);
+    reaskProduct(tabId, DELAY_AFTER_NO_PRODUCT);
   });
 };
 
@@ -122,11 +120,14 @@ function parseCurrentPage(tab) {
 };
 
 function initTabVariables(tabId, hash) {
-  var uri = hash.uri || new Uri(hash.url);
-  data[tabId] = hash;
-  data[tabId].host = uri.host();
-  data[tabId].versions = [];
-  data[tabId].options = {};
+  var d = data[tabId] = hash;
+  d.host = d.uri.host();
+  d.versions = [];
+  d.argOptions = d.options || [];
+  d.options = [];
+  d.nbOptions = 0;
+  d.currentOptions = [];
+  d.currentOptionsIdx = [];
   // Remove all previous cookies
   chrome.cookies.getAll({},function(cooks){cookies=cooks;for (var i in cookies) {chrome.cookies.remove({name: cookies[i].name, url: "http://"+cookies[i].domain+cookies[i].path, storeId: cookies[i].storeId})}})
 };
@@ -135,7 +136,7 @@ function initTabVariables(tabId, hash) {
 //                         UTILITIES
 /////////////////////////////////////////////////////////////////
 
-function reask_a_product(tabId, delay) {
+function reaskProduct(tabId, delay) {
   if (! reask)
     return;
   delay = delay || 3000;
@@ -151,6 +152,8 @@ function buildMapping(uri, hash) {
       resMapping = $.extend(true, {}, hash[host], resMapping);
     host = host.replace(/^[^\.]+(\.|$)/, '');
   }
+  resMapping.option1 = resMapping.colors;
+  resMapping.option2 = resMapping.sizes;
   return resMapping;
 };
 
@@ -172,7 +175,10 @@ function preProcessData(data) {
     try{data.size = JSON.parse(data.size);}
     catch(err){console.error(err);data.size = undefined};
   if (! data.strategy)
-    data.strategy = 'normal'
+    data.strategy = 'normal';
+  data.options = data.options || [];
+  if (data.color) data.options[0] = data.color;
+  if (data.size) data.options[1] = data.size;
   return data;
 };
 
@@ -211,27 +217,27 @@ function loadProductUrlToExtract(tabId) {
 
 function loadMappingFromUri(uri) {
   var host = uri.host();
-  var merchant_id = null;
+  var merchantId = null;
   if (merchants[host])
-    merchant_id = merchants[host];
+    merchantId = merchants[host];
   else
     for (var i in merchants)
       if (host.match(i))
-        merchant_id = merchants[i];
-  if (! merchant_id)
+        merchantId = merchants[i];
+  if (! merchantId)
     return null;
   else
-    return loadMapping(merchant_id);
+    return loadMapping(merchantId);
 };
 
 // GET mapping for url's host,
 // and return jqXHR object.
-function loadMapping(merchant_id) {
-  console.log("Going to get mapping for merchant_id '"+merchant_id+"'");
+function loadMapping(merchantId) {
+  console.log("Going to get mapping for merchantId '"+merchantId+"'");
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: MAPPING_SHOPELIA_DOMAIN+merchant_id
+    url: MAPPING_SHOPELIA_DOMAIN+merchantId
   });
 };
 
@@ -239,171 +245,165 @@ function loadMapping(merchant_id) {
 //                      CRAWLER METHODS
 /////////////////////////////////////////////////////////////////
 
-function next_step(tabId) {
+// Called after the first page load,
+// and when page reload/ask after an option is set.
+function nextStep(tabId) {
   var d = data[tabId];
   // Contentscript just respond to us, clear rescue.
   clearTimeout(d.rescueTimer);
 
-  var last_action = d.last_action;
-  if (! last_action) {
-    return getColors(tabId);
-  } else if (last_action == "setColor") {
-    if (d.size)
-      return setSize(tabId, d.size);
-    else
-      return getSizes(tabId);
-  } else if (last_action == "setSize")
-    return crawl(tabId);
-};
+  if (! d.currentAction)
+    return getOptions(tabId, 0);
 
-function getColors(tabId) {
-  data[tabId].last_action = "getColors";
-  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
-    var d = data[tabId];
-    if (! result)
-      return sendError(tabId, "No result return for getColors");
-    else
-      d.colors = result;
-
-    if (d.colors.length == 0) {
-      if (d.size)
-        return setSize(tabId, d.size);
-      else
-        return getSizes(tabId);
-    } else {
-      d.options.colors = d.colors;
-      if (d.strategy == 'fast') {
-        return finish(tabId);
-      } else // strategy == 'options' || strategy == 'full'
-        return setNextColor(tabId)
-    }
-  });
-};
-
-function setNextColor(tabId) {
-  var d = data[tabId];
-  if (d.lastColorIdx === undefined)
-    d.lastColorIdx = 0;
+  if (d.argOptions[d.lastLevel+1])
+    return setOption(tabId, d.lastLevel+1, d.argOptions[d.lastLevel+1]);
   else
-    d.lastColorIdx += 1;
-  var color = d.colors[d.lastColorIdx]
-  if (color === undefined)
-    return finish(tabId);
-  setColor(tabId, color);
+    return getOptions(tabId, d.lastLevel+1);
 };
 
-function setColor(tabId, color) {
-  data[tabId].last_action = "setColor";
-  data[tabId].currentColor = color;
-  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping, data: color});
-};
-
-function getSizes(tabId) {
-  data[tabId].last_action = "getSizes";
-  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(result) {
-    var d = data[tabId];
-    if (! result)
-      return sendError(tabId, "No result return for getSizes");
-    else
-      d.sizes = result;
-
-    if (d.sizes.length > 0) {
-      if (! d.currentColor) {
-        d.options.sizes = d.sizes;
-      } else {
-        if (! d.options.sizes)
-          d.options.sizes = {};
-        d.options.sizes[JSON.stringify(d.currentColor)] = d.sizes;
-      }
-    }
-
-    if (d.strategy == 'options')
-      return setNextColor(tabId);
-    else if (d.sizes.length == 0)
-      return crawl(tabId);
-    else {
-      if (d.strategy == 'fast')
-        return finish(tabId);
-      else
-        return setNextSize(tabId);
-    }
-  });
-};
-
-function setNextSize(tabId) {
+// Get (if options is undefined) or set (if options is set)
+// available options for level and optionsIdx.
+// optionsIdx is default to currentOptionsIdx.
+function optionsTreeFor(tabId, level, optionsIdx, options) {
   var d = data[tabId];
-  if (d.lastSizeIdx === undefined)
-    d.lastSizeIdx = 0;
-  else
-    d.lastSizeIdx += 1;
-  var size = d.sizes[d.lastSizeIdx];
-  if (size === undefined) {
-    d.lastSizeIdx = undefined;
-    return setNextColor(tabId);
+  optionsIdx = optionsIdx || d.currentOptionsIdx.slice(0, level).filter(function(e){return e!==undefined && e!==null});
+  var tree = d.options;
+  var idx = level;
+  for (var i = 0, l = optionsIdx.length ; i < l ; i++) {
+    if (! tree[idx] && options)
+      tree[idx] = [];
+    else if (! tree[idx])
+      return [];
+    tree = tree[idx];
+    idx = optionsIdx[i];
   }
-  setSize(tabId, size);
+  return options ? tree[idx] = options : tree[idx] || [];
 };
 
-function setSize(tabId, size) {
-  data[tabId].last_action = "setSize";
-  data[tabId].currentSize = size;
-  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping, data: size});
-};
+// Ask the contentscript to get options for this level.
+function getOptions(tabId, level) {
+  if (! data[tabId].mapping["option"+(level+1)])
+    return crawl(tabId);
 
-function crawl(tabId) {
-  data[tabId].last_action = "crawl";
-  sendMsg(tabId, {action: data[tabId].last_action, mapping: data[tabId].mapping}, function(option) {
+  data[tabId].currentAction = "getOptions";
+  sendMsg(tabId, {action: data[tabId].currentAction, mapping: data[tabId].mapping, level: level}, function(options) {
     var d = data[tabId];
-    if (! option)
+    if (! options)
+      return sendError(tabId, "No options return for getOptions(level="+level+")");
+
+    optionsTreeFor(tabId, level, undefined, options);
+    if (options.length > 0)
+      d.nbOptions += 1;
+
+    if (d.strategy == 'options') {
+      if (d.options.length > level+1)
+        return setNextOption(tabId, level);
+      else
+        return setNextOption(tabId, level-1, true);
+    } else if (options.length == 0) {
+      if (d.argOptions[level+1])
+        return setOption(tabId, level+1, d.argOptions[level+1]);
+      else
+        return getOptions(tabId, level+1);
+    } else if (d.strategy == 'fast') {
+      return finish(tabId);
+    } else
+      return setNextOption(tabId, level);
+  });
+};
+
+// Compute the next option to set for this level et set it via setOption().
+function setNextOption(tabId, level, back) {
+  if (level < 0)
+    return finish(tabId);
+
+  var d = data[tabId];
+  if (d.currentOptionsIdx[level] === undefined)
+    d.currentOptionsIdx[level] = 0;
+  else
+    d.currentOptionsIdx[level] += 1;
+
+  var options = optionsTreeFor(tabId, level);
+  if (options.length == 0) {
+    d.currentOptionsIdx[level] = undefined;
+    if (! back && level < d.options.length-1)
+      return setNextOption(tabId, level+1);
+    else
+      return setNextOption(tabId, level-1, true);
+  }
+
+  var option = options[ d.currentOptionsIdx[level] ];
+  if (option !== undefined) {
+    setOption(tabId, level, option);
+  } else {
+    d.currentOptionsIdx[level] = undefined;
+    setNextOption(tabId, level-1, true);
+  }
+};
+
+// Ask the contentscript to select the option.
+function setOption(tabId, level, option) {
+  var d = data[tabId];
+  d.currentAction = "setOption";
+  d.lastLevel = level;
+  d.currentOptions[level] = option;
+  sendMsg(tabId, {action: d.currentAction, mapping: d.mapping, level: level, option: option});
+};
+
+// Ask the contentscript to crawl the product (for the current options if any).
+function crawl(tabId) {
+  data[tabId].currentAction = "crawl";
+  sendMsg(tabId, {action: data[tabId].currentAction, mapping: data[tabId].mapping}, function(version) {
+    var d = data[tabId];
+    if (! version)
       return sendError(tabId, "No result return for crawl");
 
-    option.color = d.currentColor;
-    option.size = d.currentSize;
+    if (Object.keys(version).length > 0) {
+      for (var lvl = 0, l = d.currentOptions.length ; lvl < l ; lvl++)
+        if (d.currentOptions[lvl])
+          version["option"+(lvl+1)] = d.currentOptions[lvl];
+      d.versions.push(version);
+    }
 
-    // Il faut autre chose que color ou size.
-    if ((Object.keys(option).length - 2) > 0)
-      d.versions.push(option);
-
-    if (d.strategy == 'full')
-      return setNextSize(tabId);
-    else if (d.strategy == 'options')
-      return setNextColor(tabId);
+    if (d.strategy == 'full' && d.lastLevel !== undefined)
+      return setNextOption(tabId, d.lastLevel, true);
     else
       return finish(tabId);
   });
 };
 
+// Fonction récursive de creation de version.
+// Crée autant de version qu'il y a de combinaison d'options.
+// Si strategy is set to 'normal' alors il crée la matrice des options possible à partir des seules options disponibles.
+// versions is the final Array.
+// hash is the pattern for versions.
+// level must be set to 0.
+// currentIdx must be set to [].
+function createOptionedVersions(tabId, versions, hash, level, currentIdx) {
+  var d = data[tabId];
+  var options = optionsTreeFor(tabId, level, currentIdx, undefined) || [];
+  // Si pas d'options, on ajoute la version actuelle et on retourne.
+  if (options.length == 0 && level < d.options.length) {
+    createOptionedVersions(tabId, versions, hash, level+1, currentIdx);
+  } else if (options.length == 0) {
+    versions.push($.extend({},hash));
+  } else {
+    for (var i = 0, l = options.length ; i < l ; i++) {
+      hash["option"+(level+1)] = options[i];
+      createOptionedVersions(tabId, versions, hash, level+1, currentIdx.concat([d.strategy == 'normal' ? 0 : i]));
+    }
+    delete hash["option"+(level+1)];
+  }
+  return versions;
+};
+
+// When current task is done, finish() is called.
 function finish(tabId) {
   var d = data[tabId];
 
-  // Crée une version vide pour chaque option (sauf celle crawlée).
-  var versions = [].concat(d.versions);
-  if (d.strategy == 'full') {
-    console.debug((new Date()).toLocaleTimeString(), "Finished full crawling !", versions);
-  } else if (d.options.colors && d.options.sizes) {
-    var colors = d.options.colors, 
-        sizes = d.options.sizes[JSON.stringify(d.currentColor)],
-        colorSizes;
-    for (var i = 0, li = colors.length ; i < li ; i++) {
-      var color = colors[i];
-      if (d.strategy == 'options' && (colorSizes = d.options.sizes[JSON.stringify(color)]))
-        sizes = colorSizes;
-      for (var j = (i == 0 ? 1 : 0), lj = sizes.length ; j < lj ; j++)
-        versions.push({color: color, size: sizes[j]});
-    }
-    console.debug((new Date()).toLocaleTimeString(), "Finished with colors and sizes !", versions);
-  } else if (d.options.colors) {
-    var colors = d.options.colors;
-    for (var i = 1, li = colors.length ; i < li ; i++)
-      versions.push({color: colors[i]});
-    console.debug((new Date()).toLocaleTimeString(), "Finished with only colors !", versions);
-  } else if (d.options.sizes) {
-    var sizes = d.options.sizes;
-    for (var i = 1, li = sizes.length ; i < li ; i++)
-      versions.push({size: sizes[i]});
-    console.debug((new Date()).toLocaleTimeString(), "Finished with only sizes !", versions);
-  } else
-    console.debug((new Date()).toLocaleTimeString(), "Finished with no color nor size !", versions);
+  // Crée une version vide pour chaque option (sauf celle crawlée) si on est pas en stratégie 'full'.
+  var versions = d.strategy == 'full' ? d.versions : d.versions.concat(createOptionedVersions(tabId, [], {}, 0, []).slice(1));
+  console.debug((new Date()).toLocaleTimeString(), "Finished", d.strategy, "crawling !", versions);
 
   if (TEST_ENV && ! d.id) {
     d.id = "test"; 
@@ -412,6 +412,7 @@ function finish(tabId) {
     return delete data[tabId];
   }
 
+  // Send crawled versions with ajax.
   var deferred = $.ajax({
     type : "PUT",
     url: PRODUCT_EXTRACT_UPDATE+d.id,
@@ -425,28 +426,22 @@ function finish(tabId) {
     console.log("$e =", $e);
   });
 
-  if (d.strategy == 'normal' && d.options.colors && d.options.sizes) {
-    console.log("Continue to crawl options");
+  // Look if we can continue to crawl more informations.
+  if (d.strategy == 'normal' && d.nbOptions > 1) {
+    console.log("Continue to crawl only options");
     d.strategy = 'options';
-    setNextColor(tabId);
-  } else if (d.strategy == 'normal' && d.options.colors && d.options.colors.length < MAX_COLORS_TO_FULL_CRAWL) {
-    console.log("Continue to full crawl colors");
+    setNextOption(tabId, d.options.length - 2, true);
+  } else if ((d.strategy == 'normal' && d.nbOptions == 1) ||
+      (d.strategy == 'options' && versions.length < MAX_VERSIONS_TO_FULL_CRAWL)) {
+    console.log("Continue with full crawling");
     d.strategy = 'full';
-    setNextColor(tabId);
-  } else if (d.strategy == 'normal' && d.options.sizes && d.options.sizes.length < MAX_SIZES_TO_FULL_CRAWL) {
-    console.log("Continue to full crawl sizes");
-    d.strategy = 'full';
-    setNextSize(tabId);
-  } else if (d.strategy == 'options' && versions.length < MAX_VERSIONS_TO_FULL_CRAWL) {
-    console.log("Continue to full crawl");
-    d.strategy = 'full';
-    d.lastColorIdx = d.lastSizeIdx = undefined;
+    d.currentOptionsIdx = [];
     d.versions = [];
-    setNextColor(tabId);
+    setNextOption(tabId, 0);
   } else
     deferred.always(function() {
       delete data[tabId];
-      reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
+      reaskProduct(tabId, DELAY_BETWEEN_PRODUCTS);
     });
 
   return deferred;
@@ -463,7 +458,7 @@ function sendError(tabId, msg) {
   $e = data[tabId];
   console.log((new Date()).toLocaleTimeString(), msg, "\n$e =", $e);
   delete data[tabId];
-  reask_a_product(tabId, DELAY_BETWEEN_PRODUCTS);
+  reaskProduct(tabId, DELAY_BETWEEN_PRODUCTS);
 };
 
 /////////////////////////////////////////////////////////////////
@@ -505,10 +500,10 @@ function assertTest(tabId) {
 if (! TEST_ENV) {
   chrome.tabs.create({}, function(tab) {
     batchTabs[tab.id] = false;
-    reask_a_product(tab.id, DELAY_BEFORE_START);
+    reaskProduct(tab.id, DELAY_BEFORE_START);
   });
   chrome.tabs.create({}, function(tab) {
     batchTabs[tab.id] = true;
-    reask_a_product(tab.id, DELAY_BEFORE_START);
+    reaskProduct(tab.id, DELAY_BEFORE_START);
   });
 }

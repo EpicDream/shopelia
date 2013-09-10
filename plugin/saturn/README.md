@@ -38,7 +38,7 @@ In Chromium extensions' tab :
 
 To launch google-chrome and install the extension, just run
 
-    google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn
+    google-chrome --load-extension=/home/USER_NAME/shopelia/plugin/saturn
 
 To unload the extension after utilisation, add 
 
@@ -48,7 +48,7 @@ with **nhledioladlcecbcfenmdibnnndlfikf** the extension id, that you can find in
   
 On a server :
 
-    DISPLAY=:0 google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn ; google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
+    DISPLAY=:0 google-chrome --load-extension=/home/USER_NAME/shopelia/plugin/saturn ; google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
 
 Usage
 -----
@@ -110,5 +110,5 @@ The mapping must be previously set with Humanis extension.
 TODO list
 ---------
 
-Add the possibility to click on an element to get images.
+Add the possibility to click on an element to get other images.
 Add the possibility to handle multiple extractor at the same time on different tab.
