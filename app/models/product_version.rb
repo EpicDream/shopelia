@@ -56,7 +56,7 @@ class ProductVersion < ActiveRecord::Base
   private
 
   def assess_version
-    self.available = false if self.available && (self.price.nil? || self.price_shipping.nil? || self.name.nil? || self.image_url.nil?)
+    self.available = nil if self.available && (self.price.nil? || self.price_shipping.nil? || self.name.nil? || self.image_url.nil?)
     true
   end
 
