@@ -64,13 +64,14 @@ class Product < ActiveRecord::Base
   end
 
   def assess_versions
-    ok = self.product_versions.count > 0
+    ok = false
     self.product_versions.each do |version|
-      if version.available.nil?
-        ok = false
-      elsif version.available?
-        ok = false if version.name.nil? || version.price.nil? || version.price_shipping.nil? || version.shipping_info.nil? || version.image_url.nil?
-      end
+      ok = true if version.available == false \
+        || (version.available \
+        && version.price.present? \
+        && version.price_shipping.present? \
+        && version.image_url.present? \
+        && version.shipping_info.present?)
     end
     self.update_column "viking_failure", !ok
   end

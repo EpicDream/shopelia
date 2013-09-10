@@ -10,8 +10,6 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
       window.formatShipping(v)
   }
   className: 'product box'
-  events:
-    'click #full-description': 'onDescriptionClick'
 
   ui: {
     shipping: ".shipping"
@@ -28,6 +26,7 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
   events:
     "click .option-img": "onSelectVersion"
     "change .option-select": "onSelectVersion"
+    'click #full-description': 'onDescriptionClick'
 
   initialize: ->
     @model.on('change', @render, @)
@@ -46,30 +45,36 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
     @buildOption("option2", @ui.option2)
     @buildOption("option3", @ui.option3)
     @buildOption("option4", @ui.option4)
+    Shopelia.vent.trigger("modal#center")
 
   buildOption: (key, ui) ->
     versions = @model.get('versions')
     if versions && versions.length > 0 && versions[0][key]
+      added = []
       md5 = @model.get(key + '_md5')
       r = ""
       if versions[0][key]["text"]
         r += "<select class='option-select' id='" + key + "'>"
         for i in [0..versions.length - 1] by 1
           value = versions[i][key + "_md5"]
-          if value == md5
-            selected = "selected"
-          else
-            selected = ""
-          r += "<option " + selected + " value='" + value + "'>" + versions[i][key]["text"] + "</option>"
+          if !_.contains(added, value)
+            if value == md5
+              selected = "selected"
+            else
+              selected = ""
+            r += "<option " + selected + " value='" + value + "'>" + versions[i][key]["text"] + "</option>"
+            added.push(value)
         r += "</select>"
       if versions[0][key]["src"]
         for i in [0..versions.length - 1] by 1
           value = versions[i][key + "_md5"]
-          if value == md5
-            selected = "option-img-selected"
-          else
-            selected = ""
-          r += "<img class='option-img " + selected + "' id='" + value + "' data-option='" + key + "' src='" + versions[i][key]["src"] + "'> "
+          if !_.contains(added, value)
+            if value == md5
+              selected = "option-img-selected"
+            else
+              selected = ""
+            r += "<img class='option-img " + selected + "' id='" + value + "' data-option='" + key + "' src='" + versions[i][key]["src"] + "'> "
+            added.push(value)
       ui.html(r)
 
   onSelectVersion: (e) ->
@@ -83,8 +88,3 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
 
   onDescriptionClick: ->
     Shopelia.vent.trigger("modal#show_product_description",@model)
-
-
-
-
-
