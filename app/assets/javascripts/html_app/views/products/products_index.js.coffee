@@ -49,7 +49,7 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
 
   buildOption: (key, ui) ->
     versions = @model.get('versions')
-    if versions[0][key]
+    if versions && versions.length > 0 && versions[0][key]
       md5 = @model.get(key + '_md5')
       r = ""
       if versions[0][key]["text"]
