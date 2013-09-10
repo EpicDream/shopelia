@@ -156,6 +156,7 @@ class ProductVersion < ActiveRecord::Base
     html = Sanitize.clean(doc.to_s, SANITIZED_CONFIG).gsub(/[\n\s]+/, " ")
     html = html.gsub("Afficher plus", "")
     html = html.gsub("Réduire", "")
+    html = html.gsub("<h3>Amazon.fr</h3>", "")
 
     self.description = html.strip
   end
