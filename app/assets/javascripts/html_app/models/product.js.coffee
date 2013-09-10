@@ -9,13 +9,9 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
     console.log("setData")
     console.log(data)
     @set({
-      name: data.name,
-      image_url: data.image_url,
-      description: data.description,
       available: data.versions.length > 0
       merchant_name: data.merchant.name,
       merchant_logo: data.merchant.logo,
-      allow_iframe: data.merchant.allow_iframe,
       allow_quantities: data.merchant.allow_quantities,
       quantity: 1,
       ready: data.ready,
@@ -39,6 +35,9 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
         expected_cashfront_value: null,
         shipping_info: null,
         availability_info: null,
+        name: null,
+        image_url: null,
+        description: null
       })        
     else
       versions = @get('versions')
@@ -55,6 +54,9 @@ class Shopelia.Models.Product extends Backbone.RelationalModel
         expected_cashfront_value: 0,
         shipping_info: versions[index].shipping_info,
         availability_info: versions[index].availability_info,
+        name: versions[index].name,
+        image_url: versions[index].image_url,
+        description: versions[index].description
       })    
       if versions[index].cashfront_value > 0
         @set({
