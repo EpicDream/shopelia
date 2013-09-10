@@ -7,6 +7,8 @@ expedie sous: true
 expedie habituellement sous: true
 ^\(\d+\)$: true
 en stock: true
+peu de stock: true
+stock modere: true
 disponibilite immediate: true
 en vente sur: true
 "[1-9]\\d* offres": true

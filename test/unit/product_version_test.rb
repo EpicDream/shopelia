@@ -164,7 +164,7 @@ class ProductVersionTest < ActiveSupport::TestCase
     end
     
     array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
-              "Expédié habituellement sous 2 à 3 semaines" ]
+              "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
