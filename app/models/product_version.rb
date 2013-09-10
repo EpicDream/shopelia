@@ -27,6 +27,7 @@ class ProductVersion < ActiveRecord::Base
   before_validation :sanitize_description, :if => Proc.new { |v| v.description.present? }
   before_validation :crop_shipping_info
   before_validation :prepare_options
+  before_validation :assess_version
   before_destroy :check_not_related_to_any_order
 
   scope :available, where(available:true)
@@ -54,9 +55,14 @@ class ProductVersion < ActiveRecord::Base
 
   private
 
+  def assess_version
+    self.available = false if self.available && (self.price.nil? || self.price_shipping.nil? || self.name.nil? || self.image_url.nil?)
+    true
+  end
+
   def prepare_options
     if self.option1.is_a?(Hash)
-      if self.option1["text"].nil? && self.option1["src"].nil?
+      if self.option1["text"].blank? && self.option1["src"].blank?
         generate_incident "Missing text or src for option1 : #{self.option1}"
         self.option1 = nil
       else
@@ -65,7 +71,7 @@ class ProductVersion < ActiveRecord::Base
       self.option1_md5 = self.option1.nil? ? nil : Digest::MD5.hexdigest(self.option1)
     end
     if self.option2.is_a?(Hash)
-      if self.option2["text"].nil? && self.option2["src"].nil?
+      if self.option2["text"].blank? && self.option2["src"].blank?
         generate_incident "Missing text or src for option2 : #{self.option2}"
         self.option2 = nil
       else
@@ -74,7 +80,7 @@ class ProductVersion < ActiveRecord::Base
       self.option2_md5 = self.option2.nil? ? nil : Digest::MD5.hexdigest(self.option2)
     end
     if self.option3.is_a?(Hash)
-      if self.option3["text"].nil? && self.option3["src"].nil?
+      if self.option3["text"].blank? && self.option3["src"].blank?
         generate_incident "Missing text or src for option3 : #{self.option3}"
         self.option3 = nil
       else
@@ -83,7 +89,7 @@ class ProductVersion < ActiveRecord::Base
       self.option3_md5 = self.option3.nil? ? nil : Digest::MD5.hexdigest(self.option3)
     end
     if self.option4.is_a?(Hash)
-      if self.option4["text"].nil? && self.option4["src"].nil?
+      if self.option4["text"].blank? && self.option4["src"].blank?
         generate_incident "Missing text or src for option4 : #{self.option4}"
         self.option4 = nil
       else
