@@ -73,7 +73,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   
   def retrieve_versions
     @versions = params[:versions]
-    @options_completed = params[:options_completed].to_i == 1
+    @options_completed = params[:options_completed]
   end
   
 end

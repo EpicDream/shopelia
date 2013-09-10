@@ -57,27 +57,28 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
         price: "2,26 EUR",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
-        shipping_price: "3.5",
+        price_shipping: "3.5",
         option1: {"text" => "rouge"},
         option2: {"text" => "34"}
-      }], options_completed:1, format: :json
+      }], options_completed:true, format: :json
     
     assert_response 204
-    assert !product.viking_failure
-    assert product.versions_completed
+    assert !product.reload.viking_failure
+    assert product.options_completed
   end
   
   test "it should set product as viking failed if missing any main element" do
     populate_events
     product = Product.first
+    product.product_versions.destroy_all
     put :update, id:product.id, versions:[
-      { availability:"in stock",
+      { availability:"en stock",
         brand: "brand",
         description: "description",
         image_url: "http://www.amazon.fr/image.jpg",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
-        shipping_price: "3.5",
+        price_shipping: "3.5",
       }], format: :json
     
     assert_response 204

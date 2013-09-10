@@ -68,6 +68,7 @@ class Product < ActiveRecord::Base
     self.product_versions.each do |version|
       ok = true if version.available == false \
         || (version.available \
+        && version.name.present? \
         && version.price.present? \
         && version.price_shipping.present? \
         && version.image_url.present? \
@@ -120,7 +121,6 @@ class Product < ActiveRecord::Base
           end
         end
 
-        md5(version[:option1])
         v = self.product_versions.where(
           option1_md5:md5(version[:option1]),
           option2_md5:md5(version[:option2]),
