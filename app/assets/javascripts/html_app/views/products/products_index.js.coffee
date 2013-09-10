@@ -56,14 +56,15 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
       if versions[0][key]["text"]
         r += "<select class='option-select' id='" + key + "'>"
         for i in [0..versions.length - 1] by 1
-          value = $.trim(versions[i][key + "_md5"])
-          if !_.contains(added, value)
+          value = versions[i][key + "_md5"]
+          text = $.trim(versions[i][key]["text"])
+          if !_.contains(added, text)
             if value == md5
               selected = "selected"
             else
               selected = ""
-            r += "<option " + selected + " value='" + value + "'>" + versions[i][key]["text"] + "</option>"
-            added.push(value)
+            r += "<option " + selected + " value='" + value + "'>" + text + "</option>"
+            added.push(text)
         r += "</select>"
       if versions[0][key]["src"]
         for i in [0..versions.length - 1] by 1
