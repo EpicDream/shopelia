@@ -141,6 +141,16 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert_equal 10.0, version.price_strikeout
   end
   
+  test "it should set available at false if missing attribute" do
+    version = ProductVersion.new(
+      availability_text:"En stock",
+      product_id:@product.id,
+      price:"2.79",
+      price_shipping:"1")
+    assert version.save, version.errors.full_messages.join(",")
+    assert !version.available
+  end
+
   test "it should set available info" do
     array = [ "Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock", 
               "temporairement en rupture de stock.", "sur commande", "article indisponible",
@@ -159,6 +169,11 @@ class ProductVersionTest < ActiveSupport::TestCase
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
         availability_text:str)
       assert version.available, "#{str.inspect} failed !"
       assert_equal str, version.availability_info
@@ -169,6 +184,11 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert_difference "Incident.count", 1 do
       version = ProductVersion.create(
         product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
         availability_text:"bla")
       assert version.available
     end
@@ -178,6 +198,11 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert_difference "Incident.count", 0 do
       version = ProductVersion.create(
         product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
         availability_text:"en precommande")
       assert version.available
     end

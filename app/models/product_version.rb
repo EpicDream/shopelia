@@ -27,6 +27,7 @@ class ProductVersion < ActiveRecord::Base
   before_validation :sanitize_description, :if => Proc.new { |v| v.description.present? }
   before_validation :crop_shipping_info
   before_validation :prepare_options
+  before_validation :assess_version
   before_destroy :check_not_related_to_any_order
 
   scope :available, where(available:true)
@@ -53,6 +54,11 @@ class ProductVersion < ActiveRecord::Base
   end
 
   private
+
+  def assess_version
+    self.available = false if self.available && (self.price.nil? || self.price_shipping.nil? || self.name.nil? || self.image_url.nil?)
+    true
+  end
 
   def prepare_options
     if self.option1.is_a?(Hash)
