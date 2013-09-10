@@ -76,8 +76,14 @@ class ProductTest < ActiveSupport::TestCase
     product = products(:usbkey)
     product.assess_versions
     assert !product.viking_failure
-    product.product_versions.first.update_attribute :price, nil    
-    product.assess_versions
+
+    ProductVersion.create!(
+      product_id:product.id,
+      available:true)
+    assert !product.viking_failure
+
+    product.product_versions.update_all "price=null"
+    product.reload.assess_versions
     assert product.viking_failure
   end
   
@@ -324,6 +330,9 @@ class ProductTest < ActiveSupport::TestCase
     product.update_attributes(versions:[
       { name: "name",
         image_url: "http://www.amazon.fr/image.jpg",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "En stock"
       }]);
     assert product.viking_failure
   end 
