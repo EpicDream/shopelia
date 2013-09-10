@@ -19,11 +19,13 @@ class Shopelia.Controllers.ProductsController extends Shopelia.Controllers.Contr
     console.log(data)
     @product.setProduct(data)
     if @product.get('ready') == 1
-      @poller.stop()
       if @product.get('available')    
         @region.show(@view)
       else
         @onPollerExpired()
+    if @product.get('options_completed') == 1
+      @poller.stop()
 
   onPollerExpired: ->
-    Shopelia.vent.trigger("modal#show_product_not_available",@product)
+    if @product.get('ready') == 0
+      Shopelia.vent.trigger("modal#show_product_not_available",@product)

@@ -45,7 +45,6 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
     @buildOption("option2", @ui.option2)
     @buildOption("option3", @ui.option3)
     @buildOption("option4", @ui.option4)
-    Shopelia.vent.trigger("modal#center")
 
   buildOption: (key, ui) ->
     versions = @model.get('versions')
