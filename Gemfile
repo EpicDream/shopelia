@@ -71,3 +71,7 @@ group :test do
   gem "simplecov", :require => false
   gem "codeclimate-test-reporter"
 end
+
+group :assets do
+  gem 'turbo-sprockets-rails3'
+end
