@@ -528,6 +528,15 @@ class OrderTest < ActiveSupport::TestCase
     
     assert_not_equal :pending_agent, @order.state
   end
+
+  test "it should fail order if assess has invalid quantities" do
+    start_order
+    assess_order_with_invalid_quantity
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "invalid_quantity", @order.message
+  end
   
   test "it should set missing product price if only one item" do
     order_items(:item2).destroy # keep only one item
@@ -1115,6 +1124,28 @@ class OrderTest < ActiveSupport::TestCase
       "products" => [
         { "product_version_id" => product_versions(:usbkey).id,
           "price" => 9
+        },
+        { "product_version_id" => product_versions(:headphones).id,
+          "price" => 5
+        }
+      ],
+      "billing" => {
+        "shipping" => 2,
+        "total" => 16
+      }
+    }
+    @order.reload
+  end  
+
+  def assess_order_with_invalid_quantity
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "product_version_id" => product_versions(:usbkey).id,
+          "price" => 9,
+          "quantity" => 2
         },
         { "product_version_id" => product_versions(:headphones).id,
           "price" => 5
