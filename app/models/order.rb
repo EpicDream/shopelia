@@ -118,10 +118,14 @@ class Order < ActiveRecord::Base
       @questions = content["questions"]
       
       (content["products"] || []).each do |product|
-        if product["id"].nil?
-          product["id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
+        if product["product_version_id"].nil? &&
+          if product["id"]  
+            product["product_version_id"] = Product.find(product["id"]).product_versions.first.id
+          else
+            product["product_version_id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
+          end
         end
-        item = self.order_items.where(:product_version_id => product["id"]).first
+        item = self.order_items.where(:product_version_id => product["product_version_id"]).first
         p = product["price"] || product["price_product"] || product["product_price"]
         item.update_attribute(:price, p.to_f.round(2))
       end

@@ -39,10 +39,11 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_match /priceminister/, json_response["url"]
   end
   
-  test "it should send 404 if not product waiting" do
+  test "it should send empty hash if not product waiting" do
     get :shift
     
-    assert_response :not_found
+    assert_response :success
+    assert json_response.empty?
   end
 
   test "it should update product with versions" do

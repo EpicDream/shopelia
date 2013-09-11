@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130909131321) do
+ActiveRecord::Schema.define(:version => 20130911105308) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -307,6 +307,8 @@ ActiveRecord::Schema.define(:version => 20130909131321) do
     t.datetime "muted_until"
     t.boolean  "options_completed",   :default => false
   end
+
+  add_index "products", ["url"], :name => "index_products_on_url", :unique => true
 
   create_table "states", :force => true do |t|
     t.string   "iso"
