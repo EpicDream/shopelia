@@ -78,7 +78,7 @@ function start(tabId) {
       start(tab.id);
     });
   loadProductUrlToExtract(tabId).done(function(hash) {
-    if (! hash)
+    if (! hash || ! hash.url)
       return reaskProduct(tabId, DELAY_AFTER_NO_PRODUCT);
     hash = preProcessData(hash);
     var uri = new Uri(hash.url);
@@ -417,7 +417,8 @@ function finish(tabId) {
     type : "PUT",
     url: PRODUCT_EXTRACT_UPDATE+d.id,
     contentType: 'application/json',
-    data: JSON.stringify({versions: versions, options_completed: versions.length == 1 || d.strategy != 'normal'})
+    data: JSON.stringify({versions: versions, options_completed: versions.length == 1 ||
+      d.strategy == 'full' || (d.strategy == 'options' && versions.length >= MAX_VERSIONS_TO_FULL_CRAWL)})
   }).done(function() {
     console.debug("Options for", d.url, "sended (", versions.length,")");
   }).fail(function(err) {
