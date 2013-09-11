@@ -29,7 +29,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     if product.present? 
       render json: Viking::ProductSerializer.new(product).as_json[:product]
     else
-      render :json => {:error => "Queue is empty"}, :status => :not_found
+      render :json => {}
     end
   end
 
@@ -39,7 +39,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     if product.present? 
       render json: Viking::ProductSerializer.new(product).as_json[:product]
     else
-      render :json => {:error => "Queue is empty"}, :status => :not_found
+      render :json => {}
     end
   end
   
