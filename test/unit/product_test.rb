@@ -394,4 +394,50 @@ class ProductTest < ActiveSupport::TestCase
     product.versions_expires_at = 1.hour.from_now
     assert product.ready?
   end
+
+  test "it shouldn't create new version when updating" do
+    product = Product.create!(url:"http://www.amazon.fr/toto")
+
+    assert_difference("ProductVersion.count", 2) do
+      product.update_attributes(versions:[
+        { option1: {"text" => "rouge"},
+          option2: {"text" => "34"}
+        },
+        { option1: {"text" => "rouge"},
+          option2: {"text" => "35"}
+        }
+      ])
+    end
+
+    assert_difference("ProductVersion.count", 0) do
+      product.update_attributes(versions:[
+        { availability:"in stock",
+          brand: "brand",
+          reference: "reference",
+          description: "description",
+          image_url: "http://www.amazon.fr/image.jpg",
+          name: "name",
+          price: "10 EUR",
+          price_strikeout: "2.58 EUR",
+          shipping_info: "info shipping",
+          price_shipping: "3.5",
+          option1: {"text" => "rouge"},
+          option2: {"text" => "34"}
+        },
+        { availability:"in stock",
+          brand: "brand",
+          reference: "reference",
+          description: "description",
+          image_url: "http://www.amazon.fr/image.jpg",
+          name: "name",
+          price: "10 EUR",
+          price_strikeout: "2.58 EUR",
+          shipping_info: "info shipping",
+          price_shipping: "3.5",
+          option1: {"text" => "rouge"},
+          option2: {"text" => "35"}
+        }
+      ])
+    end
+  end
 end
