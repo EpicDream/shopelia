@@ -8,7 +8,7 @@ LOCAL_ENV = false;
 if (LOCAL_ENV) {
   SHOPELIA_DOMAIN = "http://localhost:3000"
 } else {
-  SHOPELIA_DOMAIN = "http://www.shopelia.fr"
+  SHOPELIA_DOMAIN = "https://www.shopelia.fr"
 }
 
 PRODUCT_EXTRACT_SHIFT_URL = SHOPELIA_DOMAIN + "/api/viking/products/shift";
