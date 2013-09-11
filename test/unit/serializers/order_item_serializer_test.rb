@@ -17,11 +17,14 @@ class OrderSerializerTest < ActiveSupport::TestCase
     assert_equal @item.product.id, hash[:id]
     assert_equal @item.product_version_id, hash[:product_version_id]
     assert_equal Linker.monetize(@item.product.url), hash[:url]
-    assert_equal @item.product_version.option1, hash[:option1].to_json
-    assert_equal @item.product_version.option2, hash[:option2].to_json
-    assert_equal @item.product_version.option3, hash[:option3].to_json
-    assert_equal @item.product_version.option4, hash[:option4].to_json
+    assert_equal [JSON.parse(@item.product_version.option1), JSON.parse(@item.product_version.option2), JSON.parse(@item.product_version.option3), JSON.parse(@item.product_version.option4)].to_set, hash[:options].to_set
   end
 
-end
+  test "it should send empty options" do
+    @item.product_version.update_attributes(option1:nil, option2:nil, option3:nil, option4:nil)
+    item_serializer = OrderItemSerializer.new(@item)
+    hash = item_serializer.as_json[:order_item]
 
+    assert hash[:options].empty?
+  end
+end
