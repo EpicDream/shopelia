@@ -500,6 +500,22 @@ class OrderTest < ActiveSupport::TestCase
   test "it should update order when assessing" do
     start_order
     assess_order
+
+    assert_equal 16, @order.prepared_price_total
+    assert_equal 14, @order.prepared_price_product
+    assert_equal 2, @order.prepared_price_shipping
+    assert_equal 1, @order.questions.count
+    assert_equal "3", @order.questions.first["id"]
+    
+    item = @order.order_items.where(:product_version_id => product_versions(:usbkey).id).first
+    assert_equal 9, item.price
+    
+    assert_not_equal :pending_agent, @order.state
+  end
+
+  test "it should assess order with product version id" do
+    start_order
+    assess_order_with_product_version_id
     
     assert_equal 16, @order.prepared_price_total
     assert_equal 14, @order.prepared_price_product
@@ -765,9 +781,6 @@ class OrderTest < ActiveSupport::TestCase
     configuration_beta
     start_order
     assess_order
-
-    puts @order.reload.inspect
-    puts @order.message
 
     assert_equal :pending_injection, @order.state
     assert_equal true, @order.questions.first["answer"]
@@ -1093,6 +1106,27 @@ class OrderTest < ActiveSupport::TestCase
     }
     @order.reload
   end
+
+  def assess_order_with_product_version_id
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "product_version_id" => product_versions(:usbkey).id,
+          "price" => 9
+        },
+        { "product_version_id" => product_versions(:headphones).id,
+          "price" => 5
+        }
+      ],
+      "billing" => {
+        "shipping" => 2,
+        "total" => 16
+      }
+    }
+    @order.reload
+  end  
 
   def assess_order_with_missing_price
     @order.callback "assess", { 

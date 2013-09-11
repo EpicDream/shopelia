@@ -43,6 +43,16 @@ class EventTest < ActiveSupport::TestCase
     end
   end
 
+  test "it should skip blank urls" do
+    assert_difference(["Event.count","Product.count"], 0) do
+      Event.from_urls(
+        :action => Event::VIEW,
+        :device_id => devices(:web).id,
+        :developer_id => developers(:prixing).id,
+        :urls => [ "" ])
+    end
+  end
+
   test "it shouldn't create event without valid product" do
     event = Event.new(
       :action => Event::CLICK,

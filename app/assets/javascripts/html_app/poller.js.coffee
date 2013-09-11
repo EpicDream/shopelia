@@ -30,8 +30,10 @@ class Shopelia.Poller extends Backbone.Wreqr.EventAggregator
           xhr.setRequestHeader("Accept","application/vnd.shopelia.v1")
           xhr.setRequestHeader("X-Shopelia-ApiKey",Shopelia.developerKey)
         success: (data,textStatus,jqXHR) ->
-          if that.isRunning
-           that.trigger("data_available",data)
+          jsonData = JSON.stringify(data)
+          if that.isRunning && (window.lastPollerData == null || window.lastPollerData != jsonData)
+            that.trigger("data_available",data)
+            window.lastPollerData = jsonData
         error: (jqXHR,textStatus,errorThrown) ->
         complete: (jqXHR, textStatus) ->
            if that.isRunning
