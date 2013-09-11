@@ -7,6 +7,8 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
     @product = product_versions(:usbkey)
     @product.option1 = { "text" => "Rouge" }
     @product.option2 = { "text" => "34" }
+    @product.option3 = nil
+    @product.option4 = nil
     @product.save
     @developer = developers(:prixing)
   end

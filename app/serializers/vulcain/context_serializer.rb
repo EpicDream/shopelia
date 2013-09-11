@@ -20,9 +20,7 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
       credentials = nil
     end
     { :products_urls => object.order_items.map{|item| Linker.monetize(item.product.url)},
-      :products => object.order_items.map{|item| { :url => Linker.monetize(item.product_version.product.url), 
-                                                   :quantity => item.quantity, 
-                                                   :id => item.product_version_id }},
+      :products => ActiveModel::ArraySerializer.new(object.order_items).as_json,
       :credentials => credentials
     }
   end
