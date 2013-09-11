@@ -29,7 +29,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     if product.present? 
       render json: Viking::ProductSerializer.new(product).as_json[:product]
     else
-      render :json => {:error => "Queue is empty"}, :status => :not_found
+      render :json => {}
     end
   end
 
@@ -39,7 +39,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     if product.present? 
       render json: Viking::ProductSerializer.new(product).as_json[:product]
     else
-      render :json => {:error => "Queue is empty"}, :status => :not_found
+      render :json => {}
     end
   end
   
@@ -51,7 +51,9 @@ class Api::Viking::ProductsController < Api::V1::BaseController
       @product.update_column "versions_expires_at", Product.versions_expiration_date
       @product.update_column "updated_at", Time.now
       head :no_content
-    elsif @product.update_attribute :versions, @versions
+    elsif @product.update_attributes(
+        versions:@versions,
+        options_completed:@options_completed)
       head :no_content
     else
       render json: @product.errors, status: :unprocessable_entity
@@ -71,6 +73,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   
   def retrieve_versions
     @versions = params[:versions]
+    @options_completed = params[:options_completed]
   end
   
 end

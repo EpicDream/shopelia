@@ -436,7 +436,7 @@ class ApiTest < ActionDispatch::IntegrationTest
     # Create order
     post "/api/orders", auth_token:auth_token, order: { 
       products: [ {
-        url:products(:dvd).url,
+        product_version_id:product_versions(:dvd).id,
         price:10,
         quantity:4
       } ], 
@@ -470,7 +470,7 @@ class ApiTest < ActionDispatch::IntegrationTest
         { id:1 }
       ],
       products: [
-        { id:products(:dvd).id,
+        { product_version_id:product_versions(:dvd).id,
           price: 10
         }
       ],
@@ -510,7 +510,5 @@ class ApiTest < ActionDispatch::IntegrationTest
     assert_equal 40, order.billed_price_product
     assert_equal 5, order.billed_price_shipping
     assert_equal 45, order.billed_price_total    
-  end    
-  
+  end
 end
-

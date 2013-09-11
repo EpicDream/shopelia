@@ -14,7 +14,13 @@ class OrderSerializerTest < ActiveSupport::TestCase
       
     assert_equal @item.quantity, hash[:quantity]
     assert_equal @item.price, hash[:price]
-    assert hash[:product].present?
+    assert_equal @item.product.id, hash[:id]
+    assert_equal @item.product_version_id, hash[:product_version_id]
+    assert_equal Linker.monetize(@item.product.url), hash[:url]
+    assert_equal @item.product_version.option1, hash[:option1].to_json
+    assert_equal @item.product_version.option2, hash[:option2].to_json
+    assert_equal @item.product_version.option3, hash[:option3].to_json
+    assert_equal @item.product_version.option4, hash[:option4].to_json
   end
 
 end

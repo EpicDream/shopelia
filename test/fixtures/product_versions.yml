@@ -10,8 +10,10 @@ usbkey:
   name: "Version"
   available: true
   brand: "Brand"
-  size: "\"5\""
-  color: "\"blue\""
+  option1: "{\"text\":10}"
+  option2: "{\"text\":10}"
+  option3: "{\"text\":10}"
+  option4: "{\"text\":10}"
   
 headphones:
   product: headphones

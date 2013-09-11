@@ -8,13 +8,16 @@ class ProductVersion < ActiveRecord::Base
   has_many :cart_items
   
   validates :product, :presence => true
-  validates :size, :uniqueness => {:scope => [:product_id, :color]}, :allow_nil => true
   
-  attr_accessible :description, :size, :color, :price, :price_shipping
+  attr_accessible :description, :price, :price_shipping
   attr_accessible :price_strikeout, :product_id, :shipping_info, :available
   attr_accessible :image_url, :brand, :name, :available, :reference
   attr_accessible :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
+  attr_accessible :option1, :option2, :option3, :option4
   attr_accessor :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
+
+  alias_attribute :size, :option1
+  alias_attribute :color, :option2
 
   before_save :truncate_name  
   before_validation :parse_price, :if => Proc.new { |v| v.price_text.present? }
@@ -23,7 +26,11 @@ class ProductVersion < ActiveRecord::Base
   before_validation :parse_available, :if => Proc.new { |v| v.availability_text.present? }
   before_validation :sanitize_description, :if => Proc.new { |v| v.description.present? }
   before_validation :crop_shipping_info
+  before_validation :prepare_options
+  before_validation :assess_version
   before_destroy :check_not_related_to_any_order
+
+  scope :available, where(available:true)
 
   SANITIZED_CONFIG = {
     :elements => %w[
@@ -47,6 +54,50 @@ class ProductVersion < ActiveRecord::Base
   end
 
   private
+
+  def assess_version
+    self.available = nil if self.available && (self.price.nil? || self.price_shipping.nil? || self.name.nil? || self.image_url.nil?)
+    true
+  end
+
+  def prepare_options
+    if self.option1.is_a?(Hash)
+      if self.option1["text"].blank? && self.option1["src"].blank?
+        generate_incident "Missing text or src for option1 : #{self.option1}"
+        self.option1 = nil
+      else
+        self.option1 = Hash[self.option1.sort].to_json
+      end
+      self.option1_md5 = self.option1.nil? ? nil : Digest::MD5.hexdigest(self.option1)
+    end
+    if self.option2.is_a?(Hash)
+      if self.option2["text"].blank? && self.option2["src"].blank?
+        generate_incident "Missing text or src for option2 : #{self.option2}"
+        self.option2 = nil
+      else
+        self.option2 = Hash[self.option2.sort].to_json
+      end
+      self.option2_md5 = self.option2.nil? ? nil : Digest::MD5.hexdigest(self.option2)
+    end
+    if self.option3.is_a?(Hash)
+      if self.option3["text"].blank? && self.option3["src"].blank?
+        generate_incident "Missing text or src for option3 : #{self.option3}"
+        self.option3 = nil
+      else
+        self.option3 = Hash[self.option3.sort].to_json
+      end
+      self.option3_md5 = self.option3.nil? ? nil : Digest::MD5.hexdigest(self.option3)
+    end
+    if self.option4.is_a?(Hash)
+      if self.option4["text"].blank? && self.option4["src"].blank?
+        generate_incident "Missing text or src for option4 : #{self.option4}"
+        self.option4 = nil
+      else
+        self.option4 = Hash[self.option4.sort].to_json
+      end
+      self.option4_md5 = self.option4.nil? ? nil : Digest::MD5.hexdigest(self.option4)
+    end
+  end
 
   def parse_float str
     str = str.downcase
@@ -111,6 +162,7 @@ class ProductVersion < ActiveRecord::Base
     html = Sanitize.clean(doc.to_s, SANITIZED_CONFIG).gsub(/[\n\s]+/, " ")
     html = html.gsub("Afficher plus", "")
     html = html.gsub("Réduire", "")
+    html = html.gsub("<h3>Amazon.fr</h3>", "")
 
     self.description = html.strip
   end

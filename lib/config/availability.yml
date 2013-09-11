@@ -1,10 +1,14 @@
 dans( plus de)? \d+ magasins: false
 cet article paraitra le: true
 en pr.\-?commande: true
+pr.\-?commandez maintenant: true
 voir les offres de ces vendeurs: true
 expedie sous: true
+expedie habituellement sous: true
 ^\(\d+\)$: true
 en stock: true
+peu de stock: true
+stock modere: true
 disponibilite immediate: true
 en vente sur: true
 "[1-9]\\d* offres": true

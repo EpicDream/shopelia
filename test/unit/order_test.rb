@@ -80,6 +80,26 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 8, order.order_items.map(&:quantity).sum
   end
 
+  test "it should create order from product version id" do
+    order = Order.create!(
+      :user_id => @user.id,
+      :developer_id => @developer.id,
+      :payment_card_id => @card.id,
+      :products => [
+        { :product_version_id => product_versions(:usbkey).id, :quantity => 1 }
+      ],
+      :address_id => @address.id,
+      :expected_price_total => 100,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10)
+
+    assert order.persisted?, order.errors.full_messages.join(",")
+    item = order.order_items.first
+    assert_equal 1, item.quantity
+    assert_equal product_versions(:usbkey).id, item.product_version_id
+    assert_equal 5, item.price
+  end
+
   test "it should prepare item price from quantity" do
     order = Order.create!(
       :user_id => @user.id,
@@ -480,6 +500,22 @@ class OrderTest < ActiveSupport::TestCase
   test "it should update order when assessing" do
     start_order
     assess_order
+
+    assert_equal 16, @order.prepared_price_total
+    assert_equal 14, @order.prepared_price_product
+    assert_equal 2, @order.prepared_price_shipping
+    assert_equal 1, @order.questions.count
+    assert_equal "3", @order.questions.first["id"]
+    
+    item = @order.order_items.where(:product_version_id => product_versions(:usbkey).id).first
+    assert_equal 9, item.price
+    
+    assert_not_equal :pending_agent, @order.state
+  end
+
+  test "it should assess order with product version id" do
+    start_order
+    assess_order_with_product_version_id
     
     assert_equal 16, @order.prepared_price_total
     assert_equal 14, @order.prepared_price_product
@@ -1070,6 +1106,27 @@ class OrderTest < ActiveSupport::TestCase
     }
     @order.reload
   end
+
+  def assess_order_with_product_version_id
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "product_version_id" => product_versions(:usbkey).id,
+          "price" => 9
+        },
+        { "product_version_id" => product_versions(:headphones).id,
+          "price" => 5
+        }
+      ],
+      "billing" => {
+        "shipping" => 2,
+        "total" => 16
+      }
+    }
+    @order.reload
+  end  
 
   def assess_order_with_missing_price
     @order.callback "assess", { 

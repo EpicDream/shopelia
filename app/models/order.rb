@@ -118,10 +118,14 @@ class Order < ActiveRecord::Base
       @questions = content["questions"]
       
       (content["products"] || []).each do |product|
-        if product["id"].nil?
-          product["id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
+        if product["product_version_id"].nil? &&
+          if product["id"]  
+            product["product_version_id"] = Product.find(product["id"]).product_versions.first.id
+          else
+            product["product_version_id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
+          end
         end
-        item = self.order_items.where(:product_version_id => product["id"]).first
+        item = self.order_items.where(:product_version_id => product["product_version_id"]).first
         p = product["price"] || product["price_product"] || product["product_price"]
         item.update_attribute(:price, p.to_f.round(2))
       end
@@ -404,17 +408,19 @@ class Order < ActiveRecord::Base
       self.errors.add(:base, I18n.t('orders.errors.no_product'))
     else
       self.products.each do |p|
-        product = Product.fetch(p[:url])
-        
-        self.errors.add(
-          :base, I18n.t('orders.errors.invalid_product', 
-          :error => product.nil? ? "" : product.errors.full_messages.join(","))) and next if product.nil? || !product.persisted?
+        if p[:url].present?
+          product = Product.fetch(p[:url])
           
-        self.errors.add(:base, I18n.t('orders.errors.duplicate_order')) if OrderItem.where(order_id:self.user.orders.where("created_at >= ?", 5.minutes.ago).map(&:id)).where(product_version_id: ProductVersion.where(product_id:product.id).map(&:id)).count > 0
+          self.errors.add(
+            :base, I18n.t('orders.errors.invalid_product', 
+            :error => product.nil? ? "" : product.errors.full_messages.join(","))) and next if product.nil? || !product.persisted?
+            
+          self.errors.add(:base, I18n.t('orders.errors.duplicate_order')) if OrderItem.where(order_id:self.user.orders.where("created_at >= ?", 5.minutes.ago).map(&:id)).where(product_version_id: ProductVersion.where(product_id:product.id).map(&:id)).count > 0
 
-        product.name = p[:name] unless p[:name].blank?
-        product.image_url = p[:image_url] unless p[:image_url].blank?
-        self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => product.errors.full_messages.join(","))) if !product.save
+          product.name = p[:name] unless p[:name].blank?
+          product.image_url = p[:image_url] unless p[:image_url].blank?
+          self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => product.errors.full_messages.join(","))) if !product.save
+        end
       end
     end
     self.errors.count == 0
@@ -422,18 +428,34 @@ class Order < ActiveRecord::Base
   
   def prepare_order_items
     self.products.each do |p|
-      product = Product.fetch(p[:url])
-      p[:quantity] ||= 1
-      if product.nil? || !product.persisted? || self.merchant_id && self.merchant_id != product.merchant_id
-        self.destroy and return
+      if p[:url].present?
+        product = Product.fetch(p[:url])
+        p[:quantity] ||= 1
+        if product.nil? || !product.persisted? || self.merchant_id && self.merchant_id != product.merchant_id
+          self.destroy and return
+        end
+        OrderItem.create!(
+          order_id:self.id, 
+          product_version:product.product_versions.first, 
+          price:p[:price].to_f.round(2),
+          quantity:p[:quantity].to_i)
+      elsif p[:product_version_id].present?
+        v = ProductVersion.find(p[:product_version_id].to_i)
+        product = v.product
+        OrderItem.create!(
+          order_id:self.id, 
+          product_version:v, 
+          price:v.price,
+          quantity:(p[:quantity] || 1).to_i)
       end
-      self.merchant_id = product.merchant_id
-      self.save
-      OrderItem.create!(
-        order_id:self.id, 
-        product_version:product.product_versions.first, 
-        price:p[:price].to_f.round(2),
-        quantity:p[:quantity].to_i)
+      if product.nil?
+        self.destroy 
+        self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => ""))
+        return
+      else
+        self.merchant_id = product.merchant_id
+        self.save
+      end
     end
     if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
       item = self.order_items.first

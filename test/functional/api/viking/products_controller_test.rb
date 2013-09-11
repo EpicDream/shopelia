@@ -39,10 +39,11 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_match /priceminister/, json_response["url"]
   end
   
-  test "it should send 404 if not product waiting" do
+  test "it should send empty hash if not product waiting" do
     get :shift
     
-    assert_response :not_found
+    assert_response :success
+    assert json_response.empty?
   end
 
   test "it should update product with versions" do
@@ -57,26 +58,28 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
         price: "2,26 EUR",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
-        shipping_price: "3.5",
-        color: "blue",
-        size: "4"
-      }], format: :json
+        price_shipping: "3.5",
+        option1: {"text" => "rouge"},
+        option2: {"text" => "34"}
+      }], options_completed:true, format: :json
     
     assert_response 204
-    assert !product.viking_failure
+    assert !product.reload.viking_failure
+    assert product.options_completed
   end
   
   test "it should set product as viking failed if missing any main element" do
     populate_events
     product = Product.first
+    product.product_versions.destroy_all
     put :update, id:product.id, versions:[
-      { availability:"in stock",
+      { availability:"en stock",
         brand: "brand",
         description: "description",
         image_url: "http://www.amazon.fr/image.jpg",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
-        shipping_price: "3.5",
+        price_shipping: "3.5",
       }], format: :json
     
     assert_response 204
@@ -147,4 +150,3 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
   end
   
 end
-

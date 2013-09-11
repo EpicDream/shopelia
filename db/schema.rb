@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130906121941) do
+ActiveRecord::Schema.define(:version => 20130911105308) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -274,8 +274,8 @@ ActiveRecord::Schema.define(:version => 20130906121941) do
     t.text     "description"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
-    t.text     "color"
-    t.text     "size"
+    t.text     "option2"
+    t.text     "option1"
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
@@ -283,6 +283,12 @@ ActiveRecord::Schema.define(:version => 20130906121941) do
     t.string   "reference"
     t.text     "images"
     t.string   "availability_info"
+    t.text     "option3"
+    t.text     "option4"
+    t.string   "option1_md5"
+    t.string   "option2_md5"
+    t.string   "option3_md5"
+    t.string   "option4_md5"
   end
 
   create_table "products", :force => true do |t|
@@ -290,8 +296,8 @@ ActiveRecord::Schema.define(:version => 20130906121941) do
     t.integer  "merchant_id"
     t.text     "url"
     t.text     "image_url"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
@@ -299,7 +305,10 @@ ActiveRecord::Schema.define(:version => 20130906121941) do
     t.boolean  "viking_failure"
     t.string   "reference"
     t.datetime "muted_until"
+    t.boolean  "options_completed",   :default => false
   end
+
+  add_index "products", ["url"], :name => "index_products_on_url", :unique => true
 
   create_table "states", :force => true do |t|
     t.string   "iso"

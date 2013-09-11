@@ -69,6 +69,9 @@
                 <td>Total</td>
                 <td colspan=2><%- @format(@total_price() - @product('expected_cashfront_value') * @product('quantity')) %></td>
             </tr>
+            <tr id="order-test-box">
+                <td colspan=3><input type="checkbox" id="order-test"> Commande de test</td>
+            </tr>
         </table>
 
 <button id="process-order" class="custom-btn btn-block">CONFIRMER LA COMMANDE</button>
