@@ -126,6 +126,12 @@ class Order < ActiveRecord::Base
           end
         end
         item = self.order_items.where(:product_version_id => product["product_version_id"]).first
+        if product["quantity"] && item.quantity != product["quantity"]
+          callback_vulcain(false)
+          fail("invalid_quantity", :vulcain)
+          self.save!
+          return
+        end
         p = product["price"] || product["price_product"] || product["product_price"]
         item.update_attribute(:price, p.to_f.round(2))
       end
