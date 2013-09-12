@@ -98,10 +98,6 @@ class Product < ActiveRecord::Base
     end
   end
   
-  def md5 hash
-    hash.nil? ? nil : Digest::MD5.hexdigest(Hash[hash.sort].to_json)
-  end
-
   def create_versions
     if self.versions.present?
       self.product_versions.update_all "available='f'"
@@ -122,10 +118,10 @@ class Product < ActiveRecord::Base
         end
 
         v = self.product_versions.where(
-          option1_md5:md5(version[:option1]),
-          option2_md5:md5(version[:option2]),
-          option3_md5:md5(version[:option3]),
-          option4_md5:md5(version[:option4])).first
+          option1_md5:ProductVersion.generate_option_md5(version[:option1]),
+          option2_md5:ProductVersion.generate_option_md5(version[:option2]),
+          option3_md5:ProductVersion.generate_option_md5(version[:option3]),
+          option4_md5:ProductVersion.generate_option_md5(version[:option4])).first
         if v.nil?
           v = ProductVersion.create!(version.merge({product_id:self.id}))
         else

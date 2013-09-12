@@ -53,6 +53,11 @@ class ProductVersion < ActiveRecord::Base
     rule ? rule.rebate(price) : 0.0
   end
 
+  def self.generate_option_md5 option
+    return nil if option.nil?
+    Digest::MD5.hexdigest(option["text"].present? ? option["text"].strip : option["src"])
+  end
+
   private
 
   def assess_version
@@ -64,38 +69,38 @@ class ProductVersion < ActiveRecord::Base
     if self.option1.is_a?(Hash)
       if self.option1["text"].blank? && self.option1["src"].blank?
         generate_incident "Missing text or src for option1 : #{self.option1}"
-        self.option1 = nil
+        self.option1_md5 = self.option1 = nil
       else
+        self.option1_md5 = ProductVersion.generate_option_md5(self.option1)
         self.option1 = Hash[self.option1.sort].to_json
       end
-      self.option1_md5 = self.option1.nil? ? nil : Digest::MD5.hexdigest(self.option1)
     end
     if self.option2.is_a?(Hash)
       if self.option2["text"].blank? && self.option2["src"].blank?
         generate_incident "Missing text or src for option2 : #{self.option2}"
-        self.option2 = nil
+        self.option2_md5 = self.option2 = nil
       else
+        self.option2_md5 = ProductVersion.generate_option_md5(self.option2)
         self.option2 = Hash[self.option2.sort].to_json
       end
-      self.option2_md5 = self.option2.nil? ? nil : Digest::MD5.hexdigest(self.option2)
     end
     if self.option3.is_a?(Hash)
       if self.option3["text"].blank? && self.option3["src"].blank?
         generate_incident "Missing text or src for option3 : #{self.option3}"
-        self.option3 = nil
+        self.option3_md5 = self.option3 = nil
       else
+        self.option3_md5 = ProductVersion.generate_option_md5(self.option3)
         self.option3 = Hash[self.option3.sort].to_json
       end
-      self.option3_md5 = self.option3.nil? ? nil : Digest::MD5.hexdigest(self.option3)
     end
     if self.option4.is_a?(Hash)
       if self.option4["text"].blank? && self.option4["src"].blank?
         generate_incident "Missing text or src for option4 : #{self.option4}"
-        self.option4 = nil
+        self.option4_md5 = self.option4 = nil
       else
+        self.option4_md5 = ProductVersion.generate_option_md5(self.option4)
         self.option4 = Hash[self.option4.sort].to_json
       end
-      self.option4_md5 = self.option4.nil? ? nil : Digest::MD5.hexdigest(self.option4)
     end
   end
 
