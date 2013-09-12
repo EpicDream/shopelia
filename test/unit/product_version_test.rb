@@ -36,11 +36,12 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should prepare options md5" do
     version = ProductVersion.create(
        product_id:@product.id,
-       option1:{ "src" => 1, "text" => 2 },
-       option2:{ "text" => 2, "src" => 1 })
+       option1:{ "text" => "   1   ", "bla" => 2 },
+       option2:{ "src" => "2", "bla" => 1 })
 
-    assert_equal ({"src" => 1, "text" => 2}.to_json), version.option1
-    assert_equal version.option1_md5, version.option2_md5
+    assert_equal ({"bla" => 2, "text" => "   1   "}.to_json), version.option1
+    assert_equal Digest::MD5.hexdigest("1"), version.option1_md5
+    assert_equal Digest::MD5.hexdigest("2"), version.option2_md5
   end
 
   test "it should generate incident if one option is invalid" do
