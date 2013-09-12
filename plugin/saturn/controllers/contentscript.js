@@ -84,12 +84,12 @@ that.setOption = function(pathes, option) {
       continue;
     var elem = undefined;
     if (elems[0].tagName == "SELECT")
-      elem = $xf(".//*[text()='"+option.text+"']", elems[0]);
+      elem = elems.find("option:contains("+option.text+")")[0];
 
     if (! elem && option.id)
       elem = elems.filter("#"+option.id)[0];
     if (! elem && option.text)
-      elem = $xf(".//*[text()='"+option.text+"']", elems.commonAncestor()[0])
+      elem = elems.find("option:contains("+option.text+")")[0];
     if (! elem && option.src)
       elem = elems.filter("[src='"+option.src+"']")[0];
     if (! elem && option.href)
