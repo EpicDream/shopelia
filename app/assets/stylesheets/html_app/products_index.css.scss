@@ -123,3 +123,9 @@
 .option-img-selected {
   border: 1px solid $red;
 }
+
+#options-pending {
+  display: none;
+  font-size: 90%;
+  margin-top: 5px;
+}
