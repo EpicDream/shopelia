@@ -10,6 +10,9 @@
         <div id="option2-box"></div>
         <div id="option3-box"></div>
         <div id="option4-box"></div>
+        <div id="options-pending">
+          <img src="/assets/html_app/loader-small.gif"> Récupération des options
+        </div>
         <div class="spacer15"></div>
         <div class='merchant-infos'>
           Vendu et expédié par <br />
@@ -41,6 +44,3 @@
     <div  class="description-content" > <%- @model('description') %></div>
   </div>
   <a id="full-description" class="block text-center">Plus de détails</a>
-
-
-
