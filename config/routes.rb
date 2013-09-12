@@ -67,7 +67,7 @@ Shopelia::Application.routes.draw do
       resources :phone_lookup, :only => :show
       resources :merchants, :only => [:index, :create]
       resources :orders, :only => [:create, :show]
-      resources :products, :only => :index
+      resources :products, :only => [:index, :create]
       resources :users, :only => [:show, :update, :destroy]
       namespace :users do
         resources :autocomplete, :only => :create
@@ -87,6 +87,11 @@ Shopelia::Application.routes.draw do
       namespace :places do
         resources :autocomplete, :only => :index
         resources :details, :only => :show
+      end
+    end
+    namespace :showcase do
+      namespace :products do
+        resources :search, :only => :index
       end
     end
     namespace :viking do
