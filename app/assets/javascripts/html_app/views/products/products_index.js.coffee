@@ -22,6 +22,7 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
     option2: "#option2-box"
     option3: "#option3-box"
     option4: "#option4-box"
+    options_pending: "#options-pending"
   }
   events:
     "click .option-img": "onSelectVersion"
@@ -45,6 +46,10 @@ class Shopelia.Views.ProductsIndex extends Shopelia.Views.ShopeliaView
     @buildOption("option2", @ui.option2)
     @buildOption("option3", @ui.option3)
     @buildOption("option4", @ui.option4)
+    if @model.get('options_completed') == 1
+      @ui.options_pending.hide()
+    else
+      @ui.options_pending.show()
 
   buildOption: (key, ui) ->
     versions = @model.get('versions')
