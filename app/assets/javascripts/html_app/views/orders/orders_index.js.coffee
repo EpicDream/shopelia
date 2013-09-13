@@ -54,19 +54,24 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
   preparedOrder: ->
     product = @model.get("product")
     user = @model.get("session").get("user")
-    total = product.getExpectedTotalPrice()
-    if $("#order-test").attr('checked')
-      total = 0
-    order = new Shopelia.Models.Order({
-      "expected_price_shipping": product.get('expected_price_shipping')
-      "expected_price_product": product.get('expected_price_product') * product.get('quantity')
-      "expected_cashfront_value": product.get('expected_cashfront_value') * product.get('quantity')
-      "expected_price_total": total
-      "address_id": user.get('addresses').getDefaultAddress().get('id')
-      "payment_card_id": user.get('payment_cards').getDefaultPaymentCard().get('id')
-      "products":[{"product_version_id":product.get('product_version_id')}]
-    })
-    order
+    if $("#order-test").is(':checked')
+      expected_prices = {
+        "expected_price_shipping": 0
+        "expected_price_product": 0
+        "expected_price_total": 0
+      }
+    else
+      expected_prices = {
+        "expected_price_shipping": product.get('expected_price_shipping')
+        "expected_price_product": product.get('expected_price_product') * product.get('quantity')
+        "expected_price_total": product.getExpectedTotalPrice()
+      }
+    new Shopelia.Models.Order($.extend(expected_prices, {
+        "expected_cashfront_value": product.get('expected_cashfront_value') * product.get('quantity')
+        "address_id": user.get('addresses').getDefaultAddress().get('id')
+        "payment_card_id": user.get('payment_cards').getDefaultPaymentCard().get('id')
+        "products":[{"product_version_id":product.get('product_version_id'),"quantity":product.get('quantity'),"price":product.get('expected_price_product')}]
+    }))
 
   lockView: ->
     disableButton(@ui.validation)
