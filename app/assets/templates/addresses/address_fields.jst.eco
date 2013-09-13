@@ -9,7 +9,7 @@
 </div>
 <div class="control-group">
     <div class="controls">
-        <input rel="popover" tracker-name="Address 1" class="input-block-level"  type="text" data-storage="false"  data-required="true" data-trigger="focusout" placeholder= "Adresse"  name="address1" autocomplete="off">
+        <input rel="popover" tracker-name="Address 1" class="input-block-level"  type="text" data-storage="false"  data-required="true" data-trigger="focusout" data-minlength="5" placeholder= "Adresse"  name="address1" autocomplete="off">
     </div>
 </div>
 <div class="control-group">
@@ -20,7 +20,7 @@
 <div id="manual_address row-fluid">
     <div class="control-group span6 pull-left ">
         <div class="controls">
-            <input rel="popover" tracker-name="Zip" type="text" data-required="true" data-trigger="change focusout" data-type="number" class="input-block-level" placeholder= "Code Postal" name="zip">
+            <input rel="popover" tracker-name="Zip" type="text" data-required="true" data-trigger="change focusout" data-minlength="3" class="input-block-level" placeholder= "Code Postal" name="zip">
             </div>
         </div>
     <div class="control-group span6 pull-right">
