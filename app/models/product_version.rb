@@ -106,6 +106,9 @@ class ProductVersion < ActiveRecord::Base
 
   def parse_float str
     str = str.downcase
+    # special cases
+    str = str.gsub(/^.*un total de/, "")
+    str = str.gsub(/so colissimo \(.*\)/, "")
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else

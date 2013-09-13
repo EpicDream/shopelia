@@ -70,6 +70,10 @@ class ProductVersionTest < ActiveSupport::TestCase
 
     str = [ "12 739€", "12 739€", "bla 12739" ]
     str.each { |s| check_price s, 12739 }
+
+    # Special cases
+    check_price "+ Eco Part : 1,50€ soit un total de 136,48€", 136.48
+    check_price "so colissimo (2 à 4 jours). 11.99 €", 11.99
   end
 
   test "it should parse free shipping" do
