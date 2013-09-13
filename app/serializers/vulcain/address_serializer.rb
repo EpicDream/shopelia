@@ -20,6 +20,10 @@ class Vulcain::AddressSerializer < ActiveModel::Serializer
     object.country.iso
   end
   
+  def zip
+    object.zip.gsub(/[^\d]/, "")
+  end
+
   def mobile_phone
     PhoneParser.is_mobile?(object.phone, object.country.iso) ? object.phone : nil
   end
