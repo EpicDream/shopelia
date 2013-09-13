@@ -56,7 +56,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should parse float" do
     str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", 
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
-            "2��79 6��30", "+ Eco Part : 1,50€ soit un total de 2,79€" ]
+            "2��79 6��30" ]
     str.each { |s| check_price s, 2.79 }
 
     str = [ "2", "2€", "Bla bla 2 €" ]
