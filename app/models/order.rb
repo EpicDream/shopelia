@@ -133,6 +133,12 @@ class Order < ActiveRecord::Base
           return
         end
         p = product["price"] || product["price_product"] || product["product_price"]
+
+        # Special case Luxemburg
+        if self.meta_order.address.country.iso == "LU"
+          p = p.to_f / 1.196 * 1.15
+        end
+
         item.update_attribute(:price, p.to_f.round(2))
       end
 
