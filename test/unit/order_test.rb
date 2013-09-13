@@ -557,6 +557,23 @@ class OrderTest < ActiveSupport::TestCase
     assert_match /Les prix des produits ne correspondent pas/, @order.message
   end
 
+  test "it should assess amazon order with address in luxemburg" do
+    @order.meta_order.address.update_attribute :country_id, countries(:luxemburg).id
+    start_order
+    assess_order_for_amazon_luxemburg
+
+    assert_not_equal :pending_agent, @order.state
+
+    assert_equal 15.38, @order.prepared_price_total
+    assert_equal 15.38, @order.prepared_price_product
+    assert_equal 0, @order.prepared_price_shipping
+    
+    item = @order.order_items.where(:product_version_id => product_versions(:usbkey).id).first
+    assert_equal 8.65, item.price
+    item = @order.order_items.where(:product_version_id => product_versions(:headphones).id).first
+    assert_equal 6.73, item.price
+  end
+
   test "it should send request to user if price it outside range" do
     start_order
     assess_order_with_higher_price
@@ -1221,6 +1238,27 @@ class OrderTest < ActiveSupport::TestCase
      }
      @order.reload
   end  
+
+  def assess_order_for_amazon_luxemburg
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "url" => products(:usbkey).url,
+          "price" => 9
+        },
+        { "url" => products(:headphones).url,
+          "price_product" => 7
+        }
+      ],
+      "billing" => {
+        "shipping" => 0,
+        "total" => 15.38
+      }
+    }
+    @order.reload
+  end
   
   def assess_order_with_higher_price
     @order.expected_price_total = 10
