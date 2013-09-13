@@ -136,7 +136,7 @@ class Order < ActiveRecord::Base
 
         # Special case Luxemburg
         if self.meta_order.address.country.iso == "LU"
-          p = p.to_f / 1.196 * 1.15
+          p = (p.to_f + 0.00000001) / 1.196 * 1.15
         end
 
         item.update_attribute(:price, p.to_f.round(2))
@@ -256,7 +256,7 @@ class Order < ActiveRecord::Base
     
     rescue Exception => e
       callback_vulcain(false) if verb.eql?("assess")
-      fail("#{e.message} - #{e.backtrace.join("\n")}", :shopelia)
+      fail("#{e.message} - #{e.backtrace.join("\n").first(300)}", :shopelia)
       # allow save if price mismatch
       self.prepared_price_product = 0
       self.save!
