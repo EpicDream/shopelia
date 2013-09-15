@@ -16,6 +16,8 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
       else
         credentials = { :number => "", :exp_date => "", :exp_year => "", :cvv => "", :holder => "" }
       end
+    elsif object.cvd_solution == "virtualis" && object.payment_transaction.present?
+      credentials = Vulcain::VirtualCardSerializer.new(object.payment_transaction.virtual_card).as_json[:virtual_card]
     else
       credentials = nil
     end
