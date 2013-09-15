@@ -10,7 +10,7 @@ rueducommerce:
   billing_solution: "mangopay"
   injection_solution: "vulcain"
   cvd_solution: "virtualis" 
-  
+
 amazon:
   name: "Amazon"
   logo: "http://www.prixing.fr/images/logos/amazon.png"
@@ -25,7 +25,7 @@ amazon:
   should_clean_args: true
   viking_data: "{\"bla\":\"boo\"}"
   allow_quantities: true
-  
+
 fnac:
   name: "Fnac"
   url: "http://www.fnac.com"
