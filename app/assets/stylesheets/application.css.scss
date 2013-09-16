@@ -8,76 +8,25 @@
 @import "bootstrap_and_overrides.css.less";
 @import "home.css.scss";
 
+body {
+  padding-top: 50px;
+}
+
 .clearfix {
   clear: both;
 }
 
-.phone-margin {
-  width: 70%;
-  margin: auto;
-  margin-top: 30px;
-  margin-bottom: 20px;
+.navbar-brand {
+  padding-bottom: 0px;
 }
 
 .logo-navbar {
   margin-top: -5px;
+  height: 30px;
+  width: 120px;
 }
 
-.modal-form input[type=text],input[type=tel],select {
-  display: block;
-  width: 100%;
-  min-height: 30px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-.modal-form .tooltip-inner {
-  background-color: $red;
-  max-width: 400px;
-}
-.modal-form .tooltip.top .tooltip-arrow {
-  border-top-color: $red;
-}
-.modal-form .tooltip.bottom .tooltip-arrow {
-  border-bottom-color: $red;
-}
-.modal-form .tooltip.right .tooltip-arrow {
-  border-right-color: $red;
-}
-.modal-form .tooltip.in {
-  opacity: 0.9;
-  filter: alpha(opacity=90);
-}
-
-#sessionError {
-  display: none;
-  color: $red;
-  margin-bottom: 20px;
-}
-
-
-html,
-body {
-  height: 100%;
-}
-
-
-#wrap {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  //padding-top: 100px;
-  margin: 0 auto -80px;
-}
-
-#footer {
-  height: 80px;
-}
-
-
-#footer {
-  background-color: $blue;
-  color: white !important;
-
+.soon {
+  padding: 300px;
+  text-align: center;
 }

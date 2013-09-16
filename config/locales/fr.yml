@@ -305,8 +305,7 @@ fr:
     registration:
       finalize:
         title: "Informations manquantes"
-        tagline: "Afin de pouvoir passer une commande avec Shopélia, vous devez ajouter
-                 une adresse de livraison et une carte de paiement"
+        tagline: "Afin de pouvoir passer une commande avec Shopélia, vous devez ajouter une adresse de livraison et une carte de paiement"
         add_address: "Ajouter une addresse"
         add_payment_card: "Ajouter une carte"
     invalid_birthdate: "Vous devez avoir au minimum 16 ans pour vous enregistrer"
@@ -324,3 +323,8 @@ fr:
     my_addresses: "Mes adresses"
     my_payment_cards: "Mes cartes"
     
+  home:
+    how: Comment ça marche ?
+    faq: Questions / Réponses
+    contact: Contact
+    sign_in: Se connecter
