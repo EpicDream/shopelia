@@ -118,11 +118,27 @@ class Order < ActiveRecord::Base
       @questions = content["questions"]
       
       (content["products"] || []).each do |product|
-        if product["id"].nil?
-          product["id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
+        if product["product_version_id"].nil? &&
+          if product["id"]  
+            product["product_version_id"] = Product.find(product["id"]).product_versions.first.id
+          else
+            product["product_version_id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
+          end
         end
-        item = self.order_items.where(:product_version_id => product["id"]).first
+        item = self.order_items.where(:product_version_id => product["product_version_id"]).first
+        if product["quantity"] && item.quantity != product["quantity"]
+          callback_vulcain(false)
+          fail("invalid_quantity", :vulcain)
+          self.save!
+          return
+        end
         p = product["price"] || product["price_product"] || product["product_price"]
+
+        # Special case Luxemburg
+        if self.meta_order.address.country.iso == "LU"
+          p = (p.to_f + 0.00000001) / 1.196 * 1.15
+        end
+
         item.update_attribute(:price, p.to_f.round(2))
       end
 
@@ -204,6 +220,11 @@ class Order < ActiveRecord::Base
                     fail(payment_result[:message], :shopelia)
                   end
                   
+                # Limonetik
+                elsif self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
+                  callback_vulcain(true)
+                  self.state = :pending_injection
+
                 # Invalid CVD solution
                 else
                   callback_vulcain(false)
