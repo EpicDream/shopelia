@@ -836,6 +836,33 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal false, @order.questions.first["answer"]
   end
   
+  test "[virtualis] it should complete order" do
+    configuration_virtualis
+    start_order
+    assess_order
+
+    assert @order.meta_order.mangopay_wallet_id.present?
+    assert_equal 1, @order.meta_order.billing_transactions.count
+
+    billing_transaction = @order.meta_order.billing_transactions.first
+    assert billing_transaction.mangopay_contribution_id.present?
+    assert billing_transaction.success?
+    assert_equal 1600, billing_transaction.amount
+    assert_equal 1600, billing_transaction.mangopay_contribution_amount
+
+    payment_transaction = @order.payment_transaction
+    assert payment_transaction.present?
+    assert_equal "virtualis", payment_transaction.processor
+    assert payment_transaction.virtual_card.present?
+    
+    order_success
+    
+    assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total  
+  end
+
   test "[amazon] it should complete order" do
     CashfrontRule.destroy_all
     configuration_amazon
@@ -1079,6 +1106,13 @@ class OrderTest < ActiveSupport::TestCase
     @order.meta_order.update_attribute :billing_solution, "mangopay"
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "amazon"
+    @order.save
+  end
+
+  def configuration_virtualis
+    @order.meta_order.update_attribute :billing_solution, "mangopay"
+    @order.injection_solution = "vulcain"
+    @order.cvd_solution = "virtualis"
     @order.save
   end
 

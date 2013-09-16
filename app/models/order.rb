@@ -118,27 +118,11 @@ class Order < ActiveRecord::Base
       @questions = content["questions"]
       
       (content["products"] || []).each do |product|
-        if product["product_version_id"].nil? &&
-          if product["id"]  
-            product["product_version_id"] = Product.find(product["id"]).product_versions.first.id
-          else
-            product["product_version_id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
-          end
+        if product["id"].nil?
+          product["id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
         end
-        item = self.order_items.where(:product_version_id => product["product_version_id"]).first
-        if product["quantity"] && item.quantity != product["quantity"]
-          callback_vulcain(false)
-          fail("invalid_quantity", :vulcain)
-          self.save!
-          return
-        end
+        item = self.order_items.where(:product_version_id => product["id"]).first
         p = product["price"] || product["price_product"] || product["product_price"]
-
-        # Special case Luxemburg
-        if self.meta_order.address.country.iso == "LU"
-          p = (p.to_f + 0.00000001) / 1.196 * 1.15
-        end
-
         item.update_attribute(:price, p.to_f.round(2))
       end
 
@@ -179,10 +163,19 @@ class Order < ActiveRecord::Base
               # Billing success
               if self.meta_order.fullfilled? || billing_transaction.success
 
-                # Limonetik CVD & injection
-                if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
-                  callback_vulcain(true)
-                  self.state = :pending_injection
+                # Virtualis CVD
+                if self.cvd_solution == "virtualis" && self.injection_solution == "vulcain"
+                  self.state = :preparing
+                  
+                  payment_transaction = PaymentTransaction.create!(order_id:self.id) 
+                  payment_result = payment_transaction.process
+
+                  if payment_result[:status] == "created"
+                    callback_vulcain(true)
+                  else
+                    callback_vulcain(false)
+                    fail(payment_result[:message], :shopelia)
+                  end
                   
                 # Amazon vouchers
                 elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
@@ -256,7 +249,7 @@ class Order < ActiveRecord::Base
     
     rescue Exception => e
       callback_vulcain(false) if verb.eql?("assess")
-      fail("#{e.message} - #{e.backtrace.join("\n").first(300)}", :shopelia)
+      fail("Error in Callback #{e.inspect}", :shopelia)
       # allow save if price mismatch
       self.prepared_price_product = 0
       self.save!
