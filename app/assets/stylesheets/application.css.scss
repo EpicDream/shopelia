@@ -5,10 +5,7 @@
 @import "variables.css.scss";
 @import "jquery-ui-1.10.3.custom.min.css.scss";
 @import "bourbon";
-@import "bootstrap";
-@import "bootstrap-responsive";
-@import "mixins.css.scss";
-@import "bootstrap_override.css.scss";
+@import "bootstrap_and_overrides.css.less";
 @import "home.css.scss";
 
 .clearfix {

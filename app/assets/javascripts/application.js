@@ -9,7 +9,7 @@
 //= require rails.validations
 //= require rails.validations.simple_form
 //= require jquery_ujs
-//= require bootstrap
+//= require twitter/bootstrap
 
 $(document).ready(function() {
   $(".modal-button").on('click', function(event) {
