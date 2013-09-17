@@ -54,6 +54,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     elsif @product.update_attributes(
         versions:@versions,
         options_completed:@options_completed)
+      @product.update_column "viking_updated_at", @options_completed ? nil : Time.now
       head :no_content
     else
       render json: @product.errors, status: :unprocessable_entity

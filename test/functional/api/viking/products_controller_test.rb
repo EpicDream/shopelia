@@ -4,6 +4,7 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
   
   setup do
+    Product.destroy_all
     @developer = developers(:prixing)
   end
 
@@ -66,6 +67,7 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_response 204
     assert !product.reload.viking_failure
     assert product.options_completed
+    assert_not_nil product.viking_updated_at
   end
   
   test "it should set product as viking failed if missing any main element" do
@@ -134,6 +136,79 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_equal 1, json_response["alive"]
   end
   
+  test "it should reset versions only on first update" do
+    populate_events
+    product = Product.first
+    product.product_versions.first.update_attribute :available, true
+
+    assert_equal 1, product.reload.product_versions.available.count
+
+    put :update, id:product.id, versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "2,26 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        option1: {"text" => "rouge"},
+        option2: {"text" => "34"}
+      }], format: :json
+
+    assert_equal 1, product.reload.product_versions.available.count
+
+    put :update, id:product.id, versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "2,26 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        option1: {"text" => "rouge"},
+        option2: {"text" => "35"}
+      }], format: :json
+
+    assert_equal 2, product.reload.product_versions.available.count
+
+    put :update, id:product.id, versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "2,26 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        option1: {"text" => "vert"},
+        option2: {"text" => "35"}
+      }], options_completed:true, format: :json
+
+    assert_equal 3, product.reload.product_versions.available.count
+    assert product.viking_updated_at.nil?
+
+    put :update, id:product.id, versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "2,26 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        option1: {"text" => "rouge"},
+        option2: {"text" => "34"}
+      }], format: :json
+
+    assert_equal 1, product.reload.product_versions.available.count
+  end
+
   private
   
   def populate_events
