@@ -67,7 +67,6 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_response 204
     assert !product.reload.viking_failure
     assert product.options_completed
-    assert_not_nil product.viking_updated_at
   end
   
   test "it should set product as viking failed if missing any main element" do
