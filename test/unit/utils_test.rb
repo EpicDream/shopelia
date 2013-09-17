@@ -47,5 +47,9 @@ class UtilsTest < ActiveSupport::TestCase
     domain = Utils.extract_domain "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(908694445)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Fdp.asp%3Fsku%3DSONYMDRZX100W%26refer%3D*)"
     assert_equal "cdiscount.com", domain
   end
-  
+
+  test "it should extract domain if url has invalid parameters" do
+    domain = Utils.extract_domain "http://www.bienmanger.com?ope=netaff"
+    assert_equal "bienmanger.com", domain
+  end  
 end
