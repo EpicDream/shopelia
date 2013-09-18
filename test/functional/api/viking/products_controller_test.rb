@@ -14,6 +14,9 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     
     assert_response :success   
     assert_equal 2, json_response.count
+
+    get :index
+    assert_equal 0, json_response.count    
   end
 
   test "it should send back first 100 products requiring a Viking check in batch mode" do
@@ -22,6 +25,9 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     
     assert_response :success   
     assert_equal 1, json_response.count
+
+    get :index, batch:true
+    assert_equal 0, json_response.count    
   end
   
   test "it should send back first product in queue waiting for a Viking check" do
@@ -30,6 +36,11 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     
     assert_response :success   
     assert_match /amazon.fr\/2/, json_response["url"]
+
+    get :shift
+    
+    assert_response :success   
+    assert_match /amazon.fr\/1/, json_response["url"]
   end
 
   test "it should send back first product in queue waiting for a Viking check in batch mode" do
@@ -38,6 +49,9 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     
     assert_response :success   
     assert_match /priceminister/, json_response["url"]
+
+    get :shift, batch:true
+    assert json_response.empty?
   end
   
   test "it should send empty hash if not product waiting" do
@@ -135,12 +149,9 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_equal 1, json_response["alive"]
   end
   
-  test "it should reset versions only on first update" do
+  test "it should reset versions when sending product to viking" do
     populate_events
-    product = Product.first
-    product.product_versions.first.update_attribute :available, true
-
-    assert_equal 1, product.reload.product_versions.available.count
+    product = Product.find_by_url("http://www.amazon.fr/1")
 
     put :update, id:product.id, versions:[
       { availability:"in stock",
@@ -157,7 +168,12 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
       }], format: :json
 
     assert_equal 1, product.reload.product_versions.available.count
+    product.update_attribute :versions_expires_at, 12.hours.ago
 
+    get :index
+
+    assert_equal 0, product.reload.product_versions.available.count
+    
     put :update, id:product.id, versions:[
       { availability:"in stock",
         brand: "brand",
@@ -170,39 +186,6 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
         price_shipping: "3.5",
         option1: {"text" => "rouge"},
         option2: {"text" => "35"}
-      }], format: :json
-
-    assert_equal 2, product.reload.product_versions.available.count
-
-    put :update, id:product.id, versions:[
-      { availability:"in stock",
-        brand: "brand",
-        description: "description",
-        image_url: "http://www.amazon.fr/image.jpg",
-        name: "name",
-        price: "2,26 EUR",
-        price_strikeout: "2.58 EUR",
-        shipping_info: "info shipping",
-        price_shipping: "3.5",
-        option1: {"text" => "vert"},
-        option2: {"text" => "35"}
-      }], options_completed:true, format: :json
-
-    assert_equal 3, product.reload.product_versions.available.count
-    assert product.viking_updated_at.nil?
-
-    put :update, id:product.id, versions:[
-      { availability:"in stock",
-        brand: "brand",
-        description: "description",
-        image_url: "http://www.amazon.fr/image.jpg",
-        name: "name",
-        price: "2,26 EUR",
-        price_strikeout: "2.58 EUR",
-        shipping_info: "info shipping",
-        price_shipping: "3.5",
-        option1: {"text" => "rouge"},
-        option2: {"text" => "34"}
       }], format: :json
 
     assert_equal 1, product.reload.product_versions.available.count
@@ -222,5 +205,4 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
       :device_id => devices(:web).id,
       :action => Event::REQUEST)
   end
-  
 end
