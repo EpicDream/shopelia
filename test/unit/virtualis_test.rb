@@ -1,4 +1,7 @@
-class VirtualisTest < Test::Unit::TestCase
+# -*- encoding : utf-8 -*-
+require 'test_helper'
+
+class VirtualisTest < ActiveSupport::TestCase
 
   def test_virtualis_message_detail_carte_virtuelle
     params = {contrat:'CA13510136', efs:'02', identifiant:'55366600', reference:'5132685243999081503'}
@@ -37,21 +40,18 @@ class VirtualisTest < Test::Unit::TestCase
 
   def test_virtualis_card_lifecycle
     result = Virtualis::Card.create({montant:'2000', duree:'2'})
-    assert_equal('ok', result['status'])
+    assert_equal('ok', result['status'], result['error_str'])
 
     card_reference = result['numeroReference']
 
     result = Virtualis::Card.detail({reference: card_reference})
-    assert_equal('ok', result['status'])
+    assert_equal('ok', result['status'], result['error_str'])
 
     result = Virtualis::Card.cancel({reference: card_reference})
-    assert_equal('ok', result['status'])
+    assert_equal('ok', result['status'], result['error_str'])
 
     result = Virtualis::Card.cancel({reference: card_reference})
     assert_equal('error', result['status'])
     assert_equal('8', result['resultat'])
   end
-
 end
-
-

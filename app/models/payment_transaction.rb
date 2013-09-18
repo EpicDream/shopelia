@@ -9,9 +9,11 @@ class PaymentTransaction < ActiveRecord::Base
 
   before_validation :initialize_transaction
 
+  scope :amazon, where(processor:"amazon")
+
   def process
     if self.processor == "amazon"
-      return { status:"error", message:"transaction already processed" } unless self.mangopay_amazon_voucher_id.nil?
+      return { status:"created" } unless self.mangopay_amazon_voucher_id.nil?
       return { status:"error", message:"missing user mangopay object" } if self.user.mangopay_id.nil?
       return { status:"error", message:"missing source mangopay wallet" } if self.mangopay_source_wallet_id.nil?
 
