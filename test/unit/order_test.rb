@@ -989,6 +989,26 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 16, @order.billed_price_total
   end
 
+  test "[amazon] it should complete order with cashfront in two times, in case vulcain fails" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account
+
+    start_order
+    assess_order_cashfront
+
+    @order.update_attribute :state_name, "pending_agent"    
+
+    start_order
+    assess_order_cashfront
+
+    order_success
+
+    assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total
+  end
+
 =begin
   test "[beta] it should process order if billing has been accepted" do
     configuration_beta

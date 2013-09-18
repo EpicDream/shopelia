@@ -189,7 +189,7 @@ class Order < ActiveRecord::Base
                   self.state = :preparing
 
                   # Cashfront
-                  if self.cashfront_value > 0
+                  if self.cashfront_value > 0 && self.meta_order.billing_transactions.successfull.cashfront.count == 0
                     cashfront_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id, processor:"cashfront")
                     cashfront_result = cashfront_transaction.process
 
@@ -201,7 +201,7 @@ class Order < ActiveRecord::Base
                     end
                   end
                  
-                  payment_transaction = PaymentTransaction.create!(order_id:self.id) 
+                  payment_transaction = self.payment_transaction || PaymentTransaction.create!(order_id:self.id) 
                   payment_result = payment_transaction.process
 
                   if payment_result[:status] == "created"
