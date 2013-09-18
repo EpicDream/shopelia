@@ -26,4 +26,5 @@ require_relative 'message'
 require_relative 'request'
 require_relative 'bean'
 require_relative 'card'
+require_relative 'report'
 
