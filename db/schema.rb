@@ -306,7 +306,7 @@ ActiveRecord::Schema.define(:version => 20130918151100) do
     t.string   "reference"
     t.datetime "muted_until"
     t.boolean  "options_completed",   :default => false
-    t.datetime "viking_updated_at"
+    t.datetime "viking_sent_at"
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true
