@@ -15,7 +15,9 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   
   api :GET, "/viking/products", "Get all products pending check"
   def index
-    render json: params[:batch] ? Product.viking_pending_batch : Product.viking_pending, each_serializer: Viking::ProductSerializer
+    products = params[:batch] ? Product.viking_pending_batch : Product.viking_pending
+    products.each { |p| p.viking_reset }
+    render json: products, each_serializer: Viking::ProductSerializer
   end
  
   api :GET, "/viking/products/failure", "Get all products which failed with Viking extraction"
@@ -37,7 +39,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   def shift
     product = params[:batch] ? Product.viking_shift_batch : Product.viking_shift
     if product.present? 
-      render json: Viking::ProductSerializer.new(product).as_json[:product]
+      render json: Viking::ProductSerializer.new(product.viking_reset).as_json[:product]
     else
       render :json => {}
     end
@@ -54,7 +56,6 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     elsif @product.update_attributes(
         versions:@versions,
         options_completed:@options_completed)
-      @product.update_column "viking_updated_at", @options_completed ? nil : Time.now
       head :no_content
     else
       render json: @product.errors, status: :unprocessable_entity

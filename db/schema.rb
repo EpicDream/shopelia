@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130917123407) do
+ActiveRecord::Schema.define(:version => 20130918151100) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -308,7 +308,7 @@ ActiveRecord::Schema.define(:version => 20130917123407) do
     t.string   "reference"
     t.datetime "muted_until"
     t.boolean  "options_completed",                  :default => false
-    t.datetime "viking_updated_at"
+    t.datetime "viking_sent_at"
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true

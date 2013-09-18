@@ -103,13 +103,13 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 1, Product.viking_pending.count
   end
 
-  test "it shouldn't need a viking check if product has been updated by viking" do
+  test "it shouldn't need a viking check if product has been sent to viking" do
     Event.from_urls(
       :urls => [products(:headphones).url],
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
       :action => Event::VIEW)
-    products(:headphones).update_attribute :viking_updated_at, Time.now
+    products(:headphones).update_attribute :viking_sent_at, Time.now
 
     assert_equal 0, Product.viking_pending.count
   end
@@ -128,13 +128,13 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 1, Product.viking_pending_batch.count
   end
 
-  test "it shouldn't need a viking check if product has been updated by viking in batch mode" do
+  test "it shouldn't need a viking check if product has been sent to viking in batch mode" do
     Event.from_urls(
       :urls => [products(:headphones).url],
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
       :action => Event::REQUEST)
-    products(:headphones).update_attribute :viking_updated_at, Time.now
+    products(:headphones).update_attribute :viking_sent_at, Time.now
 
     assert_equal 0, Product.viking_pending_batch.count
   end
@@ -215,6 +215,7 @@ class ProductTest < ActiveSupport::TestCase
   
   test "it should update product and version" do
     product = products(:usbkey)
+    product.viking_reset
     product.update_attribute :updated_at, 1.hour.ago
     product.update_attributes(versions:[
       { availability:"out of stock",
@@ -265,6 +266,7 @@ class ProductTest < ActiveSupport::TestCase
   
   test "it should set previous version as unavailable" do
     product = products(:usbkey)
+    product.viking_reset
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",
@@ -295,7 +297,7 @@ class ProductTest < ActiveSupport::TestCase
       }])
       
     assert_equal 3, product.product_versions.count
-    assert_equal [false, true, false].to_set, product.product_versions.map(&:available).to_set
+    assert_equal [false, true].to_set, product.product_versions.map(&:available).to_set
   end
   
   test "it should reset viking_failure if correct version is added" do

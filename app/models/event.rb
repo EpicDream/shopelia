@@ -15,6 +15,7 @@ class Event < ActiveRecord::Base
 
   before_validation :find_or_create_product
   before_validation :set_monetizable
+  after_create :reset_viking_sent_at
 
   attr_accessible :url, :product_id, :developer_id, :device_id, :action, :tracker, :ip_address
   attr_accessor :url
@@ -51,5 +52,9 @@ class Event < ActiveRecord::Base
       self.monetizable = !mlink.eql?(self.product.url)
       true
     end
+  end
+
+  def reset_viking_sent_at
+    self.product.update_column "viking_sent_at", nil if self.product.versions_expired?
   end
 end

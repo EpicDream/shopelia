@@ -18,7 +18,7 @@ class Product < ActiveRecord::Base
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
   attr_accessible :brand, :reference, :viking_failure, :muted_until
-  attr_accessible :options_completed, :viking_updated_at
+  attr_accessible :options_completed, :viking_sent_at
   attr_accessor :versions
   
   scope :viking_pending, lambda { joins(:events).merge(Event.buttons).merge(Product.viking_base_request) }
@@ -28,7 +28,7 @@ class Product < ActiveRecord::Base
   scope :viking_base_request, lambda {
     where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') " +
       "or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and " +
-      "(muted_until is null or muted_until < ?) and products.viking_updated_at is null", Time.now, 6.hours.ago, 12.hours.ago, Time.now) 
+      "(muted_until is null or muted_until < ?) and products.viking_sent_at is null", Time.now, 6.hours.ago, 12.hours.ago, Time.now) 
   }
   
   def self.fetch url
@@ -51,6 +51,12 @@ class Product < ActiveRecord::Base
     4.hours.from_now
   end
   
+  def viking_reset
+    self.update_column "viking_sent_at", Time.now
+    self.product_versions.update_all "available='f'"
+    self
+  end
+
   def mute?
     self.muted_until.present? && self.muted_until > Time.now
   end
@@ -96,7 +102,6 @@ class Product < ActiveRecord::Base
   
   def create_versions
     if self.versions.present?
-      self.product_versions.update_all "available='f'" if self.viking_updated_at.nil?
       self.versions.each do |version|
         version[:price_text] = version[:price]
         version[:price_shipping_text] = version[:price_shipping]
