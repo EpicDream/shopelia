@@ -209,8 +209,10 @@ fr:
   activerecord:
     attributes:
       user:
-        email: "Adresse email"
+        email: "Email"
         password: "Mot de passe"
+        first_name: "Prénom"
+        last_name: "Nom"
       address:
         first_name: "Le prénom"
         last_name: "Le nom"
@@ -253,20 +255,24 @@ fr:
              payment_card:
                blank: "doit être renseigné"
 
-  simple_form:
-    placeholders:
-      address:
-        first_name: "Prénom"
-        last_name: "Nom"
-        address1: "Adresse"
-        address2: "Complément d'adresse"
-        zip: "Code postal"
-        city: "Ville"
-        phone: "Téléphone"
-        country: "Pays"
-      payment_card:
-        number: "Numéro de la carte"
-        cvv: "CVV"
+  placeholders:
+    user:
+      email: "Votre email"
+      password: "Votre mot de passe"
+      first_name: "Votre prénom"
+      last_name: "Votre nom"
+    address:
+      first_name: "Prénom"
+      last_name: "Nom"
+      address1: "Adresse"
+      address2: "Complément d'adresse"
+      zip: "Code postal"
+      city: "Ville"
+      phone: "Téléphone"
+      country: "Pays"
+    payment_card:
+      number: "Numéro de la carte"
+      cvv: "CVV"
 
   addresses:
     add: "Ajouter l'adresse"
@@ -312,11 +318,17 @@ fr:
     cannot_destroy: "Impossible de supprimer un utilisateur avec des commandes déjà effectuées"
 
   app:
+    signin:
+      title: "Déjà membre ?"
+      unauthorized: "Erreur dans l'email ou le mot de passe"
+      submit: "Se connecter"
+    signup:
+      title: "Nouvel utilisateur"
+      submit: "Créer son compte"
     cancel: "Annuler"
     close: "Fermer"
     wait: "Patientez..."
     new_session: "Se connecter sur Shopelia"
-    sign_in: "Se connecter"
     forgot_your_password: "Mot de passe oublié ?"
     invalid_credentials: "Erreur dans l'email ou le mot de passe"
     send_me_reset_password_instructions: "Réinitialiser mon mot de passe"
@@ -324,7 +336,7 @@ fr:
     my_payment_cards: "Mes cartes"
     
   home:
-    how: Comment ça marche ?
-    faq: Questions / Réponses
-    contact: Contact
-    sign_in: Se connecter
+    how: "Comment ça marche ?"
+    faq: "Questions / Réponses"
+    contact: "Contact"
+    sign_in: "Se connecter"

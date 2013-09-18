@@ -8,7 +8,7 @@
     = yield :head
     %title= @title || "Shopelia"
 
-  %body
+  %body{class: "action-#{params[:action]}"}
     .navbar.navbar-default.navbar-fixed-top
       .container
         .navbar-header

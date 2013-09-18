@@ -2,7 +2,7 @@ require 'api_constraints'
 
 Shopelia::Application.routes.draw do
 
-  match "/checkout", :controller => "html_app", :action => "index"
+  match "/app_checkout", :controller => "html_app", :action => "index"
 
   apipie
 
@@ -16,6 +16,9 @@ Shopelia::Application.routes.draw do
   end
 
   resources :home, :only => :index
+  match "/connect", to: "home#connect"
+
+  resources :checkout, :only => :index
   resources :contact, :only => :create
   resources :gateway, :only => :index
   

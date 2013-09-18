@@ -17,23 +17,11 @@ window.shopeliaFastClick = (buttonArray) ->
     new FastClick(button)
   )
 
+Connect =
+  init: ->
+    $("#signin-form").on "ajax:error", (data, xhr, response) ->
+      $("#signup-error").html(xhr.responseText).show "fast"
+
 $(document).ready ->
-  ShopeliaCheckout.init
-    developer: "e35c8cbbcfd7f83e4bb09eddb5a3f4c461c8d30a71dc498a9fdefe217e0fcd44"
-    tracker: "shopelia-web"
-
-  $("#product-bar").on "input", ->
-    $(this).popover "hide"
-
-  $("#shopelia-form").submit (e) ->
-    e.preventDefault()
-    $button = $("#btn-order")
-    url = $("[name='url']").val()
-    if url.match(/amazon.fr/)
-      $button.attr "data-shopelia-url", url
-      ShopeliaCheckout.update()
-      $button.click()
-      $button.unbind "click"
-    else
-      $("#product-bar").popover "show"
-
+  if $("body.action-connect").length > 0
+    Connect.init()
