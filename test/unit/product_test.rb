@@ -103,6 +103,17 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 1, Product.viking_pending.count
   end
 
+  test "it shouldn't need a viking check if product has been updated by viking" do
+    Event.from_urls(
+      :urls => [products(:headphones).url],
+      :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
+      :action => Event::VIEW)
+    products(:headphones).update_attribute :viking_updated_at, Time.now
+
+    assert_equal 0, Product.viking_pending.count
+  end
+
   test "it should get all products needing a Viking check in batch mode" do
     Event.from_urls(
       :urls => [products(:headphones).url,products(:usbkey).url],
@@ -115,6 +126,17 @@ class ProductTest < ActiveSupport::TestCase
       :device_id => devices(:web).id,
       :action => Event::REQUEST)
     assert_equal 1, Product.viking_pending_batch.count
+  end
+
+  test "it shouldn't need a viking check if product has been updated by viking in batch mode" do
+    Event.from_urls(
+      :urls => [products(:headphones).url],
+      :developer_id => developers(:prixing).id,
+      :device_id => devices(:web).id,
+      :action => Event::REQUEST)
+    products(:headphones).update_attribute :viking_updated_at, Time.now
+
+    assert_equal 0, Product.viking_pending_batch.count
   end
 
   test "it should get all products which failed Viking extraction" do
