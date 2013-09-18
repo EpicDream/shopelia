@@ -61,4 +61,32 @@ class EventTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id)
     assert !event.save
   end
+
+  test "it shouldn't reset viking_sent_at if product versions are not expired when event is created" do
+    p = products(:headphones)
+    p.update_attributes(
+      versions_expires_at:1.hour.from_now,
+      viking_sent_at:3.hours.ago)
+    event = Event.create!(
+      :action => Event::VIEW,
+      :product_id => p.id,
+      :device_id => devices(:web).id,
+      :developer_id => developers(:prixing).id)
+
+    assert_not_nil p.reload.viking_sent_at
+  end
+
+  test "it should reset viking_sent_at if product versions are expired when event is created" do
+    p = products(:headphones)
+    p.update_attributes(
+      versions_expires_at:1.hour.ago,
+      viking_sent_at:1.hours.ago)
+    event = Event.create!(
+      :action => Event::VIEW,
+      :product_id => p.id,
+      :device_id => devices(:web).id,
+      :developer_id => developers(:prixing).id)
+
+    assert p.reload.viking_sent_at.nil?
+  end  
 end
