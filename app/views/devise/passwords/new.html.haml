@@ -1,9 +1,18 @@
-%h2= t('app.forgot_your_password')
-
-= simple_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post, :class => 'form-horizontal' }) do |f|
-  = f.error_notification
-
-  = f.input :email, :autofocus => true, :required => false
-  = f.button :submit, t('app.send_me_reset_password_instructions'), :class => 'btn-success'
-
-
+.fluid
+  .row
+    .col-md-6
+      .spacer50
+      %h2= t('app.forgot_your_password')
+      .spacer25
+      = form_for resource, as:resource_name, remote: true, url:password_path(resource_name), html:{class:'form form-horizontal',id:'reset-password-form'} do |f|
+        .form-group.display-none#reset-password-error-box
+          .col-lg-10.alert.alert-danger= t('app.password_instructions_fail')
+        .form-group.display-none#reset-password-success-box
+          .col-lg-10.alert.alert-success= t('app.password_instructions_sent')
+        .form-group
+          = f.label :email, class:"col-lg-4 control-label"
+          .col-lg-6
+            = f.text_field :email, class:"form-control input-lg", type:"email", placeholder:"#{t('placeholders.user.email')}"
+        .form-group
+          .col-lg-offset-4.col-lg-6
+            = f.submit t("app.send_me_reset_password_instructions"), class:"btn btn-success btn-lg", disable_with:t("app.wait")
