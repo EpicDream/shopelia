@@ -29,9 +29,9 @@ class DeviseOverride::RegistrationsController < Devise::RegistrationsController
   def build_resource(hash=nil)
     hash ||= resource_params || {}
     # avoid creation of user with these blank fields
-    hash[:password] = "~" if hash[:password].length == 0
-    hash[:first_name] = "~" if hash[:first_name].length == 0
-    hash[:last_name] = "~" if hash[:last_name].length == 0
+    hash[:password] = "~" if hash[:password].to_s.length == 0
+    hash[:first_name] = "~" if hash[:first_name].to_s.length == 0
+    hash[:last_name] = "~" if hash[:last_name].to_s.length == 0
     self.resource = User.find_by_email_and_visitor(hash[:email], true)
     if self.resource.nil?
       self.resource = resource_class.new_with_session(hash.merge({"developer_id" => @developer.id}), session)
