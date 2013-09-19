@@ -15,7 +15,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   
   api :GET, "/viking/products", "Get all products pending check"
   def index
-    products = params[:batch] ? Product.viking_pending_batch : Product.viking_pending
+    products = (params[:batch] ? Product.viking_pending_batch : Product.viking_pending).uniq
     products.each { |p| p.viking_reset }
     render json: products, each_serializer: Viking::ProductSerializer
   end
@@ -77,5 +77,4 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     @versions = params[:versions]
     @options_completed = params[:options_completed]
   end
-  
 end
