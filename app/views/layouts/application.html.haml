@@ -20,13 +20,22 @@
         .navbar-collapse.collapse
           %ul.nav.navbar-nav
             %li#nav-how
-              %a{href: "#"} #{t("home.how")}
+              %a{href: "#"}= t("home.how")
             %li#nav-faq
-              %a{href: "#"} #{t("home.faq")}
+              %a{href: "#"}= t("home.faq")
             %li#nav-contact
-              %a{href: "#"} #{t("home.contact")}
+              %a{href: "#"}= t("home.contact")
           %ul.nav.navbar-nav.navbar-right
-            %button.btn.btn-default.navbar-btn #{t("home.sign_in")}
+            -if current_user
+              %li.dropdown
+                %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
+                  = current_user.name
+                  %b.caret
+                %ul.dropdown-menu
+                  %li
+                    =link_to t("app.signout.submit"), destroy_user_session_path, method:"delete"
+            -else
+              %a.btn.btn-default.navbar-btn{href:"#{connect_path}"}= t("app.signin.submit")
 
     .container
       = yield

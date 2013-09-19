@@ -326,6 +326,8 @@ fr:
     signup:
       title: "Nouvel utilisateur"
       submit: "Créer son compte"
+    signout:
+      submit: "Se déconnecter"
     cancel: "Annuler"
     close: "Fermer"
     wait: "Patientez..."
@@ -337,9 +339,3 @@ fr:
     password_instructions_fail: "Erreur dans l'email. Merci de vérifier et recommencer."
     my_addresses: "Mes adresses"
     my_payment_cards: "Mes cartes"
-    
-  home:
-    how: "Comment ça marche ?"
-    faq: "Questions / Réponses"
-    contact: "Contact"
-    sign_in: "Se connecter"
