@@ -1,6 +1,6 @@
 = form_for resource, as:resource_name, remote: true, url:session_path(resource_name), html:{class:'form form-horizontal',id:'signin-form'} do |f|
   .form-group.display-none#signin-error-box
-    .col-lg-offset-4.col-lg-6.alert.alert-danger#signin-error-text
+    .col-lg-10.alert.alert-danger#signin-error-text
   .form-group
     = f.label :email, class:"col-lg-4 control-label"
     .col-lg-6

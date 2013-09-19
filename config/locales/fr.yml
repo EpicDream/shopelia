@@ -209,10 +209,10 @@ fr:
   activerecord:
     attributes:
       user:
-        email: "Email"
-        password: "Mot de passe"
-        first_name: "Prénom"
-        last_name: "Nom"
+        email: "L'email"
+        password: "Le mot de passe"
+        first_name: "Le prénom"
+        last_name: "Le nom"
       address:
         first_name: "Le prénom"
         last_name: "Le nom"
@@ -231,6 +231,7 @@ fr:
         cvv: "Le code de vérification"
         
     errors:
+      no_number_allowed: "ne peut pas contenir de chiffres"
       models:
         address:
           attributes:

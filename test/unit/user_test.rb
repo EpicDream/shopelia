@@ -66,6 +66,50 @@ class UserTest < ActiveSupport::TestCase
     assert_equal 0, ActionMailer::Base.deliveries.count
   end
 
+  test "it should fail user with short first name" do
+    user = User.new(
+      :email => "user@gmail.com",
+      :first_name => "A",
+      :visitor => true,
+      :developer_id => developers(:prixing).id)
+    
+    assert !user.save
+    assert_match /court/, user.errors.full_messages.first
+  end
+
+  test "it should fail user with first name containing numbers" do
+    user = User.new(
+      :email => "user@gmail.com",
+      :first_name => "a123",
+      :visitor => true,
+      :developer_id => developers(:prixing).id)
+    
+    assert !user.save
+    assert_match /chiffres/, user.errors.full_messages.first
+  end
+
+  test "it should fail user with short last name" do
+    user = User.new(
+      :email => "user@gmail.com",
+      :last_name => "A",
+      :visitor => true,
+      :developer_id => developers(:prixing).id)
+    
+    assert !user.save
+    assert_match /court/, user.errors.full_messages.first
+  end
+
+  test "it should fail user with last name containing numbers" do
+    user = User.new(
+      :email => "user@gmail.com",
+      :last_name => "a123",
+      :visitor => true,
+      :developer_id => developers(:prixing).id)
+    
+    assert !user.save
+    assert_match /chiffres/, user.errors.full_messages.first
+  end
+
   test "it should fail user creation with a bad address" do
     user = User.create(
       :email => "user@gmail.com", 

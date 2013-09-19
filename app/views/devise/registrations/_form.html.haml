@@ -1,6 +1,6 @@
 = form_for resource, as:resource_name, remote: true, url:registration_path(resource_name), html:{class:'form form-horizontal',id:'signup-form'} do |f|
   .form-group.display-none#signup-error-box
-    .col-lg-offset-4.col-lg-6.alert.alert-danger#signup-error-text
+    .col-lg-10.alert.alert-danger#signup-error-text
   .form-group
     = f.label :first_name, class:"col-lg-4 control-label"
     .col-lg-6

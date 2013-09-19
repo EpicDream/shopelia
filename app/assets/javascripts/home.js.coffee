@@ -20,7 +20,11 @@ window.shopeliaFastClick = (buttonArray) ->
 Connect =
   init: ->
     $("#signin-form").on "ajax:error", (data, xhr, response) ->
-      $("#signup-error").html(xhr.responseText).show "fast"
+      $("#signin-error-text").html(xhr.responseText)
+      $("#signin-error-box").show("fast")
+    $("#signup-form").on "ajax:error", (data, xhr, response) ->
+      $("#signup-error-text").html(xhr.responseText)
+      $("#signup-error-box").show("fast")
 
 $(document).ready ->
   if $("body.action-connect").length > 0

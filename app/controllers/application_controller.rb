@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :set_navbar
   before_filter :set_navigator_properties
+  before_filter :retrieve_developer
   layout :set_layout
   
   def after_sign_in_path_for(resource)
@@ -49,4 +50,8 @@ class ApplicationController < ActionController::Base
     ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
   end
   
+  def retrieve_developer
+    key = ENV['API_KEY'] || cookies["developer"] || "e35c8cbbcfd7f83e4bb09eddb5a3f4c461c8d30a71dc498a9fdefe217e0fcd44"
+    @developer = Developer.find_by_api_key(key)
+  end
 end
