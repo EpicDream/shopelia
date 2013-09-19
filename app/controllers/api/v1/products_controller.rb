@@ -7,7 +7,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   api :GET, "/api/products", "Get product information"
   param :url, String, "Url of the product to get", :required => true
   def index
-    render :json => @product ? ProductSerializer.new(@product, scope:@scope).as_json[:product] : {}
+    render :json => @product ? ProductSerializer.new(@product, scope:@scope).as_json[:product] : {:versions => []}
   end
 
   api :POST, "/api/products", "Get products information"
