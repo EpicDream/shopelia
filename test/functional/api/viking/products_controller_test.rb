@@ -200,6 +200,11 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
       :device_id => devices(:web).id,
       :action => Event::VIEW)
     Event.from_urls(
+      :urls => ["http://www.amazon.fr/1","http://www.amazon.fr/2"],
+      :developer_id => @developer.id,
+      :device_id => devices(:web).id,
+      :action => Event::CLICK)
+    Event.from_urls(
       :urls => ["http://www.priceminister.com/my_product"],
       :developer_id => @developer.id,
       :device_id => devices(:web).id,
