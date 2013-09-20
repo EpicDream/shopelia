@@ -15,16 +15,15 @@ class Shopelia.Controllers.ProductsController extends Shopelia.Controllers.Contr
     @poller.start()
 
   onPollerDataAvailable: (data) ->
-    console.log('data')
-    console.log(data)
-    @product.setProduct(data)
-    if @product.get('ready') == 1
-      if @product.get('available')    
-        @region.show(@view)
-      else
-        @onPollerExpired()
-    if @product.get('options_completed') == 1
-      @poller.stop()
+    if data.versions
+      @product.setProduct(data)
+      if @product.get('ready') == 1
+        if @product.get('available')    
+          @region.show(@view)
+        else
+          @onPollerExpired()
+      if @product.get('options_completed') == 1
+        @poller.stop()
 
   onPollerExpired: ->
     if @product.get('ready') == 0

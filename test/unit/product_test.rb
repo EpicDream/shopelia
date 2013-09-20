@@ -175,11 +175,11 @@ class ProductTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
       :action => Event::VIEW)
-    assert_equal products(:usbkey), Product.viking_shift
+    assert_equal products(:usbkey), Product.viking_pending.first
     products(:usbkey).update_attribute :versions_expires_at, 1.hour.from_now
-    assert_equal products(:headphones), Product.viking_shift
+    assert_equal products(:headphones), Product.viking_pending.first
     products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
-    assert Product.viking_shift.nil?
+    assert Product.viking_pending.first.nil?
   end
 
   test "it should get last product needing a Viking check in batch mode" do
@@ -188,11 +188,11 @@ class ProductTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
       :action => Event::REQUEST)
-    assert_equal products(:usbkey), Product.viking_shift_batch
+    assert_equal products(:usbkey), Product.viking_pending_batch.first
     products(:usbkey).update_attribute :versions_expires_at, 1.hour.from_now
-    assert_equal products(:headphones), Product.viking_shift_batch
+    assert_equal products(:headphones), Product.viking_pending_batch.first
     products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now
-    assert Product.viking_shift_batch.nil?
+    assert Product.viking_pending_batch.first.nil?
   end
 
   test "it should expires versions" do
