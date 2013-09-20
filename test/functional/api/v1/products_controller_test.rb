@@ -12,7 +12,7 @@ class Api::V1::ProductsControllerTest < ActionController::TestCase
     get :index, url:"bla"
     assert_response :success
     
-    assert_equal [], json_response["versions"]
+    assert json_response.empty?
   end
 
   test "it should send developer scope to product versions in order to compute cashfront value" do
