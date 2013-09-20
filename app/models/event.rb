@@ -55,6 +55,6 @@ class Event < ActiveRecord::Base
   end
 
   def reset_viking_sent_at
-    self.product.update_column "viking_sent_at", nil if self.product.versions_expired?
+    self.product.update_column "viking_sent_at", nil if self.product.persisted? && self.product.versions_expired?
   end
 end
