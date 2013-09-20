@@ -211,6 +211,7 @@ fr:
       user:
         email: "Email"
         password: "Mot de passe"
+        password_confirmation: "Confirmation"
         first_name: "Prénom"
         last_name: "Nom"
       address:
@@ -326,16 +327,20 @@ fr:
     signup:
       title: "Nouvel utilisateur"
       submit: "Créer son compte"
+      invalid_credentials: "Erreur dans l'email ou le mot de passe"
     signout:
       submit: "Se déconnecter"
+    password:
+      reset: "Réinitialiser mon mot de passe"
+      forgot: "Mot de passe oublié ?"
+      change: "Changement du mot de passe"
+      send_instructions: "Recevoir les instructions"
+      instructions_sent: "Les informations pour réinitialiser votre mot de passe vous ont été envoyées par email. Nous vous invitons à consulter votre boite email (pensez à vérifier votre dossier SPAM)."
+      instructions_fail: "Erreur dans l'email. Merci de vérifier et recommencer."
     cancel: "Annuler"
     close: "Fermer"
+    confirm: "Valider"
     wait: "Patientez..."
     new_session: "Se connecter sur Shopelia"
-    forgot_your_password: "Mot de passe oublié ?"
-    invalid_credentials: "Erreur dans l'email ou le mot de passe"
-    send_me_reset_password_instructions: "Réinitialiser mon mot de passe"
-    password_instructions_sent: "Les informations pour réinitialiser votre mot de passe vous ont été envoyées par email. Nous vous invitons à consulter votre boite email (pensez à vérifier votre dossier SPAM)."
-    password_instructions_fail: "Erreur dans l'email. Merci de vérifier et recommencer."
     my_addresses: "Mes adresses"
     my_payment_cards: "Mes cartes"

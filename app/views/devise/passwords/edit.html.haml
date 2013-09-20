@@ -1,25 +1,26 @@
-%h2= t('.change_your_password', :default => 'Change your password')
-
-= simple_form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put },:validate => true) do |f|
-  = f.error_notification
-
-  = f.input :reset_password_token, :as => :hidden
-  = f.full_error :reset_password_token
-
-  .form-inputs
-    = f.input :password, :label => false, :required => true, :autofocus => true, :placeholder => t('.new_password', :default => 'New password')
-    = f.input :password_confirmation, :label => false, :required => true, :placeholder => t('.confirm_new_password', :default => 'Confirm new password')
-    = f.button :submit, t('.change_my_password', :default => 'Change my password') , id:"reset_password_submit_btn"
-
-= render "devise/shared/links"
-:javascript
-  $(document).ready(function() {
-     $("#reset_password_submit_btn").click(function(){
-       if($("#user_password").val() == undefined || $("#user_password").val() == "") {
-         alert('Veuillez saisir un mot de passe');
-         $("#user_password").focus()
-         return false;
-       }
-     })
-  });
+.fluid
+  .row
+    .col-md-6
+      .spacer50
+      %h2= t('app.password.change')
+      .spacer25
+      = form_for resource, as:resource_name, url:password_path(resource_name), html:{method:'put',class:'form form-horizontal',id:'change-password-form'} do |f|
+        = f.hidden_field :reset_password_token
+        - if resource.errors.any?
+          .form-group
+            .col-lg-10.alert.alert-danger
+              - resource.errors.full_messages.uniq.each do |msg|
+                = msg
+                %br
+        .form-group
+          = f.label :password, class:"col-lg-4 control-label"
+          .col-lg-6
+            = f.text_field :password, class:"form-control input-lg", type:"password", placeholder:"#{t('placeholders.user.password')}"
+        .form-group
+          = f.label :password_confirmation, class:"col-lg-4 control-label"
+          .col-lg-6
+            = f.text_field :password_confirmation, class:"form-control input-lg", type:"password", placeholder:"#{t('placeholders.user.password')}"
+        .form-group
+          .col-lg-offset-4.col-lg-6
+            = f.submit t("app.confirm"), class:"btn btn-success btn-lg", disable_with:t("app.wait")
 
