@@ -97,7 +97,6 @@ Shopelia::Application.routes.draw do
     namespace :viking do
       resources :products, :only => [:index, :update]
       namespace :products do
-        get :shift
         get :failure
         get :failure_shift
         get :alive
