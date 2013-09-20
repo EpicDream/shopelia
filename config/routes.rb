@@ -1,7 +1,9 @@
 require 'api_constraints'
+require 'sidekiq/web'
 
 Shopelia::Application.routes.draw do
-
+  
+  mount Sidekiq::Web => '/sidekiq'
   match "/checkout", :controller => "html_app", :action => "index"
 
   apipie

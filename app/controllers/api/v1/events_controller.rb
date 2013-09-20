@@ -13,13 +13,14 @@ class Api::V1::EventsController < Api::V1::BaseController
   param :visitor, String, "Visitor UUID", :required => false
   param :developer, String, "Developer key", :required => true
   def index
-    Event.from_urls(
+    EventsWorker.perform_async({
       :urls => params[:urls].split("||"),
       :developer_id => @developer.id,
       :action => @action,
       :tracker => @tracker,
       :device_id => @device.id,
-      :ip_address => request.remote_ip)
+      :ip_address => request.remote_ip
+    })
     head :no_content
   end
   
@@ -28,13 +29,14 @@ class Api::V1::EventsController < Api::V1::BaseController
   param :tracker, String, "Tracker", :required => false
   param :visitor, String, "Visitor UUID", :required => false
   def create
-    Event.from_urls(
+    EventsWorker.perform_async({
       :urls => params[:urls],
       :developer_id => @developer.id,
       :action => @action,
       :tracker => @tracker,
       :device_id => @device.id,
-      :ip_address => request.remote_ip)
+      :ip_address => request.remote_ip
+    })
     head :no_content
   end
   
