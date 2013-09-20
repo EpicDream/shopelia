@@ -264,6 +264,35 @@ class ProductTest < ActiveSupport::TestCase
     assert product.versions_expires_at > Time.now
   end  
   
+  test "it should reset viking values" do
+    product = products(:usbkey)
+    product.update_attributes(options_completed: true, versions:[
+      { availability:"in stock",
+        brand: "brand",
+        reference: "reference",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        shipping_info: "info shipping",
+        price_shipping: "3.5",
+        option1: {"text" => "rouge"},
+        option2: {"text" => "34"}
+      }])
+
+    assert product.reload.options_completed
+    assert product.ready
+    assert_not_nil product.viking_sent_at
+
+    product.viking_reset
+
+    assert !product.reload.options_completed
+    assert !product.ready
+    assert product.viking_sent_at.nil?
+    assert_equal 0, product.product_versions.available.count
+  end
+
   test "it should set previous version as unavailable" do
     product = products(:usbkey)
     product.viking_reset
