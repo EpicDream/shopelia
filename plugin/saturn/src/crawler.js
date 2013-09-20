@@ -1,6 +1,8 @@
-var saturn = {};
+// Saturn Crawler.
+// Author : Vincent Renaudineau
+// Created at : 2013-09-20
 
-(function(that) {
+(function() {
 
 DELAY_BETWEEN_OPTIONS = 1500;
 OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i
@@ -32,7 +34,9 @@ function searchBackgroudImagesOptions(elems) {
     return null;
 };
 
-that.getOptions = function(pathes) {
+var Crawler = {};
+
+Crawler.getOptions = function(pathes) {
   if (! pathes) return [];
   if (! (pathes instanceof Array))
     pathes = [pathes];
@@ -73,7 +77,7 @@ that.getOptions = function(pathes) {
   return [];
 };
 
-that.setOption = function(pathes, option) {
+Crawler.setOption = function(pathes, option) {
   if (! pathes) return [];
   if (! (pathes instanceof Array))
     pathes = [pathes];
@@ -109,7 +113,7 @@ that.setOption = function(pathes, option) {
   return false;
 };
 
-that.crawl = function(mapping) {
+Crawler.crawl = function(mapping) {
   var option = {};
   var textFields = ['name', 'brand', 'description', 'price', 'price_strikeout', 'price_shipping', 'shipping_info', 'availability'];
   for (var i = 0, li=textFields.length ; i < li ; i++) {
@@ -153,7 +157,7 @@ that.crawl = function(mapping) {
       if (e.length == 0) continue;
       var images = e.add(e.find("img")).filter("img");
       if (images.length == 0) continue;
-      var values = _.chain(images).map(function(img) {return img.getAttribute("src");}).uniq().value();
+      var values = $.makeArray(images).map(function(img) {return img.getAttribute("src");}).unique();
       if (key == 'image_url')
         values = values[0];
       option[key] = values;
@@ -163,18 +167,18 @@ that.crawl = function(mapping) {
   return option;
 };
 
-that.doNext = function(action, mapping, level, option) {
+Crawler.doNext = function(action, mapping, option, value) {
   var result,
-      key = "option"+(level+1);
+      key = "option"+(option);
   switch(action) {
     case "getOptions":
-      result = mapping[key] ? that.getOptions(mapping[key].path) : [];
+      result = mapping[key] ? Crawler.getOptions(mapping[key].path) : [];
       break;
     case "setOption":
-      result = that.setOption(mapping[key].path, option);
+      result = Crawler.setOption(mapping[key].path, value);
       break;
     case "crawl":
-      result = that.crawl(mapping);
+      result = Crawler.crawl(mapping);
       break;
     default:
       console.error("Unknow command", action);
@@ -183,51 +187,11 @@ that.doNext = function(action, mapping, level, option) {
   return result;
 };
 
-})(saturn);
+if ("object" == typeof module && module && "object" == typeof module.exports)
+  exports = module.exports = Crawler;
+else if ("function" == typeof define && define.amd)
+  define("crawler", ["jquery", "html_utils"], function(){return Crawler});
+else
+  window.Crawler = Crawler;
 
-chrome.extension.onMessage.addListener(function(hash, sender, callback) {
-  if (sender.id != chrome.runtime.id) return;
-  console.debug("ProductCrawl task received", hash);
-  var result = saturn.doNext(hash.action, hash.mapping, hash.level, hash.option);
-  if (hash.action == "setOption")
-    setTimeout(goNextStep, DELAY_BETWEEN_OPTIONS);
-  else if (callback)
-    callback(result);
-});
-
-function goNextStep() {
-  chrome.extension.sendMessage("nextStep");
-};
-
-jQuery.fn.commonAncestor = function() {
-  var parents = [];
-  var minlen = Infinity;
-
-  $(this).each(function() {
-    var curparents = $(this).parents();
-    parents.push(curparents);
-    minlen = Math.min(minlen, curparents.length);
-  });
-
-  for (var i in parents) {
-    parents[i] = parents[i].slice(parents[i].length - minlen);
-  }
-
-  // Iterate until equality is found
-  for (var i = 0; i < parents[0].length; i++) {
-    var equal = true;
-    for (var j in parents) {
-      if (parents[j][i] != parents[0][i]) {
-        equal = false;
-        break;
-      }
-    }
-    if (equal) return $(parents[0][i]);
-  }
-  return $([]);
-};
-
-// To handle redirection, that throws false 'complete' state.
-$(document).ready(function() {
-  setTimeout(goNextStep, 100);
-});
+})();

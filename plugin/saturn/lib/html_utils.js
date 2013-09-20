@@ -358,16 +358,9 @@ hu.cookies.removeAll = function() {
 if ("object" == typeof module && module && "object" == typeof module.exports)
   exports = module.exports = hu;
 else if ("function" == typeof define && define.amd)
-  define("html_utils",["jquery","underscore"],function(){return hu});
+  define("html_utils", ["jquery","underscore"], function(){return hu});
 else
   this.hu = hu
-
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = hu;
-else if ("function" == typeof define && define.amd)
-  define("html_utils",[],function(){return hu});
-else
-  this.hu = hu;
 
 })();
 
