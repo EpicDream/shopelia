@@ -45,6 +45,7 @@ class Product < ActiveRecord::Base
   
   def viking_reset
     self.update_column "viking_sent_at", Time.now
+    self.update_column "options_completed", false
     self.product_versions.update_all "available='f'"
     self
   end
