@@ -31,11 +31,11 @@
     return res;
   };
   // Get firstOption or null.
-  // If options.nonArg is set to true, check if option is not set.
+  // If options.nonAlone is set to true, check if option is not given in argument, or has not a single value.
   that.prototype.firstOption = function(options) {
     options = options || {};
     var node = this._optionTree.firstChild();
-    while (node && node.value === null && (! options.nonArg || ! this.argOptions[node.depth()]))
+    while (node && (node.value === null || (options.nonAlone && ! node.hasPreviousSibling() && ! node.hasNextSibling())))
       node = node.firstChild();
     return node && node.parent() ? node.parent() : null;
   };

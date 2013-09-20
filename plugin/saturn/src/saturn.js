@@ -50,8 +50,8 @@ function buildMapping(uri, hash) {
       resMapping = $extend(true, {}, hash[host], resMapping);
     host = host.replace(/^[^\.]+(\.|$)/, '');
   }
-  resMapping.option1 = resMapping.colors;
-  resMapping.option2 = resMapping.sizes;
+  resMapping.option1 = resMapping.option1 || resMapping.colors;
+  resMapping.option2 = resMapping.option2 || resMapping.sizes;
   return resMapping;
 };
 

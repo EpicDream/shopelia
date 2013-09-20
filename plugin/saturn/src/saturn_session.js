@@ -82,7 +82,7 @@ that.prototype.next = function() {
 };
 
 that.prototype.createSubTasks = function() {
-  var firstOption = this.options.firstOption({nonArg: true}),
+  var firstOption = this.options.firstOption({nonAlone: true}),
       option = firstOption.depth()+1,
       values = Object.keys(firstOption._childrenH);
   this._subTasks = {};
