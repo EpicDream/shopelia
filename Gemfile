@@ -33,6 +33,9 @@ gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
 gem 'sanitize'
 gem 'httpclient'
+gem 'sidekiq'
+gem 'sinatra', require: false
+gem 'slim'
 
 # Gems used only for assets and not required
 # in production environments by default.
