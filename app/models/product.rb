@@ -18,8 +18,8 @@ class Product < ActiveRecord::Base
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
   attr_accessible :brand, :reference, :viking_failure, :muted_until
-  attr_accessible :options_completed, :viking_sent_at
-  attr_accessor :versions
+  attr_accessible :options_completed, :viking_sent_at, :batch
+  attr_accessor :versions, :batch
   
   scope :viking_pending, lambda { joins(:events).merge(Event.buttons).merge(Product.viking_base_request) }
   scope :viking_pending_batch, lambda { joins(:events).merge(Event.requests).merge(Product.viking_base_request) }
@@ -28,21 +28,13 @@ class Product < ActiveRecord::Base
   scope :viking_base_request, lambda {
     where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') " +
       "or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and " +
-      "(muted_until is null or muted_until < ?) and products.viking_sent_at is null", Time.now, 6.hours.ago, 12.hours.ago, Time.now) 
+      "(muted_until is null or muted_until < ?) and products.viking_sent_at is null", Time.now, 6.hours.ago, 12.hours.ago, Time.now).order("events.created_at desc").limit(100)
   }
   
   def self.fetch url
     Product.find_or_create_by_url(Linker.clean(url)) unless url.nil?
   end
   
-  def self.viking_shift 
-    Product.viking_pending.order("events.created_at desc").first
-  end
-
-  def self.viking_shift_batch
-    Product.viking_pending_batch.order("events.created_at desc").first
-  end
-
   def versions_expired?
     self.versions_expires_at.nil? || self.versions_expires_at < Time.now
   end
@@ -53,6 +45,7 @@ class Product < ActiveRecord::Base
   
   def viking_reset
     self.update_column "viking_sent_at", Time.now
+    self.update_column "options_completed", false
     self.product_versions.update_all "available='f'"
     self
   end

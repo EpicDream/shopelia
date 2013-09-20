@@ -2,6 +2,6 @@
          <div id="user-fields"></div>
          <div id="address-fields"></div>
          <div id="card-fields"></div>
-        <button id="btn-register-user" class="custom-btn btn-block">PRÉPARER MA COMMANDE</button>
+        <button id="btn-register-user" class="custom-btn btn-block">CONTINUER</button>
     </form>
 

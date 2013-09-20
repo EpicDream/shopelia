@@ -13,54 +13,13 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     get :index
     
     assert_response :success   
-    assert_equal 2, json_response.count
+    assert_equal 3, json_response.count
+    assert_equal [nil, true].to_set, json_response.map { |e| e["batch"] }.to_set
 
     get :index
     assert_equal 0, json_response.count    
   end
-
-  test "it should send back first 100 products requiring a Viking check in batch mode" do
-    populate_events
-    get :index, batch:true
-    
-    assert_response :success   
-    assert_equal 1, json_response.count
-
-    get :index, batch:true
-    assert_equal 0, json_response.count    
-  end
   
-  test "it should send back first product in queue waiting for a Viking check" do
-    populate_events
-    get :shift
-    
-    assert_response :success   
-    assert_match /amazon.fr\/2/, json_response["url"]
-
-    get :shift
-    
-    assert_response :success   
-    assert_match /amazon.fr\/1/, json_response["url"]
-  end
-
-  test "it should send back first product in queue waiting for a Viking check in batch mode" do
-    populate_events
-    get :shift, batch:true
-    
-    assert_response :success   
-    assert_match /priceminister/, json_response["url"]
-
-    get :shift, batch:true
-    assert json_response.empty?
-  end
-  
-  test "it should send empty hash if not product waiting" do
-    get :shift
-    
-    assert_response :success
-    assert json_response.empty?
-  end
-
   test "it should update product with versions" do
     populate_events
     product = Product.first
@@ -199,6 +158,11 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
       :developer_id => @developer.id,
       :device_id => devices(:web).id,
       :action => Event::VIEW)
+    Event.from_urls(
+      :urls => ["http://www.amazon.fr/1","http://www.amazon.fr/2"],
+      :developer_id => @developer.id,
+      :device_id => devices(:web).id,
+      :action => Event::CLICK)
     Event.from_urls(
       :urls => ["http://www.priceminister.com/my_product"],
       :developer_id => @developer.id,

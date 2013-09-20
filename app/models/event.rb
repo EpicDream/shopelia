@@ -28,15 +28,15 @@ class Event < ActiveRecord::Base
   scope :buttons, where(action:[VIEW, CLICK])
   
   def self.from_urls data
-    data[:urls].each do |url|
+    (data[:urls] || data["urls"]).each do |url|
       next if url.blank?
       Event.create!(
         :url => url,
-        :action => data[:action],
-        :developer_id => data[:developer_id],
-        :device_id => data[:device_id],
-        :tracker => data[:tracker],
-        :ip_address => data[:ip_address])
+        :action => data["action"] || data[:action],
+        :developer_id => data["developer_id"] || data[:developer_id],
+        :device_id => data["device_id"] || data[:device_id],
+        :tracker => data["tracker"] || data[:tracker],
+        :ip_address => data["ip_address"] || data[:ip_address])
     end
   end        
   
@@ -55,6 +55,6 @@ class Event < ActiveRecord::Base
   end
 
   def reset_viking_sent_at
-    self.product.update_column "viking_sent_at", nil if self.product.versions_expired?
+    self.product.update_column "viking_sent_at", nil if self.product.persisted? && self.product.versions_expired?
   end
 end
