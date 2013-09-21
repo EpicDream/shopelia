@@ -30,7 +30,6 @@ class Api::V1::EventsController < Api::V1::BaseController
   param :tracker, String, "Tracker", :required => false
   param :visitor, String, "Visitor UUID", :required => false
   def create
-    urls = 
     EventsWorker.perform_async({
       :urls => @urls,
       :developer_id => @developer.id,

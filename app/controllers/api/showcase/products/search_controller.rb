@@ -9,7 +9,8 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
         render :json => {}
       else
         r = PrixingWrapper.convert(prixing)
-        generate_events(r[:urls])
+        prepare_urls
+        generate_events
         render :json => r
       end
     else
@@ -19,14 +20,15 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
 
   private
   
-  def generate_events urls
-    Event.from_urls(
-      :urls => urls,
+  def generate_events
+    EventsWorker.perform_async({
+      :urls => @urls,
       :developer_id => @developer.id,
       :action => Event::VIEW,
       :tracker => @tracker,
       :device_id => @device.id,
-      :ip_address => request.remote_ip)
+      :ip_address => request.remote_ip
+    })
   end
 
   def prepare_params
@@ -37,5 +39,9 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
     else
       render :json => {"Error" => "Missing visitor param"}, status: :bad_request and return
     end
+  end
+
+  def prepare_urls
+    @urls = (params[:urls] || []).map{|e| e.unaccent}
   end
 end
