@@ -4,12 +4,12 @@ class Api::Showcase::Products::SearchControllerTest < ActionController::TestCase
   include Devise::TestHelpers
   
   test "it should answer to ean search" do
-    assert_difference "Event.count", 2 do
-      get :index, ean:"9782749910116", visitor:"uuid", format: :json
+    jobs = EventsWorker.jobs.count
+    get :index, ean:"9782749910116", visitor:"uuid", format: :json
     
-      assert_response :success
-      assert json_response["name"].present?
-    end
+    assert_response :success
+    assert json_response["name"].present?
+    assert EventsWorker.jobs.count > jobs
   end
 
   test "it should fail answer if no visitor param" do
