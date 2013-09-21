@@ -28,7 +28,7 @@ class Event < ActiveRecord::Base
   scope :buttons, where(action:[VIEW, CLICK])
   
   def self.from_urls data
-    (data[:urls] || data["urls"]).each do |url|
+    (data[:urls] || data["urls"] || []).each do |url|
       next if url.blank?
       Event.create!(
         :url => url,

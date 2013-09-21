@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'test_helper'
 
 class Api::V1::EventsControllerTest < ActionController::TestCase
@@ -9,7 +10,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
 
   test "it should create events from list of urls" do
     assert_difference("EventsWorker.jobs.count", 1) do
-      post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/1"], tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key, format: :json
+      post :create, urls:["http://www.amazon.fr/1/é","http://www.amazon.fr/2"], tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key, format: :json
     end
     assert_equal developers(:prixing).api_key, cookies[:developer_key]
     
@@ -24,11 +25,13 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
     assert_equal "toto", event.tracker
     assert_equal true, event.monetizable
     assert event.device.present?
+
+    assert_equal ["http://www.amazon.fr/1/e","http://www.amazon.fr/2"].to_set, Event.all.map(&:product).map(&:url).to_set
   end
 
   test "it should create events from list of urls in GET mode" do
     assert_difference("EventsWorker.jobs.count", 1) do
-      get :index, urls:"http://www.prout.fr/1||http://www.prout.fr/1", tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key
+      get :index, urls:"http://www.prout.fr/1/é||http://www.prout.fr/2", tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key
     end
     assert_equal developers(:prixing).api_key, cookies[:developer_key]
 
@@ -36,7 +39,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
       EventsWorker.drain
     end
 
-    assert_equal ["http://www.prout.fr/1","http://www.prout.fr/1"].to_set, Event.all.map(&:product).map(&:url).to_set
+    assert_equal ["http://www.prout.fr/1/e","http://www.prout.fr/2"].to_set, Event.all.map(&:product).map(&:url).to_set
   end
 
   test "it should create events from list of urls and with action click" do
