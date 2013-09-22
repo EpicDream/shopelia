@@ -8,6 +8,7 @@ ENV["RAILS_ENV"] = "test"
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'sidekiq/testing'
+require 'capybara/rails'
 
 class ActiveSupport::TestCase
   fixtures :all
@@ -41,3 +42,10 @@ class ActiveSupport::TestCase
   end
 end
 
+class ActionDispatch::IntegrationTest
+  include Capybara::DSL
+
+  setup do
+    Capybara.javascript_driver = :webkit
+  end
+end

@@ -76,6 +76,7 @@ group :test do
   gem 'webmock'
   gem "simplecov", :require => false
   gem "codeclimate-test-reporter"
+  gem "capybara"
 end
 
 group :assets do
