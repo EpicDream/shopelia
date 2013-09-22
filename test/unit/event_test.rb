@@ -43,13 +43,13 @@ class EventTest < ActiveSupport::TestCase
     end
   end
 
-  test "it should skip blank urls" do
+  test "it should skip bad urls" do
     assert_difference(["Event.count","Product.count"], 0) do
       Event.from_urls(
         :action => Event::VIEW,
         :device_id => devices(:web).id,
         :developer_id => developers(:prixing).id,
-        :urls => [ "" ])
+        :urls => [ "", " ", "/product", "none" ])
     end
   end
 
