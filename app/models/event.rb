@@ -29,7 +29,7 @@ class Event < ActiveRecord::Base
   
   def self.from_urls data
     (data[:urls] || data["urls"] || []).each do |url|
-      next if url.blank?
+      next if url !~ /^http/
       Event.create!(
         :url => url,
         :action => data["action"] || data[:action],
