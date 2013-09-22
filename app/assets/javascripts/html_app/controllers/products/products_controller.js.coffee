@@ -26,5 +26,5 @@ class Shopelia.Controllers.ProductsController extends Shopelia.Controllers.Contr
         @poller.stop()
 
   onPollerExpired: ->
-    if @product.get('ready') == 0
+    if (@product.get('ready') || 0) == 0
       Shopelia.vent.trigger("modal#show_product_not_available",@product)
