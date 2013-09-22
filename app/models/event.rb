@@ -43,7 +43,7 @@ class Event < ActiveRecord::Base
   private
   
   def find_or_create_product
-    self.product = Product.fetch(self.url) unless self.url.blank?
+    self.product_id = Product.fetch(self.url).id unless self.url.blank?
   end
   
   def set_monetizable
