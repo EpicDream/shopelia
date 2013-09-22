@@ -108,7 +108,7 @@ class ProductVersion < ActiveRecord::Base
     str = str.downcase
     # special cases
     str = str.gsub(/^.*un total de/, "")
-    str = str.gsub(/so colissimo \(.*\)/, "")
+    str = str.gsub(/\(.*\)/, "")
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else

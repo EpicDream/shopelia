@@ -28,8 +28,8 @@ class Event < ActiveRecord::Base
   scope :buttons, where(action:[VIEW, CLICK])
   
   def self.from_urls data
-    (data[:urls] || data["urls"]).each do |url|
-      next if url.blank?
+    (data[:urls] || data["urls"] || []).each do |url|
+      next if url !~ /^http/
       Event.create!(
         :url => url,
         :action => data["action"] || data[:action],
@@ -43,7 +43,7 @@ class Event < ActiveRecord::Base
   private
   
   def find_or_create_product
-    self.product = Product.fetch(self.url) unless self.url.blank?
+    self.product_id = Product.fetch(self.url).id unless self.url.blank?
   end
   
   def set_monetizable

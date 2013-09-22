@@ -32,7 +32,9 @@ class Product < ActiveRecord::Base
   }
   
   def self.fetch url
-    Product.find_or_create_by_url(Linker.clean(url)) unless url.nil?
+    p = Product.find_or_create_by_url(Linker.clean(url)) unless url.nil?
+    p.save! unless p.persisted?
+    p
   end
   
   def versions_expired?
