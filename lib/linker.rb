@@ -58,6 +58,8 @@ class Linker
   def self.by_rule url
     if m = url.match(/Xiti_Redirect.htm.*xtloc=([^&]+)/)
       m[1]
+    elsif m = url.match(/xiti.*gopc.url.*xtloc=([^&]+)/)
+      m[1]      
     else
       nil
     end

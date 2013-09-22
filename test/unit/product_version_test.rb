@@ -56,7 +56,8 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should parse float" do
     str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", 
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
-            "2��79 6��30" ]
+            "2��79 6��30", "sur rdv devant chez vous (6 à 10 jours). 2.79 €",
+            "livraison à domicile (1 livreur) (le livreur (au pied de l'immeuble si vous êtes en appartement) 2 bla...) 2.79 €" ]
     str.each { |s| check_price s, 2.79 }
 
     str = [ "2", "2€", "Bla bla 2 €" ]
@@ -172,18 +173,21 @@ class ProductVersionTest < ActiveSupport::TestCase
     end
     
     array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
-              "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré" ]
+              "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
+              "disponible sous 4 semaines" ]
     array.each do |str|
-      version = ProductVersion.create(
-        product_id:@product.id,
-        price:"2.79",
-        price_shipping:"1",
-        shipping_info:"toto",
-        image_url:"toto",
-        name:"toto",
-        availability_text:str)
-      assert version.available, "#{str.inspect} failed !"
-      assert_equal str, version.availability_info
+      assert_difference "Incident.count", 0 do
+        version = ProductVersion.create(
+          product_id:@product.id,
+          price:"2.79",
+          price_shipping:"1",
+          shipping_info:"toto",
+          image_url:"toto",
+          name:"toto",
+          availability_text:str)
+        assert version.available, "#{str.inspect} failed !"
+        assert_equal str, version.availability_info
+      end
     end
   end
   
