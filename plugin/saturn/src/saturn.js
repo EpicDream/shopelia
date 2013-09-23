@@ -20,7 +20,6 @@ var Saturn, that = Saturn = function() {
   this.MAPPING_URL = this.SHOPELIA_DOMAIN + "/api/viking/merchants/";
   this.PRODUCT_EXTRACT_UPDATE = this.SHOPELIA_DOMAIN + "/api/viking/products/";
 
-  this.DELAY_BEFORE_START = 2000; // 2s
   this.DELAY_BETWEEN_PRODUCTS = 500; // 500ms
   this.DELAY_RESCUE = 60000; // a session automatically fail after 60s (needed when a lot of sizes for shoes for example).
   this.DELAY_BEFORE_REASK_MAPPING = this.TEST_ENV ? 30000 : 5 * 60000; // 30s en dev ou 5min en prod
@@ -57,7 +56,7 @@ function buildMapping(uri, hash) {
 
 //
 function preProcessData(data) {
-  if (data.url.match(/priceminister/) !== null && data.url.match(/filter=10/) === null) {
+  if (data.url && data.url.match(/priceminister/) !== null && data.url.match(/filter=10/) === null) {
     data.url += (data.url.match(/#/) !== null ? "&filter=10" : "#filter=10");
   }
 
@@ -134,7 +133,7 @@ that.prototype.updateNbTabs = function() {
     var nbTabToClose = pending.length - this.MIN_NB_TABS;
     for (var i = 0 ; i < nbTabToClose ; i++) {
       this.tabs.opened[pending[i]].toClose = true;
-      this.closeTab(pending[i]);      
+      this.closeTab(pending[i]);
     }
   } else { // On ouvre des tabs
     var nbMaxOpenable = this.MAX_NB_TABS - Object.keys(this.tabs.opened).length,
@@ -268,7 +267,7 @@ that.prototype.endSession = function(session) {
 // Virtual, must be reimplement to handle tabId is undefined and supercall with tabId.
 // You must call "this.tabs.nbUpdating++;" before anything else.
 that.prototype.openNewTab = function(tabId) {
-  if (! tabId)
+  if (tabId === undefined)
     throw "abstract function";  
   this.tabs.pending.push(tabId);
   this.tabs.opened[tabId] = {};
