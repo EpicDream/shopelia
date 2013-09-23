@@ -91,7 +91,7 @@ class LinkerTest < ActiveSupport::TestCase
   
   test "it should monetize priceminister" do
     url = Linker.monetize "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html#sort=0&filter=10&s2m_exaffid=977275"
-    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html", url
+    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html", url
   end
 
   test "it should monetize fnac url" do
@@ -123,5 +123,4 @@ class LinkerTest < ActiveSupport::TestCase
     url = Linker.monetize "http://www.darty.com/nav/achat/gros_electromenager/refrigerateur_congelateur-refrigerateur-cong/refrigerateur_congelateur_bas/samsung_rl56gsbsw.html"
     assert_equal "http://ad.zanox.com/ppc/?25424898C784334680&ulp=[[www.darty.com/nav/achat/gros_electromenager/refrigerateur_congelateur-refrigerateur-cong/refrigerateur_congelateur_bas/samsung_rl56gsbsw.html?dartycid=aff_zxpublisherid_lien-profond-libre_lientexte]]", url
   end
-
 end
