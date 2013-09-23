@@ -132,8 +132,8 @@ that.prototype.updateNbTabs = function() {
   if (this.productQueue.length == 0) {// On ferme des tabs
     var nbTabToClose = pending.length - this.MIN_NB_TABS;
     for (var i = 0 ; i < nbTabToClose ; i++) {
-      this.tabs.opened[pending[i]].toClose = true;
-      this.closeTab(pending[i]);
+      this.tabs.opened[pending[0]].toClose = true;
+      this.closeTab(pending[0]);
     }
   } else { // On ouvre des tabs
     var nbMaxOpenable = this.MAX_NB_TABS - Object.keys(this.tabs.opened).length,
