@@ -1,7 +1,6 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
-
   match "/checkout", :controller => "html_app", :action => "index"
 
   apipie

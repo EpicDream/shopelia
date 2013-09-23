@@ -18,7 +18,11 @@ class Linker
         end   
         url = res['location'] if res.code =~ /^30/
         url = url.gsub(" ", "+")
-        url = uri.scheme + "://" + uri.host + url if url =~ /^\//
+        if url =~ /^\//
+          url = uri.scheme + "://" + uri.host + url 
+        elsif url !~ /^http/
+          url = uri.scheme + "://" + uri.host + "/" + url 
+        end
         count += 1
       end while res.code =~ /^30/ && count < 10
       canonical = url.gsub(/#.*$/, "")
@@ -27,6 +31,11 @@ class Linker
       merchant = Merchant.find_by_domain(domain)
       if merchant && merchant.should_clean_args?
         canonical = canonical.gsub(/\?.*$/, "")
+      else
+        # Remove all utm_ args
+        uri = URI.parse(canonical)
+        params = Rack::Utils.parse_nested_query(uri.query).delete_if{|e| e =~ /^utm_/}
+        canonical = uri.scheme + "://" + uri.host + uri.path + (params.empty? ? "" : "?" + params.to_query)
       end
       
       UrlMatcher.create(url:orig,canonical:canonical)
@@ -58,6 +67,8 @@ class Linker
   def self.by_rule url
     if m = url.match(/Xiti_Redirect.htm.*xtloc=([^&]+)/)
       m[1]
+    elsif m = url.match(/xiti.*gopc.url.*xtloc=([^&]+)/)
+      m[1]      
     else
       nil
     end

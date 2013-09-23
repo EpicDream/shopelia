@@ -1,12 +1,14 @@
+ENV['CODECLIMATE_REPO_TOKEN'] = "a7e4e665b905b5d0a668fa45edcdcad086b0d6e0dd67e03af862d25b3b55a35c"
+ENV["RAILS_ENV"] = "test"
+
 require 'simplecov'
 SimpleCov.start
 require "codeclimate-test-reporter"
 CodeClimate::TestReporter.start
 
-ENV["RAILS_ENV"] = "test"
-
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
+require 'sidekiq/testing'
 
 class ActiveSupport::TestCase
   fixtures :all
