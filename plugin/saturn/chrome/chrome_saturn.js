@@ -45,12 +45,12 @@ that.prototype.closeTab = function(tabId) {
 };
 
 //
-that.prototype.loadProductUrlsToExtract = function(batchMode, doneCallback, failCallback) {
+that.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
   // logger.debug("Going to get product_urls to extract...");
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: this.PRODUCT_EXTRACT_URL+(batchMode ? "?batch=true" : "")+(this.TEST_ENV ? (batchMode ? "&" : "?") + "consum=false" : '')
+    url: this.PRODUCT_EXTRACT_URL+(this.TEST_ENV ? "?consum=false" : '')
   }).done(doneCallback).fail(failCallback);
 };
 

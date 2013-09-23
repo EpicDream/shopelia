@@ -99,10 +99,10 @@ that.prototype.createSubTasks = function() {
       _subTaskId: value,
     };
     prod.argOptions[option] = value;
-    this.saturn.addProductToQueue(prod);
     this._subTasks[value] = prod;
     firstOption.removeChild(firstOption.childAt(value));
-  }
+    this.saturn.addProductToQueue(prod);
+  };
   this.options.argOptions[option] = values[0];
 };
 
@@ -146,7 +146,11 @@ that.prototype.subTaskEnded = function(subSession) {
   delete this._subTasks[subSession._subTaskId];
   if (Object.keys(this._subTasks).length == 0) {
     delete this._subTasks;
-    this.sendFinalVersions();
+    if (this.strategy === 'done')
+      // last subtask ended, send final result.
+      this.sendFinalVersions();
+    // else, this subtask is not yet ended,
+    // it will call finalVersion naturally when done.
   }
 };
 
@@ -163,7 +167,7 @@ that.prototype.sendPartialVersion = function() {
 // 
 that.prototype.sendFinalVersions = function() {
   if (this._subTasks) {
-    logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '['+this.id+']' : ''), "SubTask finished, wait for others...", this.TEST_ENV ? this : '');
+    logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '['+this.id+']' : ''), "Main subTask finished, wait for others...", this.TEST_ENV ? this : '');
   } else if (typeof this._onSubTaskFinished === 'function') {
     logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '{'+this.id+'}' : ''), "SubTask finished !", this.TEST_ENV ? this : '');
     this._onSubTaskFinished(this);

@@ -72,7 +72,7 @@ that.prototype = {};
 that.prototype.main = function() {
   if (! this.crawl) return;
 
-  this.loadProductUrlsToExtract(false, function(array) {
+  this.loadProductUrlsToExtract(function(array) {
     if (! array || ! (array instanceof Array)) {
       logger.err("Error when getting new products to extract : received data is undefined or is not an Array");
       this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
@@ -129,7 +129,7 @@ that.prototype.updateNbTabs = function() {
   if (this.tabs.nbUpdating > 0)
     return;
   var pending = this.tabs.pending;
-  if (this.productQueue.length == 0) {// On ferme des tabs
+  if (this.productQueue.length == 0 && pending.length > this.MIN_NB_TABS) {// On ferme des tabs
     var nbTabToClose = pending.length - this.MIN_NB_TABS;
     for (var i = 0 ; i < nbTabToClose ; i++) {
       this.tabs.opened[pending[0]].toClose = true;
@@ -137,9 +137,9 @@ that.prototype.updateNbTabs = function() {
     }
   } else { // On ouvre des tabs
     var nbMaxOpenable = this.MAX_NB_TABS - Object.keys(this.tabs.opened).length,
-        nbWanted = this.productQueue.length - pending.length,
+        nbWanted = this.MIN_NB_TABS + this.productQueue.length - pending.length,
         nbTabToOpen = nbMaxOpenable >= nbWanted ? nbWanted : nbMaxOpenable;
-    if (nbTabToOpen == 0)
+    if (nbTabToOpen == 0 && this.productQueue.length > 0)
       logger.warn("WARNING : Too many product to crawl ("+this.productQueue.length+") and max tabs opened ("+this.MAX_NB_TABS+") !");
     for (var i = 0; i < nbTabToOpen ; i++)
       this.openNewTab();
@@ -177,9 +177,9 @@ that.prototype.onProductReceived = function(prod) {
   } else
     this.loadMapping(prod.merchant_id, function(mapping) {
       if (! mapping) {
-        logger.error("`Saturn.loadMapping' : mapping is", mapping);
+        this.sendError({id: prod.id}, 'undefined mapping for merchant_id='+prod.merchant_id);
       } else if (! mapping.data || ! mapping.data.viking) {
-        logger.warn("`Saturn.loadMapping' : merchant not supported (id="+(mapping.id ? mapping.id : prod.merchant_id)+")");
+        this.sendError({id: prod.id}, 'merchant_id='+prod.merchant_id+' is not supported (url='+prod.url+')');
       } else {
         this.mappings[mapping.id] = mapping;
         this.mappings[mapping.id].date = new Date();
@@ -193,7 +193,7 @@ that.prototype.onProductReceived = function(prod) {
         prod.mapping = buildMapping(prod.uri, this.mappings[prod.merchant_id].data.viking);
         this.addProductToQueue(prod);
       } else {
-        logger.error("Error when getting mapping to extract :", err, "for", prod);
+        this.sendError({id: prod.id}, "Error when getting mapping for merchant_id="+prod.merchant_id+" : "+err);
       }
     }.bind(this));
 };
@@ -252,11 +252,13 @@ that.prototype.createSession = function(prod, tabId) {
 };
 
 that.prototype.endSession = function(session) {
-  var tabId = session.tabId;
-  if (! this.TEST_ENV)
-    delete  this.sessions[session.tabId];
   delete this.productsBeingProcessed[session.id];
-  this.tabs.pending.push(tabId);
+  var tabId = session.tabId;
+  if (tabId) {
+    if (! this.TEST_ENV)
+      delete this.sessions[tabId];
+    this.tabs.pending.push(tabId);
+  }
   this.crawlProduct();
 };
 
@@ -292,7 +294,7 @@ that.prototype.openUrl = function(session, url) {
 };
 
 //
-that.prototype.loadProductUrlsToExtract = function(batchMode, doneCallback, failCallback) {
+that.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
   throw "abstract function";
 };
 
@@ -302,7 +304,8 @@ that.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
   throw "abstract function";
 };
 
-//
+// session may be a simple Object with only id to set,
+// when fail to load mapping for example.
 that.prototype.sendError = function(session, msg) {
   window.$e = session;
   logger.err(msg, "\n$e =", window.$e);
