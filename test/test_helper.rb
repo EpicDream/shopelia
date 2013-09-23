@@ -10,6 +10,8 @@ require 'rails/test_help'
 require 'sidekiq/testing'
 require 'capybara/rails'
 
+Dir["#{Rails.root}/test/helper/*.rb"].each {|f| puts f ; require f}
+
 class ActiveSupport::TestCase
   fixtures :all
 
@@ -44,6 +46,8 @@ end
 
 class ActionDispatch::IntegrationTest
   include Capybara::DSL
+  include CommonHelper
+  include SessionsHelper
 
   setup do
     Capybara.javascript_driver = :webkit
