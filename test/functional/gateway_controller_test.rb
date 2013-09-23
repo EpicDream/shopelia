@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class GatewayControllerTest < ActionController::TestCase
+  include Devise::TestHelpers
   
   test "it should add event and redirect to checkout" do
   	assert_difference("EventsWorker.jobs.count", 1) do

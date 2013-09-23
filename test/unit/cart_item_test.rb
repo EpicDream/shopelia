@@ -3,7 +3,7 @@ require 'test_helper'
 class CartItemTest < ActiveSupport::TestCase
   
   setup do
-    @cart = Cart.create(user_id:users(:elarch).id)
+    @cart = Cart.create(user_id:users(:elarch).id, kind:Cart::FOLLOW)
     @product_version = product_versions(:usbkey)
     @developer = developers(:prixing)
   end
@@ -34,9 +34,9 @@ class CartItemTest < ActiveSupport::TestCase
 
   test "it should allow same item for different carts" do
     CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
-    item = CartItem.new(cart_id:Cart.create(user_id:users(:elarch).id).id, product_version_id:@product_version.id, developer_id:@developer.id)  
+    item = CartItem.new(cart_id:Cart.create(user_id:users(:elarch).id, kind:Cart::CHECKOUT).id, product_version_id:@product_version.id, developer_id:@developer.id)  
 
-    assert item.save
+    assert item.save, item.errors.full_messages.join(",")
   end
 
   test "it should stop monitoring" do
@@ -50,5 +50,24 @@ class CartItemTest < ActiveSupport::TestCase
     item = CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
 
     assert_equal item.uuid, item.to_param
+  end
+
+  test "it should create cart item from url" do
+    item = CartItem.new(
+      cart_id:@cart.id, 
+      url:"http://www.amazon.fr/gp/product/2081258498",
+      developer_id:@developer.id)
+
+    assert item.save
+  end
+
+  test "it should fail cart item creation with bad url" do
+    item = CartItem.new(
+      cart_id:@cart.id, 
+      url:"bad url",
+      developer_id:@developer.id)
+
+    assert !item.save
+    assert_equal I18n.t('app.cart_items.bad_url'), item.errors.full_messages.first
   end
 end

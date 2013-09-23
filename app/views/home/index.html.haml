@@ -1,2 +1,5 @@
-.soon
-  %h1 Bientôt...
+.spacer50
+- if current_user
+  = render "private"
+- else
+  = render "public"

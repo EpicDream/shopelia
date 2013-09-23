@@ -23,7 +23,7 @@ Shopelia::Application.routes.draw do
   resources :gateway, :only => :index
   
   resources :addresses
-  resources :cart_items, :only => :show do
+  resources :cart_items, :only => [:show, :create] do
     get :unsubscribe, :on => :member
   end
   resources :orders, :only => [:show, :update] do

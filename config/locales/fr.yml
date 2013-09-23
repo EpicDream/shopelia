@@ -272,6 +272,8 @@ fr:
       city: "Ville"
       phone: "Téléphone"
       country: "Pays"
+    cart_items:
+      url: "Adresse internet (URL) du produit"
     payment_card:
       number: "Numéro de la carte"
       cvv: "CVV"
@@ -337,6 +339,9 @@ fr:
       send_instructions: "Recevoir les instructions"
       instructions_sent: "Les informations pour réinitialiser votre mot de passe vous ont été envoyées par email. Nous vous invitons à consulter votre boite email (pensez à vérifier votre dossier SPAM)."
       instructions_fail: "Erreur dans l'email. Merci de vérifier et recommencer."
+    cart_items:
+      submit: "Ajouter au panier"
+      bad_url: "L'adresse du produit n'est pas valide"
     cancel: "Annuler"
     close: "Fermer"
     confirm: "Valider"
