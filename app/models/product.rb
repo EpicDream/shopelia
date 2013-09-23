@@ -35,7 +35,7 @@ class Product < ActiveRecord::Base
     return nil if url.nil?
     p = Product.find_or_create_by_url(Linker.clean(url))
     p.save! if !p.persisted? && p.errors.empty?
-    p.reload
+    p.reload unless p.nil?
   end
   
   def versions_expired?
