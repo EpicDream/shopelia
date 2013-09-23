@@ -20,19 +20,17 @@ class Api::V1::ProductsController < Api::V1::BaseController
 
   def prepare_product
     @product = Product.fetch(params[:url])
-    if @product.present? && @product.persisted?
-      # retrieve created versions
-      @product.reload
-    else
-      @product = nil 
-    end
+    rescue
   end
   
   def prepare_products
     @products = []
     (params[:urls] || []).each do |url|
-      product = Product.fetch(url)
-      @products << product.reload if product.present? && product.persisted?
+      begin
+        product = Product.fetch(url)
+        @products << product
+      rescue
+      end
     end
   end
 
