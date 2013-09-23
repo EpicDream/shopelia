@@ -30,7 +30,9 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://ad.zanox.com/ppc/?19436175C242487251&ULP=%5B%5BAccessoires-Consommables/showdetl.cfm?product_id=4855986%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d%5D%5D#rueducommerce.fr",
         :out => "http://www.rueducommerce.fr/Accessoires-Consommables/showdetl.cfm?product_id=4855986" },
       { :in  => "http://clic.reussissonsensemble.fr/click.asp?ref=593625&site=10393&type=text&tnb=2&diurl=http://tracking.lengow.com/shortUrl/2857-45667-C389183/",
-        :out => "http://www.auchan.fr/achat4/CA17234/color_47063/size_10055"}
+        :out => "http://www.auchan.fr/achat4/CA17234/color_47063/size_10055" },
+      { :in  => "http://www.amazon.fr/Eafit-Protisoya-100%-Proteine-Vegetale/dp/B0036BGQ6W?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0036BGQ6W",
+        :out => "http://www.amazon.fr/Eafit-Protisoya-100-Proteine-Vegetale/dp/B0036BGQ6W" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])
