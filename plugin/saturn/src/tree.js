@@ -172,7 +172,7 @@
   if ("object" == typeof module && module && "object" == typeof module.exports)
     exports = module.exports = Tree;
   else if ("function" == typeof define && define.amd)
-    define("tree", [], function(){return Tree});
+    define("tree", [], function(){return Tree;});
   else
     window.Tree = Tree;
 

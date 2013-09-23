@@ -2,6 +2,8 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-19
 
+logger.level = logger.NONE;
+
 describe("Saturn", function() {
   var saturn;
 
@@ -309,7 +311,6 @@ describe("Saturn", function() {
 
     afterEach(function() {
       saturn.stop();
-      console.log(saturn);
     });
 
     it('complete run', function() {
@@ -336,8 +337,8 @@ describe("Saturn", function() {
         expect(saturn.onProductsReceived.calls.length).toBe(0);
         saturn._productToExtract.push(prod);
       });
-      waitsFor(function() {return Object.keys(saturn.sessions).length > 0 || Object.keys(saturn.results).length > 0}, "Session creation is to long.", saturn.DELAY_BETWEEN_PRODUCTS * 10);
-      waitsFor(function() {return Object.keys(saturn.results).length > 0}, "Crawling is to long.", 1000);
+      waitsFor(function() {return Object.keys(saturn.sessions).length > 0 || Object.keys(saturn.results).length > 0;}, "Session creation is to long.", saturn.DELAY_BETWEEN_PRODUCTS * 10);
+      waitsFor(function() {return Object.keys(saturn.results).length > 0;}, "Crawling is to long.", 1000);
 
       runs(function() {
         expect(saturn.results[42]).not.toBe(undefined);
@@ -350,8 +351,8 @@ describe("Saturn", function() {
           nbComplete += r.options_completed ? 1 : 0;
           expect(r.versions.length).toBe(1);
           var v = r.versions[0];
-          expect(v.title && typeof v.option1 === 'string' && v.option1.match(/color/) && typeof v.option2 === 'string' && v.option2.match(/size/))
-        };
+          expect(v.title && typeof v.option1 === 'string' && v.option1.match(/color/) && typeof v.option2 === 'string' && v.option2.match(/size/));
+        }
         expect(nbComplete).toBe(1);
       });
     });

@@ -20,7 +20,7 @@ function getSelectionHtml() {
         }
     }
     return html;
-};
+}
 
 if (! Function.prototype.bind)
   Function.prototype.bind = function(scope) {
@@ -32,9 +32,9 @@ if (! Function.prototype.bind)
 
 if (! Array.prototype.unique)
   Array.prototype.unique = function(fct){
-    var r = [], values = [];
+    var r = [], values = [], i;
     if (typeof fct === 'function') {
-      for(var i = 0; i < this.length; i++){
+      for(i = 0; i < this.length; i++){
         var val = fct(this[i]);
         if( values.indexOf(val) == -1 ) {
           r.push( this[i] );
@@ -42,7 +42,7 @@ if (! Array.prototype.unique)
         }
       }
     } else {
-      for(var i = 0; i < this.length; i++){
+      for(i = 0; i < this.length; i++){
         if( r.indexOf(this[i]) == -1 )
           r.push( this[i] );
       }
@@ -63,7 +63,7 @@ function $extend() {
   }
   for ( ; i < length; i++ ) {
     // Only deal with non-null/undefined values
-    if ( (options = arguments[ i ]) != null ) {
+    if ( (options = arguments[ i ]) !== null ) {
       // Extend the base object
       for ( name in options ) {
         src = target[ name ];
@@ -97,9 +97,17 @@ function $extend() {
 
   // Return the modified object
   return target;
+}
+
+window.logger = window.logger || {
+  level: 3,
+  NONE: 0,
+  ERROR: 1,
+  WARNING: 2,
+  INFO: 3,
+  DEBUG: 4,
 };
 
-window.logger = window.logger || {};
 window.logger._log = function(level, caller, _arguments) {
   var css_style;
   switch (level) {
@@ -122,7 +130,7 @@ window.logger._log = function(level, caller, _arguments) {
       css_style = 'color: #000';
       break;
     default:
-      level = 'OTHER'
+      level = 'OTHER';
       css_style = 'color: #000';
       break;      
   }
@@ -146,25 +154,30 @@ window.logger._log = function(level, caller, _arguments) {
   switch (level) {
     case 'FATAL' :
     case 'ERROR' :
-      console.error.apply(console, args);
+      if (logger.level >= logger.ERROR)
+        console.error.apply(console, args);
       break;
     case 'WARN' :
     case 'WARNING' :
-      console.warn.apply(console, args);
+      if (logger.level >= logger.WARNING)
+        console.warn.apply(console, args);
       break;
     case 'DEBUG' :
-      console.debug.apply(console, args);
+      if (logger.level >= logger.DEBUG)
+        console.debug.apply(console, args);
       break;
     default :
-      console.info.apply(console, args);
+      if (logger.level >= logger.INFO)
+        console.info.apply(console, args);
       break;
   }
 };
 
-window.logger.fatal = function _fatal() { logger._log('FATAL', (arguments.callee.caller || {}).name, arguments) };
-window.logger.err = function _err() { logger._log('ERROR', (arguments.callee.caller || {}).name, arguments) };
+window.logger.fatal = function() { logger._log('FATAL', (arguments.callee.caller || {}).name, arguments); };
+window.logger.err = function() { logger._log('ERROR', (arguments.callee.caller || {}).name, arguments); };
 window.logger.error = logger.err;
-window.logger.warn = function _warn() { logger._log('WARN', (arguments.callee.caller || {}).name, arguments) };
-window.logger.good = function _good() { logger._log('GOOD', undefined, arguments) };
-window.logger.info = function _info() { logger._log('INFO', undefined, arguments) };
-window.logger.debug = function _debug() { logger._log('DEBUG', (arguments.callee.caller || {}).name, arguments) };
+window.logger.warn = function() { logger._log('WARN', (arguments.callee.caller || {}).name, arguments); };
+window.logger.good = function() { logger._log('GOOD', undefined, arguments); };
+window.logger.info = function() { logger._log('INFO', undefined, arguments); };
+window.logger.debug = function() { logger._log('DEBUG', (arguments.callee.caller || {}).name, arguments); };
+window.logger.print = function() { if (logger.level !== logger.NONE) console.info.apply(console, arguments); };

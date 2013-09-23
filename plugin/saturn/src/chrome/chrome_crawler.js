@@ -11,7 +11,7 @@ chrome.extension.onMessage.addListener(function(hash, sender, callback) {
 
 function goNextStep() {
   chrome.extension.sendMessage("nextStep");
-};
+}
 
 // To handle redirection, that throws false 'complete' state.
 $(document).ready(function() {

@@ -4,23 +4,24 @@
 
 (function() {
   //
-  var that = SaturnOptions = function(mapping, argOptions) {
+  var SaturnOptions = function(mapping, argOptions) {
     this._optionTree = new Tree();
     this._currentNode = this._optionTree;
     this.mapping = mapping;
     this.argOptions = argOptions;
   };
   // Return root node.
-  that.prototype.root = function() {
+  SaturnOptions.prototype.root = function() {
     return this._optionTree;
   };
   //
-  that.prototype.resetToRoot = function() {
-    return this._currentNode = this._optionTree;
+  SaturnOptions.prototype.resetToRoot = function() {
+    this._currentNode = this._optionTree;
+    return this;
   };
   // Get the list of available and set options.
   // Only available after 'normal' strategy is done in SaturnSession.
-  that.prototype.options = function() {
+  SaturnOptions.prototype.options = function() {
     var node = this._optionTree.firstChild(),
         res = [];
     while (node) {
@@ -32,7 +33,7 @@
   };
   // Get firstOption or null.
   // If options.nonAlone is set to true, check if option is not given in argument, or has not a single value.
-  that.prototype.firstOption = function(options) {
+  SaturnOptions.prototype.firstOption = function(options) {
     options = options || {};
     var node = this._optionTree.firstChild();
     while (node && (node.value === null || (options.nonAlone && ! node.hasPreviousSibling() && ! node.hasNextSibling())))
@@ -40,28 +41,29 @@
     return node && node.parent() ? node.parent() : null;
   };
   //
-  that.prototype.values = function(node) {
+  SaturnOptions.prototype.values = function(node) {
     if (! node)
       return this.values(this._currentNode);
     else if (node.value === null) {
       return this.values(node.childAt(null));
     } else
-      return node.children().map(function(e) {return e.value});
+      return node.children().map(function(e) {return e.value;});
   };
   //
-  that.prototype.setValues = function(values) {
+  SaturnOptions.prototype.setValues = function(values) {
     if (! values || ! (values instanceof Array)) {
       throw "ArgumentError : wait an Array of values.";
     } else if (this._currentNode.hasChildren()) {
       throw "currentNode as already values.";
-    } else if (values.length == 0) {
+    } else if (values.length === 0) {
       this._currentNode.addChildAt(null, null);
     } else {
-      var currentArg = this.argOptions[this._currentNode.depth()+1];
+      var currentArg = this.argOptions[this._currentNode.depth()+1],
+          i;
       // Si la valeur est donnée en argument pour cette option,
       // on ajoute que celle là (si on la trouve).
       if (currentArg) {
-        for (var i = 0; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++) {
+        for (i = 0; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++) {
           var stringified = JSON.stringify(values[i]);
           if (currentArg === stringified) {
             this._currentNode.addChildAt(stringified, values[i]);
@@ -73,17 +75,17 @@
       // si la valeur n'est pas donnée ou qu'on l'a pas trouvée,
       // on les ajoute toutes.
       if (currentArg !== null)
-        for (var i = 0; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++)
+        for (i = 0; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++)
           this._currentNode.addChildAt(JSON.stringify(values[i]), values[i]);
     }
     return this;
   };
   //
-  that.prototype.setCurrentVersion = function(version) {
+  SaturnOptions.prototype.setCurrentVersion = function(version) {
     this._currentNode.version = version;
   };
   //
-  that.prototype.next = function(options) {
+  SaturnOptions.prototype.next = function(options) {
     options = options || {};
     if (this._currentNode.isLeaf() && options.lookInMapping) {
       var nextOption = this.currentOption()+1;
@@ -104,7 +106,7 @@
       return null;
   };
   //
-  that.prototype.currentOption = function() {
+  SaturnOptions.prototype.currentOption = function() {
     if (this._currentNode === this._optionTree)
       return null;
     return this._currentNode.depth();
@@ -112,7 +114,7 @@
   // Return current option setted.
   // If currentNode's value is null, the current option is not available in the page,
   // so return parent's option (recursively).
-  that.prototype.currentSetOption = function(node) {
+  SaturnOptions.prototype.currentSetOption = function(node) {
     if (! node)
       return this.currentSetOption(this._currentNode);
     else if (node === this._optionTree)
@@ -123,34 +125,34 @@
       return node.depth();
   };
   //
-  that.prototype.currentValue = function() {
+  SaturnOptions.prototype.currentValue = function() {
     return this._currentNode.value;
   };
   //
-  that.prototype.currentNode = function() {
+  SaturnOptions.prototype.currentNode = function() {
     return this._currentNode;
   };
   // Return current state as a cuple [option, value].
-  that.prototype.current = function() {
+  SaturnOptions.prototype.current = function() {
     if (this._currentNode === this._optionTree)
       return null;
     return [this.currentOption(), this.currentValue()];
   };
   // Get the version just for the current node.
   // If version's is a hash, complete it.
-  that.prototype.currentVersion = function(version) {
+  SaturnOptions.prototype.currentVersion = function(version) {
     version = version || this._currentNode.version || {};
     var path = this._currentNode.path();
     for (var i = path.length - 1; i >= 0; i--) {
       if (path[i] !== 'null')
         version['option'+(i+1)] = JSON.parse(path[i]);
-    };
+    }
     return version;
   };
   // Get number of option currently available (and set in).
   // If currentNode's value is null, the current option is not available in the page,
   // so return parent's option.
-  that.prototype.currentNbOption = function() {
+  SaturnOptions.prototype.currentNbOption = function() {
     var path = this._currentNode.path(),
         nb = 0;
     for (var i = path.length - 1; i >= 0; i--)
@@ -163,7 +165,7 @@
   // If a leaf node, add version if any, and add the total to versions.
   function versionize(versions, currentVersion, currentNode) {
     var currentDepth = currentNode.depth();
-    if (currentNode.value !== null || currentNode.value != undefined)
+    if (currentNode.value !== null || currentNode.value !== undefined)
       currentVersion['option'+currentDepth] = currentNode.value;
     
     if (currentNode.isLeaf())
@@ -172,16 +174,16 @@
       versionize(versions, currentVersion, currentNode.children()[i]);
 
     delete currentVersion['option'+currentDepth];
-  };
+  }
   // Get the partial version of the currentNode.
-  that.prototype.partialVersionize = function() {
+  SaturnOptions.prototype.partialVersionize = function() {
     var current = this._currentNode,
         version = [];
     versionize(version, this.currentVersion(), current);
     return version;
   };
   // Versionize all optionTree.
-  that.prototype.versionize = function() {
+  SaturnOptions.prototype.versionize = function() {
     var versions = [];
     versionize(versions, {}, this._optionTree);
     return versions;
@@ -190,7 +192,7 @@
   if ("object" == typeof module && module && "object" == typeof module.exports)
     exports = module.exports = SaturnOptions;
   else if ("function" == typeof define && define.amd)
-    define("saturn_options", ["tree"], function(){return SaturnOptions});
+    define("saturn_options", ["tree"], function(){return SaturnOptions;});
   else
     window.SaturnOptions = SaturnOptions;
 

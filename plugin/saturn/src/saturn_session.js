@@ -8,7 +8,7 @@
 // Je fais la supposition simpliste mais réaliste que pour un produit,
 // il y a le même nombre d'option quelque soit l'option choisie.
 
-var SaturnSession, that = SaturnSession = function(saturn, prod) {
+var SaturnSession = function(saturn, prod) {
   this.saturn = saturn;
   $extend(this, prod);
 
@@ -16,17 +16,18 @@ var SaturnSession, that = SaturnSession = function(saturn, prod) {
   this.options = new SaturnOptions(this.mapping, this.argOptions);
 };
 
-that.prototype = {};
+SaturnSession.prototype = {};
 
-that.prototype.start = function() {
+SaturnSession.prototype.start = function() {
   logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '{'+this.id+'}' : ''), "Start crawling !", this.TEST_ENV ? this : '');
   this.next();
 };
 
-that.prototype.next = function() {
+SaturnSession.prototype.next = function() {
+  var t;
   switch (this.strategy) {
     case "normal" :
-      var t = this.options.next({lookInMapping: true, depthOnly: true});
+      t = this.options.next({lookInMapping: true, depthOnly: true});
       if (t !== null) {
         if (t[1] === undefined)
           this.getOptions(t[0]);
@@ -45,7 +46,7 @@ that.prototype.next = function() {
       break;
 
     case "options" :
-      this.createSubTasks()
+      this.createSubTasks();
       this.strategy = 'full';
       this.next();
       break;
@@ -53,7 +54,7 @@ that.prototype.next = function() {
     case "full" :
       if (this._depthOnly === undefined)
         this._depthOnly = true;
-      var t = this.options.next({depthOnly: this._depthOnly});
+      t = this.options.next({depthOnly: this._depthOnly});
       // on est arrivé à l'option la plus profonde, on crawl et on remonte.
       if (t === null && this._depthOnly) {
         this._depthOnly = false;
@@ -81,7 +82,7 @@ that.prototype.next = function() {
   }
 };
 
-that.prototype.createSubTasks = function() {
+SaturnSession.prototype.createSubTasks = function() {
   var firstOption = this.options.firstOption({nonAlone: true}),
       option = firstOption.depth()+1,
       values = Object.keys(firstOption._childrenH);
@@ -102,13 +103,13 @@ that.prototype.createSubTasks = function() {
     this._subTasks[value] = prod;
     firstOption.removeChild(firstOption.childAt(value));
     this.saturn.addProductToQueue(prod);
-  };
+  }
   this.options.argOptions[option] = values[0];
 };
 
-that.prototype.getOptions = function(option) {
+SaturnSession.prototype.getOptions = function(option) {
   this.currentAction = "getOptions";
-  var cmd = {action: this.currentAction, mapping: this.mapping, option: option}
+  var cmd = {action: this.currentAction, mapping: this.mapping, option: option};
   this.saturn.evalAndThen(this, cmd, function(values) {
     logger.debug("in getOption, result :", values);
     if (! values)
@@ -118,13 +119,13 @@ that.prototype.getOptions = function(option) {
   }.bind(this));
 };
 
-that.prototype.setOption = function(option, value) {
+SaturnSession.prototype.setOption = function(option, value) {
   this.currentAction = "setOption";
   var cmd = {action: this.currentAction, mapping: this.mapping, option: option, value: value};
   this.saturn.evalAndThen(this, cmd);
 };
 
-that.prototype.crawl = function() {
+SaturnSession.prototype.crawl = function() {
   this.currentAction = "crawl";
   this.saturn.evalAndThen(this, {action: this.currentAction, mapping: this.mapping}, function(version) {
     logger.debug("in crawl, result :", version);
@@ -142,9 +143,9 @@ that.prototype.crawl = function() {
 };
 
 //
-that.prototype.subTaskEnded = function(subSession) {
+SaturnSession.prototype.subTaskEnded = function(subSession) {
   delete this._subTasks[subSession._subTaskId];
-  if (Object.keys(this._subTasks).length == 0) {
+  if (Object.keys(this._subTasks).length === 0) {
     delete this._subTasks;
     if (this.strategy === 'done')
       // last subtask ended, send final result.
@@ -155,7 +156,7 @@ that.prototype.subTaskEnded = function(subSession) {
 };
 
 //
-that.prototype.sendPartialVersion = function() {
+SaturnSession.prototype.sendPartialVersion = function() {
   var currentV = this.options.currentVersion();
   // Only if this is not the first version
   if (this._subTaskId || this._firstVersion)
@@ -165,7 +166,7 @@ that.prototype.sendPartialVersion = function() {
 };
 
 // 
-that.prototype.sendFinalVersions = function() {
+SaturnSession.prototype.sendFinalVersions = function() {
   if (this._subTasks) {
     logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '['+this.id+']' : ''), "Main subTask finished, wait for others...", this.TEST_ENV ? this : '');
   } else if (typeof this._onSubTaskFinished === 'function') {
@@ -180,7 +181,7 @@ that.prototype.sendFinalVersions = function() {
 };
 
 //
-that.prototype.endSession = function() {
+SaturnSession.prototype.endSession = function() {
   this.strategy = 'ended'; // prevent
   this.saturn.endSession(this);
 };
@@ -188,7 +189,7 @@ that.prototype.endSession = function() {
 if ("object" == typeof module && module && "object" == typeof module.exports)
   exports = module.exports = SaturnSession;
 else if ("function" == typeof define && define.amd)
-  define("saturn_session", ["saturn_options"], function(){return SaturnSession});
+  define("saturn_session", ["saturn_options"], function(){return SaturnSession;});
 else
   window.SaturnSession = SaturnSession;
 

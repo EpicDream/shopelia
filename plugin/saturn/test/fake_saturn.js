@@ -5,7 +5,7 @@
 (function() {
 "use strict";
 
-var FakeSaturn, that = FakeSaturn = function() {
+var FakeSaturn = function() {
   Saturn.apply(this, arguments);
   this.TEST_ENV = false;
   this.results = {};
@@ -23,28 +23,27 @@ var FakeSaturn, that = FakeSaturn = function() {
   ];
 };
 
-that.prototype = new Saturn();
+FakeSaturn.prototype = new Saturn();
 
-that.prototype.openNewTab = function() {
+FakeSaturn.prototype.openNewTab = function() {
   this.tabs.nbUpdating++;
   return Saturn.prototype.openNewTab.call(this, this.tabCpt++);
 };
 
-that.prototype.getFakeProduct = function() {
+FakeSaturn.prototype.getFakeProduct = function() {
   if (Math.random() < 0.5)
     return [];
   else
     return [{id: this.urlCpt, url: this.fakeUrls[(this.urlCpt++) % this.fakeUrls.length]}];
 };
 //
-that.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
+FakeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
   doneCallback(this._productToExtract.splice(0));
 };
 
 // GET mapping for url's host,
 // and return jqXHR object.
-that.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
-  console.log("in loadMapping, merchantId : ", merchantId, merchantId === 2);
+FakeSaturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
   if (merchantId === 2)
     doneCallback({
       "id":2,
@@ -70,14 +69,13 @@ that.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
 };
 
 // 
-that.prototype.openUrl = function(session, url) {
+FakeSaturn.prototype.openUrl = function(session, url) {
   session.then();
 };
 
 // 
-that.prototype.evalAndThen = function(session, cmd, callback) {
+FakeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
   var result;
-  console.log("in evalAndThen, cmd :", cmd);
   switch (cmd.action) {
     case "getOptions" :
       switch (cmd.option) {
@@ -101,7 +99,6 @@ that.prototype.evalAndThen = function(session, cmd, callback) {
     default:
       throw "Bad command action : "+cmd.action;
   }
-  console.log("in evalAndThen, result :", result);
   if (callback)
     callback(result);
   else
@@ -112,7 +109,7 @@ that.prototype.evalAndThen = function(session, cmd, callback) {
 if ("object" == typeof module && module && "object" == typeof module.exports)
   exports = module.exports = FakeSaturn;
 else if ("function" == typeof define && define.amd)
-  define("fake_saturn", ["saturn"], function(){return FakeSaturn});
+  define("fake_saturn", ["saturn"], function(){return FakeSaturn;});
 else
   window.FakeSaturn = FakeSaturn;
  

@@ -5,16 +5,16 @@
 (function() {
 "use strict";
 
-var ChromeSaturn, that = ChromeSaturn = function() {
+var ChromeSaturn = function() {
   Saturn.apply(this, arguments);
   this.TEST_ENV = navigator.appVersion.match(/chromium/i) !== null;
 
   this.results = {}; // for debugging purpose, when there are no results sended by ajax.
 };
 
-that.prototype = new Saturn();
+ChromeSaturn.prototype = new Saturn();
 
-that.prototype.openNewTab = function() {
+ChromeSaturn.prototype.openNewTab = function() {
   this.tabs.nbUpdating++;
   logger.debug('in openNewTab');
   chrome.tabs.create({}, function(tab) {
@@ -22,7 +22,7 @@ that.prototype.openNewTab = function() {
   }.bind(this));
 };
 
-that.prototype.cleanTab = function(tabId) {
+ChromeSaturn.prototype.cleanTab = function(tabId) {
   chrome.cookies.getAll({}, function(cooks) {
     var cookies=cooks;
     for (var i in cookies)
@@ -30,7 +30,7 @@ that.prototype.cleanTab = function(tabId) {
   });
 };
 
-that.prototype.openUrl = function(session, url) {
+ChromeSaturn.prototype.openUrl = function(session, url) {
   chrome.tabs.update(session.tabId, {url: url}, function(tab) {
     // Priceminister fix when reload the same page with an #anchor set.
     if (url.match(new RegExp(tab.url+"#\\w+(=\\w+)?$")))
@@ -38,14 +38,14 @@ that.prototype.openUrl = function(session, url) {
   });
 };
 
-that.prototype.closeTab = function(tabId) {
+ChromeSaturn.prototype.closeTab = function(tabId) {
   logger.debug('in closeTab');
   Saturn.prototype.closeTab.call(this, tabId);
   chrome.tabs.remove(tabId);
 };
 
 //
-that.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
+ChromeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
   // logger.debug("Going to get product_urls to extract...");
   return $.ajax({
     type : "GET",
@@ -56,10 +56,10 @@ that.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
 
 // GET mapping for url's host,
 // and return jqXHR object.
-that.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
+ChromeSaturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
   logger.debug("Going to get mapping for merchantId '"+merchantId+"'");
   if (typeof merchantId === 'string') {
-    var toInt = parseInt(merchantId);
+    var toInt = parseInt(merchantId, 10);
     if (toInt)
       merchantId = toInt;
     else
@@ -75,7 +75,7 @@ that.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
 
 // Get merchant_id from url.
 // Return an ajax object (see jqXHR on jQuery doc).
-that.prototype.getMerchantId = function(url, callback) {
+ChromeSaturn.prototype.getMerchantId = function(url, callback) {
   return $.ajax({
     type: "GET",
     dataType: "json",
@@ -83,7 +83,7 @@ that.prototype.getMerchantId = function(url, callback) {
   });
 };
 
-that.prototype.parseCurrentPage = function(tab) {
+ChromeSaturn.prototype.parseCurrentPage = function(tab) {
   this.tabs.opened[tab.id] = {};
   this.tabs.pending.unshift(tab.id);
   var prod = {url: tab.url, merchant_id: tab.url, tabId: tab.id};
@@ -91,7 +91,7 @@ that.prototype.parseCurrentPage = function(tab) {
 };
 
 //
-that.prototype.sendError = function(session, msg) {
+ChromeSaturn.prototype.sendError = function(session, msg) {
   if (session.id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
@@ -103,7 +103,7 @@ that.prototype.sendError = function(session, msg) {
 };
 
 //
-that.prototype.sendResult = function(session, result) {
+ChromeSaturn.prototype.sendResult = function(session, result) {
   logger.debug("sendResult : ", result);
   if (session.id) {// Stop pushed or Local Test
     $.ajax({
@@ -116,14 +116,14 @@ that.prototype.sendResult = function(session, result) {
     Saturn.prototype.sendResult.call(this, session, result);
 };
 
-that.prototype.onTimeout = function(command) {
+ChromeSaturn.prototype.onTimeout = function(command) {
   return function() {
     // logger.debug("in evalAndThen, timeout for", command);
     command.callback = undefined;
     this.sendError(command.session, "something went wrong", command);
   }.bind(this);
 };
-that.prototype.onResultReceived = function(command) {
+ChromeSaturn.prototype.onResultReceived = function(command) {
   return function(result) {
     // logger.debug("in evalAndThen, result received, for", command);
     // Contentscript just respond to us, clear rescue.
@@ -134,7 +134,7 @@ that.prototype.onResultReceived = function(command) {
 };
 
 //
-that.prototype.evalAndThen = function(session, cmd, callback) {
+ChromeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
   var command = {
     session: session,
     cmd: cmd,
@@ -142,7 +142,7 @@ that.prototype.evalAndThen = function(session, cmd, callback) {
   };
 
   if (typeof callback === 'function') {
-    command.rescueTimer = window.setTimeout(this.onTimeout(command), this.DELAY_RESCUE),
+    command.rescueTimer = window.setTimeout(this.onTimeout(command), this.DELAY_RESCUE);
     command.then = this.onResultReceived(command);
   }
 
@@ -152,11 +152,14 @@ that.prototype.evalAndThen = function(session, cmd, callback) {
 if ("object" == typeof module && module && "object" == typeof module.exports)
   exports = module.exports = ChromeSaturn;
 else if ("function" == typeof define && define.amd)
-  define("chrome_saturn", ["jquery", "saturn"],function(){return ChromeSaturn});
+  define("chrome_saturn", ["jquery", "saturn"],function(){return ChromeSaturn;});
 else
   window.ChromeSaturn = ChromeSaturn;
 
 })();
+
+// Default to debug until Chrome propose tabs for each levels.
+logger.level = logger.DEBUG;
 
 var saturn = new window.ChromeSaturn();
 

@@ -5,7 +5,7 @@
 (function() {
 "use strict";
 
-var Saturn, that = Saturn = function() {
+var Saturn = function() {
 
   this.TEST_ENV = false;
   this.LOCAL_ENV = false;
@@ -25,8 +25,8 @@ var Saturn, that = Saturn = function() {
   this.DELAY_BEFORE_REASK_MAPPING = this.TEST_ENV ? 30000 : 5 * 60000; // 30s en dev ou 5min en prod
 
 
-  this.MAX_VERSIONS_TO_FULL_CRAWL = 100,
-  this.MIN_NB_TABS = 2,
+  this.MAX_VERSIONS_TO_FULL_CRAWL = 100;
+  this.MIN_NB_TABS = 2;
   this.MAX_NB_TABS = 15;
 
   this.sessions = {};
@@ -52,7 +52,7 @@ function buildMapping(uri, hash) {
   resMapping.option1 = resMapping.option1 || resMapping.colors;
   resMapping.option2 = resMapping.option2 || resMapping.sizes;
   return resMapping;
-};
+}
 
 //
 function preProcessData(data) {
@@ -65,11 +65,11 @@ function preProcessData(data) {
   if (data.size !== undefined) data.argOptions[2] = data.size;
   
   return data;
-};
+}
 
-that.prototype = {};
+Saturn.prototype = {};
 
-that.prototype.main = function() {
+Saturn.prototype.main = function() {
   if (! this.crawl) return;
 
   this.loadProductUrlsToExtract(function(array) {
@@ -79,7 +79,7 @@ that.prototype.main = function() {
     } else if (array.length > 0) {
       this.onProductsReceived(array);
     } else {
-      console.info("%cNo product.", "color: blue");
+      logger.print("%cNo product.", "color: blue");
       this.updateNbTabs();
     }
 
@@ -92,7 +92,7 @@ that.prototype.main = function() {
 };
 
 //
-that.prototype.start = function() {
+Saturn.prototype.start = function() {
   if (this.crawl)
     return;
   // init startup tabs
@@ -102,13 +102,13 @@ that.prototype.start = function() {
 };
 
 //
-that.prototype.pause = function() {
+Saturn.prototype.pause = function() {
   this.crawl = false;
   clearTimeout(this.mainCallTimeout);
 };
 
 //
-that.prototype.resume = function() {
+Saturn.prototype.resume = function() {
   if (this.crawl)
     return;
   this.crawl = true;
@@ -116,7 +116,7 @@ that.prototype.resume = function() {
 };
 
 //
-that.prototype.stop = function() {
+Saturn.prototype.stop = function() {
   this.pause();
   for (var i in this.tabs.pending)
     this.closeTab(this.tabs.pending[i]);
@@ -125,13 +125,14 @@ that.prototype.stop = function() {
 };
 
 // Increase or decrease nb tabs depending product demand.
-that.prototype.updateNbTabs = function() {
+Saturn.prototype.updateNbTabs = function() {
   if (this.tabs.nbUpdating > 0)
     return;
-  var pending = this.tabs.pending;
-  if (this.productQueue.length == 0 && pending.length > this.MIN_NB_TABS) {// On ferme des tabs
+  var pending = this.tabs.pending,
+      i;
+  if (this.productQueue.length === 0 && pending.length > this.MIN_NB_TABS) {// On ferme des tabs
     var nbTabToClose = pending.length - this.MIN_NB_TABS;
-    for (var i = 0 ; i < nbTabToClose ; i++) {
+    for (i = 0 ; i < nbTabToClose ; i++) {
       this.tabs.opened[pending[0]].toClose = true;
       this.closeTab(pending[0]);
     }
@@ -139,14 +140,14 @@ that.prototype.updateNbTabs = function() {
     var nbMaxOpenable = this.MAX_NB_TABS - Object.keys(this.tabs.opened).length,
         nbWanted = this.MIN_NB_TABS + this.productQueue.length - pending.length,
         nbTabToOpen = nbMaxOpenable >= nbWanted ? nbWanted : nbMaxOpenable;
-    if (nbTabToOpen == 0 && this.productQueue.length > 0)
+    if (nbTabToOpen === 0 && this.productQueue.length > 0)
       logger.warn("WARNING : Too many product to crawl ("+this.productQueue.length+") and max tabs opened ("+this.MAX_NB_TABS+") !");
-    for (var i = 0; i < nbTabToOpen ; i++)
+    for (i = 0; i < nbTabToOpen ; i++)
       this.openNewTab();
   }
 };
 
-that.prototype.onProductsReceived = function(prods) {
+Saturn.prototype.onProductsReceived = function(prods) {
   logger.debug(prods.length, "products received.");
   prods = prods.unique(function(p) {return p.id;});
   for (var i = prods.length - 1; i >= 0; i--) {
@@ -157,13 +158,13 @@ that.prototype.onProductsReceived = function(prods) {
       this.onProductReceived(prod);
   }
   if (prods.length > 0)
-    logger.info(prods.length, "products to crawl received :", prods.map(function(p) {return p.id}));
+    logger.info(prods.length, "products to crawl received :", prods.map(function(p) {return p.id;}));
   else
     this.updateNbTabs();
-}
+};
 
 //
-that.prototype.onProductReceived = function(prod) {
+Saturn.prototype.onProductReceived = function(prod) {
   prod = preProcessData(prod);
   logger.debug("Going to process product", prod);
   var merchantId = prod.merchant_id;
@@ -198,7 +199,7 @@ that.prototype.onProductReceived = function(prod) {
     }.bind(this));
 };
 
-that.prototype.addProductToQueue = function(prod) {
+Saturn.prototype.addProductToQueue = function(prod) {
   this.productsBeingProcessed[prod.id] = true;
   if (prod.batch_mode)
     this.batchQueue.push(prod);
@@ -208,17 +209,17 @@ that.prototype.addProductToQueue = function(prod) {
 };
 
 //
-that.prototype.crawlProduct = function() {
+Saturn.prototype.crawlProduct = function() {
 
   var prod;
-  if (this.tabs.pending.length != 0) {
-    if (this.productQueue.length != 0) {
+  if (this.tabs.pending.length !== 0) {
+    if (this.productQueue.length !== 0) {
       prod = this.productQueue.shift();
-    } else if (this.batchQueue.length != 0) {
+    } else if (this.batchQueue.length !== 0) {
       prod = this.batchQueue.shift();
     } else
       return;
-  } else if (this.productQueue.length != 0) {
+  } else if (this.productQueue.length !== 0) {
     return this.updateNbTabs();
   } else
     return;
@@ -238,20 +239,20 @@ that.prototype.crawlProduct = function() {
   }
 };
 
-that.prototype.createSession = function(prod, tabId) {
+Saturn.prototype.createSession = function(prod, tabId) {
   var session = new SaturnSession(this, prod);
   this.sessions[tabId] = session;
   session.tabId = tabId;
 
   this.cleanTab(tabId);
   session.then = function() {
-    session.then = function() {session.next()};
+    session.then = function() {session.next();};
     session.start();
   };
   this.openUrl(session, prod.url);
 };
 
-that.prototype.endSession = function(session) {
+Saturn.prototype.endSession = function(session) {
   delete this.productsBeingProcessed[session.id];
   var tabId = session.tabId;
   if (tabId) {
@@ -268,7 +269,7 @@ that.prototype.endSession = function(session) {
 
 // Virtual, must be reimplement to handle tabId is undefined and supercall with tabId.
 // You must call "this.tabs.nbUpdating++;" before anything else.
-that.prototype.openNewTab = function(tabId) {
+Saturn.prototype.openNewTab = function(tabId) {
   if (tabId === undefined)
     throw "abstract function";  
   this.tabs.pending.push(tabId);
@@ -277,11 +278,11 @@ that.prototype.openNewTab = function(tabId) {
   this.crawlProduct();
 };
 
-that.prototype.cleanTab = function(tabId) {
+Saturn.prototype.cleanTab = function(tabId) {
 };
 
 // Virtual, must be reimplement and supercall
-that.prototype.closeTab = function(tabId) {
+Saturn.prototype.closeTab = function(tabId) {
   var idx = this.tabs.pending.indexOf(tabId);
   if (idx !== -1)
     this.tabs.pending.splice(idx, 1);
@@ -289,45 +290,45 @@ that.prototype.closeTab = function(tabId) {
 };
 
 // Virtual, must be reimplement.
-that.prototype.openUrl = function(session, url) {
+Saturn.prototype.openUrl = function(session, url) {
   throw "abstract function";
 };
 
 //
-that.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
+Saturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
   throw "abstract function";
 };
 
 // GET mapping for url's host,
 // and return jqXHR object.
-that.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
+Saturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
   throw "abstract function";
 };
 
 // session may be a simple Object with only id to set,
 // when fail to load mapping for example.
-that.prototype.sendError = function(session, msg) {
+Saturn.prototype.sendError = function(session, msg) {
   window.$e = session;
   logger.err(msg, "\n$e =", window.$e);
   this.endSession(session);
 };
 
 //
-that.prototype.sendResult = function(session, result) {
+Saturn.prototype.sendResult = function(session, result) {
   var id = session.id || session.tabId;
-  this.results[id] = this.results[id] || []
+  this.results[id] = this.results[id] || [];
   this.results[id].push(result);
 };
 
 // 
-that.prototype.evalAndThen = function(session, cmd, callback) {
+Saturn.prototype.evalAndThen = function(session, cmd, callback) {
   throw "abstract function";
 };
 
-if ("object" == typeof module && module && "object" == typeof module.exports)
+if ("object" === typeof module && module && "object" === typeof module.exports)
   exports = module.exports = Saturn;
-else if ("function" == typeof define && define.amd)
-  define("saturn", ["saturn_session", "uri"], function(){return Saturn});
+else if ("function" === typeof define && define.amd)
+  define("saturn", ["saturn_session", "uri"], function(){return Saturn;});
 else
   window.Saturn = Saturn;
 
