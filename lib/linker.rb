@@ -9,7 +9,12 @@ class Linker
     if canonical.nil?
       orig = url
       begin
-        uri = URI.parse(url)
+        begin
+          uri = URI.parse(url)
+        rescue
+          url = url.gsub("%", "")
+          uri = URI.parse(url)
+        end
         req = Net::HTTP::Head.new(uri.request_uri, {'User-Agent' => UA })
         res = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
         if res.code.to_i == 405 || (res.code.to_i == 200 && res['location'].blank?)
