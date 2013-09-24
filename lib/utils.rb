@@ -8,15 +8,12 @@ class Utils
     elsif url.match(/effiliation/)
       url = url.gsub(/http\:\/\/track.effiliation.com\/servlet\/effi.redir\?id_compteur=\d+&url\=/, "")
     end
-    host = URI.parse(url.gsub(/[^0-9a-z\-\.\/\:\?]/, "")).host
+    host = self.parse_uri_safely(url).host
     host.gsub(/^(?:\w+:\/\/)?[^:?#\/\s]*?([^.\s]+\.(?:[a-z]{2,}|co\.uk|org\.uk|ac\.uk|org\.au|com\.au))(?:[:?#\/]|$)/, '\1')
   end
 
   def self.parse_uri_safely url
-    url = url.unaccent.gsub(" ", "+").gsub("<", "").gsub(">", "")
-    URI.parse(url)
-  rescue
-    URI.parse(url.gsub("%", ""))
+    URI.parse(url.unaccent.scan(/([!\#$&-;=?-\[\]_a-z~]|%[0-9a-fA-F]{2})/).join)
   end
 
   def self.strip_tracking_params url
