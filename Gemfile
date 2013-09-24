@@ -2,9 +2,11 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
-# Bundle edge Rails instead:
-# gem 'rails',     :git => 'git://github.com/rails/rails.git'
-
+gem 'syslog-logger'
+gem 'redis'
+gem 'redis-rails', '=3.2.1'
+gem 'therubyracer'
+gem 'execjs'
 gem 'maildir'
 gem 'gpgme'
 gem 'pg'
@@ -26,11 +28,15 @@ gem 'client_side_validations'
 gem 'client_side_validations-simple_form'
 gem 'devise-i18n-views'
 gem 'rails-i18n'
-gem 'backbone-on-rails'
+gem 'backbone-on-rails', '1.0.0.0'
 gem 'http_accept_language'
 gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
 gem 'sanitize'
+gem 'httpclient'
+gem 'sidekiq'
+gem 'sinatra', require: false
+gem 'slim'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -68,4 +74,9 @@ group :test do
   gem 'vcr'
   gem 'webmock'
   gem "simplecov", :require => false
+  gem "codeclimate-test-reporter"
+end
+
+group :assets do
+  gem 'turbo-sprockets-rails3'
 end

@@ -27,7 +27,7 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
     @userFields.show(@userFieldsView)
     @addressFields.show(@addressFieldsView)
     @cardFields.show(@cardFieldsView)
-    @initializeForm()
+    @initializeForm({'security':true})
 
   getUserFromForm: ->
     if @ui.form.parsley( 'validate' )
@@ -43,7 +43,6 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
                                       })
       user.get('addresses').add(address)
       user.get("payment_cards").add(card.disableWrapping())
-      console.log(user)
       user
     else
       undefined

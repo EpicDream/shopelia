@@ -5,13 +5,21 @@ usbkey:
   price_strikeout: 7
   shipping_info: "Sous 24h"
   description: "Description"
+  availability_info: "En stock"
   image_url: "http://www.img.com/img.jpg"
   name: "Version"
   available: true
   brand: "Brand"
-  size: "\"5\""
-  color: "\"blue\""
+  option1: "{\"text\":10}"
+  option2: "{\"text\":10}"
+  option3: "{\"text\":10}"
+  option4: "{\"text\":10}"
   
 headphones:
   product: headphones
 
+dvd:
+  product: dvd
+  price: 10
+  price_shipping: 0 
+  available: true

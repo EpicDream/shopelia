@@ -1,9 +1,12 @@
 class Shopelia.Notification
 
   constructor: (params) ->
-    params.icon =  false
-    params.sticker = false
-    params.closer_hover = false
+    _.extend(params,{
+            icon:  false
+            sticker: false
+            closer_hover : false
+    })
+
     if params.center
       params = @center(params)
     $.pnotify(params).click( (e) ->
@@ -19,7 +22,7 @@ class Shopelia.Notification
   @Success : (params) ->
     params.type = "success"
     if params.title is undefined
-      params.title = "Succ?s"
+      params.title = "Succès"
     new Shopelia.Notification(params)
 
   @Info : (params) ->

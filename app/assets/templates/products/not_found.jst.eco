@@ -1,4 +1,3 @@
-<div class="spacer25"></div>
 <div class="box product">
 <div class="span6 center">
     <div class="spacer15"></div>
@@ -7,10 +6,9 @@
         Nous vous invitons à vous rendre directement sur le site du marchand pour finaliser votre achat.
     </p>
     <div class="spacer15"></div>
-   <div class="span3 center">
+   <div class="span5 center">
     <a href="<%= @model('url') %>" target="_blank" class="custom-btn btn-block"> Continuer mon achat chez <strong><%= @model('merchant_name') %></strong>   </a>
    </div>
 </div>
 </div>
-<div class="spacer25"></div>
 

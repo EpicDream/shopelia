@@ -19,7 +19,7 @@ module Shopelia
     # Maximum number of times the order is allowed to retry a new account creation
     config.max_retry = 3
   
-    config.autoload_paths += %W(#{config.root}/lib )
+    config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/merchants)
     
     config.action_mailer.default_url_options = { :host => 'www.shopelia.fr', :protocol => 'https' }
     config.action_mailer.asset_host = "http://www.shopelia.fr"
@@ -63,5 +63,12 @@ module Shopelia
 
     # Compile assets
     config.assets.compile = true
+
+    config.redis_config = {
+      :host => '127.0.0.1',
+      :port => 6379,
+      :timeout => 20
+    }
+
   end
 end

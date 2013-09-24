@@ -6,9 +6,27 @@ function getOptions(path) {
   var options = [];
   if (elems.length == 0) {
     return [];
-  // Le cas facile
-  } else if (elems[0].tagName == "SELECT")
+  // SELECT, le cas facile
+  } else if (elems[0].tagName == "SELECT") {
     elems = elems.eq(0).find("option:enabled");
+  // UL, le cas pas trop compliqué
+  } else if (elems[0].tagName == "UL") {
+    // cherche d'abord les li
+    var lis = elems.eq(0).find("li:visible");
+    if (lis.length > 0) {
+      var imgs = lis.find("img:visible");
+      // ensuite on cherche si chaque li contient des images
+      if (imgs.length == lis.length)
+        elems = imgs;
+      else
+        elems = lis;
+    }
+  // If a single element is found, search images inside.
+  } else if (elems.length == 1) {
+    var imgs = elems.find("img:visible");
+    if (imgs.length > 0)
+      elems = imgs;
+  }
   return _.chain(elems).map(function(elem) {return hu.getElementAttrs(elem)}).
     filter(function(elem) {return elem.text.match(OPTION_FILTER) == null;}).value(); // .uniq()
 };
@@ -164,5 +182,5 @@ jQuery.fn.commonAncestor = function() {
 
 // To handle redirection, that throws false 'complete' state.
 $(document).ready(function() {
-  setTimeout(goNextStep, 100)
+  setTimeout(goNextStep, 100);
 });

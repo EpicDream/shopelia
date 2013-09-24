@@ -4,32 +4,30 @@ class Order < ActiveRecord::Base
   STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "pending_injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
   ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "mangopay"]
 
+  belongs_to :meta_order
   belongs_to :user
   belongs_to :merchant
-  belongs_to :address
   belongs_to :merchant_account
-  belongs_to :payment_card
   belongs_to :developer
   has_many :order_items, :dependent => :destroy
+  has_one :payment_transaction
   
   validates :user, :presence => true
   validates :state_name, :presence => true, :inclusion => { :in => STATES }
   validates :uuid, :presence => true, :uniqueness => true
-  validates :address, :presence => true
   validates :expected_price_total, :presence => true
   validates :developer, :presence => true
+  validates :meta_order, :presence => true
 
   attr_accessible :user_id, :address_id, :merchant_account_id, :payment_card_id, :developer_id
   attr_accessible :message, :products, :shipping_info, :should_auto_cancel, :confirmation
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
-  attr_accessible :mangopay_contribution_id, :mangopay_contribution_amount, :mangopay_contribution_status
-  attr_accessible :mangopay_contribution_message, :mangopay_amazon_voucher_id, :mangopay_amazon_voucher_code
-  attr_accessible :billing_solution, :injection_solution, :cvd_solution
-  attr_accessor :products, :confirmation
+  attr_accessible :injection_solution, :cvd_solution, :tracker, :meta_order_id, :expected_cashfront_value
+  attr_accessor :products, :confirmation, :payment_card_id, :address_id
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
-  scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 12.hours ) }
+  scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 18.hours ) }
   scope :canceled, lambda { where("state_name='querying' and updated_at < ?", Time.zone.now - 2.hours ) }
   scope :preparing_stale, lambda { where("state_name='preparing' and updated_at < ?", Time.zone.now - 5.minutes ) }
   
@@ -44,6 +42,7 @@ class Order < ActiveRecord::Base
   
   before_validation :initialize_uuid
   before_validation :initialize_state
+  before_validation :initialize_meta_order, :if => Proc.new { |order| order.meta_order_id.nil? }
   before_validation :initialize_merchant_account
   before_validation :verify_prices_integrity
   before_save :serialize_questions
@@ -59,7 +58,7 @@ class Order < ActiveRecord::Base
   end
   
   def start
-    return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.payment_card_id.present? && self.order_items.count > 0
+    return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.meta_order.payment_card_id.present? && self.order_items.count > 0
     if self.merchant.vendor.nil?
       fail("unsupported", "vulcain")
       self.save
@@ -105,6 +104,7 @@ class Order < ActiveRecord::Base
       when "driver_failed" then fail("driver_failed", :vulcain)
       when "order_timeout" then fail("order_timeout", :vulcain)
       when "uuid_conflict" then fail("uuid_conflict", :vulcain)
+      when "cart_amount_error" then fail("cart_amount_error", :vulcain)
       when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
       when "no_product_available" then abort("stock", :merchant)
       when "out_of_stock" then abort("stock", :merchant)
@@ -118,72 +118,119 @@ class Order < ActiveRecord::Base
       @questions = content["questions"]
       
       (content["products"] || []).each do |product|
-        if product["id"].nil?
-          product["id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
+        if product["product_version_id"].nil? &&
+          if product["id"]  
+            product["product_version_id"] = Product.find(product["id"]).product_versions.first.id
+          else
+            product["product_version_id"] = Product.find_by_url(Linker.clean(product["url"])).product_versions.first.id
+          end
         end
-        item = self.order_items.where(:product_version_id => product["id"]).first
-        item.update_attribute(:price, product["price"] || product["price_product"] || product["product_price"])
+        item = self.order_items.where(:product_version_id => product["product_version_id"]).first
+        if product["quantity"] && item.quantity != product["quantity"]
+          callback_vulcain(false)
+          fail("invalid_quantity", :vulcain)
+          self.save!
+          return
+        end
+        p = product["price"] || product["price_product"] || product["product_price"]
+
+        # Special case Luxemburg
+        if self.meta_order.address.country.iso == "LU"
+          p = (p.to_f + 0.00000001) / 1.196 * 1.15
+        end
+
+        item.update_attribute(:price, p.to_f.round(2))
       end
 
-      prepared_price_product = content["billing"]["total"].to_f - content["billing"]["shipping"].to_f
+      prepared_price_product = content["billing"]["total"].to_f.round(2) - content["billing"]["shipping"].to_f.round(2)
 
       # Set product price if unique item and without price
       if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
         self.order_items.first.update_attribute :price, prepared_price_product
       end
 
-      self.prepared_price_total = content["billing"]["total"].to_f
-      self.prepared_price_shipping = content["billing"]["shipping"].to_f
+      self.prepared_price_total = content["billing"]["total"].to_f.round(2)
+      self.prepared_price_shipping = content["billing"]["shipping"].to_f.round(2)
       self.prepared_price_product = prepared_price_product
+      self.expected_cashfront_value = self.cashfront_value
       self.save!
-      
+
       if self.expected_price_total >= self.prepared_price_total
       
         # Basic user payment
-        if self.billing_solution.nil?
+        if self.meta_order.billing_solution.nil?
           callback_vulcain(true)
           
         # MangoPay billing
-        elsif self.billing_solution == "mangopay"
-          self.state = :billing
-          billing_result = MangoPayFunnel.bill(self)
-          if billing_result["Status"] == "success"
+        elsif self.meta_order.billing_solution == "mangopay"
+          self.update_attribute :state_name, "billing"
           
-            # Billing success
-            if self.reload.mangopay_contribution_status == "success"              
+          # Prepare wallet
+          wallet_result = self.meta_order.create_mangopay_wallet
+          if wallet_result[:status] == "created"
+
+            if !self.meta_order.fullfilled?
+              billing_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id)
+              billing_result = billing_transaction.process
+            end
+
+            if self.meta_order.fullfilled? || billing_result[:status] == "processed"
             
-              # Limonetik CVD & injection
-              if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
-                callback_vulcain(true)
-                self.state = :pending_injection
-                
-              # Amazon vouchers
-              elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
-                self.state = :preparing
-                
-                voucher_result = MangoPayFunnel.voucher(self)
-                if voucher_result["Status"] == "success"
+              # Billing success
+              if self.meta_order.fullfilled? || billing_transaction.success
+
+                # Limonetik CVD & injection
+                if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
                   callback_vulcain(true)
+                  self.state = :pending_injection
+                  
+                # Amazon vouchers
+                elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
+                  self.state = :preparing
+
+                  # Cashfront
+                  if self.cashfront_value > 0 && self.meta_order.billing_transactions.successfull.cashfront.count == 0
+                    cashfront_transaction = BillingTransaction.create!(meta_order_id:self.meta_order.id, processor:"cashfront")
+                    cashfront_result = cashfront_transaction.process
+
+                    if cashfront_result[:status] != "processed"
+                      callback_vulcain(false)
+                      fail(cashfront_result[:message], :shopelia)
+                      self.save!
+                      return
+                    end
+                  end
+                 
+                  payment_transaction = self.payment_transaction || PaymentTransaction.create!(order_id:self.id) 
+                  payment_result = payment_transaction.process
+
+                  if payment_result[:status] == "created"
+                    callback_vulcain(true)
+                  else
+                    callback_vulcain(false)
+                    fail(payment_result[:message], :shopelia)
+                  end
+                  
+                # Invalid CVD solution
                 else
                   callback_vulcain(false)
-                  fail(voucher_result["Error"], :shopelia)
+                  fail("invalid_cvd_solution_#{self.cvd_solution}", :shopelia)
                 end
                 
-              # Invalid CVD solution
+              # Billing failure
               else
                 callback_vulcain(false)
-                fail("invalid_cvd_solution", :shopelia)
+                abort(billing_transaction.mangopay_contribution_message, :billing)
               end
               
-            # Billing failure
             else
               callback_vulcain(false)
-              abort(self.mangopay_contribution_message, :billing)
+              fail(billing_result[:message], :shopelia)
             end
-            
+
           else
             callback_vulcain(false)
-            fail(billing_result["Error"], :shopelia)
+            fail(wallet_result[:message], :shopelia)
           end
           
         # Invalid billing solution
@@ -197,9 +244,9 @@ class Order < ActiveRecord::Base
       end
       
     elsif verb.eql?("success")
-      self.billed_price_total = content["billing"]["total"]
-      self.billed_price_shipping = content["billing"]["shipping"]
-      self.billed_price_product = self.billed_price_total - self.billed_price_shipping
+      self.billed_price_total = content["billing"]["total"].to_f.round(2)
+      self.billed_price_shipping = content["billing"]["shipping"].to_f.round(2)
+      self.billed_price_product = (self.billed_price_total - self.billed_price_shipping).round(2)
       self.shipping_info = content["billing"]["shipping_info"]
       complete
       
@@ -209,8 +256,9 @@ class Order < ActiveRecord::Base
     
     rescue Exception => e
       callback_vulcain(false) if verb.eql?("assess")
-      fail("Error during order Callback\n#{e.inspect}", :shopelia)
-      self.update_attribute :prepared_price_product, 0 # allow save if price mismatch
+      fail("#{e.message} - #{e.backtrace.join("\n").first(300)}", :shopelia)
+      # allow save if price mismatch
+      self.prepared_price_product = 0
       self.save!
   end
 
@@ -288,6 +336,15 @@ class Order < ActiveRecord::Base
     Emailer.notify_order_creation(self).deliver
     self.update_attribute :notification_email_sent_at, Time.now
   end
+
+  def cashfront_value
+    v = 0.0
+    options = { developer:self.developer }
+    self.order_items.each do |item|
+      v += item.cashfront_value(options)
+    end
+    v.round(2)
+  end
   
   private
  
@@ -340,8 +397,20 @@ class Order < ActiveRecord::Base
     self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
   end
   
+  def initialize_meta_order
+    meta = MetaOrder.new(
+      user_id:self.user_id,
+      payment_card_id:self.payment_card_id,
+      address_id:self.address_id)
+    if meta.save
+      self.meta_order_id = meta.id
+    else
+      self.errors.add(:base, meta.errors.full_messages.join(","))
+    end
+  end
+
   def mirror_solutions_from_merchant
-    self.billing_solution = self.merchant.billing_solution if self.billing_solution.nil?
+    self.meta_order.update_attribute :billing_solution, self.merchant.billing_solution if self.meta_order.billing_solution.nil?
     self.injection_solution = self.merchant.injection_solution if self.injection_solution.nil?
     self.cvd_solution = self.merchant.cvd_solution if self.cvd_solution.nil?
   end
@@ -351,17 +420,19 @@ class Order < ActiveRecord::Base
       self.errors.add(:base, I18n.t('orders.errors.no_product'))
     else
       self.products.each do |p|
-        product = Product.fetch(p[:url])
-        
-        self.errors.add(
-          :base, I18n.t('orders.errors.invalid_product', 
-          :error => product.nil? ? "" : product.errors.full_messages.join(","))) and next if product.nil? || !product.persisted?
+        if p[:url].present?
+          product = Product.fetch(p[:url])
           
-        self.errors.add(:base, I18n.t('orders.errors.duplicate_order')) if OrderItem.where(order_id:self.user.orders.where("created_at >= ?", 5.minutes.ago).map(&:id)).where(product_version_id: ProductVersion.where(product_id:product.id).map(&:id)).count > 0
+          self.errors.add(
+            :base, I18n.t('orders.errors.invalid_product', 
+            :error => product.nil? ? "" : product.errors.full_messages.join(","))) and next if product.nil? || !product.persisted?
+            
+          self.errors.add(:base, I18n.t('orders.errors.duplicate_order')) if OrderItem.where(order_id:self.user.orders.where("created_at >= ?", 5.minutes.ago).map(&:id)).where(product_version_id: ProductVersion.where(product_id:product.id).map(&:id)).count > 0
 
-        product.name = p[:name] unless p[:name].blank?
-        product.image_url = p[:image_url] unless p[:image_url].blank?
-        self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => product.errors.full_messages.join(","))) if !product.save
+          product.name = p[:name] unless p[:name].blank?
+          product.image_url = p[:image_url] unless p[:image_url].blank?
+          self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => product.errors.full_messages.join(","))) if !product.save
+        end
       end
     end
     self.errors.count == 0
@@ -369,23 +440,48 @@ class Order < ActiveRecord::Base
   
   def prepare_order_items
     self.products.each do |p|
-      product = Product.fetch(p[:url])
-      p[:quantity] ||= 1
-      if product.nil? || !product.persisted? || self.merchant_id && self.merchant_id != product.merchant_id
-        self.destroy and return
+      if p[:url].present?
+        product = Product.fetch(p[:url])
+        p[:quantity] ||= 1
+        if product.nil? || !product.persisted? || self.merchant_id && self.merchant_id != product.merchant_id
+          self.destroy and return
+        end
+        OrderItem.create!(
+          order_id:self.id, 
+          product_version:product.product_versions.first, 
+          price:p[:price].to_f.round(2),
+          quantity:p[:quantity].to_i)
+      elsif p[:product_version_id].present?
+        v = ProductVersion.find(p[:product_version_id].to_i)
+        product = v.product
+        OrderItem.create!(
+          order_id:self.id, 
+          product_version:v, 
+          price:v.price,
+          quantity:(p[:quantity] || 1).to_i)
       end
-      self.merchant_id = product.merchant_id
-      self.save
-      order = OrderItem.create!(order:self, product_version:product.product_versions.first, price:p[:price].to_i*p[:quantity], quantity:p[:quantity])
+      if product.nil?
+        self.destroy 
+        self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => ""))
+        return
+      else
+        self.merchant_id = product.merchant_id
+        self.save
+      end
     end
     if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
       item = self.order_items.first
       item.update_attribute :price, self.expected_price_product / item.quantity
     end
+    self.reload
   end
   
   def verify_prices_integrity
-    if self.prepared_price_product.to_i > 0 && self.prepared_price_product.round(2) != self.order_items.map(&:price).sum.round(2)
+    self.expected_price_product = self.expected_price_product.to_f.round(2)
+    self.expected_price_total = self.expected_price_total.to_f.round(2)
+    self.expected_price_shipping = self.expected_price_shipping.to_f.round(2)
+    self.expected_cashfront_value = self.expected_cashfront_value.to_f.round(2)
+    if self.prepared_price_product.to_i > 0 && self.prepared_price_product.round(2) != self.order_items.map{ |e| e.price * e.quantity}.sum.round(2)
       self.errors.add(:base, I18n.t('orders.errors.price_inconsistency'))
     elsif self.expected_price_total.to_i > 0 && self.expected_price_product.to_i == 0
       self.expected_price_product = self.expected_price_total
@@ -394,6 +490,9 @@ class Order < ActiveRecord::Base
       self.expected_price_total = self.expected_price_product.to_i + self.expected_price_shipping.to_i
     elsif self.expected_price_total.round(2) != (self.expected_price_product + self.expected_price_shipping).round(2)
       self.errors.add(:base, I18n.t('orders.errors.price_inconsistency'))
+    end
+    if self.order_items.count > 0 && self.expected_cashfront_value != self.cashfront_value
+      self.errors.add(:base, I18n.t('orders.errors.cashfront_inconsistency'))
     end
   end
   

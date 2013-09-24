@@ -1,10 +1,14 @@
+ENV['CODECLIMATE_REPO_TOKEN'] = "a7e4e665b905b5d0a668fa45edcdcad086b0d6e0dd67e03af862d25b3b55a35c"
+ENV["RAILS_ENV"] = "test"
+
 require 'simplecov'
 SimpleCov.start
-
-ENV["RAILS_ENV"] = "test"
+require "codeclimate-test-reporter"
+CodeClimate::TestReporter.start
 
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
+require 'sidekiq/testing'
 
 class ActiveSupport::TestCase
   fixtures :all
@@ -22,19 +26,19 @@ class ActiveSupport::TestCase
   end
 
   setup do
-    ENV["ALLOW_REMOTE_API_CALLS"] = "0"
     ENV["API_KEY"] = developers(:prixing).api_key
-    ENV["ALLOW_PAYLINE_DRIVER"] = "0"
     ActionMailer::Base.deliveries.clear
+    File.delete(MangoPayDriver::CONFIG) if File.exist?(MangoPayDriver::CONFIG)
   end
 
   def json_response
     JSON.parse @response.body
   end
-  
-  def allow_remote_api_calls
-   ENV["ALLOW_REMOTE_API_CALLS"] = "1"
-  end
 
+  def prepare_master_cashfront_account value=10000
+    MangoPayDriver.create_master_account  
+    card = { number:"4970100000000154", exp_month:"12", exp_year:"2020", cvv:"123" }
+    contribution = MangoPayDriver.credit_master_account card, value if value > 0
+  end
 end
 

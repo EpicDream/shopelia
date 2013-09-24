@@ -10,7 +10,15 @@ class User < ActiveRecord::Base
   has_many :payment_cards, :dependent => :destroy
   has_many :merchant_accounts, :dependent => :destroy
   has_many :user_verification_failures, :dependent => :destroy
+  has_many :meta_orders, :dependent => :destroy
   has_many :orders, :dependent => :destroy
+  has_many :carts, :dependent => :destroy
+  has_many :cart_items, :through => :carts
+  has_many :devices
+  has_many :events, :through => :devices
+  has_many :billing_transactions
+  has_many :payment_transactions, :through => :orders
+
   belongs_to :nationality, :class_name => "Country"
   belongs_to :developer
 
@@ -28,14 +36,14 @@ class User < ActiveRecord::Base
   attr_accessible :email, :remember_me, :first_name, :last_name
   attr_accessible :birthdate, :civility, :nationality_id, :ip_address, :pincode
   attr_accessible :addresses_attributes, :payment_cards_attributes
-  attr_accessible :developer_id
+  attr_accessible :developer_id, :visitor, :tracker
   attr_accessor :addresses_attributes, :payment_cards_attributes
 
   before_validation :reset_test_account
 
   before_create :skip_confirmation_email
   after_create :process_nested_attributes
-  after_create :send_confirmation_email
+  after_update :process_nested_attributes
   after_create :leftronic_users_count
   after_destroy :leftronic_users_count
   before_update :update_mangopay_user, :if => Proc.new { |user| user.mangopay_id.present? && (first_name_changed? || last_name_changed? || birthdate_changed? || nationality_id_changed? || email_changed?) }
@@ -66,7 +74,7 @@ class User < ActiveRecord::Base
   end
   
   def name
-    "#{self.first_name} #{self.last_name}"
+    self.last_name.blank? ? "Guest" : "#{self.first_name} #{self.last_name}"
   end
   
   def male?
@@ -123,20 +131,38 @@ class User < ActiveRecord::Base
     password == password_confirmation && !password.blank?
   end
   
+  def create_mangopay_user
+    return { status:"error", message:"mangopay user already created" } unless self.mangopay_id.nil?
+    remote_user = MangoPay::User.create({
+        'Tag' => Rails.env.test? ? "User test" : self.id.to_s,
+        'Email' => self.email,
+        'FirstName' => self.first_name,
+        'LastName' => self.last_name,
+        'Nationality' => self.nationality.nil? ? "fr" : self.nationality.iso,
+        'Birthday' => self.birthdate.nil? ? 30.years.ago.to_i : self.birthdate.to_i,
+        'PersonType' => 'NATURAL_PERSON',
+        'CanRegisterMeanOfPayment' => true,
+        'IP' => self.ip_address
+    })
+    if remote_user["ID"].present?
+      self.update_attribute :mangopay_id, remote_user["ID"].to_i
+    else
+      { status:"error", message:"Impossible to create mangopay user object: #{remote_user.inspect}" }
+    end
+    
+    self.reload
+    { status:"success" }
+  end    
+
   private
   
   def skip_confirmation_email
-    @confirmation_delayed = true
     self.skip_confirmation_notification!
   end
   
   def process_nested_attributes
-    self.addresses = self.addresses_attributes
-    self.payment_cards = self.payment_cards_attributes
-  end
-  
-  def send_confirmation_email
-    self.send_confirmation_instructions if self.errors.count == 0 && @confirmation_delayed
+    self.addresses = self.addresses_attributes if self.addresses_attributes.present?
+    self.payment_cards = self.payment_cards_attributes if self.payment_cards_attributes.present?
   end
   
   def update_mangopay_user
@@ -161,7 +187,7 @@ class User < ActiveRecord::Base
   end
 
   def notify_creation_to_admin
-    Emailer.notify_admin_user_creation(self).deliver
+    Emailer.notify_admin_user_creation(self).deliver unless self.email =~ /shopelia/ || self.visitor?
   end
 
   def check_absence_of_completed_orders

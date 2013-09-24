@@ -3,12 +3,17 @@ class IncidentsDatatable
 
   def initialize(view)
     @view = view
+    if params[:severity].blank?
+      @severities = [ Incident::IMPORTANT, Incident::INFORMATIVE, Incident::CRITICAL ]
+    else
+      @severities = [ params[:severity].to_i ]
+    end    
   end
 
   def as_json(options = {})
     {
       sEcho: params[:sEcho].to_i,
-      iTotalRecords: Incident.where(processed:false).count,
+      iTotalRecords: Incident.where(processed:false, severity:@severities).count,
       iTotalDisplayRecords: incidents.total_entries,
       aaData: data
     }
@@ -40,10 +45,10 @@ class IncidentsDatatable
   end
 
   def fetch_incidents
-    incidents = Incident.where(processed:false).order("#{sort_column} #{sort_direction}")
+    incidents = Incident.where(processed:false, severity:@severities).order("#{sort_column} #{sort_direction}")
     incidents = incidents.page(page).per_page(per_page)
     if params[:sSearch].present?
-      users = users.where("description like :search or issue like :search", search: "%#{params[:sSearch]}%")
+      incidents = incidents.where("description like :search or issue like :search", search: "%#{params[:sSearch]}%")
     end
     incidents
   end

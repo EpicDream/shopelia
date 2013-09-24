@@ -2,4 +2,9 @@ class Shopelia.Collections.Addresses extends Backbone.Collection
   model: "Shopelia.Models.Address"
 
   getDefaultAddress: ->
-    @at(0)
+    r = @at(0)
+    _.each(@models, (address) ->
+      if address.get('is_default') == 1
+        r = address
+    )
+    r

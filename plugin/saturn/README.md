@@ -21,7 +21,11 @@ He can extract for example :
 Installation
 ------------
 
-#### Manually, for tests
+#### From packaged extension
+
+Download the saturn.crx file, and drop it in the Google-Chrome window.
+
+#### From sources
 
 In Chromium extensions' tab :
 
@@ -44,7 +48,7 @@ with **nhledioladlcecbcfenmdibnnndlfikf** the extension id, that you can find in
   
 On a server :
 
-    DISPLAY=:0 google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn && google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
+    DISPLAY=:0 google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn ; google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
 
 Usage
 -----

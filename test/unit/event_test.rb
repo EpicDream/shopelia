@@ -18,7 +18,7 @@ class EventTest < ActiveSupport::TestCase
       event = Event.new(
         :action => Event::VIEW,
         :url => "http://www.amazon.fr/my_product",
-      :device_id => devices(:web).id,
+        :device_id => devices(:web).id,
         :developer_id => developers(:prixing).id)
       assert event.save, event.errors.full_messages.join(",")
     end
@@ -42,4 +42,51 @@ class EventTest < ActiveSupport::TestCase
         :urls => [ "http://www.amazon.fr/product1", "http://www.amazon.fr/product2" ])
     end
   end
+
+  test "it should skip bad urls" do
+    assert_difference(["Event.count","Product.count"], 0) do
+      Event.from_urls(
+        :action => Event::VIEW,
+        :device_id => devices(:web).id,
+        :developer_id => developers(:prixing).id,
+        :urls => [ "", " ", "/product", "none" ])
+    end
+  end
+
+  test "it shouldn't create event without valid product" do
+    event = Event.new(
+      :action => Event::CLICK,
+      :url => "",
+      :device_id => devices(:web).id,
+      :developer_id => developers(:prixing).id)
+    assert !event.save
+  end
+
+  test "it shouldn't reset viking_sent_at if product versions are not expired when event is created" do
+    p = products(:headphones)
+    p.update_attributes(
+      versions_expires_at:1.hour.from_now,
+      viking_sent_at:3.hours.ago)
+    event = Event.create!(
+      :action => Event::VIEW,
+      :product_id => p.id,
+      :device_id => devices(:web).id,
+      :developer_id => developers(:prixing).id)
+
+    assert_not_nil p.reload.viking_sent_at
+  end
+
+  test "it should reset viking_sent_at if product versions are expired when event is created" do
+    p = products(:headphones)
+    p.update_attributes(
+      versions_expires_at:1.hour.ago,
+      viking_sent_at:1.hours.ago)
+    event = Event.create!(
+      :action => Event::VIEW,
+      :product_id => p.id,
+      :device_id => devices(:web).id,
+      :developer_id => developers(:prixing).id)
+
+    assert p.reload.viking_sent_at.nil?
+  end  
 end

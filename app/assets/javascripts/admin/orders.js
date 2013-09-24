@@ -1,31 +1,27 @@
 $(document).ready(function() {
-  processingTable = $('#processingOrders').dataTable( {
+  ordersTable = $('#orders').dataTable( {
     "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
     "bServerSide": true,
-    "bLengthChange": false,
+    "bLengthChange": true,
     "bFilter": false,
-    "bPaginate": false,
-    "bInfo": false,
-    "bSort": false,
-    "sAjaxSource": $('#processingOrders').data('source')
-  } );
-  pendingTable = $('#pendingOrders').dataTable( {
-    "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-    "bServerSide": true,
-    "bLengthChange": false,
-    "bFilter": false,
-    "bPaginate": false,
-    "bInfo": false,
+    "bPaginate": true,
+    "bInfo": true,
     "bSort": false,
     "bAutoWidth": false,
-    "sAjaxSource": $('#pendingOrders').data('source'),
+    "sAjaxSource": $('#orders').data('source'),
+    "fnServerData": function ( sSource, aoData, fnCallback ) {
+      aoData.push( { "name":"state", "value":$('#stateFilter').val() } );
+      $.getJSON( sSource, aoData, function (json) { 
+        fnCallback(json)
+      } );
+    },    
     "fnDrawCallback" : function() {
-      $('#pendingOrders .btn').on("click", function(event) {
+      $('#orders .btn-modal').on("click", function(event) {
         var url = $(this).attr('data-url');
         var state = $(this).attr('data-state');
         $('#confirmModelState').html(state);
-        $('#confirmDestruction').off();
-        $('#confirmDestruction').on("click", function(event){
+        $('#confirmModalAction').off();
+        $('#confirmModalAction').on("click", function(event){
           $.ajax({
             url: url,
             dataType: "json",
@@ -36,14 +32,14 @@ $(document).ready(function() {
               $('#confirmModal').modal('hide');
             },
             success: function(data) {
-              pendingTable.fnReloadAjax();
+              ordersTable.fnReloadAjax();
               $('#confirmModal').modal('hide');
             }
           });
         });
         $('#confirmModal').modal('show');
       });
-      $('#pendingOrders tbody tr').hover(
+      $('#orders tbody tr').hover(
         function() {
           $(this).find("button").each(function() {
             $(this).css("visibility", "visible");
@@ -61,90 +57,7 @@ $(document).ready(function() {
       return nRow;
     }  
   } );
-  completedTable = $('#completedOrders').dataTable( {
-    "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-    "bServerSide": true,
-    "sPaginationType": "bootstrap",
-    "bLengthChange": false,
-    "bPaginate": true,
-    "bFilter": false,
-    "bInfo": false,
-    "bSort": false,
-    "sAjaxSource": $('#completedOrders').data('source')
-  } );
-  failedTable = $('#failedOrders').dataTable( {
-    "sDom": "<'row'<'span6'l><'span6'f>r>t<'row'<'span6'i><'span6'p>>",
-    "bServerSide": true,
-    "sPaginationType": "bootstrap",
-    "bLengthChange": false,
-    "bPaginate": true,
-    "bFilter": false,
-    "bInfo": false,
-    "bSort": false,
-    "sAjaxSource": $('#failedOrders').data('source')
-  } );
-  Refresh.run();
+  $(".filter-option").on('change', function() {
+    ordersTable.fnReloadAjax();
+  })
 } );
-
-var Refresh = {
-  totalPending: -1,
-  totalProcessing: -1,
-  totalFailed: -1,
-  totalSuccess: -1,
-  
-	run: function() {
-	  this.toggleVisibility();
-		setInterval("Refresh.refresh()", 5000);
-	},
-
-	refresh: function() {
-	  this.reloadAjax();
-	  this.toggleVisibility();
-    
-    var totalProcessingNow = $("#processingOrders tr").size();
-    if (totalProcessingNow > this.totalProcessing && this.totalProcessing > -1) {
-      document.getElementById("sound-processing").play();
-    }
-    this.totalProcessing = totalProcessingNow;
-    
-    var totalFailedNow = $("#failedOrders tr").size();
-    if (totalFailedNow > this.totalFailed && this.totalFailed > -1) {
-      document.getElementById("sound-failed").play();
-    }
-    this.totalFailed = totalFailedNow;
-    
-    var totalPendingNow = $("#pendingOrders tr").size();
-    if (totalPendingNow > this.totalPending && this.totalPending > -1) {
-      document.getElementById("sound-pending").play();
-    }
-    this.totalPending = totalPendingNow;
-    
-    var totalSuccessNow = $("#completedOrders tr").size();
-    if (totalSuccessNow > this.totalSuccess && this.totalSuccess > -1) {
-      document.getElementById("sound-success").play();
-    }
-    this.totalSuccess = totalSuccessNow;
-	},
-	
-	reloadAjax: function() {
-    processingTable.fnReloadAjax();
-    pendingTable.fnReloadAjax();
-    completedTable.fnReloadAjax();
-    failedTable.fnReloadAjax();
-  },
-  
-  toggleVisibility: function() {
-    if (processingTable.fnGetData().length > 0) {
-      $('#processingOrdersSection').show('fast');
-    } else {
-      $('#processingOrdersSection').hide('fast');
-    }
-    
-    if (pendingTable.fnGetData().length > 0) {
-      $('#pendingOrdersSection').show('fast');
-    } else {
-      $('#pendingOrdersSection').hide('fast');
-    }
-  }  
-}
-

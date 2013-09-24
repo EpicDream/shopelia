@@ -1,0 +1,28 @@
+dans( plus de)? \d+ magasins: false
+cet article paraitra le: true
+en pr.\-?commande: true
+pr.\-?commandez maintenant: true
+voir les offres de ces vendeurs: true
+expedie sous: true
+expedie habituellement sous: true
+^\(\d+\)$: true
+en stock: true
+peu de stock: true
+stock modere: true
+disponibilite immediate: true
+en vente sur: true
+"[1-9]\\d* offres": true
+disponible sous \d semaine: true
+sur commande: false
+inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
+retrait gratuit en magasin: false
+produit epuise: false
+bientot disponible: false
+sans stock pour vos criteres: false
+ce produit est epuise: false
+indisponible: false
+en rupture de stock: false
+aucun vendeur ne propose ce produit: false
+out of stock: false
+\d+ d'occasion: false
+non disponible: false

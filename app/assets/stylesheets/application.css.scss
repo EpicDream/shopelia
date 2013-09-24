@@ -2,12 +2,14 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+@import "variables.css.scss";
 @import "jquery-ui-1.10.3.custom.min.css.scss";
 @import "bourbon";
-@import "variables.css.scss";
 @import "bootstrap";
 @import "bootstrap-responsive";
-@import "bootstrap_override";
+@import "mixins.css.scss";
+@import "bootstrap_override.css.scss";
+@import "home.css.scss";
 
 .clearfix {
   clear: both;
@@ -55,4 +57,30 @@
   display: none;
   color: $red;
   margin-bottom: 20px;
+}
+
+
+html,
+body {
+  height: 100%;
+}
+
+
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  //padding-top: 100px;
+  margin: 0 auto -80px;
+}
+
+#footer {
+  height: 80px;
+}
+
+
+#footer {
+  background-color: $blue;
+  color: white !important;
+
 }

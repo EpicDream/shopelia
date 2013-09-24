@@ -114,22 +114,28 @@
                                 <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
                                   Prix Total<br />
                                   Frais de livraison
+                                  <% if @order.expected_cashfront_value > 0 %>
+                                    <br /><font color="red"><strong>Avantages</strong></font>
+                                  <% end %>
                                 </td>
                                 <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666; line-height:24px; border-bottom:1px dashed #bdc3c7; padding-bottom:5px;">
                                   <strong><%= number_to_currency(@order.billed_price_product) %></strong><br />
                                   <strong><%= number_to_currency(@order.billed_price_shipping) %></strong>
+                                  <% if @order.expected_cashfront_value > 0 %>
+                                    <br /><strong><font color="red">- <%= number_to_currency(@order.expected_cashfront_value) %></font></strong>
+                                  <% end %>
                                 </td>
                               </tr>
                               <!--Article Title-->
                               <tr>
                                 <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;">Total payé</td>
-                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;"><span style="font-family: Helvetica, Arial, sans-serif; color:#46b758; font-weight:bold;"><%= number_to_currency(@order.billed_price_total) %></span></td>
+                                <td align="right" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:20px; color:#34495e; padding-top:10px;"><span style="font-family: Helvetica, Arial, sans-serif; color:#46b758; font-weight:bold;"><%= number_to_currency(@order.billed_price_total - @order.expected_cashfront_value) %></span></td>
                               </tr>
-<% if @order.billing_solution.eql?("mangopay") %>
+<% if @order.meta_order.billing_solution.eql?("mangopay") %>
                               <tr>
                                 <td colspan="2" align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:10px; color:#666666; line-height:12px;">
                                   <br>
-                                  Votre carte a été débitée de ce montant sous le libellé <b>INFO SHOPELIA FR by MangoPay</b>
+                                  Votre carte a été débitée de ce montant sous le libellé <b>Shopelia.fr by MangoPay</b>
                                 </td>
                               </tr>
 <% end %>                              

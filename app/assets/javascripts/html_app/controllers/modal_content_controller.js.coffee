@@ -9,13 +9,23 @@ class Shopelia.Controllers.ModalContentController extends Shopelia.Controllers.C
       region.show(@view)
       @showProduct(@getProduct())
       @showUserForm()
+      if window.Shopelia.AbbaCartPosition == 'top'
+        @showCartFormTop()
+      else if window.Shopelia.AbbaCartPosition == 'bottom'
+        @showCartFormBottom()
     else
       @view.show()
-
 
   hide: ->
     @view.hide()
 
+  showCartFormTop: ->
+    $("#modal-top-wrapper").show()
+    Shopelia.vent.trigger('add_to_cart#show',@view.top)
+
+  showCartFormBottom: ->
+    $("#modal-bottom-wrapper").show()
+    Shopelia.vent.trigger('add_to_cart#show',@view.bottom)
 
   showProduct: (product) ->
     Shopelia.vent.trigger("products#show",@view.left,product)
@@ -49,10 +59,9 @@ class Shopelia.Controllers.ModalContentController extends Shopelia.Controllers.C
 
   order: ->
     session = @getSession().clone()
-    product = @getProduct().clone()
     order = new Shopelia.Models.Order({
                                       session: session
-                                      product: product
+                                      product: @getProduct()
                                       })
     Shopelia.vent.trigger("sign_up#close")
     Shopelia.vent.trigger("sign_in#close")
@@ -61,3 +70,7 @@ class Shopelia.Controllers.ModalContentController extends Shopelia.Controllers.C
   showThankYou: ->
     Shopelia.vent.trigger("thank_you#show",@view.right)
 
+  onBeforeClose: ->
+    Shopelia.vent.trigger("sign_up#close")
+    Shopelia.vent.trigger("sign_in#close")
+    Shopelia.vent.trigger("products#close")

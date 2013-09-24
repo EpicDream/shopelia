@@ -11,36 +11,8 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should create version" do
     assert @version.save, @version.errors.full_messages.join(",")
   end
-  
-  test "it shouldn't allow duplication for sizes and colors" do
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"blue",
-      size:"32")
-    assert v.save
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"red",
-      size:"32")
-    assert v.save
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"red",
-      size:"30")    
-    assert v.save
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"blue",
-      size:"32")    
-    assert !v.save
-    v = ProductVersion.new(
-      product_id:products(:headphones).id,
-      color:"blue",
-      size:"32")    
-    assert v.save
-  end
 
-  test "it should create version with data" do
+  test "it should create version with attributes" do
     version = ProductVersion.new(
        product_id:@product.id,
        price:"10€",
@@ -48,12 +20,44 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert version.save, version.errors.full_messages.join(",")
     assert_equal 10, version.price
     assert_equal "reference", version.reference
+    assert version.option1_md5.nil?
   end
-  
+
+  test "it should truncate name to 250 chars" do
+    version = ProductVersion.new(
+      product_id:@product.id,
+      name: "0" * 500
+    )
+    assert version.save
+    
+    assert_equal 250, version.name.length
+  end
+
+  test "it should prepare options md5" do
+    version = ProductVersion.create(
+       product_id:@product.id,
+       option1:{ "text" => "   1   ", "bla" => 2 },
+       option2:{ "src" => "2", "bla" => 1 })
+
+    assert_equal ({"bla" => 2, "text" => "   1   "}.to_json), version.option1
+    assert_equal Digest::MD5.hexdigest("1"), version.option1_md5
+    assert_equal Digest::MD5.hexdigest("2"), version.option2_md5
+  end
+
+  test "it should generate incident if one option is invalid" do
+    assert_difference "Incident.count", 1 do
+      version = ProductVersion.create(
+        product_id:@product.id,
+        option1:{ "a" => 1, "b" => 2 })
+      assert version.option1.nil?
+    end
+  end
+
   test "it should parse float" do
     str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", 
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
-            "2��79 6��30" ]
+            "2��79 6��30", "sur rdv devant chez vous (6 à 10 jours). 2.79 €",
+            "livraison à domicile (1 livreur) (le livreur (au pied de l'immeuble si vous êtes en appartement) 2 bla...) 2.79 €" ]
     str.each { |s| check_price s, 2.79 }
 
     str = [ "2", "2€", "Bla bla 2 €" ]
@@ -67,6 +71,10 @@ class ProductVersionTest < ActiveSupport::TestCase
 
     str = [ "12 739€", "12 739€", "bla 12739" ]
     str.each { |s| check_price s, 12739 }
+
+    # Special cases
+    check_price "+ Eco Part : 1,50€ soit un total de 136,48€", 136.48
+    check_price "so colissimo (2 à 4 jours). 11.99 €", 11.99
   end
 
   test "it should parse free shipping" do
@@ -95,14 +103,34 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
 
   test "it should generate incident if shipping price is too high" do
-    assert_difference "Incident.count", 1 do
+    assert_difference "Incident.count", 0, "price=1000 and shipping_price=151 should pass" do
       @version.price_text = "1000"
       @version.price_shipping_text = "151"
       @version.save
     end
-    assert_difference "Incident.count", 0 do
+    assert_difference "Incident.count", 0, "price=15 and shipping_price=9 should pass" do
       @version.price_text = "15"
       @version.price_shipping_text = "9"
+      @version.save
+    end
+    assert_difference "Incident.count", 0, "price=15 and shipping_price=149 should pass" do
+      @version.price_text = "15"
+      @version.price_shipping_text = "149"
+      @version.save
+    end
+    assert_difference "Incident.count", 0, "price=300 and shipping_price=149 should pass" do
+      @version.price_text = "300"
+      @version.price_shipping_text = "149"
+      @version.save
+    end
+    assert_difference "Incident.count", 1, "price=15 and shipping_price=151 should not pass" do
+      @version.price_text = "15"
+      @version.price_shipping_text = "151"
+      @version.save
+    end
+    assert_difference "Incident.count", 1, "price=300 and shipping_price=151 should not pass" do
+      @version.price_text = "300"
+      @version.price_shipping_text = "151"
       @version.save
     end
   end
@@ -119,28 +147,74 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert_equal 10.0, version.price_strikeout
   end
   
+  test "it should set available at false if missing attribute" do
+    version = ProductVersion.new(
+      availability_text:"En stock",
+      product_id:@product.id,
+      price:"2.79",
+      price_shipping:"1")
+    assert version.save, version.errors.full_messages.join(",")
+    assert !version.available
+  end
+
   test "it should set available info" do
     array = [ "Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock", 
               "temporairement en rupture de stock.", "sur commande", "article indisponible",
-              "ce produit est epuise", "sans stock pour vos criteres", "bientot disponible" ]
+              "ce produit est epuise", "sans stock pour vos criteres", "bientot disponible",
+              "produit epuise", "inscrivez-vous pour etre prevenu lorsque cet article sera disponible",
+              "retrait gratuit en magasin", "dans plus de 50 magasins", "dans 48 magasins",
+              "non disponible" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
         availability_text:str)
-      assert !version.available
+      assert !version.available, "#{str.inspect} failed !"
+      assert_equal str, version.availability_info
     end
     
-    version = ProductVersion.create(
-      product_id:@product.id,
-      availability_text:"en stock")
-    assert version.available
+    array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
+              "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
+              "disponible sous 4 semaines" ]
+    array.each do |str|
+      assert_difference "Incident.count", 0 do
+        version = ProductVersion.create(
+          product_id:@product.id,
+          price:"2.79",
+          price_shipping:"1",
+          shipping_info:"toto",
+          image_url:"toto",
+          name:"toto",
+          availability_text:str)
+        assert version.available, "#{str.inspect} failed !"
+        assert_equal str, version.availability_info
+      end
+    end
   end
   
   test "it should generate incident if unknown availability (and set as available by default)" do
     assert_difference "Incident.count", 1 do
       version = ProductVersion.create(
         product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
         availability_text:"bla")
+      assert version.available
+    end
+  end
+
+  test "it shouldnt generate incident if availability is known and mapped to true" do
+    assert_difference "Incident.count", 0 do
+      version = ProductVersion.create(
+        product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:"en precommande")
       assert version.available
     end
   end
@@ -149,11 +223,29 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert @version.destroy
     assert !product_versions(:usbkey).destroy
   end
+
+  test "it should send 0 for cashfront value if no rule" do
+    version = ProductVersion.create!(
+      product_id:@product.id,
+      price:"100",
+      price_shipping:"10")
+
+    assert_equal 0, version.cashfront_value(developer:developers(:prixing))
+  end
   
+  test "it should compute cashfront value" do
+    version = ProductVersion.create!(
+      product_id:products(:dvd).id,
+      price:"100",
+      price_shipping:"10")
+
+    assert_equal 3, version.cashfront_value(100, developer:developers(:prixing))
+  end
+
   test "it should sanitize description (1)" do
     @version.description = <<__END
 
-<h3 class="productDescriptionSource"></h3> <div class="productDescriptionWrapper"> <p>filtre à eau.</p><p>compatible avec tous les modèles de frigo lg</p> <div class="emptyClear"> </div> </div>
+<h3>Amazon.fr</h3><h3 class="productDescriptionSource"></h3> <div class="productDescriptionWrapper"> <p>filtre à eau.</p><p>compatible avec tous les modèles de frigo lg</p> <div class="emptyClear"> </div> </div>
 
 __END
     @version.save
@@ -341,7 +433,49 @@ __END
     @version.save
     assert_equal "<ul> <li> Fabricant : <em>Olympus</em> </li> <li> Référence fabricant : <em>V104080UE000 - TG320BLEU</em> </li> </ul><p></p> Achetez un appareil photo, c'est comme s'offrir une paire de lunettes de soleil; on a toujours peur de les casser la première fois qu'on les sort de leur étui! C'est pour éviter toutes ces craintes qu'Olympus a développé sa série de compacts, tout-terrain: résistants aux chocs, étanches, et au froid extrême. Une gamme quasi indestructible!<br>Le TG-320 dispose de nombreuses fonctionnalités automatiques qui permettent de photographier sans complexe toutes les situations, même les plus compliquées. Et afin de garantir la meilleure qualité des photos de groupe ou d'un sujet éloigné, celui-ci est équipé d'un zoom optique grand angle. Le TG-320 est le compagnon idéal des aventuriers. Avec cet appareil, pas besoin de prendre des précautions il suffit juste de s'amuser et de saisir l'instant!<br>Pour s'approcher au plus près de la réalité le TG-320 est doté de la fonction 3D utilisable même sous l'eau. Il est également équipé de filtres artistiques pour donner une touche de créativité à vos photos. Et pour revivre et partager les moments forts rien de plus simple via la carte Eye-Fi. Avec toutes ses fonctionnalités, ses performances technologiques et sa robustesse, le TG-320 est exceptionnel sans oublier son rapport qualité/prix.<br> <br><p></p> <p></p> <ul> <li>Zoom optique 3.6x grand angle</li> <li>14 méga pixels</li> <li>Ecran LCD 6.9cm/ 2.7\"</li> <li>Double stabilisation d'image</li> <li>Filtres artistiques pour les vidéos et photos</li> <li>Détection de visage et SAT</li> <li>Mode photo 3D</li> <li>Mode beauté</li> <li>Mode détection animaux</li> <li>Compatible carte Eye-Fi</li> <li>Chargeur de batterie via USB</li> </ul> <br><p></p> <p>Général</p> <table><tbody> <tr> <th>Type de Produit</th> <td>Appareil photo numérique - compact</td> </tr> <tr> <th>Couleur du boîtier</th> <td>Bleu</td> </tr> <tr> <th>Résolution du Capteur</th> <td>14.0 mégapixel</td> </tr> <tr> <th>Interfaces AV</th> <td>Audio/vidéo composite, HDMI</td> </tr> </tbody></table>", @version.description
   end
-   
+
+test "it should sanitize description (4)" do
+    @version.description =<<__END   
+<div class="content">
+  <div id="outer_postBodyPS" style="overflow: hidden; z-index: 1; height: auto;">
+    <div id="postBodyPS" style="overflow: hidden;">
+      <div><b>Découvrez la suite du phénomène international : Eva et Gideon doivent faire face aux démons de leurs passés respectifs et accepter les conséquences de leurs désirs obsessionnels...</b></div>
+    </div>
+  </div>
+  <div id="psGradient" class="psGradient" style="display:none;"></div>
+  <div id="psPlaceHolder" style="display:none; height: 20px;">
+    <div id="expandPS" style="display:none; z-index: 3;">
+      <span class="swSprite s_expandChevron"></span>
+      <a class="showMore" onclick="amz_expandPostBodyDescription('PS', ['psGradient', 'psPlaceHolder']); return false;" href="#">Afficher plus</a>
+    </div>
+  </div>
+  <div id="collapsePS" style="display:none; padding-top: 3px;">
+    <span class="swSprite s_collapseChevron"></span>
+    <a class="showLess" onclick="amz_collapsePostBodyDescription('PS', ['psGradient', 'psPlaceHolder']); return false;" href="#">Réduire</a>
+  </div>
+  <noscript>
+    &lt;style type='text/css'&gt;
+    #outer_postBodyPS {
+    display: none;
+    }
+    #psGradient {
+    display: none;
+    }
+    #psPlaceHolder {
+    display: none;
+    }
+    #psExpand {
+    display: none;
+    }
+    &lt;/style&gt;
+    &lt;div id="postBodyPS"&gt;&lt;b&gt;D&amp;#xE9;couvrez la suite du ph&amp;#xE9;nom&amp;#xE8;ne international : Eva et Gideon doivent faire face aux d&amp;#xE9;mons de leurs pass&amp;#xE9;s respectifs et accepter les cons&amp;#xE9;quences de leurs d&amp;#xE9;sirs obsessionnels...&lt;/b&gt;&lt;/div&gt;
+  </noscript>
+</div>
+__END
+    @version.save
+    assert_equal "<b>Découvrez la suite du phénomène international : Eva et Gideon doivent faire face aux démons de leurs passés respectifs et accepter les conséquences de leurs désirs obsessionnels...</b>", @version.description
+end
+
   private
   
   def check_price s, p

@@ -219,7 +219,7 @@ fr:
         phone: "Le numéro de téléphone"
         address1: "L'adresse"
         country_id: "Le pays"
-      order:
+      meta_order:
         address: "L'adresse"
         payment_card: "Le moyen de paiement"
       payment_card:
@@ -246,7 +246,7 @@ fr:
               blank: "doit être renseigné"
             country_id:
               blank: "doit être renseigné"
-        order:
+        meta_order:
           attributes:
              address:
                blank: "doit être renseignée"
@@ -272,6 +272,12 @@ fr:
     add: "Ajouter l'adresse"
     success: "L'adresse a été créée avec succès"
 
+  billing_transactions:
+    errors:
+     invalid_state: "Toutes les commandes doivent être en attente de billing pour pouvoir exécuter la transaction"
+     price_inconsistency: "Le prix total des commandes ne correspond pas au prix maximum attendu par l'utilisateur"
+     already_fulfilled: "La commande a déjà été payée en sa totalité"
+
   payment_cards:
     add: "Ajouter la carte"
     success: "La carte a été créée avec succès"
@@ -288,6 +294,8 @@ fr:
       invalid_product: "Produit invalide %{error}"
       duplicate_order: "Vous ne pouvez pas commander deux fois le même produit dans un délai de 5 minutes"
       price_inconsistency: "Les prix des produits ne correspondent pas au total de la commande"
+      cashfront_inconsistency: "Le cashfront attendu de cette commande n'est pas égal au cashfront disponible"
+      cannot_initialize_meta_order: "Impossible d'initialiser la commande. Le service Shopelia est en maintenance"
   
   products:
     errors:

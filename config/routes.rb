@@ -1,7 +1,6 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
-
   match "/checkout", :controller => "html_app", :action => "index"
 
   apipie
@@ -17,8 +16,12 @@ Shopelia::Application.routes.draw do
 
   resources :home, :only => :index
   resources :contact, :only => :create
+  resources :gateway, :only => :index
   
   resources :addresses
+  resources :cart_items, :only => :show do
+    get :unsubscribe, :on => :member
+  end
   resources :orders, :only => [:show, :update] do
     get :confirm, :on => :member
     get :cancel, :on => :member
@@ -26,8 +29,12 @@ Shopelia::Application.routes.draw do
   resources :payment_cards
 
   namespace :admin do
+    match "/", to: "dashboard#index"
+    resources :dashboard, :only => :index
     resources :developers, :only => [:index, :new, :create]
+    resources :events, :only => :index
     resources :incidents, :only => [:index, :update]
+    resources :merchants, :only => [:index, :show, :new, :create, :update]
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
     resources :viking, :only => :index
@@ -53,12 +60,13 @@ Shopelia::Application.routes.draw do
     scope :module => :v1, constraints: ApiConstraints.new(version:1, default:true)  do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
+      resources :cart_items, :only => :create
       resources :events, :only => [:index, :create]
       resources :payment_cards, :only => [:index, :create, :show, :destroy]
       resources :phone_lookup, :only => :show
       resources :merchants, :only => [:index, :create]
       resources :orders, :only => [:create, :show]
-      resources :products, :only => :index
+      resources :products, :only => [:index, :create]
       resources :users, :only => [:show, :update, :destroy]
       namespace :users do
         resources :autocomplete, :only => :create
@@ -80,20 +88,31 @@ Shopelia::Application.routes.draw do
         resources :details, :only => :show
       end
     end
+    namespace :showcase do
+      namespace :products do
+        resources :search, :only => :index
+      end
+    end
     namespace :viking do
       resources :products, :only => [:index, :update]
       namespace :products do
-        get :shift
         get :failure
         get :failure_shift
         get :alive
       end
-      resources :merchants, :only => [:show, :update, :create]
+      resources :merchants, :only => [:show, :update, :index]
+    end
+    namespace :vulcain do
+      resources :merchants, :only => :update
     end
   end
+
+  match "about" => "home#about"
+
 
   match '*not_found', to: 'errors#error_404'
   get "errors/error_404"
   get "errors/error_500"
+  root to: 'home#index'
 
 end
