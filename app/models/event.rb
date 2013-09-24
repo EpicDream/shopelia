@@ -15,6 +15,7 @@ class Event < ActiveRecord::Base
 
   before_validation :find_or_create_product
   before_validation :set_monetizable
+  after_create :reset_viking_sent_at
 
   attr_accessible :url, :product_id, :developer_id, :device_id, :action, :tracker, :ip_address
   attr_accessor :url
@@ -23,23 +24,26 @@ class Event < ActiveRecord::Base
   scope :for_tracker, lambda { |tracker| where(tracker:tracker) }
   scope :views, where(action:VIEW)
   scope :clicks, where(action:CLICK)
+  scope :requests, where(action:REQUEST)
+  scope :buttons, where(action:[VIEW, CLICK])
   
   def self.from_urls data
-    data[:urls].each do |url|
+    (data[:urls] || data["urls"] || []).each do |url|
+      next if url !~ /^http/
       Event.create!(
         :url => url,
-        :action => data[:action],
-        :developer_id => data[:developer_id],
-        :device_id => data[:device_id],
-        :tracker => data[:tracker],
-        :ip_address => data[:ip_address])
+        :action => data["action"] || data[:action],
+        :developer_id => data["developer_id"] || data[:developer_id],
+        :device_id => data["device_id"] || data[:device_id],
+        :tracker => data["tracker"] || data[:tracker],
+        :ip_address => data["ip_address"] || data[:ip_address])
     end
   end        
   
   private
   
   def find_or_create_product
-    self.product = Product.fetch(self.url) unless self.url.blank?
+    self.product_id = Product.fetch(self.url).id unless self.url.blank?
   end
   
   def set_monetizable
@@ -48,5 +52,9 @@ class Event < ActiveRecord::Base
       self.monetizable = !mlink.eql?(self.product.url)
       true
     end
+  end
+
+  def reset_viking_sent_at
+    self.product.update_column "viking_sent_at", nil if self.product.persisted? && self.product.versions_expired?
   end
 end

@@ -44,7 +44,8 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
     $(@el).click (e) ->
       e.stopPropagation()
 
-    $(document).click ->
+    $(document).click (e) ->
+      if e.target.id == ""
         that.onBeforeClose()
 
   showCloseButton: ->
@@ -70,7 +71,6 @@ class Shopelia.Views.Modal extends Shopelia.Views.Layout
       this.close();
 
   close: ->
-    #console.log("close please")
     $(@el).fadeOut({
                    duration: "fast",
                    complete: () ->

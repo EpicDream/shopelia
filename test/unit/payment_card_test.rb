@@ -47,9 +47,9 @@ class PaymentCardTest < ActiveSupport::TestCase
   end
   
   test "it should fail all non completed orders attached to a destroyed payment card" do
-    order = orders(:elarch_rueducommerce)
-    assert_equal :initialized, order.state
-    order.payment_card.destroy
+    order = orders(:elarch_rueducommerce_billing)
+    assert_equal :billing, order.state
+    order.meta_order.payment_card.destroy
     
     assert_equal :failed, order.reload.state
     assert_equal "user", order.error_code
@@ -57,11 +57,19 @@ class PaymentCardTest < ActiveSupport::TestCase
   end
 
   test "it shouldn't fail a completed orders attached to a destroyed payment card" do
-    order = orders(:elarch_rueducommerce)
+    order = orders(:elarch_rueducommerce_billing)
     order.update_attribute :state_name, "completed"
-    order.payment_card.destroy
+    order.meta_order.payment_card.destroy
     
     assert_equal :completed, order.reload.state
+  end
+
+  test "it should create mangopay card" do
+    card = payment_cards(:elarch_hsbc)
+    result = card.create_mangopay_card
+
+    assert_equal "success", result[:status], result[:message]
+    assert card.mangopay_id.present?
   end
 
 end

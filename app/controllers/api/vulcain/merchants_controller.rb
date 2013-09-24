@@ -4,8 +4,8 @@ class Api::Vulcain::MerchantsController < Api::V1::BaseController
   before_filter :retrieve_merchant, :only => :update
 
   api :PUT, "/viking/merchants/:vendor", "Update merchant information"
-  param :pass, "Boolean", "Did the vulcain strategy test pass ?", :required => true
-  param :output, "String", "Output result of the strategy test", :required => true
+  param :pass, [true, false], "Did the vulcain strategy test pass ?", :required => true
+  param :output, String, "Output result of the strategy test", :required => true
   def update
     @merchant.vulcain_test_pass = params[:pass]
     @merchant.vulcain_test_output = params[:output]

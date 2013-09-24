@@ -22,5 +22,11 @@ class Vulcain::AddressSerializerTest < ActiveSupport::TestCase
     assert_equal @address.access_info, hash[:address][:additional_address]
   end
 
-end
+  test "it should keep only numbers for zip" do
+    @address.zip = "LV-1550"
+    address_serializer = Vulcain::AddressSerializer.new(@address)
+    hash = address_serializer.as_json
 
+    assert_equal "1550", hash[:address][:zip]
+  end
+end

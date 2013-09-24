@@ -18,19 +18,26 @@ class Product < ActiveRecord::Base
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
   attr_accessible :brand, :reference, :viking_failure, :muted_until
-  attr_accessor :versions
+  attr_accessible :options_completed, :viking_sent_at, :batch
+  attr_accessor :versions, :batch
   
-  scope :viking_pending, lambda { joins(:events).where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and (muted_until is null or muted_until < ?)", Time.now, 6.hours.ago, 12.hours.ago, Time.now) }
+  scope :viking_pending, lambda { joins(:events).merge(Event.buttons).merge(Product.viking_base_request) }
+  scope :viking_pending_batch, lambda { joins(:events).merge(Event.requests).merge(Product.viking_base_request) }
   scope :viking_failure, lambda { where(viking_failure:true).order("updated_at desc").limit(100) }
+
+  scope :viking_base_request, lambda {
+    where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') " +
+      "or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and " +
+      "(muted_until is null or muted_until < ?) and products.viking_sent_at is null", Time.now, 6.hours.ago, 12.hours.ago, Time.now).order("events.created_at desc").limit(100)
+  }
   
   def self.fetch url
-    Product.find_or_create_by_url(Linker.clean(url)) unless url.nil?
+    return nil if url.nil?
+    p = Product.find_or_create_by_url(Linker.clean(url))
+    p.save! if !p.persisted? && p.errors.empty?
+    p
   end
   
-  def self.viking_shift
-    Product.viking_pending.order("events.created_at desc").first
-  end
-
   def versions_expired?
     self.versions_expires_at.nil? || self.versions_expires_at < Time.now
   end
@@ -39,18 +46,31 @@ class Product < ActiveRecord::Base
     4.hours.from_now
   end
   
+  def viking_reset
+    self.update_column "viking_sent_at", Time.now
+    self.update_column "options_completed", false
+    self.product_versions.update_all "available='f'"
+    self
+  end
+
   def mute?
     self.muted_until.present? && self.muted_until > Time.now
   end
   
+  def ready?
+    !self.viking_failure && self.versions_expires_at.present? && self.versions_expires_at > Time.now
+  end
+
   def assess_versions
-    ok = self.product_versions.count > 0
+    ok = false
     self.product_versions.each do |version|
-      if version.available.nil?
-        ok = false
-      elsif version.available?
-        ok = false if version.name.nil? || version.price.nil? || version.price_shipping.nil? || version.shipping_info.nil? || version.image_url.nil?
-      end
+      ok = true if version.available == false \
+        || (version.available \
+        && version.name.present? \
+        && version.price.present? \
+        && version.price_shipping.present? \
+        && version.image_url.present? \
+        && version.shipping_info.present?)
     end
     self.update_column "viking_failure", !ok
   end
@@ -78,15 +98,12 @@ class Product < ActiveRecord::Base
   
   def create_versions
     if self.versions.present?
-      self.product_versions.update_all "available='f'"
       self.versions.each do |version|
         version[:price_text] = version[:price]
         version[:price_shipping_text] = version[:price_shipping]
         version[:price_strikeout_text] = version[:price_strikeout]
         version[:availability_text] = version[:availability]
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
-        version[:color] = version[:color].to_json unless version[:color].nil?
-        version[:size] = version[:size].to_json unless version[:size].nil?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
 
         # Default shipping values
@@ -97,7 +114,11 @@ class Product < ActiveRecord::Base
           end
         end
 
-        v = self.product_versions.find_by_size_and_color(version[:size], version[:color])
+        v = self.product_versions.where(
+          option1_md5:ProductVersion.generate_option_md5(version[:option1]),
+          option2_md5:ProductVersion.generate_option_md5(version[:option2]),
+          option3_md5:ProductVersion.generate_option_md5(version[:option3]),
+          option4_md5:ProductVersion.generate_option_md5(version[:option4])).first
         if v.nil?
           v = ProductVersion.create!(version.merge({product_id:self.id}))
         else
@@ -115,7 +136,7 @@ class Product < ActiveRecord::Base
           v.update_attributes version
         end
       end
-      version = self.reload.product_versions.where(available:true).order("updated_at").first
+      version = self.reload.product_versions.available.order(:updated_at).first
       if version.present?
         self.update_column "name", version.name
         self.update_column "brand", version.brand

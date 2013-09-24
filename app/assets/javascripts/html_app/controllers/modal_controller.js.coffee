@@ -3,7 +3,6 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
   initialize: ->
     _.bindAll this
 
-
   open: (params) ->
     console.log('opening the modal')
     @view = new Shopelia.Views.Modal()
@@ -29,10 +28,14 @@ class Shopelia.Controllers.ModalController extends Shopelia.Controllers.Controll
   showAddToCart: ->
     Shopelia.vent.trigger('add_to_cart#show',@view.content)
 
-  showNotFound:(product) ->
-    view = new Shopelia.Views.NotFound(model: product)
+  showProductNotAvailable:(product) ->
+    if product.get('ready') == 1
+      view = new Shopelia.Views.NotAvailable(model: product)
+    else
+      view = new Shopelia.Views.NotFound(model: product)
     @view.content.once("show", (view) ->
       Shopelia.vent.trigger("sign_up#close")
+      Shopelia.vent.trigger("header#hide_all")
     )
     @view.content.show(view)
 

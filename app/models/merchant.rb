@@ -4,6 +4,7 @@ class Merchant < ActiveRecord::Base
   has_many :products, :dependent => :destroy
   has_many :events, :through => :products
   has_many :orders
+  has_many :cashfront_rules
 
   validates :name, :presence => true, :uniqueness => true
   validates :domain, :presence => true, :uniqueness => true

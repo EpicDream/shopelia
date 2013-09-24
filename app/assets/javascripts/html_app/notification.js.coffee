@@ -22,7 +22,7 @@ class Shopelia.Notification
   @Success : (params) ->
     params.type = "success"
     if params.title is undefined
-      params.title = "Succ?s"
+      params.title = "Succès"
     new Shopelia.Notification(params)
 
   @Info : (params) ->

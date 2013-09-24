@@ -3,6 +3,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   skip_before_filter :authenticate_developer!
   before_filter :retrieve_developer_key
   before_filter :prepare_params
+  before_filter :prepare_urls
   before_filter :set_visitor_cookie
   before_filter :set_developer_cookie
   before_filter :set_tracker_cookie
@@ -13,13 +14,14 @@ class Api::V1::EventsController < Api::V1::BaseController
   param :visitor, String, "Visitor UUID", :required => false
   param :developer, String, "Developer key", :required => true
   def index
-    Event.from_urls(
-      :urls => params[:urls].split("||"),
+    EventsWorker.perform_async({
+      :urls => @urls,
       :developer_id => @developer.id,
       :action => @action,
       :tracker => @tracker,
       :device_id => @device.id,
-      :ip_address => request.remote_ip)
+      :ip_address => request.remote_ip
+    })
     head :no_content
   end
   
@@ -28,13 +30,14 @@ class Api::V1::EventsController < Api::V1::BaseController
   param :tracker, String, "Tracker", :required => false
   param :visitor, String, "Visitor UUID", :required => false
   def create
-    Event.from_urls(
-      :urls => params[:urls],
+    EventsWorker.perform_async({
+      :urls => @urls,
       :developer_id => @developer.id,
       :action => @action,
       :tracker => @tracker,
       :device_id => @device.id,
-      :ip_address => request.remote_ip)
+      :ip_address => request.remote_ip
+    })
     head :no_content
   end
   
@@ -48,6 +51,14 @@ class Api::V1::EventsController < Api::V1::BaseController
     @tracker = params[:tracker]
     @action = params[:shadow] ? Event::REQUEST :
       params[:type] == 'click' ? Event::CLICK : Event::VIEW
+  end
+
+  def prepare_urls
+    if params[:urls].is_a?(Array)
+      @urls = params[:urls].map{|e| e.unaccent}
+    else
+      @urls = params[:urls].unaccent.split("||")
+    end
   end
     
   def set_visitor_cookie 

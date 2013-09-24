@@ -18,37 +18,42 @@ class OrderTest < ActiveSupport::TestCase
       :developer_id => @developer.id,
       :payment_card_id => @card.id,
       :products => [ {
-        :price => 90,
-        :url => "http://www.amazon.fr/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
+        :price => 90.356,
+        :url => "http://www.cdiscount.com/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO",
         :name => "Papier normal Fax T102 Brother FAXT102G1",
         :image_url => "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg" } ],
       :address_id => @address.id,
-      :expected_price_total => 100,
-      :expected_price_product => 90,
-      :expected_price_shipping => 10,
+      :expected_price_total => 100.356,
+      :expected_price_product => 90.356,
+      :expected_price_shipping => 10.001,
       :tracker => 'toto')
     assert order.persisted?, order.errors.full_messages.join(",")
     assert_equal :preparing, order.state
     assert order.merchant_account.present?
     assert order.uuid.present?
     assert_equal 1, order.reload.order_items.count
-    assert_equal 90, order.expected_price_product
+    assert_equal 90.36, order.expected_price_product
     assert_equal 10, order.expected_price_shipping
-    assert_equal 100, order.expected_price_total
+    assert_equal 100.36, order.expected_price_total
     assert_equal "toto", order.tracker
+
+    meta = order.meta_order
+    assert meta.present?
+    assert_equal @address.id, meta.address_id
+    assert_equal @card.id, meta.payment_card_id
+    assert_equal "mangopay", meta.billing_solution
     
     item = order.order_items.first
     assert_equal 1, item.quantity
-    assert_equal 90, item.reload.price
+    assert_equal 90.36, item.reload.price
     
     product = item.product
-    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
+    assert_equal "http://www.cdiscount.com/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
     
-    assert_equal "mangopay", order.billing_solution
     assert_equal "vulcain", order.injection_solution
-    assert_equal "amazon", order.cvd_solution
+    assert_equal "virtualis", order.cvd_solution
   end
   
   test "it should create multiple order items with quantities" do
@@ -73,6 +78,26 @@ class OrderTest < ActiveSupport::TestCase
     assert order.persisted?, order.errors.full_messages.join(",")
     assert_equal 7, order.order_items.count
     assert_equal 8, order.order_items.map(&:quantity).sum
+  end
+
+  test "it should create order from product version id" do
+    order = Order.create!(
+      :user_id => @user.id,
+      :developer_id => @developer.id,
+      :payment_card_id => @card.id,
+      :products => [
+        { :product_version_id => product_versions(:usbkey).id, :quantity => 1 }
+      ],
+      :address_id => @address.id,
+      :expected_price_total => 100,
+      :expected_price_product => 90,
+      :expected_price_shipping => 10)
+
+    assert order.persisted?, order.errors.full_messages.join(",")
+    item = order.order_items.first
+    assert_equal 1, item.quantity
+    assert_equal product_versions(:usbkey).id, item.product_version_id
+    assert_equal 5, item.price
   end
 
   test "it should prepare item price from quantity" do
@@ -322,7 +347,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it shouldn't start order if missing payment card" do
-    @order.payment_card_id = nil
+    @order.meta_order.update_attribute :payment_card_id, nil
     start_order
     
     assert_equal :initialized, @order.state
@@ -425,6 +450,15 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "uuid_conflict", @order.message
   end
 
+  test "it should pause order with vulcain cart amount error" do
+    start_order
+    callback_order "failure", { "status" => "cart_amount_error" }
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "cart_amount_error", @order.message
+  end
+
   test "it should pause order with vulcain product not found" do
     start_order
     callback_order "failure", { "status" => "no_product_available" }
@@ -466,6 +500,22 @@ class OrderTest < ActiveSupport::TestCase
   test "it should update order when assessing" do
     start_order
     assess_order
+
+    assert_equal 16, @order.prepared_price_total
+    assert_equal 14, @order.prepared_price_product
+    assert_equal 2, @order.prepared_price_shipping
+    assert_equal 1, @order.questions.count
+    assert_equal "3", @order.questions.first["id"]
+    
+    item = @order.order_items.where(:product_version_id => product_versions(:usbkey).id).first
+    assert_equal 9, item.price
+    
+    assert_not_equal :pending_agent, @order.state
+  end
+
+  test "it should assess order with product version id" do
+    start_order
+    assess_order_with_product_version_id
     
     assert_equal 16, @order.prepared_price_total
     assert_equal 14, @order.prepared_price_product
@@ -478,9 +528,18 @@ class OrderTest < ActiveSupport::TestCase
     
     assert_not_equal :pending_agent, @order.state
   end
+
+  test "it should fail order if assess has invalid quantities" do
+    start_order
+    assess_order_with_invalid_quantity
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "invalid_quantity", @order.message
+  end
   
   test "it should set missing product price if only one item" do
-    @order.order_items.first.destroy # keep only one item
+    order_items(:item2).destroy # keep only one item
     start_order
     assess_order_with_missing_price
     
@@ -496,6 +555,23 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal false, @order.questions.first["answer"]
     assert_equal "shopelia", @order.error_code
     assert_match /Les prix des produits ne correspondent pas/, @order.message
+  end
+
+  test "it should assess amazon order with address in luxemburg" do
+    @order.meta_order.address.update_attribute :country_id, countries(:luxemburg).id
+    start_order
+    assess_order_for_amazon_luxemburg
+
+    assert_not_equal :pending_agent, @order.state
+
+    assert_equal 15.38, @order.prepared_price_total
+    assert_equal 15.38, @order.prepared_price_product
+    assert_equal 0, @order.prepared_price_shipping
+    
+    item = @order.order_items.where(:product_version_id => product_versions(:usbkey).id).first
+    assert_equal 8.65, item.price
+    item = @order.order_items.where(:product_version_id => product_versions(:headphones).id).first
+    assert_equal 6.73, item.price
   end
 
   test "it should send request to user if price it outside range" do
@@ -631,7 +707,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 1, Order.delayed.count
     assert_equal 0, Order.expired.count
 
-    @order.update_attribute :created_at, Time.now - 13.hours
+    @order.update_attribute :created_at, Time.now - 21.hours
     assert_equal 1, Order.delayed.count
     assert_equal 1, Order.expired.count
   end
@@ -679,6 +755,9 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "preparing_stale", @order.message
   end
  
+  test "it should compute cashback value" do
+    assert_equal 0.30, orders(:elarch_amazon_billing).cashfront_value
+  end
   
   test "[alpha] it should continue order if target price is same than expected" do
     configuration_alpha
@@ -709,8 +788,8 @@ class OrderTest < ActiveSupport::TestCase
     start_order
     assess_order
     order_success
-    
-    assert_equal :completed, @order.state
+
+    assert_equal :completed, @order.state, @order.inspect
     assert_equal 14, @order.billed_price_product
     assert_equal 2, @order.billed_price_shipping
     assert_equal 16, @order.billed_price_total
@@ -725,12 +804,9 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "[beta] it should complete order" do
-    allow_remote_api_calls    
     configuration_beta
-    VCR.use_cassette('mangopay') do
-      start_order
-      assess_order
-    end
+    start_order
+    assess_order
 
     assert_equal :pending_injection, @order.state
     assert_equal true, @order.questions.first["answer"]
@@ -747,15 +823,12 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "[beta] it should fail order if billing failed" do
-    allow_remote_api_calls    
     configuration_beta
     @order.expected_price_total = 333.05
     @order.expected_price_shipping = 33.05
     @order.expected_price_product = 300
-    VCR.use_cassette('mangopay') do
-      start_order
-      assess_order_billing_failure
-    end
+    start_order
+    assess_order_billing_failure
 
     assert_equal :failed, @order.state
     assert_equal "billing", @order.error_code
@@ -764,21 +837,27 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "[amazon] it should complete order" do
-    allow_remote_api_calls
+    CashfrontRule.destroy_all
     configuration_amazon
-    VCR.use_cassette('mangopay') do
-      start_order
-      assess_order
+    start_order
+    assess_order
 
-      assert @order.mangopay_wallet_id.present?
-      assert @order.mangopay_contribution_id.present?
-      assert_equal "success", @order.mangopay_contribution_status
-      assert_equal 1600, @order.mangopay_contribution_amount
-      assert @order.mangopay_amazon_voucher_id.present?
-      assert @order.mangopay_amazon_voucher_code.present?    
-      
-      order_success
-    end
+    assert @order.meta_order.mangopay_wallet_id.present?
+    assert_equal 1, @order.meta_order.billing_transactions.count
+
+    billing_transaction = @order.meta_order.billing_transactions.first
+    assert billing_transaction.mangopay_contribution_id.present?
+    assert billing_transaction.success?
+    assert_equal 1600, billing_transaction.amount
+    assert_equal 1600, billing_transaction.mangopay_contribution_amount
+
+    payment_transaction = @order.payment_transaction
+    assert payment_transaction.present?
+    assert_equal "amazon", payment_transaction.processor
+    assert payment_transaction.mangopay_amazon_voucher_id.present?
+    assert payment_transaction.mangopay_amazon_voucher_code.present?    
+    
+    order_success
     
     assert_equal :completed, @order.state
     assert_equal 14, @order.billed_price_product
@@ -787,21 +866,147 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "[amazon] it should complete order with lower price than expected" do
-    allow_remote_api_calls
+    CashfrontRule.destroy_all
     configuration_amazon
-    VCR.use_cassette('mangopay') do
-      start_order
-      assess_order_with_lower_price
+    start_order
+    assess_order_with_lower_price
 
-      assert_equal 1600, @order.mangopay_contribution_amount
+    billing_transaction = @order.meta_order.billing_transactions.first
+    assert_equal 1600, billing_transaction.amount
 
-      order_success
-    end
+    order_success
 
     assert_equal :completed, @order.state
     assert_equal 14, @order.billed_price_product
     assert_equal 2, @order.billed_price_shipping
     assert_equal 16, @order.billed_price_total    
+  end
+
+  test "[amazon] it should complete order with cashfront" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account
+
+    start_order
+    assess_order_cashfront
+
+    assert_equal 16, @order.prepared_price_total
+    assert_equal 2, @order.prepared_price_shipping
+    assert_equal 14, @order.prepared_price_product
+    assert_equal 0.42, @order.cashfront_value
+
+    assert @order.meta_order.mangopay_wallet_id.present?
+    assert_equal 2, @order.meta_order.billing_transactions.count
+
+    billing_transaction_mp = @order.meta_order.billing_transactions.mangopay.first
+    assert billing_transaction_mp.mangopay_contribution_id.present?
+    assert billing_transaction_mp.success?
+    assert_equal 1558, billing_transaction_mp.amount
+    assert_equal 1558, billing_transaction_mp.mangopay_contribution_amount
+    assert_equal @order.meta_order.mangopay_wallet_id, billing_transaction_mp.mangopay_destination_wallet_id
+
+    billing_transaction_cf = @order.meta_order.billing_transactions.cashfront.first
+    assert_equal 42, billing_transaction_cf.amount
+    assert billing_transaction_cf.mangopay_transfer_id.present?
+    assert billing_transaction_cf.success
+
+    payment_transaction = @order.payment_transaction
+    assert payment_transaction.present?
+    assert_equal "amazon", payment_transaction.processor
+    assert_equal 1600, payment_transaction.amount
+    assert payment_transaction.mangopay_amazon_voucher_id.present?
+    assert payment_transaction.mangopay_amazon_voucher_code.present?    
+    
+    order_success
+    
+    assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total
+  end
+
+  test "[amazon] it should update cashfront with lower price" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account
+
+    start_order
+    assess_order_with_lower_price_cashfront
+
+    assert_equal 0.42, @order.expected_cashfront_value
+  end
+
+  test "[amazon] it shouldn't complete order if expected cashfront value is not meet" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account
+    
+    @order.expected_cashfront_value = 1.0
+    assert !@order.save
+  end
+
+  test "[amazon] it should complete order with cashfront in two times, in case master balance is negative" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account(0)
+
+    start_order
+    assess_order_cashfront
+
+    assert @order.meta_order.mangopay_wallet_id.present?
+    assert_equal 2, @order.meta_order.billing_transactions.count
+
+    billing_transaction_mp = @order.meta_order.billing_transactions.mangopay.first
+    assert billing_transaction_mp.mangopay_contribution_id.present?
+    assert billing_transaction_mp.success?
+    assert_equal 1558, billing_transaction_mp.amount
+    assert_equal 1558, billing_transaction_mp.mangopay_contribution_amount
+    assert_equal @order.meta_order.mangopay_wallet_id, billing_transaction_mp.mangopay_destination_wallet_id
+
+    billing_transaction_cf = @order.meta_order.billing_transactions.cashfront.first
+    assert_equal 42, billing_transaction_cf.amount
+    assert !billing_transaction_cf.success
+    assert billing_transaction_cf.mangopay_transfer_id.nil?
+
+    assert_equal :pending_agent, @order.state
+    assert_equal "shopelia", @order.error_code
+    assert_match /cashfront/, @order.message
+  
+    assert @order.payment_transaction.nil?
+
+    prepare_master_cashfront_account(10000)
+    start_order
+    assess_order_cashfront
+
+    payment_transaction = @order.payment_transaction
+    assert payment_transaction.present?
+    assert_equal "amazon", payment_transaction.processor
+    assert_equal 1600, payment_transaction.amount
+    assert payment_transaction.mangopay_amazon_voucher_id.present?
+    assert payment_transaction.mangopay_amazon_voucher_code.present?    
+    
+    order_success
+    
+    assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total
+  end
+
+  test "[amazon] it should complete order with cashfront in two times, in case vulcain fails" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account
+
+    start_order
+    assess_order_cashfront
+
+    @order.update_attribute :state_name, "pending_agent"    
+
+    start_order
+    assess_order_cashfront
+
+    order_success
+
+    assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total
   end
 
 =begin
@@ -876,23 +1081,30 @@ class OrderTest < ActiveSupport::TestCase
   private
   
   def configuration_alpha
+    @order.meta_order.update_attribute :billing_solution, nil
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "user"
     @order.save
   end
   
   def configuration_beta
-    @order.billing_solution = "mangopay"
+    @order.meta_order.update_attribute :billing_solution, "mangopay"
     @order.injection_solution = "limonetik"
     @order.cvd_solution = "limonetik"  
     @order.save
   end
 
   def configuration_amazon
-    @order.billing_solution = "mangopay"
+    @order.order_items.each { |item| item.product_version.product.update_attribute :merchant_id, merchants(:amazon).id }
+    @order.meta_order.update_attribute :billing_solution, "mangopay"
     @order.injection_solution = "vulcain"
     @order.cvd_solution = "amazon"
     @order.save
+  end
+
+  def configuration_amazon_cashfront
+    @order.expected_cashfront_value = 0.42
+    configuration_amazon
   end
   
   def start_order
@@ -926,7 +1138,7 @@ class OrderTest < ActiveSupport::TestCase
         { "id" => "3" }
       ],
       "products" => [
-        { "url" => products(:usbkey).url + "?key=toto",
+        { "url" => products(:usbkey).url,
           "price" => 9
         },
         { "url" => products(:headphones).url,
@@ -940,6 +1152,49 @@ class OrderTest < ActiveSupport::TestCase
     }
     @order.reload
   end
+
+  def assess_order_with_product_version_id
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "product_version_id" => product_versions(:usbkey).id,
+          "price" => 9
+        },
+        { "product_version_id" => product_versions(:headphones).id,
+          "price" => 5
+        }
+      ],
+      "billing" => {
+        "shipping" => 2,
+        "total" => 16
+      }
+    }
+    @order.reload
+  end  
+
+  def assess_order_with_invalid_quantity
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "product_version_id" => product_versions(:usbkey).id,
+          "price" => 9,
+          "quantity" => 2
+        },
+        { "product_version_id" => product_versions(:headphones).id,
+          "price" => 5
+        }
+      ],
+      "billing" => {
+        "shipping" => 2,
+        "total" => 16
+      }
+    }
+    @order.reload
+  end  
 
   def assess_order_with_missing_price
     @order.callback "assess", { 
@@ -1003,6 +1258,27 @@ class OrderTest < ActiveSupport::TestCase
      }
      @order.reload
   end  
+
+  def assess_order_for_amazon_luxemburg
+    @order.callback "assess", { 
+      "questions" => [
+        { "id" => "3" }
+      ],
+      "products" => [
+        { "url" => products(:usbkey).url,
+          "price" => 9
+        },
+        { "url" => products(:headphones).url,
+          "price_product" => 7
+        }
+      ],
+      "billing" => {
+        "shipping" => 0,
+        "total" => 15.38
+      }
+    }
+    @order.reload
+  end
   
   def assess_order_with_higher_price
     @order.expected_price_total = 10
@@ -1019,7 +1295,19 @@ class OrderTest < ActiveSupport::TestCase
     @order.save
     assess_order
   end
-    
+
+  def assess_order_cashfront
+    @order.expected_cashfront_value = 0.42
+    @order.save
+    assess_order
+  end
+
+  def assess_order_with_lower_price_cashfront
+    @order.expected_cashfront_value = 0.60
+    @order.save
+    assess_order_with_lower_price
+  end
+
   def reject_order
     @order.reject "price_rejected"
     @order.reload
@@ -1041,6 +1329,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   def clearing_success
+    @order.update_attribute :billed_price_total, 16
     @order.clearing_success
     @order.reload
   end

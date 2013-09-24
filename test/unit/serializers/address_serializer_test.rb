@@ -25,6 +25,4 @@ class AddressSerializerTest < ActiveSupport::TestCase
     assert_equal @address.phone, hash[:address][:phone]
     assert_equal 1, hash[:address][:is_default]
   end
-
 end
-

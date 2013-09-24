@@ -4,7 +4,8 @@ class Admin::ProductsController < Admin::AdminController
     product = Product.find(params[:id])
     product.update_attributes(
       :viking_failure => nil,
-      :versions_expires_at => nil)
+      :versions_expires_at => nil,
+      :viking_sent_at => nil)
     
     respond_to do |format|
       format.html

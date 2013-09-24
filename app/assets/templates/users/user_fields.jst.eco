@@ -9,7 +9,7 @@
             </div>
             <div class="control-group">
                 <div class="controls">
-                    <input rel="popover" type="text" tracker-name= "Phone" data-required="true" data-trigger="focusout" data-type="number" class="input-block-level"  placeholder= "Téléphone" name="phone">
+                    <input rel="popover" type="text" tracker-name= "Phone" data-required="true" data-trigger="focusout" data-minlength="6" class="input-block-level"  placeholder= "Téléphone" name="phone">
                     </div>
                 </div>
 

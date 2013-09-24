@@ -6,8 +6,11 @@ rueducommerce:
   vendor: "RueDuCommerce"
   accepting_orders: true
   domain: "rueducommerce.fr"
-  should_clean_args: true
-
+  should_clean_args: false
+  billing_solution: "mangopay"
+  injection_solution: "vulcain"
+  cvd_solution: "virtualis" 
+  
 amazon:
   name: "Amazon"
   logo: "http://www.prixing.fr/images/logos/amazon.png"
@@ -21,6 +24,7 @@ amazon:
   domain: "amazon.fr"
   should_clean_args: true
   viking_data: "{\"bla\":\"boo\"}"
+  allow_quantities: true
   
 fnac:
   name: "Fnac"
@@ -32,7 +36,11 @@ fnac:
 cdiscount:
   name: "Cdiscount"
   domain: "cdiscount.com"
+  vendor: "cdiscount"
   should_clean_args: true
+  billing_solution: "mangopay"
+  injection_solution: "vulcain"
+  cvd_solution: "virtualis"  
 
 toysrus:
   name: "Toysrus"

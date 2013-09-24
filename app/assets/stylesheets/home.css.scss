@@ -1,0 +1,29 @@
+.center {
+  display: block;
+  margin: auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+#promise {
+  color: $grey ;
+  font-size: 30px;
+  line-height: 27px;
+}
+
+
+input#product-bar,button#btn-order {
+  height: 60px;
+  padding: 20px 30px !important;
+  font-size: 20px;
+}
+
+#merchant-table {
+  margin: auto;
+  tr,td,tbody {
+    padding: 10px;
+    margin: 10px;
+  }
+}

@@ -2,6 +2,9 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
+gem 'syslog-logger'
+gem 'redis'
+gem 'redis-rails', '=3.2.1'
 gem 'therubyracer'
 gem 'execjs'
 gem 'maildir'
@@ -30,6 +33,10 @@ gem 'http_accept_language'
 gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
 gem 'sanitize'
+gem 'httpclient'
+gem 'sidekiq'
+gem 'sinatra', require: false
+gem 'slim'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -67,4 +74,9 @@ group :test do
   gem 'vcr'
   gem 'webmock'
   gem "simplecov", :require => false
+  gem "codeclimate-test-reporter"
+end
+
+group :assets do
+  gem 'turbo-sprockets-rails3'
 end
