@@ -1,0 +1,9 @@
+.col-lg-4
+  .cart-item
+    = image_tag cart_item.product_version.image_url, class:"cart-item-img"
+    .cart-item-actions
+      .cart-item-info
+        .info-block
+          .cart-item-title= cart_item.product_version.name
+          .cart-item-price= cart_item.product_version.price
+          .button-buy Voir l'offre
