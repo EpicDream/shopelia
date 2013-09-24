@@ -5,3 +5,7 @@ france:
 morocco:
   iso: MA
   name: Morocco
+
+luxemburg:
+  iso: LU
+  name: Luxemburg

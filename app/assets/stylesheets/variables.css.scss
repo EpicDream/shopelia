@@ -2,18 +2,21 @@
 
 $sansFontFamily : 'Asap', sans-serif;
 
-$green: #29b153;
-$lightGrey: #f5f5f5;
-$darkGrey: #333333;
-$blue: #0099cc;
-$red: #d5263b;
+$green: #3cc8ad;
+$darkGreen: #00A185;
+$lightGrey: #f8f8f8;
+$grey: #798288;
+$lightBlue: #00bbff;
+$blue: #0181a6;
+$darkBlue: #021037;
+$red: #e74c3c;
 
 
 $bodyBackground: $lightGrey;
 
 
 $linkColor: $blue;
-$textColor: $darkGrey;
+$textColor: $grey;
 
 $btnSuccessBackground:              $green;
 $btnSuccessBackgroundHighlight:     darken($green,10%);
@@ -26,3 +29,21 @@ $btnInfoBorder:                     darken($blue,5%);
 //Font Size
 $smallSizeFont: 14px;
 $mediumSizeFont: 22px;
+
+//Forms
+$formsCellHeight:45px;
+$formsCellwidth: 294px;
+$formsButtonHeight: 45px;
+$formsButtonWidth: 308px;
+
+// Popovers
+// -------------------------
+
+//$popoverBackground:       $red;
+$popoverArrowColor:       $blue;
+$popoverTitleBackground:  $blue;
+
+// Special enhancement for popovers
+$popoverArrowWidth:       5px;
+$popoverArrowOuterWidth:  $popoverArrowWidth + 1;
+$popoverArrowOuterColor:  rgba(0,0,0,.25);

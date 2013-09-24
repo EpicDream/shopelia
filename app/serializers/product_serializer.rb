@@ -1,12 +1,17 @@
 class ProductSerializer < ActiveModel::Serializer
   include ActiveModelSerializerExtension::JsonWithoutNilKeys
   
-  attributes :id, :image_url, :name, :url, :merchant, :description, :master_id, :versions, :brand, :reference, :ready
+  attributes :id, :image_url, :name, :url, :merchant, :description, :master_id
+  attributes :versions, :brand, :reference, :ready, :options_completed
  
   def ready
-    !object.viking_failure && object.versions_expires_at.present? && object.versions_expires_at > Time.now ? 1 : 0
+    object.ready? ? 1 : 0
   end
  
+  def options_completed
+    object.options_completed? ? 1 : 0
+  end
+
   def master_id
     object.product_master_id
   end
@@ -16,6 +21,6 @@ class ProductSerializer < ActiveModel::Serializer
   end
   
   def versions
-    ActiveModel::ArraySerializer.new(object.product_versions.where(available:true)).as_json
+    ActiveModel::ArraySerializer.new(object.product_versions.where(available:true), scope:scope).as_json
   end
 end

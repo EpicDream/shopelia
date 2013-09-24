@@ -48,7 +48,7 @@ class IncidentsDatatable
     incidents = Incident.where(processed:false, severity:@severities).order("#{sort_column} #{sort_direction}")
     incidents = incidents.page(page).per_page(per_page)
     if params[:sSearch].present?
-      users = users.where("description like :search or issue like :search", search: "%#{params[:sSearch]}%")
+      incidents = incidents.where("description like :search or issue like :search", search: "%#{params[:sSearch]}%")
     end
     incidents
   end

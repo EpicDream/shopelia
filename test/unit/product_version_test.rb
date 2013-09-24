@@ -11,36 +11,8 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should create version" do
     assert @version.save, @version.errors.full_messages.join(",")
   end
-  
-  test "it shouldn't allow duplication for sizes and colors" do
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"blue",
-      size:"32")
-    assert v.save
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"red",
-      size:"32")
-    assert v.save
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"red",
-      size:"30")    
-    assert v.save
-    v = ProductVersion.new(
-      product_id:@product.id,
-      color:"blue",
-      size:"32")    
-    assert !v.save
-    v = ProductVersion.new(
-      product_id:products(:headphones).id,
-      color:"blue",
-      size:"32")    
-    assert v.save
-  end
 
-  test "it should create version with data" do
+  test "it should create version with attributes" do
     version = ProductVersion.new(
        product_id:@product.id,
        price:"10€",
@@ -48,12 +20,44 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert version.save, version.errors.full_messages.join(",")
     assert_equal 10, version.price
     assert_equal "reference", version.reference
+    assert version.option1_md5.nil?
   end
-  
+
+  test "it should truncate name to 250 chars" do
+    version = ProductVersion.new(
+      product_id:@product.id,
+      name: "0" * 500
+    )
+    assert version.save
+    
+    assert_equal 250, version.name.length
+  end
+
+  test "it should prepare options md5" do
+    version = ProductVersion.create(
+       product_id:@product.id,
+       option1:{ "text" => "   1   ", "bla" => 2 },
+       option2:{ "src" => "2", "bla" => 1 })
+
+    assert_equal ({"bla" => 2, "text" => "   1   "}.to_json), version.option1
+    assert_equal Digest::MD5.hexdigest("1"), version.option1_md5
+    assert_equal Digest::MD5.hexdigest("2"), version.option2_md5
+  end
+
+  test "it should generate incident if one option is invalid" do
+    assert_difference "Incident.count", 1 do
+      version = ProductVersion.create(
+        product_id:@product.id,
+        option1:{ "a" => 1, "b" => 2 })
+      assert version.option1.nil?
+    end
+  end
+
   test "it should parse float" do
     str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", 
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
-            "2��79 6��30" ]
+            "2��79 6��30", "sur rdv devant chez vous (6 à 10 jours). 2.79 €",
+            "livraison à domicile (1 livreur) (le livreur (au pied de l'immeuble si vous êtes en appartement) 2 bla...) 2.79 €" ]
     str.each { |s| check_price s, 2.79 }
 
     str = [ "2", "2€", "Bla bla 2 €" ]
@@ -67,6 +71,10 @@ class ProductVersionTest < ActiveSupport::TestCase
 
     str = [ "12 739€", "12 739€", "bla 12739" ]
     str.each { |s| check_price s, 12739 }
+
+    # Special cases
+    check_price "+ Eco Part : 1,50€ soit un total de 136,48€", 136.48
+    check_price "so colissimo (2 à 4 jours). 11.99 €", 11.99
   end
 
   test "it should parse free shipping" do
@@ -139,28 +147,59 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert_equal 10.0, version.price_strikeout
   end
   
+  test "it should set available at false if missing attribute" do
+    version = ProductVersion.new(
+      availability_text:"En stock",
+      product_id:@product.id,
+      price:"2.79",
+      price_shipping:"1")
+    assert version.save, version.errors.full_messages.join(",")
+    assert !version.available
+  end
+
   test "it should set available info" do
     array = [ "Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock", 
               "temporairement en rupture de stock.", "sur commande", "article indisponible",
               "ce produit est epuise", "sans stock pour vos criteres", "bientot disponible",
-              "retrait gratuit en magasin", "produit epuise", "inscrivez-vous pour etre prevenu lorsque cet article sera disponible" ]
+              "produit epuise", "inscrivez-vous pour etre prevenu lorsque cet article sera disponible",
+              "retrait gratuit en magasin", "dans plus de 50 magasins", "dans 48 magasins",
+              "non disponible" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
         availability_text:str)
-      assert !version.available
+      assert !version.available, "#{str.inspect} failed !"
+      assert_equal str, version.availability_info
     end
     
-    version = ProductVersion.create(
-      product_id:@product.id,
-      availability_text:"en stock")
-    assert version.available
+    array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
+              "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
+              "disponible sous 4 semaines" ]
+    array.each do |str|
+      assert_difference "Incident.count", 0 do
+        version = ProductVersion.create(
+          product_id:@product.id,
+          price:"2.79",
+          price_shipping:"1",
+          shipping_info:"toto",
+          image_url:"toto",
+          name:"toto",
+          availability_text:str)
+        assert version.available, "#{str.inspect} failed !"
+        assert_equal str, version.availability_info
+      end
+    end
   end
   
   test "it should generate incident if unknown availability (and set as available by default)" do
     assert_difference "Incident.count", 1 do
       version = ProductVersion.create(
         product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
         availability_text:"bla")
       assert version.available
     end
@@ -170,6 +209,11 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert_difference "Incident.count", 0 do
       version = ProductVersion.create(
         product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
         availability_text:"en precommande")
       assert version.available
     end
@@ -179,11 +223,29 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert @version.destroy
     assert !product_versions(:usbkey).destroy
   end
+
+  test "it should send 0 for cashfront value if no rule" do
+    version = ProductVersion.create!(
+      product_id:@product.id,
+      price:"100",
+      price_shipping:"10")
+
+    assert_equal 0, version.cashfront_value(developer:developers(:prixing))
+  end
   
+  test "it should compute cashfront value" do
+    version = ProductVersion.create!(
+      product_id:products(:dvd).id,
+      price:"100",
+      price_shipping:"10")
+
+    assert_equal 3, version.cashfront_value(100, developer:developers(:prixing))
+  end
+
   test "it should sanitize description (1)" do
     @version.description = <<__END
 
-<h3 class="productDescriptionSource"></h3> <div class="productDescriptionWrapper"> <p>filtre à eau.</p><p>compatible avec tous les modèles de frigo lg</p> <div class="emptyClear"> </div> </div>
+<h3>Amazon.fr</h3><h3 class="productDescriptionSource"></h3> <div class="productDescriptionWrapper"> <p>filtre à eau.</p><p>compatible avec tous les modèles de frigo lg</p> <div class="emptyClear"> </div> </div>
 
 __END
     @version.save

@@ -25,7 +25,14 @@
                   <tr>
                     <td align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-size:13px; color:#666666;"><br />
                       Commandé chez: <%= link_to @order.merchant.name, @order.merchant.url, style:"color: #3498db; text-decoration: none; font-weight: bold;" %><br /><br />
-                      <p style="font-family: Helvetica, Arial, sans-serif; font-size:17px; color:#46b758; line-height:24px; font-weight:bold; margin:0px;"><%= number_to_currency(order_item.product_price) %></p>
+                      <p>
+                        <span style="font-family: Helvetica, Arial, sans-serif; font-size:17px; color:#46b758; line-height:24px; font-weight:bold; margin:0px;">
+                          <%= number_to_currency(order_item.price) %>
+                        </span>
+                        <% if order_item.quantity.to_i > 1 %>
+                          <strong>x <%= order_item.quantity %></strong>
+                        <% end %>
+                      </p>
                     </td>
                   </tr>
                   <!--End Content--> 

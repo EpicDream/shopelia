@@ -1,5 +1,6 @@
 .product-image {
-  width: 90%;
+  max-width: 90%;
+  max-height: 300px;
   background-color: #ffffff;
   border: 1px solid darken($lightGrey,10%);
   border-radius:$borderRadius;
@@ -21,7 +22,6 @@
   border-radius:$borderRadius;
   padding: 5%;
   display: block;
-  margin: auto;
 }
 
 .price {
@@ -88,4 +88,44 @@
 #full-description {
   display: block;
   clear:both;
+}
+
+.price-strikeout {
+  display: none;
+  text-align: right;
+}
+
+.price-strikeout {
+   font-size: 120%;
+   text-decoration: line-through;
+}
+
+.cashfront {
+  display: none;
+  color: $red;
+  font-size: 100%;
+  font-weight: bold;
+}
+
+#shipping-info {
+  display: none;
+}
+
+.option-select {
+  max-width: 100%;
+}
+
+.option-img {
+  max-width: 50px;
+  max-height: 50px;
+  cursor: pointer;
+}
+.option-img-selected {
+  border: 1px solid $red;
+}
+
+#options-pending {
+  display: none;
+  font-size: 90%;
+  margin-top: 5px;
 }

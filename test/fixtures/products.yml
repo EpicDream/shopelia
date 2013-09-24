@@ -8,6 +8,7 @@ usbkey:
   brand: "brand"
   reference: "reference"
   viking_failure: false
+  options_completed: true
   
 headphones:
   product_master: headphones
@@ -22,4 +23,11 @@ nounours:
   merchant: toysrus
   url: "http://www.toysrus.fr/nounours"
   image_url: "http://www.toysrus.fr/nounours.jpg"
+  viking_failure: false
+
+dvd:
+  name: "Dvd"
+  merchant: amazon
+  url: "http://www.amazon.fr/dvd"
+  image_url: "http://www.amazon.fr/dvd.jpg"
   viking_failure: false

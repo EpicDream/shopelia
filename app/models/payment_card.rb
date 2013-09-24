@@ -1,6 +1,6 @@
 class PaymentCard < ActiveRecord::Base
   belongs_to :user
-  has_many :orders
+  has_many :meta_orders
  
   validates :user, :presence => true
 
@@ -24,6 +24,48 @@ class PaymentCard < ActiveRecord::Base
   before_destroy :destroy_associated_orders
   before_destroy :destroy_mangopay_payment_card, :if => Proc.new { |card| card.mangopay_id.present? }
 
+  def create_mangopay_card
+    return { status:"error", message:"mangopay card already created" } unless self.mangopay_id.nil?
+    
+    if self.user.mangopay_id.nil?
+      result = self.user.create_mangopay_user 
+      return result if result[:status] == "error"
+    end
+
+    remote_card = MangoPay::Card.create({
+      'Tag' => self.id.to_s,
+      'OwnerID' => self.user.mangopay_id,
+      'ReturnURL' => 'https://www.shopelia.fr/null'
+    })
+    if remote_card['ID'].present?
+      begin
+        PaylineDriver.inject(self, remote_card["RedirectURL"]) 
+      rescue PaylineDriver::DriverError => e
+        return { status:"error", message:"Impossible to inject payment card in Payline form: #{e.inspect}" }
+      end
+    else
+      return { status:"error", message:"Impossible to create mangopay payment card object: #{remote_card.inpect}" }
+    end
+      
+    # Wait for card approval
+    attempts = 0
+    begin
+      sleep 1 if attempts > 0
+      check_card = MangoPay::Card.details(remote_card['ID'])
+      attempts += 1
+    end while not (check_card["CardNumber"] || "").length == 16 || attempts > 30
+  
+    if (check_card["CardNumber"] || "").length == 16
+      self.update_attribute :mangopay_id, remote_card["ID"].to_i
+    else
+      MangoPay::Card.delete(remote_card["ID"])
+      return { status:"error", message:"MangoPay card injection from Payline timed out: #{check_card.inspect}" }
+    end
+
+    self.reload
+    { status: "success" }
+  end
+  
   private
 
   def crypt
@@ -68,8 +110,10 @@ class PaymentCard < ActiveRecord::Base
   end
 
   def destroy_associated_orders
-    Order.running.where(payment_card_id:self.id).each do |order|
-      order.reject "payment_card_destroyed"
+    MetaOrder.where(payment_card_id:self.id).each do |meta|
+      meta.orders.running.each do |order|
+        order.reject "payment_card_destroyed"
+      end
     end
   end
   

@@ -3,6 +3,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   skip_before_filter :authenticate_developer!
   before_filter :retrieve_product, :only => :update
   before_filter :retrieve_versions, :only => :update
+  before_filter :retrieve_pending_products, :only => :index
 
   def_param_group :product do
     param :product, Hash, :required => true, :action_aware => true do
@@ -15,7 +16,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   
   api :GET, "/viking/products", "Get all products pending check"
   def index
-    render json: Product.viking_pending, each_serializer: Viking::ProductSerializer
+    render json: @products, each_serializer: Viking::ProductSerializer
   end
  
   api :GET, "/viking/products/failure", "Get all products which failed with Viking extraction"
@@ -29,20 +30,10 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     if product.present? 
       render json: Viking::ProductSerializer.new(product).as_json[:product]
     else
-      render :json => {:error => "Queue is empty"}, :status => :not_found
+      render :json => {}
     end
   end
 
-  api :GET, "/viking/products/shift", "Get next product pending check"
-  def shift
-    product = Product.viking_shift
-    if product.present? 
-      render json: Viking::ProductSerializer.new(product).as_json[:product]
-    else
-      render :json => {:error => "Queue is empty"}, :status => :not_found
-    end
-  end
-  
   api :PUT, "/viking/products", "Update product"
   param_group :product
   def update
@@ -51,7 +42,9 @@ class Api::Viking::ProductsController < Api::V1::BaseController
       @product.update_column "versions_expires_at", Product.versions_expiration_date
       @product.update_column "updated_at", Time.now
       head :no_content
-    elsif @product.update_attribute :versions, @versions
+    elsif @product.update_attributes(
+        versions:@versions,
+        options_completed:@options_completed)
       head :no_content
     else
       render json: @product.errors, status: :unprocessable_entity
@@ -71,6 +64,26 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   
   def retrieve_versions
     @versions = params[:versions]
+    @options_completed = params[:options_completed]
   end
-  
+
+  def retrieve_pending_products
+    added = {}
+    @products = []
+    Product.viking_pending.each do |p|
+      if added[p.id].nil?
+        p.viking_reset
+        @products << p 
+        added[p.id] = 1
+      end
+    end
+    Product.viking_pending_batch.each do |p|
+      if added[p.id].nil?
+        p.viking_reset
+        p.batch = true
+        @products << p
+        added[p.id] = 1
+      end
+    end
+  end
 end

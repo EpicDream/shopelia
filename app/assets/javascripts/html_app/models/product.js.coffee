@@ -1,71 +1,163 @@
 class Shopelia.Models.Product extends Backbone.RelationalModel
   name: "product"
 
-  validate: (attrs, options) ->
-    if attrs.shipping_info is undefined or attrs.shipping_info == ""
-      "Invalid Product: Missing Attrs"
-    if attrs.expected_price_product is undefined or attrs.expected_price_product == ""
-      "Invalid Product: Missing Attrs"
-    if isNaN(attrs.expected_price_shipping) or  attrs.expected_price_shipping == ""
-      "Invalid Product: Missing Attrs"
-    if attrs.name is undefined or attrs.name == ""
-      "Invalid Product: Missing Attrs"
-    if attrs.image_url is undefined or attrs.image_url == ""
-      "Invalid Product: Missing Attrs"
-
-
-
-
-  initialize: (params) ->
-    _.bindAll(this)
-    @on("change:expected_price_product",@setExpectedPrice)
-    @on("change:expected_price_shipping",@setExpectedShipping)
-
-
-  addMerchantInfosToProduct: (data) ->
-    console.log('in add merchant')
-    console.log(data)
-    @set({
-          merchant_name: data.merchant.name,
-          merchant_logo: data.merchant.logo,
-          allow_iframe: data.merchant.allow_iframe,
-          })
-
+  setQuantity: (data) ->
+    console.log("Quantity " + data)
+    @set("quantity", data)
 
   setProduct: (data) ->
     console.log("setData")
     console.log(data)
-    try
+    @set({
+      available: data.versions.length > 0,
+      merchant_name: data.merchant.name,
+      merchant_logo: data.merchant.logo,
+      allow_quantities: data.merchant.allow_quantities,
+      quantity: 1,
+      ready: data.ready,
+      options_completed: data.options_completed,
+      versions: data.versions
+    })
+    if @get('available')
+      if @get('version_index') > 0
+        @setVersionByIndex(@get('version_index'))
+      else
+        @setVersionByIndex(0)
+
+  setVersionByIndex: (index) ->
+    if index == -1
       @set({
-           product_version_id:data.versions[0].id,
-           name: data.name,
-           image_url: data.image_url,
-           description: data.description,
-           expected_price_product: data.versions[0].price,
-           expected_price_shipping: data.versions[0].price_shipping,
-           shipping_info: data.versions[0].shipping_info
-           merchant_name: data.merchant.name,
-           merchant_logo: data.merchant.logo,
-           allow_iframe: data.merchant.allow_iframe
-           })
-    catch error
-      console.log(error)
+        version_index: null,
+        option1_md5: null,
+        option2_md5: null,
+        option3_md5: null,
+        option4_md5: null,
+        product_version_id: null,
+        expected_price_strikeout: null,
+        expected_price_shipping: null,
+        expected_price_product: null,
+        expected_cashfront_value: null,
+        shipping_info: null,
+        availability_info: null,
+        name: null,
+        image_url: null,
+        description: null
+      })        
+    else
+      versions = @get('versions')
+      @set({
+        version_index: index,
+        option1_md5: versions[index].option1_md5,
+        option2_md5: versions[index].option2_md5,
+        option3_md5: versions[index].option3_md5,
+        option4_md5: versions[index].option4_md5,
+        product_version_id: versions[index].id,
+        expected_price_strikeout: versions[index].price_strikeout,
+        expected_price_shipping: versions[index].price_shipping,
+        expected_price_product: versions[index].price,
+        expected_cashfront_value: 0,
+        shipping_info: versions[index].shipping_info,
+        availability_info: versions[index].availability_info,
+        name: versions[index].name,
+        image_url: versions[index].image_url,
+        description: versions[index].description
+      })    
+      if versions[index].cashfront_value > 0
+        @set({
+          expected_price_strikeout: versions[index].price
+          expected_cashfront_value: versions[index].cashfront_value
+        })
+      r = @get('shipping_info') 
+      if @get('availability_info') && @get('availability_info') != r
+        r += "<br><small>" + @get('availability_info') + "</small>"
+      @set({shipping_info_full: r})
 
+  setVersion: (key, value) ->
+    if key == "option1"
+      option1_md5 = value
+    else
+      option1_md5 = @get('option1_md5')
+    if key == "option2"
+      option2_md5 = value
+    else
+      option2_md5 = @get('option2_md5')
+    if key == "option3"
+      option3_md5 = value
+    else
+      option3_md5 = @get('option3_md5')
+    if key == "option4"
+      option4_md5 = value
+    else
+      option4_md5 = @get('option4_md5')
 
+    index = -1
+    versions = @get('versions')
+    if key == "option1"
+      for i in [0..versions.length - 1] by 1
+        if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5 && versions[i].option3_md5 == option3_md5 && versions[i].option4_md5 == option4_md5
+          index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5 && versions[i].option3_md5 == option3_md5
+            index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5
+            index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option1_md5 == option1_md5
+            index = i
+    if key == "option2"
+      for i in [0..versions.length - 1] by 1
+        if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5 && versions[i].option3_md5 == option3_md5 && versions[i].option4_md5 == option4_md5
+          index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5 && versions[i].option3_md5 == option3_md5
+            index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5
+            index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option2_md5 == option2_md5
+            index = i
+    if key == "option3"
+      for i in [0..versions.length - 1] by 1
+        if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5 && versions[i].option3_md5 == option3_md5 && versions[i].option4_md5 == option4_md5
+          index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5 && versions[i].option3_md5 == option3_md5
+            index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option1_md5 == option1_md5 && versions[i].option3_md5 == option3_md5
+            index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option3_md5 == option3_md5
+            index = i
+    if key == "option4"
+      for i in [0..versions.length - 1] by 1
+        if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5 && versions[i].option3_md5 == option3_md5 && versions[i].option4_md5 == option4_md5
+          index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option1_md5 == option1_md5 && versions[i].option2_md5 == option2_md5 && versions[i].option4_md5 == option4_md5
+            index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option1_md5 == option1_md5 && versions[i].option4_md5 == option4_md5
+            index = i
+      if index == -1
+        for i in [0..versions.length - 1] by 1
+          if versions[i].option4_md5 == option4_md5
+            index = i
 
-
-  customParseFloat: (float) ->
-    parseFloat(Math.round(float * 100) / 100).toFixed(2)
-
-
-  setExpectedPrice: (model,value) ->
-    model.set("expected_price_product",model.customParseFloat(value))
-
-  setExpectedShipping: (model,value) ->
-    model.set("expected_price_shipping",model.customParseFloat(value))
-
+    @setVersionByIndex(index)
 
   getExpectedTotalPrice: ->
-    @customParseFloat(parseFloat(@get('expected_price_product')) + parseFloat(@get('expected_price_shipping')))
-
-
+    @get('expected_price_product') * @get('quantity') + @get('expected_price_shipping')

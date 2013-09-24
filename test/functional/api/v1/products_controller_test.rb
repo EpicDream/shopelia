@@ -10,8 +10,23 @@ class Api::V1::ProductsControllerTest < ActionController::TestCase
 
   test "it should fail bad url" do
     get :index, url:"bla"
-    assert_response :not_found
+    assert_response :success
+    
+    assert json_response.empty?
   end
 
-end
+  test "it should send developer scope to product versions in order to compute cashfront value" do
+    get :index, url:products(:dvd).url
+    assert_response :success
 
+    assert_equal 0.30, json_response["versions"][0]["cashfront_value"], json_response.inspect
+  end
+
+  test "it should manage multiple urls" do
+    post :create, urls:[products(:dvd).url, products(:dvd).url]
+    assert_response :success
+
+    assert_equal 2, json_response.count
+    assert_equal 0.30, json_response[0]["versions"][0]["cashfront_value"]
+  end
+end

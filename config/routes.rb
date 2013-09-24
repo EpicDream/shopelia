@@ -1,7 +1,6 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
-
   match "/checkout", :controller => "html_app", :action => "index"
 
   apipie
@@ -67,7 +66,7 @@ Shopelia::Application.routes.draw do
       resources :phone_lookup, :only => :show
       resources :merchants, :only => [:index, :create]
       resources :orders, :only => [:create, :show]
-      resources :products, :only => :index
+      resources :products, :only => [:index, :create]
       resources :users, :only => [:show, :update, :destroy]
       namespace :users do
         resources :autocomplete, :only => :create
@@ -89,10 +88,14 @@ Shopelia::Application.routes.draw do
         resources :details, :only => :show
       end
     end
+    namespace :showcase do
+      namespace :products do
+        resources :search, :only => :index
+      end
+    end
     namespace :viking do
       resources :products, :only => [:index, :update]
       namespace :products do
-        get :shift
         get :failure
         get :failure_shift
         get :alive
@@ -104,8 +107,12 @@ Shopelia::Application.routes.draw do
     end
   end
 
+  match "about" => "home#about"
+
+
   match '*not_found', to: 'errors#error_404'
   get "errors/error_404"
   get "errors/error_500"
+  root to: 'home#index'
 
 end

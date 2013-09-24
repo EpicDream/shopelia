@@ -10,10 +10,10 @@ module PaylineDriver
       @driver = Selenium::WebDriver.for :chrome
       @driver.get @url
       
-      fill 'number', card.number
-      fill 'expirationDate_month', card.exp_month
-      fill 'expirationDate_year', card.exp_year
-      fill 'cvv', card.cvv
+      fill 'number', card[:number]
+      fill 'expirationDate_month', card[:exp_month]
+      fill 'expirationDate_year', card[:exp_year]
+      fill 'cvv', card[:cvv]
       click 'paybutton'
 
       begin

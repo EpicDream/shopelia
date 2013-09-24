@@ -4,12 +4,17 @@ class Linker
   
   def self.clean url
     count = 0
-    url = url.unaccent
+    url = url.unaccent.gsub(" ", "+")
     canonical = self.by_rule(url) ||  UrlMatcher.find_by_url(url).try(:canonical) || UrlMatcher.find_by_canonical(url).try(:canonical)
     if canonical.nil?
       orig = url
       begin
-        uri = URI.parse(url)
+        begin
+          uri = URI.parse(url)
+        rescue
+          url = url.gsub("%", "")
+          uri = URI.parse(url)
+        end
         req = Net::HTTP::Head.new(uri.request_uri, {'User-Agent' => UA })
         res = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
         if res.code.to_i == 405 || (res.code.to_i == 200 && res['location'].blank?)
@@ -18,7 +23,11 @@ class Linker
         end   
         url = res['location'] if res.code =~ /^30/
         url = url.gsub(" ", "+")
-        url = uri.scheme + "://" + uri.host + url if url =~ /^\//
+        if url =~ /^\//
+          url = uri.scheme + "://" + uri.host + url 
+        elsif url !~ /^http/
+          url = uri.scheme + "://" + uri.host + "/" + url 
+        end
         count += 1
       end while res.code =~ /^30/ && count < 10
       canonical = url.gsub(/#.*$/, "")
@@ -27,6 +36,11 @@ class Linker
       merchant = Merchant.find_by_domain(domain)
       if merchant && merchant.should_clean_args?
         canonical = canonical.gsub(/\?.*$/, "")
+      else
+        # Remove all utm_ args
+        uri = URI.parse(canonical)
+        params = Rack::Utils.parse_nested_query(uri.query).delete_if{|e| e =~ /^utm_/}
+        canonical = uri.scheme + "://" + uri.host + uri.path + (params.empty? ? "" : "?" + params.to_query)
       end
       
       UrlMatcher.create(url:orig,canonical:canonical)
@@ -58,6 +72,8 @@ class Linker
   def self.by_rule url
     if m = url.match(/Xiti_Redirect.htm.*xtloc=([^&]+)/)
       m[1]
+    elsif m = url.match(/xiti.*gopc.url.*xtloc=([^&]+)/)
+      m[1]      
     else
       nil
     end

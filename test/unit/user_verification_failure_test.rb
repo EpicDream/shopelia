@@ -19,13 +19,13 @@ class UserVerificationFailureTest < ActiveSupport::TestCase
   test "user should be blocked for one minute after three consecutive failures, and more after" do
     fail_3_times
 
-    assert_equal 60, UserVerificationFailure.delay(@user)
+    assert [59,60].include?(UserVerificationFailure.delay(@user))
 
     UserVerificationFailure.create(user_id:@user.id)
-    assert_equal 120, UserVerificationFailure.delay(@user)
+    assert [119,120].include?(UserVerificationFailure.delay(@user))
     
     UserVerificationFailure.create(user_id:@user.id)
-    assert_equal 240, UserVerificationFailure.delay(@user)
+    assert [239,240].include?(UserVerificationFailure.delay(@user))
   end
   
   test "delay should decrement with time since last failure" do
@@ -33,7 +33,7 @@ class UserVerificationFailureTest < ActiveSupport::TestCase
     
     uvf = UserVerificationFailure.order("created_at desc").pop
     uvf.update_column "created_at", Time.at(uvf.created_at.to_i - 10)
-    assert_equal 50, UserVerificationFailure.delay(@user)
+    assert [49,50].include?(UserVerificationFailure.delay(@user))
   end
   
   private
