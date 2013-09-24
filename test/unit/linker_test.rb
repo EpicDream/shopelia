@@ -30,9 +30,11 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://clic.reussissonsensemble.fr/click.asp?ref=593625&site=10393&type=text&tnb=2&diurl=http://tracking.lengow.com/shortUrl/2857-45667-C389183/",
         :out => "http://www.auchan.fr/achat4/CA17234/color_47063/size_10055" },
       { :in  => "http://www.amazon.fr/Eafit-Protisoya-100%-Proteine-Vegetale/dp/B0036BGQ6W?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0036BGQ6W",
-        :out => "http://www.amazon.fr/Eafit-Protisoya-100-Proteine-Vegetale/dp/B0036BGQ6W" },
+        :out => "http://www.amazon.fr/Eafit-Protisoya-100%-Proteine-Vegetale/dp/B0036BGQ6W" },
       { :in  => "http://action.metaffiliation.com/trk.php?mclic=P43EF9544D2D15S4519345193C111117180315TRENCH LUNGO",
-        :out => "http://www.zinefashionstore.com/produit-homme-Trench_de_la_marque_Memento-4030.html" }
+        :out => "http://www.zinefashionstore.com/produit-homme-Trench_de_la_marque_Memento-4030.html" },
+      { :in  => "http://tracking.publicidees.com/clic.php?partid=32430&progid=2013&adfactory_type=12&idfluxpi=500&url=http%3A%2F%2Ftracking.lengow.com%2FshortUrl%2F2082-37081-0421841%2F",
+        :out => "http://www.clarins.fr/Instant-Definition-Mascara/0421841,fr_FR,pd.html" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])
