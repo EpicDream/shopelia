@@ -58,6 +58,7 @@ class UtilsTest < ActiveSupport::TestCase
     assert_not_nil Utils.parse_uri_safely "http://tracking.publicidees.com/clic.php?partid=32430&progid=2013&adfactory_type=12&idfluxpi=500&url=http%3A%2F%2Ftracking.lengow.com%2FshortUrl%2F2082-37081-0421841%2F"
     assert_not_nil Utils.parse_uri_safely "http://www.amazon.fr/Eafit-Protisoya-100%-Proteine-Vegetale/dp/B0036BGQ6W?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0036BGQ6W"
     assert_not_nil Utils.parse_uri_safely "http://www.clarins.fr/pi?url=http://www.clarins.fr/Instant-Definition-Mascara/0421841,fr_FR,pd.html?cm_mmc=Affiliate-_-Nextidea2012-_-Maquillage+>+Yeux+>+Mascaras-_-0421841"
+    assert_not_nil Utils.parse_uri_safely "http://www.amazon.fr/SEN-120-Spot-d\\\\exterieur-enterre-12x1W/dp/B003X8O92G?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B003X8O92G"
   end
 
   test "it should strip tracking params" do
