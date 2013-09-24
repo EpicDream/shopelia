@@ -4,7 +4,7 @@ class Linker
   
   def self.clean url
     count = 0
-    url = url.unaccent
+    url = url.unaccent.gsub(" ", "+")
     canonical = self.by_rule(url) ||  UrlMatcher.find_by_url(url).try(:canonical) || UrlMatcher.find_by_canonical(url).try(:canonical)
     if canonical.nil?
       orig = url
