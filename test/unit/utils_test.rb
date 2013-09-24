@@ -51,5 +51,17 @@ class UtilsTest < ActiveSupport::TestCase
   test "it should extract domain if url has invalid parameters" do
     domain = Utils.extract_domain "http://www.bienmanger.com?ope=netaff"
     assert_equal "bienmanger.com", domain
-  end  
+  end 
+
+  test "it should safely parse url" do
+    assert_not_nil Utils.parse_uri_safely "http://action.metaffiliation.com/trk.php?mclic=P43EF9544D2D15S4519345193C111117180315TRENCH LUNGO"
+    assert_not_nil Utils.parse_uri_safely "http://tracking.publicidees.com/clic.php?partid=32430&progid=2013&adfactory_type=12&idfluxpi=500&url=http%3A%2F%2Ftracking.lengow.com%2FshortUrl%2F2082-37081-0421841%2F"
+    assert_not_nil Utils.parse_uri_safely "http://www.amazon.fr/Eafit-Protisoya-100%-Proteine-Vegetale/dp/B0036BGQ6W?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0036BGQ6W"
+    assert_not_nil Utils.parse_uri_safely "http://www.clarins.fr/pi?url=http://www.clarins.fr/Instant-Definition-Mascara/0421841,fr_FR,pd.html?cm_mmc=Affiliate-_-Nextidea2012-_-Maquillage+>+Yeux+>+Mascaras-_-0421841"
+    assert_not_nil Utils.parse_uri_safely "http://www.amazon.fr/SEN-120-Spot-d\\\\exterieur-enterre-12x1W/dp/B003X8O92G?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B003X8O92G"
+  end
+
+  test "it should strip tracking params" do
+    assert_equal "http://www.site.com/product?id=1234", Utils.strip_tracking_params("http://www.site.com/product?id=1234&utm_track=456&cm_mmc=457")
+  end
 end

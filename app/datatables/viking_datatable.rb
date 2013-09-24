@@ -23,7 +23,7 @@ class VikingDatatable
         product.id,
         viking_failure_tags(product),
         time_ago_in_words(product.updated_at),
-        "<button type=\"button\" class=\"btn btn-success\" data-loading-text=\"...\" data-retry-url=\"#{retry_admin_product_path(product)}\" style=\"visibility:hidden\">Retry</button> <button type=\"button\" class=\"btn btn-warning\" data-loading-text=\"...\" data-mute-url=\"#{mute_admin_product_path(product)}\" style=\"visibility:hidden\">Mute</button> <button type=\"button\" class=\"btn btn-danger\" data-loading-text=\"...\" data-mute-url=\"#{mute_admin_product_path(product)}\" style=\"visibility:hidden\">Reject</button>"
+        "<button type=\"button\" class=\"btn btn-success\" data-loading-text=\"...\" data-retry-url=\"#{retry_admin_product_path(product)}\" style=\"visibility:hidden\">Retry</button> <button type=\"button\" class=\"btn btn-warning\" data-loading-text=\"...\" data-mute-url=\"#{mute_admin_product_path(product)}\" style=\"visibility:hidden\">Mute</button> <button type=\"button\" class=\"btn btn-danger\" data-loading-text=\"...\" data-mute-url=\"#{mute_admin_product_path(product)}\" style=\"visibility:hidden\">Reject</button> <button type=\"button\" class=\"btn btn-info\" data-url=\"#{product.url}\" style=\"visibility:hidden\">Ariane</button>"
       ]
     end
   end

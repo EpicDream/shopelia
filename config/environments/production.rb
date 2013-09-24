@@ -1,5 +1,6 @@
 Shopelia::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
+  config.logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
 
   # Code is not reloaded between requests
   config.cache_classes = true
@@ -33,7 +34,7 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( devise_override/confirmations.css devise_override/registrations.css )
   config.assets.precompile += %w( devise_override/confirmations.js  devise_override/registrations.js  )
   config.assets.precompile += %w( devise_override/passwords.js  devise_override/passwords.js  )
-  config.assets.precompile += %w( home.js )
+  config.assets.precompile += %w( home.js errors.js )
 
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH

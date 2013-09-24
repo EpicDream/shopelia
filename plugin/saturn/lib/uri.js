@@ -1,3 +1,5 @@
+(function() {
+
 var Query = (function () {
 
   'use strict';
@@ -450,3 +452,12 @@ var Uri = (function () {
 
   return Uri;
 }());
+
+if ("object" == typeof module && module && "object" == typeof module.exports)
+  exports = module.exports = Uri;
+else if ("function" == typeof define && define.amd)
+  define("Uri",[],function(){return Uri});
+else
+  this.Uri = Uri;
+
+})();
