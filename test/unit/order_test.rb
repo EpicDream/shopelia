@@ -48,7 +48,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 90.36, item.reload.price
     
     product = item.product
-    assert_equal "http://www.cdiscount.com/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
+    assert_equal "http://www.cdiscount.com/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
     
