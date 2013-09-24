@@ -8,10 +8,9 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
       if prixing.empty? || prixing.is_a?(Hash)
         render :json => {}
       else
-        r = PrixingWrapper.convert(prixing)
-        prepare_urls
-        generate_events
-        render :json => r
+        result = PrixingWrapper.convert(prixing)
+        generate_events result
+        render :json => result
       end
     else
       render :json => {}
@@ -20,9 +19,9 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
 
   private
   
-  def generate_events
+  def generate_events result
     EventsWorker.perform_async({
-      :urls => @urls,
+      :urls => (result[:urls] || []).map{|e| e.unaccent},
       :developer_id => @developer.id,
       :action => Event::VIEW,
       :tracker => @tracker,
@@ -39,9 +38,5 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
     else
       render :json => {"Error" => "Missing visitor param"}, status: :bad_request and return
     end
-  end
-
-  def prepare_urls
-    @urls = (params[:urls] || []).map{|e| e.unaccent}
   end
 end

@@ -10,6 +10,11 @@ class Api::Showcase::Products::SearchControllerTest < ActionController::TestCase
     assert_response :success
     assert json_response["name"].present?
     assert EventsWorker.jobs.count > jobs
+
+    events = Event.count
+    EventsWorker.drain
+
+    assert Event.count > events
   end
 
   test "it should fail answer if no visitor param" do
