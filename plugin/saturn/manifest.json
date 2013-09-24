@@ -1,6 +1,6 @@
 {
   "name": "Saturn",
-  "version": "0.4.0",
+  "version": "1.1.0",
   "manifest_version": 2,
 
   "description": "Extrateur de donnée produit.",
@@ -8,7 +8,6 @@
     "48": "img/saturn48.png",
     "128": "img/saturn128.png"
   },
-  // "default_locale": "fr",
 
   "browser_action": {
     "default_title": "Active Saturn",
@@ -17,20 +16,28 @@
 
   "background": {
     "scripts": [
-      "lib/underscore-min.js",
-      "lib/jquery-1.9.1.min.js",
-      "lib/uri.js",
-      "controllers/background.js"
+      "dist/chrome_background.min.js"
+      // "lib/utils.js",
+      // "lib/jquery-1.9.1.min.js",
+      // "lib/uri.js",
+      // "src/tree.js",
+      // "src/saturn_options.js",
+      // "src/saturn_session.js",
+      // "src/saturn.js",
+      // "src/chrome/chrome_saturn.js"
     ]
   },
 
   "content_scripts": [{
     "matches": ["*://*/*"],
     "js": [
-      "lib/underscore-min.js",
-      "lib/jquery-1.9.1.min.js",
-      "lib/html_utils.js",
-      "controllers/contentscript.js"
+      "dist/chrome_crawler.min.js"
+      // "lib/utils.js",
+      // "lib/underscore-min.js",
+      // "lib/jquery-1.9.1.min.js",
+      // "lib/html_utils.js",
+      // "src/crawler.js",
+      // "src/chrome/chrome_crawler.js"
     ]
   }],
 
