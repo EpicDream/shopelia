@@ -131,24 +131,28 @@ class EventTest < ActiveSupport::TestCase
   private
   
   def populate_data
-    Event.from_urls(
-      :urls => [ "http://www.amazon.fr/productA", "http://www.amazon.fr/productB" ],
-      :action => Event::VIEW,
-      :device_id => devices(:web).id,
-      :developer_id => @developer.id)
-    Event.from_urls(
-      :urls => [ "http://www.amazon.fr/productA" ],
+    [ "http://www.amazon.fr/productA", "http://www.amazon.fr/productB" ].each do |url|
+      Event.create(
+        :url => url,
+        :action => Event::VIEW,
+        :device_id => devices(:web).id,
+        :developer_id => @developer.id)
+    end
+    Event.create(
+      :url => "http://www.amazon.fr/productA",
       :action => Event::CLICK,
       :device_id => devices(:web).id,
       :developer_id => @developer.id)
     Event.update_all "created_at='2013-08-01 10:00'"
-    Event.from_urls(
-      :urls => [ "http://www.amazon.fr/productA", "http://www.amazon.fr/productB" ],
-      :action => Event::VIEW,
-      :device_id => devices(:mobile).id,
-      :developer_id => @developer.id)
-    Event.from_urls(
-      :urls => [ "http://www.amazon.fr/productA" ],
+    [ "http://www.amazon.fr/productA", "http://www.amazon.fr/productB" ].each do |url|
+      Event.create(
+        :url => url,
+        :action => Event::VIEW,
+        :device_id => devices(:mobile).id,
+        :developer_id => @developer.id)
+    end
+    Event.create(
+      :url => "http://www.amazon.fr/productA",
       :device_id => devices(:mobile).id,
       :action => Event::CLICK,
       :developer_id => @developer.id)

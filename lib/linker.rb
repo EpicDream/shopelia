@@ -57,10 +57,10 @@ class Linker
 
   def self.get uri
     req = Net::HTTP::Head.new(uri.request_uri, {'User-Agent' => UA })
-    res = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl:uri.port == 443) { |http| http.request(req) }
     if res.code.to_i == 405 || (res.code.to_i == 200 && res['location'].blank?)
       req = Net::HTTP::Get.new(uri.request_uri, {'User-Agent' => UA })
-      res = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
+      res = Net::HTTP.start(uri.host, uri.port, use_ssl:uri.port == 443) { |http| http.request(req) }
     end
     res
   end    

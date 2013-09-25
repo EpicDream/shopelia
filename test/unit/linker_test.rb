@@ -34,7 +34,9 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://action.metaffiliation.com/trk.php?mclic=P43EF9544D2D15S4519345193C111117180315TRENCH LUNGO",
         :out => "http://www.zinefashionstore.com/produit-homme-Trench_de_la_marque_Memento-4030.html" },
       { :in  => "http://tracking.publicidees.com/clic.php?partid=32430&progid=2013&adfactory_type=12&idfluxpi=500&url=http%3A%2F%2Ftracking.lengow.com%2FshortUrl%2F2082-37081-0421841%2F",
-        :out => "http://www.clarins.fr/Instant-Definition-Mascara/0421841,fr_FR,pd.html" }
+        :out => "http://www.clarins.fr/Instant-Definition-Mascara/0421841,fr_FR,pd.html" },
+      { :in  => "https://www.thinkgeek.com/clearance/on-sale/eae1/", 
+        :out => "http://www.thinkgeek.com/tshirts-apparel/miscellaneous/?icpg=gy_eae1" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])
