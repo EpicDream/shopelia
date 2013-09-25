@@ -36,7 +36,9 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://tracking.publicidees.com/clic.php?partid=32430&progid=2013&adfactory_type=12&idfluxpi=500&url=http%3A%2F%2Ftracking.lengow.com%2FshortUrl%2F2082-37081-0421841%2F",
         :out => "http://www.clarins.fr/Instant-Definition-Mascara/0421841,fr_FR,pd.html" },
       { :in  => "https://www.thinkgeek.com/clearance/on-sale/eae1/", 
-        :out => "http://www.thinkgeek.com/tshirts-apparel/miscellaneous/?icpg=gy_eae1" }
+        :out => "http://www.thinkgeek.com/tshirts-apparel/miscellaneous/?icpg=gy_eae1" },
+      { :in  => "http://www.koordinal.com/74-bac-%C3%A0-gla%C3%A7on-igloo.html",
+        :out => "http://www.koordinal.com/74-bac-a-glacons-igloo.html" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])
