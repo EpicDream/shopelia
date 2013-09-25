@@ -9,7 +9,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
   end
 
   test "it should create events from list of urls" do
-    assert_difference("EventsWorker.jobs.count", 1) do
+    assert_difference("EventsWorker.jobs.count", 2) do
       post :create, urls:["http://www.amazon.fr/1/é","http://www.amazon.fr/2"], tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key, format: :json
     end
     assert_equal developers(:prixing).api_key, cookies[:developer_key]
@@ -30,7 +30,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
   end
 
   test "it should create events from list of urls in GET mode" do
-    assert_difference("EventsWorker.jobs.count", 1) do
+    assert_difference("EventsWorker.jobs.count", 2) do
       get :index, urls:"http://www.prout.fr/1/é||http://www.prout.fr/2", tracker:"toto", visitor:"1234", developer:developers(:prixing).api_key
     end
     assert_equal developers(:prixing).api_key, cookies[:developer_key]
@@ -43,7 +43,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
   end
 
   test "it should create events from list of urls and with action click" do
-    assert_difference("EventsWorker.jobs.count", 1) do
+    assert_difference("EventsWorker.jobs.count", 2) do
       post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/2"], type:"click", shadow:false, developer:developers(:prixing).api_key, format: :json
     end
     assert_equal 32, cookies[:visitor].length
@@ -58,7 +58,7 @@ class Api::V1::EventsControllerTest < ActionController::TestCase
   end
 
   test "it should create events from list of urls and in shadow mode" do
-    assert_difference("EventsWorker.jobs.count", 1) do
+    assert_difference("EventsWorker.jobs.count", 2) do
       post :create, urls:["http://www.amazon.fr/1","http://www.amazon.fr/2"], type:"click", shadow:true, developer:developers(:prixing).api_key, format: :json
     end
     assert_equal 32, cookies[:visitor].length

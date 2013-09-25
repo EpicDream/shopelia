@@ -153,18 +153,22 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
   private
   
   def populate_events
-    Event.from_urls(
-      :urls => ["http://www.amazon.fr/1","http://www.amazon.fr/2"],
-      :developer_id => @developer.id,
-      :device_id => devices(:web).id,
-      :action => Event::VIEW)
-    Event.from_urls(
-      :urls => ["http://www.amazon.fr/1","http://www.amazon.fr/2"],
-      :developer_id => @developer.id,
-      :device_id => devices(:web).id,
-      :action => Event::CLICK)
-    Event.from_urls(
-      :urls => ["http://www.priceminister.com/my_product"],
+    ["http://www.amazon.fr/1","http://www.amazon.fr/2"].each do |url|
+      Event.create(
+        :url => url,
+        :developer_id => @developer.id,
+        :device_id => devices(:web).id,
+        :action => Event::VIEW)
+    end
+    ["http://www.amazon.fr/1","http://www.amazon.fr/2"].each do |url|
+      Event.create(
+        :url => url,
+        :developer_id => @developer.id,
+        :device_id => devices(:web).id,
+        :action => Event::CLICK)
+    end
+    Event.create(
+      :url => "http://www.priceminister.com/my_product",
       :developer_id => @developer.id,
       :device_id => devices(:web).id,
       :action => Event::REQUEST)
