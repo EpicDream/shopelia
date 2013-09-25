@@ -1,6 +1,6 @@
 class EventsWorker
   include Sidekiq::Worker
- 
+
   def perform hash
     Event.create!(
       :url => hash["url"],
