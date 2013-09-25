@@ -38,7 +38,19 @@ class Event < ActiveRecord::Base
         :tracker => data["tracker"] || data[:tracker],
         :ip_address => data["ip_address"] || data[:ip_address])
     end
-  end        
+  end
+
+  def self.from_ids data
+    (data[:ids] || data["ids"] || []).each do |product_id|
+      Event.create!(
+        :product_id => product_id,
+        :action => data["action"] || data[:action],
+        :developer_id => data["developer_id"] || data[:developer_id],
+        :device_id => data["device_id"] || data[:device_id],
+        :tracker => data["tracker"] || data[:tracker],
+        :ip_address => data["ip_address"] || data[:ip_address])
+    end
+  end 
   
   private
   

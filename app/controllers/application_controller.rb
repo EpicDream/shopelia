@@ -51,6 +51,7 @@ class ApplicationController < ActionController::Base
   
   def set_navigator_properties
     ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
+    @remote_ip = request.remote_ip
   end
   
   def retrieve_developer

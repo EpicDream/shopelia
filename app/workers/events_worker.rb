@@ -3,6 +3,10 @@ class EventsWorker
   sidekiq_options :retry => false
   
   def perform hash
-    Event.from_urls(hash)
+    if hash["urls"]
+      Event.from_urls(hash)
+    elsif hash["ids"]
+      Event.from_ids(hash)
+    end
   end
 end

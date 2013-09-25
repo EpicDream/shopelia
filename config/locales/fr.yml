@@ -342,6 +342,7 @@ fr:
     cart_items:
       submit: "Ajouter au panier"
       bad_url: "L'adresse du produit n'est pas valide"
+      details: "Détails"
     cancel: "Annuler"
     close: "Fermer"
     confirm: "Valider"

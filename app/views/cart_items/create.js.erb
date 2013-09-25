@@ -5,4 +5,7 @@
   $("#cart_item_url").on('input', function() {
     $(this).popover('hide')
   });
+<% else %>
+  $("#cart").html("<%= escape_javascript(render @current_cart) %>")
+  showSpinners();
 <% end %>

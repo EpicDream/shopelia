@@ -43,6 +43,16 @@ class EventTest < ActiveSupport::TestCase
     end
   end
 
+  test "it should create events from list of product ids" do
+    assert_difference(["Event.count"], 2) do
+      Event.from_ids(
+        :action => Event::VIEW,
+        :device_id => devices(:web).id,
+        :developer_id => developers(:prixing).id,
+        :ids => [ products(:dvd).id, products(:headphones).id ])
+    end
+  end
+
   test "it should skip bad urls" do
     assert_difference(["Event.count","Product.count"], 0) do
       Event.from_urls(
