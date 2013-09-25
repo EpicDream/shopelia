@@ -38,7 +38,7 @@ In Chromium extensions' tab :
 
 To launch google-chrome and install the extension, just run
 
-    google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn
+    google-chrome --load-extension=/home/USER_NAME/shopelia/plugin/saturn
 
 To unload the extension after utilisation, add 
 
@@ -48,7 +48,7 @@ with **nhledioladlcecbcfenmdibnnndlfikf** the extension id, that you can find in
   
 On a server :
 
-    DISPLAY=:0 google-chrome --load-extension=/home/barbu/shopelia/plugin/saturn ; google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
+    DISPLAY=:0 google-chrome --load-extension=/home/USER_NAME/shopelia/plugin/saturn ; google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
 
 Usage
 -----
@@ -64,39 +64,55 @@ Click on the extension button in the toolbar to stop / restart the crawling.
 Developpers
 -----------
 
-There are two main files :
+### Grunt
 
-- background.js
-- contentscript.js
+First, run
 
-### background.js
+    npm install grunt
 
-It's the logic piece of the program.
-It communicate with the server, load pages, and ask the content script to crawl the current page.
+Then, you can use
+
+    grunt
+
+to check syntax with JSHint, run tests with Jasmine, concat and uglify source files.
+
+### Files
+
+There are three main files :
+
+- saturn.js
+- saturn_session.js
+- crawler.js
+
+### saturn.js + saturn_session.js
+
+They are the logic piece of the program.
+Saturn communicate with the server and load pages, 
+while SaturnSession ask the crawler to crawl the current page.
 
 Common scenario :
 
-1. background ask for a product to crawl ;
-2. it load the product url ;
-3. it load the content script ;
-4. it ask the content script for colors ;
+1. Saturn asks for a product to crawl ;
+2. it loads the product url ;
+3. it creates a SaturnSession ;
+4. the SaturnSession asks the crawler for colors ;
 5. for each color :
-    6. it ask the content script to select the color ;
-    7. it ask the content script for the sizes ;
+    6. it asks the crawler to select the color ;
+    7. it asks the crawler for the sizes ;
     8. for each size :
-        9. it ask the content script to select the size ;
-        10. it ask the content script to extract all informations ;
-11. it send all product options to the server ;
-12. it restart to step 1.
+        9. it asks the crawler to select the size ;
+        10. it asks the crawler to extract all informations ;
+11. it sends all product options to the server ;
+12. it restarts to step 1.
 
-### contentscript.js
+### crawler.js
 
 It's the executive piece of the program.
-Only the contentscript can interact with the web page.
+Only the crawler can interact with the web page.
 But it can not communicate with other server, and it is reloaded each time the page is.
 
-To crawl the page, it need a mapping for this website.
-The mapping indicate where to find all elements on the page.
+To crawl the page, it needs a mapping for this website.
+The mapping indicates where to find all elements on the page.
 The mapping must be previously set with Humanis extension.  
 
 ### More Documentation
@@ -110,5 +126,4 @@ The mapping must be previously set with Humanis extension.
 TODO list
 ---------
 
-Add the possibility to click on an element to get images.
-Add the possibility to handle multiple extractor at the same time on different tab.
+Add the possibility to click on an element to get other images.
