@@ -58,12 +58,28 @@ module.exports = function(grunt) {
     },
   });
 
+  function updateManifest(env) {
+    var manifest = grunt.file.readJSON("manifest.json");
+    switch (env) {
+      case 'prod' :
+        manifest.background.scripts[0] = 'dist/chrome_background.min.js';
+        manifest.content_scripts[0].js[0] = 'dist/chrome_crawler.min.js';
+        break;
+      default :
+        manifest.background.scripts[0] = 'build/chrome_background.js';
+        manifest.content_scripts[0].js[0] = 'build/chrome_crawler.js';
+    }
+    grunt.file.write("manifest.json", JSON.stringify(manifest));
+  }
+
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
+  grunt.registerTask('manifest', updateManifest);
   grunt.registerTask('test', ['jshint', 'jasmine']);
-  grunt.registerTask('default', ['jshint', 'jasmine', 'concat', 'uglify']);
+  grunt.registerTask('default', ['jshint', 'jasmine', 'concat', 'manifest:dev']);
+  grunt.registerTask('prod', ['jshint', 'jasmine', 'concat', 'uglify', 'manifest:prod']);
 
 };
