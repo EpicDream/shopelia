@@ -4,7 +4,7 @@ class Linker
   
   def self.clean url
     count = 0
-    canonical = self.by_rule(url) ||  UrlMatcher.find_by_url(url).try(:canonical) || UrlMatcher.find_by_canonical(url).try(:canonical)
+    canonical = MerchantHelper.canonize(url) || self.by_rule(url) ||  UrlMatcher.find_by_url(url).try(:canonical)
     if canonical.nil?
       orig = url
       begin
@@ -25,7 +25,7 @@ class Linker
   def self.monetize url
     return nil if url.blank?
     url = url.unaccent
-    m = MerchantConjurer.from_url(url).monetize
+    m = MerchantHelper.monetize(url)
   rescue
     merchant = Merchant.find_or_create_by_domain(Utils.extract_domain(url))
     if Incident.where(issue:"Linker",resource_type:"Merchant",resource_id:merchant.id,processed:false).where("description like 'Url not monetized%'").count == 0
