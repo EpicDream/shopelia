@@ -18,6 +18,8 @@ class Linker
       UrlMatcher.create(url:orig,canonical:canonical)
     end
     canonical
+  rescue Errno::ETIMEDOUT
+    orig
   rescue
     nil
   end
