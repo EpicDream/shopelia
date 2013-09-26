@@ -330,7 +330,7 @@ class OrderTest < ActiveSupport::TestCase
       :expected_price_total => 100)
     assert order.save
     assert_equal 1, order.reload.order_items.count
-    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY", order.order_items.first.product.url
+    assert_equal "http://www.amazon.fr/dp/B00BIXXTCY", order.order_items.first.product.url
   end
   
   test "it should set message" do

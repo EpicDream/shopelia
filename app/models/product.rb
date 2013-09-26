@@ -106,13 +106,8 @@ class Product < ActiveRecord::Base
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
 
-        # Default shipping values
-        if version[:price_shipping_text].blank?
-          m = MerchantConjurer.from_url(self.url)
-          if m.present? && m.respond_to?('shipping_price')
-            version[:price_shipping_text] = m.shipping_price(version[:price_text])
-          end
-        end
+        # Pre-process versions
+        version = MerchantHelper.process_version(self.url, version)
 
         v = self.product_versions.where(
           option1_md5:ProductVersion.generate_option_md5(version[:option1]),

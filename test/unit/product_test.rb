@@ -40,7 +40,7 @@ class ProductTest < ActiveSupport::TestCase
   test "it should clean url" do
     product = Product.new(:url => "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO")
     assert product.save, product.errors.full_messages.join(",")
-    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
+    assert_equal "http://www.amazon.fr/dp/B0006ZUFUO", product.url
   end
 
   test "it should fetch existing product" do
@@ -415,7 +415,7 @@ class ProductTest < ActiveSupport::TestCase
      assert !product.viking_failure
   end
 
-  test "it should use default shipping price if shipping price is blank" do
+  test "it should pre process versions using merchant helper" do
     product = products(:nounours)
     product.update_attributes(versions:[
       { availability:"in stock",
@@ -427,8 +427,8 @@ class ProductTest < ActiveSupport::TestCase
         price_strikeout: "2.58 EUR"
       }]);
 
-     assert !product.viking_failure
-     assert_equal 7.20, product.product_versions.first.price_shipping
+    assert !product.viking_failure
+    assert_equal 7.20, product.product_versions.first.price_shipping
   end  
 
   test "it should fail viking if shipping price is blank and no default shipping price is set for merchant" do
