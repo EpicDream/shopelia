@@ -15,7 +15,7 @@ en vente sur: true
 disponible sous \d semaine: true
 pret a expedier sous: true
 available from these sellers: true
-^in stock($| on): true
+^in stock(\.$| on): true
 only \d+ left in stock: true
 usually ships within: true
 sur commande: false
