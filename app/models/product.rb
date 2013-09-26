@@ -33,7 +33,7 @@ class Product < ActiveRecord::Base
   
   def self.fetch url
     return nil if url.nil?
-    Product.find_by_url(Linker.clean(url)) || Product.create!(url:url) 
+    Product.find_by_url(Linker.clean(url)) || Product.create(url:url) 
   end
   
   def versions_expired?
