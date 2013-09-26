@@ -26,6 +26,6 @@ aucun vendeur ne propose ce produit: false
 out of stock: false
 \d+ d'occasion: false
 non disponible: false
-n\'est plus disponible: false
-cet article a été vendu: false
+n.?est plus disponible: false
+cet article a ete vendu: false
 en vacances: false
