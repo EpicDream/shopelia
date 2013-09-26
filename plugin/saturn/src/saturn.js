@@ -26,7 +26,7 @@ var Saturn = function() {
 
 
   this.MAX_VERSIONS_TO_FULL_CRAWL = 100;
-  this.MIN_NB_TABS = 2;
+  this.MIN_NB_TABS = 0;
   this.MAX_NB_TABS = 15;
 
   this.sessions = {};
