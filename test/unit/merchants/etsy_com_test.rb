@@ -24,7 +24,9 @@ class EtsyComTest < ActiveSupport::TestCase
 
   test "it should process shipping price (3)" do
     @version[:price_shipping_text] = "Etats-Unis  €4,56 EUR €0,76 EUR, Canada  €6,08 EUR €1,52 EUR"
-    @version = @helper.process_shipping_price(@version)
+    assert_difference "Incident.count", 1 do
+      @version = @helper.process_shipping_price(@version)
+    end
 
     assert_equal nil, @version[:price_shipping_text]
   end
