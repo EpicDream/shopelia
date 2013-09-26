@@ -48,6 +48,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   
   def prepare_jobs
     (@urls || []).each do |url|
+      next if url.blank?
       EventsWorker.perform_async({
         :url => url.unaccent,
         :developer_id => @developer.id,
