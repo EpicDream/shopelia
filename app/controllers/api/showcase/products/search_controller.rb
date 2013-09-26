@@ -21,6 +21,7 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
   
   def prepare_jobs result
     (result[:urls] || []).each do |url|
+      next if url.blank?
       EventsWorker.perform_async({
         :url => url.unaccent,
         :developer_id => @developer.id,
