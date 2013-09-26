@@ -1,6 +1,6 @@
 {
   "name": "Ariane",
-  "version": "0.5.5",
+  "version": "0.6.0",
   "manifest_version": 2,
 
   "description": "Outil de mapping de page produit pour Viking/Saturn.",
@@ -16,7 +16,8 @@
   },
 
   "background": {
-    "scripts": ["lib/uri.js", "lib/jquery-1.9.1.min.js", "controllers/background.js"]
+    "scripts": ["build/require.js", "build/uri.js", "build/sprintf.js", "build/jquery.min.js", "build/logger.js", "build/viking.js", "src/ariane.js", "src/back_chrome_listeners.js"],
+    "persistent": false
   },
 
   "commands": {
@@ -29,10 +30,24 @@
   "content_scripts": [
     {
       "matches" : ["*://*/*"],
-      "js": ["lib/underscore-min.js", "lib/jquery-1.9.1.min.js", "lib/jquery-ui-1.10.3.custom.min.js", "lib/css_struct.js", "lib/html_utils.js", "lib/path_utils.js"]
+      "js": [
+        "build/require.js",
+        "build/underscore.min.js",
+        "build/jquery.min.js", 
+        "build/jquery-ui.min.js",
+        "build/uri.js",
+        "build/sprintf.js",
+        "build/logger.js",
+        "build/viking.js",
+        "build/html_utils.js",
+        "lib/css_struct.js",
+        "lib/path_utils.js",
+        "controllers/toolbar_contentscript.js",
+        "controllers/mapping_contentscript.js"
+      ]
     },{
-      "matches" : ["*://*/*"],
-      "js": ["controllers/toolbar_contentscript.js", "controllers/mapping_contentscript.js"]
+      "matches" : ["https://*.shopelia.fr/admin/viking", "https://*.shopelia.com/admin/viking"],
+      "js": ["src/loader_cs.js"]
     }
   ],
 
@@ -40,5 +55,5 @@
     "views/toolbar.html",
     "assets/*"
   ],
-  "permissions": ["tabs", "contextMenus", "*://*/*"]
+  "permissions": ["tabs", "storage", "*://*/*"]
 }

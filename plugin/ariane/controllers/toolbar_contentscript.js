@@ -1,4 +1,11 @@
 
+define('toolbar', ['jquery', 'logger'], function($, logger) {
+
+  var toolbar = {},
+      jToolbar,
+      jStep,
+      jButtons;
+
 function loadAriane() {
   // Create DIV
   var div = document.createElement('div');
@@ -44,6 +51,11 @@ function build() {
   jToolbar.find(".ari-abort").click(onAborted);
   jStep.change(onStepChanged);
   jButtons.click(onButtonClicked);
+
+  //
+  toolbar.toolbarElem = jToolbar[0];
+  toolbar.stepElem = jStep[0];
+  toolbar.buttons = jButtons.toArray();
 }
 
 /* ********************************************************** */
@@ -100,7 +112,7 @@ function onFinished() {
 /*                           Utilities                        */
 /* ********************************************************** */
 
-function startAriane(crawl_mode) {
+toolbar.startAriane = function(crawl_mode) {
   if (crawl_mode)
     jStep.val("extract").prop("disabled", true);
   $(document.body).addClass("ariane");
@@ -109,7 +121,7 @@ function startAriane(crawl_mode) {
   onStepChanged();
 };
 
-function getCurrentFieldId() {
+toolbar.getCurrentFieldId = function() {
   var fieldId = (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-/, '').replace(/product-/, '');
   if (! fieldId)
     fieldId = "other";
@@ -137,11 +149,7 @@ chrome.extension.onMessage.addListener(function(msg, sender) {
   }
 });
 
-function loadToolbarOnJQuery() {
-  if (window.jQuery && window.jQuery.ui)
-    return loadAriane();
-  else
-    return setTimeout(loadToolbarOnJQuery, 100);
-};
-
-loadToolbarOnJQuery();
+  loadAriane();
+  
+  return toolbar;
+});
