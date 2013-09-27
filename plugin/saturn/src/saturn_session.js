@@ -84,8 +84,11 @@ SaturnSession.prototype.next = function() {
 
 SaturnSession.prototype.createSubTasks = function() {
   var firstOption = this.options.firstOption({nonAlone: true}),
-      option = firstOption.depth()+1,
-      values = Object.keys(firstOption._childrenH);
+      option, values;
+  if (! firstOption) // Possible if there is only a single choice
+    return;
+  option = firstOption.depth()+1;
+  values = Object.keys(firstOption._childrenH);
   this._subTasks = {};
   for (var i = 1 ; i < values.length ; i++) {
     var value = values[i];
