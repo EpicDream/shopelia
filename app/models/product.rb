@@ -1,4 +1,6 @@
 class Product < ActiveRecord::Base
+  VERSIONS_EXPIRATION_DELAY_IN_HOURS = 4
+
   belongs_to :product_master
   belongs_to :merchant
   has_many :events, :dependent => :destroy
@@ -28,12 +30,14 @@ class Product < ActiveRecord::Base
   scope :viking_base_request, lambda {
     where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') " +
       "or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and " +
-      "(muted_until is null or muted_until < ?) and products.viking_sent_at is null", Time.now, 6.hours.ago, 12.hours.ago, Time.now).order("events.created_at desc").limit(100)
+      "(muted_until is null or muted_until < ?) and products.viking_sent_at is null", Time.now, VERSIONS_EXPIRATION_DELAY_IN_HOURS.hours.ago, VERSIONS_EXPIRATION_DELAY_IN_HOURS.hours.ago, Time.now).order("events.created_at desc").limit(100)
   }
   
   def self.fetch url
     return nil if url.nil?
-    Product.find_by_url(Linker.clean(url)) || Product.create(url:url) 
+    p = Product.find_or_create_by_url(Linker.clean(url))
+    p.save! if !p.persisted? && p.errors.empty?
+    p
   end
   
   def versions_expired?
@@ -41,7 +45,7 @@ class Product < ActiveRecord::Base
   end
   
   def self.versions_expiration_date
-    4.hours.from_now
+    VERSIONS_EXPIRATION_DELAY_IN_HOURS.hours.from_now
   end
   
   def viking_reset

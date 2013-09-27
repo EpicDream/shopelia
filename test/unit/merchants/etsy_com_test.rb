@@ -9,10 +9,10 @@ class EtsyComTest < ActiveSupport::TestCase
   end
 
   test "it should process shipping price (1)" do
-    @version[:price_shipping_text] = "Europe hors UE  €4,56 EUR €3,04 EUR, Union européenne  €4,56 EUR €3,04 EUR, Autres pays €6,84 EUR €4,56 EUR"
+    @version[:price_shipping_text] = "Europe hors UE  €4,56 EUR €3,04 EUR, Union européenne  €4.56 EUR €3,04 EUR, Autres pays €6,84 EUR €4,56 EUR"
     @version = @helper.process_shipping_price(@version)
 
-    assert_equal "4,56", @version[:price_shipping_text]
+    assert_equal "4.56", @version[:price_shipping_text]
   end
 
   test "it should process shipping price (2)" do
@@ -24,7 +24,7 @@ class EtsyComTest < ActiveSupport::TestCase
 
   test "it should process shipping price (3)" do
     @version[:price_shipping_text] = "Etats-Unis  €4,56 EUR €0,76 EUR, Canada  €6,08 EUR €1,52 EUR"
-    assert_difference "Incident.count", 1 do
+    assert_difference "Incident.count", 0 do
       @version = @helper.process_shipping_price(@version)
     end
 
@@ -51,4 +51,13 @@ class EtsyComTest < ActiveSupport::TestCase
 
     assert_equal "4,56", @version[:price_shipping_text]
   end  
+
+  test "it should process shipping price (7)" do
+    @version[:price_shipping_text] = "Canada  €6,08 EUR €1,52 EUR"
+    assert_difference "Incident.count", 1 do
+      @version = @helper.process_shipping_price(@version)
+    end
+
+    assert_equal nil, @version[:price_shipping_text]
+  end
 end

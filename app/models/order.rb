@@ -106,10 +106,11 @@ class Order < ActiveRecord::Base
       when "uuid_conflict" then fail("uuid_conflict", :vulcain)
       when "cart_amount_error" then fail("cart_amount_error", :vulcain)
       when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
+      when "cart_line_mapping_error" then fail("cart_line_mapping_error", :vulcain)
       when "no_product_available" then abort("stock", :merchant)
       when "out_of_stock" then abort("stock", :merchant)
       when "no_delivery" then abort("delivery", :merchant)
-      when "order_validation_failed" then abort("payment_refused_by_merchant", :billing)
+      when "order_validation_failed" then fail("order_validation_failed", :vulcain)
       when "account_creation_failed" then restart
       when "login_failed" then restart
       end

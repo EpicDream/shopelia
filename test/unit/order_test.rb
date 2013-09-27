@@ -441,6 +441,15 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "dispatcher_crash", @order.message
   end
 
+  test "it should pause order with vulcain order validation failure" do
+    start_order
+    callback_order "failure", { "status" => "order_validation_failed" }
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "order_validation_failed", @order.message
+  end
+
   test "it should pause order with vulcain uuid conflict" do
     start_order
     callback_order "failure", { "status" => "uuid_conflict" }
@@ -645,10 +654,10 @@ class OrderTest < ActiveSupport::TestCase
   test "it should process order validation failure" do
     start_order
     @order.callback "failure", { "status" => "order_validation_failed" }
-    assert_equal :failed, @order.reload.state
-    assert_equal "billing", @order.error_code
-    assert_equal "payment_refused_by_merchant", @order.message
-    assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
+    assert_equal :pending_agent, @order.reload.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "order_validation_failed", @order.message
+    #assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
 
   test "it shouldn't restart order if maximum number of retries has been reached" do
