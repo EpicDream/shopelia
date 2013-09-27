@@ -2,7 +2,7 @@ module MerchantHelper
 
   def self.process_version url, version
     m = self.from_url(url)
-    version = m.process_shipping_price(version) if m.present? && m.respond_to?('process_shipping_price') && version[:price_shipping_text].present?
+    version = m.process_shipping_price(version) if m.present? && m.respond_to?('process_shipping_price')
     version
   end
 
