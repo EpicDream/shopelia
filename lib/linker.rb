@@ -4,7 +4,7 @@ class Linker
   
   def self.clean url
     count = 0
-    canonical = self.by_rule(url) ||  UrlMatcher.find_by_url(url).try(:canonical) || UrlMatcher.find_by_canonical(url).try(:canonical)
+    canonical = MerchantHelper.canonize(url) || self.by_rule(url) ||  UrlMatcher.find_by_url(url).try(:canonical)
     if canonical.nil?
       orig = url
       begin
@@ -18,6 +18,8 @@ class Linker
       UrlMatcher.create(url:orig,canonical:canonical)
     end
     canonical
+  rescue Errno::ETIMEDOUT
+    orig
   rescue
     nil
   end
@@ -25,7 +27,7 @@ class Linker
   def self.monetize url
     return nil if url.blank?
     url = url.unaccent
-    m = MerchantConjurer.from_url(url).monetize
+    m = MerchantHelper.monetize(url)
   rescue
     merchant = Merchant.find_or_create_by_domain(Utils.extract_domain(url))
     if Incident.where(issue:"Linker",resource_type:"Merchant",resource_id:merchant.id,processed:false).where("description like 'Url not monetized%'").count == 0
@@ -57,10 +59,10 @@ class Linker
 
   def self.get uri
     req = Net::HTTP::Head.new(uri.request_uri, {'User-Agent' => UA })
-    res = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
+    res = Net::HTTP.start(uri.host, uri.port, use_ssl:uri.port == 443) { |http| http.request(req) }
     if res.code.to_i == 405 || (res.code.to_i == 200 && res['location'].blank?)
       req = Net::HTTP::Get.new(uri.request_uri, {'User-Agent' => UA })
-      res = Net::HTTP.start(uri.host, uri.port) { |http| http.request(req) }
+      res = Net::HTTP.start(uri.host, uri.port, use_ssl:uri.port == 443) { |http| http.request(req) }
     end
     res
   end    

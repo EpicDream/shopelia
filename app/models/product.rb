@@ -1,4 +1,6 @@
 class Product < ActiveRecord::Base
+  VERSIONS_EXPIRATION_DELAY_IN_HOURS = 4
+
   belongs_to :product_master
   belongs_to :merchant
   has_many :events, :dependent => :destroy
@@ -29,7 +31,7 @@ class Product < ActiveRecord::Base
   scope :viking_base_request, lambda {
     where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') " +
       "or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and " +
-      "(muted_until is null or muted_until < ?) and products.viking_sent_at is null", Time.now, 6.hours.ago, 12.hours.ago, Time.now).order("events.created_at desc").limit(100)
+      "(muted_until is null or muted_until < ?) and products.viking_sent_at is null", Time.now, VERSIONS_EXPIRATION_DELAY_IN_HOURS.hours.ago, VERSIONS_EXPIRATION_DELAY_IN_HOURS.hours.ago, Time.now).order("events.created_at desc").limit(100)
   }
   
   def self.fetch url
@@ -44,7 +46,7 @@ class Product < ActiveRecord::Base
   end
   
   def self.versions_expiration_date
-    4.hours.from_now
+    VERSIONS_EXPIRATION_DELAY_IN_HOURS.hours.from_now
   end
   
   def viking_reset
@@ -107,13 +109,8 @@ class Product < ActiveRecord::Base
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
 
-        # Default shipping values
-        if version[:price_shipping_text].blank?
-          m = MerchantConjurer.from_url(self.url)
-          if m.present? && m.respond_to?('shipping_price')
-            version[:price_shipping_text] = m.shipping_price(version[:price_text])
-          end
-        end
+        # Pre-process versions
+        version = MerchantHelper.process_version(self.url, version)
 
         v = self.product_versions.where(
           option1_md5:ProductVersion.generate_option_md5(version[:option1]),

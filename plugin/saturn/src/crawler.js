@@ -149,7 +149,9 @@ Crawler.crawl = function(mapping) {
         if (e.length == 1 && e[0].tagName == "IMG")
           option[key] = [e.attr("alt"), e.attr("title")].join(', ');
         else
-          option[key] = e.text();
+          option[key] = e.toArray().map(function(e) {
+            return $(e).text().replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
+          }).join(", ");
         option[key] = option[key].replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
       } else
         option[key] = e.html().replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n");

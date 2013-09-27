@@ -40,7 +40,7 @@ class ProductTest < ActiveSupport::TestCase
   test "it should clean url" do
     product = Product.new(:url => "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO")
     assert product.save, product.errors.full_messages.join(",")
-    assert_equal "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
+    assert_equal "http://www.amazon.fr/dp/B0006ZUFUO", product.url
   end
 
   test "it should fetch existing product" do
@@ -88,12 +88,14 @@ class ProductTest < ActiveSupport::TestCase
   end
   
   test "it should get all products needing a Viking check" do
-    Event.from_urls(
-      :urls => [products(:headphones).url,products(:usbkey).url],
-      :developer_id => developers(:prixing).id,
-      :device_id => devices(:web).id,
-      :action => Event::VIEW)
-    Event.create!(
+    [products(:headphones).url,products(:usbkey).url].each do |url|
+      Event.create(
+        :url => url,
+        :developer_id => developers(:prixing).id,
+        :device_id => devices(:web).id,
+        :action => Event::VIEW)
+    end
+    Event.create(
       :url => "http://www.toto.fr/productA",
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
@@ -104,8 +106,8 @@ class ProductTest < ActiveSupport::TestCase
   end
 
   test "it shouldn't need a viking check if product has been sent to viking" do
-    Event.from_urls(
-      :urls => [products(:headphones).url],
+    Event.create(
+      :url => products(:headphones).url,
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
       :action => Event::VIEW)
@@ -115,11 +117,13 @@ class ProductTest < ActiveSupport::TestCase
   end
 
   test "it should get all products needing a Viking check in batch mode" do
-    Event.from_urls(
-      :urls => [products(:headphones).url,products(:usbkey).url],
-      :developer_id => developers(:prixing).id,
-      :device_id => devices(:web).id,
-      :action => Event::VIEW)
+    [products(:headphones).url,products(:usbkey).url].each do |url|
+      Event.create(
+        :url => url,
+        :developer_id => developers(:prixing).id,
+        :device_id => devices(:web).id,
+        :action => Event::VIEW)
+    end
     Event.create!(
       :url => "http://www.toto.fr/productA",
       :developer_id => developers(:prixing).id,
@@ -129,8 +133,8 @@ class ProductTest < ActiveSupport::TestCase
   end
 
   test "it shouldn't need a viking check if product has been sent to viking in batch mode" do
-    Event.from_urls(
-      :urls => [products(:headphones).url],
+    Event.create(
+      :url => products(:headphones).url,
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
       :action => Event::REQUEST)
@@ -140,8 +144,8 @@ class ProductTest < ActiveSupport::TestCase
   end
 
   test "it should get all products which failed Viking extraction" do
-    Event.from_urls(
-      :urls => [products(:headphones).url],
+    Event.create(
+      :url => products(:headphones).url,
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
       :action => Event::VIEW)
@@ -150,11 +154,13 @@ class ProductTest < ActiveSupport::TestCase
   end
 
   test "it should get all products needing a Viking check and without failure" do
-    Event.from_urls(
-      :urls => [products(:headphones).url,products(:usbkey).url],
-      :developer_id => developers(:prixing).id,
-      :device_id => devices(:web).id,
-      :action => Event::VIEW)
+    [products(:headphones).url,products(:usbkey).url].each do |url|
+      Event.create(
+        :url => url,
+        :developer_id => developers(:prixing).id,
+        :device_id => devices(:web).id,
+        :action => Event::VIEW)
+    end
     products(:headphones).update_attribute :versions_expires_at, Time.now
     assert_equal 2, Product.viking_pending.count
     products(:headphones).update_attribute :viking_failure, true
@@ -170,11 +176,13 @@ class ProductTest < ActiveSupport::TestCase
   end  
   
   test "it should get last product needing a Viking check" do
-    Event.from_urls(
-      :urls => [products(:headphones).url,products(:usbkey).url],
-      :developer_id => developers(:prixing).id,
-      :device_id => devices(:web).id,
-      :action => Event::VIEW)
+    [products(:headphones).url,products(:usbkey).url].each do |url|
+      Event.create(
+        :url => url,
+        :developer_id => developers(:prixing).id,
+        :device_id => devices(:web).id,
+        :action => Event::VIEW)
+    end
     assert_equal products(:usbkey), Product.viking_pending.first
     products(:usbkey).update_attribute :versions_expires_at, 1.hour.from_now
     assert_equal products(:headphones), Product.viking_pending.first
@@ -183,11 +191,13 @@ class ProductTest < ActiveSupport::TestCase
   end
 
   test "it should get last product needing a Viking check in batch mode" do
-    Event.from_urls(
-      :urls => [products(:headphones).url,products(:usbkey).url],
-      :developer_id => developers(:prixing).id,
-      :device_id => devices(:web).id,
-      :action => Event::REQUEST)
+    [products(:headphones).url,products(:usbkey).url].each do |url|
+      Event.create(
+        :url => url,
+        :developer_id => developers(:prixing).id,
+        :device_id => devices(:web).id,
+        :action => Event::REQUEST)
+    end
     assert_equal products(:usbkey), Product.viking_pending_batch.first
     products(:usbkey).update_attribute :versions_expires_at, 1.hour.from_now
     assert_equal products(:headphones), Product.viking_pending_batch.first
@@ -203,8 +213,8 @@ class ProductTest < ActiveSupport::TestCase
   end
 
   test "it should destroy all related events when a product is destroyed" do
-    Event.from_urls(
-      :urls => [products(:headphones).url],
+    Event.create(
+      :url => products(:headphones).url,
       :developer_id => developers(:prixing).id,
       :device_id => devices(:web).id,
       :action => Event::VIEW)
@@ -405,7 +415,7 @@ class ProductTest < ActiveSupport::TestCase
      assert !product.viking_failure
   end
 
-  test "it should use default shipping price if shipping price is blank" do
+  test "it should pre process versions using merchant helper" do
     product = products(:nounours)
     product.update_attributes(versions:[
       { availability:"in stock",
@@ -417,8 +427,8 @@ class ProductTest < ActiveSupport::TestCase
         price_strikeout: "2.58 EUR"
       }]);
 
-     assert !product.viking_failure
-     assert_equal 7.20, product.product_versions.first.price_shipping
+    assert !product.viking_failure
+    assert_equal 7.20, product.product_versions.first.price_shipping
   end  
 
   test "it should fail viking if shipping price is blank and no default shipping price is set for merchant" do

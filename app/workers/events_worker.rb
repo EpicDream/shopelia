@@ -1,12 +1,14 @@
 class EventsWorker
   include Sidekiq::Worker
-  sidekiq_options :retry => false
-  
+
   def perform hash
-    if hash["urls"]
-      Event.from_urls(hash)
-    elsif hash["ids"]
-      Event.from_ids(hash)
-    end
+    Event.create!(
+      :url => hash["url"],
+      :product_id => hash["product_id"],
+      :action => hash["action"],
+      :developer_id => hash["developer_id"],
+      :device_id => hash["device_id"],
+      :tracker => hash["tracker"],
+      :ip_address => hash["ip_address"])
   end
 end

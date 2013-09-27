@@ -32,34 +32,14 @@ class EventTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id)
     assert_equal false, event.monetizable
   end
-  
-  test "it should create events and products from a list of urls" do
-    assert_difference(["Event.count","Product.count"], 2) do
-      Event.from_urls(
-        :action => Event::VIEW,
-        :device_id => devices(:web).id,
-        :developer_id => developers(:prixing).id,
-        :urls => [ "http://www.amazon.fr/product1", "http://www.amazon.fr/product2" ])
-    end
-  end
 
-  test "it should create events from list of product ids" do
-    assert_difference(["Event.count"], 2) do
-      Event.from_ids(
-        :action => Event::VIEW,
-        :device_id => devices(:web).id,
-        :developer_id => developers(:prixing).id,
-        :ids => [ products(:dvd).id, products(:headphones).id ])
-    end
-  end
-
-  test "it should skip bad urls" do
+  test "it should fail bad urls" do
     assert_difference(["Event.count","Product.count"], 0) do
-      Event.from_urls(
-        :action => Event::VIEW,
-        :device_id => devices(:web).id,
-        :developer_id => developers(:prixing).id,
-        :urls => [ "", " ", "/product", "none" ])
+      event = Event.create(
+      :action => Event::VIEW,
+      :url => "none",
+      :device_id => devices(:web).id,
+      :developer_id => developers(:prixing).id)
     end
   end
 

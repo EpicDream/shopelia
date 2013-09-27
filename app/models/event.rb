@@ -27,31 +27,6 @@ class Event < ActiveRecord::Base
   scope :requests, where(action:REQUEST)
   scope :buttons, where(action:[VIEW, CLICK])
   
-  def self.from_urls data
-    (data[:urls] || data["urls"] || []).each do |url|
-      next if url !~ /^http/
-      Event.create!(
-        :url => url,
-        :action => data["action"] || data[:action],
-        :developer_id => data["developer_id"] || data[:developer_id],
-        :device_id => data["device_id"] || data[:device_id],
-        :tracker => data["tracker"] || data[:tracker],
-        :ip_address => data["ip_address"] || data[:ip_address])
-    end
-  end
-
-  def self.from_ids data
-    (data[:ids] || data["ids"] || []).each do |product_id|
-      Event.create!(
-        :product_id => product_id,
-        :action => data["action"] || data[:action],
-        :developer_id => data["developer_id"] || data[:developer_id],
-        :device_id => data["device_id"] || data[:device_id],
-        :tracker => data["tracker"] || data[:tracker],
-        :ip_address => data["ip_address"] || data[:ip_address])
-    end
-  end 
-  
   private
   
   def find_or_create_product

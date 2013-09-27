@@ -9,7 +9,7 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
         render :json => {}
       else
         result = PrixingWrapper.convert(prixing)
-        generate_events result
+        prepare_jobs(result)
         render :json => result
       end
     else
@@ -19,15 +19,18 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
 
   private
   
-  def generate_events result
-    EventsWorker.perform_async({
-      :urls => (result[:urls] || []).map{|e| e.unaccent},
-      :developer_id => @developer.id,
-      :action => Event::VIEW,
-      :tracker => @tracker,
-      :device_id => @device.id,
-      :ip_address => request.remote_ip
-    })
+  def prepare_jobs result
+    (result[:urls] || []).each do |url|
+      next if url !~ /^http/
+      EventsWorker.perform_async({
+        :url => url.unaccent,
+        :developer_id => @developer.id,
+        :action => Event::VIEW,
+        :tracker => @tracker,
+        :device_id => @device.id,
+        :ip_address => request.remote_ip
+      })
+    end
   end
 
   def prepare_params

@@ -5,7 +5,7 @@ class GatewayController < ApplicationController
 
   def index
     EventsWorker.perform_async({
-      :urls => [ @url ],
+      :url => @url,
       :developer_id => @developer.id,
       :action => Event::CLICK,
       :tracker => @tracker,
