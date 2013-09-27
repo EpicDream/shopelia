@@ -16,6 +16,11 @@ class EtsyCom
     end
   end
 
+  def process_availability version
+    version[:availability_text] = "En stock" if version[:availability_text].blank?
+    version
+  end
+
   private
 
   def generate_incident str

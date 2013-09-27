@@ -60,4 +60,18 @@ class EtsyComTest < ActiveSupport::TestCase
 
     assert_equal nil, @version[:price_shipping_text]
   end
+
+  test "it should process availability (1)" do
+    @version[:availability_text] = "Cet article a été vendu."
+    @version = @helper.process_availability(@version)
+
+    assert_equal "Cet article a été vendu.", @version[:availability_text]
+  end
+
+  test "it should process availability (2)" do
+    @version[:availability_text] = ""
+    @version = @helper.process_availability(@version)
+
+    assert_equal "En stock", @version[:availability_text]
+  end
 end
