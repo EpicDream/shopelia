@@ -183,7 +183,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   test "it should set available info to true" do
     array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
               "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
-              "disponible sous 4 semaines" ]
+              "disponible sous 4 semaines", "Seulement 1 en stock" ]
     array.each do |str|
       assert_difference "Incident.count", 0 do
         version = ProductVersion.create(
