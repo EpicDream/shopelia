@@ -1,4 +1,5 @@
 dans( plus de)? \d+ magasins: false
+est plus en stock: false
 cet article paraitra le: true
 en pr.\-?commande: true
 pr.\-?commandez maintenant: true
@@ -36,5 +37,4 @@ cet article a ete vendu: false
 en vacances: false
 currently unavailable: false
 sign up to be notified when this item becomes available: false
-est plus en stock: false
 PAS DE CADEAUX INSOLITES: false

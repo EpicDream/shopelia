@@ -157,7 +157,7 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert !version.available
   end
 
-  test "it should set available info" do
+  test "it should set available info to false" do
     array = [ "Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock", 
               "temporairement en rupture de stock.", "sur commande", "article indisponible",
               "ce produit est epuise", "sans stock pour vos criteres", "bientot disponible",
@@ -169,11 +169,18 @@ class ProductVersionTest < ActiveSupport::TestCase
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
         availability_text:str)
-      assert !version.available, "#{str.inspect} failed !"
+      assert_equal false, version.available, "#{str.inspect} failed !"
       assert_equal str, version.availability_info
     end
-    
+  end
+
+  test "it should set available info to true" do
     array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
               "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
               "disponible sous 4 semaines" ]
@@ -187,7 +194,7 @@ class ProductVersionTest < ActiveSupport::TestCase
           image_url:"toto",
           name:"toto",
           availability_text:str)
-        assert version.available, "#{str.inspect} failed !"
+        assert_equal true, version.available, "#{str.inspect} failed !"
         assert_equal str, version.availability_info
       end
     end
