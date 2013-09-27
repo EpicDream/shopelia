@@ -19,7 +19,7 @@ module MerchantHelper
   private
 
   def self.from_url url
-    klass = Utils.extract_domain(url).gsub(".", "_").camelize
+    klass = Utils.extract_domain(url).gsub(/[\.-]/, "_").camelize
     klass.constantize.new(url)
   rescue
     nil
