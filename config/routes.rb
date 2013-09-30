@@ -1,25 +1,29 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
-  match "/checkout", :controller => "html_app", :action => "index"
+  match "/app_checkout", :controller => "html_app", :action => "index"
 
   apipie
 
   devise_for :users, controllers: { 
     confirmations: 'devise_override/confirmations',
+    passwords: 'devise_override/passwords',
     registrations: 'devise_override/registrations',
-    sessions: 'devise_override/sessions',    
+    sessions: 'devise_override/sessions', 
   }
   devise_scope :user do
     put "/confirm" => "devise_override/confirmations#confirm"
   end
 
   resources :home, :only => :index
+  match "/connect", to: "home#connect"
+
+  resources :checkout, :only => :index
   resources :contact, :only => :create
   resources :gateway, :only => :index
   
   resources :addresses
-  resources :cart_items, :only => :show do
+  resources :cart_items, :only => [:show, :create] do
     get :unsubscribe, :on => :member
   end
   resources :orders, :only => [:show, :update] do

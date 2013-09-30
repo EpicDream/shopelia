@@ -7,6 +7,8 @@ class Api::V1::CartItemsControllerTest < ActionController::TestCase
       post :create, product_version_id:product_versions(:usbkey).id, email:"toto@gmail.com"
       assert_response :success
     end
+
+    assert_equal Cart::FOLLOW, Cart.first.kind
   end
 
   test "it should add new item for known email" do

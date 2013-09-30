@@ -8,12 +8,16 @@ class CartItem < ActiveRecord::Base
   validates :uuid, :presence => true, :uniqueness => true
   validates :product_version_id, :presence => true, :uniqueness => { :scope => :cart_id }
 
-  attr_accessible :cart_id, :product_version_id, :developer_id, :tracker
+  attr_accessible :cart_id, :product_version_id, :developer_id, :tracker, :monitor, :url
+  attr_accessor :url
   
   before_validation :initialize_uuid
+  before_validation :check_url_validity, if:Proc.new{ |item| item.url.present? }
+  before_validation :find_or_create_product, if:Proc.new{ |item| item.url.present? && item.errors.empty? }
+
   after_create :save_prices
-  after_create :notify_creation_to_user
-  after_create :notify_creation_to_admin
+  after_create :notify_creation_to_user, if:Proc.new{ |item| item.cart.kind == Cart::FOLLOW }
+  after_create :notify_creation_to_admin, if:Proc.new{ |item| item.cart.kind == Cart::FOLLOW }
   
   def to_param
     self.uuid
@@ -24,7 +28,18 @@ class CartItem < ActiveRecord::Base
   end
 
   private
+
+  def check_url_validity
+    URI.parse(self.url)
+    rescue
+      self.errors.add(:base, I18n.t('app.cart_items.bad_url'))
+  end
   
+  def find_or_create_product
+    product = Product.fetch(self.url)
+    self.product_version_id = product.product_versions.first.id
+  end
+
   def save_prices
     self.price = self.product_version.price
     self.price_shipping = self.product_version.price_shipping
