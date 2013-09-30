@@ -27,7 +27,7 @@ FakeSaturn.prototype = new Saturn();
 
 FakeSaturn.prototype.openNewTab = function() {
   this.tabs.nbUpdating++;
-  return Saturn.prototype.openNewTab.call(this, this.tabCpt++);
+  return Saturn.prototype.openNewTab.call(this, ++this.tabCpt);
 };
 
 FakeSaturn.prototype.getFakeProduct = function() {
