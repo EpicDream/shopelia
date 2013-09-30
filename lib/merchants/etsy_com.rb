@@ -12,8 +12,8 @@ class EtsyCom
         m = text.match(/Union europeenne\s+€([\d,\.]+)/) || \
         m = text.match(/(?:^|,\s)UE\s+€([\d,\.]+)/) || \
         m = text.match(/Autres pays\s+€([\d,\.]+)/)) ? m[1] : generate_incident(text)
-      version
     end
+    version
   end
 
   def process_availability version

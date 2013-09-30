@@ -24,11 +24,11 @@ var Saturn = function() {
   this.DELAY_RESCUE = 60000; // a session automatically fail after 60s (needed when a lot of sizes for shoes for example).
   this.DELAY_BEFORE_REASK_MAPPING = this.TEST_ENV ? 30000 : 5 * 60000; // 30s en dev ou 5min en prod
 
-
   this.MAX_VERSIONS_TO_FULL_CRAWL = 100;
-  this.MIN_NB_TABS = 2;
+  this.MIN_NB_TABS = 0;
   this.MAX_NB_TABS = 15;
 
+  this.crawl = false;
   this.sessions = {};
   this.productsBeingProcessed = {};
   this.productQueue = [];
@@ -69,28 +69,6 @@ function preProcessData(data) {
 
 Saturn.prototype = {};
 
-Saturn.prototype.main = function() {
-  if (! this.crawl) return;
-
-  this.loadProductUrlsToExtract(function(array) {
-    if (! array || ! (array instanceof Array)) {
-      logger.err("Error when getting new products to extract : received data is undefined or is not an Array");
-      this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
-    } else if (array.length > 0) {
-      this.onProductsReceived(array);
-    } else {
-      logger.print("%cNo product.", "color: blue");
-      this.updateNbTabs();
-    }
-
-    this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
-
-  }.bind(this), function(err) {
-    logger.error("Error when getting new products to extract :", err);
-    this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
-  }.bind(this));
-};
-
 //
 Saturn.prototype.start = function() {
   if (this.crawl)
@@ -118,7 +96,7 @@ Saturn.prototype.resume = function() {
 //
 Saturn.prototype.stop = function() {
   this.pause();
-  for (var i in this.tabs.pending)
+  for (var i = 0; i < this.tabs.pending.length; i++)
     this.closeTab(this.tabs.pending[i]);
   for (var tabId in this.tabs.opened)
     this.tabs.opened[tabId].toClose = true;
@@ -147,6 +125,34 @@ Saturn.prototype.updateNbTabs = function() {
   }
 };
 
+Saturn.prototype.main = function() {
+  if (! this.crawl) return;
+
+  this.loadProductUrlsToExtract(
+    this.onArrayToExtractReceived.bind(this),
+    this.onArrayToExtractFailed.bind(this)
+  );
+};
+
+Saturn.prototype.onArrayToExtractReceived = function(array) {
+  if (! array || ! (array instanceof Array)) {
+    logger.err("Error when getting new products to extract : received data is undefined or is not an Array");
+    this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
+  } else if (array.length > 0) {
+    this.onProductsReceived(array);
+  } else {
+    logger.print("%cNo product.", "color: blue");
+    this.updateNbTabs();
+  }
+
+  this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
+};
+
+Saturn.prototype.onArrayToExtractFailed = function(err) {
+  logger.error("Error when getting new products to extract :", err);
+  this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
+};
+
 Saturn.prototype.onProductsReceived = function(prods) {
   logger.debug(prods.length, "products received.");
   prods = prods.unique(function(p) {return p.id;});
@@ -167,20 +173,21 @@ Saturn.prototype.onProductsReceived = function(prods) {
 Saturn.prototype.onProductReceived = function(prod) {
   prod = preProcessData(prod);
   logger.debug("Going to process product", prod);
-  var merchantId = prod.merchant_id;
+  var merchantId = prod.merchant_id || prod.url;
   prod.uri = new Uri(prod.url);
   prod.receivedTime = new Date();
-
-  if (this.mappings[merchantId] && (new Date() - this.mappings[merchantId].date) < this.DELAY_BEFORE_REASK_MAPPING) {
+  if (this.mapping !== undefined) {
+    this.addProductToQueue(prod);
+  } else if (this.mappings[merchantId] && (prod.receivedTime - this.mappings[merchantId].date) < this.DELAY_BEFORE_REASK_MAPPING) {
     logger.debug("mapping from cache", merchantId, this.mappings[merchantId]);
     prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
     this.addProductToQueue(prod);
   } else
-    this.loadMapping(prod.merchant_id, function(mapping) {
+    this.loadMapping(merchantId, function(mapping) {
       if (! mapping) {
-        this.sendError({id: prod.id}, 'undefined mapping for merchant_id='+prod.merchant_id);
+        this.sendError({id: prod.id}, 'undefined mapping for merchant_id='+merchantId);
       } else if (! mapping.data || ! mapping.data.viking) {
-        this.sendError({id: prod.id}, 'merchant_id='+prod.merchant_id+' is not supported (url='+prod.url+')');
+        this.sendError({id: prod.id}, 'merchant_id='+merchantId+' is not supported (url='+prod.url+')');
       } else {
         this.mappings[mapping.id] = mapping;
         this.mappings[mapping.id].date = new Date();
@@ -189,46 +196,54 @@ Saturn.prototype.onProductReceived = function(prod) {
         this.addProductToQueue(prod);
       }
     }.bind(this), function(err) {
-      if (this.mappings[prod.merchant_id]) {
+      if (this.mappings[merchantId]) {
         logger.warn("Error when getting mapping to extract :", err, "for", prod, '. Get the last valid one.');
-        prod.mapping = buildMapping(prod.uri, this.mappings[prod.merchant_id].data.viking);
+        prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
         this.addProductToQueue(prod);
       } else {
-        this.sendError({id: prod.id}, "Error when getting mapping for merchant_id="+prod.merchant_id+" : "+err);
+        this.sendError({id: prod.id}, "Error when getting mapping for merchant_id="+merchantId+" : "+err);
       }
     }.bind(this));
 };
 
 Saturn.prototype.addProductToQueue = function(prod) {
-  this.productsBeingProcessed[prod.id] = true;
-  if (prod.batch_mode)
-    this.batchQueue.push(prod);
-  else
-    this.productQueue.push(prod);
+  if (prod.tabId === undefined) {
+    this.productsBeingProcessed[prod.id] = true;
+    if (prod.batch_mode)
+      this.batchQueue.push(prod);
+    else
+      this.productQueue.push(prod);
+  } else
+    this.productQueue.unshift(prod);
   this.crawlProduct();
 };
 
 //
 Saturn.prototype.crawlProduct = function() {
 
-  var prod;
-  if (this.tabs.pending.length !== 0) {
+  var prod = this.productQueue[0],
+      tabId;
+  if (prod && prod.tabId !== undefined) {
+    prod = this.productQueue.shift();
+    tabId = prod.tabId;
+  } else if (this.tabs.pending.length !== 0) {
     if (this.productQueue.length !== 0) {
       prod = this.productQueue.shift();
     } else if (this.batchQueue.length !== 0) {
       prod = this.batchQueue.shift();
     } else
       return;
-  } else if (this.productQueue.length !== 0) {
+
+    tabId = this.tabs.pending.shift();
+    while (tabId !== undefined && this.tabs.opened[tabId].toClose === true) {
+      this.closeTab(tabId);
+      tabId = this.tabs.pending.shift();
+    }
+  } else if (prod !== undefined) {
     return this.updateNbTabs();
   } else
     return;
 
-  var tabId = this.tabs.pending.shift();
-  while (tabId !== undefined && this.tabs.opened[tabId].toClose === true) {
-    this.closeTab(tabId);
-    tabId = this.tabs.pending.shift();
-  }
   if (tabId === undefined) {
     logger.warn("in crawlProduct, tabId is undefined : updateNbTabs.");
     this.productQueue.unshift(prod); // may come from batch, but we don't care.
@@ -253,12 +268,14 @@ Saturn.prototype.createSession = function(prod, tabId) {
 };
 
 Saturn.prototype.endSession = function(session) {
+  delete session.then;
   delete this.productsBeingProcessed[session.id];
   var tabId = session.tabId;
   if (tabId) {
     if (! this.TEST_ENV)
       delete this.sessions[tabId];
-    this.tabs.pending.push(tabId);
+    if (! session.keepTabOpen)
+      this.tabs.pending.push(tabId);
   }
   this.crawlProduct();
 };

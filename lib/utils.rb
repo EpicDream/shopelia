@@ -13,7 +13,7 @@ class Utils
   end
 
   def self.parse_uri_safely url
-    URI.parse(url.force_encoding("UTF-8").unaccent.scan(/([!\#$&-;=?-\[\]_a-z~]|%[0-9a-fA-F]{2})/).join)
+    URI.parse(url.encode('UTF-8', 'UTF-8', :invalid => :replace).unaccent.scan(/([!\#$&-;=?-\[\]_a-z~]|%[0-9a-fA-F]{2})/).join)
   end
 
   def self.strip_tracking_params url
