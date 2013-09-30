@@ -21,4 +21,11 @@ class SuperInsoliteComTest < ActiveSupport::TestCase
 
     assert_equal "Non disponible", @version[:availability_text]
   end
+
+  test "it should process name" do
+    @version[:name] = "Coussin Donut Simpsons 22,90 €"
+    @version = @helper.process_name(@version)
+
+    assert_equal "Coussin Donut Simpsons", @version[:name]
+  end
 end
