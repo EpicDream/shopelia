@@ -92,7 +92,9 @@ ChromeSaturn.prototype.parseCurrentPage = function(tab) {
 
 //
 ChromeSaturn.prototype.sendError = function(session, msg) {
-  if (session.id) // Stop pushed or Local Test
+  if (session.extensionId) {
+    saturn.externalPort.postMessage({versions: [], errorMsg: msg});
+  } else if (session.id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
       url: this.PRODUCT_EXTRACT_UPDATE+session.id,
@@ -105,7 +107,9 @@ ChromeSaturn.prototype.sendError = function(session, msg) {
 //
 ChromeSaturn.prototype.sendResult = function(session, result) {
   logger.debug("sendResult : ", result);
-  if (session.id) {// Stop pushed or Local Test
+  if (session.extensionId) {
+    saturn.externalPort.postMessage(result);
+  } else if (session.id) {// Stop pushed or Local Test
     $.ajax({
       type : "PUT",
       url: this.PRODUCT_EXTRACT_UPDATE+session.id,
@@ -189,6 +193,23 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 chrome.tabs.onRemoved.addListener(function(tabId) {
   Saturn.prototype.closeTab.call(saturn, tabId);
+});
+
+// Inter-extension messaging. Usefull for Ariane.
+chrome.runtime.onConnectExternal.addListener(function(port) {
+  console.log("port=", port);
+  if (port.sender.id !== "aomdggmelcianmnecnijkolfnafpdbhm")
+    return logger.warning('Extension', port.sender.id, "try to connect to us");
+  saturn.externalPort = port;
+  port.onMessage.addListener(function(prod) {
+    console.log(prod);
+    if (prod.tabId === undefined || prod.url === undefined)
+      return saturn.sendError(prod, 'some fields are missing.');
+    prod.extensionId = port.sender.id;
+    prod.strategy = 'fast';
+    prod.keepTabOpen = true;
+    saturn.onProductReceived(prod);
+  });
 });
 
 if (! saturn.TEST_ENV)
