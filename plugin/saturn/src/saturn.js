@@ -21,7 +21,6 @@ var Saturn = function() {
   this.PRODUCT_EXTRACT_UPDATE = this.SHOPELIA_DOMAIN + "/api/viking/products/";
 
   this.DELAY_BETWEEN_PRODUCTS = 500; // 500ms
-  this.DELAY_RESCUE = 60000; // a session automatically fail after 60s (needed when a lot of sizes for shoes for example).
   this.DELAY_BEFORE_REASK_MAPPING = this.TEST_ENV ? 30000 : 5 * 60000; // 30s en dev ou 5min en prod
 
   this.MAX_VERSIONS_TO_FULL_CRAWL = 100;
@@ -326,8 +325,7 @@ Saturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) 
 // when fail to load mapping for example.
 Saturn.prototype.sendError = function(session, msg) {
   window.$e = session;
-  logger.err(msg, "\n$e =", window.$e);
-  this.endSession(session);
+  logger.err((session.tabId ? '('+session.tabId+')' : '')+(session.id ? '{'+session.id+'}' : ''), msg, "\n$e =", window.$e);
 };
 
 //

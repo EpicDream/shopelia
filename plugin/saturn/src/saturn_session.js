@@ -9,6 +9,7 @@
 // il y a le même nombre d'option quelque soit l'option choisie.
 
 var SaturnSession = function(saturn, prod) {
+  SaturnSession.counter++;
   this.saturn = saturn;
   $extend(this, prod);
 
@@ -16,13 +17,17 @@ var SaturnSession = function(saturn, prod) {
   this.options = new SaturnOptions(this.mapping, this.argOptions);
 };
 
+SaturnSession.counter = 0;
+
+SaturnSession.SESSION_RESCUE = 10 * 60000; // a session automatically fail after 10min.
+
 SaturnSession.prototype = {};
 
 SaturnSession.prototype.start = function() {
   this.rescueTimeout = setTimeout(function() {
     this.saturn.sendError(this, "Timeout !");
     this.endSession();
-  }, this.saturn.DELAY_RESCUE);
+  }.bind(this), SaturnSession.SESSION_RESCUE);
   logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '{'+this.id+'}' : ''), "Start crawling !", this.TEST_ENV ? this : '');
   this.next();
 };
@@ -122,8 +127,10 @@ SaturnSession.prototype.getOptions = function(option) {
   var cmd = {action: this.currentAction, mapping: this.mapping, option: option};
   this.saturn.evalAndThen(this, cmd, function(values) {
     logger.debug("in getOption, result :", values);
-    if (! values)
-      return this.saturn.sendError(this, "No options return for getOptions(option="+option+")");
+    if (! values) {
+      this.saturn.sendError(this, "No options return for getOptions(option="+option+")");
+      return this.endSession();
+    }
     this.options.setValues(values);
     this.next();
   }.bind(this));
@@ -140,8 +147,10 @@ SaturnSession.prototype.crawl = function() {
   this.saturn.evalAndThen(this, {action: this.currentAction, mapping: this.mapping}, function(version) {
     logger.debug("in crawl, result :", version);
     var d = this;
-    if (! version)
-      return this.saturn.sendError("No result return for crawl");
+    if (! version) {
+      this.saturn.sendError("No result return for crawl");
+      return this.endSession();
+    }
 
     if (Object.keys(version).length > 0) {
       this.options.setCurrentVersion(version);
