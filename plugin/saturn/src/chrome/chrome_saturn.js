@@ -8,6 +8,7 @@
 var ChromeSaturn = function() {
   Saturn.apply(this, arguments);
   this.TEST_ENV = navigator.appVersion.match(/chromium/i) !== null;
+  this.DELAY_RESCUE = 60000; // wait response from contentscript 60s max, fail after that (required when a lot of sizes for shoes for example).
 
   this.results = {}; // for debugging purpose, when there are no results sended by ajax.
 };
@@ -84,9 +85,7 @@ ChromeSaturn.prototype.getMerchantId = function(url, callback) {
 };
 
 ChromeSaturn.prototype.parseCurrentPage = function(tab) {
-  this.tabs.opened[tab.id] = {};
-  this.tabs.pending.unshift(tab.id);
-  var prod = {url: tab.url, merchant_id: tab.url, tabId: tab.id};
+  var prod = {url: tab.url, merchant_id: tab.url, tabId: tab.id, keepTabOpen: true};
   this.onProductReceived(prod);
 };
 
@@ -125,6 +124,7 @@ ChromeSaturn.prototype.onTimeout = function(command) {
     // logger.debug("in evalAndThen, timeout for", command);
     command.callback = undefined;
     this.sendError(command.session, "something went wrong", command);
+    command.session.endSession();
   }.bind(this);
 };
 ChromeSaturn.prototype.onResultReceived = function(command) {

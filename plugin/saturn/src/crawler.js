@@ -63,7 +63,7 @@ Crawler.getOptions = function(pathes) {
       if (tmp_elems) {
         elems = tmp_elems;
         tmp_elems = searchImagesOptions(elems);
-        if (tmp_elems.length == elems.length)
+        if (tmp_elems && tmp_elems.length == elems.length)
           elems = tmp_elems;
       }
     // If a single element is found, search images inside.
