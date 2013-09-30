@@ -16,9 +16,11 @@ en vente sur: true
 disponible sous \d semaine: true
 pret a expedier sous: true
 available from these sellers: true
-^in stock(\.$| on): true
+^in stock(\.$| on| but may require): true
 only \d+ left in stock: true
 usually ships within: true
+"livraison : \\d+ semaines": true
+livraison des fichiers: true
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
 retrait gratuit en magasin: false
