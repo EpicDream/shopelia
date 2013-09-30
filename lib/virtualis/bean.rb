@@ -5,7 +5,11 @@ module Virtualis
     def initialize operation, message
       @operation = operation.to_s
       @document = Nokogiri::XML(message, &:noblanks)
-      @envelope = @document.xpath("//soap:Envelope")
+      begin
+        @envelope = @document.xpath("//soap:Envelope")
+      rescue => e
+        raise ArgumentError, "Invalid reply received from server: #{@document.children}"
+      end
     end
     
     def to_hash

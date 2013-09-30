@@ -8,6 +8,8 @@ module Virtualis
       begin
         raise ArgumentError, "Missing montant" unless params.has_key?(:montant)
         message = Virtualis::Message.new(:creation_carte_virtuelle, params, format)
+        result = Virtualis::Request.new.send(message.to_xml)     
+        bean = Virtualis::Bean.new(:creation_carte_virtuelle, result)
       rescue ArgumentError => e
         hash = {
           'error_str' => e.to_s,
@@ -15,8 +17,6 @@ module Virtualis
         }
         return hash
       end
-      result = Virtualis::Request.new.send(message.to_xml)     
-      bean = Virtualis::Bean.new(:creation_carte_virtuelle, result)
       return bean.to_hash
     end
 
@@ -24,6 +24,8 @@ module Virtualis
       begin
         raise ArgumentError, "Missing card reference" unless params.has_key?(:reference)
         message = Virtualis::Message.new(:detail_carte_virtuelle, params, format)
+        result = Virtualis::Request.new.send(message.to_xml)
+        bean = Virtualis::Bean.new(:detail_carte_virtuelle, result)
       rescue ArgumentError => e
         hash = {
           'error_str' => e.to_s,
@@ -31,8 +33,6 @@ module Virtualis
         }
         return hash
       end
-      result = Virtualis::Request.new.send(message.to_xml)
-      bean = Virtualis::Bean.new(:detail_carte_virtuelle, result)
       return bean.to_hash
     end
 
@@ -41,6 +41,8 @@ module Virtualis
       begin
         raise ArgumentError, "Missing card reference" unless params.has_key?(:reference)
         message = Virtualis::Message.new(:annulation_carte_virtuelle, params, format)
+        result = Virtualis::Request.new.send(message.to_xml)
+        bean = Virtualis::Bean.new(:annulation_carte_virtuelle, result)
       rescue ArgumentError => e
         hash = {
           'error_str' => e.to_s,
@@ -48,8 +50,6 @@ module Virtualis
         }
         return hash
       end
-      result = Virtualis::Request.new.send(message.to_xml)
-      bean = Virtualis::Bean.new(:annulation_carte_virtuelle, result)
       return bean.to_hash
     end
 
