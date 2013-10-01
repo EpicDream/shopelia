@@ -21,6 +21,7 @@ only \d+ left in stock: true
 usually ships within: true
 "livraison : \\d+ semaines": true
 livraison des fichiers: true
+dernieres pieces disponibles: true
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
 retrait gratuit en magasin: false
