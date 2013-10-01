@@ -10,6 +10,8 @@ require(['ariane', 'logger'], function(ariane, logger) {
 
   var port = chrome.runtime.connect(SATURN_EXTENSION_ID);
   port.onMessage.addListener(function(msg) {
+    if (msg.errorMsg)
+      return alert(msg.errorMsg);
     chrome.storage.local.get('crawlings', function(hash) {
       hash.crawlings[msg.url][msg.kind] = msg.versions[0];
       chrome.storage.local.set(hash);
@@ -21,6 +23,7 @@ require(['ariane', 'logger'], function(ariane, logger) {
   chrome.browserAction.onClicked.addListener(function(tab) {
     logger.info("Button pressed, going to load Ariane on tab", tab.id);
     ariane.init(tab, tab.url);
+    port.postMessage({tabId: tab.id, url: tab.url, kind: 'initial'});
   });
 
   // On page reload, restart Ariane if it was started on this tab and host before.

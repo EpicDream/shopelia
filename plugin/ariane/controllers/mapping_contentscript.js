@@ -91,7 +91,6 @@ function($, logger, viking, hu, pu, toolbar) {
     elems.effect("highlight", {color: "#00cc00" }, "slow");
     logger.debug("setMapping('"+fieldId+"', '"+path+"')", elems.length, "element(s) found.");
     var context = elems.length == 1 ? hu.getElementContext(elems[0]) : {};
-    buttons.filter("#ariane-product-"+fieldId).removeClass("missing").addClass("mapped");
 
     var map = {};
     map[fieldId] = {path: path, context: context};
