@@ -1,14 +1,22 @@
 module.exports = function(grunt) {
+  var pkg = require('./package.json'),
+      manifest = require('./manifest.json'),
+      config = require('./config.json');
 
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
+    pkg: pkg,
     jshint: {
       files: [
         'Gruntfile.js',
         'src/*.js',
+        'controllers/mapping_contentscript.js',
+        'controllers/toolbar_contentscript.js',
         'test/*.js',
         '../common/mapping.js','../common/viking.js',
       ],
+      options: {
+        loopfunc: true
+      }
     },
     copy: {
       main: {
@@ -76,8 +84,13 @@ module.exports = function(grunt) {
     },
   });
 
+  // Update package.json
+  pkg.version = config.version;
+  grunt.file.write("package.json", JSON.stringify(pkg, null, 2));
+
   function updateManifest(env) {
-    var manifest = grunt.file.readJSON("manifest.json");
+    // var manifest = grunt.file.readJSON("manifest.json");
+    manifest.version = config.version;
     switch (env) {
       case 'prod' :
         manifest.background.scripts[0] = 'dist/background.min.js';
@@ -87,7 +100,7 @@ module.exports = function(grunt) {
         manifest.background.scripts[0] = 'build/background.js';
         manifest.content_scripts[0].js[0] = 'build/contentscript.js';
     }
-    grunt.file.write("manifest.json", JSON.stringify(manifest));
+    grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
   }
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
