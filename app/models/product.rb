@@ -112,7 +112,15 @@ class Product < ActiveRecord::Base
         # Pre-process versions
         version = MerchantHelper.process_version(self.url, version)
 
-        v = self.product_versions.where(
+        if version[:option1] || version[:option2] || version[:option3] || version[:option4]
+          v = self.product_versions.where(
+            option1_md5:nil,
+            option2_md5:nil,
+            option3_md5:nil,
+            option4_md5:nil).first
+        end
+
+        v ||= self.product_versions.where(
           option1_md5:ProductVersion.generate_option_md5(version[:option1]),
           option2_md5:ProductVersion.generate_option_md5(version[:option2]),
           option3_md5:ProductVersion.generate_option_md5(version[:option3]),
