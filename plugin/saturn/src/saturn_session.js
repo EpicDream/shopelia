@@ -9,6 +9,7 @@
 // il y a le même nombre d'option quelque soit l'option choisie.
 
 var SaturnSession = function(saturn, prod) {
+  SaturnSession.counter++;
   this.saturn = saturn;
   $extend(this, prod);
 
@@ -16,9 +17,17 @@ var SaturnSession = function(saturn, prod) {
   this.options = new SaturnOptions(this.mapping, this.argOptions);
 };
 
+SaturnSession.counter = 0;
+
+SaturnSession.SESSION_RESCUE = 10 * 60000; // a session automatically fail after 10min.
+
 SaturnSession.prototype = {};
 
 SaturnSession.prototype.start = function() {
+  this.rescueTimeout = setTimeout(function() {
+    this.saturn.sendError(this, "Timeout !");
+    this.endSession();
+  }.bind(this), SaturnSession.SESSION_RESCUE);
   logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '{'+this.id+'}' : ''), "Start crawling !", this.TEST_ENV ? this : '');
   this.next();
 };
@@ -26,6 +35,7 @@ SaturnSession.prototype.start = function() {
 SaturnSession.prototype.next = function() {
   var t;
   switch (this.strategy) {
+    case "fast" :
     case "normal" :
       t = this.options.next({lookInMapping: true, depthOnly: true});
       if (t !== null) {
@@ -35,7 +45,9 @@ SaturnSession.prototype.next = function() {
           this.setOption(t[0], t[1]);
       } else {
         var nbOption = this.options.currentNbOption() - Object.keys(this.argOptions).length;
-        if (nbOption > 0 && ! this._subTaskId) {
+        if (this.strategy === 'fast') {
+          this.strategy = 'done';
+        } else if (nbOption > 0 && ! this._subTaskId) {
           this.strategy = 'options';
         } else if (nbOption == 1) {
           this.strategy = 'full';
@@ -115,8 +127,10 @@ SaturnSession.prototype.getOptions = function(option) {
   var cmd = {action: this.currentAction, mapping: this.mapping, option: option};
   this.saturn.evalAndThen(this, cmd, function(values) {
     logger.debug("in getOption, result :", values);
-    if (! values)
-      return this.saturn.sendError(this, "No options return for getOptions(option="+option+")");
+    if (! values) {
+      this.saturn.sendError(this, "No options return for getOptions(option="+option+")");
+      return this.endSession();
+    }
     this.options.setValues(values);
     this.next();
   }.bind(this));
@@ -133,8 +147,10 @@ SaturnSession.prototype.crawl = function() {
   this.saturn.evalAndThen(this, {action: this.currentAction, mapping: this.mapping}, function(version) {
     logger.debug("in crawl, result :", version);
     var d = this;
-    if (! version)
-      return sendError("No result return for crawl");
+    if (! version) {
+      this.saturn.sendError("No result return for crawl");
+      return this.endSession();
+    }
 
     if (Object.keys(version).length > 0) {
       this.options.setCurrentVersion(version);
@@ -186,6 +202,7 @@ SaturnSession.prototype.sendFinalVersions = function() {
 //
 SaturnSession.prototype.endSession = function() {
   this.strategy = 'ended'; // prevent
+  clearTimeout(this.rescueTimeout);
   this.saturn.endSession(this);
 };
 
