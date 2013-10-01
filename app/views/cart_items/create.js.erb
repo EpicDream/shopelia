@@ -8,4 +8,5 @@
 <% else %>
   $("#cart").html("<%= escape_javascript(render @current_cart) %>")
   showSpinners();
+  monitorCartItems();
 <% end %>

@@ -1,12 +1,12 @@
-.col-lg-4.cart-item-box{:data => {:pid => "#{cart_item.product.id}", :uuid => "#{cart_item.uuid}"}, :class => "#{cart_item.product.ready? ? "" : "cart-item-monitor"}"}
+.col-lg-4.cart-item-box{:data => {:pid => "#{cart_item.product_version_id}", :uuid => "#{cart_item.uuid}"}, :class => "#{cart_item.product.options_completed? ? "" : "cart-item-monitor"}"}
   .cart-item
-    = image_tag cart_item.product_version.image_url || "empty.png", class:"cart-item-img"
-    - if !cart_item.product.ready?
+    = image_tag (cart_item.product.options_completed? && cart_item.product_version.image_url) || "empty.png", class:"cart-item-img"
+    - if !cart_item.product.options_completed?
       .spinner
     .cart-item-actions
       .cart-item-info
         .info-block
           .cart-item-title= cart_item.product_version.name
           .cart-item-price= number_to_currency(cart_item.product_version.price)
-          .cart-item-url{:class => "#{cart_item.product.ready? ? "hidden" : "" }"}= truncate(cart_item.product.url, length:80)
+          .cart-item-url{:class => "#{cart_item.product.options_completed? ? "hidden" : "" }"}= truncate(cart_item.product.url, length:80)
           .button-buy= t("app.cart_items.details")

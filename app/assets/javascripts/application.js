@@ -43,7 +43,9 @@ function monitorCartItems() {
   $(".cart-item-monitor").each(function() {
     var pid = $(this).data('pid');
     var uuid = $(this).data('uuid');
-    pusher.subscribe("product-" + pid).bind("update", function(data) {
+    pusher.subscribe("product-version-" + pid).bind("update", function(data) {
+      console.log("Channel " + pid);
+      console.log(data);
       el = $("[data-uuid=" + uuid + "]");
       el.find(".spinner").addClass("hidden");
       el.find(".cart-item-url").addClass("hidden");

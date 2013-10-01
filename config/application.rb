@@ -71,7 +71,7 @@ module Shopelia
     }
 
     # Pusher App
-    Pusher.url = "http://654ffe989dceb4af5e03:cd54721d7ae7b6fbff42@api.pusherapp.com/apps/54299"
+    Pusher.url = "http://654ffe989dceb4af5e03:cd54721d7ae7b6fbff42@api-eu.pusherapp.com/apps/54299"
 
   end
 end

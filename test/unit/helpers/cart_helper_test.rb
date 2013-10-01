@@ -10,7 +10,7 @@ class CartHelperTest < ActionView::TestCase
   end
  
   test "it should generate events for current cart" do
-    assert_difference "EventsWorker.jobs.count" do
+    assert_difference "EventsWorker.jobs.count", 2 do
       generate_requests_for_current_cart
     end
 

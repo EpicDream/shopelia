@@ -2,6 +2,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :set_navigator_properties
   before_filter :retrieve_developer
+  before_filter :retrieve_tracker
+  before_filter :retrieve_device
+  before_filter :retrieve_remote_ip
   before_filter :retrieve_cart
   layout :set_layout
 
@@ -51,11 +54,27 @@ class ApplicationController < ActionController::Base
   
   def set_navigator_properties
     ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
+  end
+
+  def retrieve_remote_ip
     @remote_ip = request.remote_ip
   end
   
   def retrieve_developer
     key = ENV['API_KEY'] || cookies["developer"] || "e35c8cbbcfd7f83e4bb09eddb5a3f4c461c8d30a71dc498a9fdefe217e0fcd44"
     @developer = Developer.find_by_api_key(key)
+  end
+
+  def retrieve_tracker
+    @tracker = cookies[:tracker]
+  end
+
+  def retrieve_device
+    if cookies[:visitor]
+      @device = Device.fetch(cookies[:visitor], request.env['HTTP_USER_AGENT'])
+    else
+      @device = Device.create(user_agent:request.env['HTTP_USER_AGENT'])
+      cookies[:visitor] = { :value => @device.uuid, :expires => 10.years.from_now, :domain => :all }
+    end
   end
 end
