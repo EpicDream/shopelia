@@ -9,7 +9,7 @@ define('toolbar', ['jquery', 'logger'], function($, logger) {
 function loadAriane() {
   // Create DIV
   var div = document.createElement('div');
-  div.id = "arianeDiv"
+  div.id = "arianeDiv";
   document.documentElement.appendChild(div);
   jAriane = $(div);
 
@@ -21,7 +21,7 @@ function loadAriane() {
   css_link.rel = "stylesheet";
   css_link.href = chrome.runtime.getURL("assets/main.css");
 
-};
+}
 
 function build() {
   // Init global variables
@@ -58,6 +58,8 @@ function build() {
   toolbar.buttons = jButtons.toArray();
 }
 
+  loadAriane();
+
 /* ********************************************************** */
 /*                          On Event                          */
 /* ********************************************************** */
@@ -83,7 +85,7 @@ function onStepChanged(event) {
     jToolbar.find(".ari-next").show();
     jToolbar.find(".ari-finish").hide();
   }
-};
+}
 
 function onNext() {
   jStep[0].selectedIndex += 1;
@@ -91,22 +93,22 @@ function onNext() {
   if (jStep.find("option:selected").prop("disabled"))
     jStep[0].selectedIndex += 1;
   jStep.change();
-};
+}
 
 function onButtonClicked(event) {
   jButtons.filter(".current-field").add(event.currentTarget).toggleClass("current-field");
-};
+}
 
 function onAborted() {
   res = prompt("Pour quelle raison annule-t-on ?");
   if (!res)
     return;
-  chrome.extension.sendMessage({abort: res});
-};
+  chrome.extension.sendMessage({action: 'abort', reason: res});
+}
 
 function onFinished() {
-  chrome.extension.sendMessage('finish');
-};
+  chrome.extension.sendMessage({action: 'finish'});
+}
 
 /* ********************************************************** */
 /*                           Utilities                        */
@@ -148,8 +150,6 @@ chrome.extension.onMessage.addListener(function(msg, sender) {
     e.removeClass("current-field");
   }
 });
-
-  loadAriane();
   
   return toolbar;
 });

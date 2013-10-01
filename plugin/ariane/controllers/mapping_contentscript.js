@@ -7,12 +7,26 @@ function($, logger, viking, hu, pu, toolbar) {
   var buttons = [],
       url = window.location.href,
       host = viking.getHost(url),
-      data,
-      mappingRes;
+      data;
 
   /* ********************************************************** */
   /*                        Initialisation                      */
   /* ********************************************************** */
+
+  chrome.extension.onMessage.addListener(function(msg, sender) {
+    if (sender.id !== chrome.runtime.id)
+      return;
+
+    if (msg.action === 'initialCrawl') {
+      chrome.storage.local.get('crawlings', function(hash) {
+        onCrawlResultReceived(hash.crawlings[url].initial);
+      });
+    } else if (msg.action === 'updateCrawl') {
+      chrome.storage.local.get('crawlings', function(hash) {
+        onCrawlResultReceived(hash.crawlings[url].update);
+      });
+    }
+  });
 
   mapper.start = function() {
     chrome.storage.local.get('mappings', function(hash) {
@@ -24,14 +38,6 @@ function($, logger, viking, hu, pu, toolbar) {
   mapper.init = function() {
     buttons = $("#ariane-toolbar button[id^='ariane-product-']");
     buttons.addClass("missing");
-
-    var mappingRes = search(viking.buildMapping(url, data));
-    logger.debug("Elements found :", mappingRes);
-    for (var key in mappingRes)
-      if (mappingRes[key].length > 0) {
-        var b = buttons.filter("#ariane-product-"+key);
-        b.removeClass("missing").addClass("mapped");
-      }
 
     $("body").click(onBodyClick);
     $("body").on("contextmenu", onBodyClick);
@@ -65,20 +71,20 @@ function($, logger, viking, hu, pu, toolbar) {
 
     event.preventDefault();
     // On enlève le ari-surround
-    event.target.classList.remove("ari-surround")
+    event.target.classList.remove("ari-surround");
     var path = pu.getMinimized(event.target);
     var fieldId = toolbar.getCurrentFieldId();
-    setMapping(fieldId, path);
+    mapper.setMapping(fieldId, path);
     // On remet le ari-surround
-    event.target.classList.add("ari-surround")
-  };
+    event.target.classList.add("ari-surround");
+  }
 
   /* ********************************************************** */
   /*                          Utilities                         */
   /* ********************************************************** */
 
   // May be use be the user in the console.
-  function setMapping(fieldId, path) {
+  mapper.setMapping = function(fieldId, path) {
     logger.debug('setMapping("'+fieldId+'", "'+path+'")');
 
     var elems = $(path);
@@ -95,25 +101,23 @@ function($, logger, viking, hu, pu, toolbar) {
       hash.mappings[url].data = data;
       chrome.storage.local.set(hash);
     });
+
+    updateFieldMatch(viking.buildMapping(url, data));
   };
 
-  function search(mapping) {
-    var res = {}
-    for (var key in mapping) {
-      var paths = mapping[key].path;
-      if (! paths) continue;
-      if (! (paths instanceof Array))
-        paths = [paths];
-      for (var j in paths) {
-        var path = paths[j];
-        var elems = $(path);
-        if (elems.length == 0) continue;
-        res[key] = elems;
-        break;
+  function updateFieldMatch(mapping) {
+    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
+  }
+
+  function onCrawlResultReceived(crawlResults) {
+    logger.info("Crawl results :", crawlResults);
+    buttons.removeClass('mapped').addClass('missing');
+    for (var key in crawlResults)
+      if (crawlResults[key]) {
+        var b = buttons.filter("#ariane-product-"+key);
+        b.removeClass("missing").addClass("mapped");
       }
-    }
-    return res;
-  };
+  }
 
   // Merge new mapping in the previous one.
   // Try to know if a mapping must be added before (it is more specific)
@@ -132,14 +136,15 @@ function($, logger, viking, hu, pu, toolbar) {
         continue;
 
       // On choisit le bon host, général ou spécific.
+      var goodHost;
       if (possibleHosts.length > 1) {
-        var goodHost = prompt("Pour quel host ce chemin est-il valide ?\n"+possibleHosts.join("\n"));
+        goodHost = prompt("Pour quel host ce chemin est-il valide ?\n"+possibleHosts.join("\n"));
         if (! goodHost) {
           logger.warn("key '"+key+"' with new path '"+newPath+"' skiped.");
           continue;
         }
       } else
-        var goodHost = possibleHosts[0];
+        goodHost = possibleHosts[0];
 
       // On initialize la structure si elle n'existant pas.
       if (! data.viking[goodHost])
@@ -164,7 +169,7 @@ function($, logger, viking, hu, pu, toolbar) {
         oldPath = mapping[key].path;
       }
       // if already contains it, pass
-      if (oldPath.filter(function(e) {return e.match('^\s*'+newPath+'\s*(?:,|$)');}).length > 0) {
+      if (oldPath.filter(function(e) {return e.indexOf(newPath) !== -1;}).length > 0) {
         logger.debug(oldPath, "already contains", newPath);
         continue;
       }
@@ -224,12 +229,12 @@ function($, logger, viking, hu, pu, toolbar) {
       // Par défaut on rajoute à la suite
       if (i == l) {
         if (l > 0)
-          alert("On ajoute ce path à la suite des autres.")
+          alert("On ajoute ce path à la suite des autres.");
         oldPath.push(newPath);
         mapping[key].context.push(currentMap[key].context);
       }
     }
-  };
+  }
 
   return mapper;
 });

@@ -6,16 +6,27 @@ require(['ariane', 'logger'], function(ariane, logger) {
 
 "use strict";
 
+  var SATURN_EXTENSION_ID = "nhledioladlcecbcfenmdibnnndlfikf";
+
+  var port = chrome.runtime.connect(SATURN_EXTENSION_ID);
+  port.onMessage.addListener(function(msg) {
+    chrome.storage.local.get('crawlings', function(hash) {
+      hash.crawlings[msg.url][msg.kind] = msg.versions[0];
+      chrome.storage.local.set(hash);
+      chrome.tabs.sendMessage(msg.tabId, {action: msg.kind+'Crawl'});
+    });
+  });
+
   // On extension button clicked, start Ariane on this tab and url.
   chrome.browserAction.onClicked.addListener(function(tab) {
     logger.info("Button pressed, going to load Ariane on tab", tab.id);
-    ariane.init(tab);
+    ariane.init(tab, tab.url);
   });
 
   // On page reload, restart Ariane if it was started on this tab and host before.
   // Clean the data for this tab if host has changed.
   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
-    if (changeInfo.status == "complete") {
+    if (changeInfo.status === "complete") {
       chrome.storage.local.get('openTabs', function(hash) {
         if (hash.openTabs[tabId] === undefined)
           return;
@@ -32,13 +43,17 @@ require(['ariane', 'logger'], function(ariane, logger) {
       return;
     }
     var tabId = sender.tab.id;
-    if (msg == "finish" || msg.abort !== undefined) {
-      ariane.sendFinishedStatement(tabId, msg.abort);
-    } else if (msg.action == 'launchAriane') {
-
-      chrome.tabs.create({url: msg.url}, function(tab) {
-        ariane.init(tab);
+    if (msg.action === 'launchAriane') {
+      chrome.tabs.create({}, function(tab) {
+        ariane.init(tab, msg.url);
+        port.postMessage({tabId: tab.id, url: msg.url, kind: 'initial'});
       });
+    } else if (msg.action === 'crawlPage') {
+      delete msg.action;
+      msg.tabId = tabId;
+      port.postMessage(msg);
+    } else if (msg.action === "finish" || msg.action === "abort") {
+      ariane.sendFinishedStatement(tabId, msg.reason);
     }
   });
 

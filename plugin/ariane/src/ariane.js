@@ -7,24 +7,29 @@ define('ariane', ['logger', 'viking'], function(logger, viking) {
 
   var ariane = {};
 
-  // Init openTabs
-  chrome.storage.local.set({openTabs: {}, mappings: {}});
+  // Init vars
+  chrome.storage.local.set({openTabs: {}, mappings: {}, crawlings: {}});
   logger.level = logger.ALL;
+  chrome.tabs.query({url: 'https://www.shopelia.fr/admin/viking'}, function(tabs) {
+    for (var i = 0; i < tabs.length; i++)
+      chrome.tabs.reload(tabs[i].id);
+  });
 
   // Que ce soit via le bouton dans admin/viking ou via le bouton de l'extension.
-  ariane.init = function(tab) {
-    viking.loadMapping(tab.url, function(merchantHash) {
-      chrome.storage.local.get(['mappings', 'openTabs'], function(hash) {
+  ariane.init = function(tab, url) {
+    viking.loadMapping(url, function(merchantHash) {
+      chrome.storage.local.get(['mappings', 'openTabs', 'crawlings'], function(hash) {
         if (! merchantHash) {
           alert("Fail to retrieve mapping. Retry.");
           return ariane.clean(tab.id);
         } else if (typeof merchantHash.data !== 'object') {
           logger.info("Merchant "+merchantHash.id+" is a new merchant.");
-          merchantHash.data = viking.initMerchantData(tab.url);
+          merchantHash.data = viking.initMerchantData(url);
         }
-        logger.debug("Load toolbar for tab", tab.id, ", merchantHash", merchantHash, "and previous hash", hash);
-        hash.openTabs[tab.id] = tab.url;
-        hash.mappings[tab.url] = merchantHash;
+        logger.debug("Init Ariane for tab", tab.id, ", merchantHash", merchantHash, "and previous hash", hash);
+        hash.openTabs[tab.id] = url;
+        hash.mappings[url] = merchantHash;
+        hash.crawlings[url] = {};
         chrome.storage.local.set(hash);
       });
     }, function(err) {
