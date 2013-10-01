@@ -196,7 +196,7 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 });
 
 // Inter-extension messaging. Usefull for Ariane.
-chrome.runtime.onConnectExternal.addListener(function(port) {
+chrome.extension.onConnectExternal.addListener(function(port) {
   console.log("port=", port);
   if (port.sender.id !== "aomdggmelcianmnecnijkolfnafpdbhm")
     return logger.warning('Extension', port.sender.id, "try to connect to us");
