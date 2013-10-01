@@ -5,14 +5,149 @@
 @iconWhiteSpritePath: image-url("twitter/bootstrap/glyphicons-halflings-white.png");
 
 // Set the Font Awesome (Font Awesome is default. You can disable by commenting below lines)
-@fontAwesomeEotPath: asset-url("fontawesome-webfont.eot");
+/*@fontAwesomeEotPath: asset-url("fontawesome-webfont.eot");
 @fontAwesomeEotPath_iefix: asset-url("fontawesome-webfont.eot?#iefix");
 @fontAwesomeWoffPath: asset-url("fontawesome-webfont.woff");
 @fontAwesomeTtfPath: asset-url("fontawesome-webfont.ttf");
-@fontAwesomeSvgPath: asset-url("fontawesome-webfont.svg#fontawesomeregular");
+@fontAwesomeSvgPath: asset-url("fontawesome-webfont.svg#fontawesomeregular");*/
 
 // Font Awesome
-@import "fontawesome/font-awesome";
+//@import "fontawesome/font-awesome";
+
+@font-family-sans-serif: "Helvetica Neue";
+@navbar-height: 80px;
+
+
+// Variables 
+
+@import url(https://fonts.googleapis.com/css?family=Asap:400,700,400italic,700italic);
+
+@sansFontFamily : 'Asap', sans-serif;
+
+@green: #3cc8ad;
+@darkGreen: #00A185;
+@lightGrey: #f8f8f8;
+@grey: #798288;
+@lightBlue: #00bbff;
+@blue: #0181a6;
+@darkBlue: #021037;
+@red: #e74c3c;
+
+// Buttons
+
+@btn-font-weight:                lighter;
+
+@btn-default-color:              #fff;
+@btn-default-bg:                 darken(@green,0%);
+@btn-default-border:             darken(@green,0%);
+
+@btn-primary-color:              #fff;
+@btn-primary-bg:                 @brand-primary;
+@btn-primary-border:             darken(@btn-primary-bg, 5%);
+
+@btn-success-color:              #fff;
+@btn-success-bg:                 @brand-success;
+@btn-success-border:             darken(@btn-success-bg, 5%);
+
+@btn-warning-color:              #fff;
+@btn-warning-bg:                 @brand-warning;
+@btn-warning-border:             darken(@btn-warning-bg, 5%);
+
+@btn-danger-color:               #fff;
+@btn-danger-bg:                  @brand-danger;
+@btn-danger-border:              darken(@btn-danger-bg, 5%);
+
+@btn-info-color:                 #fff;
+@btn-info-bg:                    @brand-info;
+@btn-info-border:                darken(@btn-info-bg, 5%);
+
+@btn-link-disabled-color:        @gray-light;
+
+
+.btn {
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+  border-width: 0;
+  padding: 15px 20px;
+}
+
+
+// Border Radius
+
+@border-radius-base:             2px;
+@border-radius-large:            2px;
+@border-radius-small:            1px;
+
+
+//Body
+
+@body-bg: @lightGrey;
+
+body {
+  padding-top: @navbar-height;
+  letter-spacing: 0.10em;
+  font-weight: lighter;
+}
+
+
+.spacer-header {
+   height: @navbar-height;
+}
+
+.navbar {
+ border-bottom: 2px solid @red;
+ letter-spacing: 0.20em;
+
+}
+
+.navbar-btn {
+  margin-top: 15px;
+}
+
+.sections {
+  margin-right: 20px;
+}
+.nav .sections  a {
+  color: #6a7988;
+  border-radius: 0px;
+  padding: 0px;
+  margin: 0px 15px;
+}
+
+//Tooltip
+
+@tooltip-max-width:           600px;
+@tooltip-color:               #fff;
+@tooltip-bg:                  rgba(2,16,55,0.95);
+
+@tooltip-arrow-width:         5px;
+@tooltip-arrow-color:         @tooltip-bg;
+
+
+//Download Tooltip
+
+.tooltip {
+  opacity: 0.5;
+}
+
+.tooltip-inner {
+  border-radius: 3px;
+  padding: 20px;
+  text-align: left;
+  min-width: 310px;
+}
+
+input#send-link-input {
+  padding: 20px 15px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+button#send-link-btn {
+  padding: 11px 20px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 
 // Glyphicons
 //@import "twitter/bootstrap/sprites.less";

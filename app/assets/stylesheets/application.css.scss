@@ -7,10 +7,8 @@
 @import "bourbon";
 @import "bootstrap_and_overrides.css.less";
 @import "home.css.scss";
+@import "public.css.scss";
 
-body {
-  padding-top: 55px;
-}
 
 .clearfix {
   clear: both;
@@ -24,11 +22,6 @@ body {
   margin-top: -5px;
   height: 30px;
   width: 120px;
-}
-
-.soon {
-  padding: 300px;
-  text-align: center;
 }
 
 .display-none {

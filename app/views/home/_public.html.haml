@@ -1,2 +1,30 @@
-.soon
-  %h1 Bientôt...
+.topHome
+  .spacer-header
+  .container
+    .row
+      .col-md-6.center
+        .promise
+          Scannez et commandez
+          %br
+          avec
+          %b
+            un seul compte
+          %br
+          sur
+          %b
+            les sites marchands
+
+        .spacer40
+        .btn.btn-default.btn-lg#btn-download{rel:"tooltip"}
+          Télécharger l'application
+        .row
+          .col-md-4.col-md-offset-2
+            .spacer40
+            = image_tag("appstore-icon.png")
+          .col-md-4
+            .spacer40
+            = image_tag("googleplay-icon.png")
+          .spacer40
+      .col-md-6
+        = image_tag("iphone-bg.png")
+
