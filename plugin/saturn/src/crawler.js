@@ -112,7 +112,7 @@ Crawler.setOption = function(pathes, option) {
     if (! elem && option.href)
       elem = elems.filter("[href='"+option.href+"']")[0];
     if (! elem) {
-      console.warn("No option found in", elems, "for option", elem);
+      console.warn("No option found foor path '"+path+"' in elems", elems, "for option", elem);
       continue;
     }
     if (elem.tagName == "OPTION") {

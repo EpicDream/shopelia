@@ -175,7 +175,7 @@ Saturn.prototype.onProductReceived = function(prod) {
   var merchantId = prod.merchant_id || prod.url;
   prod.uri = new Uri(prod.url);
   prod.receivedTime = new Date();
-  if (this.mapping !== undefined) {
+  if (prod.mapping !== undefined) {
     this.addProductToQueue(prod);
   } else if (this.mappings[merchantId] && (prod.receivedTime - this.mappings[merchantId].date) < this.DELAY_BEFORE_REASK_MAPPING) {
     logger.debug("mapping from cache", merchantId, this.mappings[merchantId]);

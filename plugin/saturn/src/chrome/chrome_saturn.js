@@ -92,7 +92,7 @@ ChromeSaturn.prototype.parseCurrentPage = function(tab) {
 //
 ChromeSaturn.prototype.sendError = function(session, msg) {
   if (session.extensionId) {
-    saturn.externalPort.postMessage({versions: [], errorMsg: msg});
+    saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], errorMsg: msg});
   } else if (session.id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
@@ -107,6 +107,9 @@ ChromeSaturn.prototype.sendError = function(session, msg) {
 ChromeSaturn.prototype.sendResult = function(session, result) {
   logger.debug("sendResult : ", result);
   if (session.extensionId) {
+    result.url = session.url;
+    result.tabId = session.tabId;
+    result.kind = session.kind;
     saturn.externalPort.postMessage(result);
   } else if (session.id) {// Stop pushed or Local Test
     $.ajax({
@@ -196,7 +199,7 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 });
 
 // Inter-extension messaging. Usefull for Ariane.
-chrome.runtime.onConnectExternal.addListener(function(port) {
+chrome.extension.onConnectExternal.addListener(function(port) {
   console.log("port=", port);
   if (port.sender.id !== "aomdggmelcianmnecnijkolfnafpdbhm")
     return logger.warning('Extension', port.sender.id, "try to connect to us");
