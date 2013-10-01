@@ -40,9 +40,7 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://www.koordinal.com/74-bac-%C3%A0-gla%C3%A7on-igloo.html",
         :out => "http://www.koordinal.com/74-bac-a-glacons-igloo.html" },
       { :in  => "http%3A%2F%2Fwww.amazon.fr%2FConverse-Chuck-Taylor-Baskets-adulte%2Fdp%2FB000EDMSTY%2Fref%3Dsr_1_1%3Fs%3Dshoes%26ie%3DUTF8%26qid%3D1380531062%26sr%3D1-1",
-        :out => "http://www.amazon.fr/dp/B000EDMSTY" },
-      { :in  => "http://ad.zanox.com/ppc/?22922212C13370039&ULP=[[fr/dpfr/produit/robe-de-soir%C3%A9e-noire-%C3%A0-c%C5%93urs-1918819]]",
-        :out => "http://www.dorothyperkins.fr/fr/dpfr/produit/robe-de-soire-noire--curs-1918819?_%24ja=tsid%3A34096&cmpid=aff_zx_fr&geoip=prod" }
+        :out => "http://www.amazon.fr/dp/B000EDMSTY" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])

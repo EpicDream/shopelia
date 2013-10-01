@@ -63,7 +63,7 @@ Crawler.getOptions = function(pathes) {
       if (tmp_elems) {
         elems = tmp_elems;
         tmp_elems = searchImagesOptions(elems);
-        if (tmp_elems.length == elems.length)
+        if (tmp_elems && tmp_elems.length == elems.length)
           elems = tmp_elems;
       }
     // If a single element is found, search images inside.
@@ -112,7 +112,7 @@ Crawler.setOption = function(pathes, option) {
     if (! elem && option.href)
       elem = elems.filter("[href='"+option.href+"']")[0];
     if (! elem) {
-      console.warn("No option found in", elems, "for option", elem);
+      console.warn("No option found foor path '"+path+"' in elems", elems, "for option", elem);
       continue;
     }
     if (elem.tagName == "OPTION") {

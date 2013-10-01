@@ -1,0 +1,75 @@
+gpg: chiffré avec une clef RSA de 2048 bits, identifiant 5103FA80, créée le 2013-07-12
+      « Eric Larcheveque <elarch@gmail.com> »
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 203 (0xcb)
+    Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=FR, ST=FR-29, L=Le Relecq-Kerhuon, O=Federal Service, OU=Certification Authority, CN=Federal Service CA/emailAddress=certs@gie-fs.net
+        Validity
+            Not Before: Jul 12 09:14:24 2013 GMT
+            Not After : Jul 12 09:14:24 2014 GMT
+        Subject: C=FR, ST=Some-State, L=Paris, O=Prixing, CN=Prixing
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:c1:79:e6:08:4a:48:0e:c9:0b:c4:60:53:a4:91:
+                    55:b0:dc:4f:9c:3c:83:a0:64:bd:06:12:2a:c1:16:
+                    1b:cd:f0:9b:01:cf:f1:de:80:e4:76:ff:d0:85:27:
+                    25:e1:0a:e5:60:64:90:c5:59:8b:88:a2:c9:ec:89:
+                    90:16:ea:b3:de:0b:3b:89:1e:4e:84:e0:f5:f6:cf:
+                    e2:44:cc:f8:2a:c5:32:25:6a:63:ae:1f:a1:71:de:
+                    c0:1a:0a:44:bb:d3:31:1c:ac:4a:64:54:53:05:65:
+                    f7:1b:88:19:f4:4e:a5:c5:b3:81:88:b3:36:f9:f3:
+                    fc:e4:43:64:ce:84:0d:1a:28:8c:82:1c:b5:4c:91:
+                    45:7b:92:f8:28:69:9c:95:40:06:bd:bc:50:9b:7d:
+                    36:ca:1d:38:28:83:29:0d:87:31:ad:7f:47:0b:d7:
+                    8b:4e:b1:f7:dd:5c:77:ee:7e:cb:13:71:9a:34:43:
+                    82:80:1a:dc:0b:7b:cd:f7:51:5c:fa:bb:9b:3f:0e:
+                    5d:16:c3:84:36:05:c4:f8:09:11:a1:d2:83:84:8b:
+                    8c:2f:b8:90:94:52:e3:03:fb:8f:23:76:2e:7d:7f:
+                    2a:92:49:ab:b5:95:8e:b1:f5:86:ab:31:18:55:5a:
+                    d0:f3:31:08:44:ab:58:4d:5d:07:80:69:98:ef:d2:
+                    e2:45
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Key Usage: 
+                Digital Signature, Non Repudiation
+            X509v3 Extended Key Usage: 
+                TLS Web Client Authentication
+            Netscape Comment: 
+                This certificate is used for strong authentication.
+            Netscape Cert Type: 
+                SSL Client
+    Signature Algorithm: sha1WithRSAEncryption
+         90:01:39:b7:b4:ed:65:ae:27:2d:83:56:1e:df:80:a0:4b:c0:
+         dd:90:c8:fd:54:50:41:45:32:d8:b6:09:f7:ff:07:41:db:22:
+         ed:3f:39:90:af:83:66:66:4b:71:b9:f5:98:0c:66:73:0f:00:
+         56:02:69:63:8d:20:9d:c2:fe:7f:cc:b0:8b:92:0c:16:db:69:
+         08:5a:98:f2:56:94:16:32:27:04:77:3a:7d:fa:03:e6:87:52:
+         e7:ac:c6:f7:fb:9a:09:76:23:1f:7e:4c:72:c8:c6:bd:4e:b7:
+         09:d8:71:f5:06:34:b8:5a:3f:4c:a3:3d:a2:0a:97:e7:44:7e:
+         03:d2
+-----BEGIN CERTIFICATE-----
+MIIDgDCCAumgAwIBAgICAMswDQYJKoZIhvcNAQEFBQAwgbMxCzAJBgNVBAYTAkZS
+MQ4wDAYDVQQIEwVGUi0yOTEaMBgGA1UEBxMRTGUgUmVsZWNxLUtlcmh1b24xGDAW
+BgNVBAoTD0ZlZGVyYWwgU2VydmljZTEgMB4GA1UECxMXQ2VydGlmaWNhdGlvbiBB
+dXRob3JpdHkxGzAZBgNVBAMTEkZlZGVyYWwgU2VydmljZSBDQTEfMB0GCSqGSIb3
+DQEJARYQY2VydHNAZ2llLWZzLm5ldDAeFw0xMzA3MTIwOTE0MjRaFw0xNDA3MTIw
+OTE0MjRaMFYxCzAJBgNVBAYTAkZSMRMwEQYDVQQIDApTb21lLVN0YXRlMQ4wDAYD
+VQQHDAVQYXJpczEQMA4GA1UECgwHUHJpeGluZzEQMA4GA1UEAwwHUHJpeGluZzCC
+ASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMF55ghKSA7JC8RgU6SRVbDc
+T5w8g6BkvQYSKsEWG83wmwHP8d6A5Hb/0IUnJeEK5WBkkMVZi4iiyeyJkBbqs94L
+O4keToTg9fbP4kTM+CrFMiVqY64foXHewBoKRLvTMRysSmRUUwVl9xuIGfROpcWz
+gYizNvnz/ORDZM6EDRoojIIctUyRRXuS+ChpnJVABr28UJt9NsodOCiDKQ2HMa1/
+RwvXi06x991cd+5+yxNxmjRDgoAa3At7zfdRXPq7mz8OXRbDhDYFxPgJEaHSg4SL
+jC+4kJRS4wP7jyN2Ln1/KpJJq7WVjrH1hqsxGFVa0PMxCESrWE1dB4BpmO/S4kUC
+AwEAAaN7MHkwCwYDVR0PBAQDAgbAMBMGA1UdJQQMMAoGCCsGAQUFBwMCMEIGCWCG
+SAGG+EIBDQQ1FjNUaGlzIGNlcnRpZmljYXRlIGlzIHVzZWQgZm9yIHN0cm9uZyBh
+dXRoZW50aWNhdGlvbi4wEQYJYIZIAYb4QgEBBAQDAgeAMA0GCSqGSIb3DQEBBQUA
+A4GBAJABObe07WWuJy2DVh7fgKBLwN2QyP1UUEFFMti2Cff/B0HbIu0/OZCvg2Zm
+S3G59ZgMZnMPAFYCaWONIJ3C/n/MsIuSDBbbaQhamPJWlBYyJwR3On36A+aHUues
+xvf7mgl2Ix9+THLIxr1OtwnYcfUGNLhaP0yjPaIKl+dEfgPS
+-----END CERTIFICATE-----
+
