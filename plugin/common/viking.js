@@ -34,7 +34,7 @@ define("viking", ['logger', 'jquery'], function(logger, $) {
       if (toInt)
         merchantId = '/'+toInt;
       else
-        merchantId = "?url="+encodeURIComponent(merchantId);
+        merchantId = "?url="+merchantId;
     }
     logger.debug("Going to get mapping for merchantId '"+merchantId+"'");
     var deferred = $.ajax({
