@@ -48,7 +48,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 90.36, item.reload.price
     
     product = item.product
-    assert_equal "http://www.cdiscount.com/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
+    assert_equal "http://www.cdiscount.com/Brother-Télécopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO", product.url
     assert_equal "Papier normal Fax T102 Brother FAXT102G1", product.name
     assert_equal "http://www.prixing.fr/images/product_images/2cf/2cfb0448418dc3f9f3fc517ab20c9631.jpg", product.image_url
     
@@ -330,7 +330,7 @@ class OrderTest < ActiveSupport::TestCase
       :expected_price_total => 100)
     assert order.save
     assert_equal 1, order.reload.order_items.count
-    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY", order.order_items.first.product.url
+    assert_equal "http://www.amazon.fr/dp/B00BIXXTCY", order.order_items.first.product.url
   end
   
   test "it should set message" do
@@ -439,6 +439,15 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal :pending_agent, @order.state
     assert_equal "vulcain", @order.error_code
     assert_equal "dispatcher_crash", @order.message
+  end
+
+  test "it should pause order with vulcain order validation failure" do
+    start_order
+    callback_order "failure", { "status" => "order_validation_failed" }
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "order_validation_failed", @order.message
   end
 
   test "it should pause order with vulcain uuid conflict" do
@@ -645,10 +654,10 @@ class OrderTest < ActiveSupport::TestCase
   test "it should process order validation failure" do
     start_order
     @order.callback "failure", { "status" => "order_validation_failed" }
-    assert_equal :failed, @order.reload.state
-    assert_equal "billing", @order.error_code
-    assert_equal "payment_refused_by_merchant", @order.message
-    assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
+    assert_equal :pending_agent, @order.reload.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "order_validation_failed", @order.message
+    #assert ActionMailer::Base.deliveries.last.present?, "a notification email should have been sent"
   end
 
   test "it shouldn't restart order if maximum number of retries has been reached" do
@@ -1010,6 +1019,26 @@ class OrderTest < ActiveSupport::TestCase
     
     order_success
     
+    assert_equal :completed, @order.state
+    assert_equal 14, @order.billed_price_product
+    assert_equal 2, @order.billed_price_shipping
+    assert_equal 16, @order.billed_price_total
+  end
+
+  test "[amazon] it should complete order with cashfront in two times, in case vulcain fails" do
+    configuration_amazon_cashfront
+    prepare_master_cashfront_account
+
+    start_order
+    assess_order_cashfront
+
+    @order.update_attribute :state_name, "pending_agent"    
+
+    start_order
+    assess_order_cashfront
+
+    order_success
+
     assert_equal :completed, @order.state
     assert_equal 14, @order.billed_price_product
     assert_equal 2, @order.billed_price_shipping

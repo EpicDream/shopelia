@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
+gem 'syslog-logger'
 gem 'redis'
 gem 'redis-rails', '=3.2.1'
 gem 'therubyracer'
@@ -33,6 +34,9 @@ gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
 gem 'sanitize'
 gem 'httpclient'
+gem 'sidekiq'
+gem 'sinatra', require: false
+gem 'slim'
 
 # Gems used only for assets and not required
 # in production environments by default.

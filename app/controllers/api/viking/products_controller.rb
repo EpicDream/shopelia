@@ -3,6 +3,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   skip_before_filter :authenticate_developer!
   before_filter :retrieve_product, :only => :update
   before_filter :retrieve_versions, :only => :update
+  before_filter :retrieve_pending_products, :only => :index
 
   def_param_group :product do
     param :product, Hash, :required => true, :action_aware => true do
@@ -15,7 +16,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   
   api :GET, "/viking/products", "Get all products pending check"
   def index
-    render json: params[:batch] ? Product.viking_pending_batch : Product.viking_pending, each_serializer: Viking::ProductSerializer
+    render json: @products, each_serializer: Viking::ProductSerializer
   end
  
   api :GET, "/viking/products/failure", "Get all products which failed with Viking extraction"
@@ -33,16 +34,6 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     end
   end
 
-  api :GET, "/viking/products/shift", "Get next product pending check"
-  def shift
-    product = params[:batch] ? Product.viking_shift_batch : Product.viking_shift
-    if product.present? 
-      render json: Viking::ProductSerializer.new(product).as_json[:product]
-    else
-      render :json => {}
-    end
-  end
-  
   api :PUT, "/viking/products", "Update product"
   param_group :product
   def update
@@ -75,5 +66,24 @@ class Api::Viking::ProductsController < Api::V1::BaseController
     @versions = params[:versions]
     @options_completed = params[:options_completed]
   end
-  
+
+  def retrieve_pending_products
+    added = {}
+    @products = []
+    Product.viking_pending.each do |p|
+      if added[p.id].nil?
+        p.viking_reset
+        @products << p 
+        added[p.id] = 1
+      end
+    end
+    Product.viking_pending_batch.each do |p|
+      if added[p.id].nil?
+        p.viking_reset
+        p.batch = true
+        @products << p
+        added[p.id] = 1
+      end
+    end
+  end
 end

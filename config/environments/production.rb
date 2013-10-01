@@ -1,5 +1,6 @@
 Shopelia::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
+  config.logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
 
   # Code is not reloaded between requests
   config.cache_classes = true
@@ -32,14 +33,14 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( devise/passwords.js  devise/sessions.js  devise_override/sessions.js  )
   config.assets.precompile += %w( devise_override/confirmations.css devise_override/registrations.css )
   config.assets.precompile += %w( devise_override/confirmations.js  devise_override/registrations.js  )
-  config.assets.precompile += %w( home.js )
+  config.assets.precompile += %w( home.js errors.js )
 
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH
 
   # Specifies the header that your server uses for sending files
   # config.action_dispatch.x_sendfile_header = "X-Sendfile" # for apache
-  # config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
+  config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect' # for nginx
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true

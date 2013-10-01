@@ -1,7 +1,6 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
-
   match "/checkout", :controller => "html_app", :action => "index"
 
   apipie
@@ -97,7 +96,6 @@ Shopelia::Application.routes.draw do
     namespace :viking do
       resources :products, :only => [:index, :update]
       namespace :products do
-        get :shift
         get :failure
         get :failure_shift
         get :alive

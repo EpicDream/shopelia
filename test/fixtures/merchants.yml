@@ -46,3 +46,8 @@ toysrus:
   name: "Toysrus"
   domain: "toysrus.fr"
   should_clean_args: false
+
+etsy:
+  name: "Etsy"
+  domain: "etsy.com"
+  should_clean_args: false

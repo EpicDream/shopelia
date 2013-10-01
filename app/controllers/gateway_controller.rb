@@ -4,13 +4,14 @@ class GatewayController < ApplicationController
   before_filter :retrieve_device
 
   def index
-    Event.from_urls(
-      :urls => [ @url ],
+    EventsWorker.perform_async({
+      :url => @url,
       :developer_id => @developer.id,
       :action => Event::CLICK,
       :tracker => @tracker,
       :device_id => @device.id,
-      :ip_address => request.remote_ip)
+      :ip_address => request.remote_ip
+    })
     
     redirect_to "https://www.shopelia.com/checkout?url=#{CGI::escape(@url)}&developer=#{@developer.api_key}"
   end

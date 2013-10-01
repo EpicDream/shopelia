@@ -10,7 +10,7 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html",
         :out => "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html" },
       { :in  => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY",
-        :out => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY" },
+        :out => "http://www.amazon.fr/dp/B00BIXXTCY" },
       { :in  => "http://tracking.lengow.com/shortUrl/53-1110-2759446/",
         :out => "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4" },
       { :in  => "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www.fnac.com%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4%23bl%3DMMtvh]]",
@@ -19,14 +19,30 @@ class LinkerTest < ActiveSupport::TestCase
         :out => "http://www.rueducommerce.fr/m/ps/mpid:MP-0006DM7671064" },
       { :in  => "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(717215663)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Fdp.asp%3Fsku%3DROSITRIPLE10M%26refer%3D*)",
         :out => "http://www.cdiscount.com/electromenager/four-cuisson/rosieres-triple-10m/f-11023020709-rositriple10m.html" },
-      { :in  => "http://ad.zanox.com/ppc/?18920697C1372641144&ULP=%5B%5Bhttp://www.toysrus.fr/redirect_znx.jsp?url=http%3A%2F%2Fwww.toysrus.fr%2Fproduct%2Findex.jsp%3FproductId%3D10863181%5D%5D#toysrus.fr",
-        :out => "http://www.toysrus.fr/product/index.jsp?productId=10863181" },
       { :in  => "http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm?xts=425426&xtor=AL-146-[typologie]-[1532882]-[flux]&xtloc=http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068&xtdt=22932563",
         :out => "http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068" },
+      { :in  => "http://ad.zanox.com/ppc/?19024603C1357169475&ULP=%5B%5Bhttp://logc57.xiti.com/gopc.url?xts=425426&xtor=AL-146-%5Btypologie%5D-%5BREMPLACE%5D-%5Bflux%5D&xtloc=http://www.eveiletjeux.com/mallette-tag-junior/produit/145303&url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm%5D%5D#eveiletjeux.com",
+        :out => "http://www.eveiletjeux.com/mallette-tag-junior/produit/145303" },
       { :in  => "http://action.metaffiliation.com/trk.php?mclic=P3138544D2D222S1UC431296294177V3",
         :out => "http://www.avenuedesjeux.com/playmobil-playmobil-5302-maison-de-ville.36324.html" },
       { :in  => "http://ad.zanox.com/ppc/?19436175C242487251&ULP=%5B%5BAccessoires-Consommables/showdetl.cfm?product_id=4855986%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d%5D%5D#rueducommerce.fr",
-        :out => "http://www.rueducommerce.fr/Accessoires-Consommables/showdetl.cfm?product_id=4855986" }
+        :out => "http://www.rueducommerce.fr/Accessoires-Consommables/showdetl.cfm?product_id=4855986" },
+      { :in  => "http://clic.reussissonsensemble.fr/click.asp?ref=593625&site=10393&type=text&tnb=2&diurl=http://tracking.lengow.com/shortUrl/2857-45667-C389183/",
+        :out => "http://www.auchan.fr/achat4/CA17234/color_47063/size_10055" },
+      { :in  => "http://www.amazon.fr/Eafit-Protisoya-100%-Proteine-Vegetale/dp/B0036BGQ6W?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0036BGQ6W",
+        :out => "http://www.amazon.fr/dp/B0036BGQ6W" },
+      { :in  => "http://action.metaffiliation.com/trk.php?mclic=P43EF9544D2D15S4519345193C111117180315TRENCH LUNGO",
+        :out => "http://www.zinefashionstore.com/produit-homme-Trench_de_la_marque_Memento-4030.html" },
+      { :in  => "http://tracking.publicidees.com/clic.php?partid=32430&progid=2013&adfactory_type=12&idfluxpi=500&url=http%3A%2F%2Ftracking.lengow.com%2FshortUrl%2F2082-37081-0421841%2F",
+        :out => "http://www.clarins.fr/Instant-Definition-Mascara/0421841,fr_FR,pd.html" },
+      { :in  => "https://www.thinkgeek.com/clearance/on-sale/eae1/", 
+        :out => "http://www.thinkgeek.com/tshirts-apparel/miscellaneous/?icpg=gy_eae1" },
+      { :in  => "http://www.koordinal.com/74-bac-%C3%A0-gla%C3%A7on-igloo.html",
+        :out => "http://www.koordinal.com/74-bac-a-glacons-igloo.html" },
+      { :in  => "http%3A%2F%2Fwww.amazon.fr%2FConverse-Chuck-Taylor-Baskets-adulte%2Fdp%2FB000EDMSTY%2Fref%3Dsr_1_1%3Fs%3Dshoes%26ie%3DUTF8%26qid%3D1380531062%26sr%3D1-1",
+        :out => "http://www.amazon.fr/dp/B000EDMSTY" },
+      { :in  => "http://ad.zanox.com/ppc/?22922212C13370039&ULP=[[fr/dpfr/produit/robe-de-soir%C3%A9e-noire-%C3%A0-c%C5%93urs-1918819]]",
+        :out => "http://www.dorothyperkins.fr/fr/dpfr/produit/robe-de-soire-noire--curs-1918819?_%24ja=tsid%3A34096&cmpid=aff_zx_fr&geoip=prod" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])
@@ -34,7 +50,7 @@ class LinkerTest < ActiveSupport::TestCase
   end
   
   test "it should use url matcher" do
-    assert_difference("UrlMatcher.count", 1) do
+    assert_difference("UrlMatcher.count", 2) do
       assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
     end
     assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", UrlMatcher.first.canonical
@@ -78,46 +94,11 @@ class LinkerTest < ActiveSupport::TestCase
     assert url.nil?
   end  
 
-  test "it should monetize amazon" do
+  test "it should monetize url using merchant helper" do
     url = Linker.monetize "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY"
     assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?tag=shopelia-21", url  
-    url = Linker.monetize "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY"
-    assert_equal "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY&tag=shopelia-21", url
-  end 
-  
-  test "it should monetize priceminister" do
+
     url = Linker.monetize "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html#sort=0&filter=10&s2m_exaffid=977275"
-    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html", url
+    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html", url
   end
-
-  test "it should monetize fnac url" do
-    url = Linker.monetize "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4#bl=MMtvh"
-    assert_equal "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www.fnac.com%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4%23bl%3DMMtvh]]", url
-  end
-  
-  test "it should monetize rueducommerce link" do
-    url = Linker.monetize "http://www.rueducommerce.fr/m/ps/mpid:MP-0006DM7671064"
-    assert_equal "http://ad.zanox.com/ppc/?25390102C2134048814&ulp=[[www.rueducommerce.fr%2Fm%2Fps%2Fmpid%3AMP-0006DM7671064]]", url
-  end
-
-  test "it should monetize eveiletjeux link" do
-    url = Linker.monetize "http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367"
-    assert_equal "http://ad.zanox.com/ppc/?25424162C654654636&ulp=[[http://logc57.xiti.com/gopc.url?xts=425426&xtor=AL-146-1%5Btypologie%5D-REMPLACE-%5Bparam%5D&xtloc=http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367&url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm]]", url
-  end
-
-  test "it should monetize toysrus link" do
-    url = Linker.monetize "http://www.toysrus.fr/product/index.jsp?productId=11621761"
-    assert_equal "http://ad.zanox.com/ppc/?25465502C586468223&ulp=[[http://www.toysrus.fr/redirect_znx.jsp?url=http://www.toysrus.fr/product/index.jsp?productId=11621761&]]", url
-  end
-  
-  test "it should monetize cdiscount link" do
-    url = Linker.monetize "http://www.cdiscount.com/electromenager/aspirateur-nettoyeur-vapeur/dirt-devil-m2828-3/f-110140405-dirtm28283.html"
-    assert_equal "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(765856165)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Felectromenager%2Faspirateur-nettoyeur-vapeur%2Fdirt-devil-m2828-3%2Ff-110140405-dirtm28283.html)", url
-  end  
-
-  test "it should monetize darty link" do  
-    url = Linker.monetize "http://www.darty.com/nav/achat/gros_electromenager/refrigerateur_congelateur-refrigerateur-cong/refrigerateur_congelateur_bas/samsung_rl56gsbsw.html"
-    assert_equal "http://ad.zanox.com/ppc/?25424898C784334680&ulp=[[www.darty.com/nav/achat/gros_electromenager/refrigerateur_congelateur-refrigerateur-cong/refrigerateur_congelateur_bas/samsung_rl56gsbsw.html?dartycid=aff_zxpublisherid_lien-profond-libre_lientexte]]", url
-  end
-
 end

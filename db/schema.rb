@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130915171336) do
+ActiveRecord::Schema.define(:version => 20130918151100) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -308,6 +308,10 @@ ActiveRecord::Schema.define(:version => 20130915171336) do
     t.string   "reference"
     t.datetime "muted_until"
     t.boolean  "options_completed",                  :default => false
+<<<<<<< HEAD
+=======
+    t.datetime "viking_sent_at"
+>>>>>>> master
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true

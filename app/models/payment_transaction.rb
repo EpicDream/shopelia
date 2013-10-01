@@ -10,6 +10,8 @@ class PaymentTransaction < ActiveRecord::Base
 
   before_validation :initialize_transaction
 
+  scope :amazon, where(processor:"amazon")
+
   def process
     return { status:"error", message:"missing user mangopay object" } if self.user.mangopay_id.nil?
     return { status:"error", message:"missing source mangopay wallet" } if self.mangopay_source_wallet_id.nil?
@@ -18,7 +20,12 @@ class PaymentTransaction < ActiveRecord::Base
     return { status:"error", message:"Wallet doesn't have enough money. Has #{wallet['Amount']} but need #{self.amount}" } if wallet['Amount'] < self.amount
 
     if self.processor == "amazon"
-      return { status:"error", message:"transaction already processed" } unless self.mangopay_amazon_voucher_id.nil?
+      return { status:"created" } unless self.mangopay_amazon_voucher_id.nil?
+      return { status:"error", message:"missing user mangopay object" } if self.user.mangopay_id.nil?
+      return { status:"error", message:"missing source mangopay wallet" } if self.mangopay_source_wallet_id.nil?
+
+      wallet = MangoPay::Wallet.details(self.mangopay_source_wallet_id)
+      return { status:"error", message:"Wallet doesn't have enough money. Has #{wallet['Amount']} but need #{self.amount}" } if wallet['Amount'] < self.amount
 
       voucher = MangoPay::AmazonVoucher.create({
         'Tag' => self.id.to_s,

@@ -108,7 +108,7 @@ class ProductVersion < ActiveRecord::Base
     str = str.downcase
     # special cases
     str = str.gsub(/^.*un total de/, "")
-    str = str.gsub(/so colissimo \(.*\)/, "")
+    str = str.gsub(/\(.*\)/, "")
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else
@@ -152,11 +152,10 @@ class ProductVersion < ActiveRecord::Base
   end
   
   def parse_available
-    result = nil
     self.availability_info = self.availability_text
     a = self.availability_text.unaccent.downcase
     dic = YAML.load(File.open(AVAILABILITY))
-    key = dic.keys.detect {|key| key if a =~ /#{key}/ }
+    key = dic.keys.detect {|key| key if a =~ /#{key}/i }
     generate_incident "Cannot parse availability : #{a}" if key.nil?
     self.available = key.nil? ? true : dic[key]
     true
