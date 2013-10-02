@@ -8,25 +8,24 @@ class CadeauMaestroComTest < ActiveSupport::TestCase
     @helper = CadeauMaestroCom.new("http://www.cadeau-maestro.com/196-paillassons-originaux/1706-paillasson-slide-to-unlock-8430306253466.html")
   end
 
-  test "it should canonize (1)" do
-    helper = CadeauMaestroCom.new "http://www.cadeau-maestro.com/196-paillassons-originaux/1706-paillasson-slide-to-unlock-8430306253466.html"
-    url = helper.canonize
-
-    assert_equal "http://www.cadeau-maestro.com/196/1706-8430306253466.html", url
-  end
-
-  test "it should canonize (2)" do
-    helper = CadeauMaestroCom.new "http://www.cadeau-maestro.com/181-horloges-originales/27-horloge-a-eau.html"
-    url = helper.canonize
-
-    assert_equal "http://www.cadeau-maestro.com/181/27.html", url
-  end
-
-  test "it should canonize (3)" do
-    helper = CadeauMaestroCom.new "http://www.cadeau-maestro.com/92-cadeau-fumeur"
-    url = helper.canonize
-
-    assert_equal "http://www.cadeau-maestro.com/92-cadeau-fumeur", url
+  test "it should canonize" do
+    urls = {
+      "http://www.cadeau-maestro.com/196-paillassons-originaux/1706-paillasson-slide-to-unlock-8430306253466.html" =>
+        "http://www.cadeau-maestro.com/196/1706-8430306253466.html",
+      "http://www.cadeau-maestro.com/181-horloges-originales/27-horloge-a-eau.html" =>
+        "http://www.cadeau-maestro.com/181/27.html",
+      "http://www.cadeau-maestro.com/92-cadeau-fumeur" =>
+        "http://www.cadeau-maestro.com/92-cadeau-fumeur",
+      "http://www.cadeau-maestro.com/279/1683-5546902001479.html" =>
+        "http://www.cadeau-maestro.com/279/1683-5546902001479.html",
+      "http://www.cadeau-maestro.com/196/1706-paillasson-slide-to-unlock-8430306253466.html" =>
+        "http://www.cadeau-maestro.com/196/1706-8430306253466.html",
+      "http://www.cadeau-maestro.com/196-paillassons-originaux/1706-8430306253466.html" =>
+        "http://www.cadeau-maestro.com/196/1706-8430306253466.html",
+    }
+    for url, result in urls
+      assert_equal result, CadeauMaestroCom.new(url).canonize
+    end
   end
 
   test "it should process availability (1)" do
