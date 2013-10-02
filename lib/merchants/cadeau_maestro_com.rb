@@ -21,7 +21,7 @@ class CadeauMaestroCom
   end
 
   def process_shipping_price version
-    version[:price_shipping_text] = "4.50 (à titre indicatif)" if version[:price_shipping_text].blank?
+    version[:price_shipping_text] = "4,50 € (à titre indicatif)" if version[:price_shipping_text].blank?
     version
   end
 end

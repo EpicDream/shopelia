@@ -46,6 +46,6 @@ class CadeauMaestroComTest < ActiveSupport::TestCase
     @version[:price_shipping_text] = ""
     @version = @helper.process_shipping_price(@version)
 
-    assert_equal "4.50 (à titre indicatif)", @version[:price_shipping_text]
+    assert_equal "4,50 € (à titre indicatif)", @version[:price_shipping_text]
   end
 end
