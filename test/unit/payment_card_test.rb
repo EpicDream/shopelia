@@ -37,13 +37,16 @@ class PaymentCardTest < ActiveSupport::TestCase
       :exp_month => "02",
       :exp_year => "2017",
       :cvv => "1X3")
-    assert_raises(ArgumentError) { card.save }
+   
+    assert(!card.save)
+    assert(card.errors.size == 2)
   end
   
   test "it should not update a payment card with invalid data" do
     card = payment_cards(:manu_hsbc)
     card.number = '4970100000X00154'
-    assert_raises(ArgumentError) { card.save }
+    assert(!card.save)
+    assert(card.errors.size == 1)
   end
   
   test "it should fail all non completed orders attached to a destroyed payment card" do

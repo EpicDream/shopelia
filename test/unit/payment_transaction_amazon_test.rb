@@ -51,7 +51,7 @@ class PaymentTransactionAmazonTest < ActiveSupport::TestCase
     assert payment.mangopay_amazon_voucher_code.present?
 
     result = payment.process
-    assert_equal "error", result[:status], result[:message]
+    assert_equal "created", result[:status], result[:message]
     assert_equal "transaction already processed", result[:message]
   end
 

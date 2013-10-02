@@ -3,19 +3,14 @@ class PaymentCard < ActiveRecord::Base
   has_many :meta_orders
  
   validates :user, :presence => true
+  validate  :validate_number
+  validates :exp_month, numericality: { only_integer: true,  greater_than: 0, less_than: 13 }, length: { is:2 }
+  validates :exp_year, numericality: { only_integer: true, greater_than_or_equal_to: Time.now.year, less_than_or_equal_to: Time.now.year + 10 }, length: { is:4 }
+  validates :cvv, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than_or_equal_to: 999  }, length: { is:3 }
 
-  validates :number, :presence => true, :length => { :is => 16 }
-  validates :cvv, :presence => true, :length => { :is => 3 }
-
-  def self.months
-    ("01".."12").map{|i| i}
+  def validate_number
+    errors.add(:number, "is invalid") unless CreditCardValidator::Validator.valid?(self.number || '')
   end
-  validates :exp_month, :presence => true, :inclusion => { :in => PaymentCard.months }
-
-  def self.years
-    (Time.now.year..(Time.now.year + 10)).map{|i| i.to_s}
-  end
-  validates :exp_year, :presence => true, :inclusion => { :in => PaymentCard.years }
 
   after_initialize :decrypt
   after_save :decrypt
@@ -23,6 +18,16 @@ class PaymentCard < ActiveRecord::Base
 
   before_destroy :destroy_associated_orders
   before_destroy :destroy_mangopay_payment_card, :if => Proc.new { |card| card.mangopay_id.present? }
+
+  def self.months
+    ("01".."12").map{|i| i}
+  end
+
+  def self.years
+    (Time.now.year..(Time.now.year + 10)).map{|i| i.to_s}
+  end
+
+    
 
   def create_mangopay_card
     return { status:"error", message:"mangopay card already created" } unless self.mangopay_id.nil?
