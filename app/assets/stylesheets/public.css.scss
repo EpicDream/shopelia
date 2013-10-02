@@ -15,3 +15,21 @@
   font-size: 40px;
   padding-top: 100px;
 }
+
+
+.iphone-screen {
+   width: 403px ;
+   height: 614px ;
+   background-image: url(asset-path("iphone-bg.png",image));
+   background-repeat: no-repeat ;
+   background-size: contain;
+}
+
+.demo-screen {
+  border: 1px solid #000000;
+  border-radius: 2px;
+  width:  215px;
+  height:  380px;
+  margin-top: 80px;
+  margin-left: -7px;
+}

@@ -9,6 +9,13 @@ class Emailer < ActionMailer::Base
           :body => message)
   end
 
+  def send_user_download_link email
+    @email = email
+    mail( :to => @email,
+          :subject => "Lien de téléchargement pour shopelia",
+          :from => "Shopelia <contact@shopelia.fr>")
+  end
+
   ##################################################################################
   
   def notify_order_creation order

@@ -4,6 +4,8 @@ Shopelia::Application.routes.draw do
 
   match "/send_text_message" => "send_text#send_text_message"
 
+  match '/download' => 'application#download'
+
   match "/app_checkout", :controller => "html_app", :action => "index"
 
   apipie
