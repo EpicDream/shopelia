@@ -5,7 +5,12 @@ class SuperInsoliteComTest < ActiveSupport::TestCase
 
   setup do
     @version = {}
-    @helper = SuperInsoliteCom.new("http://www.super-insolite.com/minuteur-zoom-appareil-photo.html?a_aid=4f45473184a6b")
+    @url = "http://www.super-insolite.com/minuteur-zoom-appareil-photo.html?a_aid=4f45473184a6b"
+    @helper = SuperInsoliteCom.new(@url)
+  end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(SuperInsoliteCom)
   end
 
   test "it should process availability (1)" do

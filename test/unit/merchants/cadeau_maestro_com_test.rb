@@ -5,7 +5,12 @@ class CadeauMaestroComTest < ActiveSupport::TestCase
 
   setup do
     @version = {}
-    @helper = CadeauMaestroCom.new("http://www.cadeau-maestro.com/196-paillassons-originaux/1706-paillasson-slide-to-unlock-8430306253466.html")
+    @url = "http://www.cadeau-maestro.com/196-paillassons-originaux/1706-paillasson-slide-to-unlock-8430306253466.html"
+    @helper = CadeauMaestroCom.new(@url)
+  end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(CadeauMaestroCom)
   end
 
   test "it should canonize" do
