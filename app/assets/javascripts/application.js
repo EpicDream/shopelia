@@ -39,20 +39,25 @@ $(document).ready(function() {
 });
 
 function monitorCartItems() {
-  var pusher = new Pusher("654ffe989dceb4af5e03")
+  if (window.pusher === undefined) {
+    window.pusher = new Pusher("654ffe989dceb4af5e03");
+    window.channels = [];
+  }
   $(".cart-item-monitor").each(function() {
     var pid = $(this).data('pid');
     var uuid = $(this).data('uuid');
-    pusher.subscribe("product-version-" + pid).bind("update", function(data) {
-      console.log("Channel " + pid);
-      console.log(data);
-      el = $("[data-uuid=" + uuid + "]");
-      el.find(".spinner").addClass("hidden");
-      el.find(".cart-item-url").addClass("hidden");
-      el.find(".cart-item-img").attr("src", data.image_url);
-      el.find(".cart-item-title").html(data.name);
-      el.find(".cart-item-price").html(Math.round(data.price * 100) / 100 + " €");
-    });
+    if (window.channels["product-version-" + pid] === undefined) {
+      window.channels["product-version-" + pid] = window.pusher.subscribe("product-version-" + pid)
+      window.channels["product-version-" + pid].bind("update", function(data) {
+        console.log("Channel " + pid);
+        console.log(data);
+        el = $("[data-uuid=" + uuid + "]");
+        el.find(".cart-item-spinner").addClass("hidden");
+        el.find(".cart-item-img").attr("src", data.image_url);
+        el.find(".cart-item-title").html(data.name);
+        el.find(".cart-item-price").html(Math.round(data.price * 100) / 100 + " €");
+      });
+    }
   });
 }
 
@@ -60,11 +65,11 @@ function showSpinners() {
   var opts = {
     lines: 13,
     // The number of lines to draw
-    length: 7,
+    length: 5,
     // The length of each line
-    width: 4,
+    width: 2,
     // The line thickness
-    radius: 10,
+    radius: 6,
     // The radius of the inner circle
     corners: 1,
     // Corner roundness (0..1)
@@ -84,9 +89,9 @@ function showSpinners() {
     // The CSS class to assign to the spinner
     zIndex: 2e9,
     // The z-index (defaults to 2000000000)
-    top: 'auto',
+    top: '15px',
     // Top position relative to parent in px
-    left: 'auto',
+    left: '15px',
     // Left position relative to parent in px
     visibility: true
   };

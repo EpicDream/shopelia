@@ -30,7 +30,7 @@ class ProductVersion < ActiveRecord::Base
   before_validation :assess_version
   before_destroy :check_not_related_to_any_order
 
-  after_update :notify_channel
+  after_update :notify_channel, :if => Proc.new { |v| v.available.present? }
 
   scope :available, where(available:true)
 
