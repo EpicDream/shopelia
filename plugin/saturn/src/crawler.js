@@ -158,7 +158,7 @@ Crawler.crawl = function(mapping) {
           return txt !== '';
         }).join(", ");
       } else
-        option[key] = e.html().replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n");
+        option[key] = e.toArray().map(function(elem) { return elem.innerHTML.replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n"); }).join("\n<br>\n");
       if (option[key] !== "")
         break;
     }
