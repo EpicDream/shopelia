@@ -3,6 +3,7 @@ class HtmlAppController < ApplicationController
   layout 'html_app'
 
   def index
+    @product = Product.fetch(params[:url])
   end
   
   private
