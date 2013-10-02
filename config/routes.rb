@@ -1,6 +1,9 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
+
+  match "/send_text_message" => "send_text#send_text_message"
+
   match "/app_checkout", :controller => "html_app", :action => "index"
 
   apipie

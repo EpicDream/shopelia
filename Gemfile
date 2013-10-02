@@ -37,6 +37,7 @@ gem 'httpclient'
 gem 'sidekiq'
 gem 'sinatra', require: false
 gem 'slim'
+gem 'nexmo'
 
 # Gems used only for assets and not required
 # in production environments by default.
