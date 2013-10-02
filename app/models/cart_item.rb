@@ -1,6 +1,7 @@
 class CartItem < ActiveRecord::Base
   belongs_to :cart, :touch => true
   belongs_to :product_version
+  has_one :product, :through => :product_version
   belongs_to :developer
 
   validates :cart, :presence => true

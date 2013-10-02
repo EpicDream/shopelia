@@ -1,4 +1,8 @@
+require "#{Rails.root}/app/serializers/viking/product_serializer"
+include Viking
+
 class Api::Viking::ProductsController < Api::V1::BaseController
+
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_developer!
   before_filter :retrieve_product, :only => :update

@@ -46,37 +46,32 @@
 .spacer200 { height: 200px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
 
 .cart-item, .cart-item-img{
-  max-width:260px;
-  max-height:260px;
   position:relative;
-  -webkit-transition:.7s;
-  -moz-transition:.7s;
-  -o-transition:.7s;
-  transition:.7s;
   z-index:2;
 }
 .cart-item-img {
+  max-width:260px;
+  max-height:260px;
   display: block;
   margin: 0 auto;
 }
 .cart-item-actions{
   width:260px;
   height:260px;
-  position:relative;
+  position:absolute;
   overflow:hidden;
   margin-top:-263px;
-  -webkit-transition:.7s;
-  -moz-transition:.7s;
-  -o-transition:.7s;
-  transition:.7s;
+  bottom: 5px;
   z-index:2;
 }
 .cart-item{
+  min-width:260px;
+  min-height:260px;
   width:260px;
   height:260px;
   margin:20px auto;
 }
-.info-block, .cart-item-title, .cart-item-price, .button-buy {
+.info-block, .cart-item-title, .cart-item-price, .cart-item-details, .cart-item-delete, .cart-item-spinner {
   position:absolute;
   z-index:3;
 }
@@ -86,10 +81,6 @@
   background:rgba(255,255,255,.85);
   bottom:0px;
   margin-bottom:-70px;
-  -webkit-transition:.7s;
-  -moz-transition:.7s;
-  -o-transition:.7s;
-  transition:.7s;
 }
 .cart-item-title{
   color:#222;
@@ -98,6 +89,8 @@
   top:12px;
   left:15px;
   width:170px;
+  height: 40px;
+  overflow: hidden;
 }
 .cart-item-price{
   color:#e74c3c;
@@ -107,27 +100,30 @@
   right:15px;
   top:12px;
 }
-.button-buy{
-  background:#e74c3c;
+.cart-item-details{
   margin:0 auto;
-  text-align:center;
-  line-height:46px;
-  font-weight:700;
-  color:#fff;
-  border:0px solid #c0392b;
-  border-bottom-width:2px;
-  width:100%;
+  width:70%;
   height:44px;
   bottom:15px;
-  cursor:pointer;
-  -webkit-transition:.4s;
-  -moz-transition:.4s;
-  -o-transition:.4s;
-  transition:.4s;
 }
-.button-buy:hover{
-  background:#c0392b;
+.cart-item-delete{
+  margin:0 auto;
+  width:25%;
+  height:44px;
+  bottom:15px;
+  right: 0px;
 }
 .cart-item:hover .info-block{
   margin-bottom:0;
+}
+.cart-item-spinner {
+  background:rgba(255,255,255,.85);
+  right: 15px;
+  top: 15px;
+  width: 30px;
+  height: 30px;
+}
+.cart-item .spinner {
+  top: 15px;
+  left: 15px;
 }
