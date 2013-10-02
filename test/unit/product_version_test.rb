@@ -165,7 +165,8 @@ class ProductVersionTest < ActiveSupport::TestCase
               "retrait gratuit en magasin", "dans plus de 50 magasins", "dans 48 magasins",
               "non disponible", "Désolés, cet article a été vendu. Vous aimerez peut-être ceci",
               "Mince alors. Cet article n'est plus disponible.", "Ce magasin est en vacances",
-              "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION" ]
+              "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
+              "404", "Vous recherchez une page ?" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
