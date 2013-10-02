@@ -1,6 +1,6 @@
 {
   "name": "ariane",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "author": {
     "name": "Vincent Renaudineau",
     "email": "vincent.renaudineau@prixing.fr"
@@ -15,6 +15,7 @@
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-uglify": "~0.2.4",
     "grunt-contrib-jasmine": "~0.5.2",
-    "grunt-contrib-copy": "~0.4.1"
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-jslint": "~1.1.1"
   }
 }

@@ -5,6 +5,19 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: pkg,
+    jslint: {
+      all: {
+        src: [
+          'Gruntfile.js',
+          'src/*.js',
+          'controllers/mapping_contentscript.js',
+          'controllers/toolbar_contentscript.js',
+          'test/*.js',
+          '../common/mapping.js','../common/viking.js',
+        ],
+        options: {}
+      }
+    },
     jshint: {
       files: [
         'Gruntfile.js',
@@ -88,6 +101,11 @@ module.exports = function(grunt) {
   pkg.version = config.version;
   grunt.file.write("package.json", JSON.stringify(pkg, null, 2));
 
+  function updateConfigFile(env) {
+    config.env = env;
+    grunt.file.write("config.json", JSON.stringify(config, null, 2));
+  }
+
   function updateManifest(env) {
     // var manifest = grunt.file.readJSON("manifest.json");
     manifest.version = config.version;
@@ -103,14 +121,16 @@ module.exports = function(grunt) {
     grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
   }
 
+  grunt.loadNpmTasks('grunt-jslint');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-copy');
   // grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
+  grunt.registerTask('configFile', updateConfigFile);
   grunt.registerTask('manifest', updateManifest);
   // grunt.registerTask('test', ['jshint', 'jasmine']);
-  grunt.registerTask('default', ['jshint', 'copy', /*'jasmine', */'concat', 'manifest:dev']);
-  grunt.registerTask('prod', ['jshint', 'copy', /*'jasmine', */'concat', 'uglify', 'manifest:prod']);
+  grunt.registerTask('default', ['jshint', 'copy', /*'jasmine', */'concat', 'configFile:dev', 'manifest:dev']);
+  grunt.registerTask('prod', ['jshint', 'copy', /*'jasmine', */'concat', 'uglify', 'configFile:prod', 'manifest:prod']);
 };

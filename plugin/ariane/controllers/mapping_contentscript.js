@@ -1,6 +1,10 @@
+//
+// Author : Vincent RENAUDINEAU
+// Created : 2013-09-24
 
 define('mapper', ['jquery', 'logger', 'viking', 'html_utils', 'path_utils', 'toolbar'], 
 function($, logger, viking, hu, pu, toolbar) {
+  "use strict";
 
   var mapper = {};
 
@@ -17,14 +21,8 @@ function($, logger, viking, hu, pu, toolbar) {
     if (sender.id !== chrome.runtime.id)
       return;
 
-    if (msg.action === 'initialCrawl') {
-      chrome.storage.local.get('crawlings', function(hash) {
-        onCrawlResultReceived(hash.crawlings[url].initial);
-      });
-    } else if (msg.action === 'updateCrawl') {
-      chrome.storage.local.get('crawlings', function(hash) {
-        onCrawlResultReceived(hash.crawlings[url].update);
-      });
+    if (msg.action === 'initialCrawl' || msg.action === 'updateCrawl') {
+      updateFieldMatching();
     }
   });
 
@@ -58,6 +56,7 @@ function($, logger, viking, hu, pu, toolbar) {
     });
 
     toolbar.startAriane(true);
+    updateFieldMatching();
   };
 
   /* ********************************************************** */
@@ -70,10 +69,14 @@ function($, logger, viking, hu, pu, toolbar) {
       return;
 
     event.preventDefault();
+
+    var fieldId = toolbar.getCurrentFieldId();
+    if (! fieldId)
+      return alert("Aucun champ sélectionné.");
+
     // On enlève le ari-surround
     event.target.classList.remove("ari-surround");
     var path = pu.getMinimized(event.target);
-    var fieldId = toolbar.getCurrentFieldId();
     mapper.setMapping(fieldId, path);
     // On remet le ari-surround
     event.target.classList.add("ari-surround");
@@ -85,11 +88,9 @@ function($, logger, viking, hu, pu, toolbar) {
 
   // May be use be the user in the console.
   mapper.setMapping = function(fieldId, path) {
-    logger.debug('setMapping("'+fieldId+'", "'+path+'")');
-
     var elems = $(path);
     elems.effect("highlight", {color: "#00cc00" }, "slow");
-    logger.debug("setMapping('"+fieldId+"', '"+path+"')", elems.length, "element(s) found.");
+    logger.info("setMapping('"+fieldId+"', '"+path+"')", elems.length, "element(s) found.");
     var context = elems.length == 1 ? hu.getElementContext(elems[0]) : {};
 
     var map = {};
@@ -101,21 +102,26 @@ function($, logger, viking, hu, pu, toolbar) {
       chrome.storage.local.set(hash);
     });
 
-    updateFieldMatch(viking.buildMapping(url, data));
+    rematchWithMapping(viking.buildMapping(url, data));
   };
 
-  function updateFieldMatch(mapping) {
+  function rematchWithMapping(mapping) {
     chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
   }
 
-  function onCrawlResultReceived(crawlResults) {
-    logger.info("Crawl results :", crawlResults);
-    buttons.removeClass('mapped').addClass('missing');
-    for (var key in crawlResults)
-      if (crawlResults[key]) {
-        var b = buttons.filter("#ariane-product-"+key);
-        b.removeClass("missing").addClass("mapped");
-      }
+  function updateFieldMatching() {
+    chrome.storage.local.get('crawlings', function(hash) {
+      var crawlResults = hash.crawlings[url].update || hash.crawlings[url].initial;
+      if (! crawlResults)
+        return;
+      logger.info("Crawl results :", crawlResults);
+      buttons.removeClass('mapped').addClass('missing');
+      for (var key in crawlResults)
+        if (crawlResults[key]) {
+          var b = buttons.filter("#ariane-product-"+key);
+          b.removeClass("missing").addClass("mapped");
+        }
+    });
   }
 
   // Merge new mapping in the previous one.

@@ -1,7 +1,13 @@
+//
+// Author : Vincent RENAUDINEAU
+// Created : 2013-09-24
 
 define('toolbar', ['jquery', 'logger'], function($, logger) {
+  "use strict";
 
   var toolbar = {},
+      css_link,
+      jAriane,
       jToolbar,
       jStep,
       jButtons;
@@ -65,7 +71,7 @@ function build() {
 /* ********************************************************** */
 
 function onStepChanged(event) {
-  field_for_step = {
+  var field_for_step = {
     account_creation: "#ariane-account, #ariane-user",
     logout: "",
     login: "#ariane-account",
@@ -115,6 +121,9 @@ function onFinished() {
 /* ********************************************************** */
 
 toolbar.startAriane = function(crawl_mode) {
+  if (! jStep) // Fix to fast .js files load.
+    return setTimeout('toolbar.startAriane('+(crawl_mode === true)+')', 100);
+
   if (crawl_mode)
     jStep.val("extract").prop("disabled", true);
   $(document.body).addClass("ariane");
@@ -125,8 +134,6 @@ toolbar.startAriane = function(crawl_mode) {
 
 toolbar.getCurrentFieldId = function() {
   var fieldId = (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-/, '').replace(/product-/, '');
-  if (! fieldId)
-    fieldId = "other";
   return fieldId;
 };
 
