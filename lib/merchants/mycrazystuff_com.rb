@@ -6,7 +6,8 @@ class MycrazystuffCom
   end
 
   def process_availability version
-    version[:availability_text] = version[:availability_text] =~ /prochaine exp.dition/i ? "En stock" : "Non disponible"
+    # version[:availability_text] = version[:availability_text] =~ /prochaine exp.dition/i ? "En stock" : "Non disponible"
+    version[:availability_text] = "En stock" if version[:availability_text] =~ /prochaine exp.dition/i
     version
   end
 

@@ -13,7 +13,7 @@
   },
   "background": {
     "scripts": [
-      "dist/chrome_background.min.js"
+      "build/chrome_background.js"
     ]
   },
   "content_scripts": [
@@ -22,7 +22,7 @@
         "*://*/*"
       ],
       "js": [
-        "dist/chrome_crawler.min.js"
+        "build/chrome_crawler.js"
       ]
     }
   ],
