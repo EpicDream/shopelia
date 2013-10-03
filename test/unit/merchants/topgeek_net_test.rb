@@ -23,6 +23,16 @@ class TopgeekNetTest < ActiveSupport::TestCase
     end
   end
 
+  test "it should process availability" do
+    @version[:availability_text] = "Ce produit n'est plus en stock"
+    @version = @helper.process_availability(@version)
+    assert_equal "Ce produit n'est plus en stock", @version[:availability_text]
+
+    @version[:availability_text] = ""
+    @version = @helper.process_availability(@version)
+    assert_equal "En stock", @version[:availability_text]
+  end
+
   test "it should process price shipping" do
     @version[:price_shipping_text] = ""
     @version = @helper.process_shipping_price(@version)
