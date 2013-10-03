@@ -34,6 +34,7 @@ class ThinkgeekComTest < ActiveSupport::TestCase
       "" => "En stock",
       "future" => "Non disponible",
       "peter jackson-y" => "Non disponible",
+      "on weekends only" => "Non disponible",
     }
     for avail, result in availabilities
       @version[:availability_text] = avail

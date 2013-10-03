@@ -20,6 +20,7 @@ class ThinkgeekCom
     when "" then version[:availability_text] = "En stock"
     when /^future/ then version[:availability_text] = "Non disponible"
     when /^peter jackson-y/ then version[:availability_text] = "Non disponible"
+    when /^on weekends only/ then version[:availability_text] = "Non disponible"
     end
     version
   end

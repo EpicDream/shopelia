@@ -13,6 +13,11 @@ class NodshopCom
     end
   end
 
+  def process_availability version
+    version[:availability_text] = "En stock" if version[:availability_text].blank?
+    version
+  end
+
   def process_shipping_price version
     version[:price_shipping_text] = "4,90 € (à titre indicatif)" if version[:price_shipping_text].blank?
     version
