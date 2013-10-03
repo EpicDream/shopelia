@@ -30,7 +30,7 @@ $(document).ready ->
   if $("body.action-connect").length > 0
     Connect.init()
 
-  $btnDownload = $("#btn-download");
+  $btnDownload = $(".btn-download");
   $btnDownload.tooltip({
                        'animation': true,
                        'placement': 'right',
@@ -88,7 +88,6 @@ $(document).ready ->
 
   $(window).resize ->
     $btnDownload.tooltip('hide');
-    $btnDownload = $("#btn-download");
 
 
 
