@@ -17,7 +17,7 @@
               %li
                 =link_to t("app.signout.submit"), destroy_user_session_path, method:"delete"
         -else
-          %a.btn.btn-default.navbar-btn{href:"#{connect_path}"}= t("app.signin.submit")
+          -#%a.btn.btn-default.navbar-btn{href:"#{connect_path}"}= t("app.signin.submit")
       %ul.nav.navbar-nav.navbar-right.sections
         %li#nav-how
           -#%a{href: "#"}= t("home.how")

@@ -5,9 +5,9 @@
       %li Aide
       %li Mentions légales
     %ul.list-inline.pull-right
-      %li= image_tag("twitter-icon.png")
-      %li= image_tag("facebook-icon.png")
-      %li= image_tag("email-icon.png")
+      %li= link_to(image_tag("twitter-icon.png"),"https://twitter.com/shopelia")
+      %li= link_to(image_tag("facebook-icon.png"),"http://www.facebook.com/Shopelia")
+      %li= mail_to("contact@shopelia.com",image_tag("email-icon.png"))
 
 
 
