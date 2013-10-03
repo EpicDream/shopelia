@@ -10,6 +10,39 @@
 @import "public.css.scss";
 
 
+//Sticky Footer
+
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -80px;
+  padding: 0 0 80px;
+}
+
+// Footer
+
+footer {
+   height: 80px;
+   background-color: white;
+   border-top: 1px solid #d1d4d7;
+   color: $blue;
+   box-shadow: 0 0 5px rgba(0,0,0,0.1);
+   .container {
+     ul:first-of-type {
+       li {
+         padding-top: 10px;
+       }
+     }
+     li {
+       margin-left: 10px;
+     }
+     padding-top: 20px;
+   }
+}
+
+
+
 .clearfix {
   clear: both;
 }

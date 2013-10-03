@@ -1,9 +1,7 @@
 .topHome {
   background-color: $blue;
-  min-height: 768px;
   height: 100%;
   width: 100%;
-  overflow: hidden;
   position: relative;
   text-align: center;
 }
@@ -23,13 +21,25 @@
    background-image: url(asset-path("iphone-bg.png",image));
    background-repeat: no-repeat ;
    background-size: contain;
+   background-position:center;
+   margin: auto;
+
 }
 
 .demo-screen {
-  border: 1px solid #000000;
-  border-radius: 2px;
+  border: 1px solid slategray;
+  border-radius: 3px;
   width:  215px;
   height:  380px;
   margin-top: 80px;
   margin-left: -7px;
 }
+
+article#homeArticle section {
+    display: block;
+    width:  800px;
+    margin: auto !important;
+    font-size: 18px;
+    color: $grey;
+}
+

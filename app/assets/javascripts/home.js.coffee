@@ -40,6 +40,7 @@ $(document).ready ->
                        })
 
   $btnDownload.on('shown.bs.tooltip',  () ->
+    $("#send-link-input").focus()
     $('button#send-link-btn').click (e) ->
       e.preventDefault()
       val = $("input#send-link-input").val()

@@ -9,12 +9,13 @@
     %title= @title || "Shopelia"
 
   %body{class: "action-#{params[:action]}"}
-    = render partial: "layouts/navbar.html.haml"
+    #wrap
+      = render partial: "layouts/navbar.html.haml"
 
-    .container
-      = bootstrap_flash
-    = yield
-
+      .container
+        = bootstrap_flash
+      = yield
+    = render partial: "layouts/footer.html.haml"
   :javascript
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-41276138-1']);
