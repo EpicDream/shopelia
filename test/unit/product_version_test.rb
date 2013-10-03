@@ -166,7 +166,7 @@ class ProductVersionTest < ActiveSupport::TestCase
               "non disponible", "Désolés, cet article a été vendu. Vous aimerez peut-être ceci",
               "Mince alors. Cet article n'est plus disponible.", "Ce magasin est en vacances",
               "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
-              "404", "Vous recherchez une page ?", "Coming Soon" ]
+              "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,

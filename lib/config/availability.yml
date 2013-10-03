@@ -30,7 +30,7 @@ bientot disponible: false
 sans stock pour vos criteres: false
 ce produit est epuise: false
 indisponible: false
-en rupture de stock: false
+en rupture: false
 aucun vendeur ne propose ce produit: false
 out of stock: false
 \d+ d'occasion: false
