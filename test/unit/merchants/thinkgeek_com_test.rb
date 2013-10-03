@@ -3,9 +3,14 @@ require 'test_helper'
 
 class ThinkgeekComTest < ActiveSupport::TestCase
 
+  setup do
+    @version = {}
+    @url = "http://www.thinkgeek.com/product/c534/"
+    @helper = ThinkgeekCom.new(@url)
+  end
+
   test "it should find class from url" do
-    url = "http://www.thinkgeek.com/product/f285/"
-    assert MerchantHelper.send(:from_url, url).kind_of?(ThinkgeekCom)
+    assert MerchantHelper.send(:from_url, @url).kind_of?(ThinkgeekCom)
   end
 
   test "it should canonize" do
@@ -22,10 +27,35 @@ class ThinkgeekComTest < ActiveSupport::TestCase
     end
   end
 
-  test "it should process price shipping" do
-    version = {price_shipping_text: ""}
-    version = ThinkgeekCom.new("http://www.thinkgeek.com/product/f285/").process_shipping_price(version)
+  test "it should process availability" do
+    availabilities = {
+      "In stock" => "In stock",
+      "Out of stock" => "Out of stock",
+      "" => "En stock",
+      "future" => "Non disponible",
+      "peter jackson-y" => "Non disponible",
+    }
+    for avail, result in availabilities
+      @version[:availability_text] = avail
+      @version = @helper.process_availability(@version)
+      assert_equal result, @version[:availability_text], "Fail to process '#{avail}'."
+    end
+  end
 
-    assert_equal "27,50 $ (à titre indicatif)", version[:price_shipping_text]
+
+  test "it should process price" do
+    @version[:price_text] = "n/a"
+    @version = @helper.process_price(@version)
+    assert_equal nil, @version[:price_text]
+
+    @version[:price_text] = "3,90 €"
+    @version = @helper.process_price(@version)
+    assert_equal "3,90 €", @version[:price_text]
+  end
+
+  test "it should process price shipping" do
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_shipping_price(@version)
+    assert_equal "27,50 $ (à titre indicatif)", @version[:price_shipping_text]
   end
 end
