@@ -45,7 +45,7 @@ class ThinkgeekComTest < ActiveSupport::TestCase
 
 
   test "it should process price" do
-    @version[:price_text] = "n/a"
+    @version[:price_text] = "N/A"
     @version = @helper.process_price(@version)
     assert_equal nil, @version[:price_text]
 

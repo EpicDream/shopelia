@@ -26,7 +26,7 @@ class ThinkgeekCom
   end
 
   def process_price version
-    version[:price_text] = nil if version[:price_text] == "n/a"
+    version[:price_text] = nil if version[:price_text] =~ /n\/a/i
     version
   end
 
