@@ -15,6 +15,20 @@ class ThinkgeekCom
     end
   end
 
+  def process_availability version
+    case version[:availability_text]
+    when "" then version[:availability_text] = "En stock"
+    when /^future/ then version[:availability_text] = "Non disponible"
+    when /^peter jackson-y/ then version[:availability_text] = "Non disponible"
+    end
+    version
+  end
+
+  def process_price version
+    version[:price_text] = nil if version[:price_text] == "n/a"
+    version
+  end
+
   def process_shipping_price version
     version[:price_shipping_text] = "27,50 $ (à titre indicatif)" if version[:price_shipping_text].blank?
     version
