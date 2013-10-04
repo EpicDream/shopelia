@@ -18,9 +18,9 @@ class ThinkgeekCom
   def process_availability version
     case version[:availability_text]
     when "" then version[:availability_text] = "En stock"
-    when /^future/ then version[:availability_text] = "Non disponible"
-    when /^peter jackson-y/ then version[:availability_text] = "Non disponible"
-    when /^on weekends only/ then version[:availability_text] = "Non disponible"
+    when /^future/i then version[:availability_text] = "Non disponible"
+    when /^peter jackson-y/i then version[:availability_text] = "Non disponible"
+    when /^on weekends only/i then version[:availability_text] = "Non disponible"
     end
     version
   end
