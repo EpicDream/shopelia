@@ -26,6 +26,7 @@ sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
 retrait gratuit en magasin: false
 produit epuise: false
+stock epuise: false
 bientot disponible: false
 sans stock pour vos criteres: false
 ce produit est epuise: false
@@ -36,12 +37,15 @@ out of stock: false
 \d+ d'occasion: false
 non disponible: false
 n.?est plus disponible: false
-cet article a ete vendu: false
+a ete vendu: false
 est plus vendu: false
 en vacances: false
 currently unavailable: false
 sign up to be notified when this item becomes available: false
 PAS DE CADEAUX INSOLITES: false
 404: false
-vous recherchez une page: false
+recherchez une page: false
+looking for something: false
 coming soon: false
+il y a une erreur dans l.?url: false
+est pas accessible: false

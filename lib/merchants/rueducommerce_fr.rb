@@ -9,4 +9,9 @@ class RueducommerceFr
     "http://ad.zanox.com/ppc/?25390102C2134048814&ulp=[[#{url}]]"
   end
 
+  def process_availability version
+    version[:availability_text] = "En stock" if version[:availability_text].blank? && ! version[:price_text].blank?
+    version
+  end
+
 end
