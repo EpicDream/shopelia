@@ -11,6 +11,7 @@ elarch_rueducommerce:
   expected_price_shipping: 2.0
   expected_cashfront_value: 0.0
   created_at: <%= 10.minutes.ago %>
+  gift_message: "This is a gift"
 
 elarch_amazon:
   meta_order: elarch_amz
