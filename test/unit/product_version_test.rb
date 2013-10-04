@@ -166,6 +166,7 @@ class ProductVersionTest < ActiveSupport::TestCase
               "non disponible", "Désolés, cet article a été vendu. Vous aimerez peut-être ceci",
               "Mince alors. Cet article n'est plus disponible.", "Ce magasin est en vacances",
               "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
+              "For Personalized Service on this item please call 1-800-227-3528 and our Product Specialists will gladly answer all questions and provide additional information. Please note that special conditions and guarantee limitations apply to this product.",
               "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture" ]
     array.each do |str|
       version = ProductVersion.create(
@@ -186,7 +187,7 @@ class ProductVersionTest < ActiveSupport::TestCase
               "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
               "disponible sous 4 semaines", "Seulement 1 en stock", "in stock but may require an extra 1-2 days to process.",
               "Conditions spéciales :- livraison : 10 semaines", "livraison des fichiers", "attention : dernières pièces disponibles",
-              "In stock" ]
+              "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery." ]
     array.each do |str|
       assert_difference "Incident.count", 0 do
         version = ProductVersion.create(
