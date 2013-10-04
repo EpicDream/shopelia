@@ -13,7 +13,7 @@
   },
   "background": {
     "scripts": [
-      "dist/background.min.js"
+      "build/background.js"
     ],
     "persistent": false
   },
@@ -31,7 +31,7 @@
         "*://*/*"
       ],
       "js": [
-        "dist/contentscript.min.js"
+        "build/contentscript.js"
       ]
     },
     {
