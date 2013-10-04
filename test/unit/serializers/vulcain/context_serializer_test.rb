@@ -12,6 +12,7 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     assert context[:session].present?
     assert context[:order].present?
     assert context[:order][:credentials][:number].present?
+    assert context[:order][:gift_message].present?
     assert context[:user].present?
 
     session = context[:session]
@@ -58,6 +59,7 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     context = order_serializer.as_json[:context]
 
     assert_not_nil context[:order][:credentials][:number]
+    assert_nil context[:order][:gift_message]
 
     t = PaymentTransaction.create!(
       order_id:@order.id,
