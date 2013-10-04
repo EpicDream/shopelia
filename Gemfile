@@ -15,7 +15,7 @@ gem 'devise', '~> 2.2'
 gem 'apipie-rails'
 gem "active_model_serializers", "~> 0.7.0"
 gem "mangopay", github: 'EricLarch/mangopay-ruby-sdk'
-gem 'selenium-webdriver'
+gem 'selenium-webdriver', '=2.35.0'
 gem 'headless'
 gem 'mechanize'
 gem 'unicorn'
@@ -38,6 +38,7 @@ gem 'sidekiq'
 gem 'sinatra', require: false
 gem 'slim'
 gem 'credit_card_validator'
+gem 'rubyzip', '< 1.0.0'
 
 # Gems used only for assets and not required
 # in production environments by default.

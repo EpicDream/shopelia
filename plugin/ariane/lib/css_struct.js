@@ -2,6 +2,7 @@
 // Author : Vincent Renaudineau
 // Created : 01/08/2013
 
+define('css', ['jquery'], function($) {
 'use strict';
 
 function bind(f, scope) {
@@ -9,7 +10,7 @@ function bind(f, scope) {
   return function() {
     return _function.apply(scope, arguments);
   };
-};
+}
 
 var Css = (function() {
 
@@ -39,7 +40,7 @@ var Css = (function() {
     }
     this.push(new CssPhrase(tmp));
     this.deleted = [];
-  };
+  }
 
   // function getClasses(elem) {
   //   var classes = elem.getAttribute("class")
@@ -98,7 +99,7 @@ var Css = (function() {
   //   return Css.make(elem, true);
   // };
 
-  Css.prototype = new Array();
+  Css.prototype = [];
 
   Css.prototype.toCss = function() {
     var t = [];
@@ -122,7 +123,7 @@ var Css = (function() {
   };
 
   Css.prototype.undo = function() {
-    if (this.deleted.length == 0) return this;
+    if (this.deleted.length === 0) return this;
     var h = this.deleted.pop();
     if (h.i === undefined)
       h.value.undo();
@@ -139,7 +140,7 @@ var Css = (function() {
       if (! e.simplify()) {
         e.tried = true;
         h.i = i;
-        if (i != 0 || i != l-1) // Petit bug quand on arrive au bout : "*" => true, "*" => true, "*" => false.
+        if (i !== 0 || i !== l-1) // Petit bug quand on arrive au bout : "*" => true, "*" => true, "*" => false.
           this.splice(i, 1);
       }
       this.deleted.push(h);
@@ -158,7 +159,7 @@ var CssPhrase = (function() {
   // [CssElement("div#an_id"), CssElement("> a"), CssElement("+ p")]
   function CssPhrase(structs) {
     if (typeof structs == 'string')
-      return CssPhrase(new CssStruct(structs))
+      return CssPhrase(new CssStruct(structs)).bind(this);
 
     this.structs = structs;
 
@@ -174,9 +175,9 @@ var CssPhrase = (function() {
     }
     this.push(new CssElement(tmp));
     this.deleted = [];
-  };
+  }
 
-  CssPhrase.prototype = new Array();
+  CssPhrase.prototype = [];
 
   CssPhrase.prototype.toCss = function() {
     var s = '';
@@ -201,7 +202,7 @@ var CssPhrase = (function() {
   };
 
   CssPhrase.prototype.undo = function() {
-    if (this.deleted.length == 0) return this;
+    if (this.deleted.length === 0) return this;
     var h = this.deleted.pop();
     switch (h.type) {
       case "first":
@@ -232,7 +233,7 @@ var CssPhrase = (function() {
         if (e instanceof CssSeparator) continue;
         h.i = i;
         // First element => delete fellowing separator
-        if (i == 0 && l > 1) {
+        if (i === 0 && l > 1) {
           h.type = "first"; h.value = this.splice(i,2);
         // Last element => do nothing
         } else if (i == l-1) {
@@ -272,7 +273,7 @@ var CssElement = (function() {
   // cssElem.attributes // => []
   function CssElement(structs) {
     if (typeof structs == 'string') {
-      return CssElement(new CssStruct(structs))
+      return CssElement(new CssStruct(structs)).bind(this);
     }
 
     this.structs = structs;
@@ -315,10 +316,10 @@ var CssElement = (function() {
           console.error("`CssElement::CssElement' : Unknow type :", s.type);
       }
     }
-  };
+  }
 
   CssElement.prototype.toCss = function() {
-    var res = '';
+    var res = '', j, dl;
     // On garde l'ordre initial.
     for (var i = 0, sl = this.structs.length ; i < sl ; i++) {
       var h = this.structs[i];
@@ -329,7 +330,7 @@ var CssElement = (function() {
         //     res += this.separator+' ';
         //   break;
         case "attribute":
-          for (var j = 0, dl = this.deleted.length ; j < dl ; j++)
+          for (j = 0, dl = this.deleted.length ; j < dl ; j++)
             if (this.deleted[j].type == 'attribute' && this.deleted[j].deleted && this.deleted[j].value == h.pointer)
               break;
           if (j == dl)
@@ -346,7 +347,7 @@ var CssElement = (function() {
           if (this.tag) res += this.tag;
           break;
         case "function":
-          for (var j = 0, dl = this.deleted.length ; j < dl ; j++)
+          for (j = 0, dl = this.deleted.length ; j < dl ; j++)
             if (this.deleted[j].type == 'function' && this.deleted[j].value == h.pointer)
               break;
           if (j == dl)
@@ -355,7 +356,7 @@ var CssElement = (function() {
         default:
           console.error("`CssElement::toCss' Unknow type :", h.type);
       }
-    };
+    }
 
     return res;
   };
@@ -374,7 +375,7 @@ var CssElement = (function() {
   };
 
   CssElement.prototype.undo = function() {
-    if (this.deleted.length == 0) return this;
+    if (this.deleted.length === 0) return this;
     var h = this.deleted.pop();
     if (h.starSetted)
       this.tag = undefined;
@@ -412,7 +413,7 @@ var CssElement = (function() {
     if (this.deleted.length > 0 && this.deleted[this.deleted.length-1].starSetted)
       return false;
 
-    var modifDone = false;
+    var modifDone = false, i, l;
     // first tag,
     if (this.tag && ! this.triedField.tag) {
       this.deleted.push({type: 'tag', value: this.tag});
@@ -422,7 +423,7 @@ var CssElement = (function() {
     } 
     // then functions,
     if (! modifDone)
-      for (var i = 0, l = this.functions.length ; i < l ; i++) {
+      for (i = 0, l = this.functions.length ; i < l ; i++) {
         var f = this.functions[i];
         if (f.tried) continue;
         f.tried = true;
@@ -432,7 +433,7 @@ var CssElement = (function() {
       }
     // then attributes,
     if (! modifDone)
-      for (var i = 0, l = this.attributes.length ; i < l ; i++) {
+      for (i = 0, l = this.attributes.length ; i < l ; i++) {
         var a = this.attributes[i];
         if (a.tried) continue;
         if (a.simplify()) {
@@ -446,7 +447,7 @@ var CssElement = (function() {
       }
     // then classes,
     if (! modifDone)
-      for (var i = 0, l = this.classes.length ; i < l ; i++) {
+      for (i = 0, l = this.classes.length ; i < l ; i++) {
         var c = this.classes[i];
         if (this.triedField.classes.indexOf(c) != -1) continue;
         this.triedField.classes.push(c);
@@ -482,10 +483,10 @@ var CssFunction = (function() {
   // cssFct.name // => "not"
   // cssFct.arg // => Css("span#an_other_id")
   function CssFunction(struct) {
-    this.struct = struct
+    this.struct = struct;
     this.name = struct.name;
     this.arg = this.name == "not" ? new Css(struct.arg) : struct.arg;
-  };
+  }
 
   CssFunction.prototype.toCss = function() {
     var s = ':'+this.name;
@@ -521,7 +522,7 @@ var CssAttribute = (function() {
     this.name = struct.name;
     this.method = struct.method;
     this.value = struct.value;
-  };
+  }
 
   CssAttribute.prototype.toCss = function() {
     var s = '['+this.name;
@@ -573,7 +574,7 @@ var CssSeparator = (function() {
   function CssSeparator(struct) {
     this.kind = struct.kind;
     this.deleted = undefined;
-  };
+  }
 
   CssSeparator.prototype.valueOf = function() {
     return this.toCss();
@@ -625,7 +626,7 @@ var CssStruct = (function() {
 
     var i = 0;
     var current = css;
-    var match = undefined;
+    var match;
 
     while (i < css.length) {
       if ( match = current.match(/^\[([\w-]+)(?:((?:\~|\||\*|\^|\$)?=)('(?:[^']|\\')*'|"(?:[^"]|\\")*"))?\]/) ) {
@@ -647,7 +648,7 @@ var CssStruct = (function() {
       } else if ( match = current.match(/^:([\w-]+)/) ) {
         i += match[0].length;
         current = current.slice(match[0].length);
-        var value = undefined;
+        var value;
         if (current[0] == '(') {
           var insideCSS = CssStruct.getSubNestedBrace(current);
           i += insideCSS.length + 2;
@@ -678,9 +679,9 @@ var CssStruct = (function() {
     this.initial = css;
     this.parsed  = css.slice(0,i);
     this.nonParsed = css.slice(i);
-  };
+  }
 
-  CssStruct.prototype = new Array();
+  CssStruct.prototype = [];
 
   CssStruct.prototype.toCss = function() {
     var res = '';
@@ -728,12 +729,13 @@ var CssStruct = (function() {
         i = text.indexOf(sep),
         cpt = 1,
         current = text.slice(i+1),
-        res = text.slice(0,i);
+        res = text.slice(0,i),
+        closing;
     switch (sep) {
-      case '(': var closing = ')'; break;
-      case '{': var closing = '}'; break;
-      case '[': var closing = ']'; break;
-      case '<': var closing = '>'; break;
+      case '(': closing = ')'; break;
+      case '{': closing = '}'; break;
+      case '[': closing = ']'; break;
+      case '<': closing = '>'; break;
       default: console.error("`CssStruct::getSubNestedBrace' Unknow block separator :", sep); return text;
     }
 
@@ -743,9 +745,9 @@ var CssStruct = (function() {
       if (i == -1)
         return console.error(current, i);
       else if (current[i] == sep)
-        cpt += 1
+        cpt += 1;
       else if (current[i] == closing)
-        cpt -= 1
+        cpt -= 1;
       else
         console.error(current, i);
       res += current.slice(0,i+1);
@@ -809,7 +811,9 @@ var CssStruct = (function() {
   return CssStruct;
 })();
 
+return Css;
 
+});
 /*
 TODO : plutot que de récupérer un css string, récupérer un DOM element, (un jQuery element ? avec genre jelem.queryString ?)
 path = new Path(arg) => arg peut être un path string, un element, ou un ensemble d'element (jQuery ou pas)

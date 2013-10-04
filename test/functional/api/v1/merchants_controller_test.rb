@@ -21,5 +21,15 @@ class Api::V1::MerchantsControllerTest < ActionController::TestCase
     assert_equal merchants(:rueducommerce).id, json_response["merchant"]["id"]
   end
 
-end
+  test "it shouldn't find merchant for unsupported url via get" do
+    get :index, url:"http://www.toto.fr/bla", format: :json
+    assert_response :success
+    assert json_response.empty?
+  end
 
+  test "it should find merchant for supported url via get" do
+    get :index, url:"http://www.rueducommerce.fr/bla", format: :json
+    assert_response :success
+    assert_equal merchants(:rueducommerce).id, json_response["id"]
+  end
+end

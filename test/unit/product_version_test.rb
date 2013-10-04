@@ -165,7 +165,8 @@ class ProductVersionTest < ActiveSupport::TestCase
               "retrait gratuit en magasin", "dans plus de 50 magasins", "dans 48 magasins",
               "non disponible", "Désolés, cet article a été vendu. Vous aimerez peut-être ceci",
               "Mince alors. Cet article n'est plus disponible.", "Ce magasin est en vacances",
-              "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION" ]
+              "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
+              "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
@@ -184,7 +185,8 @@ class ProductVersionTest < ActiveSupport::TestCase
     array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
               "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
               "disponible sous 4 semaines", "Seulement 1 en stock", "in stock but may require an extra 1-2 days to process.",
-              "Conditions spéciales :- livraison : 10 semaines", "livraison des fichiers" ]
+              "Conditions spéciales :- livraison : 10 semaines", "livraison des fichiers", "attention : dernières pièces disponibles",
+              "In stock" ]
     array.each do |str|
       assert_difference "Incident.count", 0 do
         version = ProductVersion.create(

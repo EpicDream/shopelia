@@ -58,6 +58,7 @@ class MerchantTest < ActiveSupport::TestCase
       :domain => 'amazon.uk',
       :logo => 'http://www.achatsweb.fr/wp-content/uploads/2012/03/Amazon-fr.jpeg',
       :url => 'http://www.amazon.uk',
+      :accepting_orders => true,
       :tc_url => 'http://www.amazon.uk/gp/help/customer/display.html/ref=hp_rel_topic?ie=UTF8&nodeId=548524#conditions_vente')
   end
 

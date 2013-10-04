@@ -6,6 +6,17 @@
     = javascript_include_tag "html_app/application"
     = javascript_include_tag "//shopelia-abba.herokuapp.com/v1/abba.js"
     %meta{ name:"viewport",content:"width=device-width,initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no"}
+    -if @product.present?
+      %meta{content: "product", name: "twitter:card"}
+      %meta{content: "@Shopelia", name: "twitter:site"}
+      %meta{content: @product.name, name: "twitter:title"}
+      %meta{content: @product.description.first(220), name: "twitter:description"}
+      %meta{content: @product.image_url, name: "twitter:image:src"}
+      %meta{content: number_to_currency(@product.product_versions.first.try(:price)), name: "twitter:data1"}/
+      %meta{content: "Prix", name: "twitter:label1"}/
+      %meta{content: @product.merchant.name, name: "twitter:data2"}/
+      %meta{content: "Vendu par", name: "twitter:label2"}/
+      %meta{content: "Shopelia.com", name: "twitter:domain"}
     <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
     = csrf_meta_tags
 

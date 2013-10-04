@@ -149,16 +149,14 @@ Crawler.crawl = function(mapping) {
         option[key] = e.toArray().map(function(elem) {
           var res;
           if (elem.tagName === 'IMG')
-            res = [elem.getAttribute("alt"), elem.getAttribute("title")].join(', ');
+            res = [elem.getAttribute("alt"), elem.getAttribute("title")].filter(function(txt){return txt;}).join(', ');
           else
             res = elem.innerText;
           res = res.replace(/\n/g,' ').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
           return res;
-        }).filter(function(txt) {
-          return txt !== '';
-        }).join(", ");
+        }).filter(function(txt) {return txt;}).join(", ");
       } else
-        option[key] = e.html().replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n");
+        option[key] = e.toArray().map(function(elem) { return elem.innerHTML.replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n"); }).join("\n<br>\n");
       if (option[key] !== "")
         break;
     }

@@ -13,7 +13,7 @@ class Merchant < ActiveRecord::Base
   
   scope :accepting_orders, :conditions => ['accepting_orders = ? and vendor is not null', true]
   
-  attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain, :viking_data
+  attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain, :viking_data, :accepting_orders
   
   before_validation :populate_name
   before_destroy :check_presence_of_orders

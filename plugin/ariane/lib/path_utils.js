@@ -2,20 +2,11 @@
 // Author : Vincent Renaudineau
 // Created : 31/07/2013
 
-(function() {
+define('path_utils', ['jquery', 'html_utils', 'css'], function($, hu, Css) {
 
 'use strict';
 
-window.pu = window.pu || {};
-
-// Local search method
-function $(path, from) {
-  if (! from) from = document;
-  if (jQuery)
-    return jQuery.makeArray(jQuery(from).find(path));
-  else
-    return from.querySelectorAll(path);
-};
+var pu = {};
 
 //
 function compArray(t1,t2) {
@@ -25,7 +16,7 @@ function compArray(t1,t2) {
     if (t1[i] != t2[i])
       return false;
   return true;
-};
+}
 
 //
 function minimize(cssString, elems, commonAncestor) {
@@ -38,7 +29,7 @@ function minimize(cssString, elems, commonAncestor) {
       css.undo();
   }
   return css.toCss();
-};
+}
 
 /////////////////////////////////////////////////////////////
 
@@ -60,18 +51,19 @@ pu.ancestorsAndI = function(e) {
 
 // Search commonAncestor of /elems/.
 pu.commonAncestor = function(elems) {
-  var parents = [];
-  var minlen = Infinity;
-  for (var i = 0, l = elems.length ; i < l ; i++) {
+  var parents = [],
+      minlen = Infinity,
+      i, l;
+  for (i = 0, l = elems.length ; i < l ; i++) {
     var curparents = pu.ancestors(elems[i]);
     parents.push(curparents);
     minlen = Math.min(minlen, curparents.length);
   }
 
-  for (var i = 0, l = parents.length ; i < l ; i++)
+  for (i = 0, l = parents.length ; i < l ; i++)
     parents[i] = parents[i].slice(parents[i].length - minlen);
 
-  for (var i = 0; i < parents[0].length; i++) {
+  for (i = 0; i < parents[0].length; i++) {
     var equal = true;
     for (var j in parents) {
       if (parents[j][i] != parents[0][i]) {
@@ -90,7 +82,7 @@ pu.get = function(elems, commonAncestor) {
   elems = elems instanceof Array ? elems : [elems];
   if (! commonAncestor && ! elems instanceof Array) {
     commonAncestor = document;
-    elems = [elems]
+    elems = [elems];
   } else if (! commonAncestor)
     commonAncestor = pu.commonAncestor(elems);
   // compute full CSS
@@ -174,9 +166,11 @@ Dans le cas d'un tableau de path, il faut mettre les plus spécifique d'abord.
 
 // Compute the CSS path between /from/ and /to/.
 pu.pathFrom = function(from, to) {
-  var fullCssFrom = hu.getFullElementCSSSelectors(jQuery(from));
-  var fullCssTo = hu.getFullElementCSSSelectors(jQuery(to));
+  var fullCssFrom = hu.getElementCSSSelectors(jQuery(from), true);
+  var fullCssTo = hu.getElementCSSSelectors(jQuery(to), true);
   return fullCssTo.replace(fullCssFrom, '').replace(/\s*>?\s*/, '');
 };
 
-})();
+return pu;
+
+});
