@@ -181,54 +181,31 @@ function($, logger, viking, hu, pu, toolbar) {
 
       var newMatch = $(newPath);
       for (var i = 0, l = oldPath.length ; i < l ; i++) {
-        var previousMatch = $(oldPath[i]);
-        // if elems is already match
+
+        var str = "Pour le nouveau path \""+newPath+"\",\n" + "et l'ancien path \""+oldPath[i]+"\",\n",
+            previousMatch = $(oldPath[i]);
         if (previousMatch.length == newMatch.length && $.makeArray(previousMatch) == $.makeArray(newMatch)) {
-          if (confirm(currentMap[key]+"\nL'élément était déjà capturé : remplacer le path ? ("+oldPath[i]+")")) {
-            oldPath.splice(i,1,newPath);
-            mapping[key].context.splice(i,1,currentMap[key].context);
-            break;
-          } else if (confirm("Le placer avant ?")) {
-            oldPath.splice(i,0,newPath);
-            mapping[key].context.splice(i,0,currentMap[key].context);
-            break;
-          } else if (! confirm("Le placer après ?")) {
-            continue;
-          }
-        } else if (previousMatch.length > newMatch.length) {
-          if (confirm(currentMap[key]+"\nL'élément était déjà capturé, mais d'autres éléments aussi : remplacer le path ? ("+oldPath[i]+")")) {
-            oldPath.splice(i,1,newPath);
-            mapping[key].context.splice(i,1,currentMap[key].context);
-            break;
-          } else if (confirm("Le placer avant ?")) {
-            oldPath.splice(i,0,newPath);
-            mapping[key].context.splice(i,0,currentMap[key].context);
-            break;
-          } else if (! confirm("Le placer après ?")) {
-            continue;
-          }
+          alert(str + "les mêmes éléments sont capturés.");
+        } else
+          alert(str + previousMatch.length + " éléments étaient capturés avant, " + newMatch.length + " maintenant.");
+
+        if (confirm(str + "concaténer les paths ?")) {
+          oldPath[i] += ", "+newPath;
           break;
-        } else {
-          logger.debug("concat ? before ? after ?", previousMatch, newMatch);
-          if (confirm("Pour la clé "+key+": "+newMatch.length+" éléments capturés avec le nouveau path, "+previousMatch.length+" avec l'ancien (path n°"+i+" = '"+oldPath[i]+"''): concaténer les paths ?")) {
-            oldPath[i] += ", "+newPath;
-            mapping[key].context.splice(i,1,currentMap[key].context);
-            break;
-          } else if (confirm("Remplacer le path ? ('"+oldPath[i]+"' => '"+newPath+"')")) {
-            oldPath.splice(i,1,newPath);
-            mapping[key].context.splice(i,1,currentMap[key].context);
-            break;
-          } else if (confirm("Le placer avant ?")) {
-            oldPath.splice(i,0,newPath);
-            mapping[key].context.splice(i,0,currentMap[key].context);
-            break;
-          } else if (confirm("Le placer après ?")) {
-            oldPath.splice(i+1,0,newPath);
-            mapping[key].context.splice(i+1,0,currentMap[key].context);
-            break;
-          } else if (i < l-1 && ! confirm("Passer au path suivant ?")) {
-            continue;
-          }
+        } else if (confirm(str + "remplacer le path ?")) {
+          oldPath.splice(i,1,newPath);
+          break;
+        } else if (confirm(str + "Le placer juste avant ?" + (i > 0 ? "\nPrécédent : \""+oldPath[i-1]+"\"." : ''))) {
+          oldPath.splice(i,0,newPath);
+          break;
+        } else if (confirm(str + "Le placer juste après ?" + (i < l-1 ? "\nSuivant : \""+oldPath[i+1]+"\"." : ''))) {
+          oldPath.splice(i+1,0,newPath);
+          break;
+        } else if (i < l-1 && ! confirm("Passer au path suivant ? (sinon on annule)")) {
+          break;
+        } else if (i < l-1 && ! confirm("Reposer les questions pour ce path ?")) {
+          i = i-1;
+          continue;
         }
       }
       // Par défaut on rajoute à la suite
@@ -236,7 +213,6 @@ function($, logger, viking, hu, pu, toolbar) {
         if (l > 0)
           alert("On ajoute ce path à la suite des autres.");
         oldPath.push(newPath);
-        mapping[key].context.push(currentMap[key].context);
       }
     }
   }
