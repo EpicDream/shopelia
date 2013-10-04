@@ -75,7 +75,6 @@ class VirtualisTest < ActiveSupport::TestCase
     data = Virtualis::Report.parse("#{Rails.root}/test/data/virtualis/report_ko_1.csv")
     assert_equal(1, data[:errors].size)
     data = Virtualis::Report.parse("#{Rails.root}/test/data/virtualis/report_ko_2.csv")
-    puts data[:errors].inspect
     assert_equal(1, data[:errors].size)
   end
 

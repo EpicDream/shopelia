@@ -10,7 +10,7 @@ class VirtualCard < ActiveRecord::Base
 
   attr_accessible :amount, :provider
 
-  before_create :generate_cvd
+  before_validation :generate_cvd
 
   private
 
