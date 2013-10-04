@@ -28,6 +28,7 @@ define('ariane', ['logger', 'viking'], function(logger, viking) {
         hash.mappings[url] = merchantHash;
         hash.crawlings[url] = {};
         chrome.storage.local.set(hash);
+        ariane.loadContentScript(tab.id);
       });
     }, function(err) {
       alert("Fail to retrieve mapping. Retry.");

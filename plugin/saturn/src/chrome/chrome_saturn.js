@@ -32,10 +32,18 @@ ChromeSaturn.prototype.cleanTab = function(tabId) {
 };
 
 ChromeSaturn.prototype.openUrl = function(session, url) {
-  chrome.tabs.update(session.tabId, {url: url}, function(tab) {
+  chrome.tabs.get(session.tabId, function(tab) {
+    if (tab.url !== url)
+      chrome.tabs.update(session.tabId, {url: url}, function(tab) {
+        // Priceminister fix when reload the same page with an #anchor set.
+        if (url.match(new RegExp(tab.url+"#\\w+(=\\w+)?$")))
+          chrome.tabs.update(session.tabId, {url: url});
+      });
     // Priceminister fix when reload the same page with an #anchor set.
-    if (url.match(new RegExp(tab.url+"#\\w+(=\\w+)?$")))
+    else if (url.match(new RegExp(tab.url+"#\\w+(=\\w+)?$")))
       chrome.tabs.update(session.tabId, {url: url});
+    else
+      session.next();
   });
 };
 
