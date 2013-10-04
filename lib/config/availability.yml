@@ -22,6 +22,7 @@ usually ships within: true
 "livraison : \\d+ semaines": true
 livraison des fichiers: true
 dernieres pieces disponibles: true
+sera expediee aujourd.?hui: true
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
 retrait gratuit en magasin: false
@@ -49,3 +50,4 @@ looking for something: false
 coming soon: false
 il y a une erreur dans l.?url: false
 est pas accessible: false
+etre averti quand le produit sera de nouveau disponible: false
