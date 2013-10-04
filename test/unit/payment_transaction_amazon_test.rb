@@ -52,7 +52,6 @@ class PaymentTransactionAmazonTest < ActiveSupport::TestCase
 
     result = payment.process
     assert_equal "created", result[:status], result[:message]
-    assert_equal "transaction already processed", result[:message]
   end
 
 end
