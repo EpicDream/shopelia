@@ -38,7 +38,7 @@ define('ariane', ['logger', 'viking'], function(logger, viking) {
   // Inject libraries and contentscript into the page.
   ariane.loadContentScript = function(tabId) {
     chrome.tabs.executeScript(tabId,
-      {code: "require(['mapper'], function(mapper) {mapper.start();});"}
+      {code: "require(['ariane_mapper'], function(mapper) {mapper.start();});"}
     );
   };
 

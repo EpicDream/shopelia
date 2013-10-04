@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define('mapper', ['jquery', 'logger', 'viking', 'html_utils', 'path_utils', 'toolbar'], 
+define('ariane_mapper', ['jquery', 'logger', 'viking', 'html_utils', 'path_utils', 'ariane_toolbar'],
 function($, logger, viking, hu, pu, toolbar) {
   "use strict";
 
