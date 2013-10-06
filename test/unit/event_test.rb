@@ -78,5 +78,16 @@ class EventTest < ActiveSupport::TestCase
       :developer_id => developers(:prixing).id)
 
     assert p.reload.viking_sent_at.nil?
-  end  
+  end
+
+  test "it should filter bots" do
+    [ "Python-urllib/2.7",
+      "QuerySeekerSpider ( http://queryseeker.com/bot.html )",
+      "Mozilla/5.0 (compatible; Kraken/0.1; http://linkfluence.net/; bot@linkfluence.net)",
+      "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.2) Gecko/20100115 Firefox/3.6 (FlipboardProxy/1.1; +http://flipboard.com/browserproxy)"
+    ].each do |ua|
+      assert Event.is_bot?(ua), ua
+    end
+    assert !Event.is_bot("Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36")
+  end 
 end
