@@ -4,7 +4,7 @@ class GatewayController < ApplicationController
   before_filter :retrieve_device
 
   def index
-    if @device.present?
+    if @device.present? && @url =~ /^http/
       EventsWorker.perform_async({
         :url => @url,
         :developer_id => @developer.id,
