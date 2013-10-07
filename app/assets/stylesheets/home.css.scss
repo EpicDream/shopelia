@@ -27,3 +27,31 @@ input#product-bar,button#btn-order {
     margin: 10px;
   }
 }
+
+
+.cgu {
+  h3 {
+    color: $blue;
+  }
+
+  b {
+   color: $green;
+  }
+
+  font-weight: normal;
+  ul {
+    list-style: none;
+    padding:0;
+    margin:0;
+  }
+
+  li {
+    padding-left: 1em;
+    text-indent: -.7em;
+  }
+
+  li:before {
+    content: "\002022 ";
+    color: $blue; /* or whatever color you prefer */
+  }
+}

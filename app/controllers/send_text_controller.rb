@@ -9,7 +9,7 @@ class SendTextController <  ApplicationController
       response = nexmo.send_message({:to => phone_number , :from => 'Shopelia', :text => 'http://10.0.0.19:3000/download'})
       if response.ok?
           # do something with response.object
-          render :json => response.to_json
+          render :json => response.object
       else
           render :json => { :errors => response.to_json }
           # handle the error

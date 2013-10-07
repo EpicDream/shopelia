@@ -36,7 +36,7 @@ $(document).ready ->
                        'placement': 'right',
                        'trigger': 'click'
                        'html': true
-                       'title': 'Ouvrez shopelia.com/download sur votre mobile ou <b> recevez le lien de téléchargement sur votre téléphone ou email</b> <div class="spacer10"></div><form class="form-inline" role="form"><div class="form-group"><input id="send-link-input" class="form-control" placeholder="Tél. ou Email"></input></div><button type="submit" id="send-link-btn" class="btn btn-default">Envoyer</button></form>'
+                       'title': 'Ouvrez shopelia.com/download sur votre mobile ou <b> recevez le lien de télé- chargement sur votre téléphone ou email</b> <div class="spacer10"></div><form class="form-inline" role="form"><div class="form-group"><input id="send-link-input" class="form-control" placeholder="Tél. ou Email"></input></div><button type="submit" id="send-link-btn" class="btn btn-default">Envoyer</button></form>'
                        })
 
   $btnDownload.on('shown.bs.tooltip',  () ->
