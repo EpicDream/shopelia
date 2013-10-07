@@ -7,8 +7,10 @@ class HomeController < ApplicationController
   def about
   end
 
-  def general_terms_of_use
+  def security
+  end
 
+  def general_terms_of_use
   end
 
   def connect
