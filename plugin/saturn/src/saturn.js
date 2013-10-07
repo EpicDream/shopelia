@@ -108,6 +108,7 @@ Saturn.prototype.updateNbTabs = function() {
   var pending = this.tabs.pending,
       i;
   if (this.productQueue.length === 0 && pending.length > this.MIN_NB_TABS) {// On ferme des tabs
+    pending = pending.sort(function(i,j){return i-j;});
     var nbTabToClose = pending.length - this.MIN_NB_TABS;
     for (i = 0 ; i < nbTabToClose ; i++) {
       this.tabs.opened[pending[0]].toClose = true;
