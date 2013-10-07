@@ -5,15 +5,11 @@
       .row
         .col-md-6.center
           .promise
-            Scannez et commandez
+            Scannez, Achetez
             %br
-            avec
-            %b
-              un seul compte
-            %br
-            sur
-            %b
-              les sites marchands
+            %h4
+              profitez des prix internet où que vous soyez
+
 
           .spacer40
           .btn.btn-default.btn-lg.btn-download{rel:"tooltip"}
@@ -44,24 +40,26 @@
   %section
     .container
       .row
-        .col-md-3.center.col-md-push-8.col-md-offset-1= image_tag("security-icon.png", width:"200px")
+        .col-md-3.center.col-md-push-8.col-md-offset-1= image_tag("convenient-icon.png", width:"200px")
         .col-md-8.col-md-pull-3
-          %h1.blue Sécurisé
+          %h1.green Pratique
           %p
-            La transaction est effectuée sur des serveurs sécurisés.
-            Nous ne stockons aucune donnée de carte bancaire.
-            =  link_to("En savoir plus")
+            C’est votre 1er achat avec Shopelia: ajoutez vos informations personnelles et bancaires pour créer votre compte et valider votre commande.
+            Et pour les achats suivants, votre e-mail et mot de passe suffisent, quel que soit le marchand chez qui vous souhaitez commander.
+
 
   .spacer50
   %section
     .container
       .row
-        .col-md-3.center= image_tag("convenient-icon.png", width:"200px")
+        .col-md-3.center= image_tag("security-icon.png", width:"200px")
         .col-md-8.col-md-offset-1
-          %h1.green Pratique
+          %h1.blue Sécurisé
           %p
-            C’est votre 1er achat avec Shopelia: ajoutez vos informations personnelles et bancaires pour créer votre compte et valider votre commande.
-            Et pour les achats suivants, votre e-mail et mot de passe suffisent, quel que soit le marchand chez qui vous souhaitez commander.
+            La transaction est effectuée sur des serveurs sécurisés.
+            Nous ne stockons aucune donnée de carte bancaire.
+            =  link_to("En savoir plus","/security")
+
 
   .spacer100
 
