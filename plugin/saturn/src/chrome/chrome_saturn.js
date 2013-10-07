@@ -2,7 +2,8 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-(function() {
+define(["jquery", "logger", "src/saturn"], function($, logger, Saturn) {
+
 "use strict";
 
 var ChromeSaturn = function() {
@@ -164,64 +165,6 @@ ChromeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
   chrome.tabs.sendMessage(session.tabId, cmd, command.then);
 };
 
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = ChromeSaturn;
-else if ("function" == typeof define && define.amd)
-  define("chrome_saturn", ["jquery", "saturn"],function(){return ChromeSaturn;});
-else
-  window.ChromeSaturn = ChromeSaturn;
+return ChromeSaturn;
 
-})();
-
-// Default to debug until Chrome propose tabs for each levels.
-logger.level = logger.DEBUG;
-
-var saturn = new window.ChromeSaturn();
-
-// On contentscript ask next step (next color/size tuple).
-chrome.extension.onMessage.addListener(function(msg, sender, response) {
-  if (sender.id != chrome.runtime.id || ! sender.tab || ! saturn.sessions[sender.tab.id])
-    return;
-  if (msg == "nextStep" && saturn.sessions[sender.tab.id].then)
-    saturn.sessions[sender.tab.id].then();
 });
-
-// On extension button clicked.
-chrome.browserAction.onClicked.addListener(function(tab) {
-  if (! saturn.TEST_ENV) {
-    if (saturn.crawl) {
-      logger.info("Button pressed, Saturn is paused.");
-      saturn.pause();
-    } else {
-      logger.info("Button pressed, Saturn is resumed.");
-      saturn.resume();
-    }
-  } else {
-    logger.info("Button pressed, going to crawl current page...");
-    saturn.parseCurrentPage(tab);
-  }
-});
-
-chrome.tabs.onRemoved.addListener(function(tabId) {
-  Saturn.prototype.closeTab.call(saturn, tabId);
-});
-
-// Inter-extension messaging. Usefull for Ariane.
-chrome.extension.onConnectExternal.addListener(function(port) {
-  console.log("port=", port);
-  if (port.sender.id !== "aomdggmelcianmnecnijkolfnafpdbhm")
-    return logger.warning('Extension', port.sender.id, "try to connect to us");
-  saturn.externalPort = port;
-  port.onMessage.addListener(function(prod) {
-    console.log(prod);
-    if (prod.tabId === undefined || prod.url === undefined)
-      return saturn.sendError(prod, 'some fields are missing.');
-    prod.extensionId = port.sender.id;
-    prod.strategy = 'fast';
-    prod.keepTabOpen = true;
-    saturn.onProductReceived(prod);
-  });
-});
-
-if (! saturn.TEST_ENV)
-  saturn.start();

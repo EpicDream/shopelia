@@ -13,23 +13,16 @@
 
 
   <!-- include lib files here... -->
-  <script type="text/javascript" src="../lib/jquery-1.9.1.min.js"></script>
-  <script type="text/javascript" src="../lib/uri.js"></script>
   <script type="text/javascript" src="../lib/utils.js"></script>
-
-  <!-- include source files here... -->
-  <script type="text/javascript" src="../src/tree.js"></script>
-  <script type="text/javascript" src="../src/saturn_options.js"></script>
-  <script type="text/javascript" src="../src/saturn_session.js"></script>
-  <script type="text/javascript" src="../src/saturn.js"></script>
+  <script type="text/javascript" data-main="../require_config.js" src="../vendor/require.js"></script>
 
   <!-- include spec files here... -->
-  <script type="text/javascript" src="fake_saturn.js"></script>
-  <script type="text/javascript" src="saturn_test.js"></script>
-
 
   <script type="text/javascript">
-    (function() {
+    requirejs.config({
+      baseUrl: '../',
+    });
+    require(['test/saturn_test'], function() {
       var jasmineEnv = jasmine.getEnv();
       jasmineEnv.updateInterval = 1000;
 
@@ -41,20 +34,8 @@
         return htmlReporter.specFilter(spec);
       };
 
-      var currentWindowOnload = window.onload;
-
-      window.onload = function() {
-        if (currentWindowOnload) {
-          currentWindowOnload();
-        }
-        execJasmine();
-      };
-
-      function execJasmine() {
-        jasmineEnv.execute();
-      }
-
-    })();
+      jasmineEnv.execute();
+    });
   </script>
 
 </head>

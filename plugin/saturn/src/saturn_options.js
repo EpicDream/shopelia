@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-10
 
-(function() {
+define(["src/tree"], function(Tree) {
   //
   var SaturnOptions = function(mapping, argOptions) {
     this._optionTree = new Tree();
@@ -196,11 +196,6 @@
     return versions;
   };
 
-  if ("object" == typeof module && module && "object" == typeof module.exports)
-    exports = module.exports = SaturnOptions;
-  else if ("function" == typeof define && define.amd)
-    define("saturn_options", ["tree"], function(){return SaturnOptions;});
-  else
-    window.SaturnOptions = SaturnOptions;
+  return SaturnOptions;
 
-})();
+});

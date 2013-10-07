@@ -1,4 +1,6 @@
 
+require(['src/crawler'], function(Crawler) {
+
 chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   if (sender.id != chrome.runtime.id) return;
   console.debug("ProductCrawl task received", hash);
@@ -22,3 +24,5 @@ var script = document.createElement("script");
 script.type = "text/javascript";
 script.innerText = "window.alert = function() {};";
 document.head.appendChild(script);
+
+});

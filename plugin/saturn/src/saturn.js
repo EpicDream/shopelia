@@ -2,7 +2,8 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-(function() {
+define(['logger', 'uri', './saturn_session'], function(logger, Uri, SaturnSession) {
+
 "use strict";
 
 var Saturn = function() {
@@ -341,11 +342,6 @@ Saturn.prototype.evalAndThen = function(session, cmd, callback) {
   throw "abstract function";
 };
 
-if ("object" === typeof module && module && "object" === typeof module.exports)
-  exports = module.exports = Saturn;
-else if ("function" === typeof define && define.amd)
-  define("saturn", ["saturn_session", "uri"], function(){return Saturn;});
-else
-  window.Saturn = Saturn;
+return Saturn;
 
-})();
+});

@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-(function() {
+define(['logger', './saturn_options'], function(logger, SaturnOptions) {
 "use strict";
 
 // Je fais la supposition simpliste mais réaliste que pour un produit,
@@ -208,11 +208,6 @@ SaturnSession.prototype.endSession = function() {
   this.saturn.endSession(this);
 };
 
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = SaturnSession;
-else if ("function" == typeof define && define.amd)
-  define("saturn_session", ["saturn_options"], function(){return SaturnSession;});
-else
-  window.SaturnSession = SaturnSession;
+return SaturnSession;
 
-})();
+});
