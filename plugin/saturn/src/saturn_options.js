@@ -74,9 +74,16 @@
       }
       // si la valeur n'est pas donnée ou qu'on l'a pas trouvée,
       // on les ajoute toutes.
-      if (currentArg !== null)
+      if (currentArg !== null) {
+        // On place l'élément sélectionné en premier.
+        for (i = 1; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++)
+          if (values[i].selected) {
+            values.unshift(values.splice(i, 1)[0]);
+            break;
+          }
         for (i = 0; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++)
           this._currentNode.addChildAt(JSON.stringify(values[i]), values[i]);
+      }
     }
     return this;
   };

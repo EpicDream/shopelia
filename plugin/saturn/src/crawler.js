@@ -106,11 +106,13 @@ Crawler.setOption = function(pathes, option) {
     if (! elem && option.id)
       elem = elems.filter("#"+option.id)[0];
     if (! elem && option.text)
-      elem = elems.find("option:contains("+option.text+")")[0];
+      elem = (elem = elems.filter(":contains("+option.text+")")) && elem.length == 1 ? elem[0] : undefined;
     if (! elem && option.src)
       elem = elems.filter("[src='"+option.src+"']")[0];
     if (! elem && option.href)
       elem = elems.filter("[href='"+option.href+"']")[0];
+    if (! elem && option.title)
+      elem = (elem = elems.filter("[title='"+option.title+"']")) && elem.length == 1 ? elem[0] : undefined;
     if (! elem) {
       console.warn("No option found foor path '"+path+"' in elems", elems, "for option", elem);
       continue;

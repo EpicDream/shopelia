@@ -39,10 +39,12 @@ SaturnSession.prototype.next = function() {
     case "normal" :
       t = this.options.next({lookInMapping: true, depthOnly: true});
       if (t !== null) {
-        if (t[1] === undefined)
+        if (t[1] === undefined) {
           this.getOptions(t[0]);
-        else
+        } else if (! t[1].selected) {
           this.setOption(t[0], t[1]);
+        } else
+          this.next();
       } else {
         var nbOption = this.options.currentNbOption() - Object.keys(this.argOptions).length;
         if (this.strategy === 'fast') {
