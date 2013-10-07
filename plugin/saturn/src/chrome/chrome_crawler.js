@@ -17,3 +17,8 @@ function goNextStep() {
 $(document).ready(function() {
   setTimeout(goNextStep, 100);
 });
+
+var script = document.createElement("script");
+script.type = "text/javascript";
+script.innerText = "window.alert = function() {};";
+document.head.appendChild(script);
