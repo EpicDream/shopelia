@@ -8,7 +8,7 @@ class Api::V1::CartItemsControllerTest < ActionController::TestCase
       assert_response :success
     end
 
-    assert_equal Cart::FOLLOW, Cart.first.kind
+    assert_equal Cart::CHECKOUT, Cart.first.kind
   end
 
   test "it should add new item for known email" do
