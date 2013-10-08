@@ -1,0 +1,10 @@
+%section.header
+  %header
+    %h1 Merchant #{@merchant.name}
+
+.container-fluid
+  .row-fluid
+    .span4
+      %article.coolbox
+        %h3 Edit properties
+        = render "form"
