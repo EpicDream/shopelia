@@ -45,7 +45,7 @@ logger._log = function(level, caller, _arguments) {
   
   var args;
   if (window.chrome)
-    args = [sprintf('%%c[%s][%5s]%s ',(new Date()).toLocaleTimeString(), level, typeof caller === 'string' ? " `"+caller+"' :" : ''), css_style];
+    args = [sprintf('%%c[%s][%5s]%s ',(new Date()).toLocaleTimeString(), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : ''), css_style];
   else
     args = [sprintf('[%s][%5s]%s ',(new Date()).toLocaleTimeString(), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : '')]
 
