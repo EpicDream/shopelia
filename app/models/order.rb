@@ -108,6 +108,7 @@ class Order < ActiveRecord::Base
       when "cart_amount_error" then fail("cart_amount_error", :vulcain)
       when "dispatcher_crash" then fail("dispatcher_crash", :vulcain)
       when "cart_line_mapping_error" then fail("cart_line_mapping_error", :vulcain)
+      when "gift_message_failure" then fail("gift_message_failure", :vulcain)
       when "no_product_available" then abort("stock", :merchant)
       when "out_of_stock" then abort("stock", :merchant)
       when "no_delivery" then abort("delivery", :merchant)
