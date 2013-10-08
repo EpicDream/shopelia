@@ -9,7 +9,7 @@
             %h4= t 'app.public.tagline'
               
           .spacer40
-          .btn.btn-default.btn-lg.btn-download{rel:"tooltip"}
+          .btn.btn-default.btn-lg.btn-download{rel:"tooltip", data:{animation:'true', placement:'right', trigger:'click', html:'true'}}
             = t 'app.public.download_app'
           .row
             .col-md-4.col-md-offset-2
@@ -64,3 +64,35 @@
               = t 'app.public.download_app'
 
     .spacer50
+
+#sendAppInvalidEntryModal.modal.fade{role: "dialog", tabindex: "-1"}
+  .modal-dialog
+    .modal-content
+      .modal-body
+        %h3= t 'app.public.send_app.invalid_entry'
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"}= t 'app.close'
+
+#sendAppErrorModal.modal.fade{role: "dialog", tabindex: "-1"}
+  .modal-dialog
+    .modal-content
+      .modal-body
+        %h3= t 'app.public.send_app.error'
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"}= t 'app.close'
+
+#sendAppSuccessModal.modal.fade{role: "dialog", tabindex: "-1"}
+  .modal-dialog
+    .modal-content
+      .modal-body
+        %h3= t 'app.public.send_app.success'
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"}= t 'app.close'
+
+#downloadTooltip.hidden
+  =raw(t 'app.public.download.tooltip')
+  .spacer10
+  %form.form-inline{role: "form"}
+    .form-group
+      %input#send-link-input.form-control{placeholder: "#{t 'app.public.download.placeholder'}"}/
+    %button#send-link-btn.btn.btn-default{type: "submit", "data-loading-text" => "#{t 'app.public.download.wait'}"}= t 'app.public.download.send'

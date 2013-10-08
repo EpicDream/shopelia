@@ -338,6 +338,15 @@ fr:
       terms: "CGU"
       help: "Aide"
       security: "Sécurité"
+      send_app:
+        invalid_entry: "Veuillez entrez un email ou un numéro de téléphone valide"
+        error: "Nous n'avons pas pu vous envoyer le lien pour télécharger l'application. Veuillez vérifier les informations saisies."
+        success: "Le lien de téléchargement a bien été envoyé ! vous le receverez dans quelques instants. A tout de suite sur l'application Shopelia !"
+      download:
+        tooltip: "Ouvrez <strong>shopelia.com/download</strong> sur votre mobile ou <strong>recevez le lien de téléchargement sur votre téléphone ou email</strong>"
+        send: "Envoyer"
+        placeholder: "Tel. ou Email"
+        wait: " ... "
     signin:
       title: "Déjà membre ?"
       unauthorized: "Erreur dans l'email ou le mot de passe"
