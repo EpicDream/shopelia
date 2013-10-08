@@ -29,6 +29,7 @@ module AdminHelper
     case action
     when Event::VIEW then "<span class='label label-warning'>view</span>"
     when Event::CLICK then "<span class='label label-success'>click</span>"
+    when Event::REQUEST then "<span class='label'>request</span>"
     end
   end
 

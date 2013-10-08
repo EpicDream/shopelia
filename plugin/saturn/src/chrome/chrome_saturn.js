@@ -8,6 +8,7 @@
 var ChromeSaturn = function() {
   Saturn.apply(this, arguments);
   this.TEST_ENV = navigator.appVersion.match(/chromium/i) !== null;
+  this.DELAY_RESCUE = 60000; // wait response from contentscript 60s max, fail after that (required when a lot of sizes for shoes for example).
 
   this.results = {}; // for debugging purpose, when there are no results sended by ajax.
 };
@@ -84,15 +85,15 @@ ChromeSaturn.prototype.getMerchantId = function(url, callback) {
 };
 
 ChromeSaturn.prototype.parseCurrentPage = function(tab) {
-  this.tabs.opened[tab.id] = {};
-  this.tabs.pending.unshift(tab.id);
-  var prod = {url: tab.url, merchant_id: tab.url, tabId: tab.id};
+  var prod = {url: tab.url, merchant_id: tab.url, tabId: tab.id, keepTabOpen: true};
   this.onProductReceived(prod);
 };
 
 //
 ChromeSaturn.prototype.sendError = function(session, msg) {
-  if (session.id) // Stop pushed or Local Test
+  if (session.extensionId) {
+    saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], errorMsg: msg});
+  } else if (session.id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
       url: this.PRODUCT_EXTRACT_UPDATE+session.id,
@@ -105,7 +106,12 @@ ChromeSaturn.prototype.sendError = function(session, msg) {
 //
 ChromeSaturn.prototype.sendResult = function(session, result) {
   logger.debug("sendResult : ", result);
-  if (session.id) {// Stop pushed or Local Test
+  if (session.extensionId) {
+    result.url = session.url;
+    result.tabId = session.tabId;
+    result.kind = session.kind;
+    saturn.externalPort.postMessage(result);
+  } else if (session.id) {// Stop pushed or Local Test
     $.ajax({
       type : "PUT",
       url: this.PRODUCT_EXTRACT_UPDATE+session.id,
@@ -121,6 +127,7 @@ ChromeSaturn.prototype.onTimeout = function(command) {
     // logger.debug("in evalAndThen, timeout for", command);
     command.callback = undefined;
     this.sendError(command.session, "something went wrong", command);
+    command.session.endSession();
   }.bind(this);
 };
 ChromeSaturn.prototype.onResultReceived = function(command) {
@@ -189,6 +196,23 @@ chrome.browserAction.onClicked.addListener(function(tab) {
 
 chrome.tabs.onRemoved.addListener(function(tabId) {
   Saturn.prototype.closeTab.call(saturn, tabId);
+});
+
+// Inter-extension messaging. Usefull for Ariane.
+chrome.extension.onConnectExternal.addListener(function(port) {
+  console.log("port=", port);
+  if (port.sender.id !== "aomdggmelcianmnecnijkolfnafpdbhm")
+    return logger.warning('Extension', port.sender.id, "try to connect to us");
+  saturn.externalPort = port;
+  port.onMessage.addListener(function(prod) {
+    console.log(prod);
+    if (prod.tabId === undefined || prod.url === undefined)
+      return saturn.sendError(prod, 'some fields are missing.');
+    prod.extensionId = port.sender.id;
+    prod.strategy = 'fast';
+    prod.keepTabOpen = true;
+    saturn.onProductReceived(prod);
+  });
 });
 
 if (! saturn.TEST_ENV)

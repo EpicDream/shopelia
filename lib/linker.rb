@@ -4,6 +4,7 @@ class Linker
   
   def self.clean url
     count = 0
+    url = URI.unescape(url) if url =~ /^http%3A%2F%2F/
     canonical = MerchantHelper.canonize(url) || self.by_rule(url) ||  UrlMatcher.find_by_url(url).try(:canonical)
     if canonical.nil?
       orig = url
@@ -16,11 +17,12 @@ class Linker
 
       canonical = self.clean_url url
       UrlMatcher.create(url:orig,canonical:canonical)
+      UrlMatcher.create(url:canonical,canonical:canonical)
     end
     canonical
   rescue Errno::ETIMEDOUT
     orig
-  rescue
+  rescue 
     nil
   end
 

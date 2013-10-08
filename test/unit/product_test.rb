@@ -164,7 +164,7 @@ class ProductTest < ActiveSupport::TestCase
     products(:headphones).update_attribute :versions_expires_at, Time.now
     assert_equal 2, Product.viking_pending.count
     products(:headphones).update_attribute :viking_failure, true
-    assert_equal 1, Product.viking_pending.count
+    assert_equal 2, Product.viking_pending.count
     products(:headphones).update_attribute :versions_expires_at, nil
     assert_equal 2, Product.viking_pending.count
     products(:headphones).update_attribute :versions_expires_at, 1.hour.from_now

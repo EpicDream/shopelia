@@ -1,8 +1,21 @@
+//
+// Author : Vincent RENAUDINEAU
+// Created : 2013-09-24
+
+define('toolbar', ['jquery', 'logger'], function($, logger) {
+  "use strict";
+
+  var toolbar = {},
+      css_link,
+      jAriane,
+      jToolbar,
+      jStep,
+      jButtons;
 
 function loadAriane() {
   // Create DIV
   var div = document.createElement('div');
-  div.id = "arianeDiv"
+  div.id = "arianeDiv";
   document.documentElement.appendChild(div);
   jAriane = $(div);
 
@@ -14,7 +27,7 @@ function loadAriane() {
   css_link.rel = "stylesheet";
   css_link.href = chrome.runtime.getURL("assets/main.css");
 
-};
+}
 
 function build() {
   // Init global variables
@@ -44,14 +57,21 @@ function build() {
   jToolbar.find(".ari-abort").click(onAborted);
   jStep.change(onStepChanged);
   jButtons.click(onButtonClicked);
+
+  //
+  toolbar.toolbarElem = jToolbar[0];
+  toolbar.stepElem = jStep[0];
+  toolbar.buttons = jButtons.toArray();
 }
+
+  loadAriane();
 
 /* ********************************************************** */
 /*                          On Event                          */
 /* ********************************************************** */
 
 function onStepChanged(event) {
-  field_for_step = {
+  var field_for_step = {
     account_creation: "#ariane-account, #ariane-user",
     logout: "",
     login: "#ariane-account",
@@ -71,7 +91,7 @@ function onStepChanged(event) {
     jToolbar.find(".ari-next").show();
     jToolbar.find(".ari-finish").hide();
   }
-};
+}
 
 function onNext() {
   jStep[0].selectedIndex += 1;
@@ -79,28 +99,31 @@ function onNext() {
   if (jStep.find("option:selected").prop("disabled"))
     jStep[0].selectedIndex += 1;
   jStep.change();
-};
+}
 
 function onButtonClicked(event) {
   jButtons.filter(".current-field").add(event.currentTarget).toggleClass("current-field");
-};
+}
 
 function onAborted() {
   res = prompt("Pour quelle raison annule-t-on ?");
   if (!res)
     return;
-  chrome.extension.sendMessage({abort: res});
-};
+  chrome.extension.sendMessage({action: 'abort', reason: res});
+}
 
 function onFinished() {
-  chrome.extension.sendMessage('finish');
-};
+  chrome.extension.sendMessage({action: 'finish'});
+}
 
 /* ********************************************************** */
 /*                           Utilities                        */
 /* ********************************************************** */
 
-function startAriane(crawl_mode) {
+toolbar.startAriane = function(crawl_mode) {
+  if (! jStep) // Fix to fast .js files load.
+    return setTimeout('toolbar.startAriane('+(crawl_mode === true)+')', 100);
+
   if (crawl_mode)
     jStep.val("extract").prop("disabled", true);
   $(document.body).addClass("ariane");
@@ -109,10 +132,8 @@ function startAriane(crawl_mode) {
   onStepChanged();
 };
 
-function getCurrentFieldId() {
+toolbar.getCurrentFieldId = function() {
   var fieldId = (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-/, '').replace(/product-/, '');
-  if (! fieldId)
-    fieldId = "other";
   return fieldId;
 };
 
@@ -136,12 +157,6 @@ chrome.extension.onMessage.addListener(function(msg, sender) {
     e.removeClass("current-field");
   }
 });
-
-function loadToolbarOnJQuery() {
-  if (window.jQuery && window.jQuery.ui)
-    return loadAriane();
-  else
-    return setTimeout(loadToolbarOnJQuery, 100);
-};
-
-loadToolbarOnJQuery();
+  
+  return toolbar;
+});

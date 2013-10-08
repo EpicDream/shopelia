@@ -1,7 +1,10 @@
 // HTML Utils.
 // Author : Vincent Renaudineau
 
-hu = {};
+define('html_utils', ['jquery'], function($) {
+// "use strict";
+
+var hu = {};
 
 hu.getElementXPath = function(element) {
   var xpath = '';
@@ -39,8 +42,8 @@ hu.getElementCompleteXPath = function(element) {
   return xpath;
 };
 
-hu.getElementsByXPath = function(xpath) { 
-  var aResult = new Array();
+hu.getElementsByXPath = function(xpath) {
+  var aResult = [];
   try {
     var a = document.evaluate(xpath, document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     for ( var i = 0 ; i < a.snapshotLength ; i++ ){aResult.push(a.snapshotItem(i));}
@@ -53,11 +56,11 @@ hu.getElementsByXPath = function(xpath) {
 
 hu.isXpath = function(path) {
   return path[0] == '/' || path[0] == '(';
-}
+};
 
 function getClasses(jelem) {
   return (jelem.attr("class") ? _.compact(jelem.attr("class").split(/\s+/)).sort() : []);
-};
+}
 
 // Get CSS Selector for this element : tagname, id, classes, child position.
 // If complete is false, stop when an id is found, or when discriminant classes are found and add only these.
@@ -74,7 +77,7 @@ function fromParentSelector(jelement, complete) {
   }
   // Si il n'y a qu'un élément de ce type en enfant, on s'arrête
   var sameTagSiblings = jelement.siblings().filter(function(index) { return this.tagName == tag; });
-  if (! complete && sameTagSiblings.length == 0)
+  if (! complete && sameTagSiblings.length === 0)
     return res;
   // CLASSES
   var elementClasses = getClasses(jelement);
@@ -92,11 +95,8 @@ function fromParentSelector(jelement, complete) {
   // var pos = jelement.index(tag) + 1;
   res += ":nth-of-type(" + pos + ")";
   return res;
-};
+}
 
-hu.getFullElementCSSSelectors = function(jelement) {
-  return hu.getElementCSSSelectors(jelement, true);
-};
 hu.getElementCSSSelectors = function(jelement, complete) {
   var css = '';
   for ( ; jelement && jelement[0].nodeType == 1 ; jelement = jelement.parent() ) {
@@ -125,7 +125,7 @@ hu.setXPathUniq = function(xpath, e) {
 
   // var elems = hu.getElementsByXPath(xpath);
   // if (elems.length == 1 && elems[0] == e)
-  //   return xpath;
+  // return xpath;
   // throw "Don't succeed to set xpath uniq."
   return xpath;
 };
@@ -160,10 +160,10 @@ hu.getElementAttrs = function(e) {
   var attrs = e.attributes;
   var data = {
     tagName: e.tagName,
-    id: attrs['id'],
-    class: attrs['class'],
-    text: e.innerText,
-    href: e.ownerDocument.location.href
+    id: attrs.id,
+    class: attrs.class,
+    text: e.innerText.trim(),
+    location: e.ownerDocument.location.href
   };
   if (e.tagName == "INPUT" || e.tagName == "SELECT" || e.tagName == "TEXTAREA") data.value = e.value;
   var type = e.getAttribute("type");
@@ -176,13 +176,13 @@ hu.getElementAttrs = function(e) {
 hu.getLabelAttrs = function(e) {
   var l = hu.getInputsLabel(e);
   if (! l) return {};
-  return Object({xpath: hu.getElementXPath(l), id: l.getAttribute("id"), class: l.getAttribute("class"), text: l.innerText})
+  return Object({xpath: hu.getElementXPath(l), id: l.getAttribute("id"), class: l.getAttribute("class"), text: l.innerText});
 };
 hu.getFormAttrs = function(e) {
   var current = e;
   while (current.tagName.toLowerCase() != "form" && current.tagName.toLowerCase() != "body")
     current = current.parentNode;
-  if (current.tagName.toLowerCase() != "form") 
+  if (current.tagName.toLowerCase() != "form")
     return {};
   else
     return hu.getElementAttrs(current);
@@ -202,7 +202,6 @@ hu.getFormAttrs = function(e) {
 // h.form : input's form's attributes. See hu.getElementAttrs().
 hu.getElementContext = function(e) {
   var context = {};
-  context.url = location.href;
   context.xpath = hu.getElementXPath(e);
   context.fullXPath = hu.getElementCompleteXPath(e);
   context.css = hu.getElementCSSSelectors($(e));
@@ -221,7 +220,7 @@ hu.getElementContext = function(e) {
     context.form = hu.getFormAttrs(e);
   }
   return context;
-}
+};
 
 // For an input/textarea/select e, search the corresponding label :
 // search first with the 'for' attribute if present,
@@ -313,12 +312,13 @@ hu.labels = function(e) {
 hu.cookies = {};
 
 hu.cookies.add = function(name,value,days,domain) {
+  var date, expires;
   if (days) {
-    var date = new Date();
+    date = new Date();
     date.setTime(date.getTime()+(days*24*60*60*1000));
-    var expires = "; expires="+date.toGMTString();
-  }
-  else var expires = "";
+    expires = "; expires="+date.toGMTString();
+  } else
+    expires = "";
   if (domain) domain = "; domain="+domain;
   else domain = "";
   document.cookie = name+"="+value+expires+"; path=/"+domain;
@@ -330,7 +330,7 @@ hu.cookies.get = function(name) {
   for(var i=0;i < ca.length;i++) {
     var c = ca[i];
     while (c.charAt(0)==' ') c = c.substring(1,c.length);
-    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
   }
   return null;
 };
@@ -357,3 +357,42 @@ hu.cookies.removeAll = function() {
   for (var i in keys)
     this.remove(keys[i]);
 };
+
+// if ("object" == typeof module && module && "object" == typeof module.exports)
+//   exports = module.exports = hu;
+// else if ("function" == typeof define && define.amd)
+//   define("html_utils", ["jquery","underscore"], function(){return hu;});
+// else
+//   this.hu = hu;
+  
+  return hu;
+
+});
+
+//bravo's xpath function shortcut
+// if you don't have $x already
+function $x(p, c) {
+  var i, r = [], x = document.evaluate(p, c || document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+  while(i=x.iterateNext()) r.push(i);
+  return r;
+}
+// xpath unordered nodes
+function $xu(p, c) {
+  var i, r = [], x = document.evaluate(p, c || document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+  while(i=x.iterateNext()) r.push(i);
+  return r;
+}
+// xpath ordered nodes
+function $xo(p, c) {
+  var i, r = [], x = document.evaluate(p, c || document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
+  while(i=x.iterateNext()) r.push(i);
+  return r;
+}
+// xpath single first node
+function $xf(p, c) {
+  return document.evaluate(p, c || document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
+// xpath single any node
+function $xa(p, c) {
+  return document.evaluate(p, c || document, null, XPathResult.ANY_UNORDERED_NODE_TYPE, null).singleNodeValue;
+}

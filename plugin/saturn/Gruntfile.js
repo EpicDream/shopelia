@@ -1,7 +1,9 @@
 module.exports = function(grunt) {
+  var pkg = require('./package.json'),
+      manifest = require('./manifest.json');
 
   grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
+    pkg: pkg,
     concat: {
       options: {
         separator: ';'
@@ -48,6 +50,7 @@ module.exports = function(grunt) {
     jshint: {
       files: ['Gruntfile.js', 'src/**/*.js', 'lib/tree.js', 'test/*.js'],
       options: {
+        loopfunc: true,
         globals: { // options here to override JSHint defaults
           jQuery: true,
           console: true,
@@ -59,7 +62,7 @@ module.exports = function(grunt) {
   });
 
   function updateManifest(env) {
-    var manifest = grunt.file.readJSON("manifest.json");
+    manifest.version = pkg.version;
     switch (env) {
       case 'prod' :
         manifest.background.scripts[0] = 'dist/chrome_background.min.js';
@@ -69,7 +72,7 @@ module.exports = function(grunt) {
         manifest.background.scripts[0] = 'build/chrome_background.js';
         manifest.content_scripts[0].js[0] = 'build/chrome_crawler.js';
     }
-    grunt.file.write("manifest.json", JSON.stringify(manifest));
+    grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
   }
 
   grunt.loadNpmTasks('grunt-contrib-uglify');

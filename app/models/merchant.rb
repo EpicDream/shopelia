@@ -13,9 +13,12 @@ class Merchant < ActiveRecord::Base
   
   scope :accepting_orders, :conditions => ['accepting_orders = ? and vendor is not null', true]
   
-  attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain, :viking_data
+  attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain, :viking_data, :accepting_orders
+  attr_accessible :billing_solution, :injection_solution, :cvd_solution, :should_clean_args, :allow_quantities
+  attr_accessible :rejecting_events
   
   before_validation :populate_name
+  before_validation :nullify_vendor
   before_destroy :check_presence_of_orders
   after_update :notify_leftronic_vulcain_test_semaphore
   
@@ -34,6 +37,10 @@ class Merchant < ActiveRecord::Base
   
   def populate_name
     self.name = self.domain if self.name.blank?
+  end
+
+  def nullify_vendor
+    self.vendor = nil if self.vendor.blank?
   end
   
   def check_presence_of_orders

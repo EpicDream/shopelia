@@ -38,7 +38,9 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "https://www.thinkgeek.com/clearance/on-sale/eae1/", 
         :out => "http://www.thinkgeek.com/tshirts-apparel/miscellaneous/?icpg=gy_eae1" },
       { :in  => "http://www.koordinal.com/74-bac-%C3%A0-gla%C3%A7on-igloo.html",
-        :out => "http://www.koordinal.com/74-bac-a-glacons-igloo.html" }
+        :out => "http://www.koordinal.com/74-bac-a-glacons-igloo.html" },
+      { :in  => "http%3A%2F%2Fwww.amazon.fr%2FConverse-Chuck-Taylor-Baskets-adulte%2Fdp%2FB000EDMSTY%2Fref%3Dsr_1_1%3Fs%3Dshoes%26ie%3DUTF8%26qid%3D1380531062%26sr%3D1-1",
+        :out => "http://www.amazon.fr/dp/B000EDMSTY" }
     ]
     array.each do |h|
       assert_equal h[:out], Linker.clean(h[:in])
@@ -46,7 +48,7 @@ class LinkerTest < ActiveSupport::TestCase
   end
   
   test "it should use url matcher" do
-    assert_difference("UrlMatcher.count", 1) do
+    assert_difference("UrlMatcher.count", 2) do
       assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
     end
     assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", UrlMatcher.first.canonical
@@ -55,7 +57,7 @@ class LinkerTest < ActiveSupport::TestCase
       Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
     end   
 
-    assert_difference("UrlMatcher.count", 1) do
+    assert_difference("UrlMatcher.count", 0) do
       assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4")
     end
   end

@@ -10,5 +10,11 @@ class EventsWorker
       :device_id => hash["device_id"],
       :tracker => hash["tracker"],
       :ip_address => hash["ip_address"])
+  rescue Exceptions::RejectingEventsException
+    # do nothing
+  rescue ActiveRecord::RecordInvalid
+    UrlMatcher.find_by_url(Linker.clean hash["url"]).try(:destroy)
+    UrlMatcher.find_by_url(hash["url"]).try(:destroy)
+    raise
   end
 end

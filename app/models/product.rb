@@ -29,9 +29,9 @@ class Product < ActiveRecord::Base
   scope :expired, where("versions_expires_at is null or versions_expires_at < ?", Time.now)
 
   scope :viking_base_request, lambda {
-    where("(products.versions_expires_at is null or (products.versions_expires_at < ? and products.viking_failure='f') " +
-      "or (products.versions_expires_at < ? and products.viking_failure='t')) and events.created_at > ? and " +
-      "(muted_until is null or muted_until < ?) and products.viking_sent_at is null", Time.now, VERSIONS_EXPIRATION_DELAY_IN_HOURS.hours.ago, VERSIONS_EXPIRATION_DELAY_IN_HOURS.hours.ago, Time.now).order("events.created_at desc").limit(100)
+    where("(products.versions_expires_at is null or products.versions_expires_at < ?)" +
+      "and events.created_at > ? and (muted_until is null or muted_until < ?) " +
+      "and products.viking_sent_at is null", Time.now, 12.hours.ago, Time.now).order("events.created_at desc").limit(100)
   }
   
   def self.fetch url

@@ -63,7 +63,7 @@ Crawler.getOptions = function(pathes) {
       if (tmp_elems) {
         elems = tmp_elems;
         tmp_elems = searchImagesOptions(elems);
-        if (tmp_elems.length == elems.length)
+        if (tmp_elems && tmp_elems.length == elems.length)
           elems = tmp_elems;
       }
     // If a single element is found, search images inside.
@@ -112,7 +112,7 @@ Crawler.setOption = function(pathes, option) {
     if (! elem && option.href)
       elem = elems.filter("[href='"+option.href+"']")[0];
     if (! elem) {
-      console.warn("No option found in", elems, "for option", elem);
+      console.warn("No option found foor path '"+path+"' in elems", elems, "for option", elem);
       continue;
     }
     if (elem.tagName == "OPTION") {
@@ -145,16 +145,18 @@ Crawler.crawl = function(mapping) {
       path = pathes[j];
       e = $(path);
       if (e.length === 0) continue;
-      if (key != 'description') {
-        if (e.length == 1 && e[0].tagName == "IMG")
-          option[key] = [e.attr("alt"), e.attr("title")].join(', ');
-        else
-          option[key] = e.toArray().map(function(e) {
-            return $(e).text().replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
-          }).join(", ");
-        option[key] = option[key].replace(/\n/g,'').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
+      if (key !== 'description') {
+        option[key] = e.toArray().map(function(elem) {
+          var res;
+          if (elem.tagName === 'IMG')
+            res = [elem.getAttribute("alt"), elem.getAttribute("title")].filter(function(txt){return txt;}).join(', ');
+          else
+            res = elem.innerText;
+          res = res.replace(/\n/g,' ').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
+          return res;
+        }).filter(function(txt) {return txt;}).join(", ");
       } else
-        option[key] = e.html().replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n");
+        option[key] = e.toArray().map(function(elem) { return elem.innerHTML.replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n"); }).join("\n<br>\n");
       if (option[key] !== "")
         break;
     }

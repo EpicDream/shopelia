@@ -1,4 +1,7 @@
 class Event < ActiveRecord::Base
+
+  BOTS = "#{Rails.root}/lib/config/bots.yml"
+
   belongs_to :product
   belongs_to :developer
   belongs_to :device
@@ -15,6 +18,7 @@ class Event < ActiveRecord::Base
 
   before_validation :find_or_create_product
   before_validation :set_monetizable
+  before_validation :check_merchant_accepting_events
   after_create :reset_viking_sent_at
 
   attr_accessible :url, :product_id, :developer_id, :device_id, :action, :tracker, :ip_address
@@ -27,6 +31,14 @@ class Event < ActiveRecord::Base
   scope :requests, where(action:REQUEST)
   scope :buttons, where(action:[VIEW, CLICK])
   
+  def self.is_bot? ua
+    filter = YAML.load(File.open(BOTS))
+    filter.each do |f|
+      return true if ua =~ /#{f}/i
+    end
+    false
+  end
+
   private
   
   def find_or_create_product
@@ -39,6 +51,10 @@ class Event < ActiveRecord::Base
       self.monetizable = !mlink.eql?(self.product.url)
       true
     end
+  end
+
+  def check_merchant_accepting_events
+    raise Exceptions::RejectingEventsException if self.merchant.present? && self.merchant.rejecting_events?
   end
 
   def reset_viking_sent_at

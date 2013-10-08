@@ -7,6 +7,8 @@ class AmazonFr
   def canonize
     if m = @url.match(/\/dp\/([A-Z0-9]+)/)
       "http://www.amazon.fr/dp/#{m[1]}"
+    elsif m = @url.match(/\/gp\/product\/([A-Z0-9]+)/)
+      "http://www.amazon.fr/gp/product/#{m[1]}"
     else
       nil
     end

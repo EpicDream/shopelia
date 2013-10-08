@@ -11,8 +11,9 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
     if object.cvd_solution.nil?
       credentials = Vulcain::PaymentCardSerializer.new(object.meta_order.payment_card).as_json[:payment_card]
     elsif object.cvd_solution == "amazon" 
-      if object.payment_transaction.present?
-        credentials = { :voucher => object.payment_transaction.mangopay_amazon_voucher_code }
+      t = PaymentTransaction.where(order_id:object.id).first
+      if t.present?
+        credentials = { :voucher => t.mangopay_amazon_voucher_code }
       else
         credentials = { :number => "", :exp_date => "", :exp_year => "", :cvv => "", :holder => "" }
       end
@@ -21,7 +22,8 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
     end
     { :products_urls => object.order_items.map{|item| Linker.monetize(item.product.url)},
       :products => ActiveModel::ArraySerializer.new(object.order_items).as_json,
-      :credentials => credentials
+      :credentials => credentials,
+      :gift_message => object.gift_message
     }
   end
   

@@ -20,11 +20,15 @@ describe("Saturn", function() {
 
     it('start/pause/resume/stop call good functions.', function() {
       spyOn(saturn, 'main');
+
+      expect(saturn.crawl).toBe(false);
+      expect(saturn.openNewTab).not.toHaveBeenCalled();
+      expect(saturn.closeTab).not.toHaveBeenCalled();
+      expect(saturn.main.calls.length).toBe(0);
       saturn.start();
 
       expect(saturn.crawl).toBe(true);
       expect(saturn.openNewTab.calls.length).toBe(saturn.MIN_NB_TABS);
-      expect(saturn.main).toHaveBeenCalled();
       expect(saturn.main.calls.length).toBe(1);
 
       saturn.pause();
@@ -34,6 +38,7 @@ describe("Saturn", function() {
       expect(saturn.crawl).toBe(true);
       expect(saturn.main.calls.length).toBe(2);
 
+      expect(saturn.closeTab).not.toHaveBeenCalled();
       saturn.stop();
       expect(saturn.crawl).toBe(false);
       expect(saturn.closeTab.calls.length).toBe(saturn.MIN_NB_TABS);

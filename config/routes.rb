@@ -46,7 +46,7 @@ Shopelia::Application.routes.draw do
     resources :developers, :only => [:index, :new, :create]
     resources :events, :only => :index
     resources :incidents, :only => [:index, :update]
-    resources :merchants, :only => [:index, :show, :new, :create, :update]
+    resources :merchants, :only => [:index, :show, :edit, :update]
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
     resources :viking, :only => :index
