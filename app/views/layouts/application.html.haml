@@ -10,12 +10,11 @@
 
   %body{class: "action-#{params[:action]}"}
     #wrap
-      = render partial: "layouts/navbar.html.haml"
-
+      = render "widgets/navbar"
       .container
         = bootstrap_flash
       = yield
-    = render partial: "layouts/footer.html.haml"
+    = render "widgets/footer"
   :javascript
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-41276138-1']);

@@ -322,6 +322,22 @@ fr:
     cannot_destroy: "Impossible de supprimer un utilisateur avec des commandes déjà effectuées"
 
   app:
+    public:
+      promise: "Scannez, Achetez"
+      tagline: "profitez des prix internet où que vous soyez"
+      download_app: "Télécharger l'application"
+      simple:
+        title: "Simple"
+        text: "Scannez le code-barres du produit dont vous avez envie. Nous vous proposons une liste de prix et de sites marchands, en incluant les frais de livraison pour éviter les mauvaises surprises."
+      practical:
+        title: "Pratique"
+        text: "C’est votre 1er achat avec Shopelia: ajoutez vos informations personnelles et bancaires pour créer votre compte et valider votre commande. Et pour les achats suivants, votre e-mail et mot de passe suffisent, quel que soit le marchand chez qui vous souhaitez commander."
+      secure: 
+        title: "Sécurisé"
+        text: "La transaction est effectuée sur des serveurs sécurisés. Shopelia ne stocke aucune donnée de carte bancaire sur son infrastructure."
+      terms: "CGU"
+      help: "Aide"
+      security: "Sécurité"
     signin:
       title: "Déjà membre ?"
       unauthorized: "Erreur dans l'email ou le mot de passe"
