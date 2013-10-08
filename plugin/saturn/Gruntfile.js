@@ -45,7 +45,7 @@ module.exports = function(grunt) {
           optimize: "none",
           name: 'src/crawler',
           include: ["lib/utils"],
-          out: 'dist/crawler.js',
+          out: 'build/crawler.js',
         }
       },
       chrome_saturn: {
@@ -55,7 +55,7 @@ module.exports = function(grunt) {
           optimize: "none",
           name: 'src/chrome/chrome_saturn',
           include: ["lib/utils"],
-          out: 'dist/chrome_saturn.js',
+          out: 'build/chrome_saturn.js',
         }
       },
     },
@@ -68,19 +68,19 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
-          'dist/chrome_saturn.js',
+          'build/chrome_saturn.js',
           'src/chrome/main.js'
         ],
-        dest: 'dist/background.js'
+        dest: 'build/background.js'
       },
       contentscript: {
         src: [
           'vendor/require.js',
           'require_config.js',
-          "dist/crawler.js",
+          "build/crawler.js",
           "src/chrome/chrome_crawler.js",
         ],
-        dest: 'dist/contentscript.js'
+        dest: 'build/contentscript.js'
       }
     },
     // Uglify them in prod.
@@ -95,6 +95,11 @@ module.exports = function(grunt) {
           'dist/contentscript.min.js': ['<%= concat.contentscript.dest %>']
         }
       }
+    },
+    clean: {
+      dev: ['vendor'],
+      prod: ['build', 'vendor'],
+      total: ['build', 'vendor', 'dist', 'node_modules']
     },
     exec: {
       "package": {
@@ -112,8 +117,8 @@ module.exports = function(grunt) {
         manifest.content_scripts[0].js[0] = 'dist/contentscript.min.js';
         break;
       default :
-        manifest.background.scripts[0] = 'dist/background.js';
-        manifest.content_scripts[0].js[0] = 'dist/contentscript.js';
+        manifest.background.scripts[0] = 'build/background.js';
+        manifest.content_scripts[0].js[0] = 'build/contentscript.js';
     }
     grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
   }
@@ -124,11 +129,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-exec');
 
   grunt.registerTask('manifest', updateManifest);
   grunt.registerTask('test', ['jshint', 'jasmine']);
-  grunt.registerTask('default', ['jshint', 'copy', 'jasmine', 'requirejs', 'concat', 'manifest:dev']);
-  grunt.registerTask('prod', ['jshint', 'copy', 'jasmine', 'requirejs', 'concat', 'uglify', 'manifest:prod', 'exec']);
+  grunt.registerTask('default', ['jshint', 'copy', 'jasmine', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
+  grunt.registerTask('prod', ['jshint', 'copy', 'jasmine', 'requirejs', 'concat', 'uglify', 'manifest:prod', 'clean:prod', 'exec:package']);
 
 };
