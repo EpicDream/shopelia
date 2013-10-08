@@ -90,4 +90,15 @@ class EventTest < ActiveSupport::TestCase
     end
     assert !Event.is_bot?("Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36")
   end 
+
+  test "it should raise exception if merchant doesn't accept events" do
+    products(:headphones).merchant.update_attribute :rejecting_events, true
+    assert_raise Exceptions::RejectingEventsException do 
+      event = Event.create(
+        :action => Event::VIEW,
+        :product_id => products(:headphones).id,
+        :device_id => devices(:web).id,
+        :developer_id => developers(:prixing).id)
+    end
+  end
 end

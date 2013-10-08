@@ -18,6 +18,7 @@ class Event < ActiveRecord::Base
 
   before_validation :find_or_create_product
   before_validation :set_monetizable
+  before_validation :check_merchant_accepting_events
   after_create :reset_viking_sent_at
 
   attr_accessible :url, :product_id, :developer_id, :device_id, :action, :tracker, :ip_address
@@ -50,6 +51,10 @@ class Event < ActiveRecord::Base
       self.monetizable = !mlink.eql?(self.product.url)
       true
     end
+  end
+
+  def check_merchant_accepting_events
+    raise Exceptions::RejectingEventsException if self.merchant.rejecting_events?
   end
 
   def reset_viking_sent_at
