@@ -2,6 +2,8 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-19
 
+define(['logger', 'src/saturn_session', './fake_saturn'], function(logger, SaturnSession, FakeSaturn) {
+
 logger.level = logger.NONE;
 
 describe("Saturn", function() {
@@ -362,4 +364,6 @@ describe("Saturn", function() {
       });
     });
   });
+});
+
 });

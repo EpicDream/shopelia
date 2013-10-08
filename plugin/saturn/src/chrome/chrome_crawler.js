@@ -1,4 +1,6 @@
 
+require(['src/crawler'], function(Crawler) {
+
 chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   if (sender.id != chrome.runtime.id) return;
   console.debug("ProductCrawl task received", hash);
@@ -16,4 +18,11 @@ function goNextStep() {
 // To handle redirection, that throws false 'complete' state.
 $(document).ready(function() {
   setTimeout(goNextStep, 100);
+});
+
+var script = document.createElement("script");
+script.type = "text/javascript";
+script.innerText = "window.alert = function() {};";
+document.head.appendChild(script);
+
 });

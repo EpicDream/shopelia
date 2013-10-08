@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-19
 
-(function() {
+define(['src/saturn'], function(Saturn) {
 "use strict";
 
 var FakeSaturn = function() {
@@ -105,12 +105,6 @@ FakeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
     session.then();
 };
 
-
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = FakeSaturn;
-else if ("function" == typeof define && define.amd)
-  define("fake_saturn", ["saturn"], function(){return FakeSaturn;});
-else
-  window.FakeSaturn = FakeSaturn;
+return FakeSaturn;
  
-})();
+});

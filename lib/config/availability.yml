@@ -26,6 +26,7 @@ livraison des fichiers: true
 dernieres pieces disponibles: true
 sera expediee aujourd.?hui: true
 please allow [\d-]+ weeks for delivery: true
+expected ship date: true
 
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false

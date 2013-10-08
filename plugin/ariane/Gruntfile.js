@@ -53,20 +53,20 @@ module.exports = function(grunt) {
           "build/require.js",
           "build/uri.js",
           "build/sprintf.js",
-          "build/jquery.min.js",
+          "build/jquery.js",
           "build/logger.js",
           "build/viking.js",
           "src/ariane.js",
           "src/back_chrome_listeners.js"
         ],
-        dest: 'build/background.js'
+        dest: 'dist/background.js'
       },
       contentscript: {
         src: [
           "build/require.js",
-          "build/underscore.min.js",
-          "build/jquery.min.js", 
-          "build/jquery-ui.min.js",
+          "build/underscore.js",
+          "build/jquery.js",
+          "build/jquery-ui.js",
           "build/uri.js",
           "build/sprintf.js",
           "build/logger.js",
@@ -77,7 +77,7 @@ module.exports = function(grunt) {
           "controllers/toolbar_contentscript.js",
           "controllers/mapping_contentscript.js"
         ],
-        dest: 'build/contentscript.js'
+        dest: 'dist/contentscript.js'
       }
     },
     uglify: {
@@ -115,8 +115,8 @@ module.exports = function(grunt) {
         manifest.content_scripts[0].js[0] = 'dist/contentscript.min.js';
         break;
       default :
-        manifest.background.scripts[0] = 'build/background.js';
-        manifest.content_scripts[0].js[0] = 'build/contentscript.js';
+        manifest.background.scripts[0] = 'dist/background.js';
+        manifest.content_scripts[0].js[0] = 'dist/contentscript.js';
     }
     grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
   }

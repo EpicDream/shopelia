@@ -41,6 +41,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   api :PUT, "/viking/products", "Update product"
   param_group :product
   def update
+    Viking.touch
     if @versions.blank?
       @product.update_column "viking_failure", true
       @product.update_column "versions_expires_at", Product.versions_expiration_date

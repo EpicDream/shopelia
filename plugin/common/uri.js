@@ -1,3 +1,5 @@
+(function() {
+
 var Query = (function () {
 
   'use strict';
@@ -9,7 +11,7 @@ var Query = (function () {
     s = s.replace('+', ' ');
     return s;
   }
- 
+
   function Query(q) {
     var i, ps, p, kvp, k, v;
 
@@ -449,4 +451,16 @@ var Uri = (function () {
   };
 
   return Uri;
-}());
+})();
+
+
+if ("object" == typeof module && module && "object" == typeof module.exports)
+  module.exports = Uri;
+else if ("object" == typeof exports)
+  exports = Uri;
+else if ("function" == typeof define && define.amd)
+  define("uri", [], function(sprtf){sprintf = sprtf; return Uri;});
+else
+  window.Uri = Uri;
+
+})();

@@ -187,7 +187,7 @@ class ProductVersionTest < ActiveSupport::TestCase
               "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
               "disponible sous 4 semaines", "Seulement 1 en stock", "in stock but may require an extra 1-2 days to process.",
               "Conditions spéciales :- livraison : 10 semaines", "livraison des fichiers", "attention : dernières pièces disponibles",
-              "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery." ]
+              "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery.", "expected ship date" ]
     array.each do |str|
       assert_difference "Incident.count", 0 do
         version = ProductVersion.create(
