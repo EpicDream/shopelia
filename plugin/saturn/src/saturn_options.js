@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-10
 
-define(["src/tree"], function(Tree) {
+define(["src/tree", 'satconf'], function(Tree) {
   //
   var SaturnOptions = function(mapping, argOptions) {
     this._optionTree = new Tree();
@@ -63,7 +63,7 @@ define(["src/tree"], function(Tree) {
       // Si la valeur est donnée en argument pour cette option,
       // on ajoute que celle là (si on la trouve).
       if (currentArg) {
-        for (i = 0; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++) {
+        for (i = 0; i < values.length && (! satconf.TEST_ENV || i < 3); i++) {
           var stringified = JSON.stringify(values[i]);
           if (currentArg === stringified) {
             this._currentNode.addChildAt(stringified, values[i]);
@@ -76,12 +76,12 @@ define(["src/tree"], function(Tree) {
       // on les ajoute toutes.
       if (currentArg !== null) {
         // On place l'élément sélectionné en premier.
-        for (i = 1; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++)
+        for (i = 1; i < values.length && (satconf.env !== "dev" || i < 3); i++)
           if (values[i].selected) {
             values.unshift(values.splice(i, 1)[0]);
             break;
           }
-        for (i = 0; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++)
+        for (i = 0; i < values.length && (satconf.env !== "dev" || i < 3); i++)
           this._currentNode.addChildAt(JSON.stringify(values[i]), values[i]);
       }
     }

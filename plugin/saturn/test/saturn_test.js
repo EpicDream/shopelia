@@ -2,9 +2,9 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-19
 
-define(['logger', 'src/saturn_session', './fake_saturn'], function(logger, SaturnSession, FakeSaturn) {
+define(['logger', 'src/saturn_session', './fake_saturn', 'satconf'], function(logger, SaturnSession, FakeSaturn) {
 
-logger.level = logger.NONE;
+logger.level = logger[satconf.log_level];
 
 describe("Saturn", function() {
   var saturn;
@@ -30,7 +30,7 @@ describe("Saturn", function() {
       saturn.start();
 
       expect(saturn.crawl).toBe(true);
-      expect(saturn.openNewTab.calls.length).toBe(saturn.MIN_NB_TABS);
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS);
       expect(saturn.main.calls.length).toBe(1);
 
       saturn.pause();
@@ -43,7 +43,7 @@ describe("Saturn", function() {
       expect(saturn.closeTab).not.toHaveBeenCalled();
       saturn.stop();
       expect(saturn.crawl).toBe(false);
-      expect(saturn.closeTab.calls.length).toBe(saturn.MIN_NB_TABS);
+      expect(saturn.closeTab.calls.length).toBe(satconf.MIN_NB_TABS);
     });
 
     it('start only once', function() {
@@ -66,7 +66,7 @@ describe("Saturn", function() {
       runs(function() {
         saturn.start();
         flag = false;
-        setTimeout(function() {flag = true;}, saturn.DELAY_BETWEEN_PRODUCTS * 3);
+        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 3);
       });
       waitsFor(function() {
         return flag;
@@ -76,7 +76,7 @@ describe("Saturn", function() {
         saturn.pause();
         nbCalls = saturn.main.calls.length;
         flag = false;
-        setTimeout(function() {flag = true;}, saturn.DELAY_BETWEEN_PRODUCTS * 2);
+        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 2);
       });
       waitsFor(function() {return flag;});
       runs(function() {
@@ -84,7 +84,7 @@ describe("Saturn", function() {
         saturn.resume();
 
         flag = false;
-        setTimeout(function() {flag = true;}, saturn.DELAY_BETWEEN_PRODUCTS * 3);
+        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 3);
       });
       waitsFor(function() {return flag;});
       runs(function() {
@@ -92,7 +92,7 @@ describe("Saturn", function() {
         saturn.stop();
         nbCalls = saturn.main.calls.length;
         flag = false;
-        setTimeout(function() {flag = true;}, saturn.DELAY_BETWEEN_PRODUCTS * 2);
+        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 2);
       });
       waitsFor(function() {return flag;});
       runs(function() {
@@ -125,39 +125,39 @@ describe("Saturn", function() {
 
       // Il crée autant de tab que nécessaire au démarrage.
       saturn.updateNbTabs();
-      expect(saturn.openNewTab.calls.length).toBe(saturn.MIN_NB_TABS);
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS);
       expect(saturn.closeTab).not.toHaveBeenCalled();
 
       // Il y a juste ce qu'il faut en pending
       saturn.updateNbTabs();
-      expect(saturn.openNewTab.calls.length).toBe(saturn.MIN_NB_TABS);
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS);
       expect(saturn.closeTab).not.toHaveBeenCalled();
 
       // Les MIN_NB_TABS sont occupées et il en manque une.
       saturn.pending = [];
       saturn.productQueue = [{id: 42}];
       saturn.updateNbTabs();
-      expect(saturn.openNewTab.calls.length).toBe(saturn.MIN_NB_TABS + 1);
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1);
       expect(saturn.closeTab).not.toHaveBeenCalled();
 
       // Il y en a une de trop en pending
       saturn.productQueue = [];
       saturn.updateNbTabs();
-      expect(saturn.openNewTab.calls.length).toBe(saturn.MIN_NB_TABS + 1);
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1);
       expect(saturn.closeTab.calls.length).toBe(1);
 
       // Il manque 3 tabs
       saturn.productQueue = [{id: 13}, {id: 14}, {id: 15}];
       saturn.updateNbTabs();
-      expect(saturn.openNewTab.calls.length).toBe(saturn.MIN_NB_TABS + 1 + 3);
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
       expect(saturn.closeTab.calls.length).toBe(1);
 
       // Il manque des tabs, mais trop.
-      expect(Object.keys(saturn.tabs.opened).length).toBe(saturn.MIN_NB_TABS + 3);
+      expect(Object.keys(saturn.tabs.opened).length).toBe(satconf.MIN_NB_TABS + 3);
       saturn.MAX_NB_TABS = saturn.MIN_NB_TABS + 3;
       saturn.productQueue = [{id: 16}];
       saturn.updateNbTabs();
-      expect(saturn.openNewTab.calls.length).toBe(saturn.MIN_NB_TABS + 1 + 3);
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
       expect(saturn.closeTab.calls.length).toBe(1);
     });
   });
@@ -321,7 +321,7 @@ describe("Saturn", function() {
     });
 
     it('complete run', function() {
-      saturn.DELAY_BETWEEN_PRODUCTS = 100;
+      satconf.DELAY_BETWEEN_PRODUCTS = 100;
       spyOn(saturn, 'main').andCallThrough();
       spyOn(saturn, 'onProductsReceived').andCallThrough();
 
@@ -335,7 +335,7 @@ describe("Saturn", function() {
       runs(function() {
         saturn.start();
         flag = false;
-        setTimeout(function() {flag = true;}, saturn.DELAY_BETWEEN_PRODUCTS * 3);
+        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 3);
       });
       waitsFor(function() {return flag;});
 

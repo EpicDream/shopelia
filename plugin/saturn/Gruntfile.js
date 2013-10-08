@@ -1,6 +1,7 @@
 module.exports = function(grunt) {
   var pkg = require('./package.json'),
-      manifest = require('./manifest.json');
+      manifest = require('./manifest.json'),
+      satconf = grunt.file.readYAML('./config.yml');
 
   grunt.initConfig({
     pkg: pkg,
@@ -109,8 +110,43 @@ module.exports = function(grunt) {
     },
   });
 
+  // Update package.json
+  pkg.version = satconf.version;
+  grunt.file.write("package.json", JSON.stringify(pkg, null, 2));
+
+  function updateConfigFile(env) {
+    var conf = {};
+    for (var key in satconf)
+      conf[key] = satconf[key];
+    conf.env = env = env || satconf.env;
+
+    if (! satconf.log_level)
+      switch (env) {
+        case "test" :
+          conf.log_level = satconf.default_test_log_level || "NONE";
+          break;
+        case "dev" :
+          conf.log_level = satconf.default_dev_log_level || "ALL";
+          break;
+        default :
+          conf.log_level = satconf.default_prod_log_level || "WARN";
+      }
+
+    if (! satconf.run_mode)
+      switch (env) {
+        case "staging" :
+        case "prod" :
+          conf.run_mode = "auto";
+          break;
+        default :
+          conf.run_mode = "manual";
+      }
+
+    grunt.file.write("build/config.js", 'var satconf = ' + JSON.stringify(conf, null, 2) + ';\n');
+  }
+
   function updateManifest(env) {
-    manifest.version = pkg.version;
+    manifest.version = satconf.version;
     switch (env) {
       case 'prod' :
         manifest.background.scripts[0] = 'dist/background.min.js';
@@ -132,9 +168,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-exec');
 
+  grunt.registerTask('setEnv', function(env) {satconf.env = env;});
+  grunt.registerTask('configFile', updateConfigFile);
   grunt.registerTask('manifest', updateManifest);
-  grunt.registerTask('test', ['jshint', 'jasmine']);
-  grunt.registerTask('default', ['jshint', 'copy', 'jasmine', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
-  grunt.registerTask('prod', ['jshint', 'copy', 'jasmine', 'requirejs', 'concat', 'uglify', 'manifest:prod', 'clean:prod', 'exec:package']);
-
+  grunt.registerTask('test', ['jshint', 'configFile:test', 'copy', 'jasmine']);
+  grunt.registerTask('base', ['test', 'configFile', 'requirejs', 'concat']);
+  grunt.registerTask('default', ['base', 'manifest:dev', 'clean:dev']);
+  grunt.registerTask('prod', ['setEnv:prod', 'base', 'uglify', 'manifest:prod', 'clean:prod', 'exec:package']);
 };

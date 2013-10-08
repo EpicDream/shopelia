@@ -2,14 +2,12 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(["jquery", "logger", "src/saturn"], function($, logger, Saturn) {
+define(["jquery", "logger", "src/saturn", 'satconf'], function($, logger, Saturn) {
 
 "use strict";
 
 var ChromeSaturn = function() {
   Saturn.apply(this, arguments);
-  this.TEST_ENV = navigator.appVersion.match(/chromium/i) !== null;
-  this.DELAY_RESCUE = 60000; // wait response from contentscript 60s max, fail after that (required when a lot of sizes for shoes for example).
 
   this.results = {}; // for debugging purpose, when there are no results sended by ajax.
 };
@@ -60,7 +58,7 @@ ChromeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCal
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: this.PRODUCT_EXTRACT_URL+(this.TEST_ENV ? "?consum=false" : '')
+    url: satconf.PRODUCT_EXTRACT_URL+(satconf.consum ? "?consum=false" : '')
   }).done(doneCallback).fail(failCallback);
 };
 
@@ -79,7 +77,7 @@ ChromeSaturn.prototype.loadMapping = function(merchantId, doneCallback, failCall
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: this.MAPPING_URL+merchantId
+    url: satconf.MAPPING_URL+merchantId
   }).done(doneCallback).fail(failCallback);
 };
 
@@ -89,7 +87,7 @@ ChromeSaturn.prototype.getMerchantId = function(url, callback) {
   return $.ajax({
     type: "GET",
     dataType: "json",
-    url: this.MAPPING_URL.slice(0,-1) + "?url=" + url
+    url: satconf.MAPPING_URL.slice(0,-1) + "?url=" + url
   });
 };
 
@@ -105,7 +103,7 @@ ChromeSaturn.prototype.sendError = function(session, msg) {
   } else if (session.id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
-      url: this.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
       contentType: 'application/json',
       data: JSON.stringify({versions: [], errorMsg: msg})
     });
@@ -123,7 +121,7 @@ ChromeSaturn.prototype.sendResult = function(session, result) {
   } else if (session.id) {// Stop pushed or Local Test
     $.ajax({
       type : "PUT",
-      url: this.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
       contentType: 'application/json',
       data: JSON.stringify(result)
     });
@@ -158,7 +156,7 @@ ChromeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
   };
 
   if (typeof callback === 'function') {
-    command.rescueTimer = window.setTimeout(this.onTimeout(command), this.DELAY_RESCUE);
+    command.rescueTimer = window.setTimeout(this.onTimeout(command), satconf.DELAY_RESCUE);
     command.then = this.onResultReceived(command);
   }
 
