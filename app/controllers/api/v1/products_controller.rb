@@ -13,7 +13,7 @@ class Api::V1::ProductsController < Api::V1::BaseController
   api :POST, "/api/products", "Get products information"
   param :urls, Hash, "Urls of the product to get", :required => true
   def create
-    render :json => ActiveModel::ArraySerializer.new(@products, scope:@scope)
+    render :json => @products.map{ |p| ProductSerializer.new(p, scope:@scope).as_json[:product] }
   end
 
   private
