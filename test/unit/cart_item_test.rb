@@ -3,7 +3,7 @@ require 'test_helper'
 class CartItemTest < ActiveSupport::TestCase
   
   setup do
-    @cart = Cart.create(user_id:users(:elarch).id, kind:Cart::FOLLOW)
+    @cart = Cart.create(user_id:users(:manu).id, kind:Cart::FOLLOW)
     @product_version = product_versions(:usbkey)
     @developer = developers(:prixing)
   end
@@ -34,7 +34,7 @@ class CartItemTest < ActiveSupport::TestCase
 
   test "it should allow same item for different carts" do
     CartItem.create(cart_id:@cart.id, product_version_id:@product_version.id, developer_id:@developer.id)
-    item = CartItem.new(cart_id:Cart.create(user_id:users(:elarch).id, kind:Cart::CHECKOUT).id, product_version_id:@product_version.id, developer_id:@developer.id)  
+    item = CartItem.new(cart_id:Cart.create(user_id:users(:manu).id, kind:Cart::CHECKOUT).id, product_version_id:@product_version.id, developer_id:@developer.id)  
 
     assert item.save, item.errors.full_messages.join(",")
   end

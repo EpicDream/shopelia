@@ -3,7 +3,7 @@ require 'test_helper'
 class CartTest < ActiveSupport::TestCase
   
   test "it should create cart for user" do
-    cart = Cart.new(name:"Test", user_id:users(:elarch).id)
+    cart = Cart.new(name:"Test", user_id:users(:manu).id)
     assert cart.save, cart.errors.full_messages.join(",")
     assert_equal Cart::CHECKOUT, cart.kind
   end
@@ -12,5 +12,4 @@ class CartTest < ActiveSupport::TestCase
     cart = Cart.new
     assert !cart.save
   end 
-  
 end
