@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-(function() {
+define(['logger', './saturn_options'], function(logger, SaturnOptions) {
 "use strict";
 
 // Je fais la supposition simpliste mais réaliste que pour un produit,
@@ -39,10 +39,12 @@ SaturnSession.prototype.next = function() {
     case "normal" :
       t = this.options.next({lookInMapping: true, depthOnly: true});
       if (t !== null) {
-        if (t[1] === undefined)
+        if (t[1] === undefined) {
           this.getOptions(t[0]);
-        else
+        } else if (! t[1].selected) {
           this.setOption(t[0], t[1]);
+        } else
+          this.next();
       } else {
         var nbOption = this.options.currentNbOption() - Object.keys(this.argOptions).length;
         if (this.strategy === 'fast') {
@@ -206,11 +208,6 @@ SaturnSession.prototype.endSession = function() {
   this.saturn.endSession(this);
 };
 
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = SaturnSession;
-else if ("function" == typeof define && define.amd)
-  define("saturn_session", ["saturn_options"], function(){return SaturnSession;});
-else
-  window.SaturnSession = SaturnSession;
+return SaturnSession;
 
-})();
+});

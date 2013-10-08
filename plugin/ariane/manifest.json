@@ -1,6 +1,6 @@
 {
   "name": "Ariane",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "manifest_version": 2,
   "description": "Outil de mapping de page produit pour Viking/Saturn.",
   "icons": {
@@ -13,7 +13,7 @@
   },
   "background": {
     "scripts": [
-      "build/background.js"
+      "dist/background.min.js"
     ],
     "persistent": false
   },
@@ -31,7 +31,7 @@
         "*://*/*"
       ],
       "js": [
-        "build/contentscript.js"
+        "dist/contentscript.min.js"
       ]
     },
     {

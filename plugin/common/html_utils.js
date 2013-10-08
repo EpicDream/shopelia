@@ -1,7 +1,7 @@
 // HTML Utils.
 // Author : Vincent Renaudineau
 
-define('html_utils', ['jquery'], function($) {
+define('html_utils', ['jquery', 'underscore'], function($) {
 // "use strict";
 
 var hu = {};
