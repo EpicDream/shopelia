@@ -1,0 +1,3 @@
+#!/bin/bash
+
+google-chrome --load-extension=.; google-chrome --uninstall-extension=nhledioladlcecbcfenmdibnnndlfikf
