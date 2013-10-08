@@ -96,6 +96,12 @@ module.exports = function(grunt) {
         }
       }
     },
+    exec: {
+      "package": {
+        cwd: "../",
+        cmd: "google-chrome --pack-extension=saturn --pack-extension-key=priv_keys/saturn.pem && mv -f saturn.crx extensions/",
+      }
+    },
   });
 
   function updateManifest(env) {
@@ -118,10 +124,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-exec');
 
   grunt.registerTask('manifest', updateManifest);
   grunt.registerTask('test', ['jshint', 'jasmine']);
   grunt.registerTask('default', ['jshint', 'copy', 'jasmine', 'requirejs', 'concat', 'manifest:dev']);
-  grunt.registerTask('prod', ['jshint', 'copy', 'jasmine', 'requirejs', 'concat', 'uglify', 'manifest:prod']);
+  grunt.registerTask('prod', ['jshint', 'copy', 'jasmine', 'requirejs', 'concat', 'uglify', 'manifest:prod', 'exec']);
 
 };
