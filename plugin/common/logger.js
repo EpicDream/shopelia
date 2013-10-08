@@ -43,10 +43,17 @@ logger._log = function(level, caller, _arguments) {
       break;
   }
   
-  var args = [sprintf('%%c[%s][%5s]%s ',(new Date()).toLocaleTimeString(), level, typeof caller === 'string' ? " `"+caller+"' :" : ''), css_style];
-  if (typeof _arguments !== 'object' || _arguments.length === undefined)
+  var args;
+  if (window.chrome)
+    args = [sprintf('%%c[%s][%5s]%s ',(new Date()).toLocaleTimeString(), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : ''), css_style];
+  else
+    args = [sprintf('[%s][%5s]%s ',(new Date()).toLocaleTimeString(), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : '')]
+
+  if (typeof _arguments !== 'object' || _arguments.length === undefined) {
     args.push(_arguments);
-  else for ( var i = 0 ; i < _arguments.length ; i++ ) {
+  } else if (! window.chrome) for ( var i = 0 ; i < _arguments.length ; i++ ) {
+    args.push(_arguments[i]);
+  } else for ( var i = 0 ; i < _arguments.length ; i++ ) {
     var arg = _arguments[i];
     if (typeof arg === 'number') {
       args[0] += "%f ";

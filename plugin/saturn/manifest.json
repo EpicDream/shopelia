@@ -1,6 +1,6 @@
 {
   "name": "Saturn",
-  "version": "1.1.2",
+  "version": "2.1.0",
   "manifest_version": 2,
   "description": "Extrateur de donnée produit.",
   "icons": {
@@ -13,7 +13,7 @@
   },
   "background": {
     "scripts": [
-      "build/chrome_background.js"
+      "dist/background.min.js"
     ]
   },
   "content_scripts": [
@@ -22,7 +22,7 @@
         "*://*/*"
       ],
       "js": [
-        "build/chrome_crawler.js"
+        "dist/contentscript.min.js"
       ]
     }
   ],

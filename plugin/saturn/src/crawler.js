@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-20
 
-(function() {
+define(["jquery", "html_utils"], function($, hu) {
 
 DELAY_BETWEEN_OPTIONS = 1500;
 OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i;
@@ -77,7 +77,7 @@ Crawler.getOptions = function(pathes) {
     break;
   }
 
-  return $.makeArray(elems).filter(function(elem) {
+  return elems.toArray().filter(function(elem) {
     return elem.innerText.match(OPTION_FILTER) === null;
   }).map(function(elem) {
     var h = hu.getElementAttrs(elem);
@@ -106,11 +106,13 @@ Crawler.setOption = function(pathes, option) {
     if (! elem && option.id)
       elem = elems.filter("#"+option.id)[0];
     if (! elem && option.text)
-      elem = elems.find("option:contains("+option.text+")")[0];
+      elem = (elem = elems.filter(":contains("+option.text+")")) && elem.length == 1 ? elem[0] : undefined;
     if (! elem && option.src)
       elem = elems.filter("[src='"+option.src+"']")[0];
     if (! elem && option.href)
       elem = elems.filter("[href='"+option.href+"']")[0];
+    if (! elem && option.title)
+      elem = (elem = elems.filter("[title='"+option.title+"']")) && elem.length == 1 ? elem[0] : undefined;
     if (! elem) {
       console.warn("No option found foor path '"+path+"' in elems", elems, "for option", elem);
       continue;
@@ -176,7 +178,7 @@ Crawler.crawl = function(mapping) {
       if (e.length === 0) continue;
       images = e.add(e.find("img")).filter("img");
       if (images.length === 0) continue;
-      values = $.makeArray(images).map(get_src).unique();
+      values = images.toArray().map(get_src).unique();
       if (key == 'image_url')
         values = values[0];
       option[key] = values;
@@ -206,11 +208,6 @@ Crawler.doNext = function(action, mapping, option, value) {
   return result;
 };
 
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = Crawler;
-else if ("function" == typeof define && define.amd)
-  define("crawler", ["jquery", "html_utils"], function(){return Crawler;});
-else
-  window.Crawler = Crawler;
+return Crawler;
 
-})();
+});
