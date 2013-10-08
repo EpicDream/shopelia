@@ -54,7 +54,7 @@ class Event < ActiveRecord::Base
   end
 
   def check_merchant_accepting_events
-    raise Exceptions::RejectingEventsException if self.merchant.rejecting_events?
+    raise Exceptions::RejectingEventsException if self.merchant.present? && self.merchant.rejecting_events?
   end
 
   def reset_viking_sent_at
