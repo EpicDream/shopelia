@@ -18,6 +18,7 @@ class Merchant < ActiveRecord::Base
   attr_accessible :rejecting_events
   
   before_validation :populate_name
+  before_validation :nullify_vendor
   before_destroy :check_presence_of_orders
   after_update :notify_leftronic_vulcain_test_semaphore
   
@@ -36,6 +37,10 @@ class Merchant < ActiveRecord::Base
   
   def populate_name
     self.name = self.domain if self.name.blank?
+  end
+
+  def nullify_vendor
+    self.vendor = nil if self.vendor.blank?
   end
   
   def check_presence_of_orders
