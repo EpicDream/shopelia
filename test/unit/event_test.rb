@@ -88,6 +88,6 @@ class EventTest < ActiveSupport::TestCase
     ].each do |ua|
       assert Event.is_bot?(ua), ua
     end
-    assert !Event.is_bot("Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36")
+    assert !Event.is_bot?("Mozilla/5.0 (Windows NT 6.0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.66 Safari/537.36")
   end 
 end
