@@ -10,7 +10,7 @@
       %meta{content: "product", name: "twitter:card"}
       %meta{content: "@Shopelia", name: "twitter:site"}
       %meta{content: @product.name, name: "twitter:title"}
-      %meta{content: @product.description.first(220), name: "twitter:description"}
+      %meta{content: (@product.description || "").first(220), name: "twitter:description"}
       %meta{content: @product.image_url, name: "twitter:image:src"}
       %meta{content: number_to_currency(@product.product_versions.first.try(:price)), name: "twitter:data1"}/
       %meta{content: "Prix", name: "twitter:label1"}/
