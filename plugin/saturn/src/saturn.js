@@ -2,32 +2,11 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', 'uri', './saturn_session'], function(logger, Uri, SaturnSession) {
+define(['logger', 'uri', './saturn_session', 'satconf'], function(logger, Uri, SaturnSession) {
 
 "use strict";
 
 var Saturn = function() {
-
-  this.TEST_ENV = false;
-  this.LOCAL_ENV = false;
-
-  if (this.LOCAL_ENV) {
-    this.SHOPELIA_DOMAIN = "http://localhost:3000";
-  } else {
-    this.SHOPELIA_DOMAIN = "https://www.shopelia.fr";
-  }
-
-  this.PRODUCT_EXTRACT_URL = this.SHOPELIA_DOMAIN + "/api/viking/products";
-  this.MAPPING_URL = this.SHOPELIA_DOMAIN + "/api/viking/merchants/";
-  this.PRODUCT_EXTRACT_UPDATE = this.SHOPELIA_DOMAIN + "/api/viking/products/";
-
-  this.DELAY_BETWEEN_PRODUCTS = 500; // 500ms
-  this.DELAY_BEFORE_REASK_MAPPING = this.TEST_ENV ? 30000 : 5 * 60000; // 30s en dev ou 5min en prod
-
-  this.MAX_VERSIONS_TO_FULL_CRAWL = 100;
-  this.MIN_NB_TABS = 0;
-  this.MAX_NB_TABS = 15;
-
   this.crawl = false;
   this.sessions = {};
   this.productsBeingProcessed = {};
@@ -74,7 +53,7 @@ Saturn.prototype.start = function() {
   if (this.crawl)
     return;
   // init startup tabs
-  for (var i = 0; i < this.MIN_NB_TABS; i++)
+  for (var i = 0; i < satconf.MIN_NB_TABS; i++)
     this.openNewTab();
   this.resume();
 };
@@ -107,20 +86,21 @@ Saturn.prototype.updateNbTabs = function() {
   if (this.tabs.nbUpdating > 0)
     return;
   var pending = this.tabs.pending,
+      prodLength = this.productQueue.length + this.batchQueue.length,
       i;
-  if (this.productQueue.length === 0 && pending.length > this.MIN_NB_TABS) {// On ferme des tabs
+  if (prodLength === 0 && pending.length > satconf.MIN_NB_TABS) {// On ferme des tabs
     pending = pending.sort(function(i,j){return i-j;});
-    var nbTabToClose = pending.length - this.MIN_NB_TABS;
+    var nbTabToClose = pending.length - satconf.MIN_NB_TABS;
     for (i = 0 ; i < nbTabToClose ; i++) {
       this.tabs.opened[pending[0]].toClose = true;
       this.closeTab(pending[0]);
     }
   } else { // On ouvre des tabs
-    var nbMaxOpenable = this.MAX_NB_TABS - Object.keys(this.tabs.opened).length,
-        nbWanted = this.MIN_NB_TABS + this.productQueue.length - pending.length,
+    var nbMaxOpenable = satconf.MAX_NB_TABS - Object.keys(this.tabs.opened).length,
+        nbWanted = satconf.MIN_NB_TABS + prodLength - pending.length,
         nbTabToOpen = nbMaxOpenable >= nbWanted ? nbWanted : nbMaxOpenable;
-    if (nbTabToOpen === 0 && this.productQueue.length > 0)
-      logger.warn("WARNING : Too many product to crawl ("+this.productQueue.length+") and max tabs opened ("+this.MAX_NB_TABS+") !");
+    if (nbTabToOpen === 0 && prodLength > 0)
+      logger.warn("WARNING : Too many product to crawl ("+prodLength+") and max tabs opened ("+satconf.MAX_NB_TABS+") !");
     for (i = 0; i < nbTabToOpen ; i++)
       this.openNewTab();
   }
@@ -138,20 +118,22 @@ Saturn.prototype.main = function() {
 Saturn.prototype.onArrayToExtractReceived = function(array) {
   if (! array || ! (array instanceof Array)) {
     logger.err("Error when getting new products to extract : received data is undefined or is not an Array");
-    this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
+    this.mainCallTimeout = setTimeout(this.main.bind(this), satconf.DELAY_BETWEEN_PRODUCTS);
   } else if (array.length > 0) {
+    if (logger.level <= logger.WARNING)
+      logger.print("%c[%s] %d product received.", "color: blue", (new Date()).toLocaleTimeString(), array.length);
     this.onProductsReceived(array);
   } else {
     logger.print("%cNo product.", "color: blue");
     this.updateNbTabs();
   }
 
-  this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
+  this.mainCallTimeout = setTimeout(this.main.bind(this), satconf.DELAY_BETWEEN_PRODUCTS);
 };
 
 Saturn.prototype.onArrayToExtractFailed = function(err) {
   logger.error("Error when getting new products to extract :", err);
-  this.mainCallTimeout = setTimeout(this.main.bind(this), this.DELAY_BETWEEN_PRODUCTS);
+  this.mainCallTimeout = setTimeout(this.main.bind(this), satconf.DELAY_BETWEEN_PRODUCTS);
 };
 
 Saturn.prototype.onProductsReceived = function(prods) {
@@ -179,7 +161,7 @@ Saturn.prototype.onProductReceived = function(prod) {
   prod.receivedTime = new Date();
   if (prod.mapping !== undefined) {
     this.addProductToQueue(prod);
-  } else if (this.mappings[merchantId] && (prod.receivedTime - this.mappings[merchantId].date) < this.DELAY_BEFORE_REASK_MAPPING) {
+  } else if (this.mappings[merchantId] && (prod.receivedTime - this.mappings[merchantId].date) < satconf.DELAY_BEFORE_REASK_MAPPING) {
     logger.debug("mapping from cache", merchantId, this.mappings[merchantId]);
     prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
     this.addProductToQueue(prod);
@@ -240,7 +222,7 @@ Saturn.prototype.crawlProduct = function() {
       this.closeTab(tabId);
       tabId = this.tabs.pending.shift();
     }
-  } else if (prod !== undefined) {
+  } else if (prod !== undefined || this.batchQueue.length > 0) {
     return this.updateNbTabs();
   } else
     return;
@@ -273,7 +255,7 @@ Saturn.prototype.endSession = function(session) {
   delete this.productsBeingProcessed[session.id];
   var tabId = session.tabId;
   if (tabId) {
-    if (! this.TEST_ENV)
+    if (satconf.env !== 'dev')
       delete this.sessions[tabId];
     if (! session.keepTabOpen)
       this.tabs.pending.push(tabId);
