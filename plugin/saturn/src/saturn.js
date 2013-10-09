@@ -119,6 +119,8 @@ Saturn.prototype.onArrayToExtractReceived = function(array) {
     logger.err("Error when getting new products to extract : received data is undefined or is not an Array");
     this.mainCallTimeout = setTimeout(this.main.bind(this), satconf.DELAY_BETWEEN_PRODUCTS);
   } else if (array.length > 0) {
+    if (logger.level <= logger.WARNING)
+      logger.print("%c[%s] %d product received.", "color: blue", (new Date()).toLocaleTimeString(), array.length);
     this.onProductsReceived(array);
   } else {
     logger.print("%cNo product.", "color: blue");
@@ -219,7 +221,7 @@ Saturn.prototype.crawlProduct = function() {
       this.closeTab(tabId);
       tabId = this.tabs.pending.shift();
     }
-  } else if (prod !== undefined) {
+  } else if (prod !== undefined || this.batchQueue.length > 0) {
     return this.updateNbTabs();
   } else
     return;

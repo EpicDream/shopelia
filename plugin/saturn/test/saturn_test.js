@@ -4,7 +4,7 @@
 
 define(['logger', 'src/saturn_session', './fake_saturn', 'satconf'], function(logger, SaturnSession, FakeSaturn) {
 
-logger.level = logger[satconf.log_level];
+logger.level = logger.NONE;
 
 describe("Saturn", function() {
   var saturn;
@@ -118,7 +118,56 @@ describe("Saturn", function() {
       expect(Object.keys(saturn.tabs.opened).length).toBe(0);
     });
 
-    it('updateNbTabs', function() {
+    it('updateNbTabs (1)', function() {
+      satconf.MIN_NB_TABS = 2;
+      satconf.MAX_NB_TABS = 15;
+
+      spyOn(saturn, 'openNewTab').andCallThrough();
+      spyOn(saturn, 'closeTab').andCallThrough();
+      spyOn(saturn, 'crawlProduct');
+
+      // Il crée autant de tab que nécessaire au démarrage.
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS);
+      expect(saturn.closeTab).not.toHaveBeenCalled();
+
+      // Il y a juste ce qu'il faut en pending
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS);
+      expect(saturn.closeTab).not.toHaveBeenCalled();
+
+      // Les MIN_NB_TABS sont occupées et il en manque une.
+      saturn.pending = [];
+      saturn.productQueue = [{id: 42}];
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1);
+      expect(saturn.closeTab).not.toHaveBeenCalled();
+
+      // Il y en a une de trop en pending
+      saturn.productQueue = [];
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1);
+      expect(saturn.closeTab.calls.length).toBe(1);
+
+      // Il manque 3 tabs
+      saturn.productQueue = [{id: 13}, {id: 14}, {id: 15}];
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
+      expect(saturn.closeTab.calls.length).toBe(1);
+
+      // Il manque des tabs, mais trop.
+      expect(Object.keys(saturn.tabs.opened).length).toBe(satconf.MIN_NB_TABS + 3);
+      saturn.MAX_NB_TABS = saturn.MIN_NB_TABS + 3;
+      saturn.productQueue = [{id: 16}];
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
+      expect(saturn.closeTab.calls.length).toBe(1);
+    });
+
+    it('updateNbTabs (2)', function() {
+      satconf.MIN_NB_TABS = 0;
+      satconf.MAX_NB_TABS = 15;
+
       spyOn(saturn, 'openNewTab').andCallThrough();
       spyOn(saturn, 'closeTab').andCallThrough();
       spyOn(saturn, 'crawlProduct');
@@ -211,7 +260,7 @@ describe("Saturn", function() {
       expect(saturn.crawlProduct.calls.length).toBe(2);
     });
 
-    it('crawlProduct', function() {
+    it('crawlProduct (1)', function() {
       spyOn(saturn, 'updateNbTabs');
       spyOn(saturn, 'createSession');
       spyOn(saturn, 'closeTab');
@@ -230,17 +279,9 @@ describe("Saturn", function() {
       expect(saturn.closeTab).not.toHaveBeenCalled();
       expect(saturn.tabs.pending.length).toBe(1);
 
-      // productQueue and pending are empty but not batchQueue.
-      saturn.tabs.pending = [];
-      saturn.batchQueue.push({id: 51});
-      saturn.crawlProduct();
-      expect(saturn.updateNbTabs).not.toHaveBeenCalled();
-      expect(saturn.createSession).not.toHaveBeenCalled();
-      expect(saturn.closeTab).not.toHaveBeenCalled();
-      expect(saturn.batchQueue.length).toBe(1);
-
       // pending is empty but not batchQueue and productQueue.
       saturn.tabs.pending = [];
+      saturn.batchQueue.push({id: 51});
       saturn.productQueue.push({id: 42});
       saturn.crawlProduct();
       expect(saturn.updateNbTabs.calls.length).toBe(1);
@@ -264,7 +305,7 @@ describe("Saturn", function() {
       saturn.tabs.pending = [1];
       saturn.tabs.opened[1] = {};
       saturn.crawlProduct();
-      expect(saturn.updateNbTabs.calls.length).toBe(2);
+      expect(saturn.updateNbTabs.calls.length).toBe(3);
       expect(saturn.createSession.calls.length).toBe(1);
       expect(saturn.closeTab.calls.length).toBe(1);
       expect(saturn.productQueue.length).toBe(0);
@@ -275,12 +316,36 @@ describe("Saturn", function() {
       saturn.tabs.pending = [2];
       saturn.tabs.opened[2] = {};
       saturn.crawlProduct();
-      expect(saturn.updateNbTabs.calls.length).toBe(2);
+      expect(saturn.updateNbTabs.calls.length).toBe(3);
       expect(saturn.closeTab.calls.length).toBe(1);
       expect(saturn.createSession.calls.length).toBe(2);
       expect(saturn.productQueue.length).toBe(0);
       expect(saturn.batchQueue.length).toBe(0);
       expect(saturn.tabs.pending.length).toBe(0);
+    });
+
+    it('crawlProduct (2)', function() {
+      spyOn(saturn, 'updateNbTabs');
+      spyOn(saturn, 'createSession');
+      spyOn(saturn, 'closeTab');
+
+      // productQueue and pending are empty but not batchQueue.
+      saturn.tabs.pending = [];
+      saturn.batchQueue.push({id: 51});
+      saturn.crawlProduct();
+      expect(saturn.updateNbTabs.calls.length).toBe(1);
+      expect(saturn.createSession).not.toHaveBeenCalled();
+      expect(saturn.closeTab).not.toHaveBeenCalled();
+      expect(saturn.batchQueue.length).toBe(1);
+
+      // productQueue is empty but not batchQueue and pending.
+      saturn.tabs.pending = [1];
+      saturn.tabs.opened[1] = {};
+      saturn.crawlProduct();
+      expect(saturn.updateNbTabs.calls.length).toBe(1);
+      expect(saturn.createSession.calls.length).toBe(1);
+      expect(saturn.closeTab).not.toHaveBeenCalled();
+      expect(saturn.batchQueue.length).toBe(0);
     });
 
     it('onProductsReceived', function() {
@@ -345,7 +410,8 @@ describe("Saturn", function() {
         saturn._productToExtract.push(prod);
       });
       waitsFor(function() {return Object.keys(saturn.sessions).length > 0 || Object.keys(saturn.results).length > 0;}, "Session creation is to long.", saturn.DELAY_BETWEEN_PRODUCTS * 10);
-      waitsFor(function() {return Object.keys(saturn.results).length > 0;}, "Crawling is to long.", 1000);
+      waitsFor(function() {return Object.keys(saturn.results).length > 0;}, "Crawling is to long to start.", 1000);
+      waitsFor(function() {return Object.keys(saturn.sessions).length === 0;}, "Crawling is to long to end.", 2000);
 
       runs(function() {
         expect(saturn.results[42]).not.toBe(undefined);

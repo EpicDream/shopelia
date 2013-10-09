@@ -118,10 +118,14 @@ module.exports = function(grunt) {
     var conf = {};
     for (var key in satconf)
       conf[key] = satconf[key];
-    conf.env = env = env || satconf.env;
+
+    if (env)
+      conf.env = env;
+    else if (! satconf.env)
+      conf.env = "dev";
 
     if (! satconf.log_level)
-      switch (env) {
+      switch (conf.env) {
         case "test" :
           conf.log_level = satconf.default_test_log_level || "NONE";
           break;
@@ -133,7 +137,7 @@ module.exports = function(grunt) {
       }
 
     if (! satconf.run_mode)
-      switch (env) {
+      switch (conf.env) {
         case "staging" :
         case "prod" :
           conf.run_mode = "auto";

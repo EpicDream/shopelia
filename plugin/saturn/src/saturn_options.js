@@ -64,7 +64,7 @@ define(["src/tree", 'satconf'], function(Tree) {
       // on ajoute que celle là (si on la trouve).
       if (currentArg) {
         for (i = 0; i < values.length && (! satconf.TEST_ENV || i < 3); i++) {
-          var stringified = JSON.stringify(values[i]);
+          var stringified = values[i].hash;
           if (currentArg === stringified) {
             this._currentNode.addChildAt(stringified, values[i]);
             currentArg = null; // pour indiquer qu'on l'a trouvé.
@@ -82,7 +82,7 @@ define(["src/tree", 'satconf'], function(Tree) {
             break;
           }
         for (i = 0; i < values.length && (satconf.env !== "dev" || i < 3); i++)
-          this._currentNode.addChildAt(JSON.stringify(values[i]), values[i]);
+          this._currentNode.addChildAt(values[i].hash, values[i]);
       }
     }
     return this;
@@ -149,10 +149,12 @@ define(["src/tree", 'satconf'], function(Tree) {
   // If version's is a hash, complete it.
   SaturnOptions.prototype.currentVersion = function(version) {
     version = version || this._currentNode.version || {};
-    var path = this._currentNode.path();
-    for (var i = path.length - 1; i >= 0; i--) {
-      if (path[i] !== 'null')
-        version['option'+(i+1)] = JSON.parse(path[i]);
+    var node = this._currentNode, i = node.depth();
+    while (i > 0) {
+      if (node.value !== null)
+        version['option'+i] = node.value;
+      node = node.parent();
+      i--;
     }
     return version;
   };

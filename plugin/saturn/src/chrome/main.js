@@ -55,9 +55,6 @@ chrome.extension.onConnectExternal.addListener(function(port) {
   });
 });
 
-// Default to debug until Chrome propose tabs for each levels.
-logger.level = logger.DEBUG;
-
 if (satconf.run_mode === 'auto')
   saturn.start();
 
