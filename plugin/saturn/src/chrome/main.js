@@ -2,12 +2,12 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-10-07
 
-require(['logger', 'src/saturn', 'src/chrome/chrome_saturn'], function(logger, Saturn, ChromeSaturn) {
+require(['logger', 'src/saturn', 'src/chrome/chrome_saturn', 'satconf'], function(logger, Saturn, ChromeSaturn) {
 
 "use strict";
 
 // Default to debug until Chrome propose tabs for each levels.
-logger.level = logger.DEBUG;
+logger.level = logger[satconf.log_level];
 
 var saturn = new ChromeSaturn();
 window.saturn = saturn;
@@ -22,7 +22,7 @@ chrome.extension.onMessage.addListener(function(msg, sender, response) {
 
 // On extension button clicked.
 chrome.browserAction.onClicked.addListener(function(tab) {
-  if (! saturn.TEST_ENV) {
+  if (satconf.run_mode === "auto") {
     if (saturn.crawl) {
       logger.info("Button pressed, Saturn is paused.");
       saturn.pause();
@@ -55,10 +55,7 @@ chrome.extension.onConnectExternal.addListener(function(port) {
   });
 });
 
-// Default to debug until Chrome propose tabs for each levels.
-logger.level = logger.DEBUG;
-
-if (! saturn.TEST_ENV)
+if (satconf.run_mode === 'auto')
   saturn.start();
 
 });
