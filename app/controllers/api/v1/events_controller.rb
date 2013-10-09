@@ -42,7 +42,7 @@ class Api::V1::EventsController < Api::V1::BaseController
     if params[:urls].is_a?(Array)
       @urls = params[:urls].map{|e| e.unaccent}
     else
-      @urls = params[:urls].unaccent.split("||")
+      @urls = (params[:urls] || "").unaccent.split("||")
     end
   end
   

@@ -161,7 +161,7 @@ class Order < ActiveRecord::Base
       if self.expected_price_total >= self.prepared_price_total
       
         # Basic user payment
-        if self.meta_order.billing_solution.nil?
+        if self.meta_order.billing_solution.blank?
           callback_vulcain(true)
           
         # MangoPay billing
