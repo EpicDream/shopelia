@@ -7,7 +7,7 @@ Shopelia::Application.routes.draw do
   match "/download" => "home#download"
   match "/connect", to: "home#connect"
 
-  match "/app_checkout", :controller => "html_app", :action => "index"
+  match "/checkout", :controller => "html_app", :action => "index"
 
   apipie
 
@@ -24,12 +24,13 @@ Shopelia::Application.routes.draw do
   resources :home, :only => :index
   resources :send_download_link, :only => :create
 
-  resources :checkout, :only => :index
   resources :contact, :only => :create
   resources :gateway, :only => :index
   
   resources :addresses
-  resources :carts, :only => :show
+  resources :carts, :only => :show do 
+    resources :checkout, :only => :index
+  end
   resources :cart_items, :only => [:show, :create] do
     get :unsubscribe, :on => :member
   end
