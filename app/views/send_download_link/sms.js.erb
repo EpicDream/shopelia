@@ -1,0 +1,8 @@
+<% puts @success.inspect %>
+<% if @success %>
+  $("#sendAppSuccessModal").modal();
+  $(".btn-download").tooltip('hide')
+<% else %>
+  $("#sendAppErrorModal").modal();
+<% end %>
+$("#send-link-btn").button("reset");

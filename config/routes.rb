@@ -2,11 +2,10 @@ require 'api_constraints'
 
 Shopelia::Application.routes.draw do
 
-  match '/cgu' => "home#general_terms_of_use"
-  match '/security' => "home#security"
-  match "/send_text_message" => "send_text#send_text_message"
-
-  match '/download' => 'application#download'
+  match "/cgu" => "home#general_terms_of_use"
+  match "/security" => "home#security"
+  match "/download" => "home#download"
+  match "/connect", to: "home#connect"
 
   match "/app_checkout", :controller => "html_app", :action => "index"
 
@@ -23,7 +22,7 @@ Shopelia::Application.routes.draw do
   end
 
   resources :home, :only => :index
-  match "/connect", to: "home#connect"
+  resources :send_download_link, :only => :create
 
   resources :checkout, :only => :index
   resources :contact, :only => :create

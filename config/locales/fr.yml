@@ -347,6 +347,7 @@ fr:
         send: "Envoyer"
         placeholder: "Tel. ou Email"
         wait: " ... "
+        sms_message: "Pour télécharger l'application Shopelia, cliquez ici %{url}"
     signin:
       title: "Déjà membre ?"
       unauthorized: "Erreur dans l'email ou le mot de passe"

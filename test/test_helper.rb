@@ -29,6 +29,7 @@ class ActiveSupport::TestCase
   end
 
   setup do
+    $sms_gateway_count = 0
     ENV["API_KEY"] = developers(:prixing).api_key
     ActionMailer::Base.deliveries.clear
     File.delete(MangoPayDriver::CONFIG) if File.exist?(MangoPayDriver::CONFIG)
