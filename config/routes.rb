@@ -67,6 +67,9 @@ Shopelia::Application.routes.draw do
       resources :merchants, :only => [:index, :create]
       resources :orders, :only => [:create, :show]
       resources :products, :only => [:index, :create]
+      namespace :products do
+        resources :requests, :only => :create
+      end
       resources :users, :only => [:show, :update, :destroy]
       namespace :users do
         resources :autocomplete, :only => :create
