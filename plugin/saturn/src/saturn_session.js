@@ -108,6 +108,7 @@ SaturnSession.prototype.createSubTasks = function() {
     var hashCode = hashes[i];
     var prod = {
       id: this.id,
+      batch_mode: true,
       url: this.url,
       mapping: this.mapping, //Sharing
       merchant_id: this.merchant_id,

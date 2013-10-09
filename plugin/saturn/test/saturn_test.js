@@ -209,6 +209,52 @@ describe("Saturn", function() {
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
       expect(saturn.closeTab.calls.length).toBe(1);
     });
+
+    it('updateNbTabs (3)', function() {
+      satconf.MIN_NB_TABS = 0;
+      satconf.MAX_NB_TABS = 15;
+
+      spyOn(saturn, 'openNewTab').andCallThrough();
+      spyOn(saturn, 'closeTab').andCallThrough();
+      spyOn(saturn, 'crawlProduct');
+
+      // Il crée autant de tab que nécessaire au démarrage.
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS);
+      expect(saturn.closeTab).not.toHaveBeenCalled();
+
+      // Il y a juste ce qu'il faut en pending
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS);
+      expect(saturn.closeTab).not.toHaveBeenCalled();
+
+      // Les MIN_NB_TABS sont occupées et il en manque une.
+      saturn.pending = [];
+      saturn.batchQueue = [{id: 42}];
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1);
+      expect(saturn.closeTab).not.toHaveBeenCalled();
+
+      // Il y en a une de trop en pending
+      saturn.batchQueue = [];
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1);
+      expect(saturn.closeTab.calls.length).toBe(1);
+
+      // Il manque 3 tabs
+      saturn.batchQueue = [{id: 13}, {id: 14}, {id: 15}];
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
+      expect(saturn.closeTab.calls.length).toBe(1);
+
+      // Il manque des tabs, mais trop.
+      expect(Object.keys(saturn.tabs.opened).length).toBe(satconf.MIN_NB_TABS + 3);
+      saturn.MAX_NB_TABS = saturn.MIN_NB_TABS + 3;
+      saturn.batchQueue = [{id: 16}];
+      saturn.updateNbTabs();
+      expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
+      expect(saturn.closeTab.calls.length).toBe(1);
+    });
   });
 
   describe('from received products to createSession',function() {

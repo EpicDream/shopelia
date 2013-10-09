@@ -86,8 +86,9 @@ Saturn.prototype.updateNbTabs = function() {
   if (this.tabs.nbUpdating > 0)
     return;
   var pending = this.tabs.pending,
+      prodLength = this.productQueue.length + this.batchQueue.length,
       i;
-  if (this.productQueue.length === 0 && pending.length > satconf.MIN_NB_TABS) {// On ferme des tabs
+  if (prodLength === 0 && pending.length > satconf.MIN_NB_TABS) {// On ferme des tabs
     pending = pending.sort(function(i,j){return i-j;});
     var nbTabToClose = pending.length - satconf.MIN_NB_TABS;
     for (i = 0 ; i < nbTabToClose ; i++) {
@@ -96,10 +97,10 @@ Saturn.prototype.updateNbTabs = function() {
     }
   } else { // On ouvre des tabs
     var nbMaxOpenable = satconf.MAX_NB_TABS - Object.keys(this.tabs.opened).length,
-        nbWanted = satconf.MIN_NB_TABS + this.productQueue.length - pending.length,
+        nbWanted = satconf.MIN_NB_TABS + prodLength - pending.length,
         nbTabToOpen = nbMaxOpenable >= nbWanted ? nbWanted : nbMaxOpenable;
-    if (nbTabToOpen === 0 && this.productQueue.length > 0)
-      logger.warn("WARNING : Too many product to crawl ("+this.productQueue.length+") and max tabs opened ("+satconf.MAX_NB_TABS+") !");
+    if (nbTabToOpen === 0 && prodLength > 0)
+      logger.warn("WARNING : Too many product to crawl ("+prodLength+") and max tabs opened ("+satconf.MAX_NB_TABS+") !");
     for (i = 0; i < nbTabToOpen ; i++)
       this.openNewTab();
   }
