@@ -1,0 +1,33 @@
+---
+"version": "2.2.1"
+#### Global options
+## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
+# "env": "prod"
+
+#### Logger options. Look in logger.js to view all possible values.
+"default_test_log_level": "NONE" # default to "NONE"
+"default_dev_log_level": "ALL" # default to "ALL"
+"default_prod_log_level": "WARN" # default to "WARN"
+## if set, hide default_*_log_level
+# "log_level" : "DEBUG"
+
+#### Saturn options
+## in ['auto', 'manual']. Default is to 'auto' in prod env, 'manual' otherwise.
+# "run_mode" : "manual"
+"DELAY_BETWEEN_PRODUCTS": 500 # 500 ms
+"DELAY_BEFORE_REASK_MAPPING": 300000 # 5 min
+"MIN_NB_TABS": 0
+"MAX_NB_TABS": 15
+"consum": true
+
+#### Chrome options
+"DELAY_BETWEEN_OPTIONS": 1500
+## wait response from contentscript 60s max, fail after that (required when a lot of sizes for shoes for example).
+"DELAY_RESCUE": 60000
+
+#### URLs options
+"SHOPELIA_DOMAIN": "https://www.shopelia.fr"
+"LOCAL_DOMAIN": "http://localhost:3000"
+"PRODUCT_EXTRACT_URL": "https://www.shopelia.fr/api/viking/products"
+"MAPPING_URL": "https://www.shopelia.fr/api/viking/merchants/"
+"PRODUCT_EXTRACT_UPDATE": "https://www.shopelia.fr/api/viking/products/"

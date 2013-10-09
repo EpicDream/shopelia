@@ -10,6 +10,7 @@ var logger = {
   level: 3,
   NONE: 0,
   ERROR: 1,
+  WARN: 2,
   WARNING: 2,
   INFO: 3,
   DEBUG: 4,
