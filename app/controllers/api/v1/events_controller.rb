@@ -34,7 +34,7 @@ class Api::V1::EventsController < Api::V1::BaseController
   
   def prepare_params
     @tracker = params[:tracker]
-    @action = params[:shadow] ? Event::REQUEST :
+    @action = (params[:shadow] && params[:shadow] != "false") ? Event::REQUEST :
       params[:type] == 'click' ? Event::CLICK : Event::VIEW
   end
 
