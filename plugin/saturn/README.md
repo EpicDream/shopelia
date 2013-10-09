@@ -28,11 +28,59 @@ There are different way to use Saturn :
 
 There are also different way to install it :
 
-1. Automatically, via 'saturn' script : it will launch a Google-Chrome with Saturn installed, and uninstall it at end.
-2. Manually, with the package extension.
-3. Manually, from the sources.
+1. (Recommended) Manually, from the sources.
+2. Manually, with the packaged extension.
+3. Automatically, via 'install' script.
 
-#### Automatically, via 'saturn' script
+#### With the packaged extension
+
+Just download the saturn.crx file, and drop it in the Google-Chrome window.
+  
+You may also find it in shopelia/plugin/extensions/
+
+#### From sources
+
+The first thing to do is to install grunt.
+
+1. If they are not already installed, install nodejs (> 0.8) and npm. Look http://doc.ubuntu-fr.org/nodejs for furthermore details. Take a look at the 'Depuis un PPA' section if nodejs package is too old in the repositories.
+2. Install grunt
+    
+    sudo npm install -g grunt-cli
+
+3. go in saturn folder.
+4. install all necessary packages.
+
+    npm install
+
+5. run
+
+    grunt prod
+
+See Install "With the packaged extension".
+
+#### Automatically, via 'install' script
+
+Go in saturn folder :
+
+    cd shopelia/plugin/saturn/
+
+The first time, set saturn script executable :
+
+    chmod u+x ./install
+
+Then, run it :
+
+    ./install
+
+Usage
+-----
+  
+In config.run_mode=auto, you have nothing to do, the extension ask itself for product to crawl.
+Click on the extension button in the toolbar to pause / resume the crawling.
+  
+In config.run_mode=manual, you can crawl the product on the current page by clicking on the extension's button at top-right of the window.
+  
+We recommand you to use it in a private tab, to do not be tracked.
 
 Go in saturn folder :
 
@@ -50,41 +98,17 @@ Or, on a server, specify the output display :
 
     DISPLAY=:0 ./saturn
 
-#### With the packaged extension
+Developpers
+-----------
 
-Just download the saturn.crx file, and drop it in the Google-Chrome window.
-  
-You may also find it in shopelia/plugin/extensions/
+Firts of all, install Saturn from sources.
 
-#### From sources
-
-In Chromium extensions' tab :
+Then, insteed of use packaged extension, open Chrome and in extensions' tab :
 
 1. Check 'Developper mode'
 2. Then click on 'Load unpacked extension'
 3. Browse on Saturn directory and open it.
 4. Check 'Allow in private navigation'.
-
-Usage
------
-  
-In production/on Google-Chrome, you have nothing to do, the extension ask itself for product to crawl.
-Click on the extension button in the toolbar to pause / resume the crawling.
-  
-In dev/on Chromium, you can crawl the product on the current page by clicking on the extension's button at top-right of the window.
-  
-We recommand you to use it in a private tab, to do not be tracked.
-
-Developpers
------------
-
-The first thing to do is to install grunt.
-
-1. if they are not already installed, install nodejs (> 0.8) and npm. Look http://doc.ubuntu-fr.org/nodejs for furthermore details. Take a look at the 'Depuis un PPA' section if nodejs package is too old in the repositories.
-2. go in saturn folder.
-3. install all necessary packages.
-
-    npm install
 
 After you have modify a file, run
 
@@ -98,6 +122,8 @@ It will
 - clean build files,
 - and update manifest.json file.
 
+and reload extension in Chrome extensions' tab.
+
 When modifications are good, before commit it with git, run
 
     grunt prod
@@ -107,6 +133,13 @@ It will additionnaly
 - minimize/uglify files,
 - do more cleaning tasks,
 - and package extension.
+
+Additionnaly to just grunt, are also available :
+
+- grunt test : just run test, doesn't build or clean anything.
+- grunt dev-prod : like dev but crawl a product like in prod, not just first options.
+- grunt prod-dev : like prod, but log all and doesn't uglify.
+- grunt staging : like prod, but doesn't consum prod.
 
 More info on [Grunt](http://gruntjs.com/)
 ### Files
