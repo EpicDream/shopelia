@@ -13,12 +13,12 @@ class Event < ActiveRecord::Base
   
   validates :product, :presence => true
   validates :developer, :presence => true
-  validates :device, :presence => true
   validates :action, :presence => true, :inclusion => { :in => [ VIEW, CLICK, REQUEST ] }
 
   before_validation :find_or_create_product
   before_validation :set_monetizable
   before_validation :check_merchant_accepting_events
+  before_validation :check_presence_of_device
   after_create :reset_viking_sent_at
 
   attr_accessible :url, :product_id, :developer_id, :device_id, :action, :tracker, :ip_address
@@ -59,5 +59,9 @@ class Event < ActiveRecord::Base
 
   def reset_viking_sent_at
     self.product.update_column "viking_sent_at", nil if self.product.persisted? && self.product.versions_expired?
+  end
+
+  def check_presence_of_device
+    self.errors.add(:base, 'Missing device') if self.device.nil? && self.action != REQUEST
   end
 end

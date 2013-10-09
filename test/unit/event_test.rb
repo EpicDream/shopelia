@@ -52,6 +52,22 @@ class EventTest < ActiveSupport::TestCase
     assert !event.save
   end
 
+  test "it shouldn't create event without valid device" do
+    event = Event.new(
+      :action => Event::CLICK,
+      :url => "http://www.google.com/my_product",
+      :developer_id => developers(:prixing).id)
+    assert !event.save
+  end
+
+  test "it should create event without valid device if action is REQUEST" do
+    event = Event.new(
+      :action => Event::REQUEST,
+      :url => "http://www.google.com/my_product",
+      :developer_id => developers(:prixing).id)
+    assert event.save
+  end
+
   test "it shouldn't reset viking_sent_at if product versions are not expired when event is created" do
     p = products(:headphones)
     p.update_attributes(
