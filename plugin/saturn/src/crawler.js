@@ -83,7 +83,7 @@ Crawler.getOptions = function(pathes) {
     h.xpath = hu.getElementXPath(elem);
     h.cssPath = hu.getElementCSSSelectors($(elem));
     h.saturnPath = path;
-    h.hash = [h.tagName,h.id,h.text,h.location,h.value].join(';');
+    h.hash = [h.tagName,h.id,h.text,h.location,h.value,h.src].join(';');
     return h;
   });
 };

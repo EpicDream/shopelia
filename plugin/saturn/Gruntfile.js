@@ -163,6 +163,7 @@ module.exports = function(grunt) {
     grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
   }
 
+  // Predefined tasks
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
@@ -172,11 +173,46 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-exec');
 
-  grunt.registerTask('setEnv', function(env) {satconf.env = env;});
-  grunt.registerTask('configFile', updateConfigFile);
-  grunt.registerTask('manifest', updateManifest);
-  grunt.registerTask('test', ['jshint', 'configFile:test', 'copy', 'jasmine']);
-  grunt.registerTask('base', ['test', 'configFile', 'requirejs', 'concat']);
-  grunt.registerTask('default', ['base', 'manifest:dev', 'clean:dev']);
-  grunt.registerTask('prod', ['setEnv:prod', 'base', 'uglify', 'manifest:prod', 'clean:prod', 'exec:package']);
+  // My tasks
+  grunt.registerTask('version', function() {
+    // Update package.json
+    pkg.version = satconf.version;
+    grunt.file.write("package.json", JSON.stringify(pkg, null, 2));
+    // Update manifest.json
+    manifest.version = satconf.version;
+    grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
+  });
+
+  grunt.registerTask('config', function(profile) {
+    var conf = {}, key;
+    // Set default conf
+    for (key in satconf.default)
+      conf[key] = satconf.default[key];
+    // Overwrite with profile conf
+    for (key in satconf[profile])
+      conf[key] = satconf[profile][key];
+    grunt.file.write("build/config.js", 'var satconf = ' + JSON.stringify(conf, null, 2) + ';\n');
+  });
+
+  grunt.registerTask('manifest', function(arg) {
+    switch (arg) {
+      case 'min' :
+        manifest.background.scripts[0] = 'dist/background.min.js';
+        manifest.content_scripts[0].js[0] = 'dist/contentscript.min.js';
+        break;
+      default :
+        manifest.background.scripts[0] = 'build/background.js';
+        manifest.content_scripts[0].js[0] = 'build/contentscript.js';
+    }
+    grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
+  });
+
+  // Alias
+  grunt.registerTask('default', ['dev-prod']);
+  grunt.registerTask('test', ['version', 'jshint', 'config:test', 'copy', 'jasmine']);
+  grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev']);
+  grunt.registerTask('dev-prod', ['test', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
+  grunt.registerTask('prod-dev', ['test', 'config:prod-dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
+  grunt.registerTask('staging', ['test', 'config:staging', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod', 'exec:package']);
+  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod', 'exec:package']);
 };
