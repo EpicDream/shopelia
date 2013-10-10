@@ -5,6 +5,7 @@ require.config({
     sprintf: "vendor/sprintf",
     jquery: "vendor/jquery",
     underscore: "vendor/underscore",
-    html_utils: "vendor/html_utils"
+    html_utils: "vendor/html_utils",
+    satconf: "build/config"
   }
 });

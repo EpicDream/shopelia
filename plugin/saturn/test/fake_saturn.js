@@ -80,13 +80,14 @@ FakeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
     case "getOptions" :
       switch (cmd.option) {
         case 1:
-          result = [{text: 'color1'}, {text: 'color2'}];
+          result = [{text: 'color1', hash: 'color1'}, {text: 'color2', hash: 'color2'}];
           break;
         case 2:
-          result = [{text: 'size1'}, {text: 'size2'}];
+          result = [{text: 'size1', hash: 'size1'}, {text: 'size2', hash: 'size2'}];
           break;
         default:
-          result = [{text: 'option'+cmd.option+'1'}, {text: 'option-'+cmd.option+'-2'}];
+          result = [{text: 'option-'+cmd.option+'-1', hash: 'option-'+cmd.option+'-1'},
+                    {text: 'option-'+cmd.option+'-2', hash: 'option-'+cmd.option+'-2'}];
       }
       break;
     case 'setOption' :

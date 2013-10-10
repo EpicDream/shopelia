@@ -98,30 +98,31 @@ SaturnSession.prototype.next = function() {
 
 SaturnSession.prototype.createSubTasks = function() {
   var firstOption = this.options.firstOption({nonAlone: true}),
-      option, values;
+      option, hashes;
   if (! firstOption) // Possible if there is only a single choice
     return;
   option = firstOption.depth()+1;
-  values = Object.keys(firstOption._childrenH);
+  hashes = Object.keys(firstOption._childrenH);
   this._subTasks = {};
-  for (var i = 1 ; i < values.length ; i++) {
-    var value = values[i];
+  for (var i = 1 ; i < hashes.length ; i++) {
+    var hashCode = hashes[i];
     var prod = {
       id: this.id,
+      batch_mode: true,
       url: this.url,
       mapping: this.mapping, //Sharing
       merchant_id: this.merchant_id,
       strategy: 'normal',
       argOptions: $extend(true, {}, this.options.argOptions),
       _onSubTaskFinished: this.subTaskEnded.bind(this),
-      _subTaskId: value,
+      _subTaskId: hashCode,
     };
-    prod.argOptions[option] = value;
-    this._subTasks[value] = prod;
-    firstOption.removeChild(firstOption.childAt(value));
+    prod.argOptions[option] = hashCode;
+    this._subTasks[hashCode] = prod;
+    firstOption.removeChild(firstOption.childAt(hashCode));
     this.saturn.addProductToQueue(prod);
   }
-  this.options.argOptions[option] = values[0];
+  this.options.argOptions[option] = hashes[0];
 };
 
 SaturnSession.prototype.getOptions = function(option) {
