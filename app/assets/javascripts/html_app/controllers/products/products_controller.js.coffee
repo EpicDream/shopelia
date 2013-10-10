@@ -22,7 +22,7 @@ class Shopelia.Controllers.ProductsController extends Shopelia.Controllers.Contr
           @region.show(@view)
         else
           @onPollerExpired()
-      if @product.get('options_completed') == 1
+      if @product.get('options_completed') == 1 && @product.get('ready') == 1
         @poller.stop()
 
   onPollerExpired: ->
