@@ -23,7 +23,7 @@ class Emailer < ActionMailer::Base
     @vendor = @order.merchant.name
     @product = @order.order_items.first.product
     mail( :to => @order.user.email,
-          :subject => "Votre commande chez #{@vendor} a bien été prise en compte !",
+          :subject => "Votre commande chez #{@vendor} est actuellement en cours de traitement !",
           :from => "Shopelia <contact@shopelia.fr>")
   end
 
@@ -34,7 +34,7 @@ class Emailer < ActionMailer::Base
     @product = @order.order_items.first.product
     @account = @order.merchant_account
     mail( :to => @order.user.email,
-          :subject => "Votre commande a été acceptée par #{@vendor}",
+          :subject => "Votre commande a été passée avec succès chez #{@vendor}",
           :from => "Shopelia <contact@shopelia.fr>")
   end
 
@@ -54,7 +54,7 @@ class Emailer < ActionMailer::Base
     @old_price = @order.expected_price_total
     @new_price = @order.prepared_price_total
     mail( :to => @order.user.email,
-          :subject => "ATTENTION ! Le prix de votre commande a evolué !",
+          :subject => "ATTENTION ! Le prix de votre commande a évolué !",
           :from => "Shopelia <contact@shopelia.fr>")
   end
 
@@ -73,36 +73,35 @@ class Emailer < ActionMailer::Base
     @stats = stats
     mail( :to => "Shopelia <staff@shopelia.com>",
           :subject => "Daily global statistics for #{@stats.date.to_s(:long)}",
-          :from => "Admin Shopelia <contact@shopelia.fr>")
+          :from => "Admin Shopelia <admin@shopelia.fr>")
   end
 
   def notify_admin_user_creation user
     @user = user
-    mail( :to => "Shopelia <contact@shopelia.fr>",
+    mail( :to => "Shopelia <admin@shopelia.fr>",
           :subject => "Nouvel utilisateur inscrit #{@user.name}",
-          :from => "Admin Shopelia <contact@shopelia.fr>")
+          :from => "Admin Shopelia <admin@shopelia.fr>")
   end
 
   def notify_admin_cart_item_creation item
     @item = item
-    mail( :to => "Shopelia <contact@shopelia.fr>",
+    mail( :to => "Shopelia <admin@shopelia.fr>",
           :subject => "Nouveau produit suivi #{@item.product_version.product.name}",
-          :from => "Admin Shopelia <contact@shopelia.fr>")
+          :from => "Admin Shopelia <admin@shopelia.fr>")
   end
 
   def notify_admin_order_creation order
     @order = order
     @user_agent = ENV['HTTP_USER_AGENT']
-    mail( :to => "Shopelia <contact@shopelia.fr>",
+    mail( :to => "Shopelia <admin@shopelia.fr>",
           :subject => "Nouvelle commande reçue de #{@order.user.name}",
-          :from => "Admin Shopelia <contact@shopelia.fr>")
+          :from => "Admin Shopelia <admin@shopelia.fr>")
   end
    
   def notify_admin_order_failure order
     @order = order
-    mail( :to => "Shopelia <contact@shopelia.fr>,anoiaque@gmail.com",
+    mail( :to => "Shopelia <admin@shopelia.fr>,anoiaque@gmail.com",
           :subject => "Echec de l'injection de la commande passée par #{@order.user.name}",
-          :from => "Admin Shopelia <contact@shopelia.fr>")
+          :from => "Admin Shopelia <admin@shopelia.fr>")
   end
-
 end
