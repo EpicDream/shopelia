@@ -1,5 +1,5 @@
 class MerchantSerializer < ActiveModel::Serializer
-  attributes :id, :name, :logo, :url, :accepting_orders, :domain, :allow_quantities
+  attributes :id, :name, :logo, :url, :tc_url, :accepting_orders, :domain, :allow_quantities
   
   def accepting_orders
     object.accepting_orders? ? 1 : 0
