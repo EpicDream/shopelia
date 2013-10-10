@@ -185,6 +185,6 @@ class ProductVersion < ActiveRecord::Base
   end   
 
   def notify_channel
-    Pusher.trigger("product-version-#{self.id}", "update", ProductVersionSerializer.new(self).as_json[:product_version])
+    #Pusher.trigger("product-version-#{self.id}", "update", ProductVersionSerializer.new(self).as_json[:product_version])
   end
 end
