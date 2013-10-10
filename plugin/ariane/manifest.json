@@ -1,6 +1,6 @@
 {
   "name": "Ariane",
-  "version": "0.6.5",
+  "version": "0.6.6",
   "manifest_version": 2,
   "description": "Outil de mapping de page produit pour Viking/Saturn.",
   "icons": {
@@ -40,7 +40,7 @@
         "https://*.shopelia.com/admin/viking"
       ],
       "js": [
-        "src/loader_cs.js"
+        "dist/loader.min.js"
       ]
     }
   ],

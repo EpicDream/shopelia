@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define('ariane_toolbar', ['jquery', 'logger'], function($, logger) {
+define(['jquery-ui', 'logger'], function($, logger) {
   "use strict";
 
   var toolbar = {},

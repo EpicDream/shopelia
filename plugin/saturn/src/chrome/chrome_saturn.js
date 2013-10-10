@@ -97,6 +97,20 @@ ChromeSaturn.prototype.parseCurrentPage = function(tab) {
 };
 
 //
+ChromeSaturn.prototype.sendWarning = function(session, msg) {
+  if (session.extensionId) {
+    saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], warnMsg: msg});
+  } else if (session.id) // Stop pushed or Local Test
+    $.ajax({
+      type : "PUT",
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
+      contentType: 'application/json',
+      data: JSON.stringify({versions: [], warnMsg: msg})
+    });
+  Saturn.prototype.sendWarning.call(this, session, msg);
+};
+
+//
 ChromeSaturn.prototype.sendError = function(session, msg) {
   if (session.extensionId) {
     saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], errorMsg: msg});

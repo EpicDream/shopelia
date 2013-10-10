@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created : 01/08/2013
 
-define('css', ['jquery'], function($) {
+define(['jquery'], function($) {
 'use strict';
 
 function bind(f, scope) {
