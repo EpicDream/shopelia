@@ -22,9 +22,9 @@ class Shopelia.Controllers.ProductsController extends Shopelia.Controllers.Contr
           @region.show(@view)
         else
           @onPollerExpired()
-      if @product.get('options_completed') == 1
+      if @product.get('options_completed') == 1 && @product.get('ready') == 1
         @poller.stop()
 
   onPollerExpired: ->
-    if (@product.get('ready') || 0) == 0
+    if (@product.get('ready') || 0) == 0 || @product.get('available') == false
       Shopelia.vent.trigger("modal#show_product_not_available",@product)

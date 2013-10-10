@@ -2,10 +2,9 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-20
 
-define(["jquery", "html_utils"], function($, hu) {
+define(["jquery", "html_utils", "satconf"], function($, hu) {
 
-DELAY_BETWEEN_OPTIONS = 1500;
-OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i;
+var OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i;
 
 function getFromSelectOptions(elem) {
   return elem.find("option:enabled");
@@ -84,6 +83,7 @@ Crawler.getOptions = function(pathes) {
     h.xpath = hu.getElementXPath(elem);
     h.cssPath = hu.getElementCSSSelectors($(elem));
     h.saturnPath = path;
+    h.hash = [h.tagName,h.id,h.text,h.location,h.value,h.src].join(';');
     return h;
   });
 };
