@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created : 31/07/2013
 
-define('path_utils', ['jquery', 'html_utils', 'css'], function($, hu, Css) {
+define(['jquery', 'html_utils', 'lib/css_struct'], function($, hu, Css) {
 
 'use strict';
 
