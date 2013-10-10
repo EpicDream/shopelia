@@ -153,7 +153,7 @@ Saturn.prototype.onProductsReceived = function(prods) {
 };
 
 //
-Saturn.prototype.processMapping = function(mapping) {
+Saturn.prototype.processMapping = function(mapping, prod, merchantId) {
   if (! mapping) {
     this.sendError({id: prod.id}, 'mapping is undefined for merchant_id='+merchantId);
     return false;
@@ -181,15 +181,15 @@ Saturn.prototype.onProductReceived = function(prod) {
     prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
     this.addProductToQueue(prod);
   } else
-    this.loadMapping(merchantId, this.onMappingReceived(prod), this.onMappingFail(prod, merchantId));
+    this.loadMapping(merchantId, this.onMappingReceived(prod, merchantId), this.onMappingFail(prod, merchantId));
 };
 
-Saturn.prototype.onMappingReceived = function(prod) {
+Saturn.prototype.onMappingReceived = function(prod, merchantId) {
   return function(mapping) {
-    if (! this.processMapping(mapping))
+    if (! this.processMapping(mapping, prod, merchantId))
       return;
     else if (mapping.data.ref)
-      this.loadMapping(mapping.data.ref, this.onMappingReceived(prod), this.onMappingFail(prod, mapping.data.ref));
+      this.loadMapping(mapping.data.ref, this.onMappingReceived(prod, mapping.data.ref), this.onMappingFail(prod, mapping.data.ref));
     else {
       prod.mapping = buildMapping(prod.uri, mapping.data.viking);
       this.addProductToQueue(prod);
