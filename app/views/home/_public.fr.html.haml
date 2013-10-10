@@ -14,7 +14,7 @@
           .row
             .col-md-4.col-md-offset-2
               .spacer40
-              = image_tag("appstore-icon.png")
+              = image_tag("appstore-white-soon.png", style:"opacity:0.4")
             .col-md-4
               .spacer40
               = image_tag("googleplay-icon.png")
@@ -69,7 +69,7 @@
   .modal-dialog
     .modal-content
       .modal-body
-        %h3= t 'app.public.send_app.invalid_entry'
+        %h4= t 'app.public.send_app.invalid_entry'
       .modal-footer
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"}= t 'app.close'
 
@@ -77,7 +77,7 @@
   .modal-dialog
     .modal-content
       .modal-body
-        %h3= t 'app.public.send_app.error'
+        %h4= t 'app.public.send_app.error'
       .modal-footer
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"}= t 'app.close'
 
@@ -85,7 +85,7 @@
   .modal-dialog
     .modal-content
       .modal-body
-        %h3= t 'app.public.send_app.success'
+        %h4= t 'app.public.send_app.success'
       .modal-footer
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"}= t 'app.close'
 
