@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-25
 
-define("viking", ['logger', 'jquery'], function(logger, $) {
+define(['logger', 'jquery', 'uri'], function(logger, $, Uri) {
   "use strict";
 
   var viking = {};

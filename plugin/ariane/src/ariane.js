@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define('ariane', ['logger', 'viking'], function(logger, viking) {
+define(['logger', 'viking'], function(logger, viking) {
   "use strict";
 
   var ariane = {};
@@ -39,7 +39,7 @@ define('ariane', ['logger', 'viking'], function(logger, viking) {
   // Inject libraries and contentscript into the page.
   ariane.loadContentScript = function(tabId) {
     chrome.tabs.executeScript(tabId,
-      {code: "require(['ariane_mapper'], function(mapper) {mapper.start();});"}
+      {code: "require(['controllers/mapping_contentscript'], function(mapper) {mapper.start();});"}
     );
   };
 
