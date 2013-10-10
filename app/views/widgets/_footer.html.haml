@@ -1,6 +1,6 @@
 %footer
   .container
-    %ul.list-inline.pull-left.links
+    %ul.list-inline.pull-left{:class => ("hidden" unless locale == :fr)}
       %li= link_to t('app.public.security'), "/security"
       %li= link_to t('app.public.help'), "http://support.shopelia.com/hc", target: "_blank"
       %li= link_to t('app.public.terms'), '/cgu'
