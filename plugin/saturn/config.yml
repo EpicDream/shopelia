@@ -49,9 +49,10 @@
 "staging":
   "run_mode" : "auto"
   "log_level" : "WARN"
-  "PRODUCT_EXTRACT_URL": "https://www.shopelia.fr/api/viking/products"
+  "PRODUCT_EXTRACT_URL": "https://staging.shopelia.fr/api/viking/products"
   "MAPPING_URL": "https://www.shopelia.fr/api/viking/merchants/"
   "PRODUCT_EXTRACT_UPDATE": "https://staging.shopelia.com/api/viking/products/"
+  "consum": true
 "prod":
   "run_mode" : "auto"
   "log_level" : "WARN"
