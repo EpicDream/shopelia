@@ -1,0 +1,29 @@
+!!!
+%html
+  %head
+    %meta{charset: "utf-8"}/
+    %meta{content: "width=device-width,initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no", name: "viewport"}/
+    = stylesheet_link_tag "application"
+    = javascript_include_tag "application", params[:controller] unless params[:controller] == 'application'
+    = yield :head
+    %title= @title || "Shopelia"
+
+  %body{class: "action-#{params[:action]}"}
+    #wrap
+      = render "widgets/navbar"
+      .container
+        = bootstrap_flash
+      = yield
+    = render "widgets/footer"
+  :javascript
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-41276138-1']);
+    _gaq.push(['_setDomainName', 'shopelia.com']);
+    _gaq.push(['_setAllowLinker', true]);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
