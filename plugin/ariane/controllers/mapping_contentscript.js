@@ -2,8 +2,8 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery', 'logger', 'viking', 'html_utils', 'lib/path_utils', 'controllers/toolbar_contentscript'],
-function($, logger, viking, hu, pu, toolbar) {
+define(['jquery', 'logger', 'viking', 'html_utils', 'lib/path_utils', 'controllers/toolbar_contentscript', 'src/ari-panel'],
+function($, logger, viking, hu, pu, ari_toolbar, panel) {
   "use strict";
 
   var mapper = {};
@@ -55,7 +55,8 @@ function($, logger, viking, hu, pu, toolbar) {
         event.relatedTarget.classList.add("ari-surround");
     });
 
-    toolbar.startAriane(true);
+    ari_toolbar.startAriane(true);
+    panel.show();
     updateFieldMatching();
   };
 
@@ -70,7 +71,7 @@ function($, logger, viking, hu, pu, toolbar) {
 
     event.preventDefault();
 
-    var fieldId = toolbar.getCurrentFieldId();
+    var fieldId = ari_toolbar.getCurrentFieldId();
     if (! fieldId)
       return alert("Aucun champ sélectionné.");
 

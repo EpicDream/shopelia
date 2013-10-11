@@ -58,7 +58,7 @@ ChromeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCal
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: satconf.PRODUCT_EXTRACT_URL+(satconf.consum ? "?consum=false" : '')
+    url: satconf.PRODUCT_EXTRACT_URL+(satconf.consum ? '' : "?consum=false")
   }).done(doneCallback).fail(failCallback);
 };
 
