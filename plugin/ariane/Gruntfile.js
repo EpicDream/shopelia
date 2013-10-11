@@ -63,7 +63,7 @@ module.exports = function(grunt) {
           baseUrl: '',
           mainConfigFile: "require_config.js",
           optimize: "none",
-          include: ['jquery', 'jquery-ui', 'jquery-mobile'],
+          include: ['logger', 'jquery', 'jquery-ui', 'jquery-mobile'],
           out: 'build/panel1.js',
         }
       },

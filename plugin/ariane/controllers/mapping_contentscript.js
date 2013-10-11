@@ -2,8 +2,8 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery', 'logger', 'viking', 'html_utils', 'lib/path_utils', 'controllers/toolbar_contentscript', 'src/ari-panel'],
-function($, logger, viking, hu, pu, ari_toolbar, panel) {
+define(['jquery', 'logger', 'viking', 'html_utils', 'lib/path_utils', 'controllers/toolbar_contentscript'],
+function($, logger, viking, hu, pu, ari_toolbar) {
   "use strict";
 
   var mapper = {};
@@ -56,7 +56,6 @@ function($, logger, viking, hu, pu, ari_toolbar, panel) {
     });
 
     ari_toolbar.startAriane(true);
-    panel.show();
     updateFieldMatching();
   };
 

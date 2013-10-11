@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery-ui', 'logger'], function($, logger) {
+define(['jquery-ui', 'logger', 'src/ari-panel'], function($, logger, panel) {
   "use strict";
 
   var toolbar = {},
@@ -50,11 +50,16 @@ function build() {
     text: false,
     icons: {primary: "ui-icon-circle-check"}
   }).hide();
+  jToolbar.find(".ari-panel-ctrl").button({
+    text: false,
+    icons: {primary: "ui-icon-newwin"}
+  });
 
   // Link events
   jToolbar.find(".ari-next").click(onNext);
   jToolbar.find(".ari-finish").click(onFinished);
   jToolbar.find(".ari-abort").click(onAborted);
+  jToolbar.find(".ari-panel-ctrl").click(onPanelCtrlClicked);
   jStep.change(onStepChanged);
   jButtons.click(onButtonClicked);
 
@@ -103,6 +108,10 @@ function onNext() {
 
 function onButtonClicked(event) {
   jButtons.filter(".current-field").add(event.currentTarget).toggleClass("current-field");
+}
+
+function onPanelCtrlClicked() {
+  panel.toggle();
 }
 
 function onAborted() {
