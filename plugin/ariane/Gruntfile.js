@@ -58,10 +58,19 @@ module.exports = function(grunt) {
           out: 'build/mapper.js',
         }
       },
+      panel: {
+        options: {
+          baseUrl: '',
+          mainConfigFile: "require_config.js",
+          optimize: "none",
+          include: ['jquery', 'jquery-ui', 'jquery-mobile'],
+          out: 'build/panel1.js',
+        }
+      },
     },
     concat: {
       options: {
-        separator: ';'
+        separator: '\n\n'
       },
       background: {
         src: [
@@ -80,6 +89,15 @@ module.exports = function(grunt) {
         ],
         dest: 'build/contentscript.js'
       },
+      panel: {
+        src: [
+          'vendor/require.js',
+          'require_config.js',
+          "build/panel1.js",
+          "src/panel-iframe.js",
+        ],
+        dest: 'build/panel2.js'
+      },
     },
     uglify: {
       loader: {
@@ -95,6 +113,11 @@ module.exports = function(grunt) {
       contentscript: {
         files: {
           'dist/contentscript.min.js': ['<%= concat.contentscript.dest %>']
+        }
+      },
+      panel: {
+        files: {
+          'dist/panel.min.js': ['<%= concat.panel.dest %>']
         }
       }
     },
@@ -123,6 +146,7 @@ module.exports = function(grunt) {
 
   // My tasks
   grunt.registerTask('version', function() {
+    console.log(pkg.version, " -> ", arconf.version);
     // Update package.json
     pkg.version = arconf.version;
     grunt.file.write("package.json", JSON.stringify(pkg, null, 2));

@@ -1,6 +1,6 @@
 {
   "name": "Ariane",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "manifest_version": 2,
   "description": "Outil de mapping de page produit pour Viking/Saturn.",
   "icons": {
@@ -13,7 +13,7 @@
   },
   "background": {
     "scripts": [
-      "dist/background.min.js"
+      "build/background.js"
     ],
     "persistent": false
   },
@@ -31,7 +31,7 @@
         "*://*/*"
       ],
       "js": [
-        "dist/contentscript.min.js"
+        "build/contentscript.js"
       ]
     },
     {
@@ -40,13 +40,13 @@
         "https://*.shopelia.com/admin/viking"
       ],
       "js": [
-        "dist/loader.min.js"
+        "src/loader_cs.js"
       ]
     }
   ],
   "web_accessible_resources": [
     "views/toolbar.html",
-    "config.json",
+    "views/panel.html",
     "assets/*"
   ],
   "permissions": [

@@ -122,6 +122,7 @@ module.exports = function(grunt) {
 
   // My tasks
   grunt.registerTask('version', function() {
+    console.log(pkg.version, " -> ", satconf.version);
     // Update package.json
     pkg.version = satconf.version;
     grunt.file.write("package.json", JSON.stringify(pkg, null, 2));
