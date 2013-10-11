@@ -4,7 +4,7 @@ class HomeController < ApplicationController
   def download
     user_agent = request.env['HTTP_USER_AGENT'].downcase
     if user_agent.match(/android/)
-      redirect_to "market://details?id=fr.epicdream.beamy"
+      redirect_to "market://details?id=com.shopelia.android.application"
     elsif user_agent.match(/iphone/) || user_agent.match(/ipod/) || user_agent.match(/ipad/)
       redirect_to "http://itunes.apple.com/fr/app/prixing/id423317030?mt=8&ls=1"
     else
