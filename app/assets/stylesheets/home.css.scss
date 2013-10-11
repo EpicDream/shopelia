@@ -63,5 +63,7 @@ input#product-bar,button#btn-order {
 iframe, #video-iframe {
   width: 100%;
   display: inline-block;
+  vertical-align: middle;
   height: 80%;
+  min-height: 700px;
 }
