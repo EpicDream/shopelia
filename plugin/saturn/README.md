@@ -21,16 +21,10 @@ He can extract for example :
 Installation
 ------------
 
-There are different way to use Saturn :
-
-1. You may install it in a Chromium, and launch it manually on each page you want to crawl.
-2. You may install it in a Google-Chrome and, at launch, it will ask product to crawl to shopelia automatically.
-
 There are also different way to install it :
 
-1. (Recommended) Manually, from the sources.
-2. Manually, with the packaged extension.
-3. Automatically, via 'install' script.
+- Automatically, via 'install' script (recommended).
+- Manually, with the packaged extension.
 
 #### With the packaged extension
 
@@ -38,7 +32,7 @@ Just download the saturn.crx file, and drop it in the Google-Chrome window.
   
 You may also find it in shopelia/plugin/extensions/
 
-#### From sources
+#### Automatically, via 'install' script
 
 The first thing to do is to install grunt.
 
@@ -46,19 +40,6 @@ The first thing to do is to install grunt.
 2. Install grunt
     
     sudo npm install -g grunt-cli
-
-3. go in saturn folder.
-4. install all necessary packages.
-
-    npm install
-
-5. run
-
-    grunt prod
-
-See Install "With the packaged extension".
-
-#### Automatically, via 'install' script
 
 Go in saturn folder :
 
@@ -72,16 +53,22 @@ Then, run it :
 
     ./install
 
+If you want a special version of saturn, rerun grunt. For example, for a prod with manual-launch Saturn, run
+
+    grunt dev-prod
+
 Usage
 -----
   
-In config.run_mode=auto, you have nothing to do, the extension ask itself for product to crawl.
+There are different way to use Saturn :
+
+1. In config.run_mode=manual, you can crawl the product on the current page by clicking on the extension's button at top-right of the window.
+
+2. In config.run_mode=auto, you have nothing to do, the extension ask itself for product to crawl.
 Click on the extension button in the toolbar to pause / resume the crawling.
   
-In config.run_mode=manual, you can crawl the product on the current page by clicking on the extension's button at top-right of the window.
-  
 We recommand you to use it in a private tab, to do not be tracked.
-
+  
 Go in saturn folder :
 
     cd shopelia/plugin/saturn/
@@ -97,6 +84,19 @@ Then, run it :
 Or, on a server, specify the output display :
 
     DISPLAY=:0 ./saturn
+
+Configuration
+-------------
+
+All configuration is done in the config.yml file. You can find
+
+- run_mode : manual to launch saturn on the current page or auto to let him get products to crawl.
+- PRODUCT_EXTRACT_URL : where to find products to crawl (prod, staging, local)
+- PRODUCT_EXTRACT_UPDATE : where to send crawl results (prod, staging, local)
+- MAPPING_URL : where to find mapping (prod, staging, local).
+- consum : cunsum or not the products (usefull when getting real products from prod for tests)
+- MAX_NB_TABS : the max number of tab it can open simultaneously.
+- log_level : ALL, DEBUG, INFO, WARNING, ERROR, NONE.
 
 Developpers
 -----------

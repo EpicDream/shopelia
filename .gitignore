@@ -13,7 +13,11 @@ gpg/pubring.gpg~
 keys/mango_pay/production
 lib/config/mangopay_test.yml
 lib/config/mangopay_production.yml
-node_modules/
-priv_keys/
+
+plugin/*/node_modules/
+plugin/*/build/
+plugin/*/vendor/
+plugin/*/dist/
+plugin/priv_keys/
 *.sublime-project
 *.sublime-workspace
