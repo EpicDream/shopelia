@@ -1,0 +1,3 @@
+$("#signup-error-text").html("<%= raw @user.errors.full_messages.join("<br>") %>")
+$("#signup-error-box").show('fast');
+$("#signup-form #user_email").focus();

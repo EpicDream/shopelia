@@ -174,7 +174,7 @@
                                   <table width="400" height="32" border="0" cellspacing="0" cellpadding="0" bgcolor="#69bf6a" style="border-radius:4px;">
                                     <tr>
                                       <td width="400 valign="center" align="center">
-                                        <%= link_to "Valider la commande au prix de #{number_to_currency(@order.prepared_price_total)}", confirm_zen_order_url(@order), style:"font-family: Arial, Helvetica, sans-serif; font-size:14px; color:#ffffff; text-decoration: none; font-weight: bold;" %>
+                                        <%= link_to "Valider ma commande au prix de #{number_to_currency(@order.prepared_price_total)}", confirm_zen_order_url(@order), style:"font-family: Arial, Helvetica, sans-serif; font-size:14px; color:#ffffff; text-decoration: none; font-weight: bold;" %>
                                       </td>
                                     </tr>
                                   </table>
@@ -192,7 +192,7 @@
                                   <table width="400" height="32" border="0" cellspacing="0" cellpadding="0" bgcolor="#e54c3c" style="border-radius:4px;">
                                     <tr>
                                       <td width="400 valign="center" align="center">
-                                        <%= link_to "Annuler la commande", cancel_zen_order_url(@order), style:"font-family: Arial, Helvetica, sans-serif; font-size:14px; color:#ffffff; text-decoration: none; font-weight: bold;" %>
+                                        <%= link_to "Annuler ma commande", cancel_zen_order_url(@order), style:"font-family: Arial, Helvetica, sans-serif; font-size:14px; color:#ffffff; text-decoration: none; font-weight: bold;" %>
                                       </td>
                                     </tr>
                                   </table>
@@ -226,9 +226,9 @@
                         </tr>
                         <tr>
                           <td align="justify" style="font-family: Helvetica, Arial, sans-serif; font-size:12px; font-weight: italic; color:#95a5a6; padding: 10px;">
-                            Il arrive que le prix du produit ou de livraison évolue entre le moment où 
-                            vous avez passé votre commande et le moment on nous l'exécutons chez le marchand. 
-                            Shopelia s'efforce de limiter ce genre de situation, merci de votre compréhension.
+                            <strong>IMPORTANT</strong> - Il arrive que le prix du produit ou de livraison évolue entre le moment où 
+                            vous passez votre commande et le moment on nous l'exécutons chez le marchand.
+                            Nous nous efforçons de limiter ce genre de situation. Merci de votre compréhension.
                           </td>
                         </tr>
                         <tr>

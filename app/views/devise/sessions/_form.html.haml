@@ -1,21 +1,17 @@
-#sessionForm
-  = simple_form_for resource, as:resource_name, remote: true, wrapper: :bootstrap, url:session_path(resource_name), html:{class:'modal-form form-horizontal',id:'loginForm'} do |f|
-    .modal-body
-      .controls
-        #sessionError
-          = I18n.t("app.invalid_credentials")
-      = f.input :email, autofocus:true, required:false
-      = f.input :password, required:false
-      .controls
-        = link_to t("app.forgot_your_password"), new_password_path(resource_name)
-    .modal-footer
-      %a{:class => 'btn btn-large', "data-dismiss" => "modal"}
-        = I18n.t("app.cancel")
-      = f.button :submit, I18n.t("app.sign_in"), class:'btn-success btn-large', id:'submit-form', disable_with:I18n.t("app.wait")
-
-:javascript
-  $(document).ready(function() {
-    $('#loginForm').on('ajax:error', function(data, xhr, response) { 
-      $('#sessionError').html(xhr.responseText).show('fast');
-    });
-  });
+= form_for resource, as:resource_name, remote: true, url:session_path(resource_name), html:{class:'form form-horizontal',id:'signin-form'} do |f|
+  .form-group.display-none#signin-error-box
+    .col-lg-10.alert.alert-danger#signin-error-text
+  .form-group
+    = f.label :email, class:"col-lg-4 control-label"
+    .col-lg-6
+      = f.text_field :email, class:"form-control input-lg", type:"email", placeholder:"#{t('placeholders.user.email')}"
+  .form-group
+    = f.label :password, class:"col-lg-4 control-label"
+    .col-lg-6
+      = f.text_field :password, class:"form-control input-lg", type:"password", placeholder:"#{t('placeholders.user.password')}"
+  .form-group
+    .col-lg-offset-4.col-lg-6
+      = f.submit t("app.signin.submit"), class:"btn btn-success btn-lg", disable_with:t("app.wait")
+  .form-group
+    .col-lg-offset-4.col-lg-6
+      = link_to t("app.password.forgot"), new_password_path(resource_name)

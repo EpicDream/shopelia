@@ -15,7 +15,7 @@ class Api::V1::CartItemsController < Api::V1::BaseController
       @item = CartItem.new(
         cart_id:@cart.id, 
         product_version_id:@product_version.id, 
-        developer_id:@developer.id, 
+        developer_id:@developer.id,
         tracker:@tracker)
     end
     
@@ -47,7 +47,7 @@ class Api::V1::CartItemsController < Api::V1::BaseController
   end
   
   def retrieve_cart
-    @cart = Cart.find_or_create_by_user_id(@user.id)
+    @cart = Cart.find_or_create_by_user_id_and_kind(@user.id, Cart::FOLLOW)
   end
 
   def retrieve_item

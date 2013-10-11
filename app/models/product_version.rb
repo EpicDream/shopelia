@@ -30,6 +30,8 @@ class ProductVersion < ActiveRecord::Base
   before_validation :assess_version
   before_destroy :check_not_related_to_any_order
 
+  after_update :notify_channel, :if => Proc.new { |v| v.available.present? }
+
   scope :available, where(available:true)
 
   SANITIZED_CONFIG = {
@@ -181,4 +183,8 @@ class ProductVersion < ActiveRecord::Base
   def truncate_name
     self.name = self.name[0..249] if self.name && self.name.length > 250
   end   
+
+  def notify_channel
+    #Pusher.trigger("product-version-#{self.id}", "update", ProductVersionSerializer.new(self).as_json[:product_version])
+  end
 end

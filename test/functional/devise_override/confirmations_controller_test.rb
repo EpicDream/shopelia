@@ -39,8 +39,4 @@ class DeviseOverride::ConfirmationsControllerTest < ActionController::TestCase
     put :confirm, user: { password: "merguez", password_confirmation: "merguez",civility: "1" , birthdate: "05/01/1980", nationality_id: countries(:morocco).id,confirmation_token: user.reload.confirmation_token}
     assert user.reload.valid_password?("merguez")
   end
-
-
-
 end
-
