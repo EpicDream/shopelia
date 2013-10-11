@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-08-26
 
-require(['ariane', 'logger'], function(ariane, logger) {
+require(['src/ariane', 'logger'], function(ariane, logger) {
 
 "use strict";
 

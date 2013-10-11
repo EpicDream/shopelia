@@ -22,7 +22,7 @@ var Saturn = function() {
 function buildMapping(uri, hash) {
   var host = uri.host();
   // logger.debug("Going to build a mapping for host", host, "between", jQuery.map(hash,function(v, k){return k;}) );
-  var resMapping = {};
+  var resMapping = hash["default"] || {};
   while (host !== "") {
     if (hash[host])
       resMapping = $extend(true, {}, hash[host], resMapping);
@@ -153,6 +153,21 @@ Saturn.prototype.onProductsReceived = function(prods) {
 };
 
 //
+Saturn.prototype.processMapping = function(mapping, prod, merchantId) {
+  if (! mapping) {
+    this.sendError({id: prod.id}, 'mapping is undefined for merchant_id='+merchantId);
+    return false;
+  } else if (! mapping.data || (! mapping.data.viking && ! mapping.data.ref)) {
+    this.sendWarning({id: prod.id}, 'merchant_id='+merchantId+' is not supported (url='+prod.url+')');
+    return false;
+  } else if (! mapping.data.ref) {
+    this.mappings[mapping.id] = mapping;
+    this.mappings[mapping.id].date = new Date();
+  }
+  return true;
+};
+
+//
 Saturn.prototype.onProductReceived = function(prod) {
   prod = preProcessData(prod);
   logger.debug("Going to process product", prod);
@@ -166,27 +181,31 @@ Saturn.prototype.onProductReceived = function(prod) {
     prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
     this.addProductToQueue(prod);
   } else
-    this.loadMapping(merchantId, function(mapping) {
-      if (! mapping) {
-        this.sendError({id: prod.id}, 'undefined mapping for merchant_id='+merchantId);
-      } else if (! mapping.data || ! mapping.data.viking) {
-        this.sendError({id: prod.id}, 'merchant_id='+merchantId+' is not supported (url='+prod.url+')');
-      } else {
-        this.mappings[mapping.id] = mapping;
-        this.mappings[mapping.id].date = new Date();
-        prod.mapping = buildMapping(prod.uri, mapping.data.viking);
-        // logger.debug("mapping choosen", prod.mapping);
-        this.addProductToQueue(prod);
-      }
-    }.bind(this), function(err) {
-      if (this.mappings[merchantId]) {
-        logger.warn("Error when getting mapping to extract :", err, "for", prod, '. Get the last valid one.');
-        prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
-        this.addProductToQueue(prod);
-      } else {
-        this.sendError({id: prod.id}, "Error when getting mapping for merchant_id="+merchantId+" : "+err);
-      }
-    }.bind(this));
+    this.loadMapping(merchantId, this.onMappingReceived(prod, merchantId), this.onMappingFail(prod, merchantId));
+};
+
+Saturn.prototype.onMappingReceived = function(prod, merchantId) {
+  return function(mapping) {
+    if (! this.processMapping(mapping, prod, merchantId))
+      return;
+    else if (mapping.data.ref)
+      this.loadMapping(mapping.data.ref, this.onMappingReceived(prod, mapping.data.ref), this.onMappingFail(prod, mapping.data.ref));
+    else {
+      prod.mapping = buildMapping(prod.uri, mapping.data.viking);
+      this.addProductToQueue(prod);
+    }
+  }.bind(this);
+};
+
+Saturn.prototype.onMappingFail = function(prod, merchantId) {
+  return function(err) {
+    if (this.mappings[merchantId]) {
+      logger.warn("Error when getting mapping to extract :", err, "for", prod, '. Get the last valid one.');
+      prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
+      this.addProductToQueue(prod);
+    } else
+      this.sendError({id: prod.id}, "Error when getting mapping for merchant_id="+merchantId+" : "+err);
+  }.bind(this);
 };
 
 Saturn.prototype.addProductToQueue = function(prod) {
@@ -303,6 +322,13 @@ Saturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback)
 // and return jqXHR object.
 Saturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
   throw "abstract function";
+};
+
+// session may be a simple Object with only id to set,
+// when fail to load mapping for example.
+Saturn.prototype.sendWarning = function(session, msg) {
+  window.$e = session;
+  logger.warn((session.tabId ? '('+session.tabId+')' : '')+(session.id ? '{'+session.id+'}' : ''), msg, "\n$e =", window.$e);
 };
 
 // session may be a simple Object with only id to set,
