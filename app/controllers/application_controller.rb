@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
+  before_filter :set_locale
   before_filter :set_navigator_properties
   before_filter :retrieve_developer
   before_filter :retrieve_tracker
