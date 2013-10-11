@@ -9,6 +9,9 @@ CodeClimate::TestReporter.start
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 require 'sidekiq/testing'
+require 'capybara/rails'
+
+Dir["#{Rails.root}/test/helper/*.rb"].each {|f| puts f ; require f}
 
 class ActiveSupport::TestCase
   fixtures :all
@@ -26,6 +29,7 @@ class ActiveSupport::TestCase
   end
 
   setup do
+    $sms_gateway_count = 0
     ENV["API_KEY"] = developers(:prixing).api_key
     ActionMailer::Base.deliveries.clear
     File.delete(MangoPayDriver::CONFIG) if File.exist?(MangoPayDriver::CONFIG)
@@ -42,3 +46,12 @@ class ActiveSupport::TestCase
   end
 end
 
+class ActionDispatch::IntegrationTest
+  include Capybara::DSL
+  include CommonHelper
+  include SessionsHelper
+
+  setup do
+    Capybara.javascript_driver = :webkit
+  end
+end

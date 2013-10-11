@@ -26,6 +26,7 @@ class Product < ActiveRecord::Base
   scope :viking_pending, lambda { joins(:events).merge(Event.buttons).merge(Product.viking_base_request) }
   scope :viking_pending_batch, lambda { joins(:events).merge(Event.requests).merge(Product.viking_base_request) }
   scope :viking_failure, lambda { where(viking_failure:true).order("updated_at desc").limit(100) }
+  scope :expired, where("versions_expires_at is null or versions_expires_at < ?", Time.now)
 
   scope :viking_base_request, lambda {
     where("(products.versions_expires_at is null or products.versions_expires_at < ?)" +
@@ -37,7 +38,7 @@ class Product < ActiveRecord::Base
     return nil if url.nil?
     p = Product.find_or_create_by_url(Linker.clean(url))
     p.save! if !p.persisted? && p.errors.empty?
-    p
+    p.reload unless p.nil?
   end
   
   def versions_expired?
@@ -111,7 +112,15 @@ class Product < ActiveRecord::Base
         # Pre-process versions
         version = MerchantHelper.process_version(self.url, version)
 
-        v = self.product_versions.where(
+        if version[:option1] || version[:option2] || version[:option3] || version[:option4]
+          v = self.product_versions.where(
+            option1_md5:nil,
+            option2_md5:nil,
+            option3_md5:nil,
+            option4_md5:nil).first
+        end
+
+        v ||= self.product_versions.where(
           option1_md5:ProductVersion.generate_option_md5(version[:option1]),
           option2_md5:ProductVersion.generate_option_md5(version[:option2]),
           option3_md5:ProductVersion.generate_option_md5(version[:option3]),

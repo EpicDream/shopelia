@@ -1,4 +1,4 @@
-class Admin::AdminController < ApplicationController
+class Admin::AdminController < ActionController::Base
   before_filter :set_locale
   layout 'admin'
 

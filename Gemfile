@@ -38,6 +38,8 @@ gem 'httpclient'
 gem 'sidekiq'
 gem 'sinatra', require: false
 gem 'slim'
+gem 'nexmo'
+gem 'pusher'
 gem 'rubyzip', '< 1.0.0'
 
 # Gems used only for assets and not required
@@ -50,6 +52,8 @@ group :assets do
   gem 'jquery-datatables-rails', github: 'rweng/jquery-datatables-rails'
   gem 'uglifier', '>= 1.0.3'
   gem 'marionette-rails'
+  gem "less-rails"
+  gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git', :branch => 'bootstrap3'
 end
 
 # To use ActiveModel has_secure_password
@@ -77,6 +81,7 @@ group :test do
   gem 'webmock'
   gem "simplecov", :require => false
   gem "codeclimate-test-reporter"
+  gem "capybara"
 end
 
 group :assets do
