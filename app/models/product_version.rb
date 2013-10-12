@@ -6,6 +6,7 @@ class ProductVersion < ActiveRecord::Base
   belongs_to :product, :touch => true
   has_many :order_items
   has_many :cart_items
+  has_and_belongs_to_many :collections
   
   validates :product, :presence => true
   
