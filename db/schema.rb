@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131012151357) do
+ActiveRecord::Schema.define(:version => 20131013162319) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -101,6 +101,21 @@ ActiveRecord::Schema.define(:version => 20131012151357) do
     t.datetime "updated_at",        :null => false
   end
 
+  create_table "collection_items", :force => true do |t|
+    t.integer  "collection_id"
+    t.integer  "product_version_id"
+    t.integer  "user_id"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
+  create_table "collection_tags", :force => true do |t|
+    t.integer  "collection_id"
+    t.integer  "tag_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
   create_table "collections", :force => true do |t|
     t.integer  "user_id"
     t.string   "uuid"
@@ -108,16 +123,6 @@ ActiveRecord::Schema.define(:version => 20131012151357) do
     t.text     "description"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
-  end
-
-  create_table "collections_product_versions", :id => false, :force => true do |t|
-    t.integer "collection_id"
-    t.integer "product_version_id"
-  end
-
-  create_table "collections_tags", :id => false, :force => true do |t|
-    t.integer "collection_id"
-    t.integer "tag_id"
   end
 
   create_table "countries", :force => true do |t|

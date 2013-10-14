@@ -1,18 +1,27 @@
 class Collection < ActiveRecord::Base
   belongs_to :user
-  has_and_belongs_to_many :product_versions
-  has_and_belongs_to_many :tags
+  has_many :collection_items
+  has_many :collection_tags
+  has_many :product_versions, :through => :collection_items
+  has_many :tags, :through => :collection_tags
 
   validates :user, :presence => true
+  validates :name, :presence => true
   validates :uuid, :presence => true, :uniqueness => true
 
   before_validation :generate_uuid
 
   attr_accessible :description, :name, :user_id
 
+  scope :items, joins(:collection_items).order("collection_items.created_at ASC")
+
   def to_param
     param = self.uuid + (self.name.present? ? "-#{self.name}" : "")
     param.unaccent.parameterize
+  end
+
+  def belongs_to? user
+    self.user_id == user.id
   end
 
   private

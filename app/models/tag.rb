@@ -1,5 +1,6 @@
 class Tag < ActiveRecord::Base
-  has_and_belongs_to_many :collections
+  has_many :collection_tags
+  has_many :collections, :through => :collection_tags
 
   validates :name, :presence => true, :uniqueness => true
 
