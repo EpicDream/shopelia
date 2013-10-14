@@ -10,6 +10,7 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
       else
         result = PrixingWrapper.convert(prixing)
         prepare_jobs(result)
+        log_scan(result)
         render :json => result
       end
     else
@@ -19,6 +20,17 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
 
   private
   
+  def log_scan result
+    ScanLog.create(
+      ean:@ean,
+      device_id:@device.id,
+      prices_count:result[:urls].count)
+    LeftronicLiveScanWorker.perform_async(
+      ean:@ean, 
+      name:result[:name], 
+      image_url:result[:image_url])
+  end
+
   def prepare_jobs result
     (result[:urls] || []).each do |url|
       next if url !~ /^http/
