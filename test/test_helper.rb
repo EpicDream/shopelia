@@ -33,7 +33,7 @@ class ActiveSupport::TestCase
     ENV["API_KEY"] = developers(:prixing).api_key
     ActionMailer::Base.deliveries.clear
     File.delete(MangoPayDriver::CONFIG) if File.exist?(MangoPayDriver::CONFIG)
-    EventsWorker.drain
+    EventsWorker.clear
   end
 
   def json_response
