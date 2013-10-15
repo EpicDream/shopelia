@@ -13,6 +13,7 @@ class EventsWorker
   rescue Exceptions::RejectingEventsException
     # do nothing
   rescue ActiveRecord::RecordInvalid
+  rescue ActiveRecord::RecordNotFound
     UrlMatcher.find_by_url(Linker.clean hash["url"]).try(:destroy)
     UrlMatcher.find_by_url(hash["url"]).try(:destroy)
     raise
