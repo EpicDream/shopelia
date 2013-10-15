@@ -95,7 +95,7 @@ function($, logger, viking, hu, pu, ari_toolbar) {
 
     var map = {};
     map[fieldId] = {path: path, context: context};
-    mergeMappings(map);
+    viking.merge(map, data, host);
 
     chrome.storage.local.get('mappings', function(hash) {
       hash.mappings[url].data = data;
@@ -122,99 +122,6 @@ function($, logger, viking, hu, pu, ari_toolbar) {
           b.removeClass("missing").addClass("mapped");
         }
     });
-  }
-
-  // Merge new mapping in the previous one.
-  // Try to know if a mapping must be added before (it is more specific)
-  // or after (it is less specific) existing ones.
-  function mergeMappings(currentMap) {
-    // GOING TO MERGE NEW MAPPING WITH OLD ONES
-    // create new host rule if it did not exist.
-    logger.debug('Going to merge', currentMap, 'in', data.viking);
-
-    //
-    var possibleHosts = viking.compatibleHosts(host, data);
-
-    for (var key in currentMap) {
-      // if no new map, continue
-      if (! currentMap[key])
-        continue;
-
-      // On choisit le bon host, général ou spécific.
-      var goodHost;
-      if (possibleHosts.length > 1) {
-        goodHost = prompt("Pour quel host ce chemin est-il valide ?\n"+possibleHosts.join("\n"));
-        if (! goodHost) {
-          logger.warn("key '"+key+"' with new path '"+newPath+"' skiped.");
-          continue;
-        }
-      } else
-        goodHost = possibleHosts[0];
-
-      // On initialize la structure si elle n'existant pas.
-      if (! data.viking[goodHost])
-        data.viking[goodHost] = {};
-      var mapping = data.viking[goodHost];
-      if (! mapping[key]) mapping[key] = {path: [], context: []};
-      if (! mapping[key].path) mapping[key].path = [];
-      if (! mapping[key].context) mapping[key].context = [];
-
-      var newPath = currentMap[key].path;
-      var oldPath = mapping[key].path;
-      logger.debug('Merge for key "'+key+'", "'+newPath+'" in "'+oldPath+'"');
-
-      // if it did not exist, just create it and continue.
-      if (! oldPath) {
-        mapping[key] = {path: [newPath], context: [currentMap[key].context]};
-        continue;
-      }
-      // if old version, update it.
-      if (! (oldPath instanceof Array)) {
-        mapping[key] = {path: [oldPath], context: [mapping[key].context]};
-        oldPath = mapping[key].path;
-      }
-      // if already contains it, pass
-      if (oldPath.filter(function(e) {return e.indexOf(newPath) !== -1;}).length > 0) {
-        logger.debug(oldPath, "already contains", newPath);
-        continue;
-      }
-
-      var newMatch = $(newPath);
-      for (var i = 0, l = oldPath.length ; i < l ; i++) {
-
-        var str = "Pour le nouveau path \""+newPath+"\",\n" + "et l'ancien path \""+oldPath[i]+"\",\n",
-            previousMatch = $(oldPath[i]);
-        if (previousMatch.length == newMatch.length && $.makeArray(previousMatch) == $.makeArray(newMatch)) {
-          alert(str + "les mêmes éléments sont capturés.");
-        } else
-          alert(str + previousMatch.length + " éléments étaient capturés avant, " + newMatch.length + " maintenant.");
-
-        if (confirm(str + "concaténer les paths ?")) {
-          oldPath[i] += ", "+newPath;
-          break;
-        } else if (confirm(str + "remplacer le path ?")) {
-          oldPath.splice(i,1,newPath);
-          break;
-        } else if (confirm(str + "Le placer juste avant ?" + (i > 0 ? "\nPrécédent : \""+oldPath[i-1]+"\"." : ''))) {
-          oldPath.splice(i,0,newPath);
-          break;
-        } else if (confirm(str + "Le placer juste après ?" + (i < l-1 ? "\nSuivant : \""+oldPath[i+1]+"\"." : ''))) {
-          oldPath.splice(i+1,0,newPath);
-          break;
-        } else if (i < l-1 && confirm("Reposer les questions pour ce path ?")) {
-          i = i-1;
-          continue;
-        } else if (i < l-1 && ! confirm("Passer au path suivant ? (sinon on annule)")) {
-          break;
-        }
-      }
-      // Par défaut on rajoute à la suite
-      if (i == l) {
-        if (l > 0)
-          alert("On ajoute ce path à la suite des autres.");
-        oldPath.push(newPath);
-      }
-    }
   }
 
   return mapper;

@@ -17,25 +17,37 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
   chrome.extension.onMessage.addListener(function(msg, sender) {
     if (msg.action === 'initialCrawl' || msg.action === 'updateCrawl') {
       if ($.mobile.activePage.attr("id") === 'pathsPage')
-        panel.onFieldSelected();
-      else
-        panel.onHostChange();
-    } else if (msg.action === 'setField')
+        panel.updateResult();
+      panel.updateFieldMatch();
+    } else if (msg.action === 'setField') {
       panel.onFieldSelected({field: msg.field});
+    }
   });
 
   panel.onHostChange = function() {
-    chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
+    chrome.storage.local.get(['mappings'], function(hash) {
       var host = hostsSelect.val(),
           mapping = hash.mappings[url].data.viking[host],
-          crawlRes = hash.crawlings[url].update || hash.crawlings[url].initial || {},
           field;
 
       fieldsList.html("");
       for (field in mapping)
-        $('<li>').append($('<a href="#">').addClass(crawlRes[field] ? 'present' : 'absent').text(field)).appendTo(fieldsList);
+        $('<li>').append($('<a href="#">').text(field)).appendTo(fieldsList);
       fieldsList.listview('refresh');
       fieldsList.find("li a").click(panel.onFieldSelected);
+      panel.updateFieldMatch();
+    });
+  };
+
+  panel.updateFieldMatch = function() {
+    chrome.storage.local.get(['crawlings'], function(hash) {
+      var crawlRes = hash.crawlings[url].update || hash.crawlings[url].initial || {};
+      fieldsList.find("li a").each(function() {
+        if (crawlRes[this.innerText])
+          this.classList.add('present');
+        else
+          this.classList.remove('present');
+      });
     });
   };
 
@@ -54,7 +66,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     if (! field)
       return $.mobile.changePage('#fieldsPage');
 
-    chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
+    chrome.storage.local.get(['mappings'], function(hash) {
       var host = hostsSelect.val(),
           mapping = hash.mappings[url].data.viking[host],
           paths = mapping[field].path || [],
@@ -65,11 +77,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       fieldName.innerText = field;
 
       // RESULT
-      pathsResult.value = (hash.crawlings[url].update || hash.crawlings[url].initial || {})[field] || "Nothing found. :-(";
-      $(pathsResult).attr("title", pathsResult.value);
-      if (pathsResult.value.length > 200)
-        pathsResult.value = pathsResult.value.slice(0, 200) + "...";
-      $(pathsResult).css('height', 'auto');
+      panel.updateResult(field);
 
       // LABEL
       if (field.search(/^option/) !== -1) {
@@ -100,6 +108,17 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       pathsList.listview('refresh').find("input").textinput();
 
       $.mobile.changePage('#pathsPage');
+    });
+  };
+
+  panel.updateResult = function(field) {
+    chrome.storage.local.get(['crawlings'], function(hash) {
+      field = field || currentField.val();
+      pathsResult.value = (hash.crawlings[url].update || hash.crawlings[url].initial || {})[field] || "Nothing found. :-(";
+      pathsResult.title = pathsResult.value;
+      if (pathsResult.value.length > 200)
+        pathsResult.value = pathsResult.value.slice(0, 200) + "...";
+      pathsResult.style.height = 'auto';
     });
   };
 
@@ -170,7 +189,6 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       mapping.path = paths;
       if (field.search(/^option/) !== -1)
         mapping.label = optionLabel.value;
-      console.log("For '"+field+"', value='"+optionLabel.value+"', and final=", hash.mappings[url].data.viking[host][field].label);
       chrome.storage.local.set(hash);
       // chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
     });
