@@ -172,7 +172,7 @@ Crawler.crawl = function(mapping) {
     if (! pathes) continue;
     if (! (pathes instanceof Array))
       pathes = [pathes];
-    for (j in pathes) {
+    for (j = 0, lj=pathes.length ; j < lj ; j++) {
       path = pathes[j];
       e = $(path);
       if (e.length === 0) continue;
