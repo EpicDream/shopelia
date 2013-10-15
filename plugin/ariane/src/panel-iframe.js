@@ -105,11 +105,11 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     for (i in paths) {
       var li = $('<li>');
       li.append($('<label for="path'+i+'">Path '+i+' :</label>').hide());
-      li.append($('<input type="text" id="path'+i+'" />').val(paths[i]));
+      var input = $('<input type="text" id="path'+i+'" />').val(paths[i]);
+      li.append(input);
       var buttonGroup = $('<div data-role="controlgroup" data-type="horizontal" data-mini="true">');
 
       var searchBtn = $('<a data-role="button" data-icon="search" data-iconpos="notext" title="Search">Search</a>');
-      searchBtn.addClass('ui-disabled');
       searchBtn.click(panel.onSearchBtnClicked);
       buttonGroup.append(searchBtn);
       var deleteBtn = $('<a data-role="button" data-icon="delete" data-iconpos="notext" title="Delete">Delete</a>');
@@ -119,6 +119,8 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       li.append(buttonGroup);
       pathsList.append(li);
       li.trigger('create');
+      if (panel.getMatchedElements(paths[i]).length > 0)
+        input.parent().addClass('found');
     }
     pathsList.listview('refresh').find("input").textinput();
   };
@@ -139,8 +141,15 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     return false; // To prevent form submission.
   };
 
+  panel.getMatchedElements = function(path) {
+    return $(path, window.parent.document);
+  };
+
+  // Highlight elements
   panel.onSearchBtnClicked = function(event) {
-    logger.debug('Search "'+$(event.target).parentsUntil("ul", "li").find("input").val()+'"');
+    var path = $(event.currentTarget).parentsUntil("ul", "li").find("input").val();
+    logger.debug('Search "'+path+'"');
+    panel.getMatchedElements(path).effect("highlight", {color: "#00cc00" }, "slow");
   };
 
   panel.onDeleteBtnClicked = function(event) {
@@ -201,7 +210,8 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     newPathInput.parents("form").on("submit", panel.onNewPathAdd);
     $(pathOkBtn).click(panel.onPathOkBtnClicked);
 
-    chrome.storage.local.get('mappings', function(hash) {
+    chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
+      cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
       var hosts = Object.keys(hash.mappings[cUrl].data.viking),
           i;
       for (i in hosts)
