@@ -34,7 +34,7 @@ function searchBackgroudImagesOptions(elems) {
 }
 
 function get_src(img) {
-  return img.getAttribute("src");
+  return img.src;
 }
 
 var Crawler = {};

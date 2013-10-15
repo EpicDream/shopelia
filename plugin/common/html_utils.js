@@ -168,8 +168,10 @@ hu.getElementAttrs = function(e) {
   if (e.tagName == "INPUT" || e.tagName == "SELECT" || e.tagName == "TEXTAREA") data.value = e.value;
   var type = e.getAttribute("type");
   if (e.tagName == "INPUT" && (type == "radio" || type == "checkbox")) data.checked = e.checked;
+  if (e.tagName == "IMG") data.src = e.src;
   for (var i = 0 ; i < attrs.length ; i++)
-    data[attrs[i].name] = attrs[i].value;
+    if (data[attrs[i].name] === undefined)
+      data[attrs[i].name] = attrs[i].value;
   return data;
 };
 // getElementAttrs + xpath

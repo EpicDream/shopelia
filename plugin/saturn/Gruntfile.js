@@ -100,7 +100,7 @@ module.exports = function(grunt) {
     clean: {
       dev: ['vendor'],
       prod: ['build', 'vendor'],
-      total: ['build', 'vendor', 'dist', 'node_modules']
+      all: ['build', 'vendor', 'dist', 'node_modules']
     },
     exec: {
       "package": {
