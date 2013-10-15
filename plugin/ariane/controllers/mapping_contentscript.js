@@ -11,6 +11,7 @@ function($, logger, viking, hu, pu, ari_toolbar) {
   var buttons = [],
       url = window.location.href,
       host = viking.getHost(url),
+      started = false,
       data;
 
   /* ********************************************************** */
@@ -27,6 +28,9 @@ function($, logger, viking, hu, pu, ari_toolbar) {
   });
 
   mapper.start = function() {
+    if (started)
+      return;
+    started = true;
     chrome.storage.local.get('mappings', function(hash) {
       mapper.mapping = data = hash.mappings[url].data;
       mapper.init();
