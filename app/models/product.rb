@@ -38,7 +38,7 @@ class Product < ActiveRecord::Base
   
   algoliasearch index_name: "products-#{Rails.env}" do
     attribute :name, :description, :url, :image_url, :brand, :reference
-    attributesToIndex [:name, :description]
+    attributesToIndex [:name, :brand, :description]
   end
 
   def self.fetch url
