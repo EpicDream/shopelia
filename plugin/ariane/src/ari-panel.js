@@ -20,21 +20,22 @@ define(function() {
   init();
 
   panel.show = function() {
-    if (! iframe) // Fix to fast .js files load.
-      return setTimeout(panel.show().bind(this), 100);
-
-    iframe.class = "";
+    iframe.classList.remove("ari-panel-hide");
     document.body.classList.add("ari-panel-body");
   };
 
   panel.hide = function() {
-    iframe.class = "ari-panel-hide";
+    iframe.classList.add("ari-panel-hide");
     document.body.classList.remove("ari-panel-body");
   };
 
   panel.toggle = function() {
     iframe.classList.toggle("ari-panel-hide");
     document.body.classList.toggle("ari-panel-body");
+  };
+
+  panel.isVisible = function() {
+    return ! iframe.classList.contains('ari-panel-hide');
   };
 
   return panel;

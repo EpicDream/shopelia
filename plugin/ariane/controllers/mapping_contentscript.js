@@ -201,11 +201,11 @@ function($, logger, viking, hu, pu, ari_toolbar) {
         } else if (confirm(str + "Le placer juste après ?" + (i < l-1 ? "\nSuivant : \""+oldPath[i+1]+"\"." : ''))) {
           oldPath.splice(i+1,0,newPath);
           break;
-        } else if (i < l-1 && ! confirm("Passer au path suivant ? (sinon on annule)")) {
-          break;
-        } else if (i < l-1 && ! confirm("Reposer les questions pour ce path ?")) {
+        } else if (i < l-1 && confirm("Reposer les questions pour ce path ?")) {
           i = i-1;
           continue;
+        } else if (i < l-1 && ! confirm("Passer au path suivant ? (sinon on annule)")) {
+          break;
         }
       }
       // Par défaut on rajoute à la suite

@@ -108,6 +108,7 @@ function onNext() {
 
 function onButtonClicked(event) {
   jButtons.filter(".current-field").add(event.currentTarget).toggleClass("current-field");
+  chrome.extension.sendMessage({action: 'setField', field: toolbar.getCurrentFieldId()});
 }
 
 function onPanelCtrlClicked() {

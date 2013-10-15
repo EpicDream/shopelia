@@ -6,6 +6,15 @@
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
   <script type="text/javascript" src="../build/panel2.js"></script>
   <style>
+    a.present {
+      color: green !important;
+    }
+    a.absent {
+      color: red !important;
+    }
+    li > div[data-role="controlgroup"] {
+      text-align:right;
+    }
     /*.actionsList {
       padding: 5px; to handle empty list
     }*/
@@ -42,7 +51,11 @@
     </div>
     <div data-role="content">
       <input type="hidden" id="currentField" />
-      <p id="pathsResult"></p>
+      <h2>Résultats :</h2>
+      <textarea id="pathsResult" readonly></textarea>
+      <h2 id="optionLabelTitle">Label :</h2>
+      <input id="optionLabel" />
+      <h2>Paths :</h2>
       <ul id="pathsList" data-role="listview" data-inset="true">
       </ul>
       <form>
