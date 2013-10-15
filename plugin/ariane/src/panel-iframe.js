@@ -6,32 +6,40 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
 
   window.panel = {};
 
-  var url = document.referrer,
+  var cUrl = document.referrer, // current url
+      cHost ='', // current host
+      cMapping = {}, // current mapping
+      cCrawling = {}, // current crawling
+      cField = '', // current field
       hostsSelect,
       fieldsList,
       newFieldInput,
-      currentField,
       pathsList,
       newPathInput;
 
   chrome.extension.onMessage.addListener(function(msg, sender) {
     if (msg.action === 'initialCrawl' || msg.action === 'updateCrawl') {
-      if ($.mobile.activePage.attr("id") === 'pathsPage')
-        panel.updateResult();
-      panel.updateFieldMatch();
+      chrome.storage.local.get(['crawlings', 'mappings'], function(hash) {
+        cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
+        cMapping = hash.mappings[cUrl].data.viking[cHost];
+        if ($.mobile.activePage.attr("id") === 'pathsPage') {
+          panel.updateResult();
+          panel.updatePathsList();
+        }
+        panel.updateFieldMatch();
+      });
     } else if (msg.action === 'setField') {
-      panel.onFieldSelected({field: msg.field});
+      cField = msg.field;
+      panel.onFieldSelected();
     }
   });
 
   panel.onHostChange = function() {
+    cHost = hostsSelect.val();
     chrome.storage.local.get(['mappings'], function(hash) {
-      var host = hostsSelect.val(),
-          mapping = hash.mappings[url].data.viking[host],
-          field;
-
+      cMapping = hash.mappings[cUrl].data.viking[cHost];
       fieldsList.html("");
-      for (field in mapping)
+      for (var field in cMapping)
         $('<li>').append($('<a href="#">').text(field)).appendTo(fieldsList);
       fieldsList.listview('refresh');
       fieldsList.find("li a").click(panel.onFieldSelected);
@@ -40,89 +48,82 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
   };
 
   panel.updateFieldMatch = function() {
-    chrome.storage.local.get(['crawlings'], function(hash) {
-      var crawlRes = hash.crawlings[url].update || hash.crawlings[url].initial || {};
-      fieldsList.find("li a").each(function() {
-        if (crawlRes[this.innerText])
-          this.classList.add('present');
-        else
-          this.classList.remove('present');
-      });
+    fieldsList.find("li a").each(function() {
+      if (cCrawling[this.innerText])
+        this.classList.add('present');
+      else
+        this.classList.remove('present');
     });
   };
 
   panel.onFieldSelected = function(event) {
-    var field;
     if (! event) {
-      field = currentField.val();
-    } else if (event.field) {
-      field = event.field;
+      // cField already set.
     } else if (event.currentTarget) {
-      field = event.currentTarget.innerText;
+      cField = event.currentTarget.innerText;
     } else if (event.target) {
-      field = event.target.innerText;
+      cField = event.target.innerText;
     }
 
-    if (! field)
+    if (! cField)
       return $.mobile.changePage('#fieldsPage');
 
     chrome.storage.local.get(['mappings'], function(hash) {
-      var host = hostsSelect.val(),
-          mapping = hash.mappings[url].data.viking[host],
-          paths = mapping[field].path || [],
-          i;
-      if (typeof paths === 'string')
-        paths = [paths];
-      currentField.val(field);
-      fieldName.innerText = field;
+      cMapping = hash.mappings[cUrl].data.viking[cHost];
+      fieldName.innerText = cField;
 
       // RESULT
-      panel.updateResult(field);
+      panel.updateResult();
 
       // LABEL
-      if (field.search(/^option/) !== -1) {
-        $(optionLabel).val(mapping[field].label).parent().show().prev().show();
+      if (cField.search(/^option/) !== -1) {
+        $(optionLabel).val(cMapping[cField].label).parent().show().prev().show();
       } else
         $(optionLabel).val('').parent().hide().prev().hide();
 
       // PATH LIST
-      pathsList.html("");
-      for (i in paths) {
-        var li = $('<li>');
-        li.append($('<label for="path'+i+'">Path '+i+' :</label>').hide());
-        li.append($('<input type="text" id="path'+i+'" />').val(paths[i]));
-        var buttonGroup = $('<div data-role="controlgroup" data-type="horizontal" data-mini="true">');
-
-        var searchBtn = $('<a data-role="button" data-icon="search" data-iconpos="notext" title="Search">Search</a>');
-        searchBtn.addClass('ui-disabled');
-        searchBtn.click(panel.onSearchBtnClicked);
-        buttonGroup.append(searchBtn);
-        var deleteBtn = $('<a data-role="button" data-icon="delete" data-iconpos="notext" title="Delete">Delete</a>');
-        deleteBtn.click(panel.onDeleteBtnClicked);
-        buttonGroup.append(deleteBtn);
-
-        li.append(buttonGroup);
-        pathsList.append(li);
-        li.trigger('create');
-      }
-      pathsList.listview('refresh').find("input").textinput();
+      panel.updatePathsList();
 
       $.mobile.changePage('#pathsPage');
     });
   };
 
-  panel.updateResult = function(field) {
-    chrome.storage.local.get(['crawlings'], function(hash) {
-      field = field || currentField.val();
-      pathsResult.value = (hash.crawlings[url].update || hash.crawlings[url].initial || {})[field] || "Nothing found. :-(";
-      pathsResult.title = pathsResult.value;
-      if (pathsResult.value.length > 200)
-        pathsResult.value = pathsResult.value.slice(0, 200) + "...";
-      pathsResult.style.height = 'auto';
-    });
+  panel.updateResult = function() {
+    pathsResult.value = cCrawling[cField] || "Nothing found. :-(";
+    pathsResult.title = pathsResult.value;
+    if (pathsResult.value.length > 200)
+      pathsResult.value = pathsResult.value.slice(0, 200) + "...";
+    pathsResult.style.height = 'auto';
   };
 
-  panel.onNewFieldAdd = function(event) {
+  panel.updatePathsList = function() {
+    var paths = cMapping[cField].path || [],
+        i;
+    if (typeof paths === 'string')
+      paths = [paths];
+    pathsList.html("");
+    for (i in paths) {
+      var li = $('<li>');
+      li.append($('<label for="path'+i+'">Path '+i+' :</label>').hide());
+      li.append($('<input type="text" id="path'+i+'" />').val(paths[i]));
+      var buttonGroup = $('<div data-role="controlgroup" data-type="horizontal" data-mini="true">');
+
+      var searchBtn = $('<a data-role="button" data-icon="search" data-iconpos="notext" title="Search">Search</a>');
+      searchBtn.addClass('ui-disabled');
+      searchBtn.click(panel.onSearchBtnClicked);
+      buttonGroup.append(searchBtn);
+      var deleteBtn = $('<a data-role="button" data-icon="delete" data-iconpos="notext" title="Delete">Delete</a>');
+      deleteBtn.click(panel.onDeleteBtnClicked);
+      buttonGroup.append(deleteBtn);
+
+      li.append(buttonGroup);
+      pathsList.append(li);
+      li.trigger('create');
+    }
+    pathsList.listview('refresh').find("input").textinput();
+  };
+
+  panel.onNewFieldAdd = function() {
     var newField = newFieldInput.val();
     logger.debug("New field :", newField, "!");
     newFieldInput.val("");
@@ -130,13 +131,12 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     $('<li><a href="#">'+newField+'</a></li>').appendTo(fieldsList).click(panel.onFieldSelected);
     fieldsList.listview('refresh');
 
-    chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
-      var host = hostsSelect.val();
-      hash.mappings[url].data.viking[host][newField] = {path: []};
+    chrome.storage.local.get(['mappings'], function(hash) {
+      hash.mappings[cUrl].data.viking[cHost][newField] = {path: []};
       chrome.storage.local.set(hash);
     });
 
-    return false;
+    return false; // To prevent form submission.
   };
 
   panel.onSearchBtnClicked = function(event) {
@@ -164,14 +164,12 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     $('<li>').append($('<input type="text" />').val(newPath)).appendTo(pathsList).trigger('create');
     pathsList.listview('refresh');
 
-    chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
-      var host = hostsSelect.val(),
-          field = currentField.val();
-      hash.mappings[url].data.viking[host][field].path.push(newPath);
+    chrome.storage.local.get(['mappings'], function(hash) {
+      hash.mappings[cUrl].data.viking[cHost][cField].path.push(newPath);
       chrome.storage.local.set(hash);
     });
 
-    return false;
+    return false; // To prevent form submission.
   };
 
   panel.onPathOkBtnClicked = function(event) {
@@ -183,11 +181,9 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
 
     var paths = pathsList.find("input").toArray().map(function(e) {return e.value;});
     chrome.storage.local.get(['mappings'], function(hash) {
-      var host = hostsSelect.val(),
-          field = currentField.val(),
-          mapping = hash.mappings[url].data.viking[host][field];
+      var mapping = hash.mappings[cUrl].data.viking[cHost][cField];
       mapping.path = paths;
-      if (field.search(/^option/) !== -1)
+      if (cField.search(/^option/) !== -1)
         mapping.label = optionLabel.value;
       chrome.storage.local.set(hash);
       // chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
@@ -200,15 +196,13 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     fieldsList = $("#fieldsList").listview();
     newFieldInput = $("#newFieldInput");
     newFieldInput.parents("form").on("submit", panel.onNewFieldAdd);
-    currentField = $("#currentField");
     pathsList = $("#pathsList").listview().sortable({ delay: 20, distance: 10, axis: "y", containment: "parent" }).on("sortupdate", panel.onPathSorted);
     newPathInput = $("#newPathInput");
     newPathInput.parents("form").on("submit", panel.onNewPathAdd);
     $(pathOkBtn).click(panel.onPathOkBtnClicked);
 
-
     chrome.storage.local.get('mappings', function(hash) {
-      var hosts = Object.keys(hash.mappings[url].data.viking),
+      var hosts = Object.keys(hash.mappings[cUrl].data.viking),
           i;
       for (i in hosts)
         $("<option>").val(hosts[i]).text(hosts[i]).appendTo(hostsSelect).trigger('create');
