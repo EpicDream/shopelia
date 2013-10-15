@@ -12,6 +12,10 @@ define(['jquery-ui', 'logger', 'src/ari-panel'], function($, logger, panel) {
       jStep,
       jButtons;
 
+/* ********************************************************** */
+/*                        Initialisation                      */
+/* ********************************************************** */
+
 function loadAriane() {
   // Create DIV
   var div = document.createElement('div');
@@ -75,6 +79,24 @@ function build() {
 /*                          On Event                          */
 /* ********************************************************** */
 
+chrome.extension.onMessage.addListener(function(msg, sender) {
+  if (msg === "next-step") {
+    var buttons = jButtons.filter(":visible");
+    var e = buttons.filter(".current-field");
+    var idx = buttons.index(e);
+    if (! e)
+      buttons.first().addClass("current-field");
+    else if (idx+1 < buttons.length) {
+      e.removeClass("current-field");
+      buttons.eq(idx+1).addClass("current-field");
+    } else {
+      e.removeClass("current-field");
+    }
+  } else if (msg.action === 'setField') {
+    toolbar.setCurrentField(msg.field);
+  }
+});
+
 function onStepChanged(event) {
   var field_for_step = {
     account_creation: "#ariane-account, #ariane-user",
@@ -107,8 +129,7 @@ function onNext() {
 }
 
 function onButtonClicked(event) {
-  jButtons.filter(".current-field").add(event.currentTarget).toggleClass("current-field");
-  chrome.extension.sendMessage({action: 'setField', field: toolbar.getCurrentFieldId()});
+  chrome.extension.sendMessage({action: 'setField', field: event.currentTarget.id.replace(/ariane-product-/, '')});
 }
 
 function onPanelCtrlClicked() {
@@ -142,31 +163,14 @@ toolbar.startAriane = function(crawl_mode) {
   onStepChanged();
 };
 
-toolbar.getCurrentFieldId = function() {
-  var fieldId = (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-/, '').replace(/product-/, '');
-  return fieldId;
+toolbar.setCurrentField = function(field) {
+  jButtons.filter(".current-field").removeClass("current-field");
+  jButtons.filter("#ariane-product-"+field).addClass("current-field");
 };
 
-/* ********************************************************** */
-/*                        Initialisation                      */
-/* ********************************************************** */
-
-chrome.extension.onMessage.addListener(function(msg, sender) {
-  if (sender.id != chrome.runtime.id || msg != "next-step")
-    return;
-
-  var buttons = jButtons.filter(":visible");
-  var e = buttons.filter(".current-field");
-  var idx = buttons.index(e);
-  if (! e)
-    buttons.first().addClass("current-field");
-  else if (idx+1 < buttons.length) {
-    e.removeClass("current-field");
-    buttons.eq(idx+1).addClass("current-field");
-  } else {
-    e.removeClass("current-field");
-  }
-});
+toolbar.getCurrentFieldId = function() {
+  return (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-product-/, '');
+};
   
   return toolbar;
 });

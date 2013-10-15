@@ -24,6 +24,11 @@ function($, logger, viking, hu, pu, ari_toolbar) {
 
     if (msg.action === 'initialCrawl' || msg.action === 'updateCrawl') {
       updateFieldMatching();
+    } else if (msg.action === 'recrawl') {
+      chrome.storage.local.get('mappings', function(hash) {
+        data = hash.mappings[url].data;
+        rematch();
+      });
     }
   });
 
@@ -32,7 +37,7 @@ function($, logger, viking, hu, pu, ari_toolbar) {
       return;
     started = true;
     chrome.storage.local.get('mappings', function(hash) {
-      mapper.mapping = data = hash.mappings[url].data;
+      data = hash.mappings[url].data;
       mapper.init();
     });
   };
@@ -106,11 +111,11 @@ function($, logger, viking, hu, pu, ari_toolbar) {
       chrome.storage.local.set(hash);
     });
 
-    rematchWithMapping(viking.buildMapping(url, data));
+    rematch();
   };
 
-  function rematchWithMapping(mapping) {
-    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
+  function rematch() {
+    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: viking.buildMapping(url, data), kind: 'update'});
   }
 
   function updateFieldMatching() {

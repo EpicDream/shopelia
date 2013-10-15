@@ -29,8 +29,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
         panel.updateFieldMatch();
       });
     } else if (msg.action === 'setField') {
-      cField = msg.field;
-      panel.onFieldSelected();
+      panel.loadField(msg.field);
     }
   });
 
@@ -57,14 +56,12 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
   };
 
   panel.onFieldSelected = function(event) {
-    if (! event) {
-      // cField already set.
-    } else if (event.currentTarget) {
-      cField = event.currentTarget.innerText;
-    } else if (event.target) {
-      cField = event.target.innerText;
-    }
+    var field  = event.currentTarget.innerText;
+    chrome.extension.sendMessage({action: 'setField', field: field});
+  };
 
+  panel.loadField = function(field) {
+    cField = field;
     if (! cField)
       return $.mobile.changePage('#fieldsPage');
 
@@ -195,8 +192,12 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       if (cField.search(/^option/) !== -1)
         mapping.label = optionLabel.value;
       chrome.storage.local.set(hash);
-      // chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
+      chrome.extension.sendMessage({action: 'recrawl'});
     });
+  };
+
+  panel.onBackBtnClicked = function() {
+    chrome.extension.sendMessage({action: 'setField', field: ''});
   };
 
   $(document).ready(function() {
@@ -209,6 +210,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     newPathInput = $("#newPathInput");
     newPathInput.parents("form").on("submit", panel.onNewPathAdd);
     $(pathOkBtn).click(panel.onPathOkBtnClicked);
+    $(".backButton").click(panel.onBackBtnClicked);
 
     chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
       cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
