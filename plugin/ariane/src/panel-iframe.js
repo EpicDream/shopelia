@@ -93,32 +93,37 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     pathsResult.style.height = 'auto';
   };
 
+  panel.addPathToList = function(path) {
+    var li = $('<li>'),
+        i = pathsList[0].children.length;
+    li.append($('<label for="path'+i+'">Path '+i+' :</label>').hide());
+    var input = $('<input type="text" id="path'+i+'" />').val(path);
+    li.append(input);
+    var buttonGroup = $('<div data-role="controlgroup" data-type="horizontal" data-mini="true">');
+
+    var searchBtn = $('<a data-role="button" data-icon="search" data-iconpos="notext" title="Search">Search</a>');
+    searchBtn.click(panel.onSearchBtnClicked);
+    buttonGroup.append(searchBtn);
+    var deleteBtn = $('<a data-role="button" data-icon="delete" data-iconpos="notext" title="Delete">Delete</a>');
+    deleteBtn.click(panel.onDeleteBtnClicked);
+    buttonGroup.append(deleteBtn);
+
+    li.append(buttonGroup);
+    pathsList.append(li);
+    li.trigger('create');
+    if (panel.getMatchedElements(path).length > 0)
+      input.parent().addClass('found');
+    return li;
+  };
+
   panel.updatePathsList = function() {
     var paths = cMapping[cField].path || [],
         i;
     if (typeof paths === 'string')
       paths = [paths];
     pathsList.html("");
-    for (i in paths) {
-      var li = $('<li>');
-      li.append($('<label for="path'+i+'">Path '+i+' :</label>').hide());
-      var input = $('<input type="text" id="path'+i+'" />').val(paths[i]);
-      li.append(input);
-      var buttonGroup = $('<div data-role="controlgroup" data-type="horizontal" data-mini="true">');
-
-      var searchBtn = $('<a data-role="button" data-icon="search" data-iconpos="notext" title="Search">Search</a>');
-      searchBtn.click(panel.onSearchBtnClicked);
-      buttonGroup.append(searchBtn);
-      var deleteBtn = $('<a data-role="button" data-icon="delete" data-iconpos="notext" title="Delete">Delete</a>');
-      deleteBtn.click(panel.onDeleteBtnClicked);
-      buttonGroup.append(deleteBtn);
-
-      li.append(buttonGroup);
-      pathsList.append(li);
-      li.trigger('create');
-      if (panel.getMatchedElements(paths[i]).length > 0)
-        input.parent().addClass('found');
-    }
+    for (i in paths)
+      panel.addPathToList(paths[i]);
     pathsList.listview('refresh').find("input").textinput();
   };
 
@@ -144,9 +149,15 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
 
   // Highlight elements
   panel.onSearchBtnClicked = function(event) {
-    var path = $(event.currentTarget).parentsUntil("ul", "li").find("input").val();
+    var input = $(event.currentTarget).parentsUntil("ul", "li").find("input");
+    var path = input.val();
     logger.debug('Search "'+path+'"');
-    panel.getMatchedElements(path).effect("highlight", {color: "#00cc00" }, "slow");
+    if (panel.getMatchedElements(path).length > 0) {
+      input.parent().addClass('found');
+      panel.getMatchedElements(path).effect("highlight", {color: "#00cc00" }, "slow");
+    } else {
+      input.parent().removeClass('found');
+    }
   };
 
   panel.onDeleteBtnClicked = function(event) {
@@ -167,7 +178,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     logger.debug("New path :", newPath, "!");
     newPathInput.val("");
 
-    $('<li>').append($('<input type="text" />').val(newPath)).appendTo(pathsList).trigger('create');
+    panel.addPathToList(newPath);
     pathsList.listview('refresh');
 
     chrome.storage.local.get(['mappings'], function(hash) {
