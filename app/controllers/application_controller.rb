@@ -49,7 +49,11 @@ class ApplicationController < ActionController::Base
     if params[:no_layout].present?
       false
     else
-      'application'
+      if devise_controller? && resource_name == :developer
+        "developers"
+      else
+        "application"
+      end
     end
   end
   
