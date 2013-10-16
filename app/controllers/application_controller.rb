@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   end  
 
   unless Rails.application.config.consider_all_requests_local
-    rescue_from Exception, with: lambda { |exception| render_error 500, exception }
+    #rescue_from Exception, with: lambda { |exception| render_error 500, exception }
   end
 
   rescue_from ActionController::RoutingError, ActionController::UnknownController, ::AbstractController::ActionNotFound, ActiveRecord::RecordNotFound, with: lambda { |exception| render_error 404, exception }
@@ -49,7 +49,11 @@ class ApplicationController < ActionController::Base
     if params[:no_layout].present?
       false
     else
-      'application'
+      if devise_controller? && resource_name == :developer
+        "developers"
+      else
+        "application"
+      end
     end
   end
   

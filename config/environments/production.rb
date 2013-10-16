@@ -24,6 +24,7 @@ Shopelia::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
+  config.assets.precompile += %w( developers/dashboard.js  developers/tracking.js )
   config.assets.precompile += %w( addresses.css application.css errors.css orders.css cart_items.css carts.css )
   config.assets.precompile += %w( admin/users.css admin/orders.css  admin/developers.css admin/incidents.css )
   config.assets.precompile += %w( admin/users.js  admin/orders.js   admin/developers.js  admin/incidents.js )
@@ -35,7 +36,7 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( devise_override/confirmations.js  devise_override/registrations.js  )
   config.assets.precompile += %w( devise_override/passwords.js devise_override/passwords.css  )
   config.assets.precompile += %w( home.js errors.js cart_items.js carts.js send_download_link.js )
-  config.assets.precompile += %w( send_download_link.css )
+  config.assets.precompile += %w( send_download_link.css html_app.js )
 
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH

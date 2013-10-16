@@ -11,6 +11,7 @@ Shopelia::Application.routes.draw do
 
   apipie
 
+  devise_for :developers
   devise_for :users, controllers: { 
     confirmations: 'devise_override/confirmations',
     passwords: 'devise_override/passwords',
@@ -54,6 +55,13 @@ Shopelia::Application.routes.draw do
       get :retry, :on => :member
       get :mute, :on => :member
     end
+  end
+
+  constraints DomainConstraints.new('developers') do
+    root :to => 'developers/dashboard#index'
+  end
+  namespace :developers do
+    resources :tracking, :only => [:index, :create, :destroy]
   end
   
   namespace :zen do
@@ -128,6 +136,7 @@ Shopelia::Application.routes.draw do
   match '*not_found', to: 'errors#error_404'
   get "errors/error_404"
   get "errors/error_500"
+
   root to: 'home#index'
 
 end

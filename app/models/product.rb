@@ -1,10 +1,13 @@
 class Product < ActiveRecord::Base
+  include AlgoliaSearch
+
   VERSIONS_EXPIRATION_DELAY_IN_HOURS = 4
 
   belongs_to :product_master
   belongs_to :merchant
   has_many :events, :dependent => :destroy
   has_many :product_versions, :dependent => :destroy
+  has_and_belongs_to_many :developers, :uniq => true
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true
@@ -34,6 +37,11 @@ class Product < ActiveRecord::Base
       "and products.viking_sent_at is null", Time.now, 12.hours.ago, Time.now).order("events.created_at desc").limit(100)
   }
   
+  algoliasearch index_name: "products-#{Rails.env}" do
+    attribute :name, :description, :url, :image_url, :brand, :reference
+    attributesToIndex [:name, :brand, :description]
+  end
+
   def self.fetch url
     return nil if url.nil?
     p = Product.find_or_create_by_url(Linker.clean(url))
@@ -62,6 +70,10 @@ class Product < ActiveRecord::Base
   
   def ready?
     !self.viking_failure && self.versions_expires_at.present? && self.versions_expires_at > Time.now
+  end
+
+  def available?
+    self.product_versions.available.count > 0
   end
 
   def assess_versions

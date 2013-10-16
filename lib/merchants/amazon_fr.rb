@@ -4,6 +4,12 @@ class AmazonFr
     @url = url
   end
 
+  def process_availability version
+    version[:availability_text] = "En stock" if version[:availability_text] =~ /Voir les offres de ces vendeurs/
+    version[:availability_text] = "En stock" if version[:availability_text] =~ /plus que \d+ exemplaire/
+    version
+  end
+
   def canonize
     if m = @url.match(/\/dp\/([A-Z0-9]+)/)
       "http://www.amazon.fr/dp/#{m[1]}"

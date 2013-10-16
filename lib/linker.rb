@@ -1,6 +1,6 @@
 class Linker
 
-  UA = "Mozilla/4.0 (compatible; MSIE 7.0; Mac 6.0)"
+  UA = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36"
   
   def self.clean url
     count = 0
@@ -64,6 +64,7 @@ class Linker
     res = Net::HTTP.start(uri.host, uri.port, use_ssl:uri.port == 443) { |http| http.request(req) }
     if res.code.to_i == 405 || (res.code.to_i == 200 && res['location'].blank?)
       req = Net::HTTP::Get.new(uri.request_uri, {'User-Agent' => UA })
+      req["accept-encoding"] = "gzip"
       res = Net::HTTP.start(uri.host, uri.port, use_ssl:uri.port == 443) { |http| http.request(req) }
     end
     res

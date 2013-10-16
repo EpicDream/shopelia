@@ -58,7 +58,7 @@ ChromeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCal
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: satconf.PRODUCT_EXTRACT_URL+(satconf.consum ? "?consum=false" : '')
+    url: satconf.PRODUCT_EXTRACT_URL+(satconf.consum ? '' : "?consum=false")
   }).done(doneCallback).fail(failCallback);
 };
 
@@ -94,6 +94,20 @@ ChromeSaturn.prototype.getMerchantId = function(url, callback) {
 ChromeSaturn.prototype.parseCurrentPage = function(tab) {
   var prod = {url: tab.url, merchant_id: tab.url, tabId: tab.id, keepTabOpen: true};
   this.onProductReceived(prod);
+};
+
+//
+ChromeSaturn.prototype.sendWarning = function(session, msg) {
+  if (session.extensionId) {
+    saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], warnMsg: msg});
+  } else if (session.id) // Stop pushed or Local Test
+    $.ajax({
+      type : "PUT",
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
+      contentType: 'application/json',
+      data: JSON.stringify({versions: [], warnMsg: msg})
+    });
+  Saturn.prototype.sendWarning.call(this, session, msg);
 };
 
 //

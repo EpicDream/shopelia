@@ -1,0 +1,46 @@
+.container
+  .row
+    %h1 Products tracking
+  .row
+    .spacer30
+    .col-lg-2
+      %a.btn.btn-success.btn-large#addProducts Add new producs
+  .row    
+    .col-lg-12
+      %article.coolbox
+        %h3 Tracked products
+        %table.table
+          %thead
+            %tr
+              %th URL
+              %th Name
+              %th Price
+              %th Available
+              %th Status
+              %th 
+          %tbody
+            - @products.each do |product|
+              %tr
+                %td= link_to product.url, product.url
+                %td= product.name
+                %td= product.product_versions.first.price
+                %td= product_availability(product)
+                %td= product_viking_status(product)
+                %td
+                  %a.btn{href:"#{developers_tracking_path(product)}", method:"delete"}
+                    %i.icon-delete
+        = will_paginate @products, renderer: BootstrapPagination::Rails
+
+#addProductsModal.modal.fade
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", type: "button"} ×
+        %h4.modal-title Add new products
+      .modal-body
+        = form_tag developers_tracking_index_path, id:"productsForm" do
+          %p Enter URLs of products to track (one URL per line)
+          = text_area_tag "urls", "", rows:"10", cols:"80", style:"width:95%", id:"productsFormUrls"
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+        %button.btn.btn-primary#productsFormConfirm{type: "button"} Add products
