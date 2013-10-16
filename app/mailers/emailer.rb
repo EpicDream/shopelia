@@ -12,7 +12,7 @@ class Emailer < ActionMailer::Base
   def send_user_download_link email
     @email = email
     mail( :to => @email,
-          :subject => "Lien de téléchargement pour shopelia",
+          :subject => "Lien de téléchargement pour Shopelia",
           :from => "Shopelia <contact@shopelia.fr>")
   end
 
