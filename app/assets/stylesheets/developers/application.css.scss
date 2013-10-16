@@ -2,13 +2,17 @@
 @import "bootstrap_and_overrides.css.less";
 @import "common.css.scss";
 
+body {
+  background-color: $lightGrey ;
+}
 
 .border-form-div {
-  max-width: 300px;
-  padding: 19px 29px 29px;
+  max-width: 320px;
+  padding: 19px 29px 19px 29px;
   margin: 0 auto 20px;
   background-color: #fff;
-  border: 1px solid #e5e5e5;
+  color: $darkBlue;
+  border: 1px solid #cecece;
   -webkit-border-radius: 5px;
      -moz-border-radius: 5px;
           border-radius: 5px;
@@ -27,4 +31,6 @@
   height: auto;
   margin-bottom: 15px;
   padding: 7px 9px;
+  border-radius: 3px;
+  border: 1px solid #cecece;
 }

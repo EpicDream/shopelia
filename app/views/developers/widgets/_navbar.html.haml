@@ -9,6 +9,8 @@
     .navbar-collapse.collapse
       %ul.nav.navbar-nav.navbar-right
         - if current_developer.present?
+          %li#nav-tracking
+            = link_to "Product tracking", developers_tracking_index_path
           %li.dropdown
             %a.dropdown-toggle{"data-toggle" => "dropdown", href: "#"}
               = current_developer.name
@@ -19,6 +21,3 @@
         - else
           %a.btn.btn-default.navbar-btn{href:"#{developer_session_path}"}
             Sign in
-      %ul.nav.navbar-nav.navbar-right.sections
-        %li#nav-tracking
-          = link_to "Product tracking", developers_tracking_index_path
