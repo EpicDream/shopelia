@@ -22,4 +22,10 @@ class Api::Showcase::Products::SearchControllerTest < ActionController::TestCase
     
     assert_response :bad_request
   end
+
+  test "it should generate scan log" do
+    assert_difference "ScanLog.count" do
+      get :index, ean:"9782749910116", visitor:"uuid", format: :json
+    end
+  end
 end

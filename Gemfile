@@ -30,7 +30,7 @@ gem 'client_side_validations-simple_form'
 gem 'devise-i18n-views'
 gem 'rails-i18n'
 gem 'backbone-on-rails', '1.0.0.0'
-gem 'http_accept_language'
+gem 'http_accept_language', '~> 2.0.0.pre'
 gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
 gem 'sanitize'
@@ -41,6 +41,7 @@ gem 'slim'
 gem 'nexmo'
 gem 'pusher'
 gem 'rubyzip', '< 1.0.0'
+gem 'algoliasearch-rails'
 
 # Gems used only for assets and not required
 # in production environments by default.
