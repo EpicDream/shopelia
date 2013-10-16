@@ -13,8 +13,6 @@ class Collection < ActiveRecord::Base
 
   attr_accessible :description, :name, :user_id
 
-  scope :items, joins(:collection_items).order("collection_items.created_at ASC")
-
   def to_param
     param = self.uuid + (self.name.present? ? "-#{self.name}" : "")
     param.unaccent.parameterize
@@ -22,6 +20,10 @@ class Collection < ActiveRecord::Base
 
   def belongs_to? user
     self.user_id == user.id
+  end
+
+  def items
+    self.collection_items.order("collection_items.created_at ASC")
   end
 
   private

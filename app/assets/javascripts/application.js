@@ -10,6 +10,7 @@
 //= require twitter/bootstrap
 //= require lib/spin
 //= require lib/pusher.min
+//= require lib/algoliasearch.min
 //= require monitor
 
 $(document).ready(function() {

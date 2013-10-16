@@ -4,12 +4,21 @@
     .container
       .row
         .collection-title
-          = @collection.name
+          //= @collection.name
       .spacer25
       - if @collection.belongs_to?(@current_user)
         .row
-          = render "add_product"
+          .col-xs-8.col-lg-10
+            %input#catalogue-algolia.form-control.input-lg{placeholder: "#{t('app.collections.search_catalogue')}", spellcheck: "false", type: "text"}
         .spacer25
+        #catalogue
+          .row
+            - 12.times do |i|
+              .col-xs-6.col-md-4
+                .collection-product-box.display-none{id: "catalogue-box-#{i}"}
+                  .collection-product
+                    %img.collection-product-img{id: "catalogue-box-img-#{i}"}
+                  .collection-product-price{id: "catalogue-box-price-#{i}"}
       .row#collection
         = render @collection.items
     .spacer200

@@ -333,6 +333,7 @@ fr:
   app:
     collections:
       submit: "Nouvelle collection"
+      search_catalogue: "Recherche dans le catalogue"
       add: 
         submit: "Ajout du produit"
         invalid_url: "Vous devez entrer une adresse valide"
