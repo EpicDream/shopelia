@@ -4,6 +4,7 @@ class EventsWorker
   def perform hash
     create_event hash
   rescue Exceptions::RejectingEventsException
+  rescue ActiveRecord::RecordNotUnique
     # do nothing
   rescue ActiveRecord::RecordInvalid
   rescue ActiveRecord::RecordNotFound
