@@ -294,3 +294,69 @@ footer {
   padding: 5px 20px 5px 20px;
   background-color: #00A185;
 }
+
+.catalogue-box {
+  cursor: pointer;
+}
+.catalogue-box, .catalogue, .catalogue-img {
+  position: relative;
+  z-index:2;
+}
+.catalogue-img {
+  max-width: 90%;
+  max-height: 90%;
+  display: block;
+  margin: auto;
+  padding-top: 5px;
+}
+.catalogue, .catalogue-box {
+  background-color: #fff;
+  max-width: 210px;
+  max-height: 150px;
+  width: 210px;
+  height: 150px;
+  margin: 25px 0px 0px 0px;
+}
+.catalogue {
+  -webkit-transition: all 0.4s ease-out;
+  -moz-transition: all 0.4s ease-out;  /* FF4+ */
+  -o-transition: all 0.4s ease-out;  /* Opera 10.5+ */
+  -ms-transition: all 0.4s ease-out;  /* IE10? */
+  transition: all 0.4s ease-out;    
+}
+.catalogue:hover {
+  opacity: 0.6;
+  -webkit-transition: all 0.4s ease-out;
+  -moz-transition: all 0.4s ease-out;  /* FF4+ */
+  -o-transition: all 0.4s ease-out;  /* Opera 10.5+ */
+  -ms-transition: all 0.4s ease-out;  /* IE10? */
+  transition: all 0.4s ease-out;    
+}
+.catalogue-price {
+  position:absolute;
+  z-index:3;
+  color: #fff;
+  font-size:1.2em;
+  right:0px;
+  top:0px;
+  padding: 5px 20px 5px 20px;
+  background-color: #00A185;
+}
+.catalogue-name {
+  position:absolute;
+  z-index:3;
+  color: #000;
+  font-size:1.0em;
+  width: 100%;
+  height: 29px;
+  overflow: hidden;
+  left:0px;
+  bottom:0px;
+  padding: 5px;
+  background-color: #ddd;
+}
+
+#tags_category, #tags_merchant {
+  line-height: 40px;
+  text-align: left;
+}
