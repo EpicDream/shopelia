@@ -6,6 +6,28 @@ var Index = {
         $('#productsForm').submit();
       });
     });
+    $('.link-delete').on("click", function(event) {
+      var url = $(this).attr('data-url');
+      $('#deleteProductModal').off();
+      $('#deleteProductConfirm').on("click", function(event){
+        $.ajax({
+          url: url,
+          dataType: "json",
+          type : "delete",
+          contentType: "application/json",
+          error: function(data) {
+            window.location.reload();
+            $('#deleteProductModal').modal('hide');
+          },
+          success: function(data) {
+            window.location.reload();
+            $('#deleteProductModal').modal('hide');
+          }
+        });
+      });
+      $('#deleteProductModal').modal('show');
+    });
+
   }
 }
 

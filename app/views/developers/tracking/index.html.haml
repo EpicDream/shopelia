@@ -27,8 +27,8 @@
                 %td= product_availability(product)
                 %td= product_viking_status(product)
                 %td
-                  %a.btn{href:"#{developers_tracking_path(product)}", method:"delete"}
-                    %i.icon-delete
+                  %a.link-delete{href:"#", data:{url:"#{developers_tracking_path(product)}"}}
+                    %i.icon-trash.icon-2x
         = will_paginate @products, renderer: BootstrapPagination::Rails
 
 #addProductsModal.modal.fade
@@ -44,3 +44,15 @@
       .modal-footer
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
         %button.btn.btn-primary#productsFormConfirm{type: "button"} Add products
+
+#deleteProductModal.modal.fade
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", type: "button"} ×
+        %h4.modal-title Remove product from list
+      .modal-body
+        %p Are you sure ?
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+        %button.btn.btn-danger#deleteProductConfirm{type: "button"} Delete
