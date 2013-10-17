@@ -46,7 +46,7 @@ function build() {
     text: false,
     icons: {primary: "ui-icon-cancel"}
   });
-  jToolbar.find(".ari.-next").button({
+  jToolbar.find(".ari-next").button({
     text: false,
     icons: {primary: "ui-icon-circle-arrow-e"}
   }).addClass("ui-corner-right");
@@ -70,6 +70,8 @@ function build() {
   //
   toolbar.toolbarElem = jToolbar[0];
   toolbar.stepElem = jStep[0];
+  toolbar.abortElem = jToolbar.find(".ari-abort");
+  toolbar.finishElem = jToolbar.find(".ari-finish");
   toolbar.buttons = jButtons.toArray();
 }
 

@@ -56,7 +56,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
   };
 
   panel.onFieldSelected = function(event) {
-    var field  = event.currentTarget.innerText;
+    var field  = event.currentTarget.innerText.trim();
     chrome.extension.sendMessage({action: 'setField', field: field});
   };
 
@@ -117,7 +117,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
   };
 
   panel.updatePathsList = function() {
-    var paths = cMapping[cField].path || [],
+    var paths = cMapping[cField] && cMapping[cField].path || [],
         i;
     if (typeof paths === 'string')
       paths = [paths];
@@ -128,11 +128,11 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
   };
 
   panel.onNewFieldAdd = function() {
-    var newField = newFieldInput.val();
+    var newField = newFieldInput.val().trim().replace(/\W/, '').toLowerCase();
     logger.debug("New field :", newField, "!");
     newFieldInput.val("");
 
-    $('<li><a href="#">'+newField+'</a></li>').appendTo(fieldsList).click(panel.onFieldSelected);
+    $('<li>').append($('<a href="#">'+newField+'</a>').click(panel.onFieldSelected)).appendTo(fieldsList);
     fieldsList.listview('refresh');
 
     chrome.storage.local.get(['mappings'], function(hash) {
