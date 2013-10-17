@@ -33,4 +33,13 @@ class Developers::TrackingControllerTest < ActionController::TestCase
       xhr :delete, :destroy, id: products(:dvd).id
     end
   end
+
+  test "should create events" do
+    @developer.products << products(:dvd)
+
+    assert_difference "Event.count" do
+      get :refresh
+      assert_redirected_to developers_tracking_index_path
+    end
+  end
 end

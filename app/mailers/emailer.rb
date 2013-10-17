@@ -17,6 +17,16 @@ class Emailer < ActionMailer::Base
   end
 
   ##################################################################################
+
+  def send_products_feed_to_developer(developer, content)
+    attachments['products_feed.xml'] = content
+    mail( :to => developer.email,
+          :subject => "Products feed", 
+          :from => "Shopelia Developers <contact@shopelia.com>",
+          :body => "Daily products feed" )
+  end
+
+  ##################################################################################
   
   def notify_order_creation order
     @order = order
