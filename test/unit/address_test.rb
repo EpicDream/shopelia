@@ -75,18 +75,16 @@ class AddressTest < ActiveSupport::TestCase
   end
   
   test "it should create address from reference" do
-    VCR.use_cassette('places_api') do  
-      address = Address.new(
-        :user_id => users(:elarch).id,
-        :phone => "0646403619",        
-        :reference => "CjQjAAAAPtgCbee5jsEkoWoc6apT3qFBYmWlxcVOPrwUBoQ5Pqv8ExTxyh-M--tsL8QAT8xCEhBo2z7K3wdT4K6S7smh--ZIGhTCBtyjxjD5fBNcR15jutp7SZA2Fw")
+    address = Address.new(
+      :user_id => users(:elarch).id,
+      :phone => "0646403619",        
+      :reference => "CjQjAAAAPtgCbee5jsEkoWoc6apT3qFBYmWlxcVOPrwUBoQ5Pqv8ExTxyh-M--tsL8QAT8xCEhBo2z7K3wdT4K6S7smh--ZIGhTCBtyjxjD5fBNcR15jutp7SZA2Fw")
 
-      assert address.save
-      assert_equal "21 Rue d'Aboukir", address.address1
-      assert_equal "75002", address.zip
-      assert_equal "Paris", address.city
-      assert_equal countries(:france).id, address.country_id
-    end
+    assert address.save
+    assert_equal "21 Rue d'Aboukir", address.address1
+    assert_equal "75002", address.zip
+    assert_equal "Paris", address.city
+    assert_equal countries(:france).id, address.country_id
   end
   
   test "it should fail all non completed orders attached to a destroyed address" do

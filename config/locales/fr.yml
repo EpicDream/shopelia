@@ -349,14 +349,14 @@ fr:
         text: "C’est votre 1er achat avec Shopelia: ajoutez vos informations personnelles et bancaires pour créer votre compte et valider votre commande. Et pour les achats suivants, votre e-mail et mot de passe suffisent, quel que soit le marchand chez qui vous souhaitez commander."
       secure: 
         title: "Sécurisé"
-        text: "La transaction est effectuée sur des serveurs sécurisés. Shopelia ne stocke aucune donnée de carte bancaire sur son infrastructure."
+        text: "La transaction est effectuée sur des serveurs sécurisés. Nous ne stockons aucune donnée de carte bancaire."
       terms: "CGU"
       help: "Aide"
       security: "Sécurité"
       send_app:
         invalid_entry: "Veuillez entrez un email ou un numéro de téléphone valide"
         error: "Nous n'avons pas pu vous envoyer le lien pour télécharger l'application. Veuillez vérifier les informations saisies."
-        success: "Le lien de téléchargement a bien été envoyé ! vous le receverez dans quelques instants. A tout de suite sur l'application Shopelia !"
+        success: "Le lien de téléchargement a bien été envoyé ! vous le recevrez dans quelques instants. A tout de suite sur l'application Shopelia !"
       download:
         tooltip: "Ouvrez <strong>shopelia.com/download</strong> sur votre mobile ou <strong>recevez le lien de téléchargement sur votre téléphone ou email</strong>"
         send: "Envoyer"

@@ -42,14 +42,18 @@ class ApplicationController < ActionController::Base
   
   def set_locale
     available = %w{fr en}
-    I18n.locale = http_accept_language.compatible_language_from(available)
+    I18n.locale = Rails.env.test? ? "fr" : http_accept_language.compatible_language_from(available)
   end
   
   def set_layout
     if params[:no_layout].present?
       false
     else
-      'application'
+      if devise_controller? && resource_name == :developer
+        "developers"
+      else
+        "application"
+      end
     end
   end
   

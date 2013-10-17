@@ -16,24 +16,10 @@ Dir["#{Rails.root}/test/helper/*.rb"].each {|f| puts f ; require f}
 class ActiveSupport::TestCase
   fixtures :all
 
-  VCR.configure do |c|
-    c.cassette_library_dir = 'test/cassettes'
-    c.hook_into :webmock
-    c.ignore_localhost = true
-    c.default_cassette_options = {
-      :record => :new_episodes,
-      :serialize_with => :syck,
-      :match_requests_on => [:method, VCR.request_matchers.uri_without_param(:ts), :body]
-    }
-    c.allow_http_connections_when_no_cassette = true
-    c.ignore_hosts 'codeclimate.com'
-  end
-
   setup do
     $sms_gateway_count = 0
     ENV["API_KEY"] = developers(:prixing).api_key
     ActionMailer::Base.deliveries.clear
-    WebMock.disable_net_connect!(:allow => "codeclimate.com")
     File.delete(MangoPayDriver::CONFIG) if File.exist?(MangoPayDriver::CONFIG)
     EventsWorker.clear
   end

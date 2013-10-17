@@ -62,9 +62,9 @@ ActiveRecord::Schema.define(:version => 20131013162319) do
     t.integer  "mangopay_contribution_id"
     t.integer  "mangopay_contribution_amount"
     t.string   "mangopay_contribution_message"
-    t.integer  "mangopay_destination_wallet_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.integer  "mangopay_destination_wallet_id"
     t.integer  "mangopay_transfer_id"
   end
 
@@ -135,9 +135,34 @@ ActiveRecord::Schema.define(:version => 20131013162319) do
   create_table "developers", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.string   "email",                  :default => "", :null => false
+    t.string   "encrypted_password",     :default => "", :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "unconfirmed_email"
   end
+
+  add_index "developers", ["confirmation_token"], :name => "index_developers_on_confirmation_token"
+  add_index "developers", ["email"], :name => "index_developers_on_email"
+  add_index "developers", ["reset_password_token"], :name => "index_developers_on_reset_password_token"
+
+  create_table "developers_products", :id => false, :force => true do |t|
+    t.integer "developer_id"
+    t.integer "product_id"
+  end
+
+  add_index "developers_products", ["product_id"], :name => "index_developers_products_on_product_id"
 
   create_table "devices", :force => true do |t|
     t.string   "uuid"
@@ -286,6 +311,7 @@ ActiveRecord::Schema.define(:version => 20131013162319) do
     t.datetime "updated_at",                   :null => false
     t.integer  "amount"
     t.integer  "mangopay_source_wallet_id"
+    t.integer  "virtual_card_id"
   end
 
   create_table "product_masters", :force => true do |t|
@@ -420,5 +446,17 @@ ActiveRecord::Schema.define(:version => 20131013162319) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "virtual_cards", :force => true do |t|
+    t.string   "provider"
+    t.string   "number"
+    t.string   "exp_month"
+    t.string   "exp_year"
+    t.string   "cvv"
+    t.float    "amount"
+    t.integer  "cvd_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
 end
