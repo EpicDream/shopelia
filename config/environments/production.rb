@@ -24,6 +24,7 @@ Shopelia::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
+  config.assets.precompile += %w( developers/dashboard.js  developers/tracking.js )
   config.assets.precompile += %w( addresses.css application.css errors.css orders.css cart_items.css carts.css )
   config.assets.precompile += %w( admin/users.css admin/orders.css  admin/developers.css admin/incidents.css )
   config.assets.precompile += %w( admin/users.js  admin/orders.js   admin/developers.js  admin/incidents.js )

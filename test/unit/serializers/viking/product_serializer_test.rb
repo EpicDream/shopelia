@@ -8,7 +8,7 @@ class Viking::ProductSerializerTest < ActiveSupport::TestCase
     @product.batch = true
   end
   
-  test "it should correctly serialize product" do
+  test "it should correctly serialize product for viking" do
     product_serializer = Viking::ProductSerializer.new(@product)
     hash = product_serializer.as_json
       
