@@ -25,4 +25,12 @@ class Developers::TrackingControllerTest < ActionController::TestCase
 
     assert_equal 1, @developer.reload.products.count
   end
+
+  test "should remove product" do
+    @developer.products << products(:dvd)
+
+    assert_difference "@developer.products.count", -1 do
+      xhr :delete, :destroy, id: products(:dvd).id
+    end
+  end
 end
