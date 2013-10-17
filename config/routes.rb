@@ -62,6 +62,9 @@ Shopelia::Application.routes.draw do
   end
   namespace :developers do
     resources :tracking, :only => [:index, :create, :destroy]
+    namespace :tracking do
+      get :refresh
+    end
   end
   
   namespace :zen do

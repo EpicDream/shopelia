@@ -21,6 +21,18 @@ class Developers::TrackingController < Developers::DevelopersController
     end
   end
 
+  def refresh
+    current_developer.products.update_all "versions_expires_at = null"
+    current_developer.products.each do |p|
+      Event.create(
+        :product_id => p.id,
+        :action => Event::REQUEST,
+        :developer_id => current_developer.id)
+    end
+
+    redirect_to developers_tracking_index_path, notice: "Products are scheduled to be refreshed immediately. Reload page to check out updates."
+  end 
+
   private
 
   def retrieve_product
