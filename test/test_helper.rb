@@ -20,6 +20,7 @@ class ActiveSupport::TestCase
     $sms_gateway_count = 0
     ENV["API_KEY"] = developers(:prixing).api_key
     ActionMailer::Base.deliveries.clear
+    WebMock.disable_net_connect!(:allow => "codeclimate.com")
     File.delete(MangoPayDriver::CONFIG) if File.exist?(MangoPayDriver::CONFIG)
     EventsWorker.clear
   end
