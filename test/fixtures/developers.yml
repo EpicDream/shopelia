@@ -1,7 +1,9 @@
 prixing:
   name: Prixing
   api_key: abcde
+  email: "contact@prixing.fr"
 
 shopelia:
   name: Shopelia
   api_key: "e35c8cbbcfd7f83e4bb09eddb5a3f4c461c8d30a71dc498a9fdefe217e0fcd44"
+  email: "eric@shopelia.com"

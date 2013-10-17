@@ -24,6 +24,7 @@ gem 'haml'
 gem 'haml-rails'
 gem 'bourbon'
 gem 'will_paginate'
+gem 'will_paginate-bootstrap'
 gem "simple_form"
 gem 'client_side_validations'
 gem 'client_side_validations-simple_form'
@@ -78,8 +79,6 @@ end
 
 group :test do
   #gem "turn", "~> 0.8.3"
-  gem 'vcr'
-  gem 'webmock'
   gem "simplecov", :require => false
   gem "codeclimate-test-reporter"
   gem "capybara"
