@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 module AlgoliaFeed
 
   class Cdiscount < AlgoliaFeed
@@ -5,7 +7,7 @@ module AlgoliaFeed
     def initialize
       super
 
-      self.urls = {'http://pf.tradedoubler.com/export/export?myFeed=13692964912238732&myFormat=13692964912238732' => 'gz'}
+      self.urls = ['http://pf.tradedoubler.com/export/export?myFeed=13692964912238732&myFormat=13692964912238732']
 
       self.conversions = {
         'name'         => 'name',
@@ -35,8 +37,13 @@ module AlgoliaFeed
     def process_product(product)
       record = super
       record['_tags'] = [] unless record.has_key?('_tags')
-      record['_tags'] << product.xpath('TDCategoryName').text if product.xpath('TDCategoryName').text.size > 0
-      record['_tags'] << product.xpath('merchantCategoryName').text if product.xpath('merchantCategoryName').text.size > 0
+      categories = []
+      categories << product.xpath('TDCategoryName').text if product.xpath('TDCategoryName').text.size > 0
+      categories << product.xpath('merchantCategoryName').text if product.xpath('merchantCategoryName').text.size > 0
+      categories.each do |c|
+        records['_tags'] << "category:#{c}"
+      end
+      record['category'] = categories.join('>')
       record['_tags'] << "merchant_name:Cdiscount"
       record['price'] = (record['price'].to_f * 100).to_i.to_s
       record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s

@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
-gem 'zipruby'
+gem 'ruby-filemagic'
 gem 'syslog-logger'
 gem 'redis'
 gem 'redis-rails', '=3.2.1'
