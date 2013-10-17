@@ -3,7 +3,11 @@ require 'test_helper'
 class DeveloperTest < ActiveSupport::TestCase
   
   test "it should create new developer" do
-    dev = Developer.new(:name => 'Eric')
+    dev = Developer.new(
+      :name => 'Eric', 
+      :email => 'dev@shopelia.com', 
+      :password => 'merguez',
+      :password_confirmation => 'merguez')
     assert dev.save, dev.errors.full_messages.join(",")
     assert dev.api_key
   end
@@ -12,5 +16,4 @@ class DeveloperTest < ActiveSupport::TestCase
     dev = Developer.new(:name => 'Prixing')
     assert !dev.save
   end
-  
 end

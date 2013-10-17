@@ -55,7 +55,7 @@ class CashfrontRuleTest < ActiveSupport::TestCase
     rule = CashfrontRule.new(
       merchant_id:@merchant.id,
       rebate_percentage:7,
-      developer_id:Developer.create(name:"Toto").id,
+      developer_id:developers(:shopelia).id,
       max_rebate_value:10)
     assert rule.save
   end
