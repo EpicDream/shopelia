@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created : 31/07/2013
 
-define(['jquery', 'html_utils', 'lib/css_struct'], function($, hu, Css) {
+define(['jquery', 'html_utils', 'lib/css'], function($, hu, Css) {
 
 'use strict';
 
@@ -10,11 +10,21 @@ var pu = {};
 
 //
 function compArray(t1,t2) {
-  if (t1.length != t2.length)
+  if (t1 === t2) { return true; }
+  if (t1 === null || t2 === null) { return false; }
+  if (t1.length !== t2.length)
     return false;
-  for (var i = 0, l = t1.length ; i < l ; i++)
-    if (t1[i] != t2[i])
+  for (var i = 0, l = t1.length ; i < l ; i++) {
+    if (typeof t1[i] !== typeof t2[i]) {
       return false;
+    } else if (t1[i] instanceof Array && t2[i] instanceof Array && ! compArray(t1[i], t2[i])) {
+      return false;
+    } else if (typeof t1[i] === 'object' && t1[i] !== t2[i]) {
+      return false;
+    } else if (t1[i] != t2[i]) {
+      return false;
+    }
+  }
   return true;
 }
 

@@ -101,11 +101,11 @@ hu.getElementCSSSelectors = function(jelement, complete) {
   var css = '';
   for ( ; jelement && jelement[0].nodeType == 1 ; jelement = jelement.parent() ) {
     elem_selector = fromParentSelector(jelement, complete);
-    css = elem_selector + " " + css;
+    css = elem_selector + " > " + css;
     if (jelement[0].tagName.toLowerCase() == 'body' || (! complete && elem_selector.match(/#/)))
       break;
   }
-  return css.trim();
+  return css.trim().replace(/\s\>$/, '');
 };
 
 // Return an Array of jQuery elements.

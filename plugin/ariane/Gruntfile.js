@@ -10,6 +10,7 @@ module.exports = function(grunt) {
         src: [
           'Gruntfile.js',
           'src/*.js',
+          'lib/*.js',
           'controllers/mapping_contentscript.js',
           'controllers/toolbar_contentscript.js',
           'test/*.js',
@@ -36,6 +37,17 @@ module.exports = function(grunt) {
         files: [
           {expand: true, cwd: '../common/', src: ['*.js'], dest: 'vendor/'}
         ]
+      }
+    },
+    // Launch all tests
+    jasmine: {
+      src: ['lib/*.js'],
+      options: {
+        specs: ['test/*.js'],
+        template: require('grunt-template-jasmine-requirejs'),
+        templateOptions: {
+          requireConfigFile: 'require_config.js'
+        },
       }
     },
     // Concat modules' files in a way that requirejs always work.
@@ -138,6 +150,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jslint');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -183,7 +196,7 @@ module.exports = function(grunt) {
 
   // Alias
   grunt.registerTask('default', ['dev']);
-  grunt.registerTask('base', ['version', 'jshint', 'copy']);
-  grunt.registerTask('dev', ['base', 'config:dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
-  grunt.registerTask('prod', ['base', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod', 'exec:package']);
+  grunt.registerTask('test', ['version', 'jshint', 'copy', 'jasmine']);
+  grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
+  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod', 'exec:package']);
 };
