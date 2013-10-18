@@ -20,7 +20,12 @@ namespace :shopelia do
           product_serializer = ProductSerializer.new(product)
           products << product_serializer.as_json
         end
-        Emailer.send_products_feed_to_developer(developer, products.to_xml).deliver if products.count > 0
+        if products.count > 0
+          filename = "/tmp/products-feed-#{SecureRandom.hex(4)}-#{Time.now.strftime("%Y-%m-%d")}.xml"
+          File.open(filename, "w") { |file| file.write products.to_xml }
+          `gzip #{filename}`
+          Emailer.send_products_feed_to_developer(developer, filename + '.gz').deliver
+        end
       end
     end
   end
