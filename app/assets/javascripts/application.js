@@ -11,7 +11,9 @@
 //= require lib/spin
 //= require lib/pusher.min
 //= require lib/algoliasearch.min
+//= require lib/bootstrap-paginator.min
 //= require monitor
+//= require products-feed
 
 $(document).ready(function() {
   $(".modal-button").on('click', function(event) {
@@ -35,8 +37,8 @@ $(document).ready(function() {
       })
     } 
   );
-  showSpinners();
-  monitorCartItems();
+  //showSpinners();
+  //monitorCartItems();
 });
 
 function monitorCartItems() {

@@ -331,9 +331,10 @@ fr:
     cannot_destroy: "Impossible de supprimer un utilisateur avec des commandes déjà effectuées"
 
   app:
+    catalogue:
+      search: "Rechercher des produits dans le catalogue"
     collections:
       submit: "Nouvelle collection"
-      search_catalogue: "Recherche dans le catalogue"
       add: 
         submit: "Ajout du produit"
         invalid_url: "Vous devez entrer une adresse valide"
