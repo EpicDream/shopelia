@@ -28,7 +28,7 @@ module AlgoliaFeed
 
     def canonize_url(url)
       matches = /url\((.+?)\)/.match(url)
-      return url unless matches[1].present?
+      return url unless matches.present?
       new_url = URI.unescape(matches[1])
       new_url.gsub!(/\&refer.+/, '')
       new_url
@@ -36,12 +36,17 @@ module AlgoliaFeed
       
     def process_product(product)
       record = super
+puts product.search('name').text
+exit
       record['_tags'] = [] unless record.has_key?('_tags')
       categories = []
-      categories << product.xpath('TDCategoryName').text if product.xpath('TDCategoryName').text.size > 0
-      categories << product.xpath('merchantCategoryName').text if product.xpath('merchantCategoryName').text.size > 0
-      categories.each do |c|
-        records['_tags'] << "category:#{c}"
+      categories << product.search('TDCategoryName').text if product.search('TDCategoryName').text.size > 0
+      if product.search('merchantCategoryName').text.size > 0
+        cats = product.search('merchantCategoryName').text.split(/\s+\/\s+/)
+        categories << cats
+      end
+      categories.flatten.each do |c|
+        record['_tags'] << "category:#{c.to_s}"
       end
       record['category'] = categories.join('>')
       record['_tags'] << "merchant_name:Cdiscount"

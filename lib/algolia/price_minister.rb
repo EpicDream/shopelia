@@ -41,9 +41,7 @@ module AlgoliaFeed
 
     def canonize_url(url)
       matches = /url=(http:\/\/www.priceminister.com\/offer\/buy\/\d+)/.match(url)
-      return matches[1] if matches[1] =~ /\S/
-
-      puts url
+      return matches[1] if matches.present?
       url
     end
 
@@ -55,10 +53,10 @@ module AlgoliaFeed
       record['currency'] = 'EUR'
       record['_tags'] = [] unless record.has_key?('_tags')
       categories = []
-      categories << product.xpath('categorie').text if product.xpath('categorie').text.size > 0
-      categories << product.xpath('souscategorie').text if product.xpath('souscategorie').text.size > 0
-      categories << product.xpath('souscategorie2').text if product.xpath('souscategorie2').text.size > 0
-      categories << product.xpath('souscategorie3').text if product.xpath('souscategorie3').text.size > 0
+      categories << product.search('categorie').text if product.search('categorie').text.size > 0
+      categories << product.search('souscategorie').text if product.search('souscategorie').text.size > 0
+      categories << product.search('souscategorie2').text if product.search('souscategorie2').text.size > 0
+      categories << product.search('souscategorie3').text if product.search('souscategorie3').text.size > 0
       categories.each do |c|
         record['_tags'] << "category:#{c}"
       end

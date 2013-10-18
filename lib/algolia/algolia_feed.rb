@@ -9,11 +9,8 @@ require 'open-uri'
 require 'filemagic'
 require 'zip/zip'
 
-
-
-# TODO: Split categories
 # TODO: Add params on object creation
-# URL rewrite
+# Select search fields on index creation - name, brand, reference
 
 module AlgoliaFeed
 
@@ -26,22 +23,21 @@ module AlgoliaFeed
     end
 
     def initialize
-      self.urls = {}
-      self.conversions = []
+      self.urls = []
+      self.conversions = {}
       self.product_field = 'product'
       self.batch_size = 1000
       self.algolia_index_name = 'products-feed-fr-new'
       self.algolia_application_id = "JUFLKNI0PS"
       self.algolia_api_key = "bd7e7d322cf11e241e3a8fb22aeb5620"
       self.tmpdir = '/var/lib/db/algolia'
+    end
 
+    def run
       Algolia.init :application_id => self.algolia_application_id,
                    :api_key        => self.algolia_api_key
       self.algolia_index = Algolia::Index.new(self.algolia_index_name)
 
-    end
-
-    def run
       self.urls.each do |url|
         self.records = []
         reader = get_products_reader(url)
@@ -62,7 +58,7 @@ module AlgoliaFeed
         self.send_batch
         puts "[#{Time.now}] Processed #{products_counter} products in #{Time.now - file_start} seconds (#{(products_counter.to_f/(Time.now - file_start)).round} pr/s)"
         reader = nil
-        unlink(current_file)
+        File.unlink(self.current_file)
       end
     end
 
@@ -119,14 +115,18 @@ module AlgoliaFeed
     def process_product(product)
       record = {}
       self.conversions.each_pair do |from, to|
-        record[to] = product.xpath(from).text if product.xpath(from).text.size > 0
+        record[to] = product.search(from).text if product.search(from).text.size > 0
       end
-      if record['ean'].present?
-        record['_tags'] = []
+      if record.has_key?('ean')
+        record['_tags'] = []  unless record.has_key?('_tags')
         record['ean'].split(/\D+/).each do |ean|
           record['_tags'] << "ean:#{ean}" if ean.size > 7
         end 
         record.delete('ean')
+      end
+      if record.has_key?('brand')
+        record['_tags'] = []  unless record.has_key?('_tags')
+        record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
       end
       record
     end
@@ -135,4 +135,5 @@ end
 
 require_relative 'price_minister'
 require_relative 'cdiscount'
+require_relative 'zanox'
 
