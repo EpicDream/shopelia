@@ -18,12 +18,12 @@ class Emailer < ActionMailer::Base
 
   ##################################################################################
 
-  def send_products_feed_to_developer(developer, content)
-    attachments['products_feed.xml'] = content
+  def send_products_feed_to_developer(developer, filename)
+    attachments[filename.gsub("/tmp/", "")] = File.read(filename)
     mail( :to => developer.email,
-          :subject => "Products feed", 
+          :subject => "Products feed for #{developer.name} [#{Time.now.strftime("%Y-%m-%d")}]", 
           :from => "Shopelia Developers <contact@shopelia.com>",
-          :body => "Daily products feed" )
+          :body => "Please find attached your daily products extract" )
   end
 
   ##################################################################################
