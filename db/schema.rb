@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131014120831) do
+ActiveRecord::Schema.define(:version => 20131015114419) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -135,9 +135,34 @@ ActiveRecord::Schema.define(:version => 20131014120831) do
   create_table "developers", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.string   "email",                  :default => "", :null => false
+    t.string   "encrypted_password",     :default => "", :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "unconfirmed_email"
   end
+
+  add_index "developers", ["confirmation_token"], :name => "index_developers_on_confirmation_token"
+  add_index "developers", ["email"], :name => "index_developers_on_email"
+  add_index "developers", ["reset_password_token"], :name => "index_developers_on_reset_password_token"
+
+  create_table "developers_products", :id => false, :force => true do |t|
+    t.integer "developer_id"
+    t.integer "product_id"
+  end
+
+  add_index "developers_products", ["product_id"], :name => "index_developers_products_on_product_id"
 
   create_table "devices", :force => true do |t|
     t.string   "uuid"

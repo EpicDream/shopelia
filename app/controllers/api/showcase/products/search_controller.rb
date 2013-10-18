@@ -25,10 +25,11 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
       ean:@ean,
       device_id:@device.id,
       prices_count:result[:urls].count)
-    LeftronicLiveScanWorker.perform_async(
-      ean:@ean, 
+    LeftronicLiveScanWorker.perform_async({
+      ean:@ean,
+      prices_count:result[:urls].count,
       name:result[:name], 
-      image_url:result[:image_url])
+      image_url:result[:image_url]})
   end
 
   def prepare_jobs result

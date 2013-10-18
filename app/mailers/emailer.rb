@@ -12,8 +12,18 @@ class Emailer < ActionMailer::Base
   def send_user_download_link email
     @email = email
     mail( :to => @email,
-          :subject => "Lien de téléchargement pour shopelia",
+          :subject => "Lien de téléchargement pour Shopelia",
           :from => "Shopelia <contact@shopelia.fr>")
+  end
+
+  ##################################################################################
+
+  def send_products_feed_to_developer(developer, filename)
+    attachments[filename.gsub("/tmp/", "")] = File.read(filename)
+    mail( :to => developer.email,
+          :subject => "Products feed for #{developer.name} [#{Time.now.strftime("%Y-%m-%d")}]", 
+          :from => "Shopelia Developers <contact@shopelia.com>",
+          :body => "Please find attached your daily products extract" )
   end
 
   ##################################################################################

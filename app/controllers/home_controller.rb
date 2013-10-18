@@ -1,6 +1,10 @@
 class HomeController < ApplicationController
   layout 'about', :only => [:about]
 
+  def index
+    logger.error request.original_url
+  end
+
   def download
     user_agent = request.env['HTTP_USER_AGENT'].downcase
     if user_agent.match(/android/)

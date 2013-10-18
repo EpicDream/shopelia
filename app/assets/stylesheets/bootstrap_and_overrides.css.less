@@ -5,13 +5,13 @@
 @iconWhiteSpritePath: image-url("twitter/bootstrap/glyphicons-halflings-white.png");
 
 // Set the Font Awesome (Font Awesome is default. You can disable by commenting below lines)
-/*@fontAwesomeEotPath: asset-url("fontawesome-webfont.eot");
+@fontAwesomeEotPath: asset-url("fontawesome-webfont.eot");
 @fontAwesomeEotPath_iefix: asset-url("fontawesome-webfont.eot?#iefix");
 @fontAwesomeWoffPath: asset-url("fontawesome-webfont.woff");
 @fontAwesomeTtfPath: asset-url("fontawesome-webfont.ttf");
-@fontAwesomeSvgPath: asset-url("fontawesome-webfont.svg#fontawesomeregular");*/
+@fontAwesomeSvgPath: asset-url("fontawesome-webfont.svg#fontawesomeregular");
+@import "fontawesome/font-awesome";
 
-// Font Awesome
 
 @navbar-height: 80px;
 
@@ -75,7 +75,7 @@
 .btn {
   box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
   border-width: 0;
-  padding: 15px 20px;
+  padding: 10px 15px;
 }
 
 
@@ -107,6 +107,8 @@ html, body {
 .spacer-header {
    height: @navbar-height;
 }
+
+//Navbar
 
 @navbar-bg: white;
 
@@ -165,6 +167,8 @@ button#send-link-btn {
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
+
+
 
 
 

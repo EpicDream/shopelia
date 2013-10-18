@@ -7,6 +7,7 @@ class Product < ActiveRecord::Base
   belongs_to :merchant
   has_many :events, :dependent => :destroy
   has_many :product_versions, :dependent => :destroy
+  has_and_belongs_to_many :developers, :uniq => true
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true
@@ -38,7 +39,7 @@ class Product < ActiveRecord::Base
   
   algoliasearch index_name: "products-#{Rails.env}" do
     attribute :name, :description, :url, :image_url, :brand, :reference
-    attributesToIndex [:name, :description]
+    attributesToIndex [:name, :brand, :description]
   end
 
   def self.fetch url
@@ -69,6 +70,10 @@ class Product < ActiveRecord::Base
   
   def ready?
     !self.viking_failure && self.versions_expires_at.present? && self.versions_expires_at > Time.now
+  end
+
+  def available?
+    self.product_versions.available.count > 0
   end
 
   def assess_versions
