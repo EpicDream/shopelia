@@ -16,10 +16,14 @@ module AlgoliaFeed
 
   class AlgoliaFeed
 
-    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :algolia_application_id, :algolia_api_key, :algolia_index_name, :algolia_index, :tmpdir, :current_file
+    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :algolia_application_id, :algolia_api_key, :algolia_index_name, :algolia_index, :algolia_production_index_name, :tmpdir, :current_file
 
     def self.run
       self.new.run
+    end
+
+    def self.make_production
+      self.new.make_production
     end
 
     def initialize
@@ -28,9 +32,18 @@ module AlgoliaFeed
       self.product_field = 'product'
       self.batch_size = 1000
       self.algolia_index_name = 'products-feed-fr-new'
+      self.algolia_production_index_name = 'products-feed-fr'
       self.algolia_application_id = "JUFLKNI0PS"
       self.algolia_api_key = "bd7e7d322cf11e241e3a8fb22aeb5620"
       self.tmpdir = '/var/lib/db/algolia'
+    end
+
+    def make_production
+      Algolia.init :application_id => self.algolia_application_id,
+                   :api_key        => self.algolia_api_key
+      puts Algolia.move_index(self.algolia_index_name, self.algolia_production_index_name)
+      index = Algolia::Index.new(self.algolia_production_index_name)
+      index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference']})
     end
 
     def run

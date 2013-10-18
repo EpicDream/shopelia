@@ -15,7 +15,7 @@ module AlgoliaFeed
         "http://priceminister.effiliation.com/output/commun/effiliation_GAMES_NEW.xml.gz",
         "http://priceminister.effiliation.com/output/commun/effiliation_BABY_NEW.xml.gz",
         "http://priceminister.effiliation.com/output/commun/effiliation_HIFI_NEW.xml.gz",
-#        "http://priceminister.effiliation.com/output/commun/effiliation_WHITE_NEW.xml.gz",
+        "http://priceminister.effiliation.com/output/commun/effiliation_WHITE_NEW.xml.gz",
         "http://priceminister.effiliation.com/output/commun/effiliation_VIDEO_NEW.xml.gz",
         "ftp://prixing:j5Z61eg@priceminister.effiliation.com/prixing_MUSIC_TOP.xml.zip",
         "http://priceminister.effiliation.com/output/commun/effiliation_SPORT_NEW.xml.gz",
@@ -34,7 +34,6 @@ module AlgoliaFeed
         'nomproduit'      => 'name',
         'urlimage'        => 'image_url',
         'nomfournisseur'  => 'brand',
-        'descriptif'      => 'description',
         'stock'           => 'availability'
       }
     end
@@ -48,6 +47,7 @@ module AlgoliaFeed
     def process_product(product)
     begin
       record = super
+      record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
       record['price'] = (record['price'].to_f * 100).to_i.to_s
       record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
       record['currency'] = 'EUR'
@@ -65,10 +65,9 @@ module AlgoliaFeed
       record['product_url'] = canonize_url(record['product_url'])
       record['image_url'].gsub!(/_S\./i, "_L.")
       record.delete('image_url') if record['image_url'] =~ /noavailableimage/
-      record.delete('description') if record['description'] =~ /^Retrouvez (des millions|tous les)/
       return unless record['image_url'] =~ /\S/
     rescue => e
-      puts "Failed record #{record.inspect}"
+#      puts "Failed record #{record.inspect}"
       return
     end  
       record
