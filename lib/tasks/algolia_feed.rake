@@ -8,7 +8,7 @@ namespace :shopelia do
       AlgoliaFeed::Cdiscount.run
       AlgoliaFeed::PriceMinister.run
       AlgoliaFeed::Zanox.run
-      AlgoliaFeed::AlgoliaFeed.make_production
+#      AlgoliaFeed::AlgoliaFeed.make_production
     end
   end
 end
