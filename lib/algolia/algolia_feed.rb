@@ -35,7 +35,7 @@ module AlgoliaFeed
       self.algolia_production_index_name = 'products-feed-fr'
       self.algolia_application_id = "JUFLKNI0PS"
       self.algolia_api_key = "bd7e7d322cf11e241e3a8fb22aeb5620"
-      self.tmpdir = '/var/lib/db/algolia'
+      self.tmpdir = '/tmp'
     end
 
     def make_production
@@ -53,13 +53,23 @@ module AlgoliaFeed
 
       self.urls.each do |url|
         self.records = []
-        reader = get_products_reader(url)
+				reader = nil
+				begin
+          reader = get_products_reader(url)
+				rescue => e
+					puts e
+				  next
+				end
         file_start = Time.now
         products_counter = 0
         puts "[#{Time.now}] Processing products"
         reader.each do |r|
           next unless r.name == self.product_field && r.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
-          product = Nokogiri::XML(r.outer_xml).children.first
+          xml_product = Nokogiri::XML(r.outer_xml).children.first
+					product = {}
+					xml_product.children.each do |c|
+						product[c.name] = c.text if c.text=~/\S/
+					end
           products_counter += 1
           puts "#{Time.now} Done #{products_counter} products" if products_counter % 10000 == 0 
           record = process_product(product)
@@ -83,12 +93,17 @@ module AlgoliaFeed
 
     def get_products_reader(url)
       puts "#{Time.now} Fetching #{url}"
-      raw_file = "#{self.tmpdir}/algolia_feed_raw_data-#{Time.now}"
-      decoded_file = "#{self.tmpdir}/algolia_feed_decoded_file-#{Time.now}"
+      raw_file = "#{self.tmpdir}/algolia_feed_raw_data-#{Time.now.to_i}"
+      decoded_file = "#{self.tmpdir}/algolia_feed_decoded_file-#{Time.now.to_i}"
       if url =~ /^http/
         File.open(raw_file, 'wb') do |f|
           uri = URI(url)
-          f.write Net::HTTP.get(uri)
+          res = Net::HTTP.get_response(uri)
+					if res.is_a?(Net::HTTPSuccess)
+						f.write res.body
+					else
+						raise StandardError, "Cannot download #{url}: #{res.message}"
+					end
         end
       else
         File.open(raw_file, 'wb') do |f|
@@ -128,7 +143,7 @@ module AlgoliaFeed
     def process_product(product)
       record = {}
       self.conversions.each_pair do |from, to|
-        record[to] = product.search(from).text if product.search(from).text.size > 0
+				record[to] = product[from] if product.has_key?(from)
       end
       if record.has_key?('ean')
         record['_tags'] = []  unless record.has_key?('_tags')

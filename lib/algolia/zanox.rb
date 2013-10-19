@@ -31,7 +31,7 @@ module AlgoliaFeed
         'logDescription'       => 'description'
       }
 
-#      self.algolia_index_name = 'zanox'
+      self.algolia_index_name = 'zanox'
 
     end
 
@@ -64,35 +64,22 @@ module AlgoliaFeed
     end
 
     def best_image(product)
-      if product.search('largeImage').text.size > 0
-        return product.search('largeImage').text
-      elsif product.search('mediumImage').text.size > 0
-        return product.search('mediumImage').text
-      elsif product.search('smallImage').text.size > 0
-        return product.search('smallImage').text
-      end
+      return product['largeImage']  if product.has_key?('largeImage')
+			return product['mediumImage'] if product.has_key?('mediumImage')
+			return product['smallImage']  if product.has_key?('smallImage')
+		  return
     end
 
     def merchant_tag(url)
-      if url =~ /carrefour\.fr/
-        return 'merchant_name:Carrefour'
-      elsif url =~ /darty\.fr/
-        return 'merchant_name:Darty'
-      elsif url =~ /toysrus\.fr/
-        return 'merchant_name:ToysRus'
-      elsif url =~ /fnac\.com/
-        return 'merchant_name:Fnac'
-      elsif url =~ /imenager\.fr/
-        return 'merchant_name:Imenager'
-      elsif url =~ /conforama\.fr/
-        return 'merchant_name:Conforama'
-      elsif url =~ /rueducommerce\.fr/
-        return 'merchant_name:RueduCommerce'
-      elsif url =~ /eveiletjeux\.com/
-        return 'merchant_name:EveiletJeux'
-      else
-        return 'merchant_name:Zanox'
-      end
+      return 'merchant_name:Carrefour'     if url =~ /carrefour\.fr/
+      return 'merchant_name:Darty'         if url =~ /darty\.fr/
+      return 'merchant_name:ToysRus'       if url =~ /toysrus\.fr/
+      return 'merchant_name:Fnac'          if url =~ /fnac\.com/
+      return 'merchant_name:Imenager'      if url =~ /imenager\.fr/
+      return 'merchant_name:Conforama'     if url =~ /conforama\.fr/
+      return 'merchant_name:RueduCommerce' if url =~ /rueducommerce\.fr/
+      return 'merchant_name:EveiletJeux'   if url =~ /eveiletjeux\.com/
+      return 'merchant_name:Zanox'
     end
       
     def process_product(product)
@@ -108,8 +95,8 @@ module AlgoliaFeed
       record['_tags'] = [] unless record.has_key?('_tags')
 
       categories = []
-      if product.search('merchantCategory').text.size > 0
-        cats = product.search('merchantCategory').text.split(/\s+\-\s+/)
+      if product.has_key?('merchantCategory')
+        cats = product['merchantCategory'].split(/\s+\-\s+/)
         categories << cats
       end
       categories.flatten.each do |c|
