@@ -31,35 +31,29 @@ module AlgoliaFeed
         'logDescription'       => 'description'
       }
 
-      self.algolia_index_name = 'zanox'
+#      self.algolia_index_name = 'zanox'
 
     end
 
     def canonize_url(url)
       matches = /eurl=(.+?html)/.match(url)
-      if matches.present?
-        return URI.unescape(matches[1])
-      end
-      matches = /\[\[(.+?\.fnac.com.+?)\]\]/.match(url)
-      if matches.present?
-        return "http://#{matches[1]}"
-      end
+      return URI.unescape(matches[1]) if matches.present?
+      
+			matches = /\[\[(.+?\.fnac.com.+?)\]\]/.match(url)
+      return "http://#{matches[1]}" if matches.present?
+
       matches = /\[\[(.+?\.darty.com.+?)\]\]/.match(url)
-      if matches.present?
-        return matches[1]
-      end
+      return matches[1] if matches.present?
+
       matches = /\[\[(.+?\.toysrus.fr.+?)\]\]/.match(url)
-      if matches.present?
-        return matches[1]
-      end
+      return matches[1] if matches.present?
+
       matches = /\[\[(.+?\.imenager.com.+?)\]\]/.match(url)
-      if matches.present?
-        return matches[1]
-      end
+      return matches[1] if matches.present?
+
       matches = /\[\[(.+?\.eveiletjeux.+?)\]\]/.match(url)
-      if matches.present?
-        return matches[1]
-      end
+      return matches[1] if matches.present?
+
       url
     end
 

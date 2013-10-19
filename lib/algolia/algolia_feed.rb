@@ -71,7 +71,7 @@ module AlgoliaFeed
 						product[c.name] = c.text if c.text=~/\S/
 					end
           products_counter += 1
-          puts "#{Time.now} Done #{products_counter} products" if products_counter % 10000 == 0 
+#          puts "#{Time.now} Done #{products_counter} products" if products_counter % 100000 == 0 
           record = process_product(product)
           self.records << record if record.present?
           if self.records.size >= self.batch_size
