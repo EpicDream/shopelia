@@ -40,6 +40,7 @@ class Order < ActiveRecord::Base
   scope :completed, lambda { where("state_name='completed'") }
   scope :failed, lambda { where("state_name='failed'") }
   scope :running, lambda { where("state_name<>'completed' and state_name<>'failed'") }
+  scope :queued, lambda { where("state_name='queued'") }
   
   before_validation :initialize_uuid
   before_validation :initialize_state
@@ -58,6 +59,16 @@ class Order < ActiveRecord::Base
     self.uuid
   end
   
+  def start_from_queue
+    return unless self.state == :queued
+    self.state = :initialized
+    start
+  end
+
+  def queue_busy?
+    Order.where(user_id:self.user_id).where("state_name not in (?)", ["queued", "completed", "failed", "pending_agent", "refunded", "querying"]).count > 0
+  end
+
   def start
     return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.meta_order.payment_card_id.present? && self.order_items.count > 0
     if self.merchant.vendor.nil?

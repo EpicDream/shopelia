@@ -27,6 +27,15 @@ class Emailer < ActionMailer::Base
   end
 
   ##################################################################################
+
+  def send_cadeau_shaker_report(developer, log)
+    mail( :to => developer.email,
+          :subject => "Orders batch report for #{developer.name} [#{Time.now.strftime("%Y-%m-%d")}]", 
+          :from => "Shopelia Developers <contact@shopelia.com>",
+          :body => log.join("\n") )
+  end
+
+  ##################################################################################
   
   def notify_order_creation order
     @order = order
