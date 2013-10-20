@@ -131,7 +131,7 @@ __END
     assert_equal @user.id, order.user_id
     assert_equal "queued", order.state_name
     assert_equal "batch", order.tracker
-    assert_equal payment_cards(:cadeau_shaker).id, order.payment_card_id
+    assert_equal payment_cards(:cadeau_shaker).id, order.meta_order.payment_card.id
     assert_equal 1, order.order_items.count
     assert_equal @product.id, order.order_items.first.product_version_id
     assert_equal @order["expected_price_total"].to_f, order.expected_price_total

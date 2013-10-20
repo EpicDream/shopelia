@@ -71,8 +71,10 @@ module Customers
         developer_id:@developer.id,
         tracker:@tracker,
         address_id: address.id,
-        card_id: @card.id,
-        products: { product_version_id:product_version.id },
+        payment_card_id: @card.id,
+        products: [ 
+          { product_version_id:product_version.id }
+        ],
         state_name: "queued",
         expected_price_total:hash["expected_price_total"].to_f)
       if order.save

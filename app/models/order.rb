@@ -24,7 +24,7 @@ class Order < ActiveRecord::Base
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :injection_solution, :cvd_solution, :tracker, :meta_order_id, :expected_cashfront_value
-  attr_accessible :gift_message, :uuid
+  attr_accessible :gift_message, :uuid, :state_name
   attr_accessor :products, :confirmation, :payment_card_id, :address_id
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
