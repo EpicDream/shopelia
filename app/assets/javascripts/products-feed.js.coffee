@@ -1,35 +1,41 @@
 class @ProductsFeed
-  constructor: (@indexName, @dataCallback, @tagsCallback) ->
+  constructor: (@indexName, dataCallback) ->
     @tags = []
     @page = 0
-    @hitsPerPage = 20
-    @hitsForTags = 100
+    @hitsPerPage = 100
     algolia = new AlgoliaSearch("JUFLKNI0PS", '03832face9510ee5a495b06855dfa38b')
     @index = algolia.initIndex(@indexName)
+    window.dataCallback = dataCallback
 
   sendQuery: (query) ->
     @query = query
     @refreshData()
-    if @page == 0
-      @refreshTags()
 
   setPage: (page) ->
     @page = page
     @refreshData()
 
   refreshData: ->
-    @index.search @query, @dataCallback, hitsPerPage: @hitsPerPage, page: @page
+    @index.search @query, @_prepareResults, hitsPerPage: @hitsPerPage, page: @page
 
-  refreshTags: ->
-    @index.search @query, @tagsCallback, hitsPerPage: @hitsForTags
-
-  parseTags: (content) ->
+  _prepareResults: (success, content) ->
+    eans = {}
     tags = {}
+    products = []
     for i of content.hits
+      eanFound = false
       result = content.hits[i]
       for j of result["_tags"]
         tag = result["_tags"][j]
-        tags[tag] = (tags[tag] or 0) + 1  unless tag.match("^ean")
+        if tag.match("^ean") 
+          eanFound = true
+          if eans[tag] == undefined
+            eans[tag] = 1
+            products.push result
+        else
+          tags[tag] = (tags[tag] or 0) + 1
+      if !eanFound
+        products.push result
     tuples = []
     for key of tags
       tuples.push [key, tags[key]]
@@ -49,4 +55,4 @@ class @ProductsFeed
         tagsCategory += "<span class='label label-default'>" +
           tag.replace("category:", "") +
           "</span> "
-    "tagsCategory": tagsCategory, "tagsMerchant": tagsMerchant
+    window.dataCallback { "products":products, "tagsCategory": tagsCategory, "tagsMerchant": tagsMerchant }

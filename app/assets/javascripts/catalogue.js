@@ -1,6 +1,6 @@
 var Index = {
   init: function() {
-    Index.feed = new ProductsFeed("products-feed-fr-new", Index.dataCallback, Index.tagsCallback);
+    Index.feed = new ProductsFeed("products-feed-fr", Index.dataCallback);
     $('#catalogue-search').on('keyup', function() {
       var query = $(this).val();
       if (query.length > 2) {
@@ -10,29 +10,27 @@ var Index = {
       }
     });
   },
-  dataCallback: function(success, content) {
-    console.log(content);
-    $("#search-info").html(content["nbHits"] + " résultats");
-    for (var i in content.hits) {
-      result = content.hits[i]
+  dataCallback: function(result) {
+    console.log(result);
+    var products = result["products"]
+    for (var i in products) {
+      var product = products[i]
       $("#catalogue-box-" + i).removeClass('display-none');
-      $("#catalogue-box-img-" + i).attr('src', result["image_url"]);
-      $("#catalogue-box-price-" + i).html(result["price"] / 100 + " €");
-      $("#catalogue-box-name-" + i).html(result["name"]);
+      $("#catalogue-box-img-" + i).attr('src', product["image_url"]);
+      $("#catalogue-box-price-" + i).html(product["price"] / 100 + " €");
+      $("#catalogue-box-name-" + i).html(product["name"]);
     }
-    for (i = content.hits.length; i < Index.feed.hitsPerPage; i++) {
+    for (i = products.length; i < Index.feed.hitsPerPage; i++) {
       $("#catalogue-box-" + i).removeClass('display-none');
       $("#catalogue-box-" + i).addClass('display-none');
     }
-  },
-  tagsCallback: function(success, content) {
-    var result = Index.feed.parseTags(content);
     $("#tags-merchant").html(result["tagsMerchant"]);
     $("#tags-category").html(result["tagsCategory"]);
   },
   clean: function() {
     $("#tags-merchant").html("");
     $("#tags-category").html("");
+    $("#search-info").html("");
     for (i = 0; i < Index.feed.hitsPerPage; i++) {
       $("#catalogue-box-" + i).removeClass('display-none');
       $("#catalogue-box-" + i).addClass('display-none');
