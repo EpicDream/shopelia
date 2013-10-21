@@ -45,7 +45,7 @@ class MerchantAccount < ActiveRecord::Base
   end
 
   def self.find_or_create_for_order order
-    if order.merchant.multiple_addresses?
+    if order.merchant.present? && order.merchant.multiple_addresses?
       MerchantAccount.where("user_id=? and merchant_id=? and is_default='t'", order.user_id, order.merchant_id).first || MerchantAccount.create(user_id:order.user_id, merchant_id:order.merchant_id)
     else      
       MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and is_default='t'", order.user_id, order.merchant_id, order.address_id).first || MerchantAccount.create(user_id:order.user_id, merchant_id:order.merchant_id, address_id:order.address_id)

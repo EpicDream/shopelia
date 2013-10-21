@@ -50,7 +50,6 @@ class Order < ActiveRecord::Base
   before_create :validates_products
   after_initialize :deserialize_questions
   after_create :prepare_order_items
-  after_create :initialize_merchant_account
   after_create :mirror_solutions_from_merchant, :if => Proc.new { |order| !order.destroyed? }
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
   after_create :notify_creation_to_admin, :if => Proc.new { |order| !order.destroyed? }
@@ -407,10 +406,6 @@ class Order < ActiveRecord::Base
     self.state = :initialized if self.state_name.nil?
   end
   
-  def initialize_merchant_account
-    self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
-  end
-  
   def initialize_meta_order
     meta = MetaOrder.new(
       user_id:self.user_id,
@@ -479,7 +474,8 @@ class Order < ActiveRecord::Base
         self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => ""))
         return
       else
-        self.merchant_id = product.merchant_id
+        self.merchant_id = product.merchant_id if self.merchant_id.nil?
+        self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
         self.save
       end
     end
