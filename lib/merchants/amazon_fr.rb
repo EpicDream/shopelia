@@ -30,4 +30,16 @@ class AmazonFr
     end
   end
 
+  def process_shipping_price version
+    if m = version[:price_shipping_text].match(/livraison gratuite d.s (\d+) euros d'achats/i)
+      limit = MerchantHelper.parse_float m[1]
+      current_price = MerchantHelper.parse_float version[:price_text]
+      if current_price < limit
+        version[:price_shipping] = 2.79
+      else
+        version[:price_shipping] = 0.0
+      end
+    end
+    version
+  end
 end

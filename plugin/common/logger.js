@@ -44,11 +44,12 @@ logger._log = function(level, caller, _arguments) {
       break;
   }
   
-  var args;
-  if (window.chrome)
-    args = [sprintf('%%c[%s][%5s]%s ',(new Date()).toLocaleTimeString(), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : ''), css_style];
-  else
-    args = [sprintf('[%s][%5s]%s ',(new Date()).toLocaleTimeString(), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : '')]
+  var d = new Date(),
+    args = [sprintf('[%s][%5s]%s ',d.toLocaleTimeString() + '.' + d.getMilliseconds(), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : '')]
+  if (window.chrome) {
+    args[0] = "%c" + args[0];
+    args.push(css_style);
+  }
 
   if (typeof _arguments !== 'object' || _arguments.length === undefined) {
     args.push(_arguments);

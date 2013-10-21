@@ -57,7 +57,8 @@ require(['src/ariane', 'logger'], function(ariane, logger) {
       port.postMessage(msg);
     } else if (msg.action === "finish" || msg.action === "abort") {
       ariane.sendFinishedStatement(tabId, msg.reason);
-    }
+    } else
+      chrome.tabs.sendMessage(tabId, msg);
   });
 
   // On shortcuts emited, transmit it to contentscript.

@@ -60,7 +60,7 @@ describe("Saturn", function() {
       spyOn(saturn, 'main').andCallThrough();
       spyOn(saturn, 'onProductsReceived');
       spyOn(saturn, 'updateNbTabs');
-      saturn.DELAY_BETWEEN_PRODUCTS = 100;
+      satconf.DELAY_BETWEEN_PRODUCTS = 100;
       var flag, nbCalls;
 
       runs(function() {

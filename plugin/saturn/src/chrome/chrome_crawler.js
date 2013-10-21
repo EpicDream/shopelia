@@ -1,5 +1,6 @@
 
 require(['src/crawler', "satconf"], function(Crawler) {
+  "use strict";
 
 chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   if (sender.id != chrome.runtime.id) return;

@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery-ui', 'logger'], function($, logger) {
+define(['jquery-ui', 'logger', 'src/ari-panel'], function($, logger, panel) {
   "use strict";
 
   var toolbar = {},
@@ -11,6 +11,10 @@ define(['jquery-ui', 'logger'], function($, logger) {
       jToolbar,
       jStep,
       jButtons;
+
+/* ********************************************************** */
+/*                        Initialisation                      */
+/* ********************************************************** */
 
 function loadAriane() {
   // Create DIV
@@ -42,7 +46,7 @@ function build() {
     text: false,
     icons: {primary: "ui-icon-cancel"}
   });
-  jToolbar.find(".ari.-next").button({
+  jToolbar.find(".ari-next").button({
     text: false,
     icons: {primary: "ui-icon-circle-arrow-e"}
   }).addClass("ui-corner-right");
@@ -50,17 +54,24 @@ function build() {
     text: false,
     icons: {primary: "ui-icon-circle-check"}
   }).hide();
+  jToolbar.find(".ari-panel-ctrl").button({
+    text: false,
+    icons: {primary: "ui-icon-newwin"}
+  });
 
   // Link events
   jToolbar.find(".ari-next").click(onNext);
   jToolbar.find(".ari-finish").click(onFinished);
   jToolbar.find(".ari-abort").click(onAborted);
+  jToolbar.find(".ari-panel-ctrl").click(onPanelCtrlClicked);
   jStep.change(onStepChanged);
   jButtons.click(onButtonClicked);
 
   //
   toolbar.toolbarElem = jToolbar[0];
   toolbar.stepElem = jStep[0];
+  toolbar.abortElem = jToolbar.find(".ari-abort");
+  toolbar.finishElem = jToolbar.find(".ari-finish");
   toolbar.buttons = jButtons.toArray();
 }
 
@@ -69,6 +80,24 @@ function build() {
 /* ********************************************************** */
 /*                          On Event                          */
 /* ********************************************************** */
+
+chrome.extension.onMessage.addListener(function(msg, sender) {
+  if (msg === "next-step") {
+    var buttons = jButtons.filter(":visible");
+    var e = buttons.filter(".current-field");
+    var idx = buttons.index(e);
+    if (! e)
+      buttons.first().addClass("current-field");
+    else if (idx+1 < buttons.length) {
+      e.removeClass("current-field");
+      buttons.eq(idx+1).addClass("current-field");
+    } else {
+      e.removeClass("current-field");
+    }
+  } else if (msg.action === 'setField') {
+    toolbar.setCurrentField(msg.field);
+  }
+});
 
 function onStepChanged(event) {
   var field_for_step = {
@@ -102,7 +131,11 @@ function onNext() {
 }
 
 function onButtonClicked(event) {
-  jButtons.filter(".current-field").add(event.currentTarget).toggleClass("current-field");
+  chrome.extension.sendMessage({action: 'setField', field: event.currentTarget.id.replace(/ariane-product-/, '')});
+}
+
+function onPanelCtrlClicked() {
+  panel.toggle();
 }
 
 function onAborted() {
@@ -132,31 +165,14 @@ toolbar.startAriane = function(crawl_mode) {
   onStepChanged();
 };
 
-toolbar.getCurrentFieldId = function() {
-  var fieldId = (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-/, '').replace(/product-/, '');
-  return fieldId;
+toolbar.setCurrentField = function(field) {
+  jButtons.filter(".current-field").removeClass("current-field");
+  jButtons.filter("#ariane-product-"+field).addClass("current-field");
 };
 
-/* ********************************************************** */
-/*                        Initialisation                      */
-/* ********************************************************** */
-
-chrome.extension.onMessage.addListener(function(msg, sender) {
-  if (sender.id != chrome.runtime.id || msg != "next-step")
-    return;
-
-  var buttons = jButtons.filter(":visible");
-  var e = buttons.filter(".current-field");
-  var idx = buttons.index(e);
-  if (! e)
-    buttons.first().addClass("current-field");
-  else if (idx+1 < buttons.length) {
-    e.removeClass("current-field");
-    buttons.eq(idx+1).addClass("current-field");
-  } else {
-    e.removeClass("current-field");
-  }
-});
+toolbar.getCurrentFieldId = function() {
+  return (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-product-/, '');
+};
   
   return toolbar;
 });

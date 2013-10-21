@@ -101,11 +101,11 @@ hu.getElementCSSSelectors = function(jelement, complete) {
   var css = '';
   for ( ; jelement && jelement[0].nodeType == 1 ; jelement = jelement.parent() ) {
     elem_selector = fromParentSelector(jelement, complete);
-    css = elem_selector + " " + css;
+    css = elem_selector + " > " + css;
     if (jelement[0].tagName.toLowerCase() == 'body' || (! complete && elem_selector.match(/#/)))
       break;
   }
-  return css.trim();
+  return css.trim().replace(/\s\>$/, '');
 };
 
 // Return an Array of jQuery elements.
@@ -168,8 +168,10 @@ hu.getElementAttrs = function(e) {
   if (e.tagName == "INPUT" || e.tagName == "SELECT" || e.tagName == "TEXTAREA") data.value = e.value;
   var type = e.getAttribute("type");
   if (e.tagName == "INPUT" && (type == "radio" || type == "checkbox")) data.checked = e.checked;
+  if (e.tagName == "IMG") data.src = e.src;
   for (var i = 0 ; i < attrs.length ; i++)
-    data[attrs[i].name] = attrs[i].value;
+    if (data[attrs[i].name] === undefined)
+      data[attrs[i].name] = attrs[i].value;
   return data;
 };
 // getElementAttrs + xpath
