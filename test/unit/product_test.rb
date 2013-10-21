@@ -376,6 +376,25 @@ class ProductTest < ActiveSupport::TestCase
      assert_equal "in stock", product.product_versions.first.shipping_info
   end  
 
+  test "it should use shipping_info if availability is blank" do
+    product = products(:headphones)
+    product.update_attribute :viking_failure, true
+    product.update_attributes(versions:[
+      { shipping_info:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        price_shipping: "3.5"
+      }]);
+
+     assert !product.viking_failure
+     assert_equal "in stock", product.product_versions.first.availability_info
+     assert product.product_versions.first.available?
+  end  
+
   test "it shouldn't set viking_failure if availability is false and anything is missing" do
     product = products(:headphones)
     
