@@ -20,6 +20,7 @@ class Customers::CadeauShakerTest < ActiveSupport::TestCase
     <city>METZ</city>
     <country_iso>fr</country_iso>
     <expected_price_total>34</expected_price_total>
+    <gift_message>Message</gift_message>
   </commande>
   <commande>
     <id_commande>991</id_commande>
@@ -34,6 +35,7 @@ class Customers::CadeauShakerTest < ActiveSupport::TestCase
     <city>saint etienne</city>
     <country_iso>fr</country_iso>
     <expected_price_total>18</expected_price_total>
+    <gift_message>Message</gift_message>
   </commande>
 </commandes>
 __END
@@ -111,6 +113,12 @@ __END
     log = @customer.process_order(@order)
     assert_match /^Invalid expected price total/, log
   end
+
+  test "it shouldn't process order without gift message" do
+    @order["gift_message"] = nil
+    log = @customer.process_order(@order)
+    assert_match /^Gift message required/, log
+  end
     
   test "it shouldn't process order if already existing uuid" do
     Order.first.update_attribute :uuid, @customer.build_uuid(@order["id_commande"])
@@ -131,6 +139,7 @@ __END
     assert_equal @user.id, order.user_id
     assert_equal "queued", order.state_name
     assert_equal "batch", order.tracker
+    assert_equal "Message", order.gift_message
     assert_equal payment_cards(:cadeau_shaker).id, order.payment_card_id
     assert_equal 1, order.order_items.count
     assert_equal @product.id, order.order_items.first.product_version_id

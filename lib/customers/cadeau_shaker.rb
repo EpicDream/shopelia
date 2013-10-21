@@ -58,6 +58,7 @@ module Customers
       return "Impossible to find product version id #{hash["product_version_id"]} for order #{hash["id_commande"]}" if product_version.nil?
       
       return "Invalid expected price total for order #{hash["id_commande"]}" unless hash["expected_price_total"].to_f > 0
+      return "Gift message required for order #{hash["id_commande"]}" if hash["gift_message"].blank?
       
       return "Only French address are accepted (order #{hash["id_commande"]})" if hash["country_iso"] != "fr"
       return "Missing name for address (order #{hash["id_commande"]})" if hash["first_name"].nil? || hash["last_name"].nil?
@@ -74,6 +75,7 @@ module Customers
         card_id: @card.id,
         products: { product_version_id:product_version.id },
         state_name: "queued",
+        gift_message:hash["gift_message"],
         expected_price_total:hash["expected_price_total"].to_f)
       if order.save
         "Order #{hash["id_commande"]} for product #{product_version.name} successfully queued for processing"
