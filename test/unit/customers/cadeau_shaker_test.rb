@@ -4,13 +4,13 @@ require 'test_helper'
 class Customers::CadeauShakerTest < ActiveSupport::TestCase
 
   setup do
-    content = <<__END
+    @content = <<__END
 <?xml version="1.0" encoding="UTF-8"?>
 <commandes>
   <commande>
     <id_commande>1001</id_commande>
-    <product_version_id>1245</product_version_id>
-    <quantity>1</quantity>
+    <product_version_id>#{product_versions(:dvd).id}</product_version_id>
+    <quantity>2</quantity>
     <first_name>Ludovic</first_name>
     <last_name>JOUILLEROT</last_name>
     <address>12 rue de la Fontenotte</address>
@@ -24,7 +24,7 @@ class Customers::CadeauShakerTest < ActiveSupport::TestCase
   </commande>
   <commande>
     <id_commande>991</id_commande>
-    <product_version_id>112988</product_version_id>
+    <product_version_id>#{product_versions(:headphones).id}</product_version_id>
     <quantity>1</quantity>
     <first_name>Laura</first_name>
     <last_name>CHANELIERE</last_name>
@@ -40,12 +40,11 @@ class Customers::CadeauShakerTest < ActiveSupport::TestCase
 </commandes>
 __END
     @customer = Customers::CadeauShaker.new
-    @orders = @customer.extract_orders(content)
+    @orders = @customer.extract_orders(@content)
     @product = product_versions(:dvd)
     @user = users(:cadeau_shaker)
     @developer = developers(:cadeau_shaker)
     @order = @orders[0]
-    @order["product_version_id"] = @product.id
   end
 
   test "it extract orders from XML" do
@@ -55,8 +54,8 @@ __END
   
   test "it should build order uuid" do
     assert_equal 32, @customer.build_uuid(1001).length
-    assert_equal "cadeaushaker1001xxxxxxxxxxxxxxxx", @customer.build_uuid(1001)
-    assert_equal "cadeaushaker100999xxxxxxxxxxxxxx", @customer.build_uuid(100999)
+    assert_equal "batchxcadeaushaker1001xxxxxxxxxx", @customer.build_uuid(1001)
+    assert_equal "batchxcadeaushaker100999xxxxxxxx", @customer.build_uuid(100999)
   end
   
   test "it should build address" do
@@ -140,9 +139,24 @@ __END
     assert_equal "queued", order.state_name
     assert_equal "batch", order.tracker
     assert_equal "Message", order.gift_message
-    assert_equal payment_cards(:cadeau_shaker).id, order.payment_card_id
+    assert_equal payment_cards(:cadeau_shaker).id, order.meta_order.payment_card.id
     assert_equal 1, order.order_items.count
+    assert_equal 2, order.order_items.first.quantity
     assert_equal @product.id, order.order_items.first.product_version_id
     assert_equal @order["expected_price_total"].to_f, order.expected_price_total
   end  
+
+  test "it should process all XML" do
+    assert_difference "Order.count", 2 do
+      @customer.process_xml @content
+    end
+  end
+
+  test "it should send email" do
+    @customer.process_xml @content
+    @customer.send_email
+
+    assert_equal 3, ActionMailer::Base.deliveries.count
+    assert_equal @developer.email, ActionMailer::Base.deliveries.last.to[0]
+  end
 end

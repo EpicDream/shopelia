@@ -10,16 +10,25 @@ module Customers
       @developer = Developer.find_by_name!(DEVELOPER_NAME)
       @card = @user.payment_cards.first!
       @tracker = "batch"
+      @log = []
     end
     
     def run
       content = fetch(ORDERS_URL)
+      process_xml(content)
+    end
+
+    def process_xml content
       orders = extract_orders(content)
       
-      log = []
       orders.each do |order|
-        log << self.process_order(order)
+        @log << self.process_order(order)
       end
+      @log.delete_if {|e| e.blank?}
+    end
+
+    def send_email
+      Emailer.send_cadeau_shaker_report(@developer, @log).deliver if @log.count > 0
     end
 
     def fetch url
@@ -32,7 +41,7 @@ module Customers
     end
     
     def build_uuid id
-      uuid = "cadeaushaker#{id}"
+      uuid = "batchxcadeaushaker#{id}"
       uuid + "x" * (32 - uuid.length)
     end
     
@@ -72,8 +81,10 @@ module Customers
         developer_id:@developer.id,
         tracker:@tracker,
         address_id: address.id,
-        card_id: @card.id,
-        products: { product_version_id:product_version.id },
+        payment_card_id: @card.id,
+        products: [ 
+          { product_version_id:product_version.id, quantity:hash["quantity"].to_i }
+        ],
         state_name: "queued",
         gift_message:hash["gift_message"],
         expected_price_total:hash["expected_price_total"].to_f)

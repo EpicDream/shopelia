@@ -55,11 +55,11 @@ class EventTest < ActiveSupport::TestCase
   end
 
   test "it should count daily signups" do
-    assert_equal 3, @stats.daily_signups
+    assert_equal 4, @stats.daily_signups
   end
 
   test "it should count monthly signups" do
-    assert_equal 3, @stats.monthly_signups
+    assert_equal 4, @stats.monthly_signups
   end
   
   test "it should count daily unique views" do

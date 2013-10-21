@@ -24,7 +24,7 @@ class Order < ActiveRecord::Base
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :injection_solution, :cvd_solution, :tracker, :meta_order_id, :expected_cashfront_value
-  attr_accessible :gift_message, :uuid
+  attr_accessible :gift_message, :uuid, :state_name
   attr_accessor :products, :confirmation, :payment_card_id, :address_id
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
@@ -40,6 +40,7 @@ class Order < ActiveRecord::Base
   scope :completed, lambda { where("state_name='completed'") }
   scope :failed, lambda { where("state_name='failed'") }
   scope :running, lambda { where("state_name<>'completed' and state_name<>'failed'") }
+  scope :queued, lambda { where("state_name='queued'") }
   
   before_validation :initialize_uuid
   before_validation :initialize_state
@@ -58,6 +59,16 @@ class Order < ActiveRecord::Base
     self.uuid
   end
   
+  def start_from_queue
+    return unless self.state == :queued
+    self.state = :initialized
+    start
+  end
+
+  def queue_busy?
+    Order.where(user_id:self.user_id).where("state_name not in (?)", ["queued", "completed", "failed", "pending_agent", "refunded", "querying"]).count > 0
+  end
+
   def start
     return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.meta_order.payment_card_id.present? && self.order_items.count > 0
     if self.merchant.vendor.nil?
