@@ -4,7 +4,7 @@ module AlgoliaFeed
 
   class Zanox < AlgoliaFeed
 
-    def initialize
+    def initialize(params={})
       super
 
       self.urls = [
