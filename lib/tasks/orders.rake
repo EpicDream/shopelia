@@ -16,11 +16,9 @@ namespace :shopelia do
       Leftronic.new.push_number("shopelia_status", status)			
     end
 
-    desc "Manager batched orders"
+    desc "Manage batched orders"
     task :batch => :environment do
-      Order.queued.each do |order|
-        order.start_from_queue if !order.queue_busy?
-      end
+      OrdersBatchWorker.perform_async
     end
   end
 end
