@@ -29,7 +29,7 @@ class Order < ActiveRecord::Base
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
   scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 18.hours ) }
-  scope :canceled, lambda { where("state_name='querying' and updated_at < ?", Time.zone.now - 2.hours ) }
+  scope :canceled, lambda { where("state_name='querying' and updated_at < ?", Time.zone.now - 12.hours ) }
   scope :preparing_stale, lambda { where("state_name='preparing' and updated_at < ?", Time.zone.now - 5.minutes ) }
   
   scope :preparing, lambda { where("state_name='preparing'") }
