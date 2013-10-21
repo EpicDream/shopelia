@@ -45,12 +45,12 @@ class Order < ActiveRecord::Base
   before_validation :initialize_uuid
   before_validation :initialize_state
   before_validation :initialize_meta_order, :if => Proc.new { |order| order.meta_order_id.nil? }
-  before_validation :initialize_merchant_account
   before_validation :verify_prices_integrity
   before_save :serialize_questions
   before_create :validates_products
   after_initialize :deserialize_questions
   after_create :prepare_order_items
+  after_create :initialize_merchant_account
   after_create :mirror_solutions_from_merchant, :if => Proc.new { |order| !order.destroyed? }
   after_create :start, :if => Proc.new { |order| !order.destroyed? }
   after_create :notify_creation_to_admin, :if => Proc.new { |order| !order.destroyed? }
