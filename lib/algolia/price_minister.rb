@@ -23,7 +23,7 @@ module AlgoliaFeed
       ]
 
       self.product_field = 'produit'
-      self.batch_size = 1000
+#      self.algolia_index_name = 'priceminister'
 
       self.conversions = {
         'codebarre'       => 'ean',
@@ -53,10 +53,10 @@ module AlgoliaFeed
       record['currency'] = 'EUR'
       record['_tags'] = [] unless record.has_key?('_tags')
       categories = []
-      categories << product.search('categorie').text if product.search('categorie').text.size > 0
-      categories << product.search('souscategorie').text if product.search('souscategorie').text.size > 0
-      categories << product.search('souscategorie2').text if product.search('souscategorie2').text.size > 0
-      categories << product.search('souscategorie3').text if product.search('souscategorie3').text.size > 0
+      categories << product['categorie'] if product.has_key?('categorie')
+      categories << product['souscategorie'] if product.has_key?('souscategorie')
+      categories << product['souscategorie2'] if product.has_key?('souscategorie2')
+      categories << product['souscategorie3'] if product.has_key?('souscategorie3')
       categories.each do |c|
         record['_tags'] << "category:#{c}"
       end

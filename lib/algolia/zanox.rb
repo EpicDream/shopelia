@@ -37,62 +37,43 @@ module AlgoliaFeed
 
     def canonize_url(url)
       matches = /eurl=(.+?html)/.match(url)
-      if matches.present?
-        return URI.unescape(matches[1])
-      end
-      matches = /\[\[(.+?\.fnac.com.+?)\]\]/.match(url)
-      if matches.present?
-        return "http://#{matches[1]}"
-      end
+      return URI.unescape(matches[1]) if matches.present?
+      
+			matches = /\[\[(.+?\.fnac.com.+?)\]\]/.match(url)
+      return "http://#{matches[1]}" if matches.present?
+
       matches = /\[\[(.+?\.darty.com.+?)\]\]/.match(url)
-      if matches.present?
-        return matches[1]
-      end
+      return matches[1] if matches.present?
+
       matches = /\[\[(.+?\.toysrus.fr.+?)\]\]/.match(url)
-      if matches.present?
-        return matches[1]
-      end
+      return matches[1] if matches.present?
+
       matches = /\[\[(.+?\.imenager.com.+?)\]\]/.match(url)
-      if matches.present?
-        return matches[1]
-      end
+      return matches[1] if matches.present?
+
       matches = /\[\[(.+?\.eveiletjeux.+?)\]\]/.match(url)
-      if matches.present?
-        return matches[1]
-      end
+      return matches[1] if matches.present?
+
       url
     end
 
     def best_image(product)
-      if product.search('largeImage').text.size > 0
-        return product.search('largeImage').text
-      elsif product.search('mediumImage').text.size > 0
-        return product.search('mediumImage').text
-      elsif product.search('smallImage').text.size > 0
-        return product.search('smallImage').text
-      end
+      return product['largeImage']  if product.has_key?('largeImage')
+			return product['mediumImage'] if product.has_key?('mediumImage')
+			return product['smallImage']  if product.has_key?('smallImage')
+		  return
     end
 
     def merchant_tag(url)
-      if url =~ /carrefour\.fr/
-        return 'merchant_name:Carrefour'
-      elsif url =~ /darty\.fr/
-        return 'merchant_name:Darty'
-      elsif url =~ /toysrus\.fr/
-        return 'merchant_name:ToysRus'
-      elsif url =~ /fnac\.com/
-        return 'merchant_name:Fnac'
-      elsif url =~ /imenager\.fr/
-        return 'merchant_name:Imenager'
-      elsif url =~ /conforama\.fr/
-        return 'merchant_name:Conforama'
-      elsif url =~ /rueducommerce\.fr/
-        return 'merchant_name:RueduCommerce'
-      elsif url =~ /eveiletjeux\.com/
-        return 'merchant_name:EveiletJeux'
-      else
-        return 'merchant_name:Zanox'
-      end
+      return 'merchant_name:Carrefour'     if url =~ /carrefour\.fr/
+      return 'merchant_name:Darty'         if url =~ /darty\.fr/
+      return 'merchant_name:ToysRus'       if url =~ /toysrus\.fr/
+      return 'merchant_name:Fnac'          if url =~ /fnac\.com/
+      return 'merchant_name:Imenager'      if url =~ /imenager\.fr/
+      return 'merchant_name:Conforama'     if url =~ /conforama\.fr/
+      return 'merchant_name:RueduCommerce' if url =~ /rueducommerce\.fr/
+      return 'merchant_name:EveiletJeux'   if url =~ /eveiletjeux\.com/
+      return 'merchant_name:Zanox'
     end
       
     def process_product(product)
@@ -108,8 +89,8 @@ module AlgoliaFeed
       record['_tags'] = [] unless record.has_key?('_tags')
 
       categories = []
-      if product.search('merchantCategory').text.size > 0
-        cats = product.search('merchantCategory').text.split(/\s+\-\s+/)
+      if product.has_key?('merchantCategory')
+        cats = product['merchantCategory'].split(/\s+\-\s+/)
         categories << cats
       end
       categories.flatten.each do |c|

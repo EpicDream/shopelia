@@ -23,7 +23,7 @@ module AlgoliaFeed
         'shippingCost' => 'shipping_price',
         'deliveryTime' => 'shipping_info',
       }
-
+      # self.algolia_index_name = 'cdiscount'
     end
 
     def canonize_url(url)
@@ -36,13 +36,11 @@ module AlgoliaFeed
       
     def process_product(product)
       record = super
-puts product.search('name').text
-exit
       record['_tags'] = [] unless record.has_key?('_tags')
       categories = []
-      categories << product.search('TDCategoryName').text if product.search('TDCategoryName').text.size > 0
-      if product.search('merchantCategoryName').text.size > 0
-        cats = product.search('merchantCategoryName').text.split(/\s+\/\s+/)
+			categories << product['TDCategoryName'] if product.has_key?('TDCategoryName')
+			if product.has_key?('merchantCategoryName')
+        cats = product['merchantCategoryName'].split(/\s+\/\s+/)
         categories << cats
       end
       categories.flatten.each do |c|
