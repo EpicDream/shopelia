@@ -2,9 +2,11 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
+gem 'ruby-filemagic'
 gem 'syslog-logger'
 gem 'redis'
 gem 'redis-rails', '=3.2.1'
+gem 'nest'
 gem 'therubyracer'
 gem 'execjs'
 gem 'maildir'
@@ -23,13 +25,14 @@ gem 'haml'
 gem 'haml-rails'
 gem 'bourbon'
 gem 'will_paginate'
+gem 'will_paginate-bootstrap'
 gem "simple_form"
 gem 'client_side_validations'
 gem 'client_side_validations-simple_form'
 gem 'devise-i18n-views'
 gem 'rails-i18n'
 gem 'backbone-on-rails', '1.0.0.0'
-gem 'http_accept_language'
+gem 'http_accept_language', '~> 2.0.0.pre'
 gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
 gem 'sanitize'
@@ -37,7 +40,10 @@ gem 'httpclient'
 gem 'sidekiq'
 gem 'sinatra', require: false
 gem 'slim'
+gem 'nexmo'
+gem 'pusher'
 gem 'rubyzip', '< 1.0.0'
+gem 'algoliasearch-rails'
 
 # Gems used only for assets and not required
 # in production environments by default.
@@ -49,6 +55,8 @@ group :assets do
   gem 'jquery-datatables-rails', github: 'rweng/jquery-datatables-rails'
   gem 'uglifier', '>= 1.0.3'
   gem 'marionette-rails'
+  gem "less-rails"
+  gem 'twitter-bootstrap-rails', :git => 'git://github.com/seyhunak/twitter-bootstrap-rails.git', :branch => 'bootstrap3'
 end
 
 # To use ActiveModel has_secure_password
@@ -72,10 +80,9 @@ end
 
 group :test do
   #gem "turn", "~> 0.8.3"
-  gem 'vcr'
-  gem 'webmock'
   gem "simplecov", :require => false
   gem "codeclimate-test-reporter"
+  gem "capybara"
 end
 
 group :assets do

@@ -1,6 +1,6 @@
 class MerchantAccount < ActiveRecord::Base
 
-  EMAIL_DOMAIN = "shopelia.fr"
+  EMAIL_DOMAIN = "shopelia.com"
 
   belongs_to :user
   belongs_to :merchant
@@ -11,7 +11,6 @@ class MerchantAccount < ActiveRecord::Base
   validates :merchant, :presence => true
   validates :login, :presence => true, :uniqueness => { :scope => :merchant_id }
   validates :password, :presence => true
-  validates :address, :presence => true
   
   before_validation :attribute_login
   before_validation :attribute_password
@@ -36,11 +35,21 @@ class MerchantAccount < ActiveRecord::Base
   end
   
   after_save do |record|
-    MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and id<>? and is_default='t'", record.user_id, record.merchant_id, record.address_id, record.id).update_all "is_default='f'" if record.is_default?
+    if record.is_default?
+      if self.merchant.multiple_addresses?
+        MerchantAccount.where("user_id=? and merchant_id=? and id<>? and is_default='t'", record.user_id, record.merchant_id, record.id).update_all "is_default='f'"
+      else
+        MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and id<>? and is_default='t'", record.user_id, record.merchant_id, record.address_id, record.id).update_all "is_default='f'"
+      end
+    end
   end
 
   def self.find_or_create_for_order order
-    MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and is_default='t'", order.user_id, order.merchant_id, order.address_id).first || MerchantAccount.create(user_id:order.user_id, merchant_id:order.merchant_id, address_id:order.address_id)
+    if order.merchant.present? && order.merchant.multiple_addresses?
+      MerchantAccount.where("user_id=? and merchant_id=? and is_default='t'", order.user_id, order.merchant_id).first || MerchantAccount.create(user_id:order.user_id, merchant_id:order.merchant_id)
+    else      
+      MerchantAccount.where("user_id=? and merchant_id=? and address_id=? and is_default='t'", order.user_id, order.merchant_id, order.address_id).first || MerchantAccount.create(user_id:order.user_id, merchant_id:order.merchant_id, address_id:order.address_id)
+    end
   end
   
   def confirm_creation!
@@ -76,7 +85,6 @@ class MerchantAccount < ActiveRecord::Base
   end
   
   def attribute_address
-    self.address_id = self.user.addresses.default.first.try(:id) if self.address_id.nil?
-  end
-    
+    self.address_id = self.user.addresses.default.first.try(:id) if self.address_id.nil? && !self.merchant.multiple_addresses?
+  end    
 end

@@ -1,2 +1,3 @@
-$("#sessionError").show('fast');
-$("#user_email").focus();
+$("#signin-error-text").html("<%= t('app.signin.unauthorized') %>")
+$("#signin-error-box").show('fast');
+$("#signin-form #user_email").focus();

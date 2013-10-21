@@ -45,6 +45,10 @@ class Leftronic
     push_number("saturn_status", Viking.saturn_alive? ? 0 : 100)
   end
 
+  def notify_live_scan name, ean, image_url
+    push_text("livescan", name, ean, image_url)
+  end
+
   def clear_board
     clear("shopelia_sound")
     clear("shopelia_orders_pending_agent")

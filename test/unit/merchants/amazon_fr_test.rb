@@ -4,6 +4,7 @@ require 'test_helper'
 class AmazonFrTest < ActiveSupport::TestCase
 
   setup do
+    @version = {}
     @helper = AmazonFr.new("http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY")
     @helper2 = AmazonFr.new("http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY")
     @version = {}
@@ -38,4 +39,14 @@ class AmazonFrTest < ActiveSupport::TestCase
     @version = @helper.process_shipping_price(@version)
     assert_equal 0.0, @version[:price_shipping]
   end
+
+  test "it should process availability" do
+    @version[:availability_text] = "Voir les offres de ces vendeurs"
+    @version = @helper.process_availability(@version)
+    assert_equal "En stock", @version[:availability_text]
+
+    @version[:availability_text] = "Il ne reste plus que 6 exemplaire(s) en stock."
+    @version = @helper.process_availability(@version)
+    assert_equal "En stock", @version[:availability_text]
+  end  
 end

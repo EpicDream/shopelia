@@ -1,10 +1,13 @@
 class Product < ActiveRecord::Base
+  include AlgoliaSearch
+
   VERSIONS_EXPIRATION_DELAY_IN_HOURS = 4
 
   belongs_to :product_master
   belongs_to :merchant
   has_many :events, :dependent => :destroy
   has_many :product_versions, :dependent => :destroy
+  has_and_belongs_to_many :developers, :uniq => true
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true
@@ -26,6 +29,7 @@ class Product < ActiveRecord::Base
   scope :viking_pending, lambda { joins(:events).merge(Event.buttons).merge(Product.viking_base_request) }
   scope :viking_pending_batch, lambda { joins(:events).merge(Event.requests).merge(Product.viking_base_request) }
   scope :viking_failure, lambda { where(viking_failure:true).order("updated_at desc").limit(100) }
+  scope :expired, where("versions_expires_at is null or versions_expires_at < ?", Time.now)
 
   scope :viking_base_request, lambda {
     where("(products.versions_expires_at is null or products.versions_expires_at < ?)" +
@@ -33,11 +37,16 @@ class Product < ActiveRecord::Base
       "and products.viking_sent_at is null", Time.now, 12.hours.ago, Time.now).order("events.created_at desc").limit(100)
   }
   
+  algoliasearch index_name: "products-#{Rails.env}" do
+    attribute :name, :description, :url, :image_url, :brand, :reference
+    attributesToIndex [:name, :brand, :description]
+  end
+
   def self.fetch url
     return nil if url.nil?
     p = Product.find_or_create_by_url(Linker.clean(url))
     p.save! if !p.persisted? && p.errors.empty?
-    p
+    p.reload unless p.nil?
   end
   
   def versions_expired?
@@ -61,6 +70,10 @@ class Product < ActiveRecord::Base
   
   def ready?
     !self.viking_failure && self.versions_expires_at.present? && self.versions_expires_at > Time.now
+  end
+
+  def available?
+    self.product_versions.available.count > 0
   end
 
   def assess_versions
@@ -104,14 +117,22 @@ class Product < ActiveRecord::Base
         version[:price_text] = version[:price]
         version[:price_shipping_text] = version[:price_shipping]
         version[:price_strikeout_text] = version[:price_strikeout]
-        version[:availability_text] = version[:availability]
+        version[:availability_text] = version[:availability] || version[:shipping_info]
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
 
         # Pre-process versions
         version = MerchantHelper.process_version(self.url, version)
 
-        v = self.product_versions.where(
+        if version[:option1] || version[:option2] || version[:option3] || version[:option4]
+          v = self.product_versions.where(
+            option1_md5:nil,
+            option2_md5:nil,
+            option3_md5:nil,
+            option4_md5:nil).first
+        end
+
+        v ||= self.product_versions.where(
           option1_md5:ProductVersion.generate_option_md5(version[:option1]),
           option2_md5:ProductVersion.generate_option_md5(version[:option2]),
           option3_md5:ProductVersion.generate_option_md5(version[:option3]),

@@ -320,6 +320,7 @@ class ProductTest < ActiveSupport::TestCase
         option1: {"text" => "rouge"},
         option2: {"text" => "34"}
       }])
+    product.viking_reset
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",
@@ -335,7 +336,7 @@ class ProductTest < ActiveSupport::TestCase
         option2: {"text" => "34"}
       }])
       
-    assert_equal 3, product.product_versions.count
+    assert_equal 1, product.reload.product_versions.available.count
     assert_equal [false, true].to_set, product.product_versions.map(&:available).to_set
   end
   
@@ -373,6 +374,25 @@ class ProductTest < ActiveSupport::TestCase
 
      assert !product.viking_failure
      assert_equal "in stock", product.product_versions.first.shipping_info
+  end  
+
+  test "it should use shipping_info if availability is blank" do
+    product = products(:headphones)
+    product.update_attribute :viking_failure, true
+    product.update_attributes(versions:[
+      { shipping_info:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        price_shipping: "3.5"
+      }]);
+
+     assert !product.viking_failure
+     assert_equal "in stock", product.product_versions.first.availability_info
+     assert product.product_versions.first.available?
   end  
 
   test "it shouldn't set viking_failure if availability is false and anything is missing" do
@@ -458,10 +478,25 @@ class ProductTest < ActiveSupport::TestCase
     assert product.ready?
   end
 
+  test "it should overwrite version without option when receiving first version with options" do
+    product = Product.create!(url:"http://www.amazon.fr/toto")
+    assert_equal 1, product.product_versions.count
+
+    assert_difference("ProductVersion.count", 0) do
+      product.update_attributes(versions:[
+        { option1: {"text" => "rouge"},
+          option2: {"text" => "34"}
+        }
+      ])
+    end
+
+    assert_equal "rouge", JSON.parse(product.reload.product_versions.first.option1)["text"]
+  end
+
   test "it shouldn't create new version when updating" do
     product = Product.create!(url:"http://www.amazon.fr/toto")
 
-    assert_difference("ProductVersion.count", 2) do
+    assert_difference("ProductVersion.count", 1) do
       product.update_attributes(versions:[
         { option1: {"text" => "rouge"},
           option2: {"text" => "34"}

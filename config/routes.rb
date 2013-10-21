@@ -1,25 +1,38 @@
 require 'api_constraints'
 
 Shopelia::Application.routes.draw do
+
+  match "/cgu" => "home#general_terms_of_use"
+  match "/security" => "home#security"
+  match "/download" => "home#download"
+  match "/connect", to: "home#connect"
+
   match "/checkout", :controller => "html_app", :action => "index"
 
   apipie
 
+  devise_for :developers
   devise_for :users, controllers: { 
     confirmations: 'devise_override/confirmations',
+    passwords: 'devise_override/passwords',
     registrations: 'devise_override/registrations',
-    sessions: 'devise_override/sessions',    
+    sessions: 'devise_override/sessions', 
   }
   devise_scope :user do
     put "/confirm" => "devise_override/confirmations#confirm"
   end
 
   resources :home, :only => :index
+  resources :send_download_link, :only => :create
+
   resources :contact, :only => :create
   resources :gateway, :only => :index
   
   resources :addresses
-  resources :cart_items, :only => :show do
+  resources :carts, :only => :show do 
+    resources :checkout, :only => :index
+  end
+  resources :cart_items, :only => [:show, :create] do
     get :unsubscribe, :on => :member
   end
   resources :orders, :only => [:show, :update] do
@@ -34,13 +47,23 @@ Shopelia::Application.routes.draw do
     resources :developers, :only => [:index, :new, :create]
     resources :events, :only => :index
     resources :incidents, :only => [:index, :update]
-    resources :merchants, :only => [:index, :show, :new, :create, :update]
+    resources :merchants, :only => [:index, :show, :edit, :update]
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
     resources :viking, :only => :index
     resources :products do
       get :retry, :on => :member
       get :mute, :on => :member
+    end
+  end
+
+  constraints DomainConstraints.new('developers') do
+    root :to => 'developers/dashboard#index'
+  end
+  namespace :developers do
+    resources :tracking, :only => [:index, :create, :destroy]
+    namespace :tracking do
+      get :refresh
     end
   end
   
@@ -67,6 +90,9 @@ Shopelia::Application.routes.draw do
       resources :merchants, :only => [:index, :create]
       resources :orders, :only => [:create, :show]
       resources :products, :only => [:index, :create]
+      namespace :products do
+        resources :requests, :only => :create
+      end
       resources :users, :only => [:show, :update, :destroy]
       namespace :users do
         resources :autocomplete, :only => :create
@@ -113,6 +139,7 @@ Shopelia::Application.routes.draw do
   match '*not_found', to: 'errors#error_404'
   get "errors/error_404"
   get "errors/error_500"
+
   root to: 'home#index'
 
 end

@@ -5,82 +5,91 @@
 @import "variables.css.scss";
 @import "jquery-ui-1.10.3.custom.min.css.scss";
 @import "bourbon";
-@import "bootstrap";
-@import "bootstrap-responsive";
-@import "mixins.css.scss";
-@import "bootstrap_override.css.scss";
+@import "bootstrap_and_overrides.css.less";
 @import "home.css.scss";
+@import "public.css.scss";
+@import "common.css.scss";
 
-.clearfix {
-  clear: both;
+
+.cart-item, .cart-item-img{
+  position:relative;
+  z-index:2;
 }
-
-.phone-margin {
-  width: 70%;
-  margin: auto;
-  margin-top: 30px;
-  margin-bottom: 20px;
-}
-
-.logo-navbar {
-  margin-top: -5px;
-}
-
-.modal-form input[type=text],input[type=tel],select {
+.cart-item-img {
+  max-width:260px;
+  max-height:260px;
   display: block;
-  width: 100%;
-  min-height: 30px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+  margin: 0 auto;
 }
-
-.modal-form .tooltip-inner {
-  background-color: $red;
-  max-width: 400px;
+.cart-item-actions{
+  width:260px;
+  height:260px;
+  position:absolute;
+  overflow:hidden;
+  margin-top:-263px;
+  bottom: 5px;
+  z-index:2;
 }
-.modal-form .tooltip.top .tooltip-arrow {
-  border-top-color: $red;
+.cart-item{
+  min-width:260px;
+  min-height:260px;
+  width:260px;
+  height:260px;
+  margin:20px auto;
 }
-.modal-form .tooltip.bottom .tooltip-arrow {
-  border-bottom-color: $red;
+.info-block, .cart-item-title, .cart-item-price, .cart-item-details, .cart-item-delete, .cart-item-spinner {
+  position:absolute;
+  z-index:3;
 }
-.modal-form .tooltip.right .tooltip-arrow {
-  border-right-color: $red;
+.info-block{
+  height:130px;
+  width:260px;
+  background:rgba(255,255,255,.85);
+  bottom:0px;
+  margin-bottom:-70px;
 }
-.modal-form .tooltip.in {
-  opacity: 0.9;
-  filter: alpha(opacity=90);
+.cart-item-title{
+  color:#222;
+  font-size:1em;
+  font-weight:400;
+  top:12px;
+  left:15px;
+  width:170px;
+  height: 40px;
+  overflow: hidden;
 }
-
-#sessionError {
-  display: none;
-  color: $red;
-  margin-bottom: 20px;
+.cart-item-price{
+  color:#e74c3c;
+  font-size:1em;
+  font-weight:700;
+  font-family:'helvetica neue';
+  right:15px;
+  top:12px;
 }
-
-
-html,
-body {
-  height: 100%;
+.cart-item-details{
+  margin:0 auto;
+  width:70%;
+  height:44px;
+  bottom:15px;
 }
-
-
-#wrap {
-  min-height: 100%;
-  height: auto !important;
-  height: 100%;
-  //padding-top: 100px;
-  margin: 0 auto -80px;
+.cart-item-delete{
+  margin:0 auto;
+  width:25%;
+  height:44px;
+  bottom:15px;
+  right: 0px;
 }
-
-#footer {
-  height: 80px;
+.cart-item:hover .info-block{
+  margin-bottom:0;
 }
-
-
-#footer {
-  background-color: $blue;
-  color: white !important;
-
+.cart-item-spinner {
+  background:rgba(255,255,255,.85);
+  right: 15px;
+  top: 15px;
+  width: 30px;
+  height: 30px;
+}
+.cart-item .spinner {
+  top: 15px;
+  left: 15px;
 }

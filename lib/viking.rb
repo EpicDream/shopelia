@@ -1,10 +1,13 @@
 module Viking
 
-  def self.saturn_alive?
-    event = Event.where("created_at < ?", 1.minute.ago).order("created_at desc").first
-    return true if event.product.nil?
-    event.product.updated_at > event.created_at || event.product.versions_expires_at.to_i > event.created_at.to_i
+  def self.touch
+    Nest.new("viking")[:updated_at].set(Time.now.to_i)
   end
 
-end
+  def self.saturn_alive?
+    return true if Product.where("viking_sent_at > ?", 3.minutes.ago).count == 0
 
+    delay_since_updated = Time.now.to_i - Nest.new("viking")[:updated_at].get.to_i
+    delay_since_updated < 120
+  end
+end

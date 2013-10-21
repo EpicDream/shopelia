@@ -1,6 +1,7 @@
 require 'test_helper'
 
 class ContactControllerTest < ActionController::TestCase
+  include Devise::TestHelpers
 
   test "should send contact email" do
     post :create, email:"test@test.fr", name:"Name", message:"Message", format: :json

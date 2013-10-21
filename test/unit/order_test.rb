@@ -477,6 +477,15 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "stock", @order.message
   end  
 
+  test "it should pause order with gift message failure" do
+    start_order
+    callback_order "failure", { "status" => "gift_message_failure" }
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "gift_message_failure", @order.message
+  end  
+
   test "it should restart paused order" do
     pause_order
     start_order
@@ -725,7 +734,7 @@ class OrderTest < ActiveSupport::TestCase
     @order.update_attribute :state_name, "querying"
     assert_equal 0, Order.canceled.count
     
-    @order.update_attribute :updated_at, Time.now - 3.hours
+    @order.update_attribute :updated_at, Time.now - 13.hours
     assert_equal 1, Order.canceled.count    
   end
   
