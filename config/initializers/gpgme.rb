@@ -2,7 +2,7 @@ $crypto = nil
 $gpgme_passphrase = nil
 
 def passfunc(obj, uid_hint, passphrase_info, prev_was_bad, fd)
-  raise ArgumentError, "No GPG passphrase available" if $gpgme_passphrase.nil?
+  raise SecurityError, "No GPG passphrase available" if $gpgme_passphrase.nil?
   system('stty -echo')
   io = IO.for_fd(fd, 'w')
   io.puts($gpgme_passphrase)
