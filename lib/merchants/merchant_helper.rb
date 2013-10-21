@@ -19,6 +19,27 @@ module MerchantHelper
     m.present? && m.respond_to?('canonize') ? m.canonize : nil
   end
 
+  # Return nil if cannot find a price.
+  def self.parse_float str
+    str = str.downcase
+    # special cases
+    str = str.gsub(/^.*un total de/, "")
+    str = str.gsub(/\(.*\)/, "")
+    if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
+      0.0
+    else
+      if m = str.match(/^[^\d]*(\d+)[^\d](\d\d\d) ?[^\d] ?(\d+)/)
+        m[1].to_f * 1000 + m[2].to_f + m[3].to_f / 100
+      elsif m = str.match(/^[^\d]*(\d+)[^\d](\d\d\d)/)
+        m[1].to_f * 1000 + m[2].to_f
+      elsif m = str.match(/^[^\d]*(\d+)[^\d]*$/) || m = str.match(/^[^\d]*(\d+)[^\d]{1,2}(\d+)/)
+        m[1].to_f + m[2].to_f / 100
+      else
+        nil
+      end
+    end
+  end
+
   private
 
   def self.from_url url
