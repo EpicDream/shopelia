@@ -4,7 +4,7 @@ module AlgoliaFeed
 
   class Cdiscount < AlgoliaFeed
 
-    def initialize
+    def initialize(params={})
       super
 
       self.urls = ['http://pf.tradedoubler.com/export/export?myFeed=13692964912238732&myFormat=13692964912238732']
@@ -37,13 +37,8 @@ module AlgoliaFeed
     def process_product(product)
       record = super
       record['_tags'] = [] unless record.has_key?('_tags')
-      categories = []
-			categories << product['TDCategoryName'] if product.has_key?('TDCategoryName')
-			if product.has_key?('merchantCategoryName')
-        cats = product['merchantCategoryName'].split(/\s+\/\s+/)
-        categories << cats
-      end
-      categories.flatten.each do |c|
+      categories = get_categories([product['TDCategoryName'],  product['merchantCategoryName']])
+      categories.each do |c|
         record['_tags'] << "category:#{c.to_s}"
       end
       record['category'] = categories.join('>')

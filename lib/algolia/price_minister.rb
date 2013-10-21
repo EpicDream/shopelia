@@ -52,11 +52,7 @@ module AlgoliaFeed
       record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
       record['currency'] = 'EUR'
       record['_tags'] = [] unless record.has_key?('_tags')
-      categories = []
-      categories << product['categorie'] if product.has_key?('categorie')
-      categories << product['souscategorie'] if product.has_key?('souscategorie')
-      categories << product['souscategorie2'] if product.has_key?('souscategorie2')
-      categories << product['souscategorie3'] if product.has_key?('souscategorie3')
+      categories = get_categories([product['categorie'], product['souscategorie'], product['souscategorie2'], product['souscategorie3']])
       categories.each do |c|
         record['_tags'] << "category:#{c}"
       end

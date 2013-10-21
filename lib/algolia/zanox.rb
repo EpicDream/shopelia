@@ -88,12 +88,8 @@ module AlgoliaFeed
 
       record['_tags'] = [] unless record.has_key?('_tags')
 
-      categories = []
-      if product.has_key?('merchantCategory')
-        cats = product['merchantCategory'].split(/\s+\-\s+/)
-        categories << cats
-      end
-      categories.flatten.each do |c|
+      categories = get_categories(product['merchantCategory'])
+      categories.each do |c|
         record['_tags'] << "category:#{c.to_s}"
       end
       record['category'] = categories.join('>')
