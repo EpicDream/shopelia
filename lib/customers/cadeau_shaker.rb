@@ -13,9 +13,11 @@ module Customers
       @log = []
     end
     
-    def run
-      content = fetch(ORDERS_URL)
-      process_xml(content)
+    def self.run
+      c = self.new
+      content = c.fetch(ORDERS_URL)
+      c.process_xml(content)
+      c.send_email
     end
 
     def process_xml content
