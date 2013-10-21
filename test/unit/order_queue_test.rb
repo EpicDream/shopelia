@@ -13,6 +13,29 @@ class OrderQueueTest < ActiveSupport::TestCase
     assert_equal 1, Order.queued.count
   end
 
+  test "it shouldn't add again already queued orders" do
+    order = Order.find_by_uuid("batchxcadeaushaker1001xxxxxxxxxx")
+
+    assert_difference "Order.count", 0 do
+      populate_queue
+    end
+
+    order.update_attribute :state_name, "pending_agent"
+    assert_difference "Order.count", 0 do
+      populate_queue
+    end
+
+    order.update_attribute :state_name, "completed"
+    assert_difference "Order.count", 0 do
+      populate_queue
+    end
+
+    order.update_attribute :state_name, "failed"
+    assert_difference "Order.count", 0 do
+      populate_queue
+    end
+  end
+
   test "it should start order from queue state" do
     order = Order.find_by_uuid("batchxcadeaushaker1001xxxxxxxxxx")
     order.start_from_queue
