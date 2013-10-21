@@ -3,7 +3,7 @@ namespace :shopelia do
  
     desc "Process batch orders for customers"
     task :batch => :environment do
-      CustomersBatchWorker.perform_async
+      Customers::CadeauShaker.run
     end
   end
 end

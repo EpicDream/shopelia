@@ -18,7 +18,9 @@ namespace :shopelia do
 
     desc "Manage batched orders"
     task :batch => :environment do
-      OrdersBatchWorker.perform_async
+      Order.queued.each do |order|
+        order.start_from_queue if !order.queue_busy?
+      end
     end
   end
 end

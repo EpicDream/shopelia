@@ -103,6 +103,8 @@ class PaymentCard < ActiveRecord::Base
 
     self.number = decrypted[0..15]
     self.cvv = decrypted[22..24]
+
+  rescue SecurityError
   end
   
   def destroy_mangopay_payment_card
