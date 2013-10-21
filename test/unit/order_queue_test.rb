@@ -66,6 +66,7 @@ class OrderQueueTest < ActiveSupport::TestCase
     <city>METZ</city>
     <country_iso>fr</country_iso>
     <expected_price_total>34</expected_price_total>
+    <gift_message>Message</gift_message>
   </commande>
   <commande>
     <id_commande>991</id_commande>
@@ -80,6 +81,7 @@ class OrderQueueTest < ActiveSupport::TestCase
     <city>saint etienne</city>
     <country_iso>fr</country_iso>
     <expected_price_total>18</expected_price_total>
+    <gift_message>Message</gift_message>
   </commande>
 </commandes>"
     @customer = Customers::CadeauShaker.new
