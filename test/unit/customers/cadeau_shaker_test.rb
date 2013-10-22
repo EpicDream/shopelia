@@ -144,6 +144,9 @@ __END
     assert_equal 2, order.order_items.first.quantity
     assert_equal @product.id, order.order_items.first.product_version_id
     assert_equal @order["expected_price_total"].to_f, order.expected_price_total
+    assert_equal "amazon", order.cvd_solution
+    assert_equal "vulcain", order.injection_solution
+    assert_equal "mangopay", order.meta_order.billing_solution
   end  
 
   test "it should process all XML" do

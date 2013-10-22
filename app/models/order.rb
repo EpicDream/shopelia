@@ -257,9 +257,9 @@ class Order < ActiveRecord::Base
       end
       
     elsif verb.eql?("success")
-      self.billed_price_total = content["billing"]["total"].to_f.round(2)
-      self.billed_price_shipping = content["billing"]["shipping"].to_f.round(2)
-      self.billed_price_product = (self.billed_price_total - self.billed_price_shipping).round(2)
+      self.billed_price_total = self.prepared_price_total
+      self.billed_price_shipping = self.prepared_price_shipping
+      self.billed_price_product = self.prepared_price_product
       self.shipping_info = content["billing"]["shipping_info"]
       complete
       
@@ -422,6 +422,7 @@ class Order < ActiveRecord::Base
     self.meta_order.update_attribute :billing_solution, self.merchant.billing_solution if self.meta_order.billing_solution.nil?
     self.injection_solution = self.merchant.injection_solution if self.injection_solution.nil?
     self.cvd_solution = self.merchant.cvd_solution if self.cvd_solution.nil?
+    self.save!
   end
   
   def validates_products  
@@ -476,7 +477,7 @@ class Order < ActiveRecord::Base
       else
         self.merchant_id = product.merchant_id if self.merchant_id.nil?
         self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
-        self.save
+        self.save!
       end
     end
     if self.order_items.count == 1 && self.order_items.first.price.to_i == 0
