@@ -160,8 +160,8 @@ hu.getElementAttrs = function(e) {
   var attrs = e.attributes;
   var data = {
     tagName: e.tagName,
-    id: attrs.id,
-    class: attrs.class,
+    id: e.id,
+    class: e.classList.toString().trim(),
     text: e.innerText.trim(),
     location: e.ownerDocument.location.href
   };
