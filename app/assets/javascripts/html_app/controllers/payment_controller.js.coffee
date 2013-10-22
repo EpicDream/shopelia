@@ -15,8 +15,8 @@ class Shopelia.Controllers.PaymentController extends Shopelia.Controllers.Contro
       beforeSend : (xhr) ->
         xhr.setRequestHeader("X-Shopelia-AuthToken",that.getSession().get("auth_token"))
       success : (resp) ->
-        #console.log('card success callback')
-        that.getSession().get("user").payment_cards.push(resp.disableWrapping().toJSON())
+        that.getSession().get("user").get('payment_cards').add(resp.disableWrapping().toJSON())
+        console.log(that.getSession().get("user").get('payment_cards'))
         Shopelia.vent.trigger("modal_content#order")
       error : (model, response) ->
         #console.log('card error callback')

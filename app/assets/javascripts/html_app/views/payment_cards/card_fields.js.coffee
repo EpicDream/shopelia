@@ -1,4 +1,4 @@
-class Shopelia.Views.CardFields extends Shopelia.Views.ShopeliaView
+class Shopelia.Views.CardFields extends Shopelia.Views.Form
 
   template: 'payment_cards/card_fields'
   className: 'paiement-view box'
@@ -13,6 +13,12 @@ class Shopelia.Views.CardFields extends Shopelia.Views.ShopeliaView
     'keyup input[name="number"]': 'addCardType'
     'keyup input[name="exp_date"]': "formatExpDate"
     "click #btn-register-payment": "onValidationClick"
+
+
+  onRender: ->
+    Tracker.onDisplay('Add Payment Card');
+    $(@el).fadeIn('slow')
+    @initializeForm({'security':true})
 
   getFormResult: ->
     cardFormObject = {};
@@ -29,9 +35,9 @@ class Shopelia.Views.CardFields extends Shopelia.Views.ShopeliaView
       "exp_year": year,
       "cvv": cvv
     }
-    if @getSession().authenticated()
-      userId = @getSession().get("user").id
-      cardFormObject["user_id"] =  userId
+    #if @getSession().authenticated()
+    #  userId = @getSession().get("user").id
+    #  cardFormObject["user_id"] =  userId
     cardFormObject
 
   onValidationClick: (e) ->
