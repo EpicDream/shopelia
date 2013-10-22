@@ -42,17 +42,22 @@ window.addEventListener("message", function(event) {
 // Also add a waitAjax method to survey jQuery and Prototype Ajax pool.
 var script = document.createElement("script");
 script.type = "text/javascript";
-script.innerHTML = "window.alert = function() {};\n" +
+script.innerHTML = "(function () {"+
+  "window.alert = function() {};\n" +
   "function ajaxDone() {"+
+    "waitAjaxTimer = undefined;" +
     "window.postMessage('ajaxFinished', '*');"+
   "}" +
-  "DELAY_BETWEEN_OPTIONS = " + satconf.DELAY_BETWEEN_OPTIONS + ";" +
+  "var DELAY_BETWEEN_OPTIONS = " + satconf.DELAY_BETWEEN_OPTIONS + "," +
+    "waitAjaxTimer; "+
   "function waitAjax() {"+
-    "var d = new Date(), time = d.toLocaleTimeString() + '.' + d.getMilliseconds();"+
+    // "var d = new Date(), time = d.toLocaleTimeString() + '.' + d.getMilliseconds();"+
+    "if (waitAjaxTimer === undefined)"+
+      "setTimeout(function () {if (waitAjaxTimer === undefined) return; clearTimeout(waitAjaxTimer); ajaxDone();}, 10000); // wait max 10s"+
     "if (typeof jQuery !== 'undefined') {"+
       "if (jQuery.active !== 0) {"+
         // "console.log(time, 'jQuery.active != 0, wait a little time...');"+
-        "setTimeout(waitAjax, 100);"+
+        "waitAjaxTimer = setTimeout(waitAjax, 100);"+
       "} else {"+
         // "console.log(time, 'jQuery.active == 0 !');"+
         "setTimeout(ajaxDone, 100);"+
@@ -60,7 +65,7 @@ script.innerHTML = "window.alert = function() {};\n" +
     "} else if (typeof Ajax !== 'undefined') {"+
       "if (Ajax.activeRequestCount !== 0) {"+
         // "console.log(time, 'Ajax.activeRequestCount != 0, wait a little time...');"+
-        "setTimeout(waitAjax, 100);"+
+        "waitAjaxTimer = setTimeout(waitAjax, 100);"+
       "} else {"+
         // "console.log(time, 'Ajax.activeRequestCount == 0 !');"+
         "setTimeout(ajaxDone, 100);"+
@@ -74,8 +79,13 @@ script.innerHTML = "window.alert = function() {};\n" +
     "if (event.source !== window || event.data !== 'waitAjax')"+
       "return;"+
     "waitAjax();"+
-  "}, false);" +
-  "waitAjax();";
+  "}, false);"+
+"})";
 document.head.appendChild(script);
+
+// To handle redirection, that throws false 'complete' state.
+$(document).ready(function() {
+  setTimeout(goNextStep, 100);
+});
 
 });
