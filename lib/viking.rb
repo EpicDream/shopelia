@@ -1,13 +1,22 @@
 module Viking
 
-  def self.touch
+  def self.touch_request
+    Nest.new("viking")[:created_at].set(Time.now.to_i)
+  end
+
+  def self.touch_reply
     Nest.new("viking")[:updated_at].set(Time.now.to_i)
   end
 
   def self.saturn_alive?
-    return true if Product.where("viking_sent_at > ?", 3.minutes.ago).count == 0
+    created_at = Nest.new("viking")[:created_at].get.to_i
+    updated_at = Nest.new("viking")[:updated_at].get.to_i
+    now = Time.now.to_i
 
-    delay_since_updated = Time.now.to_i - Nest.new("viking")[:updated_at].get.to_i
-    delay_since_updated < 60
+    if created_at > now - 120
+      updated_at > now - 60
+    else
+      true
+    end
   end
 end
