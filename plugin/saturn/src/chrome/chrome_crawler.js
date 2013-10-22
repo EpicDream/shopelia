@@ -42,39 +42,39 @@ window.addEventListener("message", function(event) {
 // Also add a waitAjax method to survey jQuery and Prototype Ajax pool.
 var script = document.createElement("script");
 script.type = "text/javascript";
-script.innerHTML = "window.alert = function() {};" +
-  (function ajaxDone() {
-    window.postMessage('ajaxFinished', '*');
-  }).toString() +
+script.innerHTML = "window.alert = function() {};\n" +
+  "function ajaxDone() {"+
+    "window.postMessage('ajaxFinished', '*');"+
+  "}" +
   "DELAY_BETWEEN_OPTIONS = " + satconf.DELAY_BETWEEN_OPTIONS + ";" +
-  (function waitAjax() {
-    var d = new Date(), time = d.toLocaleTimeString() + '.' + d.getMilliseconds();
-    if (typeof jQuery !== 'undefined') {
-      if (jQuery.active !== 0) {
-        // console.log(time, 'jQuery.active != 0, wait a little time...');
-        setTimeout(waitAjax, 100);
-      } else {
-        // console.log(time, 'jQuery.active == 0 !');
-        setTimeout(ajaxDone, 100);
-      }
-    } else if (typeof Ajax !== 'undefined') {
-      if (Ajax.activeRequestCount !== 0) {
-        // console.log(time, 'Ajax.activeRequestCount != 0, wait a little time...');
-        setTimeout(waitAjax, 100);
-      } else {
-        // console.log(time, 'Ajax.activeRequestCount == 0 !');
-        setTimeout(ajaxDone, 100);
-      }
-    } else {
-      // console.log(time, 'Neither jQuery nor Prototype, wait some time...');
-      setTimeout(ajaxDone, DELAY_BETWEEN_OPTIONS);
-    }
-  }).toString() +
-  "window.addEventListener('message', " + (function(event) {
-    if (event.source !== window || event.data !== 'waitAjax')
-      return;
-    waitAjax();
-  }).toString() +", false);" +
+  "function waitAjax() {"+
+    "var d = new Date(), time = d.toLocaleTimeString() + '.' + d.getMilliseconds();"+
+    "if (typeof jQuery !== 'undefined') {"+
+      "if (jQuery.active !== 0) {"+
+        // "console.log(time, 'jQuery.active != 0, wait a little time...');"+
+        "setTimeout(waitAjax, 100);"+
+      "} else {"+
+        // "console.log(time, 'jQuery.active == 0 !');"+
+        "setTimeout(ajaxDone, 100);"+
+      "}"+
+    "} else if (typeof Ajax !== 'undefined') {"+
+      "if (Ajax.activeRequestCount !== 0) {"+
+        // "console.log(time, 'Ajax.activeRequestCount != 0, wait a little time...');"+
+        "setTimeout(waitAjax, 100);"+
+      "} else {"+
+        // "console.log(time, 'Ajax.activeRequestCount == 0 !');"+
+        "setTimeout(ajaxDone, 100);"+
+      "}"+
+    "} else {"+
+      // "console.log(time, 'Neither jQuery nor Prototype, wait some time...');"+
+      "setTimeout(ajaxDone, DELAY_BETWEEN_OPTIONS);"+
+    "}"+
+  "}"+
+  "window.addEventListener('message', function(event) {"+
+    "if (event.source !== window || event.data !== 'waitAjax')"+
+      "return;"+
+    "waitAjax();"+
+  "}, false);" +
   "waitAjax();";
 document.head.appendChild(script);
 
