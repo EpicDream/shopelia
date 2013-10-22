@@ -10,7 +10,7 @@ class Shopelia.Controllers.PaymentController extends Shopelia.Controllers.Contro
 
   create: (card) ->
     @view.lockView()
-    card.save(cardJson,{
+    card.save({},{
       beforeSend : (xhr) ->
         xhr.setRequestHeader("X-Shopelia-AuthToken",that.getSession().get("auth_token"))
       success : (resp) ->
