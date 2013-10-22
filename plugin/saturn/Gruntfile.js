@@ -9,11 +9,12 @@ module.exports = function(grunt) {
       files: ['Gruntfile.js', 'src/**/*.js', 'lib/*.js', 'test/*.js'],
       options: {
         loopfunc: true,
+        multistr: true,
+        browser: true,
+        devel: true,
         globals: { // options here to override JSHint defaults
           jQuery: true,
-          console: true,
           module: true,
-          document: true
         }
       }
     },
