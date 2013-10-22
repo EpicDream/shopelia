@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131015114419) do
+ActiveRecord::Schema.define(:version => 20131021153443) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -235,6 +235,7 @@ ActiveRecord::Schema.define(:version => 20131015114419) do
     t.string   "vulcain_test_output"
     t.boolean  "allow_quantities",    :default => true
     t.boolean  "rejecting_events",    :default => false
+    t.boolean  "multiple_addresses",  :default => false
   end
 
   create_table "meta_orders", :force => true do |t|

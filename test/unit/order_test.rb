@@ -734,7 +734,7 @@ class OrderTest < ActiveSupport::TestCase
     @order.update_attribute :state_name, "querying"
     assert_equal 0, Order.canceled.count
     
-    @order.update_attribute :updated_at, Time.now - 3.hours
+    @order.update_attribute :updated_at, Time.now - 13.hours
     assert_equal 1, Order.canceled.count    
   end
   

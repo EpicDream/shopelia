@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created : 31/07/2013
 
-define(['jquery', 'html_utils', 'lib/css_struct'], function($, hu, Css) {
+define(['jquery', 'html_utils', 'lib/css', 'lib/css_minimizer'], function($, hu, Css, Minimizer) {
 
 'use strict';
 
@@ -10,11 +10,21 @@ var pu = {};
 
 //
 function compArray(t1,t2) {
-  if (t1.length != t2.length)
+  if (t1 === t2) { return true; }
+  if (t1 === null || t2 === null) { return false; }
+  if (t1.length !== t2.length)
     return false;
-  for (var i = 0, l = t1.length ; i < l ; i++)
-    if (t1[i] != t2[i])
+  for (var i = 0, l = t1.length ; i < l ; i++) {
+    if (typeof t1[i] !== typeof t2[i]) {
       return false;
+    } else if (t1[i] instanceof Array && t2[i] instanceof Array && ! compArray(t1[i], t2[i])) {
+      return false;
+    } else if (typeof t1[i] === 'object' && t1[i] !== t2[i]) {
+      return false;
+    } else if (t1[i] != t2[i]) {
+      return false;
+    }
+  }
   return true;
 }
 
@@ -29,6 +39,10 @@ function minimize(cssString, elems, commonAncestor) {
       css.undo();
   }
   return css.toCss();
+}
+
+function minimize2(cssString, elems, commonAncestor) {
+  return Minimizer.minimize(cssString, $, minimize(cssString, elems, commonAncestor));
 }
 
 /////////////////////////////////////////////////////////////
@@ -98,7 +112,7 @@ pu.getMinimized = function(elems, commonAncestor) {
   elems = elems instanceof Array ? elems : [elems];
   if (! commonAncestor)
     commonAncestor = elems.length == 1 ? document : pu.commonAncestor(elems);
-  return minimize(pu.get(elems, commonAncestor), elems, commonAncestor);
+  return minimize2(pu.get(elems, commonAncestor), elems, commonAncestor);
 };
 
 // Get minimum CSS path that identifie elements and only them.

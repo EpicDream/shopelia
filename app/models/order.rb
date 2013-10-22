@@ -1,7 +1,7 @@
 class Order < ActiveRecord::Base
   audited
   
-  STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "pending_injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded"]
+  STATES = ["initialized", "preparing", "pending_agent", "querying", "billing", "pending_injection", "pending_clearing", "completed", "failed", "pending_refund", "refunded", "queued"]
   ERRORS = ["vulcain_api", "vulcain", "shopelia", "billing", "user", "merchant", "limonetik", "mangopay"]
 
   belongs_to :meta_order
@@ -24,12 +24,12 @@ class Order < ActiveRecord::Base
   attr_accessible :expected_price_product, :expected_price_shipping, :expected_price_total
   attr_accessible :prepared_price_product, :prepared_price_shipping, :prepared_price_total
   attr_accessible :injection_solution, :cvd_solution, :tracker, :meta_order_id, :expected_cashfront_value
-  attr_accessible :gift_message
+  attr_accessible :gift_message, :uuid, :state_name
   attr_accessor :products, :confirmation, :payment_card_id, :address_id
   
   scope :delayed, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 3.minutes ) }
   scope :expired, lambda { where("state_name='pending_agent' and created_at < ?", Time.zone.now - 18.hours ) }
-  scope :canceled, lambda { where("state_name='querying' and updated_at < ?", Time.zone.now - 2.hours ) }
+  scope :canceled, lambda { where("state_name='querying' and updated_at < ?", Time.zone.now - 12.hours ) }
   scope :preparing_stale, lambda { where("state_name='preparing' and updated_at < ?", Time.zone.now - 5.minutes ) }
   
   scope :preparing, lambda { where("state_name='preparing'") }
@@ -40,11 +40,11 @@ class Order < ActiveRecord::Base
   scope :completed, lambda { where("state_name='completed'") }
   scope :failed, lambda { where("state_name='failed'") }
   scope :running, lambda { where("state_name<>'completed' and state_name<>'failed'") }
+  scope :queued, lambda { where("state_name='queued'") }
   
   before_validation :initialize_uuid
   before_validation :initialize_state
   before_validation :initialize_meta_order, :if => Proc.new { |order| order.meta_order_id.nil? }
-  before_validation :initialize_merchant_account
   before_validation :verify_prices_integrity
   before_save :serialize_questions
   before_create :validates_products
@@ -58,6 +58,16 @@ class Order < ActiveRecord::Base
     self.uuid
   end
   
+  def start_from_queue
+    return unless self.state == :queued
+    self.state = :initialized
+    start
+  end
+
+  def queue_busy?
+    Order.where(user_id:self.user_id).where("state_name not in (?)", ["queued", "completed", "failed", "pending_agent", "refunded", "querying"]).count > 0
+  end
+
   def start
     return unless [:initialized, :pending_agent, :querying].include?(self.state) && self.meta_order.payment_card_id.present? && self.order_items.count > 0
     if self.merchant.vendor.nil?
@@ -396,10 +406,6 @@ class Order < ActiveRecord::Base
     self.state = :initialized if self.state_name.nil?
   end
   
-  def initialize_merchant_account
-    self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
-  end
-  
   def initialize_meta_order
     meta = MetaOrder.new(
       user_id:self.user_id,
@@ -468,7 +474,8 @@ class Order < ActiveRecord::Base
         self.errors.add(:base, I18n.t('orders.errors.invalid_product', :error => ""))
         return
       else
-        self.merchant_id = product.merchant_id
+        self.merchant_id = product.merchant_id if self.merchant_id.nil?
+        self.merchant_account_id = MerchantAccount.find_or_create_for_order(self).id if self.merchant_account_id.nil?
         self.save
       end
     end

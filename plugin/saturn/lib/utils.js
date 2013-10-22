@@ -27,6 +27,17 @@ if (! Array.prototype.unique)
     return r;
   };
 
+if (! Array.prototype.groupBy)
+  Array.prototype.groupBy = function (fct) {
+    var i, v, result = {};
+    this.forEach(function (e) {
+      v = fct(e);
+      result[v] = result[v] || [];
+      result[v].push(e);
+    });
+    return result;
+  };
+
 // $.extend from jQuery
 function $extend() {
   var options, name, src, copy, copyIsArray, clone,
