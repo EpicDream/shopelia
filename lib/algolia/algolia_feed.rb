@@ -196,7 +196,7 @@ module AlgoliaFeed
       merchant = Merchant.find_by_domain(domain_elements.join('.'))
       return unless merchant.present?
       record['merchant'] = MerchantSerializer.new(merchant).as_json[:merchant]
-      record['_tags'] == [] unless record.has_key?('_tags')
+      record['_tags'] = [] unless record.has_key?('_tags')
       record['_tags'] << "merchant_name:#{merchant.name}"
       record['saturn'] =  merchant.viking_data.present? ? '1' : '0'
     end
