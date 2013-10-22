@@ -26,6 +26,7 @@ class OrderTest < ActiveSupport::TestCase
       :expected_price_total => 100.356,
       :expected_price_product => 90.356,
       :expected_price_shipping => 10.001,
+      :informations => "Options",
       :tracker => 'toto')
     assert order.persisted?, order.errors.full_messages.join(",")
     assert_equal :preparing, order.state
@@ -36,6 +37,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 10, order.expected_price_shipping
     assert_equal 100.36, order.expected_price_total
     assert_equal "toto", order.tracker
+    assert_equal "Options", order.informations
 
     meta = order.meta_order
     assert meta.present?
