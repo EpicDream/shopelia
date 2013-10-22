@@ -175,6 +175,8 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it shouldn't be able to create same order in a 5 minutes delay" do
+    CashfrontRule.destroy_all
+
     order = Order.create(
       :user_id => @user.id,
       :developer_id => @developer.id,
@@ -318,6 +320,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should clean urls" do
+    CashfrontRule.destroy_all
     order = Order.new(
       :user_id => @user.id,
       :developer_id => @developer.id,
@@ -328,7 +331,7 @@ class OrderTest < ActiveSupport::TestCase
         :image_url => "http://www.amazon.fr/logo.jpg" } ],
       :address_id => @address.id,
       :expected_price_total => 100)
-    assert order.save
+    assert order.save, order.errors.full_messages.join(",")
     assert_equal 1, order.reload.order_items.count
     assert_equal "http://www.amazon.fr/dp/B00BIXXTCY", order.order_items.first.product.url
   end
