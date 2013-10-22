@@ -289,7 +289,7 @@ Crawler.selectOption = function (elems, value) {
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && elems[0].tagName === "OPTION") {
-    elems = elems.filter("[value="+value.value+"]");
+    elems = elems.filter("[value='"+value.value+"']");
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.id) {
