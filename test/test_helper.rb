@@ -11,7 +11,7 @@ require 'rails/test_help'
 require 'sidekiq/testing'
 require 'capybara/rails'
 
-Dir["#{Rails.root}/test/helper/*.rb"].each {|f| puts f ; require f}
+Dir["#{Rails.root}/test/helper/*.rb"].each {|f| require f}
 
 class ActiveSupport::TestCase
   fixtures :all

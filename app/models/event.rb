@@ -59,6 +59,7 @@ class Event < ActiveRecord::Base
 
   def reset_viking_sent_at
     self.product.update_column "viking_sent_at", nil if self.product.persisted? && self.product.versions_expired?
+    Viking.touch_request
   end
 
   def check_presence_of_device
