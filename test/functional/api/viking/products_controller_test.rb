@@ -90,28 +90,7 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_response :success
     assert_match /amazon.fr\/1/, json_response["url"]
   end
-  
-  test "it should send alive data (for Viking monitoring)" do
-    populate_events
-    Nest.new("viking")[:updated_at].set(nil)
-
-    get :alive
-    assert_response :success
-    assert_equal 1, json_response["alive"]
-
-    Product.first.update_attribute :viking_sent_at, Time.now
     
-    get :alive
-    assert_response :success
-    assert_equal 0, json_response["alive"]
-
-    Viking.touch
-    
-    get :alive
-    assert_response :success
-    assert_equal 1, json_response["alive"]
-  end
-  
   test "it should reset versions when sending product to viking" do
     populate_events
     product = Product.find_by_url("http://www.amazon.fr/1")
