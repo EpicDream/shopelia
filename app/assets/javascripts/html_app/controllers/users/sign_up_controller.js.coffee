@@ -23,7 +23,6 @@ class Shopelia.Controllers.SignUpController extends Shopelia.Controllers.Control
           console.log("response user save: " + JSON.stringify(resp))
           session.saveCookies(resp)
           Shopelia.vent.trigger("modal_content#showPaymentFields")
-          #Shopelia.vent.trigger("modal_content#order")
         error : (model, response) ->
           that.view.unlockView()
           Shopelia.Notification.Error({ text: $.parseJSON(response.responseText)['error'] })
