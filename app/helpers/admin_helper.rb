@@ -43,8 +43,8 @@ module AdminHelper
       tmp += '<span class="label">Name</span> ' if v.name.nil?
       tmp += '<span class="label">Image url</span> ' if v.image_url.nil?
       tmp += '<span class="label">Shipping info</span> ' if v.shipping_info.nil?
+      tmp += '<span class="label">Availability info</span> ' if v.availability_info.nil?
       tmp += '<span class="label">Description</span> ' if v.description.nil?
-      tmp += '<span class="label">Availability</span> ' if v.available.nil?
       result += split_versions ? tmp.length > 0 ? "{#{v.id}} [ #{tmp} ] " : "" : tmp
     end
     result.blank? ? "Empty data" : result
