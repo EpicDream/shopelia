@@ -9,14 +9,15 @@ require 'open-uri'
 require 'filemagic'
 require 'zip/zip'
 
-# TODO: Add params on object creation
-# Select search fields on index creation - name, brand, reference
+# TODO: Use MerchantHelper for URL canonization
+# TODO: Better use of exceptions
+# TODO: cache merchant info
 
 module AlgoliaFeed
 
   class AlgoliaFeed
 
-    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :algolia_application_id, :algolia_api_key, :algolia_index_name, :algolia_index, :algolia_production_index_name, :tmpdir
+    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :algolia_application_id, :algolia_api_key, :algolia_index_name, :algolia_index, :algolia_production_index_name, :tmpdir, :forbidden
 
     def self.run(params={})
       self.new(params).run
@@ -26,7 +27,7 @@ module AlgoliaFeed
       self.new(params).make_production
     end
 
-    def initialize(params)
+    def initialize(params={})
       self.urls                          = params[:urls]                          || []
       self.conversions                   = params[:conversions]                   || {}
       self.product_field                 = params[:product_field]                 || 'product'
@@ -36,6 +37,7 @@ module AlgoliaFeed
       self.algolia_application_id        = params[:algolia_application_id]        || "JUFLKNI0PS"
       self.algolia_api_key               = params[:algolia_api_key]               || "bd7e7d322cf11e241e3a8fb22aeb5620"
       self.tmpdir                        = params[:tmpdir]                        || '/tmp'
+      self.forbidden                     = params[:forbidden]                     || ['sextoys', 'erotique']
     end
 
     def connect(index_name)
@@ -61,7 +63,7 @@ module AlgoliaFeed
           process_xml(decoded_file)
           File.unlink(decoded_file)
         rescue => e
-          puts e
+          puts "Failed to parse file #{url} : #{e.backtrace.join("\n")}"
           next
         end
       end
@@ -78,12 +80,27 @@ module AlgoliaFeed
           products_counter += 1
           product = product_hash(r.outer_xml)
           record = process_product(product)
-          self.records << record if record.present?
+          record = check_forbidden(record)
+          if record.present?
+            self.records << record
+            products_counter += 1
+          end
           self.send_batch if self.records.size >= self.batch_size
         end
         self.send_batch
-        puts "[#{Time.now}] Processed #{products_counter} products in #{Time.now - file_start} seconds (#{(products_counter.to_f/(Time.now - file_start)).round} pr/s)"
+        puts "[#{Time.now}] #{decoded_file} - Processed #{products_counter} products in #{Time.now - file_start} seconds (#{(products_counter.to_f/(Time.now - file_start)).round} pr/s)"
       end  
+    end
+
+    def check_forbidden(record)
+      return unless record.present?
+      forbidden_tags = "(#{self.forbidden.join('|')})"
+      record['_tags'].each do |tag|
+        next unless tag=~/category:/
+        xtag = tag.downcase.gsub(/category:/, '').gsub(/[^a-z]/, '')
+        return if xtag =~ /#{forbidden_tags}/
+      end
+      record
     end
 
     def product_hash(xml)
@@ -160,7 +177,28 @@ module AlgoliaFeed
         record['_tags'] = []  unless record.has_key?('_tags')
         record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
       end
+      add_merchant_data(record)
       record
+    end
+
+    def canonize_url(url)
+      url
+    end
+
+    def add_merchant_data(record)
+      record['product_url'] = canonize_url(record['product_url'])
+      uri = URI(record['product_url'])
+      domain_elements = uri.host.split(/\./)
+      
+      while domain_elements.size > 2
+        domain_elements.shift
+      end
+      merchant = Merchant.find_by_domain(domain_elements.join('.'))
+      return unless merchant.present?
+      record['merchant'] = MerchantSerializer.new(merchant).as_json[:merchant]
+      record['_tags'] == [] unless record.has_key?('_tags')
+      record['_tags'] << "merchant_name:#{merchant.name}"
+      record['saturn'] =  merchant.viking_data.present? ? '1' : '0'
     end
 
     def get_categories(fields)

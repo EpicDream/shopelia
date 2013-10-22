@@ -7,7 +7,7 @@ module AlgoliaFeed
     def initialize(params={})
       super
 
-      self.urls = [
+      self.urls = params[:urls] || [
         "ftp://prixing:j5Z61eg@priceminister.effiliation.com/prixing_BOOKS_TOP.xml.zip",
         "http://priceminister.effiliation.com/output/commun/effiliation_JARDIN_NEW.xml.gz",
         "http://priceminister.effiliation.com/output/commun/effiliation_CLOTHING_NEW.xml.gz",
@@ -22,10 +22,11 @@ module AlgoliaFeed
         "http://priceminister.effiliation.com/output/commun/effiliation_ELECTRONICS_NEW.xml.gz"
       ]
 
-      self.product_field = 'produit'
-#      self.algolia_index_name = 'priceminister'
+      self.product_field = params[:product_field] || 'produit'
 
-      self.conversions = {
+#      self.algolia_index_name = params[:algolia_index_name] || 'priceminister'
+
+      self.conversions = params[:conversions] || {
         'codebarre'       => 'ean',
         'prix'            => 'price',
         'urlficheproduit' => 'product_url',
@@ -45,31 +46,27 @@ module AlgoliaFeed
     end
 
     def process_product(product)
-    begin
-      record = super
-      record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
-      record['price'] = (record['price'].to_f * 100).to_i.to_s
-      record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
-      record['currency'] = 'EUR'
-      record['_tags'] = [] unless record.has_key?('_tags')
-      categories = get_categories([product['categorie'], product['souscategorie'], product['souscategorie2'], product['souscategorie3']])
-      categories.each do |c|
-        record['_tags'] << "category:#{c}"
+      begin
+        record = super
+        return if record['image_url'] =~ /(noavailableimage|generiques)/
+        record['image_url'].gsub!(/_S\./i, "_L.")
+        record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
+        record['price'] = (record['price'].to_f * 100).to_i.to_s
+        record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
+        record['currency'] = 'EUR'
+        record['_tags'] = [] unless record.has_key?('_tags')
+        categories = get_categories([product['categorie'], product['souscategorie'], product['souscategorie2'], product['souscategorie3']])
+        categories.each do |c|
+          record['_tags'] << "category:#{c}"
+        end
+        record['category'] = categories.join(' > ')
+        record['product_url'] = canonize_url(record['product_url'])
+      rescue => e
+        puts "Failed record #{record.inspect}"
+        return
       end
-      record['category'] = categories.join('>')
-      record['_tags'] << "merchant_name:Price Minister"
-      record['product_url'] = canonize_url(record['product_url'])
-      record['image_url'].gsub!(/_S\./i, "_L.")
-      record.delete('image_url') if record['image_url'] =~ /noavailableimage/
-      return unless record['image_url'] =~ /\S/
-    rescue => e
-#      puts "Failed record #{record.inspect}"
-      return
-    end  
       record
-    end
-
+    end  
   end
-
 end
 

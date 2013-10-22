@@ -39,7 +39,7 @@ module AlgoliaFeed
       matches = /eurl=(.+?html)/.match(url)
       return URI.unescape(matches[1]) if matches.present?
       
-			matches = /\[\[(.+?\.fnac.com.+?)\]\]/.match(url)
+      matches = /\[\[(.+?\.fnac.com.+?)\]\]/.match(url)
       return "http://#{matches[1]}" if matches.present?
 
       matches = /\[\[(.+?\.darty.com.+?)\]\]/.match(url)
@@ -67,7 +67,7 @@ module AlgoliaFeed
     def merchant_tag(url)
       return 'merchant_name:Carrefour'     if url =~ /carrefour\.fr/
       return 'merchant_name:Darty'         if url =~ /darty\.fr/
-      return 'merchant_name:ToysRus'       if url =~ /toysrus\.fr/
+      return "merchant_name:Toys 'R' Us"   if url =~ /toysrus\.fr/
       return 'merchant_name:Fnac'          if url =~ /fnac\.com/
       return 'merchant_name:Imenager'      if url =~ /imenager\.fr/
       return 'merchant_name:Conforama'     if url =~ /conforama\.fr/
@@ -88,13 +88,11 @@ module AlgoliaFeed
 
       record['_tags'] = [] unless record.has_key?('_tags')
 
-      categories = get_categories(product['merchantCategory'])
+      categories = get_categories([product['merchantCategory']])
       categories.each do |c|
         record['_tags'] << "category:#{c.to_s}"
       end
       record['category'] = categories.join('>')
-
-      record['_tags'] << merchant_tag(record['product_url'])
       record
     end
   end
