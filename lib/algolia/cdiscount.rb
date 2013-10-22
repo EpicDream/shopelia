@@ -4,12 +4,12 @@ module AlgoliaFeed
 
   class Cdiscount < AlgoliaFeed
 
-    def initialize
+    def initialize(params={})
       super
 
-      self.urls = ['http://pf.tradedoubler.com/export/export?myFeed=13692964912238732&myFormat=13692964912238732']
+      self.urls = params[:urls] || ['http://pf.tradedoubler.com/export/export?myFeed=13692964912238732&myFormat=13692964912238732']
 
-      self.conversions = {
+      self.conversions = params[:conversions] || {
         'name'         => 'name',
         'productUrl'   => 'product_url',
         'imageUrl'     => 'image_url',
@@ -23,7 +23,7 @@ module AlgoliaFeed
         'shippingCost' => 'shipping_price',
         'deliveryTime' => 'shipping_info',
       }
-      # self.algolia_index_name = 'cdiscount'
+      # self.algolia_index_name = params[:algolia_index_name] || 'cdiscount'
     end
 
     def canonize_url(url)
@@ -37,17 +37,11 @@ module AlgoliaFeed
     def process_product(product)
       record = super
       record['_tags'] = [] unless record.has_key?('_tags')
-      categories = []
-			categories << product['TDCategoryName'] if product.has_key?('TDCategoryName')
-			if product.has_key?('merchantCategoryName')
-        cats = product['merchantCategoryName'].split(/\s+\/\s+/)
-        categories << cats
-      end
-      categories.flatten.each do |c|
+      categories = get_categories([product['TDCategoryName'],  product['merchantCategoryName']])
+      categories.each do |c|
         record['_tags'] << "category:#{c.to_s}"
       end
       record['category'] = categories.join('>')
-      record['_tags'] << "merchant_name:Cdiscount"
       record['price'] = (record['price'].to_f * 100).to_i.to_s
       record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
       record['product_url'] = canonize_url(record['product_url'])
