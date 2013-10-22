@@ -15,7 +15,7 @@ class Merchant < ActiveRecord::Base
   
   attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain, :viking_data, :accepting_orders
   attr_accessible :billing_solution, :injection_solution, :cvd_solution, :should_clean_args, :allow_quantities
-  attr_accessible :rejecting_events
+  attr_accessible :rejecting_events, :multiple_addresses
   
   before_validation :populate_name
   before_validation :nullify_vendor

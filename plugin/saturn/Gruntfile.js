@@ -6,7 +6,7 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: pkg,
     jshint: {
-      files: ['Gruntfile.js', 'src/**/*.js', 'lib/tree.js', 'test/*.js'],
+      files: ['Gruntfile.js', 'src/**/*.js', 'lib/*.js', 'test/*.js'],
       options: {
         loopfunc: true,
         globals: { // options here to override JSHint defaults
@@ -69,6 +69,7 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
+          'lib/utils.js',
           'build/chrome_saturn.js',
           'src/chrome/main.js'
         ],
@@ -78,6 +79,7 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
+          'lib/utils.js',
           "build/crawler.js",
           "src/chrome/chrome_crawler.js",
         ],
@@ -100,7 +102,7 @@ module.exports = function(grunt) {
     clean: {
       dev: ['vendor'],
       prod: ['build', 'vendor'],
-      total: ['build', 'vendor', 'dist', 'node_modules']
+      all: ['build', 'vendor', 'dist', 'node_modules']
     },
     exec: {
       "package": {

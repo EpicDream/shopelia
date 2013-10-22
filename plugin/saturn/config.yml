@@ -1,5 +1,5 @@
 ---
-"version": "2.2.6"
+"version": "2.3.0"
 "default":
   #### Global options
   ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
@@ -11,7 +11,7 @@
   #### Saturn options
   ## in ['auto', 'manual']. Default is to 'auto' in prod env, 'manual' otherwise.
   "run_mode" : "manual"
-  "DELAY_BETWEEN_PRODUCTS": 500 # 500 ms
+  "DELAY_BETWEEN_PRODUCTS": 1000 # 1 s
   "DELAY_BEFORE_REASK_MAPPING": 300000 # 5 min
   "MIN_NB_TABS": 0
   "MAX_NB_TABS": 15
@@ -23,10 +23,10 @@
   "DELAY_RESCUE": 60000
 
   #### URLs options
-  "SHOPELIA_DOMAIN": "https://www.shopelia.fr"
-  "PRODUCT_EXTRACT_URL": "https://www.shopelia.fr/api/viking/products"
-  "MAPPING_URL": "https://www.shopelia.fr/api/viking/merchants/"
-  "PRODUCT_EXTRACT_UPDATE": "https://www.shopelia.fr/api/viking/products/"
+  "SHOPELIA_DOMAIN": "https://www.shopelia.com"
+  "PRODUCT_EXTRACT_URL": "https://www.shopelia.com/api/viking/products"
+  "MAPPING_URL": "https://www.shopelia.com/api/viking/merchants/"
+  "PRODUCT_EXTRACT_UPDATE": "https://www.shopelia.com/api/viking/products/"
 
 #### Specific Profiles
 ## For Jasmine
@@ -49,11 +49,13 @@
 "staging":
   "run_mode" : "auto"
   "log_level" : "WARN"
-  "PRODUCT_EXTRACT_URL": "https://staging.shopelia.fr/api/viking/products"
-  "MAPPING_URL": "https://www.shopelia.fr/api/viking/merchants/"
+  "PRODUCT_EXTRACT_URL": "https://staging.shopelia.com/api/viking/products"
+  "MAPPING_URL": "https://www.shopelia.com/api/viking/merchants/"
   "PRODUCT_EXTRACT_UPDATE": "https://staging.shopelia.com/api/viking/products/"
   "consum": true
+  "DELAY_BETWEEN_PRODUCTS": 5000 # 5 s
 "prod":
   "run_mode" : "auto"
   "log_level" : "WARN"
   "consum": true
+  "DELAY_BETWEEN_PRODUCTS": 500 # 500 ms

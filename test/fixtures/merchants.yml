@@ -25,6 +25,7 @@ amazon:
   should_clean_args: true
   viking_data: "{\"bla\":\"boo\"}"
   allow_quantities: true
+  multiple_addresses: true
   
 fnac:
   name: "Fnac"

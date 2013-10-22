@@ -23,8 +23,6 @@ class LinkerTest < ActiveSupport::TestCase
         :out => "http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068" },
       { :in  => "http://ad.zanox.com/ppc/?19024603C1357169475&ULP=%5B%5Bhttp://logc57.xiti.com/gopc.url?xts=425426&xtor=AL-146-%5Btypologie%5D-%5BREMPLACE%5D-%5Bflux%5D&xtloc=http://www.eveiletjeux.com/mallette-tag-junior/produit/145303&url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm%5D%5D#eveiletjeux.com",
         :out => "http://www.eveiletjeux.com/mallette-tag-junior/produit/145303" },
-      { :in  => "http://action.metaffiliation.com/trk.php?mclic=P3138544D2D222S1UC431296294177V3",
-        :out => "http://www.avenuedesjeux.com/playmobil-playmobil-5302-maison-de-ville.36324.html" },
       { :in  => "http://ad.zanox.com/ppc/?19436175C242487251&ULP=%5B%5BAccessoires-Consommables/showdetl.cfm?product_id=4855986%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d%5D%5D#rueducommerce.fr",
         :out => "http://www.rueducommerce.fr/Accessoires-Consommables/showdetl.cfm?product_id=4855986" },
       { :in  => "http://clic.reussissonsensemble.fr/click.asp?ref=593625&site=10393&type=text&tnb=2&diurl=http://tracking.lengow.com/shortUrl/2857-45667-C389183/",

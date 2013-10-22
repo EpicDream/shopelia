@@ -34,3 +34,15 @@ thomas:
   ip_address: '127.0.0.1'
   pincode: '1234'
   developer: prixing  
+  
+cadeau_shaker:
+  email: service-client@cadeaushaker.fr
+  encrypted_password: <%= User.new.send(:password_digest, 'tototo') %>
+  first_name: Cadeau
+  last_name: Shaker
+  confirmation_sent_at: <%= 1.day.ago %>
+  birthdate: '1973-09-30'
+  civility: <%= User::CIVILITY_MR %>
+  nationality: france
+  ip_address: '127.0.0.1'
+  developer: prixing    
