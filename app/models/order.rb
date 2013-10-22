@@ -257,9 +257,9 @@ class Order < ActiveRecord::Base
       end
       
     elsif verb.eql?("success")
-      self.billed_price_total = content["billing"]["total"].to_f.round(2)
-      self.billed_price_shipping = content["billing"]["shipping"].to_f.round(2)
-      self.billed_price_product = (self.billed_price_total - self.billed_price_shipping).round(2)
+      self.billed_price_total = self.prepared_price_total
+      self.billed_price_shipping = self.prepared_price_shipping
+      self.billed_price_product = self.prepared_price_product
       self.shipping_info = content["billing"]["shipping_info"]
       complete
       
