@@ -87,6 +87,7 @@ Shopelia::Application.routes.draw do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
       resources :cart_items, :only => :create
+      resources :devices, :only => :update
       resources :events, :only => [:index, :create]
       resources :payment_cards, :only => [:index, :create, :show, :destroy]
       resources :phone_lookup, :only => :show
