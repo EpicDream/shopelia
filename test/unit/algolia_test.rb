@@ -10,7 +10,7 @@ class AlgoliaTest < ActiveSupport::TestCase
     algolia = AlgoliaFeed::AlgoliaFeed.new
     raw_file = algolia.retrieve_url(url)
     decoded_file = algolia.decompress_datafile(raw_file)
-    assert_equal('XML document text', FileMagic.new.file(decoded_file))
+    assert(FileMagic.new.file(decoded_file) =~ /\AXML\s/)
     File.unlink(raw_file)
     File.unlink(decoded_file)
   end
@@ -20,7 +20,7 @@ class AlgoliaTest < ActiveSupport::TestCase
     algolia = AlgoliaFeed::AlgoliaFeed.new
     raw_file = algolia.retrieve_url(url)
     decoded_file = algolia.decompress_datafile(raw_file)
-    assert_equal('XML  document text', FileMagic.new.file(decoded_file))
+    assert(FileMagic.new.file(decoded_file) =~ /\AXML\s/)
     File.unlink(raw_file)
     File.unlink(decoded_file)
   end
