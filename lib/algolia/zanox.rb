@@ -31,7 +31,7 @@ module AlgoliaFeed
         'logDescription'       => 'description'
       }
 
-#      self.algolia_index_name = 'zanox'
+#      self.index_name = 'zanox'
 
     end
 
@@ -79,14 +79,11 @@ module AlgoliaFeed
     def process_product(product)
       record = super
 
-#       record['product_url'] = canonize_url(record['product_url'])
       record['price'] = (record['price'].to_f * 100).to_i.to_s
       record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
 
       img = best_image(product)
       record['image_url'] = img if img.present?
-
-      record['_tags'] = [] unless record.has_key?('_tags')
 
       categories = get_categories([product['merchantCategory']])
       categories.each do |c|
