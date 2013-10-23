@@ -55,7 +55,9 @@ Shopelia::Application.routes.draw do
       get :retry, :on => :member
       get :mute, :on => :member
     end
-    resources :messages
+    resources :devices do
+      resources :messages
+    end
   end
 
   constraints DomainConstraints.new('developers') do

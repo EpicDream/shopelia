@@ -1,25 +1,10 @@
-%section.header
-  %header
-    %h1 Messages
-    %h2 Talk with users, Make their dream come true
+.container
+  .row
+    .span6.offset3
+      - @messages.each do |message|
+        .row
+          .content{class: "pull-#{message.from_admin ? 'right admin-message':'left user-message'}"}
+            = message.created_at.strftime("%H:%M")
+            = message.content
 
-.container-fluid
-  .row-fluid
-    .span2
-      %article.coolbox
-        %h3 Filters
-    .span10
-      %article.coolbox
-        %h3 Merchants list
-        %table#messages.table.table-striped
-          %thead
-            %tr
-              %th Device Id
-              %th Content
-              %th Actions
-          %tbody
-            - @messages.each do |message|
-              %tr
-                %td= message.device_id
-                %td= message.content
-                %td= link_to "show conversation", admin_message_path(message)
+      =render partial: "admin/messages/form"
