@@ -52,3 +52,11 @@ etsy:
   name: "Etsy"
   domain: "etsy.com"
   should_clean_args: false
+
+priceminister:
+  name: "Price Minister"
+  url: "http://www.priceminister.com"
+  vendor: "PriceMinister"
+  viking_data: "{\"bla\":\"boo\"}"
+  domain: "priceminister.com"
+

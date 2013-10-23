@@ -115,7 +115,7 @@ Crawler.setOption_back = function(paths, option) {
     if (! elem && option.title)
       elem = (elem = elems.filter("[title='"+option.title+"']")) && elem.length == 1 ? elem[0] : undefined;
     if (! elem) {
-      console.warn("No option found foor path '"+path+"' in elems", elems, "for option", elem);
+      logger.warn("No option found foor path '"+path+"' in elems", elems, "for option", elem);
       continue;
     }
     if (elem.tagName == "OPTION") {
@@ -125,7 +125,7 @@ Crawler.setOption_back = function(paths, option) {
       elem.click();
     return true;
   }
-  console.error("No element found for paths", paths);
+  logger.error("No element found for paths", paths);
   return false;
 };
 
@@ -258,7 +258,7 @@ Crawler.searchOption = function (paths, doc) {
 };
 
 //
-Crawler.parseOption = function (elems, path) {
+Crawler.parseOption = function (elems) {
   return elems.toArray().filter(function(elem) {
     return elem.innerText.match(OPTION_FILTER) === null;
   }).map(function(elem) {
@@ -289,7 +289,7 @@ Crawler.selectOption = function (elems, value) {
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && elems[0].tagName === "OPTION") {
-    elems = elems.filter("[value="+value.value+"]");
+    elems = elems.filter("[value='"+value.value+"']");
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.id) {
@@ -382,7 +382,6 @@ Crawler.parseImage = function (elems) {
 
 //
 Crawler.parseText = function (elems) {
-  console.info("'"+elems.saturnPath+"'", "'"+elems.text()+"'", "'"+elems.toArray().map(function(elem) {return elem.innerText;}).join(', ')+"'", elems);
   return elems.toArray().map(function(elem) {
     var res;
     if (elem.tagName === 'IMG')
@@ -401,10 +400,12 @@ Crawler.parseHtml = function (elems) {
 
 //
 Crawler.parseField = function (field, elems) {
+  var images;
   switch (field) {
   case 'image_url' :
   case 'images' :
-    return Crawler.parseImage(elems);
+    images = Crawler.parseImage(elems);
+    return field === 'image_url' ? images[0] : images;
   case 'description' :
     return Crawler.parseHtml(elems);
   default :
@@ -428,7 +429,6 @@ Crawler.crawl = function (mapping, doc) {
 
       result[field] = Crawler.crawlField(mapping[field], field, doc) || mapping[field].default_value;
     }
-  console.dir(result);
   return result;
 };
 
@@ -454,7 +454,7 @@ Crawler.doNext = function(action, mapping, option, value) {
       result = Crawler.crawl(mapping);
       break;
     default:
-      console.error("Unknow command", action);
+      logger.error("Unknow command", action);
       result = false;
   }
   return result;

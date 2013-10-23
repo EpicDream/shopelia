@@ -1,16 +1,24 @@
-class Shopelia.Views.CardFields extends Shopelia.Views.ShopeliaView
+class Shopelia.Views.CardFields extends Shopelia.Views.Form
 
   template: 'payment_cards/card_fields'
-  className: 'paiement-view'
+  className: 'paiement-view box'
   ui: {
     cardNumber: 'input[name="number"]'
     date: 'input[name="exp_date"]'
     cvv: 'input[name="cvv"]'
+    validation: "#btn-register-payment"
   }
   events:
     'keydown input[name="number"]':'addSpaceToCardNumber'
     'keyup input[name="number"]': 'addCardType'
     'keyup input[name="exp_date"]': "formatExpDate"
+    "click #btn-register-payment": "onValidationClick"
+
+
+  onRender: ->
+    Tracker.onDisplay('Add Payment Card');
+    $(@el).fadeIn('slow')
+    @initializeForm({'security':true})
 
   getFormResult: ->
     cardFormObject = {};
@@ -27,35 +35,27 @@ class Shopelia.Views.CardFields extends Shopelia.Views.ShopeliaView
       "exp_year": year,
       "cvv": cvv
     }
-    if @getSession().authenticated()
-      userId = @getSession().get("user").id
-      cardFormObject["user_id"] =  userId
+    #if @getSession().authenticated()
+    #  userId = @getSession().get("user").id
+    #  cardFormObject["user_id"] =  userId
     cardFormObject
 
-  registerPaymentCard: (e) ->
-    #console.log("trigger registerPaymentCard")
+  onValidationClick: (e) ->
+    e.preventDefault()
     if $('form').parsley( 'validate' )
       e.preventDefault()
       disableButton($("#btn-register-payment"))
-      cardJson = @cardFormSerializer()
-      that = this
-      card = new Shopelia.Models.PaymentCard()
+      card = new Shopelia.Models.PaymentCard(@getFormResult())
       card.on("invalid", (model, errors) ->
         displayErrors(errors)
       )
+      Shopelia.vent.trigger("payment#create",card)
 
-      card.save(cardJson,{
-                          beforeSend : (xhr) ->
-                            xhr.setRequestHeader("X-Shopelia-AuthToken",that.getSession().get("auth_token"))
-                          success : (resp) ->
-                            #console.log('card success callback')
-                            that.getSession().get("user").payment_cards.push(resp.disableWrapping().toJSON())
-                            that.parent.setContentView(new Shopelia.Views.OrdersIndex())
-                          error : (model, response) ->
-                            #console.log('card error callback')
-                            enableButton($("#btn-register-payment"))
-                            displayErrors($.parseJSON(response.responseText))
-      })
+  lockView: ->
+    disableButton(@ui.validation)
+
+  unlockView: ->
+    enableButton(@ui.validation)
 
   addCardType: ->
     #TODO Refacto boucle each
