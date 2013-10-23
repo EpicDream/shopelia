@@ -28,11 +28,11 @@ class AlgoliaTest < ActiveSupport::TestCase
   def test_priceminister_complete_file
     algolia = AlgoliaFeed::PriceMinister.new(
       urls: ['ftp://prixing:j5Z61eg@priceminister.effiliation.com/prixing_MUSIC_TOP.xml.zip'],
-      algolia_index_name: 'testing'
+      index_name: 'testing'
     )
     algolia.run
     sleep 1
-    madonna_cds = algolia.algolia_index.search('Madonna Ghv2')
+    madonna_cds = algolia.index.search('Madonna Ghv2')
     madonna_cd = madonna_cds['hits'].first
     found_merchantname = false
     madonna_cd['_tags'].each do |tag|
@@ -44,16 +44,27 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert(found_merchantname)
     assert_equal('1', madonna_cd['saturn'])
     assert_equal('http://www.priceminister.com', madonna_cd['merchant']['url'])
-    algolia.algolia_index.delete
+    assert_equal(Digest::MD5.hexdigest(madonna_cd['product_url']), madonna_cd['objectID'])
+    algolia.index.delete
   end
 
   def test_sex_keywords
-    algolia = AlgoliaFeed::PriceMinister.new(algolia_index_name: 'testing')
-    algolia.algolia_index = algolia.connect('testing')
+    algolia = AlgoliaFeed::PriceMinister.new(index_name: 'testing')
+    algolia.connect('testing')
     algolia.process_xml("#{Rails.root}/test/data/price_miniter_sex.xml")
     sleep 1
-    assert_equal(1, algolia.algolia_index.search('')['hits'].size)
-    algolia.algolia_index.delete
+    assert_equal(1, algolia.index.search('')['hits'].size)
+    algolia.index.delete
+  end
+
+  def test_misc_data
+    algolia = AlgoliaFeed::PriceMinister.new(index_name: 'testing')
+    algolia.connect('testing')
+    algolia.process_xml("#{Rails.root}/test/data/price_miniter_sex.xml")
+    sleep 1
+    record = algolia.index.search('')['hits'].first
+    assert(Time.now.to_i - record['timestamp'] < 5)
+    algolia.index.delete
   end
 
 end
