@@ -13,6 +13,7 @@ module AlgoliaFeed
 
   class InvalidFile < IOError; end
   class InvalidRecord < ScriptError; end
+  class RejectedRecord < ScriptError; end
 
   class AlgoliaFeed
 
@@ -34,7 +35,7 @@ module AlgoliaFeed
       self.index_name            = params[:index_name]            || 'products-feed-fr'
       self.tmpdir                = params[:tmpdir]                || '/tmp'
       self.forbidden             = params[:forbidden]             || ['sextoys', 'erotique']
-      self.debug                 = params[:debug]                 || false
+      self.debug                 = params[:debug]                 || true
       self.merchant_cache = {}
     end
 
@@ -73,8 +74,10 @@ module AlgoliaFeed
             check_forbidden(record)
             products_counter += 1
             self.records << record
+          rescue RejectedRecord
+            next
           rescue InvalidRecord => e
-            puts "Failed to add record: #{e}" if self.debug
+            puts "Failed to add record: #{e.backtrace.join("\n")}\nRecord: #{record.inspect}" if self.debug
             next
           end
           self.send_batch if self.records.size >= self.batch_size
@@ -89,7 +92,7 @@ module AlgoliaFeed
       record['_tags'].each do |tag|
         next unless tag=~/category:/
         xtag = tag.downcase.gsub(/category:/, '').gsub(/[^a-z]/, '')
-        raise InvalidRecord," Record belongs to category #{xtag}" if xtag =~ /#{forbidden_tags}/
+        raise RejectedRecord," Record belongs to category #{xtag}" if xtag =~ /#{forbidden_tags}/
       end
     end
 
@@ -176,6 +179,7 @@ module AlgoliaFeed
 
     def add_merchant_data(record)
       record['product_url'] = canonize_url(record['product_url'])
+      raise InvalidRecord, "Record has nil product_url" if record['product_url'].nil?
       record['objectID'] =  Digest::MD5.hexdigest(record['product_url'])
       uri = URI(record['product_url'])
       domain_elements = uri.host.split(/\./)
