@@ -3,6 +3,7 @@ class Device < ActiveRecord::Base
 
   belongs_to :user
   has_many :events
+  has_many :messages
   
   validates :uuid, :presence => true, :uniqueness => true
   validates :user_agent, :presence => true

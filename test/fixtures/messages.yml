@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  content: MyText
+  data: 
+  from_admin: false
+  pending_answer: false
+  read: false
+  device_id: 1
+
+two:
+  content: MyText
+  data: 
+  from_admin: false
+  pending_answer: false
+  read: false
+  device_id: 1
