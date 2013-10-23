@@ -43,7 +43,7 @@ module AlgoliaFeed
     def process_product(product)
       record = super
 
-      raise InvalidRecord, "Invalid image #{record['image_url']}" if record['image_url'] =~ /(noavailableimage|generiques)/
+      raise RejectedRecord, "Invalid image #{record['image_url']}" if record['image_url'] =~ /(noavailableimage|generiques)/
       record['image_url'].gsub!(/_S\./i, "_L.")
 
       record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
