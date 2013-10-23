@@ -2,13 +2,13 @@
 // Author : Vincent Renaudineau
 // Created : 2013-10-16
 
-define(["lib/css_struct"], function(CssStruct) {
+define(['sorted_array', "lib/css_struct"], function(SortedArray, CssStruct) {
   'use strict';
-  
+
   return (function () {
 
     var Minimizer = {},
-      TAG_GEN = ['div', 'span', 'p', 'tr', 'td', 'body'],
+      TAG_GEN = {'div': true, 'span': true, 'p': true, 'tr': true, 'td': true, 'body': true, '*': true},
       COSTS = {
         'tag_gen' : 5,
         'tag_spe' : 3,
@@ -16,7 +16,7 @@ define(["lib/css_struct"], function(CssStruct) {
         'class' : 2,
         'attribute' : 3,
         'function' : 4,
-        'sep' : 0,
+        'sep' : 1,
         ' ' : 1,
         '>' : 0,
         '~' : 2,
@@ -48,42 +48,31 @@ define(["lib/css_struct"], function(CssStruct) {
 
     function score(struct) {
       var res = 0,
-        i,
-        l,
-        h;
-      for (i = 0, l = struct.length; i < l; i++) {
+        l = struct.length,
+        n = l >= 16 ? l / 4 : 4, // minimum 4
+        i, h;
+      for (i = l--; i >= 0; i--) { // l-- for (l-i) later
         h = struct[i];
-        if (!h) {
+        if (!h)
           continue;
-        }
         switch (h.type) {
         case 'tag':
-          if (TAG_GEN.indexOf(h.value) !== -1) {
-            res += COSTS.tag_gen;
-          } else {
-            res += COSTS.tag_spe;
-          }
+          res += TAG_GEN[h.value] ? COSTS.tag_gen : COSTS.tag_spe;
           break;
         default:
           res += COSTS[h.type];
         }
+        // struct is diveded in 4 section by n, each elems in first section cost 3, in second 2, etc.
+        res += (l-i) / n >>> 0; // (x >>> 0) == Math.floor(x)
       }
       return res;
     }
 
     function separate(struct, initialStruct) {
-      /*
-      quand j'ajoute un élément, il faut que j'ajoute le separateur si il n'y est pas déjà, et pas '>' mais ' ' si il y en a plusieurs !
-      */
       var children = [],
         sepCtr = 0,
-        lastDefIdx,
-        lastSepIdx,
-        elem,
-        child,
-        i,
-        l,
-        j;
+        lastDefIdx, lastSepIdx,
+        elem, child, i, l, j;
 
       for (i = 0, l = initialStruct.length; i < l; i++) {
         elem = struct[i];
@@ -112,10 +101,8 @@ define(["lib/css_struct"], function(CssStruct) {
           child[i] = initialStruct[i];
           child.newItemIdx = i;
           child.nbSep = sepCtr;
-          if (sepCtr > 0 && lastDefIdx !== undefined) {
-            child[lastSepIdx] = {type: initialStruct[lastSepIdx].type, kind: initialStruct[lastSepIdx].kind};
-            child[lastSepIdx].kind = '>';
-          }
+          if (sepCtr > 0 && lastDefIdx !== undefined)
+            child[lastSepIdx] = {type: initialStruct[lastSepIdx].type, kind: '>'};
           if (sepCtr > 1 && lastDefIdx !== undefined)
             child[lastSepIdx].kind = ' ';
           children.push(child);
@@ -130,8 +117,8 @@ define(["lib/css_struct"], function(CssStruct) {
 
     function isSolution(path, waitedRes, $) {
       var found = $(path);
-      found = typeof found.toArray === 'function' ? found.toArray() : found;
-      return arraysEqual(found.sort(), waitedRes.sort());
+      found = $.fn && $.fn.jquery ? found.toArray() : found;
+      return arraysEqual(found, waitedRes);
     }
 
     Minimizer.minimize = function (initialCss, $, easySolutionCss, options) {
@@ -139,7 +126,8 @@ define(["lib/css_struct"], function(CssStruct) {
       var initialStruct = new CssStruct(initialCss),
         waitedRes = $(easySolutionCss || initialCss),
         bestScore = score(new CssStruct(easySolutionCss || initialCss)),
-        open = [new CssStruct("")],
+        open = new SortedArray(function(a, b) {return a.score-b.score}),
+        root = new CssStruct(""),
         closed = {},
         res = [],
         current,
@@ -147,9 +135,10 @@ define(["lib/css_struct"], function(CssStruct) {
         child,
         i;
 
-      open[0].length = initialStruct.length,
-      open[0].score = 0;
-      while (open.length > 0) {
+      root.length = initialStruct.length,
+      root.score = 0;
+      open.insert(root);
+      while (open.array.length > 0) {
         current = open.shift();
         if (current.score >= bestScore)
           continue;
@@ -163,17 +152,17 @@ define(["lib/css_struct"], function(CssStruct) {
           // console.info("Processing child '"+child.cssString+"'", child.score);
           if (isSolution(child.cssString, waitedRes, $)) {
             // console.info("Solution found !");
-            if (bestScore > child.score) { bestScore = child.score; }
+            if (bestScore > child.score) {
+              bestScore = child.score;
+              open.trunc({score:bestScore});
+            }
             res.push(child);
           } else if (child.score < bestScore) {
             // console.info("Add it.");
-            open.push(child);
+            open.insert(child);
           }
           closed[child.cssString] = true;
         }
-        open.sort(function (a, b) {
-          return a.score - b.score;
-        });
       }
 
       res = res.sort(function (a, b) {

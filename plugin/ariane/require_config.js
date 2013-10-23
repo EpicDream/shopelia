@@ -3,6 +3,7 @@ require.config({
     uri: "vendor/uri",
     logger: "vendor/logger",
     sprintf: "vendor/sprintf",
+    sorted_array: "vendor/sorted_array",
     "jquery-ui": "vendor/jquery-ui",
     jquery: "vendor/jquery",
     "jquery-mobile": "vendor/jquery-mobile",
