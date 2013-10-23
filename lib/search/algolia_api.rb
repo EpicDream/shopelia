@@ -10,6 +10,8 @@ module Search
       else
         {}
       end
+    rescue
+      {}
     end
   end
 end

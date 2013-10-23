@@ -24,7 +24,7 @@ module AlgoliaFeed
 
       self.product_field = params[:product_field] || 'produit'
 
-#      self.algolia_index_name = params[:algolia_index_name] || 'priceminister'
+#      self.index_name = params[:index_name] || 'priceminister'
 
       self.conversions = params[:conversions] || {
         'codebarre'       => 'ean',
@@ -46,25 +46,18 @@ module AlgoliaFeed
     end
 
     def process_product(product)
-      begin
-        record = super
-        return if record['image_url'] =~ /(noavailableimage|generiques)/
-        record['image_url'].gsub!(/_S\./i, "_L.")
-        record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
-        record['price'] = (record['price'].to_f * 100).to_i.to_s
-        record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
-        record['currency'] = 'EUR'
-        record['_tags'] = [] unless record.has_key?('_tags')
-        categories = get_categories([product['categorie'], product['souscategorie'], product['souscategorie2'], product['souscategorie3']])
-        categories.each do |c|
-          record['_tags'] << "category:#{c}"
-        end
-        record['category'] = categories.join(' > ')
-        record['product_url'] = canonize_url(record['product_url'])
-      rescue => e
-        puts "Failed record #{record.inspect}"
-        return
+      record = super
+      raise RejectedRecord, "Invalid image #{record['image_url']}" if record['image_url'] =~ /(noavailableimage|generiques)/
+      record['image_url'].gsub!(/_S\./i, "_L.")
+      record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
+      record['price'] = (record['price'].to_f * 100).to_i.to_s
+      record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
+      record['currency'] = 'EUR'
+      categories = get_categories([product['categorie'], product['souscategorie'], product['souscategorie2'], product['souscategorie3']])
+      categories.each do |c|
+        record['_tags'] << "category:#{c}"
       end
+      record['category'] = categories.join(' > ')
       record
     end  
   end
