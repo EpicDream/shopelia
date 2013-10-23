@@ -44,25 +44,25 @@ var script = document.createElement("script");
 script.type = "text/javascript";
 script.innerHTML = "(function () {"+
   "window.alert = function() {};\n" +
-  "function ajaxDone() {"+
+  "function ajaxDone() {\n"+
     "waitAjaxTimer = undefined;" +
     "window.postMessage('ajaxFinished', '*');"+
-  "}" +
+  "}\n" +
   "var DELAY_BETWEEN_OPTIONS = " + satconf.DELAY_BETWEEN_OPTIONS + "," +
-    "waitAjaxTimer; "+
-  "function waitAjax() {"+
+    "waitAjaxTimer;\n"+
+  "function waitAjax() {\n"+
     // "var d = new Date(), time = d.toLocaleTimeString() + '.' + d.getMilliseconds();"+
     "if (waitAjaxTimer === undefined)"+
-      "setTimeout(function () {if (waitAjaxTimer === undefined) return; clearTimeout(waitAjaxTimer); ajaxDone();}, 10000); // wait max 10s"+
-    "if (typeof jQuery !== 'undefined') {"+
+      "setTimeout(function () {if (waitAjaxTimer === undefined) return; clearTimeout(waitAjaxTimer); ajaxDone();}, 10000); /* wait max 10s */" +
+    "if (typeof jQuery !== 'undefined') {\n"+
       "if (jQuery.active !== 0) {"+
         // "console.log(time, 'jQuery.active != 0, wait a little time...');"+
         "waitAjaxTimer = setTimeout(waitAjax, 100);"+
       "} else {"+
         // "console.log(time, 'jQuery.active == 0 !');"+
         "setTimeout(ajaxDone, 100);"+
-      "}"+
-    "} else if (typeof Ajax !== 'undefined') {"+
+      "}\n"+
+    "} else if (typeof Ajax !== 'undefined') {\n"+
       "if (Ajax.activeRequestCount !== 0) {"+
         // "console.log(time, 'Ajax.activeRequestCount != 0, wait a little time...');"+
         "waitAjaxTimer = setTimeout(waitAjax, 100);"+
@@ -73,14 +73,14 @@ script.innerHTML = "(function () {"+
     "} else {"+
       // "console.log(time, 'Neither jQuery nor Prototype, wait some time...');"+
       "setTimeout(ajaxDone, DELAY_BETWEEN_OPTIONS);"+
-    "}"+
-  "}"+
+    "}\n"+
+  "}\n"+
   "window.addEventListener('message', function(event) {"+
     "if (event.source !== window || event.data !== 'waitAjax')"+
       "return;"+
     "waitAjax();"+
-  "}, false);"+
-"})";
+  "}, false);\n"+
+"})()";
 document.head.appendChild(script);
 
 // To handle redirection, that throws false 'complete' state.
