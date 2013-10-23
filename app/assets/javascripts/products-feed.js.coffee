@@ -19,6 +19,7 @@ class @ProductsFeed
     @index.search @query, @_prepareResults, hitsPerPage: @hitsPerPage, page: @page
 
   _prepareResults: (success, content) ->
+    console.log(content);
     eans = {}
     tags = {}
     products = []

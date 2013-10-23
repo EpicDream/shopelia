@@ -230,49 +230,35 @@ $collection-image-size: 200px;
 
 .catalogue-box {
   cursor: pointer;
+  overflow: hidden;
 }
 .catalogue-box, .catalogue, .catalogue-img {
   position: relative;
   z-index:2;
 }
 .catalogue-img {
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 100%;
+  max-height: 100%;
   display: block;
   margin: auto;
   padding-top: 5px;
 }
 .catalogue, .catalogue-box {
   background-color: #fff;
-  max-width: 210px;
-  max-height: 150px;
-  width: 210px;
-  height: 150px;
-  margin: 25px 0px 0px 0px;
-}
-.catalogue {
-  -webkit-transition: all 0.4s ease-out;
-  -moz-transition: all 0.4s ease-out;  /* FF4+ */
-  -o-transition: all 0.4s ease-out;  /* Opera 10.5+ */
-  -ms-transition: all 0.4s ease-out;  /* IE10? */
-  transition: all 0.4s ease-out;    
-}
-.catalogue:hover {
-  opacity: 0.6;
-  -webkit-transition: all 0.4s ease-out;
-  -moz-transition: all 0.4s ease-out;  /* FF4+ */
-  -o-transition: all 0.4s ease-out;  /* Opera 10.5+ */
-  -ms-transition: all 0.4s ease-out;  /* IE10? */
-  transition: all 0.4s ease-out;    
+  max-width: 220px;
+  max-height: 300px;
+  width: 220px;
+  height: 300px;
+  margin: 10px 0px 0px 0px;
 }
 .catalogue-price {
   position:absolute;
   z-index:3;
   color: #fff;
-  font-size:1.2em;
+  font-size:1.8em;
   right:0px;
   top:0px;
-  padding: 5px 20px 5px 20px;
+  padding: 2px 5px 0px 5px;
   background-color: #00A185;
 }
 .catalogue-name {
@@ -281,14 +267,35 @@ $collection-image-size: 200px;
   color: #000;
   font-size:1.0em;
   width: 100%;
-  height: 29px;
+  height: 75px;
   overflow: hidden;
   left:0px;
-  bottom:0px;
+  bottom: 0px;
   padding: 5px;
-  background-color: #ddd;
+  background-color: rgba(255,255,255,.85);
+}
+.catalogue-merchant {
+  position:absolute;
+  z-index:3;
+  color: #fff;
+  font-size: 1.0em;
+  height: 28px;
+  left:0px;
+  top: 0px;
+  padding: 5px;
+  background-color: #f89406;
+  opacity: 0;
+}
+.catalogue-box:hover .catalogue-merchant {
+  opacity: 1;
 }
 
+#catalogue-container {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  background-color: #eee;
+}
 #tags_category, #tags_merchant {
   text-align: left;
 }

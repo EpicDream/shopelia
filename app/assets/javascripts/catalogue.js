@@ -17,8 +17,10 @@ var Index = {
       var product = products[i]
       $("#catalogue-box-" + i).removeClass('display-none');
       $("#catalogue-box-img-" + i).attr('src', product["image_url"]);
-      $("#catalogue-box-price-" + i).html(product["price"] / 100 + " €");
+      $("#catalogue-box-price-" + i).html(Math.round(product["price"] / 100) + " €");
       $("#catalogue-box-name-" + i).html(product["name"]);
+      console.log(product);
+      $("#catalogue-box-merchant-" + i).html(product["merchant"]["name"]);
     }
     for (i = products.length; i < Index.feed.hitsPerPage; i++) {
       $("#catalogue-box-" + i).removeClass('display-none');
