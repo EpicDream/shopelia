@@ -24,8 +24,6 @@ module AlgoliaFeed
 
       self.product_field = params[:product_field] || 'produit'
 
-#      self.index_name = params[:index_name] || 'priceminister'
-
       self.conversions = params[:conversions] || {
         'codebarre'       => 'ean',
         'prix'            => 'price',
@@ -37,27 +35,22 @@ module AlgoliaFeed
         'nomfournisseur'  => 'brand',
         'stock'           => 'availability'
       }
-    end
 
-    def canonize_url(url)
-      matches = /url=(http:\/\/www.priceminister.com\/offer\/buy\/\d+)/.match(url)
-      return matches[1] if matches.present?
-      url
+      self.category_fields = params[:category_fields] || ['categorie', 'souscategorie', 'souscategorie2', 'souscategorie3' ]
+
     end
 
     def process_product(product)
       record = super
+
       raise InvalidRecord, "Invalid image #{record['image_url']}" if record['image_url'] =~ /(noavailableimage|generiques)/
       record['image_url'].gsub!(/_S\./i, "_L.")
+
       record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
-      record['price'] = (record['price'].to_f * 100).to_i.to_s
-      record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
-      record['currency'] = 'EUR'
-      categories = get_categories([product['categorie'], product['souscategorie'], product['souscategorie2'], product['souscategorie3']])
-      categories.each do |c|
-        record['_tags'] << "category:#{c}"
-      end
-      record['category'] = categories.join(' > ')
+
+      record['price'] = to_cents(record['price'])
+      record['shipping_price'] = to_cents(record['shipping_price'])
+
       record
     end  
   end
