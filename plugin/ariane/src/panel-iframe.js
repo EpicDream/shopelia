@@ -11,9 +11,11 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       cMapping = {}, // current mapping
       cCrawling = {}, // current crawling
       cField = '', // current field
+      cConsistency = {}, // current consistency
       hostsSelect,
       fieldsList,
       newFieldInput,
+      consistencyResult,
       pathsList,
       newPathInput;
 
@@ -26,10 +28,14 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
           panel.updateResult();
           panel.updatePathsList();
         }
-        panel.updateFieldMatch();
+        panel.updateFieldsMatch();
       });
     } else if (msg.action === 'setField') {
       panel.loadField(msg.field);
+    } else if (msg.action === 'updateConsistency') {
+      cConsistency = msg.results;
+      panel.updateFieldsConsistency();
+      panel.updateConsistency();
     }
   });
 
@@ -42,11 +48,11 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
         $('<li>').append($('<a href="#">').text(field)).appendTo(fieldsList);
       fieldsList.listview('refresh');
       fieldsList.find("li a").click(panel.onFieldSelected);
-      panel.updateFieldMatch();
+      panel.updateFieldsMatch();
     });
   };
 
-  panel.updateFieldMatch = function() {
+  panel.updateFieldsMatch = function() {
     fieldsList.find("li a").each(function() {
       if (cCrawling[this.innerText])
         this.classList.add('present');
@@ -78,6 +84,9 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       } else
         $(optionLabel).val('').parent().hide().prev().hide();
 
+      // CONSISTENCY
+      panel.updateConsistency();
+
       // PATH LIST
       panel.updatePathsList();
 
@@ -91,6 +100,27 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     if (pathsResult.value.length > 200)
       pathsResult.value = pathsResult.value.slice(0, 200) + "...";
     pathsResult.style.height = 'auto';
+  };
+
+  panel.updateFieldsConsistency = function () {
+    fieldsList.find("li a").each(function() {
+      if (cConsistency[this.innerText])
+        this.classList.add('inconstistent');
+      else
+        this.classList.remove('inconstistent');
+    });
+  };
+
+  panel.updateConsistency = function() {
+    if (cConsistency[cField])
+      consistencyResult.text(cConsistency[cField].map(function(e) {
+        var res = "<b>Url :</b> " + e.url + "\n";
+        res += "<b>Waited :</b> '" + e.old + "'\n";
+        res += "<b>Crawled :</b> '" + e.new + "'\n";
+        return res;
+      }).join("\n\n")).show().prev().show();
+    else
+      consistencyResult.text('').hide().prev().hide();
   };
 
   panel.addPathToList = function(path) {
@@ -196,11 +226,12 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
         return false;
       }
 
-    var paths = pathsList.find("input").toArray().map(function(e) {return e.value;});
+    var paths = pathsList.find("input").toArray().map(function(e) {return e.value;}),
+      field = cField, // save it before it be reset.
     chrome.storage.local.get(['mappings'], function(hash) {
-      var mapping = hash.mappings[cUrl].data.viking[cHost][cField];
+      var mapping = hash.mappings[cUrl].data.viking[cHost][field];
       mapping.path = paths;
-      if (cField.search(/^option/) !== -1)
+      if (field.search(/^option/) !== -1)
         mapping.label = optionLabel.value;
       chrome.storage.local.set(hash);
       chrome.extension.sendMessage({action: 'recrawl'});
@@ -217,6 +248,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     fieldsList = $("#fieldsList").listview();
     newFieldInput = $("#newFieldInput");
     newFieldInput.parents("form").on("submit", panel.onNewFieldAdd);
+    consistencyResult = $("#consistencyResult");
     pathsList = $("#pathsList").listview().sortable({ delay: 20, distance: 10, axis: "y", containment: "parent" }).on("sortupdate", panel.onPathSorted);
     newPathInput = $("#newPathInput");
     newPathInput.parents("form").on("submit", panel.onNewPathAdd);
