@@ -3,10 +3,27 @@ require(['logger', 'src/crawler', "satconf"], function(logger, Crawler) {
   "use strict";
 
 // logger.level = logger.ALL;
+
 chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   if (sender.id != chrome.runtime.id) return;
   logger.info("ProductCrawl task received", hash);
-  var result = Crawler.doNext(hash.action, hash.mapping, hash.option, hash.value);
+  var key = "option"+(hash.option),
+    result;
+  switch(hash.action) {
+    case "getOptions":
+      result = hash.mapping[key] ? Crawler.getOptions(hash.mapping[key].path) : [];
+      break;
+    case "setOption":
+      result = Crawler.setOption(hash.mapping[key].path, hash.value);
+      break;
+    case "crawl":
+      result = Crawler.crawl(hash.mapping);
+      break;
+    default:
+      logger.error("Unknow command", action);
+      result = false;
+  }
+
   if (hash.action == "setOption")
     waitAjax();
   if (callback)

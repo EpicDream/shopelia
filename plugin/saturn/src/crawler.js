@@ -440,26 +440,6 @@ Crawler.fastCrawl = function (mapping, doc) {
   return result;
 };
 
-Crawler.doNext = function(action, mapping, option, value) {
-  var result,
-      key = "option"+(option);
-  switch(action) {
-    case "getOptions":
-      result = mapping[key] ? Crawler.getOptions(mapping[key].path) : [];
-      break;
-    case "setOption":
-      result = Crawler.setOption(mapping[key].path, value);
-      break;
-    case "crawl":
-      result = Crawler.crawl(mapping);
-      break;
-    default:
-      logger.error("Unknow command", action);
-      result = false;
-  }
-  return result;
-};
-
 return Crawler;
 
 });
