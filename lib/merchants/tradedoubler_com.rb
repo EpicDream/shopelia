@@ -11,3 +11,4 @@ class TradedoublerCom
   end
 
 end
+
