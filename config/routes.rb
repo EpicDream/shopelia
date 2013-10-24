@@ -106,6 +106,9 @@ Shopelia::Application.routes.draw do
         resources :reset, :only => :create
         resources :verify, :only => :create
       end
+      namespace :georges do
+        resources :messages, :only => :create
+      end
       namespace :callback do
         resources :orders, :only => :update
       end
