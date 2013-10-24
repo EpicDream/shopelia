@@ -64,6 +64,7 @@ module Shopelia
     # Compile assets
     config.assets.compile = true
 
+    # Redis
     config.redis_config = {
       :host => '127.0.0.1',
       :port => 6379,
@@ -73,8 +74,12 @@ module Shopelia
     # Pusher App
     Pusher.url = "http://654ffe989dceb4af5e03:cd54721d7ae7b6fbff42@api.pusherapp.com/apps/54299"
 
+    # Mailjet
     config.action_mailer.delivery_method = :mailjet
 
-
+    # GCM
+    GCM.host = 'https://android.googleapis.com/gcm/send'
+    GCM.format = :json
+    GCM.key = "AIzaSyDGlTm2cS2g1QA7IrsLyL7l63BxioIsJpE"
   end
 end

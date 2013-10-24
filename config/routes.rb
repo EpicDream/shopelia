@@ -55,6 +55,11 @@ Shopelia::Application.routes.draw do
       get :retry, :on => :member
       get :mute, :on => :member
     end
+    namespace :georges do
+      resources :devices do
+        resources :messages
+      end
+    end
   end
 
   constraints DomainConstraints.new('developers') do
@@ -84,6 +89,7 @@ Shopelia::Application.routes.draw do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
       resources :cart_items, :only => :create
+      resources :devices, :only => :update
       resources :events, :only => [:index, :create]
       resources :payment_cards, :only => [:index, :create, :show, :destroy]
       resources :phone_lookup, :only => :show
@@ -99,6 +105,9 @@ Shopelia::Application.routes.draw do
         resources :exists, :only => :create
         resources :reset, :only => :create
         resources :verify, :only => :create
+      end
+      namespace :georges do
+        resources :messages, :only => :create
       end
       namespace :callback do
         resources :orders, :only => :update
