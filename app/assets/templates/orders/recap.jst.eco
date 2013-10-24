@@ -1,4 +1,7 @@
-<div class="field-title clearfix">
+<h3>Paiement de votre commande</h3>
+<div class="spacer25"></div>
+
+    <div class="field-title clearfix">
     <img class="pull-left" src="/assets/html_app/shopelia-user.png">
         <h5 class="pull-left">INFORMATIONS PERSONNELLES</h5>
     </div>
@@ -57,6 +60,4 @@
                 <td colspan=3><input type="checkbox" id="order-test"> Commande de test</td>
             </tr>
         </table>
-
-<button id="process-order" class="custom-btn btn-block">CONFIRMER LA COMMANDE</button>
 <div class="spacer25"></div>

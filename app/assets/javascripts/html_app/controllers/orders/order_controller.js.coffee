@@ -9,8 +9,8 @@ class Shopelia.Controllers.OrderController extends Shopelia.Controllers.Controll
       @view.render()
 
   create: (order) ->
-    @view.lockView()
     console.log(@getSession())
+    console.log(order)
     that = this
     order.save({}, {
                beforeSend : (xhr) ->
@@ -19,8 +19,10 @@ class Shopelia.Controllers.OrderController extends Shopelia.Controllers.Controll
                  #console.log(resp)
                  Shopelia.vent.trigger("modal_content#show_thank_you")
                error: (model, response) ->
-                 that.view.unlockView()
                  console.log(JSON.stringify(response))
                })
 
 
+
+  processOrder: (order) ->
+    @view.onProcessOrder(order)

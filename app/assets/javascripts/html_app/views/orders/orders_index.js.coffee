@@ -24,7 +24,7 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     order_test: '#order-test-box'
   }
   events:
-    "click #process-order": "onProcessOrder"
+    "click #process-order": "onValidateOrder"
     "change #quantity": "onChangeQuantity"
 
   initialize: ->
@@ -42,19 +42,23 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     if @model.get("session").get("user").get("email").match(/shopelia/)
       @ui.order_test.show()
 
-  onProcessOrder: (e) ->
+  onValidateOrder: (e) ->
     e.preventDefault()
-    order = @preparedOrder()
     Shopelia.vent.trigger("modal_content#showRecap",@model)
-    Shopelia.vent.trigger("modal_content#showPaymentFields",order)
+
 
   onChangeQuantity: ->
     @model.get("product").setQuantity(@ui.quantity.val())
     @render()
 
-  preparedOrder: ->
-    product = @model.get("product")
-    user = @model.get("session").get("user")
+  onProcessOrder: (order) ->
+    preparedOrder = @preparedOrder(order)
+    console.log("PREPARED ORDER" + JSON.stringify(preparedOrder))
+    Shopelia.vent.trigger("order#create",preparedOrder)
+
+  preparedOrder: (order) ->
+    product = order.get("product")
+    user = order.get("session").get("user")
     if $("#order-test").is(':checked')
       expected_prices = {
         "expected_price_shipping": 0
@@ -70,7 +74,7 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     new Shopelia.Models.Order($.extend(expected_prices, {
         "expected_cashfront_value": product.get('expected_cashfront_value') * product.get('quantity')
         "address_id": user.get('addresses').getDefaultAddress().get('id')
-        #"payment_card_id": user.get('payment_cards').getDefaultPaymentCard().get('id')
+        "payment_card_id": user.get('payment_cards').getDefaultPaymentCard().get('id')
         "products":[{"product_version_id":product.get('product_version_id'),"quantity":product.get('quantity'),"price":product.get('expected_price_product')}]
     }))
 
