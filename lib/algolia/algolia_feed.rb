@@ -4,7 +4,6 @@ require 'rubygems'
 require 'algoliasearch'
 require 'net/http'
 require 'nokogiri'
-require 'digest/md5'
 require 'open-uri'
 require 'filemagic'
 require 'zip/zip'
@@ -17,7 +16,7 @@ module AlgoliaFeed
 
   class AlgoliaFeed
 
-    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :index, :tmpdir, :forbidden, :debug, :merchant_cache
+    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :prod_index_name, :index, :tmpdir, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields
 
     def self.run(params={})
       self.new(params).run
@@ -28,19 +27,28 @@ module AlgoliaFeed
     end
 
     def initialize(params={})
-      self.urls                  = params[:urls]                  || []
-      self.conversions           = params[:conversions]           || {}
-      self.product_field         = params[:product_field]         || 'product'
-      self.batch_size            = params[:batch_size]            || 1000
-      self.index_name            = params[:index_name]            || 'products-feed-fr'
-      self.tmpdir                = params[:tmpdir]                || '/tmp'
-      self.forbidden             = params[:forbidden]             || ['sextoys', 'erotique']
-      self.debug                 = params[:debug]                 || true
-      self.merchant_cache = {}
+      self.urls            = params[:urls]            || []
+      self.conversions     = params[:conversions]     || {}
+      self.product_field   = params[:product_field]   || 'product'
+      self.batch_size      = params[:batch_size]      || 1000
+      self.index_name      = params[:index_name]      || 'products-feed-fr-new'
+      self.prod_index_name = params[:prod_index_name] || 'products-feed-fr'
+      self.tmpdir          = params[:tmpdir]          || '/tmp'
+      self.forbidden_cats  = params[:forbidden_cats]  || ['sextoys', 'erotique']
+      self.forbidden_names = params[:forbidden_names] || ['godemich', '\bgode\b', 'cockring', 'rosebud', '\bplug anal\b', 'vibromasseur', 'sextoy', 'masturbat' ]
+      self.debug           = params[:debug]           || false
+      self.category_fields = params[:category_fields] || []   
+      self.merchant_cache  = {}
     end
 
     def connect(index_name)
       self.index = Algolia::Index.new(index_name)
+    end
+
+    def make_production
+      Algolia.move_index(self.index_name, self.prod_index_name)
+      index = Algolia::Index.new(self.prod_index_name)
+      index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference']})
     end
 
     def run
@@ -88,12 +96,14 @@ module AlgoliaFeed
     end
 
     def check_forbidden(record)
-      forbidden_tags = "(#{self.forbidden.join('|')})"
+      forbidden_categories = "(#{self.forbidden_cats.join('|')})"
       record['_tags'].each do |tag|
         next unless tag=~/category:/
         xtag = tag.downcase.gsub(/category:/, '').gsub(/[^a-z]/, '')
-        raise RejectedRecord," Record belongs to category #{xtag}" if xtag =~ /#{forbidden_tags}/
+        raise RejectedRecord," Record belongs to category #{xtag}" if xtag =~ /#{forbidden_categories}/
       end
+      forbidden_names = "(#{self.forbidden_names.join('|')})"
+      raise RejectedRecord, "Record has forbidden name #{record['name']}" if record['name'] =~ /#{forbidden_names}/
     end
 
     def product_hash(xml)
@@ -107,7 +117,7 @@ module AlgoliaFeed
 
     def send_batch
       return unless self.records.size > 0
-      self.index.save_objects(self.records)
+      self.index.add_objects(self.records)
       self.records = []
     end
 
@@ -170,24 +180,16 @@ module AlgoliaFeed
       end
       raise RejectedRecord if !record.has_key?('image_url') || record['image_url'] !~ /\Ahttp/
       add_merchant_data(record)
+      record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
+      set_categories(product, record)
       record
     end
 
-    def canonize_url(url)
-      url
-    end
-
     def add_merchant_data(record)
-      record['product_url'] = canonize_url(record['product_url'])
+      record['product_url'] = Linker.clean(record['product_url'])
       raise InvalidRecord, "Record has nil product_url" if record['product_url'].nil?
-      record['objectID'] =  Digest::MD5.hexdigest(record['product_url'])
-      uri = URI(record['product_url'])
-      domain_elements = uri.host.split(/\./)
-      while domain_elements.size > 2
-        domain_elements.shift
-      end
-      domain = domain_elements.join('.')
+      domain = Utils.extract_domain(record['product_url'])
       unless self.merchant_cache.has_key?(domain)
         merchant = Merchant.find_by_domain(domain)
         if merchant.present?
@@ -206,13 +208,21 @@ module AlgoliaFeed
       record['saturn'] = self.merchant_cache[domain][:saturn]
     end
 
-    def get_categories(fields)
+    def set_categories(product, record)
       categories = []
-      fields.each do |field|
-        next if field.nil?
-        categories << field.split(/(\>|\s+\-\s+|\s+\/\s+)/)
+      self.category_fields.each do |field_name|
+        next unless product.has_key?(field_name)
+        field = product[field_name]
+        categories << field.split(/\s+(\-|\>|\/)\s+/)
       end
-      categories.flatten
+      categories.flatten.each do |c|
+        record['_tags'] << "category:#{c.to_s}"
+      end
+      record['category'] = categories.join(' > ')
+    end
+
+    def to_cents(price)
+      (price.to_f * 100).to_i.to_s
     end
 
   end

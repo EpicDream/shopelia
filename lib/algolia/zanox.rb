@@ -31,65 +31,25 @@ module AlgoliaFeed
         'logDescription'       => 'description'
       }
 
-#      self.index_name = 'zanox'
+      self.category_fields = ['merchantCategory']
 
-    end
-
-    def canonize_url(url)
-      matches = /eurl=(.+?html)/.match(url)
-      return URI.unescape(matches[1]) if matches.present?
-      
-      matches = /\[\[(.+?\.fnac.com.+?)\]\]/.match(url)
-      return "http://#{matches[1]}" if matches.present?
-
-      matches = /\[\[(.+?\.darty.com.+?)\]\]/.match(url)
-      return matches[1] if matches.present?
-
-      matches = /\[\[(.+?\.toysrus.fr.+?)\]\]/.match(url)
-      return matches[1] if matches.present?
-
-      matches = /\[\[(.+?\.imenager.com.+?)\]\]/.match(url)
-      return matches[1] if matches.present?
-
-      matches = /\[\[(.+?\.eveiletjeux.+?)\]\]/.match(url)
-      return matches[1] if matches.present?
-
-      url
     end
 
     def best_image(product)
       return product['largeImage']  if product.has_key?('largeImage')
 			return product['mediumImage'] if product.has_key?('mediumImage')
 			return product['smallImage']  if product.has_key?('smallImage')
-		  return
+      raise RejectedRecord, "Record has no images"
     end
 
-    def merchant_tag(url)
-      return 'merchant_name:Carrefour'     if url =~ /carrefour\.fr/
-      return 'merchant_name:Darty'         if url =~ /darty\.fr/
-      return "merchant_name:Toys 'R' Us"   if url =~ /toysrus\.fr/
-      return 'merchant_name:Fnac'          if url =~ /fnac\.com/
-      return 'merchant_name:Imenager'      if url =~ /imenager\.fr/
-      return 'merchant_name:Conforama'     if url =~ /conforama\.fr/
-      return 'merchant_name:RueduCommerce' if url =~ /rueducommerce\.fr/
-      return 'merchant_name:EveiletJeux'   if url =~ /eveiletjeux\.com/
-      return 'merchant_name:Zanox'
-    end
-      
     def process_product(product)
       record = super
 
-      record['price'] = (record['price'].to_f * 100).to_i.to_s
-      record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
+      record['price'] = to_cents(record['price'])
+      record['shipping_price'] = to_cents(record['shipping_price'])
 
-      img = best_image(product)
-      record['image_url'] = img if img.present?
+      record['image_url'] = best_image(product)
 
-      categories = get_categories([product['merchantCategory']])
-      categories.each do |c|
-        record['_tags'] << "category:#{c.to_s}"
-      end
-      record['category'] = categories.join(' > ')
       record
     end
   end

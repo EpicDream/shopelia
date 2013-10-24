@@ -64,6 +64,8 @@ class AlgoliaTest < ActiveSupport::TestCase
     sleep 1
     record = algolia.index.search('')['hits'].first
     assert(Time.now.to_i - record['timestamp'] < 5)
+    assert_equal("Mode > Cosmetique-Produit-de-beaute > Cigarette Electronique (Autre)", record['category'])
+    assert_equal(3, record['_tags'].collect{ |tag| tag if tag=~ /category:/}.compact.size)
     algolia.index.delete
   end
 
