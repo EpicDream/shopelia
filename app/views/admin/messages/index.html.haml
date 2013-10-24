@@ -1,10 +1,8 @@
-.container
-  .row
-    .span6.offset3
-      - @messages.each do |message|
-        .row
-          .content{class: "pull-#{message.from_admin ? 'right admin-message':'left user-message'}"}
-            = message.created_at.strftime("%H:%M")
-            = message.content
+%section.chat
+  - @messages.each do |message|
+    %div{class: "from-#{message.from_admin ? 'admin':'user'}"}
+      %p= message.content
+    .clear
 
-      =render partial: "admin/messages/form"
+
+  =render partial: "admin/messages/form"

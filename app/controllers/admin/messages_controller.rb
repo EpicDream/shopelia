@@ -11,6 +11,8 @@ class Admin::MessagesController < Admin::AdminController
     @message = Message.create(@message_hash)
     @message.device_id = @device.id
     if @message.save!
+      @device.pending_answer = false
+      @device.save
       redirect_to admin_device_messages_url(@device)
     else
       @message.errors.full_messages
@@ -23,7 +25,6 @@ class Admin::MessagesController < Admin::AdminController
   def prepare_message_params
     @message_hash = params[:message].merge({
                                          :from_admin => true,
-                                         :pending_answer => true,
                                      })
   end
 
