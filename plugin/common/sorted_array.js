@@ -41,6 +41,9 @@
   }
 
   SortedArray.prototype.insert = function (element) {
+    if (this.array.length > 1000)
+      return this.insert2(element);
+
     var array = this.array,
       index = array.length,
       i, j, temp;
@@ -56,6 +59,25 @@
         array[j] = temp;
       }
     }
+
+    return this;
+  };
+
+  SortedArray.prototype.insert2 = function (element) {
+    var low = 0,
+      array = this.array,
+      high = array.length,
+      index, cursor;
+
+    while (high > low) {
+      index = (high + low) / 2 >>> 0;
+      cursor = array[index];
+
+      if (this.comp(cursor, element) < 0) low = index + 1;
+      else if (this.comp(cursor, element) > 0) high = index;
+      else break;
+    }
+    array.splice(low === array.length ? low : index, 0, element);
 
     return this;
   };

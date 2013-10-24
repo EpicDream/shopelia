@@ -64,31 +64,32 @@ define(['lib/css_struct', 'lib/css_minimizer'], function(CssStruct, Minimizer) {
 
       it('put spaces', function() {
         var children = Minimizer.separate(struct, initialStruct);
-        children = Minimizer.separate(children[1], initialStruct);
+        children = Minimizer.separate(children[6], initialStruct);
         expect(children.length).toBe(6);
-        expect(children.filter(function(e){return typeof e[1] === 'object';}).length).toBe(6);
+        expect(children.filter(function(e){return typeof e[8] === 'object';}).length).toBe(6);
+
+        expect(typeof children[5][7]).toBe('object');
+        expect(children[5][7].type).toBe('id');
+        expect(children[5][7].value).toBe('productImage');
+        expect(typeof children[5][5]).toBe('undefined');
+        expect(children[5].filter(function(e){return e !== undefined;}).length).toBe(2);
 
         expect(typeof children[0][0]).toBe('object');
         expect(children[0][0].type).toBe('tag');
         expect(children[0][0].value).toBe('div');
-        expect(children[0].filter(function(e){return e !== undefined;}).length).toBe(2);
+        expect(typeof children[0][5]).toBe('object');
+        expect(children[0][5].type).toBe('sep');
+        expect(children[0][5].kind).toBe(' ');
+        expect(children[0].filter(function(e){return e !== undefined;}).length).toBe(3);
 
-        expect(typeof children[1][0]).toBe('undefined');
-        expect(typeof children[1][3]).toBe('object');
-        expect(children[1][3].type).toBe('tag');
-        expect(children[1][3].value).toBe('p');
-        expect(typeof children[1][2]).toBe('object');
-        expect(children[1][2].type).toBe('sep');
-        expect(children[1][2].kind).toBe('>');
-        expect(children[1].filter(function(e){return e !== undefined;}).length).toBe(3);
-
-        expect(typeof children[4][7]).toBe('object');
-        expect(children[4][7].type).toBe('id');
-        expect(children[4][7].value).toBe('productImage');
-        expect(typeof children[4][5]).toBe('object');
-        expect(children[4][5].type).toBe('sep');
-        expect(children[4][5].kind).toBe(' ');
-        expect(children[4].filter(function(e){return e !== undefined;}).length).toBe(3);
+        expect(typeof children[2][0]).toBe('undefined');
+        expect(typeof children[2][3]).toBe('object');
+        expect(children[2][3].type).toBe('tag');
+        expect(children[2][3].value).toBe('p');
+        expect(typeof children[2][5]).toBe('object');
+        expect(children[2][5].type).toBe('sep');
+        expect(children[2][5].kind).toBe('>');
+        expect(children[2].filter(function(e){return e !== undefined;}).length).toBe(3);
       });
 
       it('global test', function() {
@@ -99,14 +100,16 @@ define(['lib/css_struct', 'lib/css_minimizer'], function(CssStruct, Minimizer) {
         res = ["div", "#zoom", "p", ".marged-right", "img", "#productImage", "[itemprop='image']"];
         expect(children).toEqual(res);
         
-        struct[0] = initialStruct[0];
-        children = Minimizer.separate(struct, initialStruct).map(function(s) {return s.toCss();});
-        res = ["div#zoom", "div > p", "div > .marged-right", "div img", "div #productImage", "div [itemprop='image']"];
-        expect(children).toEqual(res);
-        
         struct[8] = initialStruct[8];
         children = Minimizer.separate(struct, initialStruct).map(function(s) {return s.toCss();});
-        res = ["div#zoom [itemprop='image']", "div > p > [itemprop='image']", "div > .marged-right > [itemprop='image']", "div img[itemprop='image']", "div #productImage[itemprop='image']"];
+        res = ["div [itemprop='image']", "#zoom [itemprop='image']", "p > [itemprop='image']", ".marged-right > [itemprop='image']", "img[itemprop='image']", "#productImage[itemprop='image']"];
+        expect(children).toEqual(res);
+        
+        struct[4] = initialStruct[4];
+        struct[5] = initialStruct[5];
+        struct[5].kind = '>';
+        children = Minimizer.separate(struct, initialStruct).map(function(s) {return s.toCss();});
+        res = ["div > .marged-right > [itemprop='image']", "#zoom > .marged-right > [itemprop='image']", "p.marged-right > [itemprop='image']"];
         expect(children).toEqual(res);
       });
     });
@@ -169,7 +172,7 @@ define(['lib/css_struct', 'lib/css_minimizer'], function(CssStruct, Minimizer) {
         if (path === easy || path === waitedRes)
           return ["img"];
         else
-          return [];
+          return ["img", "img2"];
       }, easy)).toBe(waitedRes);
 
       easy = "div#zoom .marged-right img";
@@ -179,7 +182,7 @@ define(['lib/css_struct', 'lib/css_minimizer'], function(CssStruct, Minimizer) {
         if (path === easy || path === waitedRes)
           return ["img"];
         else
-          return [];
+          return ["img", "img2"];
       }, easy)).toBe(waitedRes);
     });
 
@@ -218,7 +221,7 @@ define(['lib/css_struct', 'lib/css_minimizer'], function(CssStruct, Minimizer) {
         if (goodResults.indexOf(path) !== -1)
           return ["img"];
         else
-          return [];
+          return ["img", "img2"];
       }, goodResults[1], {});
       expect(result).toEqual("#productImage");
 
@@ -226,32 +229,9 @@ define(['lib/css_struct', 'lib/css_minimizer'], function(CssStruct, Minimizer) {
         if (goodResults.indexOf(path) !== -1)
           return ["img"];
         else
-          return [];
+          return ["img", "img2"];
       }, goodResults[1], {maxNbResult: 3});
       expect(result).toEqual(["#productImage"]);
-
-      initialCss = "div#id1.class1:nth-of-type(3) > div#id2.class2:nth-of-type(2) > div.class3:nth-of-type(1)";
-      goodResults = [
-        "#id1:nth-of-type(3) > .marged-right > [itemprop='image']", // easy
-
-        ".class1 > #id2 > div",
-        "#id1 > .class2 > div",
-        "#id1 > #id2.class2 > div",
-        "#id1.class1 > #id2 > div",
-        "#id1.class1 > .class2 > div",
-        ".class1 > #id2.class2 > div",
-
-        ":nth-of-type(3) .class3", // best
-      ];
-      result = Minimizer.minimize(initialCss, function(path) {
-        if (goodResults.indexOf(path) !== -1)
-          return ["img"];
-        else
-          return [];
-      }, goodResults[0], {maxNbResult: 3});
-      expect(result.length).toBeGreaterThan(1);
-      expect(result[0]).toBe(":nth-of-type(3) .class3");
-      expect(result.indexOf(".class1 > #id2 > div")).not.toBe(-1);
     });
   });
 });

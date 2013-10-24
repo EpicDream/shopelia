@@ -71,46 +71,38 @@ define(['sorted_array', "lib/css_struct"], function(SortedArray, CssStruct) {
     function separate(struct, initialStruct) {
       var children = [],
         sepCtr = 0,
-        lastDefIdx, lastSepIdx,
-        elem, child, i, l, j;
+        l = initialStruct.length,
+        nbSepBetweenNewAndLastSet,
+        lastSepIdx, child, i;
 
-      for (i = 0, l = initialStruct.length; i < l; i++) {
-        elem = struct[i];
-        // => struct[i] is defined, et n'est pas un sep
-        if (elem && elem.type !== 'sep') {
-          for (j = children.length-1; j >= 0 && children[j].newItemIdx !== undefined; j--) {
-            child = children[j];
-            if (sepCtr-child.nbSep > 0 && child.newItemIdx < lastSepIdx) {
-              child[lastSepIdx] = {type: initialStruct[lastSepIdx].type, kind: initialStruct[lastSepIdx].kind};
-              child[lastSepIdx].kind = '>';
-              if (sepCtr-child.nbSep > 1)
-                child[lastSepIdx].kind = ' ';
-            }
-            delete child.newItemIdx;
-          }
-          sepCtr = 0;
-          lastSepIdx = -1;
-          lastDefIdx = i;
-        // => struct[i] is undefined, et initialStruct[i] est un sep, et il y a déjà un elem defined dans struct avant
-        } else if (initialStruct[i].type === 'sep') {
+      for (i = 0; i < l && ! struct[i]; i++) {
+        if (initialStruct[i].type === 'sep') {
           lastSepIdx = i;
           sepCtr++;
-        // => struct[i] is undefined, et initialStruct[i] n'est pas un sep
         } else {
           child = new CssStruct(struct);
           child[i] = initialStruct[i];
-          child.newItemIdx = i;
           child.nbSep = sepCtr;
-          if (sepCtr > 0 && lastDefIdx !== undefined)
-            child[lastSepIdx] = {type: initialStruct[lastSepIdx].type, kind: '>'};
-          if (sepCtr > 1 && lastDefIdx !== undefined)
-            child[lastSepIdx].kind = ' ';
           children.push(child);
         }
       }
 
-      for (j = children.length-1; j >= 0 && children[j].newItemIdx !== undefined; j--)
-        delete children[j].newItemIdx;
+      if (i === l)
+        return children;
+
+      for (i = 0, l = children.length; i < l; i++) {
+        child = children[i];
+        nbSepBetweenNewAndLastSet = sepCtr - child.nbSep;
+        delete child.nbSep;
+        // On compte sur le fait que dans la boucle précédente,
+        // on se rapproche du dernier élément setté de struct.
+        if (nbSepBetweenNewAndLastSet === 0)
+          break;
+        if (nbSepBetweenNewAndLastSet > 0)
+          child[lastSepIdx] = {type: 'sep', kind: '>'};
+        if (nbSepBetweenNewAndLastSet > 1)
+          child[lastSepIdx].kind = ' ';
+      }
 
       return children;
     }
@@ -135,33 +127,37 @@ define(['sorted_array', "lib/css_struct"], function(SortedArray, CssStruct) {
         child,
         i;
 
-      root.length = initialStruct.length,
-      root.score = 0;
-      open.insert(root);
+      root.length = initialStruct.length;
+      for (i = initialStruct.length-1; i >= 0 && initialStruct[i].type !== 'sep'; i--) {
+        child = new CssStruct(root);
+        child[i] = initialStruct[i];
+        child.cssString = child.toCss();
+        child.score = score(child);
+        open.insert(child);
+      }
       while (open.array.length > 0) {
         current = open.shift();
-        if (current.score >= bestScore)
-          continue;
-        paths = separate(current, initialStruct);
-        for (i = 0; i < paths.length; i++) {
-          child = paths[i];
-          child.cssString = child.toCss();
-          if (closed[child.cssString])
-            continue;
-          child.score = score(child);
-          // console.info("Processing child '"+child.cssString+"'", child.score);
-          if (isSolution(child.cssString, waitedRes, $)) {
-            // console.info("Solution found !");
-            if (bestScore > child.score) {
-              bestScore = child.score;
-              open.trunc({score:bestScore});
-            }
-            res.push(child);
-          } else if (child.score < bestScore) {
-            // console.info("Add it.");
-            open.insert(child);
+        // console.info("process '"+current.cssString+"', score=", current.score);
+        if (isSolution(current.cssString, waitedRes, $)) {
+          // console.info("Solution found !");
+          if (current.score < bestScore) {
+            bestScore = current.score;
+            open.trunc({score:bestScore});
           }
-          closed[child.cssString] = true;
+          res.push(current);
+        } else if (current.score < bestScore) {
+          paths = separate(current, initialStruct);
+          // console.info("Add children :", paths.length);
+          for (i = 0; i < paths.length; i++) {
+            child = paths[i];
+            child.cssString = child.toCss();
+            if (closed[child.cssString])
+              continue;
+            closed[child.cssString] = true;
+            child.score = score(child);
+            if (child.score < bestScore)
+              open.insert(child);
+          }
         }
       }
 
