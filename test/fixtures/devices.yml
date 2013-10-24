@@ -5,3 +5,4 @@ web:
 mobile:
   uuid: "uuid2"
   user_agent: "mobile"
+  push_token: "token"

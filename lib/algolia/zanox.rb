@@ -4,10 +4,10 @@ module AlgoliaFeed
 
   class Zanox < AlgoliaFeed
 
-    def initialize
+    def initialize(params={})
       super
 
-      self.urls = [
+      self.urls = params[:urls] || [
         "http://productdata.zanox.com/exportservice/v1/rest/22189354C1364358154.xml?ticket=88FC91472561713FA4B6A466542E9240AF65935CD5963D40B2C8FAA44F0CC042&gZipCompress=yes",
         "http://productdata.zanox.com/exportservice/v1/rest/19436028C1562252816.xml?ticket=88FC91472561713FA4B6A466542E9240AF65935CD5963D40B2C8FAA44F0CC042&gZipCompress=yes",
         "http://productdata.zanox.com/exportservice/v1/rest/18920697C1372641144.xml?ticket=88FC91472561713FA4B6A466542E9240AF65935CD5963D40B2C8FAA44F0CC042&gZipCompress=yes",
@@ -31,74 +31,25 @@ module AlgoliaFeed
         'logDescription'       => 'description'
       }
 
-#      self.algolia_index_name = 'zanox'
+      self.category_fields = ['merchantCategory']
 
-    end
-
-    def canonize_url(url)
-      matches = /eurl=(.+?html)/.match(url)
-      return URI.unescape(matches[1]) if matches.present?
-      
-			matches = /\[\[(.+?\.fnac.com.+?)\]\]/.match(url)
-      return "http://#{matches[1]}" if matches.present?
-
-      matches = /\[\[(.+?\.darty.com.+?)\]\]/.match(url)
-      return matches[1] if matches.present?
-
-      matches = /\[\[(.+?\.toysrus.fr.+?)\]\]/.match(url)
-      return matches[1] if matches.present?
-
-      matches = /\[\[(.+?\.imenager.com.+?)\]\]/.match(url)
-      return matches[1] if matches.present?
-
-      matches = /\[\[(.+?\.eveiletjeux.+?)\]\]/.match(url)
-      return matches[1] if matches.present?
-
-      url
     end
 
     def best_image(product)
       return product['largeImage']  if product.has_key?('largeImage')
 			return product['mediumImage'] if product.has_key?('mediumImage')
 			return product['smallImage']  if product.has_key?('smallImage')
-		  return
+      raise RejectedRecord, "Record has no images"
     end
 
-    def merchant_tag(url)
-      return 'merchant_name:Carrefour'     if url =~ /carrefour\.fr/
-      return 'merchant_name:Darty'         if url =~ /darty\.fr/
-      return 'merchant_name:ToysRus'       if url =~ /toysrus\.fr/
-      return 'merchant_name:Fnac'          if url =~ /fnac\.com/
-      return 'merchant_name:Imenager'      if url =~ /imenager\.fr/
-      return 'merchant_name:Conforama'     if url =~ /conforama\.fr/
-      return 'merchant_name:RueduCommerce' if url =~ /rueducommerce\.fr/
-      return 'merchant_name:EveiletJeux'   if url =~ /eveiletjeux\.com/
-      return 'merchant_name:Zanox'
-    end
-      
     def process_product(product)
       record = super
 
-      record['product_url'] = canonize_url(record['product_url'])
-      record['price'] = (record['price'].to_f * 100).to_i.to_s
-      record['shipping_price'] = (record['shipping_price'].to_f * 100).to_i.to_s
+      record['price'] = to_cents(record['price'])
+      record['shipping_price'] = to_cents(record['shipping_price'])
 
-      img = best_image(product)
-      record['image_url'] = img if img.present?
+      record['image_url'] = best_image(product)
 
-      record['_tags'] = [] unless record.has_key?('_tags')
-
-      categories = []
-      if product.has_key?('merchantCategory')
-        cats = product['merchantCategory'].split(/\s+\-\s+/)
-        categories << cats
-      end
-      categories.flatten.each do |c|
-        record['_tags'] << "category:#{c.to_s}"
-      end
-      record['category'] = categories.join('>')
-
-      record['_tags'] << merchant_tag(record['product_url'])
       record
     end
   end

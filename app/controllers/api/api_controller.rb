@@ -31,7 +31,7 @@ class Api::ApiController < ActionController::Base
   end
 
   def retrieve_tracker
-    @tracker = cookies[:tracker]
+    @tracker = cookies[:tracker] || params[:tracker]
   end
 
   def retrieve_device

@@ -22,11 +22,12 @@ class Api::V1::OrdersControllerTest < ActionController::TestCase
           name:"Product A",
           image_url:"http://www.rueducommerce.fr/logo.jpg"
         } ]
-      }, format: :json
+      }, tracker:"toto", format: :json
     end
     
     assert_response :success
     assert_equal "preparing", Order.last.state_name
+    assert_equal "toto", Order.last.tracker
     
     mail = ActionMailer::Base.deliveries.last
     assert mail.present?, "an admin email should have been sent"
@@ -37,6 +38,4 @@ class Api::V1::OrdersControllerTest < ActionController::TestCase
     get :show, id: @order.uuid, format: :json
     assert_response :success
   end
-
 end
-

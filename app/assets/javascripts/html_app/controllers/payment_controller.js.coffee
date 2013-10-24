@@ -10,13 +10,14 @@ class Shopelia.Controllers.PaymentController extends Shopelia.Controllers.Contro
 
   create: (card) ->
     @view.lockView()
-    card.save(cardJson,{
+    that = this
+    card.save({},{
       beforeSend : (xhr) ->
         xhr.setRequestHeader("X-Shopelia-AuthToken",that.getSession().get("auth_token"))
       success : (resp) ->
-        #console.log('card success callback')
-        that.getSession().get("user").payment_cards.push(resp.disableWrapping().toJSON())
-        that.parent.setContentView(new Shopelia.Views.OrdersIndex())
+        that.getSession().get("user").get('payment_cards').add(resp.disableWrapping().toJSON())
+        console.log(that.getSession().get("user").get('payment_cards'))
+        Shopelia.vent.trigger("modal_content#order")
       error : (model, response) ->
         #console.log('card error callback')
         that.view.unlockView()
