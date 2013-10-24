@@ -23,7 +23,7 @@ function($, logger, viking, hu, pu, ari_toolbar) {
       return;
 
     if (msg.action === 'initialCrawl' || msg.action === 'updateCrawl') {
-      updateFieldMatching();
+      updateFieldsMatching();
     } else if (msg.action === 'recrawl') {
       chrome.storage.local.get('mappings', function(hash) {
         data = hash.mappings[url].data;
@@ -43,7 +43,7 @@ function($, logger, viking, hu, pu, ari_toolbar) {
   };
 
   mapper.init = function() {
-    buttons = $("#ariane-toolbar button[id^='ariane-product-']");
+    buttons = $(ari_toolbar.toolbarElem).find("button[id^='ariane-product-']");
     buttons.addClass("missing");
 
     $("body").click(onBodyClick);
@@ -65,7 +65,7 @@ function($, logger, viking, hu, pu, ari_toolbar) {
     });
 
     ari_toolbar.startAriane(true);
-    updateFieldMatching();
+    updateFieldsMatching();
   };
 
   /* ********************************************************** */
@@ -100,25 +100,25 @@ function($, logger, viking, hu, pu, ari_toolbar) {
     var elems = $(path);
     elems.effect("highlight", {color: "#00cc00" }, "slow");
     logger.info("setMapping('"+fieldId+"', '"+path+"')", elems.length, "element(s) found.");
-    var context = elems.length == 1 ? hu.getElementContext(elems[0]) : {};
 
     var map = {};
-    map[fieldId] = {path: path, context: context};
+    map[fieldId] = {path: path};
     viking.merge(map, data, host);
 
     chrome.storage.local.get('mappings', function(hash) {
       hash.mappings[url].data = data;
       chrome.storage.local.set(hash);
-    });
 
-    rematch();
+      rematch();
+    });
   };
 
   function rematch() {
+    buttons.attr('title', ''); // reset title
     chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: viking.buildMapping(url, data), kind: 'update'});
   }
 
-  function updateFieldMatching() {
+  function updateFieldsMatching() {
     chrome.storage.local.get('crawlings', function(hash) {
       var crawlResults = hash.crawlings[url].update || hash.crawlings[url].initial;
       if (! crawlResults)
@@ -129,6 +129,8 @@ function($, logger, viking, hu, pu, ari_toolbar) {
         if (crawlResults[key]) {
           var b = buttons.filter("#ariane-product-"+key);
           b.removeClass("missing").addClass("mapped");
+          if (b[0].title) b[0].title += "\n";
+          b[0].title += "Crawl result = '" + crawlResults[key] + "'\n";
         }
     });
   }
