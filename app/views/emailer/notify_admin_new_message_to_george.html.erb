@@ -1,0 +1,7 @@
+<b>Nouveau message reçu pour Georges !</b>
+<p>
+<u>Envoyé par</u> : <%= @message.device.id %>
+<p>
+<%= @message.content %>
+<p>
+<%= link_to "Répondre", admin_georges_device_messages_url(@message.device) %>
