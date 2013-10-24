@@ -35,8 +35,11 @@ function buildMapping(uri, hash) {
 
 //
 function preProcessData(data) {
-  if (data.url && data.url.match(/priceminister/) !== null && data.url.match(/filter=10/) === null) {
-    data.url += (data.url.match(/#/) !== null ? "&filter=10" : "#filter=10");
+  if (data.url && data.url.search(/^https?:\/\/[\w\.]+priceminister\.com/) !== -1 && data.url.search(/filter=10/) === -1) {
+    if (data.url.search(/filter=\d0/) !== -1) {
+      data.url = data.url.replace(/filter=\d0/, 'filter=10');
+    } else
+      data.url += (data.url.search(/#/) !== -1 ? "&filter=10" : "#filter=10");
   }
 
   data.argOptions = data.options || data.argOptions || {};
