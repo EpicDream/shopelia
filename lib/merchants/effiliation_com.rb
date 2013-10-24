@@ -5,11 +5,10 @@ class EffiliationCom
   end
 
   def canonize
-    matches = /url\=(http.+)/.match(@url)
-    return @url unless matches.present?
-    url = URI.unescape(matches[1])
-    @url = MerchantHelper.canonize(url)
+    if m = /url\=(http.+)/.match(@url)
+      MerchantHelper.canonize(URI.unescape(m[1]))
+    else
+      nil
+    end
   end
-
 end
-
