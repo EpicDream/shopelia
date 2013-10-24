@@ -2,8 +2,8 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery', 'logger', 'viking', 'html_utils', 'lib/path_utils', 'controllers/toolbar_contentscript'],
-function($, logger, viking, hu, pu, ari_toolbar) {
+define(['jquery', 'logger', 'viking', 'html_utils', 'crawler', 'lib/path_utils', 'controllers/toolbar_contentscript'],
+function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
   "use strict";
 
   var mapper = {};
@@ -24,6 +24,7 @@ function($, logger, viking, hu, pu, ari_toolbar) {
 
     if (msg.action === 'initialCrawl' || msg.action === 'updateCrawl') {
       updateFieldsMatching();
+      mapper.savePage();
     } else if (msg.action === 'recrawl') {
       chrome.storage.local.get('mappings', function(hash) {
         data = hash.mappings[url].data;
@@ -113,9 +114,26 @@ function($, logger, viking, hu, pu, ari_toolbar) {
     });
   };
 
+  mapper.savePage = function () {
+    chrome.storage.local.get(['mappings', 'crawlings'], function (hash) {
+      var data = hash.mappings[url].data,
+        page;
+      if (! data.pages)
+        data.pages = {};
+      if (! data.pages[url])
+        data.pages[url] = viking.getPage(document);
+      page = data.pages[url];
+      if (! page.results)
+        page.results = Crawler.fastCrawl(viking.buildMapping(url, data));
+      chrome.storage.local.set(hash);
+    });
+  };
+
   function rematch() {
+    var mapping = viking.buildMapping(url, data);
     buttons.attr('title', ''); // reset title
-    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: viking.buildMapping(url, data), kind: 'update'});
+    updatePageResult(mapping);
+    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
   }
 
   function updateFieldsMatching() {
@@ -134,6 +152,15 @@ function($, logger, viking, hu, pu, ari_toolbar) {
         }
     });
   }
+
+  function updatePageResult(mapping) {
+    chrome.storage.local.get(['mappings'], function (hash) {
+      var page = hash.mappings[url].data.pages[url];
+      page.results = Crawler.fastCrawl(mapping, viking.getDocument(page));
+      logger.debug("New page results =", page.results);
+      chrome.storage.local.set(hash);
+    });
+  };
 
   return mapper;
 });
