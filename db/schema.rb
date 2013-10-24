@@ -245,6 +245,17 @@ ActiveRecord::Schema.define(:version => 20131023130003) do
     t.boolean  "multiple_addresses",  :default => false
   end
 
+  create_table "messages", :force => true do |t|
+    t.text     "content"
+    t.text     "data"
+    t.boolean  "from_admin"
+    t.boolean  "pending_answer"
+    t.boolean  "read"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.integer  "device_id"
+  end
+
   create_table "meta_orders", :force => true do |t|
     t.integer  "user_id"
     t.datetime "created_at",         :null => false

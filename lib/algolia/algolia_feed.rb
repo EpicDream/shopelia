@@ -9,15 +9,15 @@ require 'open-uri'
 require 'filemagic'
 require 'zip/zip'
 
-# TODO: Use MerchantHelper for URL canonization
-# TODO: Better use of exceptions
-# TODO: cache merchant info
-
 module AlgoliaFeed
+
+  class InvalidFile < IOError; end
+  class InvalidRecord < ScriptError; end
+  class RejectedRecord < ScriptError; end
 
   class AlgoliaFeed
 
-    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :algolia_application_id, :algolia_api_key, :algolia_index_name, :algolia_index, :algolia_production_index_name, :tmpdir, :forbidden
+    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :index, :tmpdir, :forbidden, :debug, :merchant_cache
 
     def self.run(params={})
       self.new(params).run
@@ -28,32 +28,23 @@ module AlgoliaFeed
     end
 
     def initialize(params={})
-      self.urls                          = params[:urls]                          || []
-      self.conversions                   = params[:conversions]                   || {}
-      self.product_field                 = params[:product_field]                 || 'product'
-      self.batch_size                    = params[:batch_size]                    || 1000
-      self.algolia_index_name            = params[:algolia_index_name]            || 'products-feed-fr-new'
-      self.algolia_production_index_name = params[:algolia_production_index_name] || 'products-feed-fr'
-      self.algolia_application_id        = params[:algolia_application_id]        || "JUFLKNI0PS"
-      self.algolia_api_key               = params[:algolia_api_key]               || "bd7e7d322cf11e241e3a8fb22aeb5620"
-      self.tmpdir                        = params[:tmpdir]                        || '/tmp'
-      self.forbidden                     = params[:forbidden]                     || ['sextoys', 'erotique']
+      self.urls                  = params[:urls]                  || []
+      self.conversions           = params[:conversions]           || {}
+      self.product_field         = params[:product_field]         || 'product'
+      self.batch_size            = params[:batch_size]            || 1000
+      self.index_name            = params[:index_name]            || 'products-feed-fr'
+      self.tmpdir                = params[:tmpdir]                || '/tmp'
+      self.forbidden             = params[:forbidden]             || ['sextoys', 'erotique']
+      self.debug                 = params[:debug]                 || true
+      self.merchant_cache = {}
     end
 
     def connect(index_name)
-      Algolia.init :application_id => self.algolia_application_id,
-                   :api_key        => self.algolia_api_key
-      index = Algolia::Index.new(index_name)
-    end
-
-    def make_production
-      index = connect(self.algolia_production_index_name)
-      puts Algolia.move_index(self.algolia_index_name, self.algolia_production_index_name)
-      index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference']})
+      self.index = Algolia::Index.new(index_name)
     end
 
     def run
-      self.algolia_index = connect(self.algolia_index_name)
+      connect(self.index_name)
 
       self.urls.each do |url|
         begin
@@ -62,7 +53,7 @@ module AlgoliaFeed
           File.unlink(raw_file)
           process_xml(decoded_file)
           File.unlink(decoded_file)
-        rescue => e
+        rescue InvalidFile => e
           puts "Failed to parse file #{url} : #{e.backtrace.join("\n")}"
           next
         end
@@ -76,31 +67,33 @@ module AlgoliaFeed
       File.open(decoded_file, 'rb') do |f|
         reader = Nokogiri::XML::Reader(f) { |config| config.nonet.noblanks }
         reader.each do |r|
-          next unless r.name == self.product_field && r.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
-          products_counter += 1
-          product = product_hash(r.outer_xml)
-          record = process_product(product)
-          record = check_forbidden(record)
-          if record.present?
-            self.records << record
+          begin
+            next unless r.name == self.product_field && r.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
+            product = product_hash(r.outer_xml)
+            record = process_product(product)
+            check_forbidden(record)
             products_counter += 1
+            self.records << record
+          rescue RejectedRecord
+            next
+          rescue InvalidRecord => e
+            puts "Failed to add record: #{e.backtrace.join("\n")}\nRecord: #{record.inspect}" if self.debug
+            next
           end
           self.send_batch if self.records.size >= self.batch_size
         end
         self.send_batch
-        puts "[#{Time.now}] #{decoded_file} - Processed #{products_counter} products in #{Time.now - file_start} seconds (#{(products_counter.to_f/(Time.now - file_start)).round} pr/s)"
+        puts "[#{Time.now}] #{decoded_file} - Processed #{products_counter} products in #{Time.now - file_start} seconds (#{(products_counter.to_f/(Time.now - file_start)).round} pr/s)" if self.debug
       end  
     end
 
     def check_forbidden(record)
-      return unless record.present?
       forbidden_tags = "(#{self.forbidden.join('|')})"
       record['_tags'].each do |tag|
         next unless tag=~/category:/
         xtag = tag.downcase.gsub(/category:/, '').gsub(/[^a-z]/, '')
-        return if xtag =~ /#{forbidden_tags}/
+        raise RejectedRecord," Record belongs to category #{xtag}" if xtag =~ /#{forbidden_tags}/
       end
-      record
     end
 
     def product_hash(xml)
@@ -114,7 +107,7 @@ module AlgoliaFeed
 
     def send_batch
       return unless self.records.size > 0
-      self.algolia_index.add_objects(self.records)
+      self.index.save_objects(self.records)
       self.records = []
     end
 
@@ -127,7 +120,7 @@ module AlgoliaFeed
           if res.is_a?(Net::HTTPSuccess)
             f.write res.body
           else
-            raise StandardError, "Cannot download #{url}: #{res.message}"
+            raise InvalidFile, "Cannot download #{url}: #{res.message}"
           end
         else
           open(url) do |ftp|
@@ -162,22 +155,22 @@ module AlgoliaFeed
     end
 
     def process_product(product)
-      record = {}
+      record = {'_tags' => []}
       self.conversions.each_pair do |from, to|
         record[to] = product[from] if product.has_key?(from)
       end
       if record.has_key?('ean')
-        record['_tags'] = []  unless record.has_key?('_tags')
         record['ean'].split(/\D+/).each do |ean|
-        record['_tags'] << "ean:#{ean}" if ean.size > 7
+          record['_tags'] << "ean:#{ean}" if ean.size > 7
         end 
         record.delete('ean')
       end
       if record.has_key?('brand')
-        record['_tags'] = []  unless record.has_key?('_tags')
         record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
       end
+      raise RejectedRecord if !record.has_key?('image_url') || record['image_url'] !~ /\Ahttp/
       add_merchant_data(record)
+      record['timestamp'] = Time.now.to_i
       record
     end
 
@@ -187,18 +180,30 @@ module AlgoliaFeed
 
     def add_merchant_data(record)
       record['product_url'] = canonize_url(record['product_url'])
+      raise InvalidRecord, "Record has nil product_url" if record['product_url'].nil?
+      record['objectID'] =  Digest::MD5.hexdigest(record['product_url'])
       uri = URI(record['product_url'])
       domain_elements = uri.host.split(/\./)
-      
       while domain_elements.size > 2
         domain_elements.shift
       end
-      merchant = Merchant.find_by_domain(domain_elements.join('.'))
-      return unless merchant.present?
-      record['merchant'] = MerchantSerializer.new(merchant).as_json[:merchant]
-      record['_tags'] = [] unless record.has_key?('_tags')
-      record['_tags'] << "merchant_name:#{merchant.name}"
-      record['saturn'] =  merchant.viking_data.present? ? '1' : '0'
+      domain = domain_elements.join('.')
+      unless self.merchant_cache.has_key?(domain)
+        merchant = Merchant.find_by_domain(domain)
+        if merchant.present?
+          self.merchant_cache[domain] = {
+            :name   => merchant.name,
+            :data   => MerchantSerializer.new(merchant).as_json[:merchant],
+            :saturn => merchant.viking_data.present? ? '1' : '0'
+          }
+        else
+          self.merchant_cache[domain] = {}
+        end
+      end
+      return unless self.merchant_cache[domain].has_key?(:name)
+      record['merchant'] = self.merchant_cache[domain][:data]
+      record['_tags'] << "merchant_name:#{self.merchant_cache[domain][:name]}"
+      record['saturn'] = self.merchant_cache[domain][:saturn]
     end
 
     def get_categories(fields)
