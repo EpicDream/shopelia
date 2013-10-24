@@ -70,6 +70,9 @@ class Shopelia.Controllers.ModalContentController extends Shopelia.Controllers.C
   showPaymentFields: ->
     Shopelia.vent.trigger("payment#show",@view.right)
 
+  showRecap: (order) ->
+    Shopelia.vent.trigger("recap#show",@view.left,order)
+
 
   showThankYou: ->
     Shopelia.vent.trigger("thank_you#show",@view.right)
