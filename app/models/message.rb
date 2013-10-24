@@ -10,9 +10,8 @@ class Message < ActiveRecord::Base
   private
 
   def serialize_data
-    p self.products_urls
     unless self.products_urls.nil?
-
+       self.data =  self.products_urls.split(/\r?\n/).reject! { |c| c.empty? }
     end
   end
 

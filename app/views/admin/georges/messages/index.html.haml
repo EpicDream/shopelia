@@ -1,8 +1,12 @@
+%section.header
+  %header
+    %h1 Conversation
 %section.chat
   - @messages.each do |message|
-    %div{class: "from-#{message.from_admin ? 'admin':'user'}"}
-      %p= message.content
-    .clear
+    - unless message.content.empty?
+      %div{class: "from-#{message.from_admin ? 'admin':'user'}"}
+        %p= message.content
+      .clear
 
 
   =render partial: "admin/georges/messages/form"
