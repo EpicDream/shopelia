@@ -24,10 +24,13 @@ class ZanoxComTest < ActiveSupport::TestCase
         out: nil
       },
       { in: 'http://ad.zanox.com/ppc/?19436175C242487251&amp;ULP=[[m/ps/mpid:MP-0002CM2247254%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d]]',
-        out: nil
+        out: 'http://www.rueducommerce.fr/m/ps/mpid:MP-0002CM2247254'
       },
       { in: 'http://ad.zanox.com/ppc/?19024603C1357169475&amp;ULP=[[http://logc57.xiti.com/gopc.url?xts=425426&amp;xtor=AL-146-%5Btypologie%5D-%5BREMPLACE%5D-%5Bflux%5D&amp;xtloc=http://www.eveiletjeux.com/mallette-visseuse-technico/produit/0006216&amp;url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm]]',
         out: 'http://www.eveiletjeux.com/mallette-visseuse-technico/produit/0006216'
+      },
+      { in: 'http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[www.fnac.com%2FTous-les-Enregistreurs%2FEnregistreur-DVD-Enregistreur-Blu-ray%2Fnsh180760%2Fw-4%23bl%3DMMtvh]]',
+        out: 'http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4'
       }
     ]
     urls.each do |url|
