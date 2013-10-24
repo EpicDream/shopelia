@@ -1,4 +1,4 @@
-= simple_form_for [:admin,@device,Message.new], remote:true do |f|
+= simple_form_for [:admin,:georges,@device,Message.new], remote:true do |f|
   = f.input :content,label:false
   = f.input :products_urls,:as => :text, label:false, placeholder:"Product Urls"
   = f.button :submit, "Validate", :class => 'btn-success'

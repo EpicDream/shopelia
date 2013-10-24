@@ -55,8 +55,10 @@ Shopelia::Application.routes.draw do
       get :retry, :on => :member
       get :mute, :on => :member
     end
-    resources :devices do
-      resources :messages
+    namespace :georges do
+      resources :devices do
+        resources :messages
+      end
     end
   end
 

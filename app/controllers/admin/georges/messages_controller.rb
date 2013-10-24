@@ -1,4 +1,4 @@
-class Admin::MessagesController < Admin::AdminController
+class Admin::Georges::MessagesController < Admin::AdminController
   before_filter :prepare_message_params , :only => [:create]
 
   def index
@@ -13,7 +13,7 @@ class Admin::MessagesController < Admin::AdminController
     if @message.save!
       @device.pending_answer = false
       @device.save
-      redirect_to admin_device_messages_url(@device)
+      redirect_to admin_georges_device_messages_url(@device)
     else
       @message.errors.full_messages
     end
