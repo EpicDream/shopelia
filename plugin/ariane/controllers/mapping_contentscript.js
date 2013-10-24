@@ -30,6 +30,8 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
         data = hash.mappings[url].data;
         rematch();
       });
+    } else if (msg.action === 'updateConsistency') {
+      updateFieldsConsitency(msg.results);
     }
   });
 
@@ -130,9 +132,11 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
   };
 
   function rematch() {
-    var mapping = viking.buildMapping(url, data);
+    var mapping = viking.buildMapping(url, data),
+      results = mapper.checkConsistency(mapping);
     buttons.attr('title', ''); // reset title
     updatePageResult(mapping);
+    chrome.extension.sendMessage({action: "updateConsistency", url: url, results: results});
     chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
   }
 
@@ -160,6 +164,45 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
       logger.debug("New page results =", page.results);
       chrome.storage.local.set(hash);
     });
+  };
+
+  function updateFieldsConsitency(results) {
+    var b, key;
+    logger.info("Consistency results :", results);
+    buttons.removeClass('inconstistent');
+    for (key in results) {
+      b = buttons.filter("#ariane-product-"+key);
+      b.addClass("inconstistent");
+      b[0].title += results[key].map(function(e) {return "\n" + e.msg + "\n";}).join('');
+    }
+  }
+
+  mapper.checkConsistency = function (mapping, field) {
+    var pages = data.pages,
+      fields = field ? [field] : Object.keys(mapping),
+      results = {},
+      page, pageUrl, oldResults, pageDoc, newResults, i;
+
+    for (pageUrl in pages) {
+      if (pageUrl === url) continue;
+      page = pages[pageUrl];
+      oldResults = page.results;
+      pageDoc = viking.getDocument(page);
+      newResults = Crawler.fastCrawl(mapping, pageDoc);
+      for (i = fields.length - 1; i >= 0; i--) {
+        field = fields[i];
+        if (oldResults[field] != newResults[field]) {
+          results[field] = results[field] || [];
+          results[field].push({
+            url: page.href,
+            old: oldResults[field],
+            new: newResults[field],
+            msg: "On page '"+page.href+"',\n'" + newResults[field] + "' got, but\n'" + oldResults[field] + "' waited.",
+          });
+        }
+      }
+    }
+    return results;
   };
 
   return mapper;

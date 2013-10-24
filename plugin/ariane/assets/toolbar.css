@@ -18,6 +18,8 @@
 #ariane-toolbar button.missing:not(.current-field) span {background-color: red;}
 #ariane-toolbar button.missing.current-field span {color: red;}
 #ariane-toolbar button.mapped span {color: green;}
+#ariane-toolbar button.missing.inconstistent span {color: black;}
+#ariane-toolbar button.mapped.inconstistent span {color: orangeRed;}
 #ariane-toolbar button.ari-panel-ctrl {
   position: absolute;
   right: 3px;
