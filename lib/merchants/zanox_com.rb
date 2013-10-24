@@ -12,8 +12,8 @@ class ZanoxCom
       url = m[1] if m = /xtloc\=(http:\/\/www.eveiletjeux.com.+?)\&/.match(url)
    
       url = MerchantHelper.canonize(url)
-      @url = url if url.present?
+      return url if url.present?
     end
-    @url
+    nil
   end
 end

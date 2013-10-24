@@ -21,10 +21,10 @@ class ZanoxComTest < ActiveSupport::TestCase
         out: 'http://www.imenager.com/accessoire-cuisson/fp-336342-seb'
       },
       { in: 'http://ad.zanox.com/ppc/?19472705C2093117078&amp;ULP=[[474-20606-100171/]]',
-        out: 'http://ad.zanox.com/ppc/?19472705C2093117078&amp;ULP=[[474-20606-100171/]]'
+        out: nil
       },
       { in: 'http://ad.zanox.com/ppc/?19436175C242487251&amp;ULP=[[m/ps/mpid:MP-0002CM2247254%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d]]',
-        out: 'http://ad.zanox.com/ppc/?19436175C242487251&amp;ULP=[[m/ps/mpid:MP-0002CM2247254%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d]]'
+        out: nil
       },
       { in: 'http://ad.zanox.com/ppc/?19024603C1357169475&amp;ULP=[[http://logc57.xiti.com/gopc.url?xts=425426&amp;xtor=AL-146-%5Btypologie%5D-%5BREMPLACE%5D-%5Bflux%5D&amp;xtloc=http://www.eveiletjeux.com/mallette-visseuse-technico/produit/0006216&amp;url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm]]',
         out: 'http://www.eveiletjeux.com/mallette-visseuse-technico/produit/0006216'
