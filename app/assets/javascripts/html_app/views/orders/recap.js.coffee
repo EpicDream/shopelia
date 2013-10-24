@@ -4,7 +4,7 @@ class Shopelia.Views.Recap extends Shopelia.Views.Layout
 
   templateHelpers: {
     user:(attr) ->
-      console.log("ORDER RECAP HELPER" + @)
+      console.log("ORDER RECAP HELPER" + JSON.stringify(@))
       @order.session.get('user').get(attr)
     product:(attr) ->
       @order.product.get(attr)
@@ -18,7 +18,9 @@ class Shopelia.Views.Recap extends Shopelia.Views.Layout
 
   className: 'box'
   ui: {
+    cashfront: '#order-cashfront'
     quantity: '#quantity'
+    order_test: '#order-test-box'
   }
 
   initialize: ->
