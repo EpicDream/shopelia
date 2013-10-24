@@ -162,13 +162,14 @@ module AlgoliaFeed
       end
       if record.has_key?('ean')
         record['ean'].split(/\D+/).each do |ean|
-        record['_tags'] << "ean:#{ean}" if ean.size > 7
+          record['_tags'] << "ean:#{ean}" if ean.size > 7
         end 
         record.delete('ean')
       end
       if record.has_key?('brand')
         record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
       end
+      raise RejectedRecord if !record.has_key?('image_url') || record['image_url'] !~ /\Ahttp/
       add_merchant_data(record)
       record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
