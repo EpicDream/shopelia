@@ -18,6 +18,7 @@ class Shopelia.Views.Recap extends Shopelia.Views.Layout
 
   className: 'box'
   ui: {
+    title: "#payment-title-header"
     cashfront: '#order-cashfront'
     quantity: '#quantity'
     order_test: '#order-test-box'
@@ -38,4 +39,5 @@ class Shopelia.Views.Recap extends Shopelia.Views.Layout
       @ui.order_test.show()
 
 
-
+  onConfirmedOrder: ->
+    @ui.title.text("Commande effectuée")

@@ -18,6 +18,7 @@ class Shopelia.Controllers.OrderController extends Shopelia.Controllers.Controll
                success: (resp) ->
                  #console.log(resp)
                  Shopelia.vent.trigger("modal_content#show_thank_you")
+                 Shopelia.vent.trigger("recap#changeTitle")
                error: (model, response) ->
                  console.log(JSON.stringify(response))
                })

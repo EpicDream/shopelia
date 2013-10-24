@@ -1,4 +1,4 @@
-<h3>Paiement de votre commande</h3>
+<h3 id="payment-title-header">Paiement de votre commande</h3>
 <div class="spacer25"></div>
 
     <div class="field-title clearfix">

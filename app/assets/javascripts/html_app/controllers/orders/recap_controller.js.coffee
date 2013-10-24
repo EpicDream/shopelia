@@ -5,4 +5,5 @@ class Shopelia.Controllers.RecapController extends Shopelia.Controllers.Controll
     region.show(@view)
 
 
-
+  changeTitle: ->
+    @view.onConfirmedOrder()
