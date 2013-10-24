@@ -1,31 +1,23 @@
 class Admin::Georges::MessagesController < Admin::AdminController
-  before_filter :prepare_message_params , :only => [:create]
+  before_filter :retrieve_device
 
   def index
-    @device = Device.find(params[:device_id])
-    @messages = Message.where(device_id:@device.id)
+    @messages = @device.messages.order(:created_at)
   end
 
   def create
-    @device = Device.find(params[:device_id])
-    @message = Message.create(@message_hash)
-    @message.device_id = @device.id
-    if @message.save!
-      @device.pending_answer = false
-      @device.save
+    @message = @device.messages.build(params[:message].merge(from_admin:true))
+
+    if @message.save
       redirect_to admin_georges_device_messages_url(@device)
     else
-      @message.errors.full_messages
+      render :action => 'index'
     end
   end
 
-
   private
 
-  def prepare_message_params
-    @message_hash = params[:message].merge({
-                                         :from_admin => true,
-                                     })
+  def retrieve_device
+    @device = Device.find(params[:device_id])
   end
-
 end
