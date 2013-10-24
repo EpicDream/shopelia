@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131022113011) do
+ActiveRecord::Schema.define(:version => 20131024110904) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -143,9 +143,17 @@ ActiveRecord::Schema.define(:version => 20131022113011) do
   create_table "devices", :force => true do |t|
     t.string   "uuid"
     t.text     "user_agent"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
     t.integer  "user_id"
+    t.string   "push_token"
+    t.string   "os"
+    t.string   "os_version"
+    t.string   "phone"
+    t.string   "referrer"
+    t.integer  "build"
+    t.string   "version"
+    t.boolean  "pending_answer"
   end
 
   add_index "devices", ["uuid"], :name => "index_devices_on_uuid"
@@ -212,6 +220,16 @@ ActiveRecord::Schema.define(:version => 20131022113011) do
     t.boolean  "allow_quantities",    :default => true
     t.boolean  "rejecting_events",    :default => false
     t.boolean  "multiple_addresses",  :default => false
+  end
+
+  create_table "messages", :force => true do |t|
+    t.text     "content"
+    t.text     "data"
+    t.boolean  "from_admin"
+    t.boolean  "read"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.integer  "device_id"
   end
 
   create_table "meta_orders", :force => true do |t|

@@ -46,6 +46,7 @@ gem 'rubyzip', '< 1.0.0'
 gem 'algoliasearch-rails'
 gem 'mailjet'
 gem 'amazon-ecs'
+gem 'pushmeup'
 
 # Gems used only for assets and not required
 # in production environments by default.

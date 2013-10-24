@@ -65,12 +65,13 @@ define(['logger', 'viking'], function(logger, viking) {
   // Clean data for this tab.
   // All data are saved in global variable $e for debugging purpose.
   ariane.clean = function(tabId, deleteTab) {
-    chrome.storage.local.get(['openTabs', "mappings"], function(hash) {
+    chrome.storage.local.get(['openTabs', "mappings", "crawlings"], function(hash) {
       var url = hash.openTabs[tabId];
       if (url === undefined)
         return;
       delete hash.openTabs[tabId];
       delete hash.mappings[url];
+      delete hash.crawlings[url];
       chrome.storage.local.set(hash);
     });
     if (deleteTab !== false)
