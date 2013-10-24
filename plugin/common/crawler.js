@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-20
 
-define(["logger", "jquery", "html_utils", "satconf"], function(logger, $, hu) {
+define(["logger", "jquery", "html_utils", "core_extensions"], function(logger, $, hu) {
   "use strict";
 
 var OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*taille\s*$|couleur/i;

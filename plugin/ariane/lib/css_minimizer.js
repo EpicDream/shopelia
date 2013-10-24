@@ -2,13 +2,13 @@
 // Author : Vincent Renaudineau
 // Created : 2013-10-16
 
-define(["lib/css_struct"], function(CssStruct) {
+define(['sorted_array', "lib/css_struct"], function(SortedArray, CssStruct) {
   'use strict';
-  
+
   return (function () {
 
     var Minimizer = {},
-      TAG_GEN = ['div', 'span', 'p', 'tr', 'td', 'body'],
+      TAG_GEN = {'div': true, 'span': true, 'p': true, 'tr': true, 'td': true, 'body': true, '*': true},
       COSTS = {
         'tag_gen' : 5,
         'tag_spe' : 3,
@@ -16,7 +16,7 @@ define(["lib/css_struct"], function(CssStruct) {
         'class' : 2,
         'attribute' : 3,
         'function' : 4,
-        'sep' : 0,
+        'sep' : 1,
         ' ' : 1,
         '>' : 0,
         '~' : 2,
@@ -48,90 +48,69 @@ define(["lib/css_struct"], function(CssStruct) {
 
     function score(struct) {
       var res = 0,
-        i,
-        l,
-        h;
-      for (i = 0, l = struct.length; i < l; i++) {
+        l = struct.length,
+        n = l >= 16 ? l / 4 : 4, // minimum 4
+        i, h;
+      for (i = l--; i >= 0; i--) { // l-- for (l-i) later
         h = struct[i];
-        if (!h) {
+        if (!h)
           continue;
-        }
         switch (h.type) {
         case 'tag':
-          if (TAG_GEN.indexOf(h.value) !== -1) {
-            res += COSTS.tag_gen;
-          } else {
-            res += COSTS.tag_spe;
-          }
+          res += TAG_GEN[h.value] ? COSTS.tag_gen : COSTS.tag_spe;
           break;
         default:
           res += COSTS[h.type];
         }
+        // struct is diveded in 4 section by n, each elems in first section cost 3, in second 2, etc.
+        res += (l-i) / n >>> 0; // (x >>> 0) == Math.floor(x)
       }
       return res;
     }
 
     function separate(struct, initialStruct) {
-      /*
-      quand j'ajoute un élément, il faut que j'ajoute le separateur si il n'y est pas déjà, et pas '>' mais ' ' si il y en a plusieurs !
-      */
       var children = [],
         sepCtr = 0,
-        lastDefIdx,
-        lastSepIdx,
-        elem,
-        child,
-        i,
-        l,
-        j;
+        l = initialStruct.length,
+        nbSepBetweenNewAndLastSet,
+        lastSepIdx, child, i;
 
-      for (i = 0, l = initialStruct.length; i < l; i++) {
-        elem = struct[i];
-        // => struct[i] is defined, et n'est pas un sep
-        if (elem && elem.type !== 'sep') {
-          for (j = children.length-1; j >= 0 && children[j].newItemIdx !== undefined; j--) {
-            child = children[j];
-            if (sepCtr-child.nbSep > 0 && child.newItemIdx < lastSepIdx) {
-              child[lastSepIdx] = {type: initialStruct[lastSepIdx].type, kind: initialStruct[lastSepIdx].kind};
-              child[lastSepIdx].kind = '>';
-              if (sepCtr-child.nbSep > 1)
-                child[lastSepIdx].kind = ' ';
-            }
-            delete child.newItemIdx;
-          }
-          sepCtr = 0;
-          lastSepIdx = -1;
-          lastDefIdx = i;
-        // => struct[i] is undefined, et initialStruct[i] est un sep, et il y a déjà un elem defined dans struct avant
-        } else if (initialStruct[i].type === 'sep') {
+      for (i = 0; i < l && ! struct[i]; i++) {
+        if (initialStruct[i].type === 'sep') {
           lastSepIdx = i;
           sepCtr++;
-        // => struct[i] is undefined, et initialStruct[i] n'est pas un sep
         } else {
           child = new CssStruct(struct);
           child[i] = initialStruct[i];
-          child.newItemIdx = i;
           child.nbSep = sepCtr;
-          if (sepCtr > 0 && lastDefIdx !== undefined) {
-            child[lastSepIdx] = {type: initialStruct[lastSepIdx].type, kind: initialStruct[lastSepIdx].kind};
-            child[lastSepIdx].kind = '>';
-          }
-          if (sepCtr > 1 && lastDefIdx !== undefined)
-            child[lastSepIdx].kind = ' ';
           children.push(child);
         }
       }
 
-      for (j = children.length-1; j >= 0 && children[j].newItemIdx !== undefined; j--)
-        delete children[j].newItemIdx;
+      if (i === l)
+        return children;
+
+      for (i = 0, l = children.length; i < l; i++) {
+        child = children[i];
+        nbSepBetweenNewAndLastSet = sepCtr - child.nbSep;
+        delete child.nbSep;
+        // On compte sur le fait que dans la boucle précédente,
+        // on se rapproche du dernier élément setté de struct.
+        if (nbSepBetweenNewAndLastSet === 0)
+          break;
+        if (nbSepBetweenNewAndLastSet > 0)
+          child[lastSepIdx] = {type: 'sep', kind: '>'};
+        if (nbSepBetweenNewAndLastSet > 1)
+          child[lastSepIdx].kind = ' ';
+      }
 
       return children;
     }
 
     function isSolution(path, waitedRes, $) {
       var found = $(path);
-      found = typeof found.toArray === 'function' ? found.toArray() : found;
-      return arraysEqual(found.sort(), waitedRes.sort());
+      found = $.fn && $.fn.jquery ? found.toArray() : found;
+      return arraysEqual(found, waitedRes);
     }
 
     Minimizer.minimize = function (initialCss, $, easySolutionCss, options) {
@@ -139,7 +118,8 @@ define(["lib/css_struct"], function(CssStruct) {
       var initialStruct = new CssStruct(initialCss),
         waitedRes = $(easySolutionCss || initialCss),
         bestScore = score(new CssStruct(easySolutionCss || initialCss)),
-        open = [new CssStruct("")],
+        open = new SortedArray(function(a, b) {return a.score-b.score}),
+        root = new CssStruct(""),
         closed = {},
         res = [],
         current,
@@ -147,33 +127,38 @@ define(["lib/css_struct"], function(CssStruct) {
         child,
         i;
 
-      open[0].length = initialStruct.length,
-      open[0].score = 0;
-      while (open.length > 0) {
+      root.length = initialStruct.length;
+      for (i = initialStruct.length-1; i >= 0 && initialStruct[i].type !== 'sep'; i--) {
+        child = new CssStruct(root);
+        child[i] = initialStruct[i];
+        child.cssString = child.toCss();
+        child.score = score(child);
+        open.insert(child);
+      }
+      while (open.array.length > 0) {
         current = open.shift();
-        if (current.score >= bestScore)
-          continue;
-        paths = separate(current, initialStruct);
-        for (i = 0; i < paths.length; i++) {
-          child = paths[i];
-          child.cssString = child.toCss();
-          if (closed[child.cssString])
-            continue;
-          child.score = score(child);
-          // console.info("Processing child '"+child.cssString+"'", child.score);
-          if (isSolution(child.cssString, waitedRes, $)) {
-            // console.info("Solution found !");
-            if (bestScore > child.score) { bestScore = child.score; }
-            res.push(child);
-          } else if (child.score < bestScore) {
-            // console.info("Add it.");
-            open.push(child);
+        // console.info("process '"+current.cssString+"', score=", current.score);
+        if (isSolution(current.cssString, waitedRes, $)) {
+          // console.info("Solution found !");
+          if (current.score < bestScore) {
+            bestScore = current.score;
+            open.trunc({score:bestScore});
           }
-          closed[child.cssString] = true;
+          res.push(current);
+        } else if (current.score < bestScore) {
+          paths = separate(current, initialStruct);
+          // console.info("Add children :", paths.length);
+          for (i = 0; i < paths.length; i++) {
+            child = paths[i];
+            child.cssString = child.toCss();
+            if (closed[child.cssString])
+              continue;
+            closed[child.cssString] = true;
+            child.score = score(child);
+            if (child.score < bestScore)
+              open.insert(child);
+          }
         }
-        open.sort(function (a, b) {
-          return a.score - b.score;
-        });
       }
 
       res = res.sort(function (a, b) {

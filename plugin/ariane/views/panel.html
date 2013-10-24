@@ -9,8 +9,14 @@
     #fieldsList a {
       color: red !important;
     }
+    #fieldsList a.inconstistent {
+      color: orangeRed !important;
+    }
     #fieldsList a.present {
       color: green !important;
+    }
+    #fieldsList a.present.inconstistent {
+      color: orange !important;
     }
     #pathsList .found {
       background-color: LightGreen;
@@ -55,8 +61,10 @@
     <div data-role="content">
       <h2>Résultats :</h2>
       <textarea id="pathsResult" readonly></textarea>
-      <h2 id="optionLabelTitle">Label :</h2>
+      <h2>Label :</h2>
       <input id="optionLabel" />
+      <h2>Consistance :</h2>
+      <textarea id="consistencyResult" readonly></textarea>
       <h2>Paths :</h2>
       <ul id="pathsList" data-role="listview" data-inset="true">
       </ul>
