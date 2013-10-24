@@ -20,7 +20,7 @@
                             </div>
                         </div>
                     </div>
-    <button id="btn-register-payment" class="custom-btn btn-block">ENREGISTRER MA CARTE</button>
+    <button id="btn-register-payment" class="custom-btn btn-block">PAYER MA COMMANDE</button>
 </form>
 
 
