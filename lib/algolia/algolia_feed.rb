@@ -4,7 +4,6 @@ require 'rubygems'
 require 'algoliasearch'
 require 'net/http'
 require 'nokogiri'
-require 'digest/md5'
 require 'open-uri'
 require 'filemagic'
 require 'zip/zip'
@@ -17,7 +16,7 @@ module AlgoliaFeed
 
   class AlgoliaFeed
 
-    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :index, :tmpdir, :forbidden, :debug, :merchant_cache, :category_fields
+    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :prod_index_name, :index, :tmpdir, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields
 
     def self.run(params={})
       self.new(params).run
@@ -32,16 +31,24 @@ module AlgoliaFeed
       self.conversions     = params[:conversions]     || {}
       self.product_field   = params[:product_field]   || 'product'
       self.batch_size      = params[:batch_size]      || 1000
-      self.index_name      = params[:index_name]      || 'products-feed-fr'
+      self.index_name      = params[:index_name]      || 'products-feed-fr-new'
+      self.prod_index_name = params[:prod_index_name] || 'products-feed-fr'
       self.tmpdir          = params[:tmpdir]          || '/tmp'
-      self.forbidden       = params[:forbidden]       || ['sextoys', 'erotique']
+      self.forbidden_cats  = params[:forbidden_cats]  || ['sextoys', 'erotique']
+      self.forbidden_names = params[:forbidden_names] || ['godemich', '\bgode\b', 'cockring', 'rosebud', '\bplug anal\b', 'vibromasseur', 'sextoy', 'masturbat' ]
       self.debug           = params[:debug]           || false
       self.category_fields = params[:category_fields] || []   
-      self.merchant_cache = {}
+      self.merchant_cache  = {}
     end
 
     def connect(index_name)
       self.index = Algolia::Index.new(index_name)
+    end
+
+    def make_production
+      Algolia.move_index(self.index_name, self.prod_index_name)
+      index = Algolia::Index.new(self.prod_index_name)
+      index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference']})
     end
 
     def run
@@ -89,12 +96,14 @@ module AlgoliaFeed
     end
 
     def check_forbidden(record)
-      forbidden_tags = "(#{self.forbidden.join('|')})"
+      forbidden_categories = "(#{self.forbidden_cats.join('|')})"
       record['_tags'].each do |tag|
         next unless tag=~/category:/
         xtag = tag.downcase.gsub(/category:/, '').gsub(/[^a-z]/, '')
-        raise RejectedRecord," Record belongs to category #{xtag}" if xtag =~ /#{forbidden_tags}/
+        raise RejectedRecord," Record belongs to category #{xtag}" if xtag =~ /#{forbidden_categories}/
       end
+      forbidden_names = "(#{self.forbidden_names.join('|')})"
+      raise RejectedRecord, "Record has forbidden name #{record['name']}" if record['name'] =~ /#{forbidden_names}/
     end
 
     def product_hash(xml)
@@ -108,7 +117,7 @@ module AlgoliaFeed
 
     def send_batch
       return unless self.records.size > 0
-      self.index.save_objects(self.records)
+      self.index.add_objects(self.records)
       self.records = []
     end
 
@@ -180,7 +189,6 @@ module AlgoliaFeed
     def add_merchant_data(record)
       record['product_url'] = Linker.clean(record['product_url'])
       raise InvalidRecord, "Record has nil product_url" if record['product_url'].nil?
-      record['objectID'] =  Digest::MD5.hexdigest(record['product_url'])
       domain = Utils.extract_domain(record['product_url'])
       unless self.merchant_cache.has_key?(domain)
         merchant = Merchant.find_by_domain(domain)
