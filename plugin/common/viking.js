@@ -132,9 +132,8 @@ define(['logger', 'jquery', 'uri'], function(logger, $, Uri) {
       if (! data.viking[goodHost])
         data.viking[goodHost] = {};
       var mapping = data.viking[goodHost];
-      if (! mapping[key]) mapping[key] = {path: [], context: []};
+      if (! mapping[key]) mapping[key] = {path: []};
       if (! mapping[key].path) mapping[key].path = [];
-      if (! mapping[key].context) mapping[key].context = [];
 
       var newPath = currentMap[key].path;
       var oldPath = mapping[key].path;
@@ -142,12 +141,12 @@ define(['logger', 'jquery', 'uri'], function(logger, $, Uri) {
 
       // if it did not exist, just create it and continue.
       if (! oldPath) {
-        mapping[key] = {path: [newPath], context: [currentMap[key].context]};
+        mapping[key] = {path: [newPath]};
         continue;
       }
       // if old version, update it.
       if (! (oldPath instanceof Array)) {
-        mapping[key] = {path: [oldPath], context: [mapping[key].context]};
+        mapping[key] = {path: [oldPath]};
         oldPath = mapping[key].path;
       }
       // if already contains it, pass
@@ -192,6 +191,23 @@ define(['logger', 'jquery', 'uri'], function(logger, $, Uri) {
         oldPath.push(newPath);
       }
     }
+  };
+
+  // Return the doc (default to current document) has a viking's page.
+  viking.getPage = function (doc) {
+    doc = doc || document;
+    return {
+      innerHTML: doc.documentElement.innerHTML,
+      title: doc.title,
+      href: document.location.href,
+    };
+  };
+
+  // Get the DOMDocument from the viking's saved page.
+  viking.getDocument = function (page) {
+    var doc = document.implementation.createHTMLDocument(page.title);
+    doc.documentElement.innerHTML = page.innerHTML;
+    return doc;
   };
 
   return viking;
