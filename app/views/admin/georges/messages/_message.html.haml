@@ -1,0 +1,4 @@
+- unless message.content.empty?
+  %div{class: "from-#{message.from_admin ? 'admin':'user'}"}
+    %p= message.content
+  .clear

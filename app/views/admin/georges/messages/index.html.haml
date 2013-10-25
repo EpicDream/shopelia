@@ -2,11 +2,6 @@
   %header
     %h1 Conversation
 %section.chat
-  - @messages.each do |message|
-    - unless message.content.empty?
-      %div{class: "from-#{message.from_admin ? 'admin':'user'}"}
-        %p= message.content
-      .clear
-
-
+  #messages
+    = render partial: "admin/georges/messages/message", collection: @messages
   =render partial: "admin/georges/messages/form"

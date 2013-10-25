@@ -1,10 +1,8 @@
-= simple_form_for [:admin,:georges,@device,Message.new], remote:true do |f|
-  = f.input :content,label:false , :input_html => { :rows => 3 ,:class => "span5"}
+= form_for([:admin,:georges,@device,Message.new], remote: true, :html => { :id => 'message_form' }) do |f|
+  = f.text_area :content ,:rows => 10, :class => "span5"
   %label.checkbox
     %input.checkbox{type:"checkbox",id:"data-checkbox", checked:false} send product urls
-  = f.input :products_urls,:as => :text, label:false, placeholder:"Product Urls" , :input_html => { :rows => 10, :class => "span5" }
-  = f.button :submit, "Validate", :class => 'btn-success btn-large'
+  = f.text_area :products_urls, :rows => 10, :class => "span5"
+  = f.submit "Validate", :class => 'btn btn-success btn-large'
   %button.pull-right.btn.btn-danger.btn-large End Conversation
-
-
 
