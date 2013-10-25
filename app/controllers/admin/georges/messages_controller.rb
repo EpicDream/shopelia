@@ -15,6 +15,25 @@ class Admin::Georges::MessagesController < Admin::AdminController
     end
   end
 
+  def check
+    @products = []
+    developer = Developer.find_by_name("Shopelia")
+    (params[:urls] || "").split(/\r?\n/).compact.each do |url|
+      product = Product.fetch(url)
+      product.p.authorize_push_channel
+      Event.create!(
+        :product_id => product.id,
+        :action => Event::REQUEST,
+        :developer_id => developer.id,
+        :tracker => "georges")
+      @products << product
+    end
+
+    respond_to do |format|
+      format.js
+    end
+  end
+
   private
 
   def retrieve_device

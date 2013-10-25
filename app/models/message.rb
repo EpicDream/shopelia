@@ -14,6 +14,16 @@ class Message < ActiveRecord::Base
   attr_accessible :content, :data, :device_id, :read, :products_urls, :from_admin
   attr_accessor :products_urls
 
+  def build_push_data
+    self.data.map do |url|
+      product = Product.fetch(url)
+      { product_url:product.url,
+        name:product.name,
+        image_url:product.image_url,
+        price:product.product_versions.first.price }
+    end
+  end
+
   private
 
   def set_pending_answer
@@ -21,7 +31,19 @@ class Message < ActiveRecord::Base
   end
 
   def serialize_data
-    self.data =  self.products_urls.split(/\r?\n/).compact if self.products_urls.present?
+    if self.products_urls.present?
+      self.data =  self.products_urls.split(/\r?\n/).compact
+      developer = Developer.find_by_name("Shopelia")
+      self.data.each do |url|
+        EventsWorker.perform_async({
+          :url => url.unaccent,
+          :developer_id => developer.id,
+          :action => Event::REQUEST,
+          :tracker => "georges",
+          :device_id => self.device.id
+        })
+      end
+    end
   end
 
   def ensure_content

@@ -34,8 +34,8 @@ $(document).ready(function() {
       })
     } 
   );
-  showSpinners();
-  monitorCartItems();
+  //showSpinners();
+  //monitorCartItems();
 });
 
 function monitorCartItems() {

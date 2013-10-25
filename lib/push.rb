@@ -8,7 +8,7 @@ module Push
       GCM.send_notification message.device.push_token, {
         type:'Georges',
         message:message.content,
-        products:message.data
+        products:message.build_push_data
       }
     end
   end
