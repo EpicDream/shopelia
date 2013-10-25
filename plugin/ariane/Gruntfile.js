@@ -200,5 +200,5 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['dev']);
   grunt.registerTask('test', ['version', 'jshint', 'copy', 'jasmine']);
   grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
-  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod', 'exec:package']);
+  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod']);
 };
