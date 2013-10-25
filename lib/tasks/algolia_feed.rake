@@ -6,6 +6,7 @@ namespace :shopelia do
     desc "Process all Algolia feeds"
     task :run => :environment do
       AlgoliaFeed::Cdiscount.run
+      AlgoliaFeed::Zanox.run
       AlgoliaFeed::PriceMinister.run
       AlgoliaFeed::Zanox.run
 #      AlgoliaFeed::AlgoliaFeed.make_production

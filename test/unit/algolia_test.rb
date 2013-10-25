@@ -5,6 +5,14 @@ require 'algolia/algolia_feed'
 
 class AlgoliaTest < ActiveSupport::TestCase
 
+  setup do
+    if Algolia.list_indexes['items'].collect{ |i| i['name'] }.include?('testing')
+      algolia = AlgoliaFeed::AlgoliaFeed.new
+      algolia.connect('testing')
+      algolia.index.delete
+    end
+  end
+
   def test_algolia_download_http_and_gunzip
     url = "http://productdata.zanox.com/exportservice/v1/rest/19024603C1357169475.xml?ticket=F03A5E4E67A27FD5925A570370AD7885&gZipCompress=yes"
     algolia = AlgoliaFeed::AlgoliaFeed.new
@@ -44,7 +52,6 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert(found_merchantname)
     assert_equal('1', madonna_cd['saturn'])
     assert_equal('http://www.priceminister.com', madonna_cd['merchant']['url'])
-    assert_equal(Digest::MD5.hexdigest(madonna_cd['product_url']), madonna_cd['objectID'])
     algolia.index.delete
   end
 
@@ -64,6 +71,8 @@ class AlgoliaTest < ActiveSupport::TestCase
     sleep 1
     record = algolia.index.search('')['hits'].first
     assert(Time.now.to_i - record['timestamp'] < 5)
+    assert_equal("Mode > Cosmetique-Produit-de-beaute > Cigarette Electronique (Autre)", record['category'])
+    assert_equal(3, record['_tags'].collect{ |tag| tag if tag=~ /category:/}.compact.size)
     algolia.index.delete
   end
 

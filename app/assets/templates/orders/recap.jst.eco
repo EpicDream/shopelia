@@ -1,11 +1,14 @@
-<div class="field-title clearfix">
+<h3 id="payment-title-header">Paiement de votre commande</h3>
+<div class="spacer25"></div>
+
+    <div class="field-title clearfix">
     <img class="pull-left" src="/assets/html_app/shopelia-user.png">
-    <h5 class="pull-left">INFORMATIONS PERSONNELLES</h5>
-</div>
+        <h5 class="pull-left">INFORMATIONS PERSONNELLES</h5>
+    </div>
 
     <div class="infos clearfix offset1">
         <img class="pull-left" src="/assets/html_app/email-icon.png">
-        <span class="pull-left" ><%= @user('email') %></span>
+            <span class="pull-left" ><%= @user('email') %></span>
     </div>
             <div class="spacer5"></div>
     <div class="infos clearfix offset1">
@@ -34,13 +37,8 @@
         <table class="table table-borderless" id="total-price-table">
             <tr>
                 <td><%= @product('name') %></td>
-                <td>
-                  <select id="quantity">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                  </select>
+                <td id="quantity">
+                   <%= @product('quantity') %>
                 </td>
                 <td><%- @format(@product('expected_price_product')) %></td>
             </tr>
@@ -62,6 +60,4 @@
                 <td colspan=3><input type="checkbox" id="order-test"> Commande de test</td>
             </tr>
         </table>
-
-<button id="process-order" class="custom-btn btn-block">CONFIRMER LA COMMANDE</button>
 <div class="spacer25"></div>

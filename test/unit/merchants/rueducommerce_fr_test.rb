@@ -13,6 +13,11 @@ class RueducommerceFrTest < ActiveSupport::TestCase
     assert_equal "http://ad.zanox.com/ppc/?25390102C2134048814&ulp=[[www.rueducommerce.fr%2Fm%2Fps%2Fmpid%3AMP-0006DM7671064]]", @helper.monetize
   end
 
+  test "it should canonize" do
+    assert_equal "http://www.rueducommerce.fr/m/ps/mpid:MP-0006DM7671064", @helper.canonize
+    assert RueducommerceFr.new("http://www.rueducommerce.fr/bla").canonize.nil?
+  end
+
   test "it should process availability" do
     @version[:availability_text] = ""
     @version[:price_text] = ""

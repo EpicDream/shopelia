@@ -6,9 +6,9 @@ class LinkerTest < ActiveSupport::TestCase
   test "it should clean url" do
     array = [
       { :in  => "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html",
-        :out => "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html" },
+        :out => "http://www.priceminister.com/offer/buy/103220572" },
       { :in  => "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html",
-        :out => "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html" },
+        :out => "http://www.priceminister.com/offer/buy/103220572" },
       { :in  => "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY",
         :out => "http://www.amazon.fr/dp/B00BIXXTCY" },
       { :in  => "http://tracking.lengow.com/shortUrl/53-1110-2759446/",
@@ -18,9 +18,7 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://ad.zanox.com/ppc/?19436175C242487251&ULP=%5B%5Bm/ps/mpid:MP-0006DM7671064%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d%5D%5D#rueducommerce.fr",
         :out => "http://www.rueducommerce.fr/m/ps/mpid:MP-0006DM7671064" },
       { :in  => "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(717215663)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Fdp.asp%3Fsku%3DROSITRIPLE10M%26refer%3D*)",
-        :out => "http://www.cdiscount.com/electromenager/four-cuisson/rosieres-triple-10m/f-11023020709-rositriple10m.html" },
-      { :in  => "http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm?xts=425426&xtor=AL-146-[typologie]-[1532882]-[flux]&xtloc=http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068&xtdt=22932563",
-        :out => "http://www.eveiletjeux.com/ordinateur-genius-malice-orange/produit/300068" },
+        :out => "http://www.cdiscount.com/dp.asp?sku=ROSITRIPLE10M" },
       { :in  => "http://ad.zanox.com/ppc/?19024603C1357169475&ULP=%5B%5Bhttp://logc57.xiti.com/gopc.url?xts=425426&xtor=AL-146-%5Btypologie%5D-%5BREMPLACE%5D-%5Bflux%5D&xtloc=http://www.eveiletjeux.com/mallette-tag-junior/produit/145303&url=http://www.eveiletjeux.com/Commun/Xiti_Redirect.htm%5D%5D#eveiletjeux.com",
         :out => "http://www.eveiletjeux.com/mallette-tag-junior/produit/145303" },
       { :in  => "http://ad.zanox.com/ppc/?19436175C242487251&ULP=%5B%5BAccessoires-Consommables/showdetl.cfm?product_id=4855986%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d%5D%5D#rueducommerce.fr",

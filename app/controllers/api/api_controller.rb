@@ -27,7 +27,7 @@ class Api::ApiController < ActionController::Base
   end
   
   def set_navigator_properties
-    ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
+    @user_agent = ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
   end
 
   def retrieve_tracker
@@ -35,8 +35,11 @@ class Api::ApiController < ActionController::Base
   end
 
   def retrieve_device
-    visitor = cookies[:visitor] || params[:visitor]
-    @device = Device.find_by_uuid(visitor) unless visitor.blank?
+    if @user_agent =~ /^shopelia/
+      @device = Device.from_user_agent(@user_agent)
+    else
+      visitor = cookies[:visitor] || params[:visitor]
+      @device = Device.find_by_uuid(visitor) unless visitor.blank?
+    end
   end
-
 end

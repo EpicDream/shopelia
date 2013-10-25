@@ -24,7 +24,7 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     order_test: '#order-test-box'
   }
   events:
-    "click #process-order": "onProcessOrder"
+    "click #process-order": "onValidateOrder"
     "change #quantity": "onChangeQuantity"
 
   initialize: ->
@@ -42,18 +42,23 @@ class Shopelia.Views.OrdersIndex extends Shopelia.Views.ShopeliaView
     if @model.get("session").get("user").get("email").match(/shopelia/)
       @ui.order_test.show()
 
-  onProcessOrder: (e) ->
+  onValidateOrder: (e) ->
     e.preventDefault()
-    order = @preparedOrder()
-    Shopelia.vent.trigger("order#create",order)
+    Shopelia.vent.trigger("modal_content#showRecap",@model)
+
 
   onChangeQuantity: ->
     @model.get("product").setQuantity(@ui.quantity.val())
     @render()
 
-  preparedOrder: ->
-    product = @model.get("product")
-    user = @model.get("session").get("user")
+  onProcessOrder: (order) ->
+    preparedOrder = @preparedOrder(order)
+    console.log("PREPARED ORDER" + JSON.stringify(preparedOrder))
+    Shopelia.vent.trigger("order#create",preparedOrder)
+
+  preparedOrder: (order) ->
+    product = order.get("product")
+    user = order.get("session").get("user")
     if $("#order-test").is(':checked')
       expected_prices = {
         "expected_price_shipping": 0

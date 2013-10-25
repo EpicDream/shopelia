@@ -67,7 +67,8 @@ class Shopelia.Controllers.ModalContentController extends Shopelia.Controllers.C
     Shopelia.vent.trigger("sign_in#close")
     Shopelia.vent.trigger("order#show",@view.right,order)
 
-  showPaymentFields: ->
+  showRecap: (order) ->
+    Shopelia.vent.trigger("recap#show",@view.left,order)
     Shopelia.vent.trigger("payment#show",@view.right)
 
 

@@ -1,6 +1,7 @@
 class Message < ActiveRecord::Base
   belongs_to :device
 
+  before_validation :ensure_content
   before_validation :ensure_device_pushable
   before_save :serialize_data
   after_create :set_pending_answer
@@ -21,6 +22,10 @@ class Message < ActiveRecord::Base
 
   def serialize_data
     self.data =  self.products_urls.split(/\r?\n/).compact if self.products_urls.present?
+  end
+
+  def ensure_content
+    self.errors.add(:base, I18n.t('messages.errors.empty')) unless content.present? || products_urls.present?
   end
 
   def ensure_device_pushable

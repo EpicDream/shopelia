@@ -117,7 +117,7 @@ class Product < ActiveRecord::Base
         version[:price_text] = version[:price]
         version[:price_shipping_text] = version[:price_shipping]
         version[:price_strikeout_text] = version[:price_strikeout]
-        version[:availability_text] = version[:availability] || version[:shipping_info]
+        version[:availability_text] = version[:availability]
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
 

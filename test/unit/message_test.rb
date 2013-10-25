@@ -12,6 +12,17 @@ class MessageTest < ActiveSupport::TestCase
     assert_equal "allo", message.content
   end
 
+  test "it should create message with data only" do
+    message = Message.new(products_urls:"http://www.amazon.fr",device_id:@device.id)
+    assert message.save, message.errors.full_messages.join("\n")
+  end
+
+  test "it shouldn't create empty message" do
+    message = Message.new(device_id:@device.id)
+    assert !message.save
+    assert_equal I18n.t('messages.errors.empty'), message.errors.full_messages.first
+  end
+
   test "it should serialize products_urls" do
     products_urls = "http://www.toto.com\nhttp://www.titi.com"
     message = Message.new(content:"allo",products_urls:products_urls,device_id:@device.id)
