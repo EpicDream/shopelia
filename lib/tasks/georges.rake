@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 namespace :shopelia do
   namespace :georges do
     
