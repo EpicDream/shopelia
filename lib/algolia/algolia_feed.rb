@@ -36,7 +36,7 @@ module AlgoliaFeed
       self.batch_size      = params[:batch_size]      || 1000
       self.index_name      = params[:index_name]      || 'products-feed-fr-new'
       self.prod_index_name = params[:prod_index_name] || 'products-feed-fr'
-      self.tmpdir          = params[:tmpdir]          || '/tmp'
+      self.tmpdir          = params[:tmpdir]          || '/home/shopelia/shopelia/tmp/algolia'
       self.forbidden_cats  = params[:forbidden_cats]  || ['sextoys', 'erotique']
       self.forbidden_names = params[:forbidden_names] || ['godemich', '\bgode\b', 'cockring', 'rosebud', '\bplug anal\b', 'vibromasseur', 'sextoy', 'masturbat' ]
       self.debug           = params[:debug]           || 0
@@ -129,7 +129,7 @@ module AlgoliaFeed
     end
 
     def retrieve_url(url)
-      raw_file = "#{self.tmpdir}/algolia_feed_raw_data-#{Time.now.to_i}"
+      raw_file = "#{self.tmpdir}/#{self.class}-#{Time.now.to_i}.raw"
       output = `wget -O #{raw_file} #{url}` if self.debug > 0
       raise InvalidFile, "Cannot download #{url}: #{output}" unless File.exist?(raw_file)
       return raw_file
@@ -166,7 +166,7 @@ puts res.body
     end
 
     def decompress_datafile(raw_file)
-      decoded_file = "#{self.tmpdir}/algolia_feed_decoded_data-#{Time.now.to_i}"
+      decoded_file = "#{self.tmpdir}/#{self.class}-#{Time.now.to_i}.xml"
       file_type = FileMagic.new.file(raw_file)
       if file_type =~ /^gzip compressed data/
         File.open(decoded_file, 'wb') do |f|
