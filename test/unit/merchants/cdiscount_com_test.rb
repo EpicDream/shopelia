@@ -23,4 +23,8 @@ class CdiscountComTest < ActiveSupport::TestCase
     @version = @helper.process_availability(@version)
     assert_equal "Indisponible", @version[:availability_text]
   end
+
+  test "it should canonize" do
+    assert_equal "http://www.cdiscount.com/dp.asp?sku=81367657", CdiscountCom.new("http://www.cdiscount.com/dp.asp?sku=81367657").canonize
+  end
 end

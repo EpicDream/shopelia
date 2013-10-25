@@ -7,9 +7,11 @@ class Admin::Georges::MessagesController < Admin::AdminController
 
   def create
     @message = @device.messages.build(params[:message].merge(from_admin:true))
-
     if @message.save
-      redirect_to admin_georges_device_messages_url(@device)
+      respond_to do |format|
+        format.html { redirect_to admin_georges_device_messages_url(@device)}
+        format.js
+      end
     else
       render :action => 'index'
     end
