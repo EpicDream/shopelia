@@ -12,7 +12,7 @@ class Message < ActiveRecord::Base
   validates :device, :presence => true
 
   attr_accessible :content, :data, :device_id, :read, :products_urls, :from_admin
-  attr_accessor :products_urls
+  attr_accessor :products_urls, :autoreply
 
   def build_push_data
     self.data.map do |url|
@@ -28,6 +28,7 @@ class Message < ActiveRecord::Base
 
   def set_pending_answer
     self.device.update_attribute :pending_answer, !self.from_admin?
+    self.device.update_attribute :autoreplied, false if !self.from_admin
   end
 
   def serialize_data

@@ -10,7 +10,7 @@ class Device < ActiveRecord::Base
   attr_accessible :push_token, :os, :os_version, :version, :build
   attr_accessible :referrer, :phone, :user_agent, :email, :uuid
   attr_accessible :pending_answer
-  
+ 
   def self.fetch uuid, ua
     Device.find_by_uuid(uuid) || Device.create(uuid:uuid,user_agent:ua)
   end
