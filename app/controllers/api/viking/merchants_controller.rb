@@ -12,7 +12,12 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
   
   api :GET, "/viking/merchants", "Get merchant by url"
   def index
-    render json: Object::Viking::MerchantSerializer.new(@merchant).as_json[:merchant]
+    if @merchant
+      render json: Object::Viking::MerchantSerializer.new(@merchant).as_json[:merchant]
+    else
+      h = {totalCount: Merchant.count, supportedBySaturn: Merchant.where("viking_data is not 'null'").select("id").map(&:id)}
+      render json: h.to_json
+    end
   end 
 
   api :GET, "/viking/merchants/:id", "Get merchant information"
