@@ -170,6 +170,7 @@ class Product < ActiveRecord::Base
       self.reload
       self.assess_versions
       self.reload
+      notify_channel
     elsif self.product_versions.empty?
       ProductVersion.create!(product_id:self.id,available:false)
     end

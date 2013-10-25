@@ -126,7 +126,7 @@ class Emailer < ActionMailer::Base
 
   def notify_admin_new_message_to_george message
     @message = message
-    mail( :to => "Shopelia <admin@shopelia.fr>",
+    mail( :to => "Shopelia <georges@shopelia.fr>",
           :subject => "Nouveau message reçu pour Georges !",
           :from => "Admin Shopelia <admin@shopelia.fr>")
   end    
