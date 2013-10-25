@@ -14,6 +14,9 @@ module AlgoliaFeed
   class InvalidRecord < ScriptError; end
   class RejectedRecord < ScriptError; end
 
+# TODO: Missing categories for Amazon
+# TODO: Get rid of wget in retrieve_url
+
   class AlgoliaFeed
 
     attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :prod_index_name, :index, :tmpdir, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields
@@ -36,7 +39,7 @@ module AlgoliaFeed
       self.tmpdir          = params[:tmpdir]          || '/tmp'
       self.forbidden_cats  = params[:forbidden_cats]  || ['sextoys', 'erotique']
       self.forbidden_names = params[:forbidden_names] || ['godemich', '\bgode\b', 'cockring', 'rosebud', '\bplug anal\b', 'vibromasseur', 'sextoy', 'masturbat' ]
-      self.debug           = params[:debug]           || false
+      self.debug           = params[:debug]           || 0
       self.category_fields = params[:category_fields] || []   
       self.merchant_cache  = {}
     end
@@ -77,21 +80,25 @@ module AlgoliaFeed
         reader.each do |r|
           begin
             next unless r.name == self.product_field && r.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
+            puts "Found XML: #{r.outer_xml}" if self.debug > 2
             product = product_hash(r.outer_xml)
+            puts "Got product hash: #{product.inspect}" if self.debug > 2
             record = process_product(product)
+            puts "Got record: #{record}" if self.debug > 2
             check_forbidden(record)
             products_counter += 1
             self.records << record
-          rescue RejectedRecord
+          rescue RejectedRecord => e
+            puts "Rejecting record: #{e}\n#{e.backtrace.join("\n")}\nRecord: #{record.inspect}" if self.debug > 2
             next
           rescue InvalidRecord => e
-            puts "Failed to add record: #{e.backtrace.join("\n")}\nRecord: #{record.inspect}" if self.debug
+            puts "Failed to add record: #{e.backtrace.join("\n")}\nRecord: #{record.inspect}" if self.debug > 1
             next
           end
           self.send_batch if self.records.size >= self.batch_size
         end
         self.send_batch
-        puts "[#{Time.now}] #{decoded_file} - Processed #{products_counter} products in #{Time.now - file_start} seconds (#{(products_counter.to_f/(Time.now - file_start)).round} pr/s)" if self.debug
+        puts "[#{Time.now}] #{decoded_file} - Processed #{products_counter} products in #{Time.now - file_start} seconds (#{(products_counter.to_f/(Time.now - file_start)).round} pr/s)" if self.debug > 0
       end  
     end
 
@@ -123,10 +130,25 @@ module AlgoliaFeed
 
     def retrieve_url(url)
       raw_file = "#{self.tmpdir}/algolia_feed_raw_data-#{Time.now.to_i}"
+      output = `wget -O #{raw_file} #{url}` if self.debug > 0
+      raise InvalidFile, "Cannot download #{url}: #{output}" unless File.exist?(raw_file)
+      return raw_file
+    end
+
+    def x_retrieve_url(url)
       File.open(raw_file, 'wb') do |f|
+        puts "Downloading URL #{url}" if self.debug > 0
         if url =~ /^http/
           uri = URI(url)
-          res = Net::HTTP.get_response(uri)
+          http = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https')
+puts http.inspect
+puts "scheme: #{uri.scheme} request: #{uri.request_uri} #{uri.host} #{uri.port}"
+          req = Net::HTTP::Get.new(uri.request_uri)
+puts "#{self.http_auth[:user]} #{self.http_auth[:password]}"
+          req.basic_auth(self.http_auth[:user], self.http_auth[:password])# if self.http_auth.has_key?(:user)
+puts req.inspect
+          res = http.request(req)
+puts res.body
           if res.is_a?(Net::HTTPSuccess)
             f.write res.body
           else
@@ -167,6 +189,7 @@ module AlgoliaFeed
     def process_product(product)
       record = {'_tags' => []}
       self.conversions.each_pair do |from, to|
+      puts "product[#{from}] = #{product[from]} -> record[#{to}]" if self.debug > 2
         record[to] = product[from] if product.has_key?(from)
       end
       if record.has_key?('ean')
@@ -175,10 +198,8 @@ module AlgoliaFeed
         end 
         record.delete('ean')
       end
-      if record.has_key?('brand')
-        record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
-      end
-      raise RejectedRecord if !record.has_key?('image_url') || record['image_url'] !~ /\Ahttp/
+      record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
+      raise RejectedRecord, "Record has no usable image #{record['image_url']}" unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
       add_merchant_data(record)
       record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
@@ -186,8 +207,12 @@ module AlgoliaFeed
       record
     end
 
+    def canonize(url)
+      Linker.clean(url)
+    end
+
     def add_merchant_data(record)
-      record['product_url'] = Linker.clean(record['product_url'])
+      record['product_url'] = canonize(record['product_url'])
       raise InvalidRecord, "Record has nil product_url" if record['product_url'].nil?
       domain = Utils.extract_domain(record['product_url'])
       unless self.merchant_cache.has_key?(domain)
@@ -231,4 +256,5 @@ end
 require_relative 'price_minister'
 require_relative 'cdiscount'
 require_relative 'zanox'
+require_relative 'amazon'
 
