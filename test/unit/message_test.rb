@@ -40,6 +40,18 @@ class MessageTest < ActiveSupport::TestCase
     assert !@device.reload.pending_answer
   end
 
+  test "it should set autoreplied to false when Georges receives a new message" do
+    @device.update_attribute :autoreplied, true
+    Message.create(content:"allo",device_id:@device.id)
+    assert !@device.reload.autoreplied
+  end
+
+  test "it shouldn't set autoreplied to false when Georges replies" do
+    @device.update_attribute :autoreplied, true
+    Message.create(content:"allo",device_id:@device.id,from_admin:true)
+    assert @device.reload.autoreplied
+  end
+
   test "it should create a message if device is not pushable" do
     message = Message.new(content:"allo",device_id:devices(:web).id)
     assert !message.save
@@ -49,7 +61,7 @@ class MessageTest < ActiveSupport::TestCase
   test "it should send message to admin when user writes to Georges" do
     Message.create(content:"allo",device_id:@device.id)
     assert_equal 1, ActionMailer::Base.deliveries.count
-    assert_equal "admin@shopelia.fr", ActionMailer::Base.deliveries.first.to[0]
+    assert_equal "georges@shopelia.fr", ActionMailer::Base.deliveries.first.to[0]
     assert_equal 0, $push_delivery_count
   end
 
