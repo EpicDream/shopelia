@@ -1,0 +1,5 @@
+%div{class: "from-#{message.from_admin ? 'admin':'user'}"}
+  %p= message.content
+  - message.data.each do |url|
+    = render Product.fetch(url)
+.clear

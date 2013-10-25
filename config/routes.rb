@@ -57,6 +57,7 @@ Shopelia::Application.routes.draw do
     end
     namespace :georges do
       resources :devices do
+        match "/messages/check", to: "messages#check"
         resources :messages
       end
     end

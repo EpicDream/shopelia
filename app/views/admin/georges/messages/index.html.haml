@@ -2,11 +2,22 @@
   %header
     %h1 Conversation
 %section.chat
-  - @messages.each do |message|
-    - unless message.content.empty?
-      %div{class: "from-#{message.from_admin ? 'admin':'user'}"}
-        %p= message.content
-      .clear
-
-
+  #messages
+    = render partial: "admin/georges/messages/message", collection: @messages
   =render partial: "admin/georges/messages/form"
+  = form_for [:admin,:georges,@device] do |f|
+    = f.hidden_field :pending_answer, :value => false
+    = f.submit "End Conversation", :class => "btn btn-danger btn-large"
+%section
+  %button.btn.btn-large.btn-info#checkurls Check urls
+  .row
+    #products
+
+:javascript
+  $('#checkurls').on('click', function(e) {
+    $.ajax({
+      url: '#{admin_georges_device_messages_check_path(@device)}',
+      data: { "urls":$('#message_products_urls').val() },
+      dataType: "script"
+    });
+  });

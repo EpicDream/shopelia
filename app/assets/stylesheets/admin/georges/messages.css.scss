@@ -2,7 +2,7 @@ section.chat {
   max-width: 450px;
   margin: 50px auto;
 
-  div {
+  #messages > div {
     max-width: 255px;
     word-wrap: break-word;
     margin-bottom: 20px;
