@@ -305,9 +305,15 @@ Saturn.prototype.cleanTab = function(tabId) {
 
 // Virtual, must be reimplement and supercall
 Saturn.prototype.closeTab = function(tabId) {
-  var idx = this.tabs.pending.indexOf(tabId);
+  var idx = this.tabs.pending.indexOf(tabId),
+    session = this.sessions[tabId];
   if (idx !== -1)
     this.tabs.pending.splice(idx, 1);
+  else if (session) {
+    this.sendError(session, 'Tab closed prematurely.');
+    session.keepTabOpen = true; // To prevent that endSession() add the tab to pending.
+    this.endSession(session);
+  }
   delete this.tabs.opened[tabId];
 };
 
