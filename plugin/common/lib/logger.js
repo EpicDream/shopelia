@@ -18,7 +18,10 @@ var logger = {
 };
 
 logger._log = function(level, caller, _arguments) {
-  var css_style;
+  var d = new Date(),
+    args = [sprintf('[%s][%5s]%s ',d.toLocaleTimeString() + '.' + d.getMilliseconds(), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : '')],
+    css_style, i, arg;
+
   switch (level) {
     case 'FATAL' :
     case 'ERROR' :
@@ -44,8 +47,6 @@ logger._log = function(level, caller, _arguments) {
       break;
   }
   
-  var d = new Date(),
-    args = [sprintf('[%s][%5s]%s ',d.toLocaleTimeString() + '.' + d.getMilliseconds(), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : '')]
   if (window.chrome) {
     args[0] = "%c" + args[0];
     args.push(css_style);
@@ -53,10 +54,10 @@ logger._log = function(level, caller, _arguments) {
 
   if (typeof _arguments !== 'object' || _arguments.length === undefined) {
     args.push(_arguments);
-  } else if (! window.chrome) for ( var i = 0 ; i < _arguments.length ; i++ ) {
+  } else if (! window.chrome) for ( i = 0 ; i < _arguments.length ; i++ ) {
     args.push(_arguments[i]);
-  } else for ( var i = 0 ; i < _arguments.length ; i++ ) {
-    var arg = _arguments[i];
+  } else for ( i = 0 ; i < _arguments.length ; i++ ) {
+    arg = _arguments[i];
     if (typeof arg === 'number') {
       args[0] += "%f ";
     } else if (typeof arg === 'string') {

@@ -45,19 +45,20 @@
       return this.insert2(element);
 
     var array = this.array,
-      index = array.length,
-      i, j, temp;
+      idx = array.length,
+      j = idx-1,
+      temp;
 
     array.push(element);
 
-    while (index) {
-      i = index, j = --index;
-
-      if (this.comp(array[i], array[j]) < 0) {
-        temp = array[i];
-        array[i] = array[j];
+    while (idx) {
+      if (this.comp(array[idx], array[j]) < 0) {
+        temp = array[idx];
+        array[idx] = array[j];
         array[j] = temp;
       }
+      j = idx;
+      idx -= 1;
     }
 
     return this;

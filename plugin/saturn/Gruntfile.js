@@ -6,7 +6,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: pkg,
     jshint: {
-      files: ['Gruntfile.js', 'src/**/*.js', 'lib/*.js', 'test/*.js'],
+      files: [
+        'Gruntfile.js',
+        'src/**/*.js',
+        'lib/*.js',
+        'test/*.js',
+        '../common/lib/*.js',
+      ],
       options: {
         loopfunc: true,
         multistr: true,
@@ -21,9 +27,11 @@ module.exports = function(grunt) {
     // Copy all needed libs to "vendor/" repository
     copy: {
       main: {
-        files: [
-          {expand: true, cwd: '../common/', src: ['*.js'], dest: 'vendor/'}
-        ]
+        expand: true,
+        cwd: '../common/',
+        src: ['./lib/*.js', './vendor/*.js'],
+        flatten: true,
+        dest: 'vendor/',
       }
     },
     // Launch all tests

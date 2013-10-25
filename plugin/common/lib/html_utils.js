@@ -374,20 +374,26 @@ hu.cookies.removeAll = function() {
 //bravo's xpath function shortcut
 // if you don't have $x already
 function $x(p, c) {
-  var i, r = [], x = document.evaluate(p, c || document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
-  while(i=x.iterateNext()) r.push(i);
+  var x = document.evaluate(p, c || document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null),
+    i = x.iterateNext(),
+    r = [];
+  while(i) { r.push(i); i = x.iterateNext(); }
   return r;
 }
 // xpath unordered nodes
 function $xu(p, c) {
-  var i, r = [], x = document.evaluate(p, c || document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
-  while(i=x.iterateNext()) r.push(i);
+  var x = document.evaluate(p, c || document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null),
+    i = x.iterateNext(),
+    r = [];
+  while(i) { r.push(i); i = x.iterateNext(); }
   return r;
 }
 // xpath ordered nodes
 function $xo(p, c) {
-  var i, r = [], x = document.evaluate(p, c || document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null);
-  while(i=x.iterateNext()) r.push(i);
+  var x = document.evaluate(p, c || document, null, XPathResult.ORDERED_NODE_ITERATOR_TYPE, null),
+    i = x.iterateNext(),
+    r = [];
+  while(i) { r.push(i); i = x.iterateNext(); }
   return r;
 }
 // xpath single first node
