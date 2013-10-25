@@ -1,5 +1,7 @@
 # -*- encoding : utf-8 -*-
 class TopgeekNet
+  DEFAULT_PRICE_SHIPPING = "5,90 €"
+  DEFAULT_SHIPPING_INFO = "Livraison colis privé sous 3 à 5 jours."
 
   def initialize url
     @url = url
@@ -19,12 +21,12 @@ class TopgeekNet
   end
 
   def process_shipping_price version
-    version[:price_shipping_text] = "3,90 € (à titre indicatif)" if version[:price_shipping_text].blank?
+    version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
     version
   end
 
   def process_shipping_info version
-    version[:shipping_info] = "Livraison SoColissimo." if version[:shipping_info].blank?
+    version[:shipping_info] = DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
     version
   end
 end
