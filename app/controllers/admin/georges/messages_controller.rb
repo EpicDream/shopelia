@@ -13,6 +13,7 @@ class Admin::Georges::MessagesController < Admin::AdminController
         format.js
       end
     else
+      
       render :action => 'index'
     end
   end
@@ -22,7 +23,7 @@ class Admin::Georges::MessagesController < Admin::AdminController
     developer = Developer.find_by_name("Shopelia")
     (params[:urls] || "").split(/\r?\n/).compact.each do |url|
       product = Product.fetch(url)
-      product.p.authorize_push_channel
+      product.authorize_push_channel
       Event.create!(
         :product_id => product.id,
         :action => Event::REQUEST,

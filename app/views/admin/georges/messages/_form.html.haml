@@ -3,17 +3,4 @@
   %label.checkbox
     %input.checkbox{type:"checkbox",id:"data-checkbox", checked:false} send product urls
   = f.text_area :products_urls, :rows => 10, :class => "span5"
-  .row
-    #products
   = f.submit "Validate", :class => 'btn btn-success btn-large'
-
-%button.btn.btn-large.btn-info#checkurls Check urls
-
-:javascript
-  $('#checkurls').on('click', function(e) {
-    $.ajax({
-      url: '#{admin_georges_device_messages_check_path(@device)}',
-      data: { "urls":$('#message_products_urls').val() },
-      dataType: "script"
-    });
-  });

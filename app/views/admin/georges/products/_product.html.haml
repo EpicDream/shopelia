@@ -1,4 +1,4 @@
-.span4.product-box.product-monitor{:data => {:pid => "#{product.id}"}}
+.span2.product-box.product-monitor{:data => {:pid => "#{product.id}"}}
   .product
     = image_tag product.image_url || "empty.png", class:"product-img"
     - if product.versions_expired?
