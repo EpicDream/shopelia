@@ -35,7 +35,7 @@ class Api::ApiController < ActionController::Base
   end
 
   def retrieve_device
-    if @user_agent =~ /^shopelia/
+    if @user_agent =~ /^shopelia\:/
       @device = Device.from_user_agent(@user_agent)
     else
       visitor = cookies[:visitor] || params[:visitor]
