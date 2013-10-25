@@ -164,7 +164,7 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
       logger.debug("New page results =", page.results);
       chrome.storage.local.set(hash);
     });
-  };
+  }
 
   function updateFieldsConsitency(results) {
     var b, key;
