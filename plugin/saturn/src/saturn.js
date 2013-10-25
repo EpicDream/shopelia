@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', 'uri', './saturn_session', 'satconf'], function(logger, Uri, SaturnSession) {
+define(['logger', 'uri', './saturn_session', 'satconf', 'core_extensions'], function(logger, Uri, SaturnSession) {
 
 "use strict";
 

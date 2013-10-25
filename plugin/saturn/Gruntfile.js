@@ -53,8 +53,8 @@ module.exports = function(grunt) {
           baseUrl: '',
           mainConfigFile: "require_config.js",
           optimize: "none",
-          name: 'src/crawler',
-          include: ["lib/utils"],
+          name: 'crawler',
+          include: ['satconf'],
           out: 'build/crawler.js',
         }
       },
@@ -64,7 +64,6 @@ module.exports = function(grunt) {
           mainConfigFile: "require_config.js",
           optimize: "none",
           name: 'src/chrome/chrome_saturn',
-          include: ["lib/utils"],
           out: 'build/chrome_saturn.js',
         }
       },
@@ -78,7 +77,6 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
-          'lib/utils.js',
           'build/chrome_saturn.js',
           'src/chrome/main.js'
         ],
@@ -88,7 +86,6 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
-          'lib/utils.js',
           "build/crawler.js",
           "src/chrome/chrome_crawler.js",
         ],

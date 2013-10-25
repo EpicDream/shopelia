@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(["jquery", "logger", "src/saturn", 'satconf'], function($, logger, Saturn) {
+define(["jquery", "logger", "src/saturn", 'satconf', 'core_extensions'], function($, logger, Saturn) {
 
 "use strict";
 
