@@ -4,7 +4,6 @@ class Device < ActiveRecord::Base
   has_many :messages
   
   validates :uuid, :presence => true, :uniqueness => true
-  validates :user_agent, :presence => true
   
   before_validation :generate_uuid
 
@@ -14,6 +13,18 @@ class Device < ActiveRecord::Base
   
   def self.fetch uuid, ua
     Device.find_by_uuid(uuid) || Device.create(uuid:uuid,user_agent:ua)
+  end
+
+  def self.from_user_agent ua
+    hash = ua.gsub(/^shopelia:/, "").split(/\:/).map{|e| e.match(/^(.*)\[(.*)\]$/)[1..2]}.map{|e| { e[0] => e[1] }}.inject(:merge)
+    device = Device.find_or_create_by_uuid(hash["uuid"])
+    device.os = hash["os"]
+    device.os_version = hash["os_version"]
+    device.version = hash["version"]
+    device.build = hash["build"].to_i
+    device.phone = hash["phone"]
+    device.save
+    device
   end
   
   private

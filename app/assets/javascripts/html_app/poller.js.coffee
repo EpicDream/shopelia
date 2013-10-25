@@ -6,7 +6,7 @@ class Shopelia.Poller extends Backbone.Wreqr.EventAggregator
     @method = config.method or 'GET'
     @url = config.url
     @userData = config.userData
-    @expiry = config.expiry or 15000
+    @expiry = config.expiry or 150000
     @optionsExpiry = config.optionsExpiry or 180000
     @isRunning = false
 
