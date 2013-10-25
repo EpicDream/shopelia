@@ -212,6 +212,7 @@ puts res.body
     end
 
     def add_merchant_data(record)
+      raise InvalidRecord, "Record has nil product_url" if record['product_url'].nil?
       record['product_url'] = canonize(record['product_url'])
       raise InvalidRecord, "Record has nil product_url" if record['product_url'].nil?
       domain = Utils.extract_domain(record['product_url'])
