@@ -1,26 +1,30 @@
 %section.header
   %header
     %h1 Messages
-    %h2 Talk with users, Make their dream come true
+    %h2 Talk with users, make their dream come true
 
 .container-fluid
   .row-fluid
     .span2
       %article.coolbox
         %h3 Filters
+        %select.input-small#pendingAnswerFilter
+          %option{value:0}
+            All
+          %option{value:1}
+            Waiting for answer
+          %option{value:2}
+            Closed
     .span10
       %article.coolbox
         %h3 Devices list
-        %table.table.table-striped
+        %table.table.table-striped#devices{data:{source:"#{admin_georges_devices_url(format: 'json')}"}}
           %thead
             %tr
-              %th Device Id
-              %th Content
-              %th Actions
+              %th Device id
+              %th Products
+              %th Messages
+              %th Last message
+              %th Received
+              %th &nbsp;
           %tbody
-            -  @devices.each do |device|
-              - unless device.messages.last.nil?
-                %tr
-                  %td= device.messages.last.device_id
-                  %td= device.messages.last.content
-                  %td= link_to "show conversation", admin_georges_device_messages_path(device)
