@@ -43,7 +43,8 @@ module AlgoliaFeed
         'item_inventory'       => 'shipping_info',
         'item_shipping_charge' => 'shipping_price',
         'item_image_url'       => 'image_url',
-        'item_salesrank'       => 'rank'
+        'item_salesrank'       => 'rank',
+        'item_author'          => 'author'
       }
 
       self.category_fields = params[:category_fields] || ['item_category', 'merchant_cat_path']
@@ -69,10 +70,15 @@ module AlgoliaFeed
     def process_product(product)
       record = super
 
+      raise RejectedRecord, "Item has no rank" unless record.has_key?('rank')
+      raise RejectedRecord, "Item rank is too low" if record['rank'] > 500_000
       record['price'] = to_cents(record['price'])
       record['shipping_price'] = '0' if record['shipping_price'] =~ /gratuite/i
       record['shipping_price'] = to_cents(record['shipping_price'])
-
+      if record.has_key?('author')
+        record['brand'] = record['author']
+        record.delete('author')
+      end
       record
     end
   end

@@ -61,8 +61,8 @@ class AlgoliaTest < ActiveSupport::TestCase
     algolia.index.delete
   end
 
-  def test_amazon
-    algolia = AlgoliaFeed::Amazon.new(index_name: 'testing')
+  def test_amazon_aparel
+    algolia = AlgoliaFeed::Amazon.new(index_name: 'testing', debug:0)
     algolia.connect('testing')
     algolia.process_xml("#{Rails.root}/test/data/amazon_aparel.xml")
     sleep 1
@@ -71,6 +71,19 @@ class AlgoliaTest < ActiveSupport::TestCase
     item = hits.first
     assert_equal('http://www.amazon.fr/dp/B0047V0NJ6', item['product_url'])
     assert_equal('1', item['saturn'])
+    assert_equal(Fixnum, item['price'].class)
+    assert_equal(Fixnum, item['rank'].class)
+  end
+
+  def test_amazon_books
+    algolia = AlgoliaFeed::Amazon.new(index_name: 'testing')
+    algolia.connect('testing')
+    algolia.process_xml("#{Rails.root}/test/data/amazon_books.xml")
+    sleep 1
+    hits = algolia.index.search('')['hits']
+    assert_equal(1, hits.size)
+    item = hits.first
+    assert_equal('Philip J. Neimark', item['brand'])
   end
 
   def test_zanox

@@ -16,7 +16,6 @@ module AlgoliaFeed
   class RejectedRecord < ScriptError; end
 
 # TODO: Missing categories for Amazon
-# TODO: Get rid of wget in retrieve_url
 
   class AlgoliaFeed
 
@@ -113,6 +112,9 @@ module AlgoliaFeed
       end
       forbidden_names = "(#{self.forbidden_names.join('|')})"
       raise RejectedRecord, "Record has forbidden name #{record['name']}" if record['name'] =~ /#{forbidden_names}/
+      raise RejectedRecord, "Record has no product URL" unless (record.has_key?('product_url') and record['product_url'] =~ /\Ahttp/)
+      raise RejectedRecord, "Record has no price" unless (record.has_key?('price') and record['price'] > 0)
+      raise RejectedRecord, "Record has no usable image #{record['image_url']}" unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
     end
 
     def product_hash(xml)
@@ -209,8 +211,9 @@ module AlgoliaFeed
     def process_product(product)
       record = {'_tags' => []}
       self.conversions.each_pair do |from, to|
-      puts "product[#{from}] = #{product[from]} -> record[#{to}]" if self.debug > 2
+        puts "product[#{from}] = #{product[from]} -> record[#{to}]" if self.debug > 2
         record[to] = product[from] if product.has_key?(from)
+        record[to] = record[to].to_i if (record[to] =~ /\A[0-9.]+\Z/ and to != 'ean')
       end
       if record.has_key?('ean')
         record['ean'].split(/\D+/).each do |ean|
@@ -219,7 +222,6 @@ module AlgoliaFeed
         record.delete('ean')
       end
       record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
-      raise RejectedRecord, "Record has no usable image #{record['image_url']}" unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
       add_merchant_data(record)
       record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
@@ -268,7 +270,7 @@ module AlgoliaFeed
     end
 
     def to_cents(price)
-      (price.to_f * 100).to_i.to_s
+      (price.to_f * 100).to_i
     end
 
   end
