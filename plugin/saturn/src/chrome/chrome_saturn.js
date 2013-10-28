@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(["jquery", "logger", "src/saturn", 'satconf'], function($, logger, Saturn) {
+define(["jquery", "logger", "src/saturn", 'satconf', 'core_extensions'], function($, logger, Saturn) {
 
 "use strict";
 
@@ -35,11 +35,11 @@ ChromeSaturn.prototype.openUrl = function(session, url) {
     if (tab.url !== url)
       chrome.tabs.update(session.tabId, {url: url}, function(tab) {
         // Priceminister fix when reload the same page with an #anchor set.
-        if (url.match(new RegExp(tab.url+"#\\w+(=\\w+)?$")))
+        if (url.match(/#\w+(=\w+)?/))
           chrome.tabs.update(session.tabId, {url: url});
       });
     // Priceminister fix when reload the same page with an #anchor set.
-    else if (url.match(new RegExp(tab.url+"#\\w+(=\\w+)?$")))
+    else if (url.match(/#\w+(=\w+)?/))
       chrome.tabs.update(session.tabId, {url: url});
     else
       session.next();

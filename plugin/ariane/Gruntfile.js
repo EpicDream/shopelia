@@ -14,7 +14,7 @@ module.exports = function(grunt) {
           'controllers/mapping_contentscript.js',
           'controllers/toolbar_contentscript.js',
           'test/*.js',
-          '../common/mapping.js','../common/viking.js',
+          '../common/lib/*.js',
         ],
         options: {}
       }
@@ -26,7 +26,7 @@ module.exports = function(grunt) {
         'controllers/mapping_contentscript.js',
         'controllers/toolbar_contentscript.js',
         'test/*.js',
-        '../common/mapping.js','../common/viking.js',
+        '../common/lib/*.js',
       ],
       options: {
         loopfunc: true
@@ -34,9 +34,11 @@ module.exports = function(grunt) {
     },
     copy: {
       main: {
-        files: [
-          {expand: true, cwd: '../common/', src: ['*.js'], dest: 'vendor/'}
-        ]
+        expand: true,
+        cwd: '../common/',
+        src: ['./lib/*.js', './vendor/*.js'],
+        flatten: true,
+        dest: 'vendor/',
       }
     },
     // Launch all tests
@@ -198,5 +200,5 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['dev']);
   grunt.registerTask('test', ['version', 'jshint', 'copy', 'jasmine']);
   grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
-  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod', 'exec:package']);
+  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod']);
 };

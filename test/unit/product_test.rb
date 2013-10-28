@@ -377,7 +377,7 @@ class ProductTest < ActiveSupport::TestCase
   end  
 
   test "it shouldn't set viking_failure if availability is false and anything is missing" do
-    product = products(:headphones)
+    product = products(:nounours)
     
     product.update_attributes(versions:[
       { availability:"out of stock",
@@ -433,7 +433,7 @@ class ProductTest < ActiveSupport::TestCase
   end  
 
   test "it should fail viking if shipping price is blank and no default shipping price is set for merchant" do
-    product = products(:headphones)
+    product = products(:cd)
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",

@@ -6,7 +6,13 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: pkg,
     jshint: {
-      files: ['Gruntfile.js', 'src/**/*.js', 'lib/*.js', 'test/*.js'],
+      files: [
+        'Gruntfile.js',
+        'src/**/*.js',
+        'lib/*.js',
+        'test/*.js',
+        '../common/lib/*.js',
+      ],
       options: {
         loopfunc: true,
         multistr: true,
@@ -21,9 +27,11 @@ module.exports = function(grunt) {
     // Copy all needed libs to "vendor/" repository
     copy: {
       main: {
-        files: [
-          {expand: true, cwd: '../common/', src: ['*.js'], dest: 'vendor/'}
-        ]
+        expand: true,
+        cwd: '../common/',
+        src: ['./lib/*.js', './vendor/*.js'],
+        flatten: true,
+        dest: 'vendor/',
       }
     },
     // Launch all tests
@@ -45,8 +53,8 @@ module.exports = function(grunt) {
           baseUrl: '',
           mainConfigFile: "require_config.js",
           optimize: "none",
-          name: 'src/crawler',
-          include: ["lib/utils"],
+          name: 'crawler',
+          include: ['satconf'],
           out: 'build/crawler.js',
         }
       },
@@ -56,7 +64,6 @@ module.exports = function(grunt) {
           mainConfigFile: "require_config.js",
           optimize: "none",
           name: 'src/chrome/chrome_saturn',
-          include: ["lib/utils"],
           out: 'build/chrome_saturn.js',
         }
       },
@@ -70,7 +77,6 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
-          'lib/utils.js',
           'build/chrome_saturn.js',
           'src/chrome/main.js'
         ],
@@ -80,7 +86,6 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
-          'lib/utils.js',
           "build/crawler.js",
           "src/chrome/chrome_crawler.js",
         ],
@@ -165,5 +170,5 @@ module.exports = function(grunt) {
   grunt.registerTask('dev-prod', ['test', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
   grunt.registerTask('prod-dev', ['test', 'config:prod-dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
   grunt.registerTask('staging', ['test', 'config:staging', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod']);
-  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod', 'exec:package']);
+  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod']);
 };

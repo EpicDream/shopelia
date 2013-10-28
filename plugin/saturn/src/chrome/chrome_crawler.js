@@ -1,5 +1,5 @@
 
-require(['logger', 'src/crawler', "satconf"], function(logger, Crawler) {
+require(['logger', 'crawler', "satconf"], function(logger, Crawler) {
   "use strict";
 
 // logger.level = logger.ALL;
@@ -42,7 +42,7 @@ function waitAjax() {
       goNextStep();
   } else {
     // console.log('Neither jQuery nor Prototype, wait some time...');
-    setTimeout(ajaxDone, satconf.DELAY_BETWEEN_OPTIONS);
+    setTimeout(goNextStep, satconf.DELAY_BETWEEN_OPTIONS);
     // logger.debug("in contentscript, going to send 'waitAjax' msg.");
     // window.postMessage('waitAjax', '*');
   }

@@ -227,7 +227,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       }
 
     var paths = pathsList.find("input").toArray().map(function(e) {return e.value;}),
-      field = cField, // save it before it be reset.
+      field = cField; // save it before it be reset.
     chrome.storage.local.get(['mappings'], function(hash) {
       var mapping = hash.mappings[cUrl].data.viking[cHost][field];
       mapping.path = paths;

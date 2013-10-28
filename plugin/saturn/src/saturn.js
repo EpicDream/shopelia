@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', 'uri', './saturn_session', 'satconf'], function(logger, Uri, SaturnSession) {
+define(['logger', 'uri', './saturn_session', 'satconf', 'core_extensions'], function(logger, Uri, SaturnSession) {
 
 "use strict";
 
@@ -35,8 +35,11 @@ function buildMapping(uri, hash) {
 
 //
 function preProcessData(data) {
-  if (data.url && data.url.match(/priceminister/) !== null && data.url.match(/filter=10/) === null) {
-    data.url += (data.url.match(/#/) !== null ? "&filter=10" : "#filter=10");
+  if (data.url && data.url.search(/^https?:\/\/[\w\.]+priceminister\.com/) !== -1 && data.url.search(/filter=10/) === -1) {
+    if (data.url.search(/filter=\d0/) !== -1) {
+      data.url = data.url.replace(/filter=\d0/, 'filter=10');
+    } else
+      data.url += (data.url.search(/#/) !== -1 ? "&filter=10" : "#filter=10");
   }
 
   data.argOptions = data.options || data.argOptions || {};
@@ -302,9 +305,15 @@ Saturn.prototype.cleanTab = function(tabId) {
 
 // Virtual, must be reimplement and supercall
 Saturn.prototype.closeTab = function(tabId) {
-  var idx = this.tabs.pending.indexOf(tabId);
+  var idx = this.tabs.pending.indexOf(tabId),
+    session = this.sessions[tabId];
   if (idx !== -1)
     this.tabs.pending.splice(idx, 1);
+  else if (session) {
+    this.sendError(session, 'Tab closed prematurely.');
+    session.keepTabOpen = true; // To prevent that endSession() add the tab to pending.
+    this.endSession(session);
+  }
   delete this.tabs.opened[tabId];
 };
 
