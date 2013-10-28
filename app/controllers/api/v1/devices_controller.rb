@@ -27,6 +27,6 @@ class Api::V1::DevicesController < Api::V1::BaseController
   private
   
   def retrieve_device
-    @device = Device.find_by_uuid!(params[:id])
+    @device = Device.find_or_create_by_uuid(params[:id])
   end  
 end
