@@ -7,6 +7,7 @@ require 'nokogiri'
 require 'open-uri'
 require 'filemagic'
 require 'zip/zip'
+require 'net/http/digest_auth'
 
 module AlgoliaFeed
 
@@ -19,7 +20,7 @@ module AlgoliaFeed
 
   class AlgoliaFeed
 
-    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :prod_index_name, :index, :tmpdir, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields
+    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :prod_index_name, :index, :tmpdir, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields, :http_auth
 
     def self.run(params={})
       self.new(params).run
@@ -42,6 +43,7 @@ module AlgoliaFeed
       self.debug           = params[:debug]           || 0
       self.category_fields = params[:category_fields] || []   
       self.merchant_cache  = {}
+      self.http_auth = params[:http_auth] || {}
     end
 
     def connect(index_name)
@@ -128,40 +130,58 @@ module AlgoliaFeed
       self.records = []
     end
 
-    def retrieve_url(url)
+    def old_retrieve_url(url)
       raw_file = "#{self.tmpdir}/#{self.class}-#{Time.now.to_i}.raw"
       output = `wget -O #{raw_file} #{url}` if self.debug > 0
       raise InvalidFile, "Cannot download #{url}: #{output}" unless File.exist?(raw_file)
       return raw_file
     end
 
-    def x_retrieve_url(url)
-      File.open(raw_file, 'wb') do |f|
-        puts "Downloading URL #{url}" if self.debug > 0
-        if url =~ /^http/
-          uri = URI(url)
-          http = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https')
-puts http.inspect
-puts "scheme: #{uri.scheme} request: #{uri.request_uri} #{uri.host} #{uri.port}"
-          req = Net::HTTP::Get.new(uri.request_uri)
-puts "#{self.http_auth[:user]} #{self.http_auth[:password]}"
-          req.basic_auth(self.http_auth[:user], self.http_auth[:password])# if self.http_auth.has_key?(:user)
-puts req.inspect
-          res = http.request(req)
-puts res.body
-          if res.is_a?(Net::HTTPSuccess)
+    def retrieve_url(url)
+      raw_file = "#{self.tmpdir}/#{self.class}-#{Time.now.to_i}.raw"
+      puts "Downloading URL #{url}" if self.debug > 0
+      if url =~ /^http/
+        digest_auth = Net::HTTP::DigestAuth.new
+        uri = URI.parse url
+        if self.http_auth.has_key?(:user)
+          uri.user = self.http_auth[:user]
+          uri.password = self.http_auth[:password]
+        end
+
+        h = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https')
+        req = Net::HTTP::Get.new uri.request_uri
+        res = h.request req
+  
+        if res.code == '401'
+          auth = digest_auth.auth_header uri, res['www-authenticate'], 'GET'
+          req = Net::HTTP::Get.new uri.request_uri
+          req.add_field 'Authorization', auth
+          res = h.request req
+        end
+
+        if res.code == '301' or res.code == '302'
+          puts "Redirecting to #{res.response['Location']}" if debug > 1
+          return retrieve_url(res.response['Location'])
+        end
+
+        if res.is_a?(Net::HTTPSuccess)
+          puts "Writing file #{raw_file}" if debug > 1
+          File.open(raw_file, 'wb') do |f|
             f.write res.body
-          else
-            raise InvalidFile, "Cannot download #{url}: #{res.message}"
           end
         else
-          open(url) do |ftp|
+          raise InvalidFile, "Cannot download #{url}: #{res.message}"
+        end
+      else
+        open(url) do |ftp|
+          File.open(raw_file, 'wb') do |f|
             ftp.each_line do |line|
               f.write line
             end
           end
         end
       end
+
       raw_file
     end
 

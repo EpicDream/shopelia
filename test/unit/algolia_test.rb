@@ -15,7 +15,7 @@ class AlgoliaTest < ActiveSupport::TestCase
 
   def test_algolia_download_http_and_gunzip
     url = "http://productdata.zanox.com/exportservice/v1/rest/19024603C1357169475.xml?ticket=F03A5E4E67A27FD5925A570370AD7885&gZipCompress=yes"
-    algolia = AlgoliaFeed::AlgoliaFeed.new
+    algolia = AlgoliaFeed::AlgoliaFeed.new(debug:0, tmpdir:'/tmp')
     raw_file = algolia.retrieve_url(url)
     decoded_file = algolia.decompress_datafile(raw_file)
     assert(FileMagic.new.file(decoded_file) =~ /\AXML\s/)
@@ -25,7 +25,7 @@ class AlgoliaTest < ActiveSupport::TestCase
 
   def test_algolia_download_ftp_and_unzip
     url = "ftp://prixing:j5Z61eg@priceminister.effiliation.com/prixing_BOOKS_TOP.xml.zip"
-    algolia = AlgoliaFeed::AlgoliaFeed.new
+    algolia = AlgoliaFeed::AlgoliaFeed.new(debug: 0, tmpdir:'/tmp')
     raw_file = algolia.retrieve_url(url)
     decoded_file = algolia.decompress_datafile(raw_file)
     assert(FileMagic.new.file(decoded_file) =~ /\AXML\s/)
@@ -34,8 +34,8 @@ class AlgoliaTest < ActiveSupport::TestCase
   end
 
   def test_download_auth_http
-    url = 'https://httpwwwprixin-21:fjisnrsd48@assoc-datafeeds-eu.amazon.com/datafeed/getFeed?filename=fr_amazon_videogames.xml.gz'
-    algolia = AlgoliaFeed::AlgoliaFeed.new
+    url = 'https://assoc-datafeeds-eu.amazon.com/datafeed/getFeed?filename=fr_amazon_videogames.xml.gz'
+    algolia = AlgoliaFeed::Amazon.new(debug: 0, tmpdir:'/tmp')
     raw_file = algolia.retrieve_url(url)
     decoded_file = algolia.decompress_datafile(raw_file)
     assert(FileMagic.new.file(decoded_file) =~ /\AXML\s/)
