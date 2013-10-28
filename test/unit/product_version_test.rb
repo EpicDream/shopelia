@@ -167,7 +167,7 @@ class ProductVersionTest < ActiveSupport::TestCase
               "Mince alors. Cet article n'est plus disponible.", "Ce magasin est en vacances",
               "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
               "For Personalized Service on this item please call 1-800-227-3528 and our Product Specialists will gladly answer all questions and provide additional information. Please note that special conditions and guarantee limitations apply to this product.",
-              "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture" ]
+              "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture", "Ouille, cette page est introuvable !!!" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,

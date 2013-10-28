@@ -13,6 +13,13 @@ class Api::Viking::MerchantsControllerTest < ActionController::TestCase
     assert_equal merchants(:rueducommerce).id, json_response["id"]
   end
 
+  test "it should find all merchants" do
+    get :index, format: :json
+    assert_response :success
+    assert_kind_of Integer, json_response["totalCount"]
+    assert_kind_of Array, json_response["supportedBySaturn"]
+  end
+
   test "it should send data for merchant" do
     get :show, id:@merchant.id
     

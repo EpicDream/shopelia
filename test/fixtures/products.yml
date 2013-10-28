@@ -31,3 +31,10 @@ dvd:
   url: "http://www.amazon.fr/dvd"
   image_url: "http://www.amazon.fr/dvd.jpg"
   viking_failure: false
+
+cd:
+  name: "Dvd"
+  merchant: cdiscount
+  url: "http://www.cdiscount.com/cd"
+  image_url: "http://www.cdiscount.com/cd.jpg"
+  viking_failure: false
