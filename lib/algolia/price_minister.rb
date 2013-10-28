@@ -40,6 +40,14 @@ module AlgoliaFeed
 
     end
 
+    def canonize(url)
+      if m = url.match(/(http:\/\/www\.priceminister\.com\/offer\/buy\/\d+)/)
+        return m[1]
+      else
+        return Linker.clean(url)
+      end
+    end
+
     def process_product(product)
       record = super
 

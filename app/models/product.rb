@@ -90,6 +90,10 @@ class Product < ActiveRecord::Base
     self.update_column "viking_failure", !ok
   end
   
+  def authorize_push_channel
+    Nest.new("product")[self.id][:created_at].set(Time.now.to_i)
+  end
+
   private
   
   def truncate_name
@@ -166,6 +170,7 @@ class Product < ActiveRecord::Base
       self.reload
       self.assess_versions
       self.reload
+      notify_channel
     elsif self.product_versions.empty?
       ProductVersion.create!(product_id:self.id,available:false)
     end
@@ -183,5 +188,9 @@ class Product < ActiveRecord::Base
     self.update_column "viking_failure", false
     self.update_column "versions_expires_at", nil
   end
-  
+
+  def notify_channel
+    ts = Nest.new("product")[self.id][:created_at].get.to_i  
+    Pusher.trigger("product-#{self.id}", "update", ProductSerializer.new(self).as_json[:product]) if ts > Time.now.to_i - 60*5
+  end
 end
