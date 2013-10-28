@@ -1,4 +1,5 @@
 module MerchantHelper
+  UNAVAILABLE = "Indisponible"
 
   def self.process_version url, version
     m = self.from_url(url)
