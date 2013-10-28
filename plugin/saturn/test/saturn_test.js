@@ -265,7 +265,7 @@ describe("Saturn", function() {
       spyOn(saturn, 'crawlProduct');
       expect(Object.keys(saturn.sessions).length).toBe(0);
       
-      saturn.createSession({id: 42}, 1);
+      saturn.createSession({id: 42, url: ''}, 1);
       saturn.productsBeingProcessed[42] = true;
       
       expect(Object.keys(saturn.sessions).length).toBe(1);

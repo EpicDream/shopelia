@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', 'uri', './saturn_session', 'satconf', 'core_extensions'], function(logger, Uri, SaturnSession) {
+define(['logger', 'uri', './saturn_session', './helper', 'satconf', 'core_extensions'], function(logger, Uri, SaturnSession, Helper) {
 
 "use strict";
 
@@ -35,17 +35,7 @@ function buildMapping(uri, hash) {
 
 //
 function preProcessData(data) {
-  if (data.url && data.url.search(/^https?:\/\/[\w\.]+priceminister\.com/) !== -1 && data.url.search(/filter=10/) === -1) {
-    if (data.url.search(/filter=\d0/) !== -1) {
-      data.url = data.url.replace(/filter=\d0/, 'filter=10');
-    } else
-      data.url += (data.url.search(/#/) !== -1 ? "&filter=10" : "#filter=10");
-  }
-
   data.argOptions = data.options || data.argOptions || {};
-  if (data.color !== undefined) data.argOptions[1] = data.color;
-  if (data.size !== undefined) data.argOptions[2] = data.size;
-  
   return data;
 }
 
@@ -269,7 +259,8 @@ Saturn.prototype.createSession = function(prod, tabId) {
     session.then = function() {session.next();};
     session.start();
   };
-  this.openUrl(session, prod.url);
+  Helper.help(session);
+  this.openUrl(session, session.url);
 };
 
 Saturn.prototype.endSession = function(session) {

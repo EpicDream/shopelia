@@ -10,7 +10,7 @@ class CdiscountCom
   end
 
   def canonize
-    if m = /sku=([A-Za-z0-9]+)/.match(@url)
+    if m = /sku=([A-Za-z0-9\_\-]+)/.match(@url)
 			"http://www.cdiscount.com/dp.asp?sku=#{m[1]}"
     else
       nil

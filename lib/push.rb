@@ -9,7 +9,7 @@ module Push
         type:'Georges',
         message:message.content,
         products:message.build_push_data,
-        notification:message.autoreply.present? ? 0 : 1
+        message_id:message.id
       }
     end
   end
