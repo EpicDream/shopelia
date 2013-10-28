@@ -213,7 +213,7 @@ module AlgoliaFeed
       self.conversions.each_pair do |from, to|
         puts "product[#{from}] = #{product[from]} -> record[#{to}]" if self.debug > 2
         record[to] = product[from] if product.has_key?(from)
-        record[to] = record[to].to_i if (record[to] =~ /\A[0-9.]+\Z/ and to != 'ean')
+        record[to] = record[to].to_i if (record[to] =~ /\A[0-9.]+\Z/ and ['price', 'shipping_price', 'rank'].include?(to))
       end
       if record.has_key?('ean')
         record['ean'].split(/\D+/).each do |ean|
