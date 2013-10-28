@@ -12,4 +12,11 @@ class Api::V1::Georges::MessagesController < Api::V1::BaseController
       render json: message.errors, status: :unprocessable_entity
     end
   end
+
+  api :GET, "/api/georges/messages/:id/read", "Mark message as read"
+  def read
+    message = Message.find(params[:id])
+    message.update_attribute :read_at, Time.now
+    head :no_content
+  end
  end
