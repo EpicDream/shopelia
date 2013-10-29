@@ -20,7 +20,7 @@ module AlgoliaFeed
         'brand'        => 'brand',
         'reference'    => 'reference',
         'price'        => 'price',
-        'shippingCost' => 'shipping_price',
+        'shippingCost' => 'price_shipping',
         'deliveryTime' => 'shipping_info',
       }
 
@@ -32,7 +32,7 @@ module AlgoliaFeed
       record = super
 
       record['price'] = to_cents(record['price'])
-      record['shipping_price'] = to_cents(record['shipping_price'])
+      record['price_shipping'] = to_cents(record['price_shipping'])
 
       record
     end

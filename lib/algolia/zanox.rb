@@ -23,7 +23,7 @@ module AlgoliaFeed
         'manufacturer'         => 'brand',
         'ean'                  => 'ean',
         'price'                => 'price',
-        'shippingHandlingCost' => 'shipping_price',
+        'shippingHandlingCost' => 'price_shipping',
         'deliveryTime'         => 'shipping_info',
         'currencyCode'         => 'currency',
         'deepLink'             => 'product_url',
@@ -46,7 +46,7 @@ module AlgoliaFeed
       record = super
 
       record['price'] = to_cents(record['price'])
-      record['shipping_price'] = to_cents(record['shipping_price'])
+      record['price_shipping'] = to_cents(record['price_shipping'])
 
       record['image_url'] = best_image(product)
 

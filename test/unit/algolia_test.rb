@@ -85,7 +85,7 @@ class AlgoliaTest < ActiveSupport::TestCase
     item = hits.first
     assert_equal('Philip J. Neimark', item['brand'])
     assert_equal(404, item['price'])
-    assert_equal(299, item['shipping_price'])
+    assert_equal(299, item['price_shipping'])
   end
 
   def test_zanox
