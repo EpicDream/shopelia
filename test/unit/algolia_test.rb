@@ -84,10 +84,12 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert_equal(1, hits.size)
     item = hits.first
     assert_equal('Philip J. Neimark', item['brand'])
+    assert_equal(404, item['price'])
+    assert_equal(299, item['shipping_price'])
   end
 
   def test_zanox
-    algolia = AlgoliaFeed::Zanox.new(index_name: 'testing', debug:2)
+    algolia = AlgoliaFeed::Zanox.new(index_name: 'testing', debug:0)
     algolia.connect('testing')
     algolia.process_xml("#{Rails.root}/test/data/zanox.xml")
     sleep 1
