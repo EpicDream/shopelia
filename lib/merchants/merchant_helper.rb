@@ -1,5 +1,13 @@
 module MerchantHelper
   UNAVAILABLE = "Indisponible"
+  AVAILABLE = "En stock"
+
+  def self.availability_hash(url)
+    helper = self.get_helper(url)
+    return {} if helper.nil?
+    return helper::AVAILABILITY_HASH if helper.const_defined?(:AVAILABILITY_HASH)
+    return {}
+  end
 
   def self.process_version url, version
     m = self.from_url(url)
@@ -41,12 +49,21 @@ module MerchantHelper
     end
   end
 
+
   private
 
-  def self.from_url url
-    klass = Utils.extract_domain(url).gsub(/[\.-]/, "_").camelize
-    klass.constantize.new(url)
+  def self.get_helper url
+    Utils.extract_domain(url).gsub(/[\.-]/, "_").camelize.constantize
   rescue
     nil
+  end
+
+  def self.from_url url
+    klass = self.get_helper(url)
+    if klass.nil?
+      nil
+    else
+      klass.new(url)
+    end
   end
 end
