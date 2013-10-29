@@ -232,7 +232,6 @@ Crawler.searchOption = function (paths, doc) {
   for (i = 0, l = paths.length; i < l ; i++) {
     path = paths[i];
     elems = $(path, doc);
-    options = [];
     if (elems.length === 0) {
       continue;
     // SELECT, le cas facile
