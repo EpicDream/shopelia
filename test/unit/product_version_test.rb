@@ -167,7 +167,7 @@ class ProductVersionTest < ActiveSupport::TestCase
               "Mince alors. Cet article n'est plus disponible.", "Ce magasin est en vacances",
               "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
               "For Personalized Service on this item please call 1-800-227-3528 and our Product Specialists will gladly answer all questions and provide additional information. Please note that special conditions and guarantee limitations apply to this product.",
-              "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture", "Ouille, cette page est introuvable !!!" ]
+              "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture", "Ouille, cette page est introuvable !!!", "Epuisé" ]
     array.each do |str|
       version = ProductVersion.create(
         product_id:@product.id,
@@ -204,6 +204,22 @@ class ProductVersionTest < ActiveSupport::TestCase
     end
   end
   
+  test "it should search availability in MerchantHelper" do
+    str = "Prête à décorer votre intérieur !"
+    assert_difference "Incident.count", 0 do
+      version = ProductVersion.create(
+        product_id:products(:lampe).id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:str)
+
+      assert_equal true, version.available, "#{str.inspect} failed !"
+    end
+  end
+
   test "it should generate incident if unknown availability (and set as available by default)" do
     assert_difference "Incident.count", 1 do
       version = ProductVersion.create(

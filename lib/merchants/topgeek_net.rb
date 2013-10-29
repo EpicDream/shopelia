@@ -3,6 +3,10 @@ class TopgeekNet
   DEFAULT_PRICE_SHIPPING = "5,90 €"
   DEFAULT_SHIPPING_INFO = "Livraison colis privé sous 3 à 5 jours."
 
+  AVAILABILITY_HASH = {
+    "prete a decorer votre interieur" => true,
+  }
+
   def initialize url
     @url = url
   end
