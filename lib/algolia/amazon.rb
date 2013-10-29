@@ -41,7 +41,7 @@ module AlgoliaFeed
         'item_page_url'        => 'product_url',
         'item_price'           => 'price',
         'item_inventory'       => 'shipping_info',
-        'item_shipping_charge' => 'shipping_price',
+        'item_shipping_charge' => 'price_shipping',
         'item_image_url'       => 'image_url',
         'item_salesrank'       => 'rank',
         'item_author'          => 'author'
@@ -73,8 +73,8 @@ module AlgoliaFeed
       raise RejectedRecord.new("Item has no rank", :rejected_rank) unless record.has_key?('rank')
       raise RejectedRecord.new("Item rank is too low", :rejected_rank) if record['rank'] > 500_000
       record['price'] = to_cents(record['price'])
-      record['shipping_price'] = '0' if record['shipping_price'] =~ /gratuite/i
-      record['shipping_price'] = to_cents(record['shipping_price'])
+      record['price_shipping'] = '0' if record['price_shipping'] =~ /gratuite/i
+      record['price_shipping'] = to_cents(record['price_shipping'])
       record
     end
   end

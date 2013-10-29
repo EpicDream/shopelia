@@ -28,7 +28,7 @@ module AlgoliaFeed
         'codebarre'       => 'ean',
         'prix'            => 'price',
         'urlficheproduit' => 'product_url',
-        'fraisdeport'     => 'shipping_price',
+        'fraisdeport'     => 'price_shipping',
         'dateexpedition'  => 'shipping_info',
         'nomproduit'      => 'name',
         'urlimage'        => 'image_url',
@@ -58,7 +58,7 @@ module AlgoliaFeed
       record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
 
       record['price'] = to_cents(record['price'])
-      record['shipping_price'] = to_cents(record['shipping_price'])
+      record['price_shipping'] = to_cents(record['price_shipping'])
 
       record.delete('rank') if record['rank'] == 0
 
