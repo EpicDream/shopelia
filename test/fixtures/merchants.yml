@@ -53,6 +53,11 @@ etsy:
   domain: "etsy.com"
   should_clean_args: false
 
+carrefour:
+  name: "Carrefour"
+  domain: "carrefour.fr"
+  viking_data: "{\"bla\":\"boo\"}"
+
 priceminister:
   name: "Price Minister"
   url: "http://www.priceminister.com"
