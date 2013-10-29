@@ -432,6 +432,23 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 7.20, product.product_versions.first.price_shipping
   end  
 
+  test "it should pre process versions using merchant helper (2)" do
+    product = products(:dvd)
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        price_shipping: "Livraison gratuite dès 15 euros d'achats"
+      }]);
+
+    assert !product.viking_failure
+    assert_equal 2.79, product.product_versions.first.price_shipping
+  end 
+
   test "it should fail viking if shipping price is blank and no default shipping price is set for merchant" do
     product = products(:cd)
     product.update_attributes(versions:[

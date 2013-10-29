@@ -35,9 +35,9 @@ class AmazonFr
       limit = MerchantHelper.parse_float m[1]
       current_price = MerchantHelper.parse_float version[:price_text]
       if current_price < limit
-        version[:price_shipping] = 2.79
+        version[:price_shipping_text] = "2.79"
       else
-        version[:price_shipping] = 0.0
+        version[:price_shipping_text] = "0.0"
       end
     end
     version

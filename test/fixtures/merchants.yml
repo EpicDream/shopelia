@@ -65,3 +65,9 @@ priceminister:
   viking_data: "{\"bla\":\"boo\"}"
   domain: "priceminister.com"
 
+topgeek:
+  name: "TopGeek"
+  url: "http://www.topgeek.net"
+  vendor: "TopGeek"
+  domain: "topgeek.net"
+
