@@ -95,7 +95,7 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert_equal(1, hits.size)
     item = hits.first
     assert_equal('1', item['saturn'])
-    assert_equal('http://www.priceminister.com/offer/buy/206799878', item['product_url'])
+    assert_equal('http://online.carrefour.fr/electromenager-multimedia/hp/cartouche-encre-n-342-couleur_a00000318_frfr.html', item['product_url'])
   end
 
 end

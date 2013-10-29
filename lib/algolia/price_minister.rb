@@ -33,7 +33,8 @@ module AlgoliaFeed
         'nomproduit'      => 'name',
         'urlimage'        => 'image_url',
         'nomfournisseur'  => 'brand',
-        'stock'           => 'availability'
+        'stock'           => 'availability',
+        'TOP100'          => 'rank'
       }
 
       self.category_fields = params[:category_fields] || ['categorie', 'souscategorie', 'souscategorie2', 'souscategorie3' ]
@@ -51,13 +52,15 @@ module AlgoliaFeed
     def process_product(product)
       record = super
 
-      raise RejectedRecord, "Invalid image #{record['image_url']}" if record['image_url'] =~ /(noavailableimage|generiques)/
+      raise RejectedRecord.new("Invalid image #{record['image_url']}", :rejected_img) if record['image_url'] =~ /(noavailableimage|generiques)/
       record['image_url'].gsub!(/_S\./i, "_L.")
 
       record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
 
       record['price'] = to_cents(record['price'])
       record['shipping_price'] = to_cents(record['shipping_price'])
+
+      record.delete('rank') if record['rank'] == 0
 
       record
     end  

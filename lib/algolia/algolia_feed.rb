@@ -12,10 +12,17 @@ require 'net/http/digest_auth'
 module AlgoliaFeed
 
   class InvalidFile < IOError; end
-  class InvalidRecord < ScriptError; end
-  class RejectedRecord < ScriptError; end
+  class RejectedRecord < ScriptError; 
+    attr_accessor :reason
+    def initialize(str, reason)
+      super(str)
+      self.reason = reason
+    end
+  end
 
 # TODO: Missing categories for Amazon
+# TODO: multithreading
+# TODO: Admin page
 
   class AlgoliaFeed
 
@@ -75,31 +82,41 @@ module AlgoliaFeed
     def process_xml(decoded_file)  
       self.records = []
       file_start = Time.now
-      products_counter = 0
+      stats = {
+        :total          => 0,
+        :accepted       => 0,
+      }
       File.open(decoded_file, 'rb') do |f|
         reader = Nokogiri::XML::Reader(f) { |config| config.nonet.noblanks }
         reader.each do |r|
           begin
             next unless r.name == self.product_field && r.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
+            stats[:total] += 1
             puts "Found XML: #{r.outer_xml}" if self.debug > 2
             product = product_hash(r.outer_xml)
             puts "Got product hash: #{product.inspect}" if self.debug > 2
             record = process_product(product)
             puts "Got record: #{record}" if self.debug > 2
             check_forbidden(record)
-            products_counter += 1
+            stats[:accepted] += 1
             self.records << record
           rescue RejectedRecord => e
-            puts "Rejecting record: #{e}\n#{e.backtrace.join("\n")}\nRecord: #{record.inspect}" if self.debug > 2
+            puts "Rejecting record: #{e}\n#{e}\n#{e.backtrace.join("\n")}\nRecord: #{record.inspect}" if self.debug > 2
+            stats[:rejected] = 0 unless stats.has_key?(:rejected)
+            stats[:rejected] += 1
+            stats[e.reason] = 0 unless stats.has_key?(e.reason)
+            stats[e.reason] += 1
             next
-          rescue InvalidRecord => e
-            puts "Failed to add record: #{e.backtrace.join("\n")}\nRecord: #{record.inspect}" if self.debug > 1
+          rescue => e
+            puts "Crashed record: #{e}\n#{e.backtrace.join("\n")}\nRecord: #{record.inspect}"
+            stats[:crashes] = 0 unless stats.has_key?(:crashes)
+            stats[:crashes] += 1
             next
           end
           self.send_batch if self.records.size >= self.batch_size
         end
         self.send_batch
-        puts "[#{Time.now}] #{decoded_file} - Processed #{products_counter} products in #{Time.now - file_start} seconds (#{(products_counter.to_f/(Time.now - file_start)).round} pr/s)" if self.debug > 0
+        puts "[#{Time.now}] #{decoded_file} - Time: #{Time.now - file_start} - #{stats.inspect}" if self.debug > 0
       end  
     end
 
@@ -108,13 +125,13 @@ module AlgoliaFeed
       record['_tags'].each do |tag|
         next unless tag=~/category:/
         xtag = tag.downcase.gsub(/category:/, '').gsub(/[^a-z]/, '')
-        raise RejectedRecord," Record belongs to category #{xtag}" if xtag =~ /#{forbidden_categories}/
+        raise RejectedRecord.new("Record belongs to category #{xtag}", :rejected_sex) if xtag =~ /#{forbidden_categories}/
       end
       forbidden_names = "(#{self.forbidden_names.join('|')})"
-      raise RejectedRecord, "Record has forbidden name #{record['name']}" if record['name'] =~ /#{forbidden_names}/
-      raise RejectedRecord, "Record has no product URL" unless (record.has_key?('product_url') and record['product_url'] =~ /\Ahttp/)
-      raise RejectedRecord, "Record has no price" unless (record.has_key?('price') and record['price'] > 0)
-      raise RejectedRecord, "Record has no usable image #{record['image_url']}" unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
+      raise RejectedRecord.new("Record has forbidden name #{record['name']}", :rejected_sex) if record['name'] =~ /#{forbidden_names}/
+      raise RejectedRecord.new("Record has no product URL", :rejected_url) unless (record.has_key?('product_url') and record['product_url'] =~ /\Ahttp/)
+      raise RejectedRecord.new("Record has no price", :rejected_price) unless (record.has_key?('price') and record['price'] > 0)
+      raise RejectedRecord.new("Record has no usable image #{record['image_url']}", :rejected_img) unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
     end
 
     def product_hash(xml)
@@ -221,6 +238,10 @@ module AlgoliaFeed
         end 
         record.delete('ean')
       end
+      if record.has_key?('author')
+        record['brand'] = record['author']
+        record.delete('author')
+      end
       record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
       add_merchant_data(record)
       record['currency'] = 'EUR' unless record.has_key?('currency')
@@ -234,9 +255,9 @@ module AlgoliaFeed
     end
 
     def add_merchant_data(record)
-      raise InvalidRecord, "Record has nil product_url" if record['product_url'].nil?
+      raise RejectedRecord.new("Record has nil product_url", :rejected_url) if record['product_url'].nil?
       record['product_url'] = canonize(record['product_url'])
-      raise InvalidRecord, "Record has nil product_url" if record['product_url'].nil?
+      raise RejectedRecord.new("Record has nil product_url", :rejected_url) if record['product_url'].nil?
       domain = Utils.extract_domain(record['product_url'])
       unless self.merchant_cache.has_key?(domain)
         merchant = Merchant.find_by_domain(domain)
