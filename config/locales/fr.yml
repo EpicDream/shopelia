@@ -291,6 +291,10 @@ fr:
     add: "Ajouter l'adresse"
     success: "L'adresse a été créée avec succès"
 
+  messages:
+    errors:
+      device_not_pushable: "Le device n'a pas de push token, impossible de créer un message"
+
   billing_transactions:
     errors:
      invalid_state: "Toutes les commandes doivent être en attente de billing pour pouvoir exécuter la transaction"

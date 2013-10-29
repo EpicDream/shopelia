@@ -1,12 +1,29 @@
 
-require(['logger', 'src/crawler', "satconf"], function(logger, Crawler) {
+require(['logger', 'crawler', "satconf"], function(logger, Crawler) {
   "use strict";
 
 // logger.level = logger.ALL;
+
 chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   if (sender.id != chrome.runtime.id) return;
   logger.info("ProductCrawl task received", hash);
-  var result = Crawler.doNext(hash.action, hash.mapping, hash.option, hash.value);
+  var key = "option"+(hash.option),
+    result;
+  switch(hash.action) {
+    case "getOptions":
+      result = hash.mapping[key] ? Crawler.getOptions(hash.mapping[key].path) : [];
+      break;
+    case "setOption":
+      result = Crawler.setOption(hash.mapping[key].path, hash.value);
+      break;
+    case "crawl":
+      result = Crawler.crawl(hash.mapping);
+      break;
+    default:
+      logger.error("Unknow command", action);
+      result = false;
+  }
+
   if (hash.action == "setOption")
     waitAjax();
   if (callback)
@@ -25,7 +42,7 @@ function waitAjax() {
       goNextStep();
   } else {
     // console.log('Neither jQuery nor Prototype, wait some time...');
-    setTimeout(ajaxDone, satconf.DELAY_BETWEEN_OPTIONS);
+    setTimeout(goNextStep, satconf.DELAY_BETWEEN_OPTIONS);
     // logger.debug("in contentscript, going to send 'waitAjax' msg.");
     // window.postMessage('waitAjax', '*');
   }
@@ -44,25 +61,25 @@ var script = document.createElement("script");
 script.type = "text/javascript";
 script.innerHTML = "(function () {"+
   "window.alert = function() {};\n" +
-  "function ajaxDone() {"+
+  "function ajaxDone() {\n"+
     "waitAjaxTimer = undefined;" +
     "window.postMessage('ajaxFinished', '*');"+
-  "}" +
+  "}\n" +
   "var DELAY_BETWEEN_OPTIONS = " + satconf.DELAY_BETWEEN_OPTIONS + "," +
-    "waitAjaxTimer; "+
-  "function waitAjax() {"+
+    "waitAjaxTimer;\n"+
+  "function waitAjax() {\n"+
     // "var d = new Date(), time = d.toLocaleTimeString() + '.' + d.getMilliseconds();"+
     "if (waitAjaxTimer === undefined)"+
-      "setTimeout(function () {if (waitAjaxTimer === undefined) return; clearTimeout(waitAjaxTimer); ajaxDone();}, 10000); // wait max 10s"+
-    "if (typeof jQuery !== 'undefined') {"+
+      "setTimeout(function () {if (waitAjaxTimer === undefined) return; clearTimeout(waitAjaxTimer); ajaxDone();}, 10000); /* wait max 10s */" +
+    "if (typeof jQuery !== 'undefined') {\n"+
       "if (jQuery.active !== 0) {"+
         // "console.log(time, 'jQuery.active != 0, wait a little time...');"+
         "waitAjaxTimer = setTimeout(waitAjax, 100);"+
       "} else {"+
         // "console.log(time, 'jQuery.active == 0 !');"+
         "setTimeout(ajaxDone, 100);"+
-      "}"+
-    "} else if (typeof Ajax !== 'undefined') {"+
+      "}\n"+
+    "} else if (typeof Ajax !== 'undefined') {\n"+
       "if (Ajax.activeRequestCount !== 0) {"+
         // "console.log(time, 'Ajax.activeRequestCount != 0, wait a little time...');"+
         "waitAjaxTimer = setTimeout(waitAjax, 100);"+
@@ -73,14 +90,14 @@ script.innerHTML = "(function () {"+
     "} else {"+
       // "console.log(time, 'Neither jQuery nor Prototype, wait some time...');"+
       "setTimeout(ajaxDone, DELAY_BETWEEN_OPTIONS);"+
-    "}"+
-  "}"+
+    "}\n"+
+  "}\n"+
   "window.addEventListener('message', function(event) {"+
     "if (event.source !== window || event.data !== 'waitAjax')"+
       "return;"+
     "waitAjax();"+
-  "}, false);"+
-"})";
+  "}, false);\n"+
+"})()";
 document.head.appendChild(script);
 
 // To handle redirection, that throws false 'complete' state.

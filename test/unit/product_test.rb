@@ -376,27 +376,8 @@ class ProductTest < ActiveSupport::TestCase
      assert_equal "in stock", product.product_versions.first.shipping_info
   end  
 
-  test "it should use shipping_info if availability is blank" do
-    product = products(:headphones)
-    product.update_attribute :viking_failure, true
-    product.update_attributes(versions:[
-      { shipping_info:"in stock",
-        brand: "brand",
-        description: "description",
-        image_url: "http://www.amazon.fr/image.jpg",
-        name: "name",
-        price: "10 EUR",
-        price_strikeout: "2.58 EUR",
-        price_shipping: "3.5"
-      }]);
-
-     assert !product.viking_failure
-     assert_equal "in stock", product.product_versions.first.availability_info
-     assert product.product_versions.first.available?
-  end  
-
   test "it shouldn't set viking_failure if availability is false and anything is missing" do
-    product = products(:headphones)
+    product = products(:nounours)
     
     product.update_attributes(versions:[
       { availability:"out of stock",
@@ -451,8 +432,25 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 7.20, product.product_versions.first.price_shipping
   end  
 
+  test "it should pre process versions using merchant helper (2)" do
+    product = products(:dvd)
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        price_shipping: "Livraison gratuite dès 15 euros d'achats"
+      }]);
+
+    assert !product.viking_failure
+    assert_equal 2.79, product.product_versions.first.price_shipping
+  end 
+
   test "it should fail viking if shipping price is blank and no default shipping price is set for merchant" do
-    product = products(:headphones)
+    product = products(:cd)
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",

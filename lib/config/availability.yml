@@ -27,6 +27,12 @@ dernieres pieces disponibles: true
 sera expediee aujourd.?hui: true
 please allow [\d-]+ weeks for delivery: true
 expected ship date: true
+recommande: true
+livraison sous \d: true
+expedie exceptionnellement sous \d: true
+livraison dans la piece de votre choix: true
+dispo sous \d: true
+reapprovisionne le: true
 
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
@@ -58,3 +64,5 @@ est pas accessible: false
 etre averti quand le produit sera de nouveau disponible: false
 no longer available: false
 for personalized service on this item please call: false
+cet article n’est malheureusement plus disponible: false
+page est introuvable: false

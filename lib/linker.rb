@@ -22,8 +22,8 @@ class Linker
     canonical
   rescue Errno::ETIMEDOUT
     orig
-  rescue 
-    nil
+  rescue
+    orig
   end
 
   def self.monetize url
@@ -56,7 +56,7 @@ class Linker
       canonical = Utils.strip_tracking_params canonical
     end
 
-    canonical
+    MerchantHelper.canonize(canonical) || canonical
   end
 
   def self.get uri

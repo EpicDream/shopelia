@@ -16,7 +16,9 @@ lib/config/mangopay_production.yml
 
 plugin/*/node_modules/
 plugin/*/build/
-plugin/*/vendor/
+plugin/saturn/vendor/
+plugin/ariane/vendor/
+plugin/kanaveral/vendor/
 plugin/*/dist/
 plugin/priv_keys/
 *.sublime-project

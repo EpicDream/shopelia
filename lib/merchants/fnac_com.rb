@@ -9,4 +9,7 @@ class FnacCom
     "http://ad.zanox.com/ppc/?25134383C1552684717T&ULP=[[#{url}]]"
   end
 
+  def canonize
+    @url.gsub(/\?.*$/, "").gsub(/#.*$/, "")
+  end
 end

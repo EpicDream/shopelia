@@ -35,17 +35,17 @@ class UtilsTest < ActiveSupport::TestCase
 
   test "it should extract domain from effiliation urls" do
     domain = Utils.extract_domain "http://track.effiliation.com/servlet/effi.redir?id_compteur=12345&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html"
-    assert_equal "priceminister.com", domain
+    assert_equal "effiliation.com", domain
   end
   
   test "it should extract domain from zanox url" do
     domain = Utils.extract_domain "http://ad.zanox.com/ppc/?19054231C2048768278&ULP=[[jeux-jouets.fnac.com/a5782285/DOUETCIE-FND-LAPIN-BONBON-PM-TAUPE]]"
-    assert_equal "fnac.com", domain
+    assert_equal "zanox.com", domain
   end
 
   test "it should extract domain from tradedoubler url" do
     domain = Utils.extract_domain "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(908694445)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Fdp.asp%3Fsku%3DSONYMDRZX100W%26refer%3D*)"
-    assert_equal "cdiscount.com", domain
+    assert_equal "tradedoubler.com", domain
   end
 
   test "it should extract domain if url has invalid parameters" do
