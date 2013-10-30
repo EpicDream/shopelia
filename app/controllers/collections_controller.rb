@@ -1,7 +1,7 @@
 class CollectionsController < ApplicationController
-  before_filter :authenticate_user!, :only => [:create, :add]
-  before_filter :find_collection, :only => [:show, :add, :edit, :update]
-  before_filter :ensure_collection_edit_rights!, :only => [:add, :update]
+  before_filter :authenticate_user!, :only => [:create,]
+  before_filter :find_collection, :only => [:show, :edit, :update]
+  before_filter :ensure_collection_edit_rights!, :only => [:update]
 
   def index
     @collections = Collection.order("created_at DESC")
@@ -26,15 +26,6 @@ class CollectionsController < ApplicationController
       redirect_to collection_path(@collection)
     else
       render "edit"
-    end
-  end
-
-  def add
-    @item = @collection.collection_product_versions.build(url:params[:url])
-    @item.save
-
-    respond_to do |format|
-      format.js
     end
   end
 
