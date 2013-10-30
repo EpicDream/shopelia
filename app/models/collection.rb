@@ -1,7 +1,7 @@
 class Collection < ActiveRecord::Base
   belongs_to :user
-  has_many :collection_items
-  has_many :collection_tags
+  has_many :collection_items, :dependent => :destroy
+  has_many :collection_tags, :dependent => :destroy
   has_many :products, :through => :collection_items
   has_many :tags, :through => :collection_tags
 
