@@ -1,0 +1,11 @@
+<% if @item.errors.any? %>
+  $("#collection_add_url").data("content", "<%= raw @item.errors.full_messages.join("<br>") %>")
+  $("#collection_add_url").popover('show');
+  $("#collection_add_url").focus();
+  $("#collection_add_url").on('input', function() {
+    $(this).popover('hide')
+  });
+<% else %>
+  $("#collection").html("<%= escape_javascript(render @collection.items) %>")
+  monitorCollectionItems();
+<% end %>

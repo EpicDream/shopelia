@@ -1,0 +1,8 @@
+gameofthrones:
+  name: "Game of Thrones"
+
+tvshows:
+  name: "TV shows"
+
+__home:
+  name: "__Home"

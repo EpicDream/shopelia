@@ -8,6 +8,8 @@ class Product < ActiveRecord::Base
   has_many :events, :dependent => :destroy
   has_many :product_versions, :dependent => :destroy
   has_and_belongs_to_many :developers, :uniq => true
+  has_many :collection_items, :through => :product_versions
+  has_many :collections, :through => :collection_items
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true
