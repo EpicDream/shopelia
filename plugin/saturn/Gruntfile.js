@@ -12,6 +12,7 @@ module.exports = function(grunt) {
         'lib/*.js',
         'test/*.js',
         '../common/lib/*.js',
+        '../common/test/**',
       ],
       options: {
         loopfunc: true,
@@ -36,14 +37,31 @@ module.exports = function(grunt) {
     },
     // Launch all tests
     jasmine: {
-      src: ['src/*.js'],
-      options: {
-        vendor: ['lib/*.js'],
-        specs: ['test/*.js'],
-        template: require('grunt-template-jasmine-requirejs'),
-        templateOptions: {
-          requireConfigFile: 'require_config.js'
-        },
+      main: {
+        src: ['src/*.js'],
+        options: {
+          '--web-security' : false,
+          '--local-to-remote-url-access' : true,
+          '--ignore-ssl-errors' : true,
+          specs: ['test/*.js', '../common/test/lib/*.js'],
+          template: require('grunt-template-jasmine-requirejs'),
+          templateOptions: {
+            requireConfigFile: 'require_config.js'
+          },
+        }
+      },
+      mappings: {
+        src: ['src/*.js'],
+        options: {
+          '--web-security' : false,
+          '--local-to-remote-url-access' : true,
+          '--ignore-ssl-errors' : true,
+          specs: ['../common/test/mappings/*.js'],
+          template: require('grunt-template-jasmine-requirejs'),
+          templateOptions: {
+            requireConfigFile: 'require_config.js'
+          },
+        }
       }
     },
     // Concat modules' files in a way that requirejs always work.
@@ -165,10 +183,11 @@ module.exports = function(grunt) {
 
   // Alias
   grunt.registerTask('default', ['dev-prod']);
-  grunt.registerTask('test', ['version', 'jshint', 'config:test', 'copy', 'jasmine']);
+  grunt.registerTask('test', ['version', 'jshint', 'config:test', 'copy', 'jasmine:main']);
   grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev']);
   grunt.registerTask('dev-prod', ['test', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
   grunt.registerTask('prod-dev', ['test', 'config:prod-dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
   grunt.registerTask('staging', ['test', 'config:staging', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod']);
   grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod']);
+  grunt.registerTask('test-mappings', ['test', 'jasmine:mappings']);
 };

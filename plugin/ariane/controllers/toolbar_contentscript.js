@@ -5,7 +5,7 @@
 define(['jquery-ui', 'logger', 'src/ari-panel'], function($, logger, panel) {
   "use strict";
 
-  var toolbar = {},
+  var vk_toolbar = {},
       css_link,
       jAriane,
       jToolbar,
@@ -68,11 +68,11 @@ function build() {
   jButtons.click(onButtonClicked);
 
   //
-  toolbar.toolbarElem = jToolbar[0];
-  toolbar.stepElem = jStep[0];
-  toolbar.abortElem = jToolbar.find(".ari-abort");
-  toolbar.finishElem = jToolbar.find(".ari-finish");
-  toolbar.buttons = jButtons.toArray();
+  vk_toolbar.toolbarElem = jToolbar[0];
+  vk_toolbar.stepElem = jStep[0];
+  vk_toolbar.abortElem = jToolbar.find(".ari-abort");
+  vk_toolbar.finishElem = jToolbar.find(".ari-finish");
+  vk_toolbar.buttons = jButtons.toArray();
 }
 
   loadAriane();
@@ -95,7 +95,7 @@ chrome.extension.onMessage.addListener(function(msg, sender) {
       e.removeClass("current-field");
     }
   } else if (msg.action === 'setField') {
-    toolbar.setCurrentField(msg.field);
+    vk_toolbar.setCurrentField(msg.field);
   }
 });
 
@@ -153,9 +153,9 @@ function onFinished() {
 /*                           Utilities                        */
 /* ********************************************************** */
 
-toolbar.startAriane = function(crawl_mode) {
+vk_toolbar.startAriane = function(crawl_mode) {
   if (! jStep) // Fix to fast .js files load.
-    return setTimeout('toolbar.startAriane('+(crawl_mode === true)+')', 100);
+    return setTimeout('vk_toolbar.startAriane('+(crawl_mode === true)+')', 100);
 
   if (crawl_mode)
     jStep.val("extract").prop("disabled", true);
@@ -165,14 +165,14 @@ toolbar.startAriane = function(crawl_mode) {
   onStepChanged();
 };
 
-toolbar.setCurrentField = function(field) {
+vk_toolbar.setCurrentField = function(field) {
   jButtons.filter(".current-field").removeClass("current-field");
   jButtons.filter("#ariane-product-"+field).addClass("current-field");
 };
 
-toolbar.getCurrentFieldId = function() {
+vk_toolbar.getCurrentFieldId = function() {
   return (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-product-/, '');
 };
   
-  return toolbar;
+  return vk_toolbar;
 });

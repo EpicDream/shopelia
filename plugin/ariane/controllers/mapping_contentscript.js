@@ -2,17 +2,17 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery', 'logger', 'viking', 'html_utils', 'crawler', 'lib/path_utils', 'controllers/toolbar_contentscript'],
-function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
+define(['jquery', 'logger', 'html_utils', 'crawler', 'mapping', 'lib/path_utils', 'controllers/toolbar_contentscript'],
+function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
   "use strict";
 
   var mapper = {};
 
   var buttons = [],
       url = window.location.href,
-      host = viking.getHost(url),
+      host = Mapping.getHost(url),
       started = false,
-      data;
+      mapping;
 
   /* ********************************************************** */
   /*                        Initialisation                      */
@@ -27,7 +27,7 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
       mapper.savePage();
     } else if (msg.action === 'recrawl') {
       chrome.storage.local.get('mappings', function(hash) {
-        data = hash.mappings[url].data;
+        mapping = new Mapping(hash.mappings[url], url);
         rematch();
       });
     } else if (msg.action === 'updateConsistency') {
@@ -40,7 +40,8 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
       return;
     started = true;
     chrome.storage.local.get('mappings', function(hash) {
-      data = hash.mappings[url].data;
+      mapping = new Mapping(hash.mappings[url], url);
+      mapper.savePage();
       mapper.init();
     });
   };
@@ -104,12 +105,10 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
     elems.effect("highlight", {color: "#00cc00" }, "slow");
     logger.info("setMapping('"+fieldId+"', '"+path+"')", elems.length, "element(s) found.");
 
-    var map = {};
-    map[fieldId] = {path: path};
-    viking.merge(map, data, host);
+    mapping.addPath(fieldId, path);
 
     chrome.storage.local.get('mappings', function(hash) {
-      hash.mappings[url].data = data;
+      hash.mappings[url] = mapping.toObject();
       chrome.storage.local.set(hash);
 
       rematch();
@@ -117,27 +116,20 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
   };
 
   mapper.savePage = function () {
-    chrome.storage.local.get(['mappings', 'crawlings'], function (hash) {
-      var data = hash.mappings[url].data,
-        page;
-      if (! data.pages)
-        data.pages = {};
-      if (! data.pages[url])
-        data.pages[url] = viking.getPage(document);
-      page = data.pages[url];
-      if (! page.results)
-        page.results = Crawler.fastCrawl(viking.buildMapping(url, data));
+    chrome.storage.local.get(['mappings'], function (hash) {
+      mapping.saveCurrentPage();
+      hash.mappings[url] = mapping.toObject();
       chrome.storage.local.set(hash);
     });
   };
 
   function rematch() {
-    var mapping = viking.buildMapping(url, data),
-      results = mapper.checkConsistency(mapping);
+    var map = mapping.currentMap,
+      results = mapping.checkConsistency();
     buttons.attr('title', ''); // reset title
-    updatePageResult(mapping);
+    updatePageResult();
     chrome.extension.sendMessage({action: "updateConsistency", url: url, results: results});
-    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
+    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: map, kind: 'update'});
   }
 
   function updateFieldsMatching() {
@@ -157,11 +149,12 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
     });
   }
 
-  function updatePageResult(mapping) {
+  function updatePageResult() {
+    var page = mapping.getPage(url);
+    page.results = Crawler.fastCrawl(mapping.currentMap, Mapping.page2doc(page));
+    logger.debug("New page results =", page.results);
     chrome.storage.local.get(['mappings'], function (hash) {
-      var page = hash.mappings[url].data.pages[url];
-      page.results = Crawler.fastCrawl(mapping, viking.getDocument(page));
-      logger.debug("New page results =", page.results);
+      hash.mappings[url] = mapping.toObject();
       chrome.storage.local.set(hash);
     });
   }
@@ -187,7 +180,7 @@ function($, logger, viking, hu, Crawler, pu, ari_toolbar) {
       if (pageUrl === url) continue;
       page = pages[pageUrl];
       oldResults = page.results;
-      pageDoc = viking.getDocument(page);
+      pageDoc = Mapping.page2doc(page);
       newResults = Crawler.fastCrawl(mapping, pageDoc);
       for (i = fields.length - 1; i >= 0; i--) {
         field = fields[i];
