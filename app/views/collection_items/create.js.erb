@@ -1,4 +1,5 @@
 <% if @item.errors.any? %>
+  @item.product.authorize_push_channel
   $("#collection_item_url").data("content", "<%= raw @item.errors.full_messages.first %>")
   $("#collection_item_url").popover('show');
   $("#collection_item_url").focus();
