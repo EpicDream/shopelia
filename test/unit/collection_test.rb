@@ -31,6 +31,6 @@ class CollectionsTest < ActiveSupport::TestCase
   end
 
   test "it should associate with tags" do
-    assert_equal 2, @collection.tags.count
+    assert_equal 3, @collection.tags.count
   end
 end
