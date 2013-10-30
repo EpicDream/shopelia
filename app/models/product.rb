@@ -192,5 +192,6 @@ class Product < ActiveRecord::Base
   def notify_channel
     ts = Nest.new("product")[self.id][:created_at].get.to_i  
     Pusher.trigger("product-#{self.id}", "update", ProductSerializer.new(self).as_json[:product]) if ts > Time.now.to_i - 60*5
+    rescue
   end
 end
