@@ -402,9 +402,10 @@ Crawler.parseField = function (field, elems) {
   var images;
   switch (field) {
   case 'image_url' :
+    return Crawler.parseImage(elems)[0];
   case 'images' :
     images = Crawler.parseImage(elems);
-    return field === 'image_url' ? images[0] : images;
+    return images.length > 0 ? images : undefined;
   case 'description' :
     return Crawler.parseHtml(elems);
   default :
