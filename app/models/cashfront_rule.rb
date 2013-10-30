@@ -1,13 +1,26 @@
 class CashfrontRule < ActiveRecord::Base
   belongs_to :merchant
   belongs_to :developer
+  belongs_to :device
 
-  validates :merchant_id, :presence => true, :uniqueness => { :scope => :developer_id }
-  validates :rebate_percentage, :presence => true, :inclusion => 1..10
+  validates :merchant_id, :presence => true, :uniqueness => { :scope => [:developer_id, :device_id] }
+  validates :device_id, :allow_nil => true, :uniqueness => { :scope => [:developer_id, :merchant_id] }
+  validates :rebate_percentage, :presence => true, :inclusion => 1..100
 
-  attr_accessible :category_id, :developer_id, :max_rebate_value, :merchant_id, :rebate_percentage, :user_id
+  attr_accessible :category_id, :developer_id, :device_id, :user_id
+  attr_accessible :max_rebate_value, :merchant_id, :rebate_percentage
 
+  scope :for_merchant, lambda { |merchant| where(merchant_id:merchant.try(:id)) }
   scope :for_developer, lambda { |developer| where(developer_id:developer.try(:id)) }
+  scope :for_device, lambda { |device| where(device_id:device.try(:id)) }
+
+  def self.find_for_scope scope={}
+    rule = nil
+    rule_req = CashfrontRule.for_merchant(scope[:merchant]).for_developer(scope[:developer])
+    rule = rule_req.send(:for_device, scope[:device]).first if scope[:device].present?
+    rule = rule_req.first if rule.nil?
+    rule
+  end
 
   def rebate price
     r = price.to_f * self.rebate_percentage / 100.0

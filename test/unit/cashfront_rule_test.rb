@@ -5,7 +5,8 @@ class CashfrontRuleTest < ActiveSupport::TestCase
   setup do
     @developer = developers(:prixing)
     @merchant = merchants(:rueducommerce)
-    @rule = cashfront_rules(:amazon)
+    @rule = cashfront_rules(:amazon1)
+    @device = devices(:mobile)
   end
 
   test "it should create cash front rule" do
@@ -58,6 +59,39 @@ class CashfrontRuleTest < ActiveSupport::TestCase
       developer_id:developers(:shopelia).id,
       max_rebate_value:10)
     assert rule.save
+
+    # Device scope
+    rule = CashfrontRule.new(
+      merchant_id:@merchant.id,
+      rebate_percentage:7,
+      developer_id:@developer.id,
+      device_id:@device.id,
+      max_rebate_value:10)
+    assert rule.save
+
+    rule = CashfrontRule.new(
+      merchant_id:@merchant.id,
+      rebate_percentage:7,
+      developer_id:@developer.id,
+      device_id:@device.id,
+      max_rebate_value:10)
+    assert !rule.save
+
+    rule = CashfrontRule.new(
+      merchant_id:merchants(:fnac).id,
+      rebate_percentage:7,
+      developer_id:@developer.id,
+      device_id:@device.id,
+      max_rebate_value:10)
+    assert rule.save
+
+    rule = CashfrontRule.new(
+      merchant_id:@merchant.id,
+      rebate_percentage:7,
+      developer_id:@developer.id,
+      device_id:devices(:web).id,
+      max_rebate_value:10)
+    assert rule.save    
   end
 
   test "it should compute cashfront value for a price" do
@@ -66,5 +100,19 @@ class CashfrontRuleTest < ActiveSupport::TestCase
 
     @rule.update_attribute :max_rebate_value, nil
     assert_equal 300, @rule.rebate(10000)    
+  end
+
+  test "it should select cashfront rule depending of scope" do
+    scope = { merchant:merchants(:amazon), developer:developers(:prixing) }
+    assert_equal cashfront_rules(:amazon1), CashfrontRule.find_for_scope(scope)
+
+    scope = { merchant:merchants(:amazon), developer:developers(:prixing), device:devices(:web) }
+    assert_equal cashfront_rules(:amazon1), CashfrontRule.find_for_scope(scope)
+
+    scope = { merchant:merchants(:amazon), developer:developers(:prixing), device:devices(:mobile) }
+    assert_equal cashfront_rules(:amazon2), CashfrontRule.find_for_scope(scope)
+
+    scope = { merchant:merchants(:amazon), developer:developers(:shopelia), device:devices(:mobile) }
+    assert_equal cashfront_rules(:amazon3), CashfrontRule.find_for_scope(scope)
   end
 end

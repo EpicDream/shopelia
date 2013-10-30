@@ -30,6 +30,6 @@ class Api::V1::CollectionsController < Api::V1::BaseController
   end
 
   def prepare_scope
-    @scope = { developer:@developer, short:true }
+    @scope = { developer:@developer, device:@device, short:true }
   end
 end
