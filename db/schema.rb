@@ -411,6 +411,12 @@ ActiveRecord::Schema.define(:version => 20131029130950) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "tags", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "url_matchers", :force => true do |t|
     t.text     "url"
     t.text     "canonical"
