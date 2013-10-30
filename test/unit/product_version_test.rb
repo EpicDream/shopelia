@@ -218,6 +218,20 @@ class ProductVersionTest < ActiveSupport::TestCase
 
       assert_equal true, version.available, "#{str.inspect} failed !"
     end
+
+    str = "operation commerciale"
+    assert_difference "Incident.count", 0 do
+      version = ProductVersion.create(
+        product_id:products(:cd).id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:str)
+
+      assert_equal false, version.available, "#{str.inspect} failed !"
+    end
   end
 
   test "it should generate incident if unknown availability (and set as available by default)" do
