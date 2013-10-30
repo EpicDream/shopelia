@@ -254,7 +254,7 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       expect(typeof crawl).toBe('object');
       expect(Object.keys(crawl).length).toBe(11);
       for (field in merchant.data.viking['amazon.fr']) {
-        expect(crawl[field]).toBe(waitedResults[field] || '');
+        expect(crawl[field]).toBe(waitedResults[field]);
       }
     });
 

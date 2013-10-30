@@ -200,12 +200,12 @@ Crawler.parseText = function (elems) {
       res = elem.innerText || $(elem).text();
     res = res.replace(/\n/g,' ').replace(/ {2,}/g,' ').replace(/^\s+|\s+$/g,'');
     return res;
-  }).filter(function(txt) {return txt;}).join(", ");
+  }).filter(function(txt) {return txt;}).join(", ") || undefined;
 };
 
 //
 Crawler.parseHtml = function (elems) {
-  return elems.toArray().map(function(elem) { return elem.innerHTML.replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n"); }).join("\n<br>\n");
+  return elems.toArray().map(function(elem) { return elem.innerHTML.replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n"); }).join("\n<br>\n") || undefined;
 };
 
 //
@@ -213,7 +213,7 @@ Crawler.parseField = function (field, elems) {
   var images;
   switch (field) {
   case 'image_url' :
-    return Crawler.parseImage(elems)[0] || '';
+    return Crawler.parseImage(elems)[0];
   case 'images' :
     images = Crawler.parseImage(elems);
     return images.length > 0 ? images : undefined;
