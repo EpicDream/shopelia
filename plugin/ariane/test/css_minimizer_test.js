@@ -231,7 +231,7 @@ define(['lib/css_struct', 'lib/css_minimizer'], function(CssStruct, Minimizer) {
         else
           return ["img", "img2"];
       }, goodResults[1], {maxNbResult: 3});
-      expect(result).toEqual(["#productImage"]);
+      expect(result).toEqual(["#productImage", ".marged-right > img"]);
     });
   });
 });
