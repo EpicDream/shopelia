@@ -50,7 +50,6 @@ module AlgoliaFeed
       self.category_fields = params[:category_fields] || ['item_category', 'merchant_cat_path']
 
       self.http_auth = params[:http_auth] || {:user => 'httpwwwprixin-21', :password => 'fjisnrsd48'}
-
     end
 
     def canonize(url)

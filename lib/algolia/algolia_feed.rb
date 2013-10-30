@@ -26,14 +26,14 @@ module AlgoliaFeed
 
   class AlgoliaFeed
 
-    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :prod_index_name, :index, :tmpdir, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields, :http_auth
-
-    def self.run(params={})
-      self.new(params).run
-    end
+    attr_accessor :records, :urls, :conversions, :product_field, :batch_size, :index_name, :prod_index_name, :index, :tmpdir, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields, :http_auth, :rejected_files
 
     def self.make_production(params={})
       self.new(params).make_production
+    end
+
+    def self.download(params={})
+      self.new(params).download
     end
 
     def initialize(params={})
@@ -50,6 +50,7 @@ module AlgoliaFeed
       self.category_fields = params[:category_fields] || []   
       self.merchant_cache  = {}
       self.http_auth = params[:http_auth] || {}
+      self.rejected_files = params[:rejected_files] || []
     end
 
     def connect(index_name)
@@ -59,24 +60,7 @@ module AlgoliaFeed
     def make_production
       Algolia.move_index(self.index_name, self.prod_index_name)
       index = Algolia::Index.new(self.prod_index_name)
-      index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference']})
-    end
-
-    def run
-      connect(self.index_name)
-
-      self.urls.each do |url|
-        begin
-          raw_file = retrieve_url(url)
-          decoded_file = decompress_datafile(raw_file)
-          File.unlink(raw_file)
-          process_xml(decoded_file)
-          File.unlink(decoded_file)
-        rescue InvalidFile => e
-          puts "Failed to parse file #{url} : #{e.backtrace.join("\n")}"
-          next
-        end
-      end
+      index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference'], "customRanking" => ["asc(rank)"]})
     end
 
     def process_xml(decoded_file)  
@@ -156,8 +140,16 @@ module AlgoliaFeed
       return raw_file
     end
 
-    def retrieve_url(url)
-      raw_file = "#{self.tmpdir}/#{self.class}-#{Time.now.to_i}.raw"
+    def retrieve_url(url, dir = nil, raw_file=nil)
+      unless raw_file.present?
+        uri = URI(url)
+        basename = uri.path.gsub(/\A.+\//,'').gsub(/xml.*?\Z/, 'xml')
+        basename = "#{basename}.xml" unless basename =~ /\.xml\Z/
+        raw_file = "#{dir}/#{basename}.raw"
+      end
+      dir = "#{self.tmpdir}/#{self.class}" unless dir.present?
+      Dir.mkdir(dir) unless Dir.exists?(dir)
+      raw_file = "#{dir}/#{raw_file}"
       puts "Downloading URL #{url}" if self.debug > 0
       if url =~ /^http/
         digest_auth = Net::HTTP::DigestAuth.new
@@ -204,18 +196,33 @@ module AlgoliaFeed
       raw_file
     end
 
-    def decompress_datafile(raw_file)
-      decoded_file = "#{self.tmpdir}/#{self.class}-#{Time.now.to_i}.xml"
+    def decompress_datafile(raw_file, dir=nil, decoded_file=nil)
+      dir = "#{self.tmpdir}/#{self.class}" unless dir.present?
+      Dir.mkdir(dir) unless Dir.exists?(dir)
+      if decoded_file.present?
+        decoded_file = "#{dir}/#{decoded_file}" 
+      else
+        decoded_file = raw_file.gsub(/\.raw\Z/, '')
+      end
       file_type = FileMagic.new.file(raw_file)
       if file_type =~ /^gzip compressed data/
         File.open(decoded_file, 'wb') do |f|
+          puts "Extracting #{decoded_file}" if debug > 1
           Zlib::GzipReader.open(raw_file) do |gz|
             f.write gz.read
           end
         end
       elsif file_type =~ /^Zip archive data/
         Zip::ZipFile.open(raw_file) do |zipfile|
-          zipfile.each do |file|
+          if zipfile.count > 1
+            zipfile.each do |file|
+              next if self.rejected_files.include?(file.to_s)
+              puts "Extracting #{dir}/#{file}" if debug > 1
+              zipfile.extract(file, "#{dir}/#{file}")
+            end
+          else
+            file = zipfile.first
+              puts "Extracting #{decoded_file}" if debug > 1
             zipfile.extract(file, decoded_file)
           end
         end
@@ -260,19 +267,16 @@ module AlgoliaFeed
       raise RejectedRecord.new("Record has nil product_url", :rejected_url) if record['product_url'].nil?
       domain = Utils.extract_domain(record['product_url'])
       unless self.merchant_cache.has_key?(domain)
-        merchant = Merchant.find_by_domain(domain)
-        if merchant.present?
-          self.merchant_cache[domain] = {
-            :name   => merchant.name,
-            :data   => MerchantSerializer.new(merchant).as_json[:merchant],
-            :saturn => merchant.viking_data.present? ? '1' : '0'
-          }
-        else
-          self.merchant_cache[domain] = {}
-        end
+        merchant = Merchant.find_or_create_by_domain(domain)
+        self.merchant_cache[domain] = {
+          :name   => merchant.name,
+          :data   => MerchantSerializer.new(merchant).as_json[:merchant],
+          :saturn => merchant.viking_data.present? ? '1' : '0'
+        }
       end
       return unless self.merchant_cache[domain].has_key?(:name)
       record['merchant'] = self.merchant_cache[domain][:data]
+      record['merchant_name'] = self.merchant_cache[domain][:name]
       record['_tags'] << "merchant_name:#{self.merchant_cache[domain][:name]}"
       record['saturn'] = self.merchant_cache[domain][:saturn]
     end
@@ -294,11 +298,45 @@ module AlgoliaFeed
       (price.to_f * 100).round
     end
 
+    def download
+      self.urls.each do |url|
+        begin
+          raw_file = retrieve_url(url)
+          decoded_file = decompress_datafile(raw_file)
+          File.unlink(raw_file)
+        rescue => e
+          puts "Failed to download URL #{url} : #{e}\n#{e.backtrace.join("\n")}"
+          next
+        end
+      end
+    end
+
+    def process_directory(dir=nil, free_children=6)
+      self.connect(self.index_name)
+      dir = "#{self.tmpdir}/#{self.class}" unless dir.present?
+      trap('CLD') {
+        free_children += 1
+      }
+      Dir.foreach(dir) do |f|
+        path = "#{dir}/#{f}"
+        next unless File.file?(path)
+        while (free_children < 1)
+          sleep 1
+        end
+        sleep 1 # TODO Remove this - needed by SQLite
+        free_children -= 1
+        fork do
+          process_xml(path)
+        end
+      end
+      Process.waitall
+    end
+
   end
 end
 
 require_relative 'price_minister'
-require_relative 'cdiscount'
+require_relative 'tradedoubler'
 require_relative 'zanox'
 require_relative 'amazon'
 
