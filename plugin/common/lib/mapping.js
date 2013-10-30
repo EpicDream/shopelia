@@ -73,7 +73,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
       dataType: "json",
       url: map.MAPPING_URL+query,
     }).done(function (hash) {
-      if (hash.data.ref) {
+      if (hash.data && hash.data.ref) {
         map.load(hash.data.ref).done(function(mapp) {
           mapp.refs.unshift(mapp.id);
           mapp.id = hash.id;
@@ -123,7 +123,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   map.adaptMapping= function (mapping) {
     var field, i, paths, path;
     for (field in mapping) {
-      paths = mapping[field].path;
+      paths = mapping[field].path || [];
       for (i = 0; i < paths.length; i++) {
         path = paths[i];
         if (path.search(/:visible/) !== -1)
@@ -136,6 +136,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   var Mapping = function (merchant, url) {
     this._data = merchant.data || {};
     this.id = merchant.id;
+    this.url = url;
     this.refs = [];
     this._pages = this._data.pages || {};
 
@@ -155,16 +156,19 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
 
   Mapping.prototype = {};
 
+  Mapping.prototype.toObject = function() {
+    return {id: this.id, data: {viking: this._host_mappings, pages: this._pages}};
+  };
+
   //TODO: handle frameworks like prestashop, magento, shopify, etc
   Mapping.prototype._initMerchantData = function (url) {
-    var minHost = map.getMinHost(url),
-      i;
-    this.host = minHost;
+    var i;
+    this.host = 'default';
     this._data = this._data || {};
     this._host_mappings = {};
-    this._host_mappings[minHost] = {};
+    this._host_mappings['default'] = {};
     for (i = map.FIELDS.length - 1 ; i >= 0 ; i--)
-      this._host_mappings[minHost][map.FIELDS[i]] = {path: []};
+      this._host_mappings['default'][map.FIELDS[i]] = {path: []};
   };
 
   // Build a single host agnostic mapping by merging different host mapping.
@@ -176,9 +180,11 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     logger.debug("Going to build a mapping for host", host, "between", $.map(mappings,function(v, k){return k;}) );
     while (host !== "") {
       if (mappings[host])
-        result = $.extend(false, {}, mappings[host], this.mapping);
+        result = $.extend(false, {}, mappings[host], result);
       host = host.replace(/^[\w-]+(\.|$)/, '');
     }
+    if (mappings["default"])
+      result = $.extend(false, {}, mappings["default"], result);
     return result;
   };
 
@@ -219,7 +225,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   Mapping.prototype.addPath = function (field, newPath, host) {
     var mapping, oldPath, i, str, previousMatch;
 
-    logger.debug("Going to add '" + path + "' in field '" + field + "'.");
+    logger.debug("Going to add '" + newPath + "' in field '" + field + "'.");
     host = host || this.host;
 
     // On initialize la structure si elle n'existant pas.
@@ -295,9 +301,15 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     return this._$(path, this._origin);
   };
 
+  Mapping.prototype.saveCurrentPage = function() {
+    var page = map.doc2page();
+    this._pages[location.href] = page;
+    this._pages[location.href].results = this.crawlPage(page);
+  };
+
   Mapping.prototype.setPage = function(page, url) {
     url = url || page.url;
-    this.pages[url] = page;
+    this._pages[url] = page;
   };
   
   Mapping.prototype.updatePage = function(page, url) {
@@ -305,7 +317,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   };
 
   Mapping.prototype.getPage = function(url) {
-    return this.pages[url];
+    return this._pages[url];
   };
 
   Mapping.prototype.crawlPage = function (page) {
@@ -337,7 +349,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
         field = fields[i];
         logger.debug("Check consistency for field "+field);
         if (oldResults[field] != newResults[field]) {
-          logger.error("ERROR on field '"+field+"' : old '" + oldResults[field] + "' != new '" + newResults[field] + "', ", Object.keys(newResults).join());
+          logger.warn("ERROR on field '"+field+"' : old '" + oldResults[field] + "' != new '" + newResults[field] + "', ", Object.keys(newResults).join());
           results[field] = results[field] || [];
           results[field].push({
             url: page.url,

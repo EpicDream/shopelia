@@ -51,7 +51,7 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       url = "http://www.amazon.fr/dp/B000000002";
     });
 
-    it('initialize (1)', function () {
+    it('initialize regular', function () {
       spyOn(Mapping.prototype, '_initMerchantData');
       spyOn(Mapping.prototype, 'setUrl');
       spyOn(Mapping.prototype, 'setHost');
@@ -66,7 +66,7 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       expect(mapping._host_mappings).toBe(merchant.data.viking);
     });
 
-    it('initialize (2)', function () {
+    it('initialize without url', function () {
       spyOn(Mapping.prototype, '_initMerchantData');
       spyOn(Mapping.prototype, 'setUrl');
       spyOn(Mapping.prototype, 'setHost');
@@ -81,7 +81,7 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       expect(mapping._host_mappings).toBe(merchant.data.viking);
     });
 
-    it('initialize (3)', function () {
+    it('initialize without data', function () {
       spyOn(Mapping.prototype, '_initMerchantData').andCallThrough();
       spyOn(Mapping.prototype, 'setUrl');
       spyOn(Mapping.prototype, 'setHost');
@@ -89,11 +89,28 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       var mapping = new Mapping({id: 42}, url);
 
       expect(mapping._initMerchantData.calls.length).toBe(1);
-      expect(mapping.setHost).not.toHaveBeenCalled();
-      expect(mapping.setUrl.calls.length).toBe(1);
+      expect(mapping.setHost.calls.length).toBe(1);
+      expect(mapping.setUrl).not.toHaveBeenCalled();
       expect(mapping.id).toBe(42);
       expect(typeof mapping._data).toBe('object');
       expect(typeof mapping._host_mappings).toBe('object');
+      expect(Object.keys(mapping._host_mappings).length).toBe(1);
+      expect(mapping._host_mappings["default"]).not.toBe(undefined);
+    });
+
+    it('toObject', function () {
+      var h = (new Mapping(merchant, url)).toObject();
+      expect(typeof h).toBe('object');
+      expect(Object.keys(h).length).toBe(2);
+      expect(h.id).toBe(2);
+      expect(typeof h.data).toBe('object');
+      expect(Object.keys(h.data).length).toBe(2);
+      expect(typeof h.data.viking).toBe('object');
+      expect(Object.keys(h.data.viking).length).toBe(1);
+      expect(typeof h.data.viking['amazon.fr']).toBe('object');
+      expect(Object.keys(h.data.viking['amazon.fr']).length).toBeGreaterThan(10);
+      expect(typeof h.data.pages).toBe('object');
+      expect(Object.keys(h.data.pages).length).toBe(2);
     });
 
     it('getHost', function () {

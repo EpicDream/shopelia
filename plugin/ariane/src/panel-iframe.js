@@ -74,6 +74,8 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     chrome.storage.local.get(['mappings'], function(hash) {
       cMapping = hash.mappings[cUrl].data.viking[cHost];
       fieldName.innerText = cField;
+      if (! cMapping[field])
+        cMapping[field] = {path: []};
 
       // RESULT
       panel.updateResult();
