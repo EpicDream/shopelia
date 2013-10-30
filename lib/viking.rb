@@ -13,8 +13,8 @@ module Viking
     updated_at = Nest.new("viking")[:updated_at].get.to_i
     now = Time.now.to_i
 
-    if created_at > now - 120
-      updated_at > now - 60
+    if created_at > now - 360
+      updated_at >= created_at
     else
       true
     end
