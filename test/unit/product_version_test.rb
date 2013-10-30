@@ -287,7 +287,7 @@ class ProductVersionTest < ActiveSupport::TestCase
       price:"100",
       price_shipping:"10")
 
-    assert_equal 0, version.cashfront_value(developer:developers(:prixing))
+    assert_equal 0, version.cashfront_value(100, developer:developers(:prixing))
   end
   
   test "it should compute cashfront value" do

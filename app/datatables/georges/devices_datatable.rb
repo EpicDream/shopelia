@@ -25,7 +25,7 @@ class Georges::DevicesDatatable
     devices.map do |device|
       last_message = device.messages.order("created_at desc").first
       [
-        link_to device.id, admin_device_path(device),
+        link_to(device.id, admin_device_path(device)),
         number_with_delimiter(device.events.clicks.count),
         number_with_delimiter(device.messages.count),
         "<span style='color:#{device.pending_answer ? 'red' : 'black'}'>#{last_message.content}</span>",
