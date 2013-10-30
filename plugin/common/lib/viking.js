@@ -70,7 +70,7 @@ define(['logger', 'jquery', 'uri'], function(logger, $, Uri) {
         host = viking.getMinHost(url);
     data.viking[host] = {};
     for (i = viking.MAPPING_FIELDS.length - 1 ; i >= 0 ; i--)
-      data.viking[host][viking.MAPPING_FIELDS[i]] = {path: []};
+      data.viking[host][viking.MAPPING_FIELDS[i]] = {paths: []};
     return data;
   };
 
@@ -132,22 +132,17 @@ define(['logger', 'jquery', 'uri'], function(logger, $, Uri) {
       if (! data.viking[goodHost])
         data.viking[goodHost] = {};
       var mapping = data.viking[goodHost];
-      if (! mapping[key]) mapping[key] = {path: []};
-      if (! mapping[key].path) mapping[key].path = [];
+      if (! mapping[key]) mapping[key] = {paths: []};
+      if (! mapping[key].paths) mapping[key].paths = [];
 
-      var newPath = currentMap[key].path;
-      var oldPath = mapping[key].path;
+      var newPath = currentMap[key].paths;
+      var oldPath = mapping[key].paths;
       logger.debug('Merge for key "'+key+'", "'+newPath+'" in "'+oldPath+'"');
 
       // if it did not exist, just create it and continue.
       if (! oldPath) {
-        mapping[key] = {path: [newPath]};
+        mapping[key] = {paths: [newPath]};
         continue;
-      }
-      // if old version, update it.
-      if (! (oldPath instanceof Array)) {
-        mapping[key] = {path: [oldPath]};
-        oldPath = mapping[key].path;
       }
       // if already contains it, pass
       if (oldPath.filter(function(e) {return e.indexOf(newPath) !== -1;}).length > 0) {

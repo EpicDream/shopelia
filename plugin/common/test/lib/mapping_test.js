@@ -15,17 +15,17 @@ define(['logger', 'mapping'], function (logger, Mapping) {
         data:{
           viking:{
             "amazon.fr":{
-              "availability":{"path":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']","b.h1:contains('recherchez une page')"]},
-              "brand":{"path":[".buying > h1 + a"]},
-              "description":{"path":["#productDescription div.content, #ps-content div.content","#feature-bullets-atf .content, .techD:first .content, #artistCentralTeaser > div","#technical-specs_feature_div .content, .content .tsTable","#technicalProductFeaturesATF","div.bucket h2:contains(\"Description\") + div.content"]},
-              "image_url":{"path":"#main-image, #prodImage, #original-main-image"},
-              "name":{"path":"span#btAsinTitle"},
-              "price":{"path":["span#actualPriceValue b, span#buyingPriceValue b","#secondaryUsedAndNew a:not([href*=\"condition=used\"]) + .price"]},
-              "price_shipping":{"path":["#actualPriceExtraMessaging, #pricePlusShippingQty .plusShippingText","table.qpDivTop div.cBox table td:first"]},
-              "price_strikeout":{"path":"span#listPriceValue"},
-              "shipping_info":{"path":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']"]},
-              "option1":{"path":[".variations div#selected_color_name + div .swatchSelect, .variations div#selected_color_name + div .swatchAvailable, .variations div#selected_color_name + div .swatchUnavailable","select#dropdown_selected_color_name"]},
-              "option2":{"path":["#dropdown_selected_size_name option.dropdownAvailable, #dropdown_selected_size_name option.dropdownSelect, div.buying > select#asinRedirect",".variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchSelect, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchAvailable, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchUnavailable"]}
+              "availability":{"paths":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']","b.h1:contains('recherchez une page')"]},
+              "brand":{"paths":[".buying > h1 + a"]},
+              "description":{"paths":["#productDescription div.content, #ps-content div.content","#feature-bullets-atf .content, .techD:first .content, #artistCentralTeaser > div","#technical-specs_feature_div .content, .content .tsTable","#technicalProductFeaturesATF","div.bucket h2:contains(\"Description\") + div.content"]},
+              "image_url":{"paths":["#main-image, #prodImage, #original-main-image"]},
+              "name":{"paths":["span#btAsinTitle"]},
+              "price":{"paths":["span#actualPriceValue b, span#buyingPriceValue b","#secondaryUsedAndNew a:not([href*=\"condition=used\"]) + .price"]},
+              "price_shipping":{"paths":["#actualPriceExtraMessaging, #pricePlusShippingQty .plusShippingText","table.qpDivTop div.cBox table td:first"]},
+              "price_strikeout":{"paths":["span#listPriceValue"]},
+              "shipping_info":{"paths":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']"]},
+              "option1":{"paths":[".variations div#selected_color_name + div .swatchSelect, .variations div#selected_color_name + div .swatchAvailable, .variations div#selected_color_name + div .swatchUnavailable","select#dropdown_selected_color_name"]},
+              "option2":{"paths":["#dropdown_selected_size_name option.dropdownAvailable, #dropdown_selected_size_name option.dropdownSelect, div.buying > select#asinRedirect",".variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchSelect, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchAvailable, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchUnavailable"]}
             }
           },
           pages: {
@@ -254,7 +254,7 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       expect(typeof crawl).toBe('object');
       expect(Object.keys(crawl).length).toBe(11);
       for (field in merchant.data.viking['amazon.fr']) {
-        expect(crawl[field]).toBe(waitedResults[field]);
+        expect(crawl[field]).toBe(waitedResults[field] || '');
       }
     });
 
@@ -264,12 +264,12 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       expect(typeof results).toBe('object');
       expect(Object.keys(results).length).toBe(0);
 
-      mapping.currentMap.description.path = ['#technicalProductFeaturesATF'];
+      mapping.currentMap.description.paths = ['#technicalProductFeaturesATF'];
       results = mapping.checkConsistency('description');
       expect(typeof results).toBe('object');
       expect(Object.keys(results).length).toBe(0);
 
-      mapping.currentMap.description.path = ['div'];
+      mapping.currentMap.description.paths = ['div'];
       results = mapping.checkConsistency('description');
       expect(typeof results).toBe('object');
       expect(Object.keys(results).length).toBe(1);

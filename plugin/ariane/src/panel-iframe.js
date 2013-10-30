@@ -12,6 +12,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       cCrawling = {}, // current crawling
       cField = '', // current field
       cConsistency = {}, // current consistency
+      cPathsBackup = [],
       hostsSelect,
       fieldsList,
       newFieldInput,
@@ -75,7 +76,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       cMapping = hash.mappings[cUrl].data.viking[cHost];
       fieldName.innerText = cField;
       if (! cMapping[field]) {
-        cMapping[field] = {path: []};
+        cMapping[field] = {paths: []};
         chrome.storage.local.set(hash);
         $('<li>').append($('<a href="#">').text(field).click(panel.onFieldSelected)).appendTo(fieldsList);
         fieldsList.listview('refresh');
@@ -95,6 +96,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       panel.updateConsistency();
 
       // PATH LIST
+      cPathsBackup = cMapping[field].paths.slice();
       panel.updatePathsList();
 
       $.mobile.changePage('#pathsPage');
@@ -154,10 +156,8 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
   };
 
   panel.updatePathsList = function() {
-    var paths = cMapping[cField] && cMapping[cField].path || [],
+    var paths = cMapping[cField] && cMapping[cField].paths || [],
         i;
-    if (typeof paths === 'string')
-      paths = [paths];
     pathsList.html("");
     for (i in paths)
       panel.addPathToList(paths[i]);
@@ -173,7 +173,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     fieldsList.listview('refresh');
 
     chrome.storage.local.get(['mappings'], function(hash) {
-      hash.mappings[cUrl].data.viking[cHost][newField] = {path: []};
+      hash.mappings[cUrl].data.viking[cHost][newField] = {paths: []};
       chrome.storage.local.set(hash);
     });
 
@@ -219,11 +219,19 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     pathsList.listview('refresh');
 
     chrome.storage.local.get(['mappings'], function(hash) {
-      hash.mappings[cUrl].data.viking[cHost][cField].path.push(newPath);
+      hash.mappings[cUrl].data.viking[cHost][cField].paths.push(newPath);
       chrome.storage.local.set(hash);
+      chrome.extension.sendMessage({action: 'recrawl'});
     });
 
     return false; // To prevent form submission.
+  };
+
+  panel.savePathsPage = function () {
+    var paths = pathsList.find("input").toArray().map(function(e) {return e.value;});
+    cMapping[cField].paths = paths;
+    if (cField.search(/^option/) !== -1)
+      cMapping[cField].label = optionLabel.value;
   };
 
   panel.onPathOkBtnClicked = function(event) {
@@ -233,20 +241,25 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
         return false;
       }
 
-    var paths = pathsList.find("input").toArray().map(function(e) {return e.value;}),
-      field = cField; // save it before it be reset.
+    panel.savePathsPage();
     chrome.storage.local.get(['mappings'], function(hash) {
-      var mapping = hash.mappings[cUrl].data.viking[cHost][field];
-      mapping.path = paths;
-      if (field.search(/^option/) !== -1)
-        mapping.label = optionLabel.value;
+      hash.mappings[cUrl].data.viking[cHost] = cMapping;
       chrome.storage.local.set(hash);
       chrome.extension.sendMessage({action: 'recrawl'});
       chrome.extension.sendMessage({action: 'setField', field: ''});
     });
   };
 
-  panel.onBackBtnClicked = function() {
+  panel.resetPaths = function () {
+    var field = cField;
+    chrome.storage.local.get(['mappings'], function(hash) {
+      hash.mappings[cUrl].data.viking[cHost][field].paths = cPathsBackup;
+      chrome.storage.local.set(hash);
+    });
+  };
+
+  panel.onPathCancelBtnClicked = function () {
+    panel.resetPaths();
     chrome.extension.sendMessage({action: 'setField', field: ''});
   };
 
@@ -262,8 +275,8 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     }).on("sortupdate", panel.onPathSorted);
     newPathInput = $("#newPathInput");
     newPathInput.parents("form").on("submit", panel.onNewPathAdd);
+    $(pathCancelBtn).click(panel.onPathCancelBtnClicked);
     $(pathOkBtn).click(panel.onPathOkBtnClicked);
-    $(".backButton").click(panel.onBackBtnClicked);
 
     chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
       cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
