@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['logger', 'viking'], function(logger, viking) {
+define(['logger', 'mapping'], function(logger, Mapping) {
   "use strict";
 
   var ariane = {};
@@ -13,24 +13,20 @@ define(['logger', 'viking'], function(logger, viking) {
 
   // Que ce soit via le bouton dans admin/viking ou via le bouton de l'extension.
   ariane.init = function(tab, url) {
-    viking.loadMapping(url, function(merchantHash) {
+    Mapping.load(url).done(function(mapping) {
       chrome.storage.local.get(['mappings', 'openTabs', 'crawlings'], function(hash) {
-        if (! merchantHash) {
+        if (! mapping) {
           alert("Fail to retrieve mapping. Retry.");
           return ariane.clean(tab.id);
-        } else if (typeof merchantHash.data !== 'object') {
-          logger.info("Merchant "+merchantHash.id+" is a new merchant.");
-          merchantHash.data = viking.initMerchantData(url);
-          chrome.tabs.update(tab.id, {url: url});
         }
-        logger.debug("Init Ariane for tab", tab.id, ", merchantHash", merchantHash, "and previous hash", hash);
+        logger.debug("Init Ariane for tab", tab.id, ", mapping", mapping, "and previous hash", hash);
         hash.openTabs[tab.id] = url;
-        hash.mappings[url] = merchantHash;
+        hash.mappings[url] = mapping.toObject();
         hash.crawlings[url] = {};
         chrome.storage.local.set(hash);
         ariane.loadContentScript(tab.id);
       });
-    }, function(err) {
+    }).fail(function(err) {
       alert("Fail to retrieve mapping. Retry.");
       ariane.clean(tab.id);
     });
@@ -50,7 +46,7 @@ define(['logger', 'viking'], function(logger, viking) {
       var mapping = hash.mappings[url];
       $.ajax({
         type : "PUT",
-        url: viking.MAPPING_URL+'/'+mapping.id,
+        url: Mapping.MAPPING_URL+'/'+mapping.id,
         contentType: 'application/json',
         data: JSON.stringify(mapping)
       }).done(function() {

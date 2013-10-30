@@ -8,6 +8,7 @@ require.config({
     underscore: "vendor/underscore",
     html_utils: "vendor/html_utils",
     crawler: "vendor/crawler",
+    mapping: "vendor/mapping",
     satconf: "build/config"
   }
 });

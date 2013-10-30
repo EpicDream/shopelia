@@ -2,7 +2,7 @@ class ProductSerializer < ActiveModel::Serializer
   include ActiveModelSerializerExtension::JsonWithoutNilKeys
   
   attributes :id, :image_url, :name, :url, :merchant, :description, :master_id
-  attributes :versions, :brand, :reference, :ready, :options_completed
+  attributes :versions, :brand, :reference, :ready, :options_completed, :price
  
   def ready
     object.ready? ? 1 : 0
@@ -21,10 +21,14 @@ class ProductSerializer < ActiveModel::Serializer
   end
   
   def versions
-    ActiveModel::ArraySerializer.new(object.product_versions.where(available:true), scope:scope).as_json
+    ActiveModel::ArraySerializer.new(object.product_versions.available, scope:scope).as_json
   end
 
   def include_description?
+    scope.nil? || !scope[:short]
+  end
+
+  def include_versions?
     scope.nil? || !scope[:short]
   end
 end

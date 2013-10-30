@@ -1,5 +1,9 @@
 class CdiscountCom
 
+  AVAILABILITY_HASH = {
+    "operation commerciale" => false,
+  }
+
   def initialize url
     @url = url
   end
@@ -18,7 +22,7 @@ class CdiscountCom
   end
 
   def process_availability version
-    version[:availability_text] = "Indisponible" if version[:shipping_info] =~ /en magasin/i
+    version[:availability_text] = MerchantHelper::UNAVAILABLE if version[:shipping_info] =~ /en magasin/i
     version
   end
 end

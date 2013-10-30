@@ -7,17 +7,17 @@ class CollectionItemTest < ActiveSupport::TestCase
   end
 
   test "it should create collection item" do
-    r = CollectionItem.new(collection_id:@collection.id, product_version_id:product_versions(:headphones).id)
+    r = CollectionItem.new(collection_id:@collection.id, product_id:products(:headphones).id)
     assert r.save
   end
 
   test "it shouldn't associate same product twice to collection" do
-    r = CollectionItem.new(collection_id:@collection.id, product_version_id:product_versions(:usbkey).id)
+    r = CollectionItem.new(collection_id:@collection.id, product_id:products(:usbkey).id)
     assert !r.save
   end
 
   test "it should create association from url" do
-    assert_difference ["Product.count", "ProductVersion.count"] do
+    assert_difference ["Product.count", "Product.count"] do
       item = CollectionItem.new(
         collection_id:@collection.id, 
         url:"http://www.amazon.fr/gp/product/1")

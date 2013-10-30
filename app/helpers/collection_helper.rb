@@ -1,7 +1,7 @@
 module CollectionHelper
 
   def generate_requests_for_current_collection
-    Product.where(id:@collection.reload.collection_items.map(&:product).map(&:id)).expired.map(&:id).each do |id|
+    Product.where(id:@collection.reload.collection_items.map(&:product_id)).expired.map(&:id).each do |id|
       EventsWorker.perform_async({
         :product_id => id,
         :developer_id => @developer.id,
@@ -11,8 +11,8 @@ module CollectionHelper
         :ip_address => @remote_ip
       })
     end
-    @collection.product_versions.each do |product_version|
-      product_version.authorize_push_channel
+    @collection.products.each do |product|
+      product.authorize_push_channel
     end
   end
 end

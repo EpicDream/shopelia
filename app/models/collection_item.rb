@@ -1,13 +1,12 @@
 class CollectionItem < ActiveRecord::Base
   belongs_to :collection
-  belongs_to :product_version
+  belongs_to :product
   belongs_to :user
-  has_one :product, :through => :product_version
 
   validates :collection_id, :presence => true
-  validates :product_version_id, :presence => true, :uniqueness => { :scope => :collection_id }
+  validates :product_id, :presence => true, :uniqueness => { :scope => :collection_id }
 
-  attr_accessible :collection_id, :product_version_id, :url
+  attr_accessible :collection_id, :product_id, :url
   attr_accessor :url
 
   before_validation :check_url_validity, if:Proc.new{ |item| item.url.present? }
@@ -23,7 +22,6 @@ class CollectionItem < ActiveRecord::Base
   end
   
   def find_or_create_product
-    product = Product.fetch(self.url)
-    self.product_version_id = product.product_versions.first.id
+    self.product_id = Product.fetch(self.url).id
   end
 end

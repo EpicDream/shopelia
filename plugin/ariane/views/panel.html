@@ -24,6 +24,12 @@
     li > div[data-role="controlgroup"] {
       text-align:right;
     }
+    #consistencyResult {
+      -webkit-appearance: textarea;
+      height: 72px;
+      overflow: auto;
+      resize: vertical;
+    }
     /*.actionsList {
       padding: 5px; to handle empty list
     }*/
@@ -64,7 +70,7 @@
       <h2>Label :</h2>
       <input id="optionLabel" />
       <h2>Consistance :</h2>
-      <textarea id="consistencyResult" readonly></textarea>
+      <div id="consistencyResult"></div>
       <h2>Paths :</h2>
       <ul id="pathsList" data-role="listview" data-inset="true">
       </ul>

@@ -26,7 +26,7 @@ amazon:
   viking_data: "{\"bla\":\"boo\"}"
   allow_quantities: true
   multiple_addresses: true
-  
+
 fnac:
   name: "Fnac"
   url: "http://www.fnac.com"
@@ -71,3 +71,8 @@ topgeek:
   vendor: "TopGeek"
   domain: "topgeek.net"
 
+zalando:
+  name: "Zalando"
+  url: "http://www.zalando.fr"
+  vendor: "ZalandoFr"
+  domain: "zalando.fr"

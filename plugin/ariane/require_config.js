@@ -12,6 +12,7 @@ require.config({
     viking: "vendor/viking",
     html_utils: "vendor/html_utils",
     crawler: "vendor/crawler",
+    mapping: "vendor/mapping",
     arconf: "build/config"
   },
   shim: {

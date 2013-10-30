@@ -54,7 +54,7 @@ class String
   }
 
   def unaccent
-    _str = self.clone
+    _str = self.dup
     UNACCENT_HASH.each do |k, v|
       _str.gsub!(/[#{v}]/, k)
     end

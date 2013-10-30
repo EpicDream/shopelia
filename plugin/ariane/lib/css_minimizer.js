@@ -117,16 +117,19 @@ define(['sorted_array', "lib/css_struct"], function(SortedArray, CssStruct) {
       options = options || {};
       var initialStruct = new CssStruct(initialCss),
         waitedRes = $(easySolutionCss || initialCss),
-        bestScore = score(new CssStruct(easySolutionCss || initialCss)),
+        easySolutionStruct = new CssStruct(easySolutionCss || initialCss),
+        bestScore = score(easySolutionStruct),
         open = new SortedArray(function(a, b) {return a.score-b.score}),
         root = new CssStruct(""),
         closed = {},
-        res = [],
+        res = [easySolutionStruct],
         current,
         paths,
         child,
         i;
 
+      easySolutionStruct.cssString = easySolutionCss;
+      easySolutionStruct.score = bestScore;
       root.length = initialStruct.length;
       for (i = initialStruct.length-1; i >= 0 && initialStruct[i].type !== 'sep'; i--) {
         child = new CssStruct(root);
