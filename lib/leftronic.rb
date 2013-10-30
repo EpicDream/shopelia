@@ -26,6 +26,10 @@ class Leftronic
     push_number("vulcain_#{merchant.vendor}_status", merchant.vulcain_test_pass? ? 0 : 100)
   end
 
+  def push_tts text
+    push("shopelia_sound",{"html" => "<audio id='sound'><source src='http://api.voicerss.org/?key=e5b7fa2bae8840be9e8cca2c6ac36676&src=#{CGI::escape(text)}&hl=fr-fr&r=0&c=mp3&f=48khz_16bit_stereo' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
+   end
+
   def notify_users_count
     push_number("shopelia_users_count", User.count)
   end

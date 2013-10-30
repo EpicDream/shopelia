@@ -81,5 +81,8 @@ module Shopelia
     GCM.host = 'https://android.googleapis.com/gcm/send'
     GCM.format = :json
     GCM.key = "AIzaSyDGlTm2cS2g1QA7IrsLyL7l63BxioIsJpE"
+
+    # Static image server
+    config.image_host = "https://www.shopelia.com"
   end
 end

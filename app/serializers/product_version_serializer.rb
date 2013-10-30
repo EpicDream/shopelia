@@ -30,4 +30,8 @@ class ProductVersionSerializer < ActiveModel::Serializer
   def option4
     JSON.parse(object.option4) unless object.option4.nil?
   end
+
+  def include_description?
+    scope.nil? || !scope[:short]
+  end
 end
