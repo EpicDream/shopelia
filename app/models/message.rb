@@ -59,6 +59,7 @@ class Message < ActiveRecord::Base
       Push.send_message(self)
     else
       Emailer.notify_admin_new_message_to_george(self).deliver
+      Leftronic.new.push_tts("Georges, " + self.content) unless self.content.blank?
     end
   end
 end
