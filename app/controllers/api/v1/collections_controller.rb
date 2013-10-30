@@ -18,7 +18,7 @@ class Api::V1::CollectionsController < Api::V1::BaseController
   private
 
   def retrieve_tags
-    @tags = Tag.where(name:params[:tags] || [])
+    @tags = (params[:tags] || []).map{|n| Tag.find_or_create_by_name(n)}
   end
 
   def retrieve_collections

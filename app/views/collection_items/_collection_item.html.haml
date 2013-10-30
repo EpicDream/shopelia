@@ -1,5 +1,5 @@
 .col-xs-6.col-md-4
-  .collection-item-box
+  .collection-item-box.collection-item-monitor{:data => {:pid => "#{collection_item.product_id}"}}
     - if collection_item.product.versions_expired?
       .collection-item-spinner
         .spinner

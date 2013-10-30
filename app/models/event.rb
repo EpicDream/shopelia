@@ -12,13 +12,13 @@ class Event < ActiveRecord::Base
   REQUEST = 2
   
   validates :product, :presence => true
-  validates :developer, :presence => true
   validates :action, :presence => true, :inclusion => { :in => [ VIEW, CLICK, REQUEST ] }
 
   before_validation :find_or_create_product
   before_validation :set_monetizable
   before_validation :check_merchant_accepting_events
   before_validation :check_presence_of_device
+  before_validation :check_presence_of_developer
   after_create :reset_viking_sent_at
 
   attr_accessible :url, :product_id, :developer_id, :device_id, :action, :tracker, :ip_address
@@ -66,5 +66,9 @@ class Event < ActiveRecord::Base
 
   def check_presence_of_device
     self.errors.add(:base, 'Missing device') if self.device.nil? && self.action != REQUEST
+  end
+
+  def check_presence_of_developer
+    self.errors.add(:base, 'Missing developer') if self.developer.nil? && self.action != REQUEST
   end
 end

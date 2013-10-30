@@ -1,5 +1,0 @@
-= form_tag add_collection_path(@collection), remote: true, class:'form', id:'addToCollectionForm' do
-  .form-group.col-xs-8.col-lg-10
-    = text_field_tag :url, nil, name:"url", class:"form-control input-lg", type:"text", placeholder:"#{t('placeholders.collections.add')}", rel:"popover", data:{placement:"bottom",trigger:"manual"}, id:"collection_add_url"
-  .col-xs-4.col-lg-2
-    = submit_tag t("app.collections.add.submit"), class:"btn btn-success btn-lg", disable_with:t("app.wait")

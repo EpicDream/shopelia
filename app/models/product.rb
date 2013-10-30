@@ -32,6 +32,7 @@ class Product < ActiveRecord::Base
   scope :viking_pending_batch, lambda { joins(:events).merge(Event.requests).merge(Product.viking_base_request) }
   scope :viking_failure, lambda { where(viking_failure:true).order("updated_at desc").limit(100) }
   scope :expired, where("versions_expires_at is null or versions_expires_at < ?", Time.now)
+  scope :available, joins(:product_versions).merge(ProductVersion.available).uniq
 
   scope :viking_base_request, lambda {
     where("(products.versions_expires_at is null or products.versions_expires_at < ?)" +

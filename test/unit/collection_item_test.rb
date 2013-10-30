@@ -26,6 +26,14 @@ class CollectionItemTest < ActiveSupport::TestCase
     end
   end
 
+  test "it should generate event" do
+    assert_difference ["EventsWorker.jobs.count"] do
+      item = CollectionItem.create(
+        collection_id:@collection.id, 
+        url:"http://www.amazon.fr/gp/product/1")
+    end
+  end
+
   test "it shouldn't create association from bad url" do
     item = CollectionItem.new(
       collection_id:@collection.id, 
