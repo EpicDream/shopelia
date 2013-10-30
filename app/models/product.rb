@@ -8,7 +8,7 @@ class Product < ActiveRecord::Base
   has_many :events, :dependent => :destroy
   has_many :product_versions, :dependent => :destroy
   has_and_belongs_to_many :developers, :uniq => true
-  has_many :collection_items, :through => :product_versions
+  has_many :collection_items
   has_many :collections, :through => :collection_items
   
   validates :merchant, :presence => true
@@ -76,6 +76,10 @@ class Product < ActiveRecord::Base
 
   def available?
     self.product_versions.available.count > 0
+  end
+
+  def price
+    self.product_versions.available.first.try(:price)
   end
 
   def assess_versions

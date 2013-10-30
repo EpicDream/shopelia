@@ -1,7 +1,7 @@
 one:
   collection: got
-  product_version: usbkey
+  product: usbkey
 
 two:
   collection: got
-  product_version: dvd
+  product: dvd
