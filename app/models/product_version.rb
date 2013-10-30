@@ -47,7 +47,8 @@ class ProductVersion < ActiveRecord::Base
     }
   }  
 
-  def cashfront_value price, scope={}
+  def cashfront_value price, scope
+    scope ||= {}
     scope[:merchant] = self.product.merchant
     rule = CashfrontRule.find_for_scope(scope)
     rule ? rule.rebate(price) : 0.0
