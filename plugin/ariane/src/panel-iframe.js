@@ -120,7 +120,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
 
   panel.updateConsistency = function() {
     if (cConsistency[cField])
-      consistencyResult.text(cConsistency[cField].map(function(e) {
+      consistencyResult.html(cConsistency[cField].map(function(e) {
         var res = "<b>Url :</b> " + e.url + "\n";
         res += "<b>Waited :</b> '" + e.old + "'\n";
         res += "<b>Crawled :</b> '" + e.new + "'\n";
@@ -255,7 +255,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     fieldsList = $("#fieldsList").listview();
     newFieldInput = $("#newFieldInput");
     newFieldInput.parents("form").on("submit", panel.onNewFieldAdd);
-    consistencyResult = $("#consistencyResult");
+    consistencyResult = $("#consistencyResult").textinput();
     pathsList = $("#pathsList").listview().sortable({ delay: 20, distance: 10, axis: "y", containment: "parent" }).on("sortupdate", panel.onPathSorted);
     newPathInput = $("#newPathInput");
     newPathInput.parents("form").on("submit", panel.onNewPathAdd);
