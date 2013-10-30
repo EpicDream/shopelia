@@ -199,7 +199,7 @@ class Product < ActiveRecord::Base
 
   def set_image_size
     size = FastImage.size(self.image_url)
-    self.image_size = size.join("x") unless size.nil?
+    self.update_column "image_size", size.join("x") unless size.nil?
   end
 
   def notify_channel
