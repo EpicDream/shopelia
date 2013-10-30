@@ -11,7 +11,7 @@ class Collection < ActiveRecord::Base
 
   before_validation :generate_uuid
 
-  attr_accessible :description, :name, :user_id, :public
+  attr_accessible :description, :name, :user_id, :public, :image
 
   has_attached_file :image, :url => "/images/collections/:id/img.jpg", :path => "#{Rails.public_path}/images/collections/:id/img.jpg"
 

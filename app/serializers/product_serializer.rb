@@ -23,4 +23,8 @@ class ProductSerializer < ActiveModel::Serializer
   def versions
     ActiveModel::ArraySerializer.new(object.product_versions.where(available:true), scope:scope).as_json
   end
+
+  def include_description?
+    scope.nil? || !scope[:short]
+  end
 end

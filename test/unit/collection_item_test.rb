@@ -6,13 +6,13 @@ class CollectionItemTest < ActiveSupport::TestCase
     @collection = collections(:got)
   end
 
-  test "it should create collection tag" do
-    r = CollectionItem.new(collection_id:@collection.id, product_version_id:product_versions(:usbkey).id)
+  test "it should create collection item" do
+    r = CollectionItem.new(collection_id:@collection.id, product_version_id:product_versions(:headphones).id)
     assert r.save
   end
 
   test "it shouldn't associate same product twice to collection" do
-    r = CollectionItem.new(collection_id:@collection.id, product_version_id:product_versions(:headphones).id)
+    r = CollectionItem.new(collection_id:@collection.id, product_version_id:product_versions(:usbkey).id)
     assert !r.save
   end
 
