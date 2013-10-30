@@ -242,6 +242,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
         mapping.label = optionLabel.value;
       chrome.storage.local.set(hash);
       chrome.extension.sendMessage({action: 'recrawl'});
+      chrome.extension.sendMessage({action: 'setField', field: ''});
     });
   };
 
