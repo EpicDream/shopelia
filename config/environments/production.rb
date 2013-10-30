@@ -38,7 +38,7 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( devise_override/confirmations.js  devise_override/registrations.js  )
   config.assets.precompile += %w( devise_override/passwords.js devise_override/passwords.css  )
   config.assets.precompile += %w( home.js errors.js cart_items.js carts.js send_download_link.js )
-  config.assets.precompile += %w( send_download_link.css html_app.js )
+  config.assets.precompile += %w( send_download_link.css html_app.js collections.js collections.css )
 
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH
