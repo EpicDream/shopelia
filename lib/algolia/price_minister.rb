@@ -28,12 +28,13 @@ module AlgoliaFeed
         'codebarre'       => 'ean',
         'prix'            => 'price',
         'urlficheproduit' => 'product_url',
-        'fraisdeport'     => 'shipping_price',
+        'fraisdeport'     => 'price_shipping',
         'dateexpedition'  => 'shipping_info',
         'nomproduit'      => 'name',
         'urlimage'        => 'image_url',
         'nomfournisseur'  => 'brand',
-        'stock'           => 'availability'
+        'stock'           => 'availability',
+        'TOP100'          => 'rank'
       }
 
       self.category_fields = params[:category_fields] || ['categorie', 'souscategorie', 'souscategorie2', 'souscategorie3' ]
@@ -51,13 +52,15 @@ module AlgoliaFeed
     def process_product(product)
       record = super
 
-      raise RejectedRecord, "Invalid image #{record['image_url']}" if record['image_url'] =~ /(noavailableimage|generiques)/
-      record['image_url'].gsub!(/_S\./i, "_L.")
+      raise RejectedRecord.new("Invalid image #{record['image_url']}", :rejected_img) if record['image_url'] =~ /(noavailableimage|generiques)/
+      record['image_url'].gsub!(/_S\./i, "_L.") if (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
 
       record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
 
       record['price'] = to_cents(record['price'])
-      record['shipping_price'] = to_cents(record['shipping_price'])
+      record['price_shipping'] = to_cents(record['price_shipping'])
+
+      record.delete('rank') if record['rank'] == 0
 
       record
     end  

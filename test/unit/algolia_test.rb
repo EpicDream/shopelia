@@ -84,10 +84,12 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert_equal(1, hits.size)
     item = hits.first
     assert_equal('Philip J. Neimark', item['brand'])
+    assert_equal(404, item['price'])
+    assert_equal(299, item['price_shipping'])
   end
 
   def test_zanox
-    algolia = AlgoliaFeed::Zanox.new(index_name: 'testing', debug:2)
+    algolia = AlgoliaFeed::Zanox.new(index_name: 'testing', debug:0)
     algolia.connect('testing')
     algolia.process_xml("#{Rails.root}/test/data/zanox.xml")
     sleep 1
@@ -95,7 +97,7 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert_equal(1, hits.size)
     item = hits.first
     assert_equal('1', item['saturn'])
-    assert_equal('http://www.priceminister.com/offer/buy/206799878', item['product_url'])
+    assert_equal('http://online.carrefour.fr/electromenager-multimedia/hp/cartouche-encre-n-342-couleur_a00000318_frfr.html', item['product_url'])
   end
 
 end

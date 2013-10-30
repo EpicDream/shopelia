@@ -123,7 +123,7 @@ class ProductVersion < ActiveRecord::Base
       :severity => Incident::IMPORTANT)
     nil
   end
-            
+
   def crop_shipping_info
     self.shipping_info = self.shipping_info[0..249] if self.shipping_info && self.shipping_info.length > 250
   end
@@ -144,8 +144,12 @@ class ProductVersion < ActiveRecord::Base
   def parse_available
     self.availability_info = self.availability_text
     a = self.availability_text.unaccent.downcase
-    dic = YAML.load(File.open(AVAILABILITY))
+    dic = MerchantHelper.availability_hash(product.url)
     key = dic.keys.detect {|key| key if a =~ /#{key}/i }
+    if key.nil?
+      dic = YAML.load(File.open(AVAILABILITY))
+      key = dic.keys.detect {|key| key if a =~ /#{key}/i }
+    end
     generate_incident "Cannot parse availability : #{a}" if key.nil?
     self.available = key.nil? ? true : dic[key]
     true
