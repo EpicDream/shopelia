@@ -22,6 +22,7 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal @product.merchant.name, hash[:product][:merchant][:name]
     assert_equal @product.product_master_id, hash[:product][:master_id]
     assert_equal @product.product_versions.first.price, hash[:product][:price]
+    assert_equal "300x225", hash[:product][:image_size]
     assert_equal 1, hash[:product][:ready]
     assert_equal 1, hash[:product][:options_completed]
     assert_equal 1, hash[:product][:versions].count

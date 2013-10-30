@@ -21,6 +21,7 @@ class Product < ActiveRecord::Base
   before_save :truncate_name
   after_save :create_versions
   after_save :clear_failure_if_mute, :if => Proc.new { |product| product.mute? }
+  after_update :set_image_size, :if => Proc.new { |product| product.image_url_changed? || product.image_size.nil? }
   
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
@@ -194,6 +195,11 @@ class Product < ActiveRecord::Base
   def clear_failure_if_mute
     self.update_column "viking_failure", false
     self.update_column "versions_expires_at", nil
+  end
+
+  def set_image_size
+    size = FastImage.size(self.image_url)
+    self.image_size = size.join("x") unless size.nil?
   end
 
   def notify_channel

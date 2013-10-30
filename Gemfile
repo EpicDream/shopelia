@@ -49,6 +49,7 @@ gem 'amazon-ecs'
 gem 'pushmeup'
 gem 'net-http-digest_auth', require:false
 gem "paperclip", "~> 3.0"
+gem 'fastimage'
 
 # Gems used only for assets and not required
 # in production environments by default.
