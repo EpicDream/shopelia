@@ -536,4 +536,10 @@ class ProductTest < ActiveSupport::TestCase
       ])
     end
   end
+
+  test "it should set scope available" do 
+    assert_equal 2, Product.available.count
+    product_versions(:dvd).update_attribute :available, false
+    assert_equal 1, Product.available.count
+  end
 end
