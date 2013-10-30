@@ -1,5 +1,5 @@
 class Georges::DevicesDatatable
-  delegate :params, :h, :link_to, :button_to, :time_ago_in_words, :number_with_delimiter, :admin_georges_device_messages_path, to: :@view
+  delegate :params, :h, :link_to, :button_to, :time_ago_in_words, :number_with_delimiter, :admin_device_path, :admin_georges_device_messages_path, to: :@view
 
   def initialize(view)
     @view = view
@@ -25,7 +25,7 @@ class Georges::DevicesDatatable
     devices.map do |device|
       last_message = device.messages.order("created_at desc").first
       [
-        device.id,
+        link_to device.id, admin_device_path(device),
         number_with_delimiter(device.events.clicks.count),
         number_with_delimiter(device.messages.count),
         "<span style='color:#{device.pending_answer ? 'red' : 'black'}'>#{last_message.content}</span>",

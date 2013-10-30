@@ -30,6 +30,8 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( admin/users.js  admin/orders.js   admin/developers.js  admin/incidents.js )
   config.assets.precompile += %w( admin/viking.css admin/dashboard.css admin/events.css admin/merchants.css )
   config.assets.precompile += %w( admin/viking.js  admin/dashboard.js  admin/events.js  admin/merchants.js  )
+  config.assets.precompile += %w( admin/devices.css )
+  config.assets.precompile += %w( admin/devices.js  )
   config.assets.precompile += %w( admin/georges/messages.js  admin/georges/devices.js  )
   config.assets.precompile += %w( admin/georges/messages.css admin/georges/devices.css )
   config.assets.precompile += %w( devise/passwords.css devise/sessions.css devise_override/sessions.css )
