@@ -23,6 +23,10 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert version.option1_md5.nil?
   end
 
+  test "it should associate with collections" do
+    assert_equal 1, product_versions(:dvd).collections.count
+  end
+
   test "it should truncate name to 250 chars" do
     version = ProductVersion.new(
       product_id:@product.id,
