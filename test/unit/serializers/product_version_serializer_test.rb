@@ -44,5 +44,10 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
     assert_equal 0.30, hash[:product_version][:cashfront_value]
   end
 
+  test "it should serialize without description" do
+    product_serializer = ProductVersionSerializer.new(product_versions(:dvd), scope:{short:true})
+    hash = product_serializer.as_json
+      
+    assert hash[:product_version][:description].nil?
+  end
 end
-

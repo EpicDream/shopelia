@@ -11,5 +11,8 @@ module CollectionHelper
         :ip_address => @remote_ip
       })
     end
+    @collection.product_versions.each do |product_version|
+      product_version.authorize_push_channel
+    end
   end
 end

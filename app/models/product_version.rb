@@ -62,6 +62,10 @@ class ProductVersion < ActiveRecord::Base
     Digest::MD5.hexdigest(option["text"].present? ? option["text"].strip : option["src"])
   end
 
+  def authorize_push_channel
+    Nest.new("product-version")[self.id][:created_at].set(Time.now.to_i)
+  end
+
   private
 
   def assess_version
@@ -177,6 +181,8 @@ class ProductVersion < ActiveRecord::Base
   end   
 
   def notify_channel
-    #Pusher.trigger("product-version-#{self.id}", "update", ProductVersionSerializer.new(self).as_json[:product_version])
+    ts = Nest.new("product-version")[self.id][:created_at].get.to_i  
+    Pusher.trigger("product-version-#{self.id}", "update", ProductVersionSerializer.new(self, scope:{short:true}).as_json[:product_version]) if ts > Time.now.to_i - 60*5
+  rescue
   end
 end
