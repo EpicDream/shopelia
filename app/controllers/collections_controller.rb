@@ -1,6 +1,6 @@
 class CollectionsController < ApplicationController
   before_filter :authenticate_user!, :only => [:create, :add]
-  before_filter :find_collection, :only => [:show, :add]
+  before_filter :find_collection, :only => [:show, :add, :edit, :update]
   before_filter :ensure_collection_edit_rights!, :only => [:add, :update]
 
   def index
@@ -18,6 +18,14 @@ class CollectionsController < ApplicationController
         format.html { render partial:"new_collection" }
         format.js
       end
+    end
+  end
+
+  def update
+    if @collection.update_attributes params[:collection]
+      redirect_to collection_path(@collection)
+    else
+      render "edit"
     end
   end
 

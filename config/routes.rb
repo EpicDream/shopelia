@@ -39,7 +39,7 @@ Shopelia::Application.routes.draw do
   resources :collections do
     post :add, :on => :member
   end
-  resources :collection_items, :only => :show
+  resources :collection_items, :only => [:show, :create]
   resources :orders, :only => [:show, :update] do
     get :confirm, :on => :member
     get :cancel, :on => :member
@@ -95,6 +95,7 @@ Shopelia::Application.routes.draw do
       devise_for :users
       resources :addresses, :only => [:index, :create, :show, :update, :destroy]
       resources :cart_items, :only => :create
+      resources :collections, :only => [:show, :index]
       resources :devices, :only => :update
       resources :events, :only => [:index, :create]
       resources :payment_cards, :only => [:index, :create, :show, :destroy]

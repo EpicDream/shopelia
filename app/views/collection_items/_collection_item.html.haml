@@ -1,5 +1,8 @@
 .col-xs-6.col-md-4
-  .collection-product-box
-    .collection-product
-      %img.collection-product-img{src:"#{collection_item.product_version.image_url}"}
-    .collection-product-price= collection_item.product_version.price
+  .collection-item-box
+    - if collection_item.product.versions_expired?
+      .collection-item-spinner
+        .spinner
+    .collection-item
+      %img.collection-item-img{src:"#{collection_item.product_version.image_url}"}
+    .collection-item-price= number_to_currency(collection_item.product_version.price || 0)

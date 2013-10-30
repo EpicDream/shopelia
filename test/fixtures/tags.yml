@@ -3,3 +3,6 @@ gameofthrones:
 
 tvshows:
   name: "TV shows"
+
+__home:
+  name: "__Home"

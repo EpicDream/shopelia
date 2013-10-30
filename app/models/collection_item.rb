@@ -1,6 +1,8 @@
 class CollectionItem < ActiveRecord::Base
   belongs_to :collection
   belongs_to :product_version
+  belongs_to :user
+  has_one :product, :through => :product_version
 
   validates :collection_id, :presence => true
   validates :product_version_id, :presence => true, :uniqueness => { :scope => :collection_id }

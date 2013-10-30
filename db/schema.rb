@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131028130442) do
+ActiveRecord::Schema.define(:version => 20131029130950) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -121,8 +121,13 @@ ActiveRecord::Schema.define(:version => 20131028130442) do
     t.string   "uuid"
     t.string   "name"
     t.text     "description"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.integer  "image_file_size"
+    t.datetime "image_updated_at"
+    t.boolean  "public",             :default => false
   end
 
   create_table "countries", :force => true do |t|

@@ -283,6 +283,8 @@ fr:
     collections:
       name: "Nom de votre collection"
       add: "URL du produit à ajouter à la collection"
+    collection_items:
+      url: "Adresse internet (URL) du produit"
     payment_card:
       number: "Numéro de la carte"
       cvv: "CVV"
@@ -339,9 +341,14 @@ fr:
       search: "Rechercher des produits dans le catalogue"
     collections:
       submit: "Nouvelle collection"
+      save: "Enregistrer"
       add: 
         submit: "Ajout du produit"
         invalid_url: "Vous devez entrer une adresse valide"
+    collection_items:
+      submit: "Ajouter"
+      bad_url: "L'adresse du produit n'est pas valide"
+      details: "Détails"
     public:
       promise: "Scannez, Achetez"
       tagline: "profitez des prix internet où que vous soyez"

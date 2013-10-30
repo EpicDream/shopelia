@@ -5,3 +5,7 @@ one:
 two:
   collection: got
   tag: tvshows
+
+three:
+  collection: got
+  tag: __home
