@@ -11,10 +11,10 @@ chrome.extension.onMessage.addListener(function(hash, sender, callback) {
     result;
   switch(hash.action) {
     case "getOptions":
-      result = hash.mapping[key] ? Crawler.getOptions(hash.mapping[key].path) : [];
+      result = hash.mapping[key] ? Crawler.getOptions(hash.mapping[key].paths) : [];
       break;
     case "setOption":
-      result = Crawler.setOption(hash.mapping[key].path, hash.value);
+      result = Crawler.setOption(hash.mapping[key].paths, hash.value);
       break;
     case "crawl":
       result = Crawler.crawl(hash.mapping);

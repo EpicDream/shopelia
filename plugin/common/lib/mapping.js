@@ -123,7 +123,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   map.adaptMapping= function (mapping) {
     var field, i, paths, path;
     for (field in mapping) {
-      paths = mapping[field].path || [];
+      paths = mapping[field].paths || [];
       for (i = 0; i < paths.length; i++) {
         path = paths[i];
         if (path.search(/:visible/) !== -1)
@@ -168,7 +168,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     this._host_mappings = {};
     this._host_mappings['default'] = {};
     for (i = map.FIELDS.length - 1 ; i >= 0 ; i--)
-      this._host_mappings['default'][map.FIELDS[i]] = {path: []};
+      this._host_mappings['default'][map.FIELDS[i]] = {paths: []};
   };
 
   // Build a single host agnostic mapping by merging different host mapping.
@@ -232,11 +232,10 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     if (! this._host_mappings[host])
       this._host_mappings[host] = {};
     mapping = this._host_mappings[host];
-    if (! mapping[field]) mapping[field] = {path: []};
-    if (! mapping[field].path) mapping[field].path = [];
-    if (typeof mapping[field].path === 'string') mapping[field].path = [mapping[field].path];
+    if (! mapping[field]) mapping[field] = {paths: []};
+    if (! mapping[field].paths) mapping[field].paths = [];
 
-    oldPath = mapping[field].path;
+    oldPath = mapping[field].paths;
     logger.debug('Merge for field "'+field+'", "'+newPath+'" in "'+oldPath+'"');
 
     // if it did not exist, just create it and continue.
@@ -324,7 +323,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     var pageDoc = Mapping.page2doc(page),
       host = map.getHost(page.url || page.href),
       mapping = this._buildMapping(host);
-    logger.debug("Going to crawl in a "+Object.keys(mapping).length+" fields mapping with host="+host+".", mapping.availability.path.join());
+    logger.debug("Going to crawl in a "+Object.keys(mapping).length+" fields mapping with host="+host+".");
     return Crawler.fastCrawl(map.adaptMapping(mapping), pageDoc);
   };
 
