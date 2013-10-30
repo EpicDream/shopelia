@@ -256,7 +256,9 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     newFieldInput = $("#newFieldInput");
     newFieldInput.parents("form").on("submit", panel.onNewFieldAdd);
     consistencyResult = $("#consistencyResult").textinput();
-    pathsList = $("#pathsList").listview().sortable({ delay: 20, distance: 10, axis: "y", containment: "parent" }).on("sortupdate", panel.onPathSorted);
+    pathsList = $("#pathsList").listview().sortable({
+      delay: 20, distance: 10, axis: "y"
+    }).on("sortupdate", panel.onPathSorted);
     newPathInput = $("#newPathInput");
     newPathInput.parents("form").on("submit", panel.onNewPathAdd);
     $(pathOkBtn).click(panel.onPathOkBtnClicked);
