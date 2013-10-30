@@ -28,7 +28,6 @@ class Message < ActiveRecord::Base
 
   def set_pending_answer
     self.device.update_attribute :pending_answer, !self.from_admin?
-    self.device.update_attribute :autoreplied, false if !self.from_admin
   end
 
   def serialize_data
