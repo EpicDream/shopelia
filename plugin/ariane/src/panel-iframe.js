@@ -74,8 +74,13 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     chrome.storage.local.get(['mappings'], function(hash) {
       cMapping = hash.mappings[cUrl].data.viking[cHost];
       fieldName.innerText = cField;
-      if (! cMapping[field])
+      if (! cMapping[field]) {
         cMapping[field] = {path: []};
+        chrome.storage.local.set(hash);
+        $('<li>').append($('<a href="#">').text(field).click(panel.onFieldSelected)).appendTo(fieldsList);
+        fieldsList.listview('refresh');
+        panel.updateFieldsMatch();
+      }
 
       // RESULT
       panel.updateResult();
