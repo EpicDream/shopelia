@@ -70,9 +70,9 @@ function monitorCollectionItems() {
   $(".collection-item-monitor").each(function() {
     var pid = $(this).data('pid');
     var uuid = $(this).data('uuid');
-    if (window.channels["product-version-" + pid] === undefined) {
-      window.channels["product-version-" + pid] = window.pusher.subscribe("product-version-" + pid)
-      window.channels["product-version-" + pid].bind("update", function(data) {
+    if (window.channels["product-" + pid] === undefined) {
+      window.channels["product-" + pid] = window.pusher.subscribe("product-" + pid)
+      window.channels["product-" + pid].bind("update", function(data) {
         el = $("[data-uuid=" + uuid + "]");
         el.find(".collection-item-spinner").addClass("hidden");
         el.find(".collection-item-img").attr("src", data.image_url);

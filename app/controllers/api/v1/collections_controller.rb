@@ -12,7 +12,7 @@ class Api::V1::CollectionsController < Api::V1::BaseController
 
   api :GET, "/collections/:uuid", "Get collection's product"
   def show
-    render json: ActiveModel::ArraySerializer.new(@collection.product_versions.available, scope:@scope)
+    render json: ActiveModel::ArraySerializer.new(@collection.products.available, scope:@scope)
   end
 
   private
@@ -30,6 +30,6 @@ class Api::V1::CollectionsController < Api::V1::BaseController
   end
 
   def prepare_scope
-    @scope = { developer:@developer }
+    @scope = { developer:@developer, short:true }
   end
 end

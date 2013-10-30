@@ -2,7 +2,7 @@ class Collection < ActiveRecord::Base
   belongs_to :user
   has_many :collection_items
   has_many :collection_tags
-  has_many :product_versions, :through => :collection_items
+  has_many :products, :through => :collection_items
   has_many :tags, :through => :collection_tags
 
   validates :user, :presence => true

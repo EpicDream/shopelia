@@ -21,6 +21,7 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal @product.description, hash[:product][:description]
     assert_equal @product.merchant.name, hash[:product][:merchant][:name]
     assert_equal @product.product_master_id, hash[:product][:master_id]
+    assert_equal @product.product_versions.first.price, hash[:product][:price]
     assert_equal 1, hash[:product][:ready]
     assert_equal 1, hash[:product][:options_completed]
     assert_equal 1, hash[:product][:versions].count
@@ -56,10 +57,11 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal 0.30, version[:cashfront_value]
   end
 
-  test "it should serialize without description" do
+  test "it should serialize short version" do
     product_serializer = ProductSerializer.new(@product, scope:{short:true})
     hash = product_serializer.as_json
 
     assert hash[:product][:description].nil?
+    assert hash[:product][:versions].nil?
   end
 end
