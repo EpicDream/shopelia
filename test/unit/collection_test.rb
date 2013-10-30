@@ -26,8 +26,8 @@ class CollectionsTest < ActiveSupport::TestCase
     assert_equal "description", collection.description
   end
 
-  test "it should associate with product versions" do
-    assert_equal 2, @collection.product_versions.count
+  test "it should associate with products" do
+    assert_equal 2, @collection.products.count
   end
 
   test "it should associate with tags" do
