@@ -2,4 +2,12 @@
   %p= message.content
   - message.data.each do |url|
     = render Product.fetch(url)
+  %small
+    - if message.from_admin
+      - if message.read_at
+        Read #{distance_of_time_in_words_to_now message.read_at} ago
+      - else
+        Sent #{distance_of_time_in_words_to_now message.created_at} ago
+    - else
+      Sent #{distance_of_time_in_words_to_now message.created_at} ago
 .clear

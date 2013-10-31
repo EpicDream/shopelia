@@ -5,6 +5,6 @@ class Admin::AdminController < ActionController::Base
   private
   
   def set_locale
-    #I18n.locale = "en"
+    I18n.locale = "en"
   end
 end
