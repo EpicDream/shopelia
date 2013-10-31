@@ -7,12 +7,12 @@ class Api::V1::CollectionsController < Api::V1::BaseController
 
   api :GET, "/collections", "Get all collections by tags"
   def index
-    render json: @collections.map{ |c| CollectionSerializer.new(c, scope:@scope).as_json[:collection] }
+    render json: @collections.sort(&:created_at).reverse.map{ |c| CollectionSerializer.new(c, scope:@scope).as_json[:collection] }
   end
 
   api :GET, "/collections/:uuid", "Get collection's product"
   def show
-    render json: @collection.products.available.map{ |p| ProductSerializer.new(p, scope:@scope).as_json[:product] }
+    render json: @collection.items.map{ |p| ProductSerializer.new(p, scope:@scope).as_json[:product] }
   end
 
   private
@@ -22,7 +22,7 @@ class Api::V1::CollectionsController < Api::V1::BaseController
   end
 
   def retrieve_collections
-    @collections = @tags.map{|tag| tag.collections}.inject(:&) || []
+    @collections = @tags.map{|tag| tag.collections.public}.inject(:&) || []
   end
 
   def retrieve_collection

@@ -1,5 +1,5 @@
 class CollectionsController < ApplicationController
-  before_filter :authenticate_user!, :only => [:create,]
+  before_filter :authenticate_user!, :only => [:create]
   before_filter :find_collection, :only => [:show, :edit, :update]
   before_filter :ensure_collection_edit_rights!, :only => [:update]
 

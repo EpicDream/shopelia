@@ -1,7 +1,8 @@
 require 'test_helper'
 
 class Api::V1::CollectionsControllerTest < ActionController::TestCase
-
+  include Devise::TestHelpers
+  
   setup do
     @collection = collections(:got)
   end

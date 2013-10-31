@@ -15,6 +15,6 @@ class CollectionSerializerTest < ActiveSupport::TestCase
     assert_equal @collection.name, hash[:collection][:name]
     assert_equal Shopelia::Application.config.image_host + @collection.image.url, hash[:collection][:image_url]
     assert_equal @collection.tags.map(&:name), hash[:collection][:tags]
-    assert_equal @collection.collection_items.count, hash[:collection][:size]
+    assert_equal @collection.image_size, hash[:collection][:image_size]
   end
 end
