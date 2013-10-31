@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 class AmazonFr
-  DEFAULT_SHIPPING_PRICE = "2.79 €"
+  DEFAULT_PRICE_SHIPPING = "2.79 €"
 
   def initialize url
     @url = url
@@ -35,12 +35,12 @@ class AmazonFr
 
   def process_price_shipping version
     if version[:price_shipping_text].blank?
-      version[:price_shipping_text] = DEFAULT_SHIPPING_PRICE
+      version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING
     elsif version[:price_shipping_text].present? && m = version[:price_shipping_text].match(/livraison gratuite d.s (\d+) euros d'achats/i)
       limit = MerchantHelper.parse_float m[1]
       current_price = MerchantHelper.parse_float version[:price_text]
       if current_price < limit
-        version[:price_shipping_text] = DEFAULT_SHIPPING_PRICE
+        version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING
       else
         version[:price_shipping_text] = MerchantHelper::FREE_PRICE
       end
