@@ -7,12 +7,12 @@ class Api::V1::CollectionsController < Api::V1::BaseController
 
   api :GET, "/collections", "Get all collections by tags"
   def index
-    render json: ActiveModel::ArraySerializer.new(@collections)
+    render json: @collections.map{ |c| CollectionSerializer.new(c, scope:@scope).as_json[:collection] }
   end
 
   api :GET, "/collections/:uuid", "Get collection's product"
   def show
-    render json: ActiveModel::ArraySerializer.new(@collection.products.available, scope:@scope)
+    render json: @collection.products.available.map{ |p| ProductSerializer.new(p, scope:@scope).as_json[:product] }
   end
 
   private
