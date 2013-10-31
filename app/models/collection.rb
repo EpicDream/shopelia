@@ -28,7 +28,7 @@ class Collection < ActiveRecord::Base
   end
 
   def items
-    self.products.available.order("collection_items.created_at ASC")
+    self.products.available
   end
 
   private
@@ -39,6 +39,6 @@ class Collection < ActiveRecord::Base
 
   def save_image_dimensions
     geo = Paperclip::Geometry.from_file(image.queued_for_write[:original])
-    self.image_size = "#{geo.width}x#{geo.height}"
+    self.image_size = "#{geo.width.to_i}x#{geo.height.to_i}"
   end
 end
