@@ -347,7 +347,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
       for (i = fields.length - 1; i >= 0; i--) {
         field = fields[i];
         logger.debug("Check consistency for field "+field);
-        if (oldResults[field] != newResults[field]) {
+        if (oldResults[field] != newResults[field] && (''+oldResults[field]) != (''+newResults[field])) {
           logger.warn("ERROR on field '"+field+"' : old '" + oldResults[field] + "' != new '" + newResults[field] + "', ", Object.keys(newResults).join());
           results[field] = results[field] || [];
           results[field].push({

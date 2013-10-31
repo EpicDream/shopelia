@@ -15,7 +15,7 @@ require(['src/ariane', 'logger'], function(ariane, logger) {
     chrome.storage.local.get('crawlings', function(hash) {
       hash.crawlings[msg.url][msg.kind] = msg.versions[0];
       chrome.storage.local.set(hash);
-      chrome.tabs.sendMessage(msg.tabId, {action: msg.kind+'Crawl'});
+      chrome.tabs.sendMessage(msg.tabId, {action: msg.kind+'Crawl', strategy: msg.strategy});
     });
   });
 
