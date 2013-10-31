@@ -86,6 +86,8 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
         fieldsList.listview('refresh');
         panel.updateFieldsMatch();
       }
+      if (! cMapping[field].paths)
+        cMapping[field].paths = [];
 
       // RESULT
       panel.updateResult();
