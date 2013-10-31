@@ -5,10 +5,10 @@ namespace :shopelia do
 
     desc "Download all feeds"
     task :download => :environment do
-      fork AlgoliaFeed::Tradedoubler.download
-      fork AlgoliaFeed::PriceMinister.download
-      fork AlgoliaFeed::Zanox.download
-      fork AlgoliaFeed::Amazon.download
+      fork { AlgoliaFeed::Tradedoubler.download(debug:1) }
+      fork { AlgoliaFeed::PriceMinister.download(debug:1) }
+      fork { AlgoliaFeed::Zanox.download(debug:1) }
+      fork { AlgoliaFeed::Amazon.download(debug:1) }
       Process.waitall
     end
 
