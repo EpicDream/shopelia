@@ -2,14 +2,15 @@ namespace :shopelia do
   namespace :algolia_feed do
 
     require 'algolia/algolia_feed'
-    
-    desc "Process all Algolia feeds"
-    task :run => :environment do
-      AlgoliaFeed::Cdiscount.run
-      AlgoliaFeed::PriceMinister.run
-      AlgoliaFeed::Zanox.run
-      AlgoliaFeed::Amazon.run
-#      AlgoliaFeed::AlgoliaFeed.make_production
+
+    desc "Download all feeds"
+    task :download => :environment do
+      fork AlgoliaFeed::Tradedoubler.download
+      fork AlgoliaFeed::PriceMinister.download
+      fork AlgoliaFeed::Zanox.download
+      fork AlgoliaFeed::Amazon.download
+      Process.waitall
     end
+
   end
 end

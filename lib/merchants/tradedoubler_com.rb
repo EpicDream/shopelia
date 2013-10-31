@@ -5,7 +5,7 @@ class TradedoublerCom
   end
 
   def canonize
-    matches = /url\((.+?)\%26refer/.match(@url)
+    matches = /url\((.+?)\)/.match(@url)
     return URI.unescape(matches[1]) if matches.present?
     @url
   end
