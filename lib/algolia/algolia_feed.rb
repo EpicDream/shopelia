@@ -8,6 +8,7 @@ require 'open-uri'
 require 'filemagic'
 require 'zip/zip'
 require 'net/http/digest_auth'
+require 'find'
 
 module AlgoliaFeed
 
@@ -36,6 +37,10 @@ module AlgoliaFeed
       self.new(params).download
     end
 
+    def self.process_xml_directory(params={})
+      self.new(params).process_xml_directory
+    end
+
     def initialize(params={})
       self.urls            = params[:urls]            || []
       self.conversions     = params[:conversions]     || {}
@@ -59,8 +64,10 @@ module AlgoliaFeed
 
     def make_production
       Algolia.move_index(self.index_name, self.prod_index_name)
-      index = Algolia::Index.new(self.prod_index_name)
-      index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference'], "customRanking" => ["asc(rank)"]})
+    end
+
+    def set_index_attributes
+      self.index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference'], "customRanking" => ["asc(rank)"]})
     end
 
     def process_xml(decoded_file)  
@@ -131,13 +138,6 @@ module AlgoliaFeed
       return unless self.records.size > 0
       self.index.add_objects(self.records)
       self.records = []
-    end
-
-    def old_retrieve_url(url)
-      raw_file = "#{self.tmpdir}/#{self.class}-#{Time.now.to_i}.raw"
-      output = `wget -O #{raw_file} #{url}` if self.debug > 0
-      raise InvalidFile, "Cannot download #{url}: #{output}" unless File.exist?(raw_file)
-      return raw_file
     end
 
     def retrieve_url(url, dir = nil, raw_file=nil)
@@ -311,22 +311,25 @@ module AlgoliaFeed
       end
     end
 
-    def process_directory(dir=nil, free_children=6)
+    def process_xml_directory(dir=nil, free_children=6)
       self.connect(self.index_name)
-      dir = "#{self.tmpdir}/#{self.class}" unless dir.present?
+      self.set_index_attributes
+      dir = self.tmpdir unless dir.present?
       trap('CLD') {
         free_children += 1
       }
-      Dir.foreach(dir) do |f|
-        path = "#{dir}/#{f}"
+      Find.find(dir) do |path|
         next unless File.file?(path)
         while (free_children < 1)
           sleep 1
         end
-        sleep 1 # TODO Remove this - needed by SQLite
         free_children -= 1
         fork do
-          process_xml(path)
+          class_name = path.split(/\//)[-2]
+          worker = class_name.constantize.new(debug: self.debug)
+          puts "#{Process.pid} #{worker} Processing #{path}" if self.debug > 0
+          worker.connect
+          worker.process_xml(path)
         end
       end
       Process.waitall
