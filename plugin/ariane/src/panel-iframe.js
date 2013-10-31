@@ -6,7 +6,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
 
   window.panel = {};
 
-  var cUrl = document.referrer, // current url
+  var cUrl = window.top.location.href, // current url
       cHost ='', // current host
       cMapping = {}, // current mapping
       cCrawling = {}, // current crawling
@@ -45,8 +45,9 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     chrome.storage.local.get(['mappings'], function(hash) {
       cMapping = hash.mappings[cUrl].data.viking[cHost];
       fieldsList.html("");
-      for (var field in cMapping)
-        $('<li>').append($('<a href="#">').text(field)).appendTo(fieldsList);
+      var fields = Object.keys(cMapping).sort();
+      for (var i = 0; i < fields.length; i++)
+        $('<li>').append($('<a href="#">').text(fields[i])).appendTo(fieldsList);
       fieldsList.listview('refresh');
       fieldsList.find("li a").click(panel.onFieldSelected);
       panel.updateFieldsMatch();

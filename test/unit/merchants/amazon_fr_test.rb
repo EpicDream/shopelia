@@ -47,5 +47,5 @@ class AmazonFrTest < ActiveSupport::TestCase
     @version[:availability_text] = "Il ne reste plus que 6 exemplaire(s) en stock."
     @version = @helper.process_availability(@version)
     assert_equal "En stock", @version[:availability_text]
-  end  
+  end
 end
