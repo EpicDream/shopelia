@@ -58,8 +58,8 @@ module AlgoliaFeed
       self.rejected_files = params[:rejected_files] || []
     end
 
-    def connect(index_name)
-      self.index = Algolia::Index.new(index_name)
+    def connect(index_name=nil)
+      self.index = Algolia::Index.new(index_name || self.index_name)
     end
 
     def make_production
@@ -325,11 +325,12 @@ module AlgoliaFeed
         end
         free_children -= 1
         fork do
+					ActiveRecord::Base.establish_connection
           class_name = path.split(/\//)[-2]
           worker = class_name.constantize.new(debug: self.debug)
-          puts "#{Process.pid} #{worker} Processing #{path}" if self.debug > 0
           worker.connect
           worker.process_xml(path)
+					exit
         end
       end
       Process.waitall

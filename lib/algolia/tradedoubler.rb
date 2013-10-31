@@ -7,9 +7,7 @@ module AlgoliaFeed
     def initialize(params={})
       super
 
-      self.urls = params[:urls] || ['http://pf.tradedoubler.com/export/export?myFeed=13826125592299963&myFormat=13826125592299963']
-
-# ['http://pf.tradedoubler.com/export/export?myFeed=13692964912238732&myFormat=13692964912238732'] Cdiscount
+      self.urls = params[:urls] || ['http://pf.tradedoubler.com/export/export?myFeed=13832248012299963&myFormat=13832248012299963']
 
       self.conversions = params[:conversions] || {
         'name'         => 'name',
