@@ -2,6 +2,7 @@
   %p= message.content
   - message.data.each do |url|
     = render Product.fetch(url)
+  %br
   %small
     - if message.from_admin
       - if message.read_at
