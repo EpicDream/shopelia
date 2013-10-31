@@ -1,4 +1,5 @@
 class CdiscountCom
+  DEFAULT_PRICE_SHIPPING = "3.99"
 
   AVAILABILITY_HASH = {
     "operation commerciale" => false,
@@ -23,6 +24,11 @@ class CdiscountCom
 
   def process_availability version
     version[:availability_text] = MerchantHelper::UNAVAILABLE if version[:shipping_info] =~ /en magasin/i
+    version
+  end
+
+  def process_price_shipping version
+    version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
     version
   end
 end

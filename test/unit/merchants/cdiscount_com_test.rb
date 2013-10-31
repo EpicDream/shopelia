@@ -28,4 +28,14 @@ class CdiscountComTest < ActiveSupport::TestCase
     assert_equal "http://www.cdiscount.com/dp.asp?sku=81367657", CdiscountCom.new("http://www.cdiscount.com/dp.asp?sku=81367657").canonize
     assert_equal "http://www.cdiscount.com/dp.asp?sku=JAMO_S606HGB", CdiscountCom.new("http://www.cdiscount.com/dp.asp?sku=JAMO_S606HGB").canonize
   end
+
+  test "it should process price shipping" do
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_price_shipping(@version)
+    assert_equal CdiscountCom::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
+
+    @version[:price_shipping_text] = "4,90 €"
+    @version = @helper.process_price_shipping(@version)
+    assert_equal "4,90 €", @version[:price_shipping_text]
+  end
 end

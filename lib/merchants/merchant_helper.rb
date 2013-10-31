@@ -13,6 +13,7 @@ module MerchantHelper
     m = self.from_url(url)
     return version unless m.present?
     version = m.process_shipping_price(version) if m.respond_to?('process_shipping_price')
+    version = m.process_price_shipping(version) if m.respond_to?('process_price_shipping')
     version = m.process_shipping_info(version) if m.respond_to?('process_shipping_info')
     version = m.process_availability(version) if m.respond_to?('process_availability')
     version = m.process_name(version) if m.respond_to?('process_name')
