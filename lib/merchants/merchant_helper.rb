@@ -33,16 +33,17 @@ module MerchantHelper
   def self.parse_float str
     str = str.downcase
     # special cases
-    str = str.gsub(/^.*un total de/, "")
+    str = str.gsub(/\A.*un total de/, "")
     str = str.gsub(/\(.*\)/, "")
+    str = str.gsub(/\(.*?\./, "")
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else
-      if m = str.match(/^[^\d]*(\d+)[^\d](\d\d\d) ?[^\d] ?(\d+)/)
+      if m = str.match(/\A\D*(\d+)\D(\d{3}) ?\D ?(\d+)/)
         m[1].to_f * 1000 + m[2].to_f + m[3].to_f / 100
-      elsif m = str.match(/^[^\d]*(\d+)[^\d](\d\d\d)/)
+      elsif m = str.match(/\A\D*(\d+)\D(\d{3})/)
         m[1].to_f * 1000 + m[2].to_f
-      elsif m = str.match(/^[^\d]*(\d+)[^\d]*$/) || m = str.match(/^[^\d]*(\d+)[^\d]{1,2}(\d+)/)
+      elsif m = str.match(/\A\D*(\d+)\D*\Z/) || m = str.match(/\A\D*(\d+)\D{1,2}(\d+)/)
         m[1].to_f + m[2].to_f / 100
       else
         nil

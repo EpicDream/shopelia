@@ -5,10 +5,11 @@ class TradedoublerCom
   end
 
   def canonize
-    matches = /url\((.+?)\)/.match(@url)
-    return URI.unescape(matches[1]) if matches.present?
+    if matches = /url\((.+?)\)/.match(@url)
+      url =  URI.unescape(matches[1])
+      url = MerchantHelper.canonize(url)
+      return url if url.present?
+    end
     @url
   end
-
 end
-
