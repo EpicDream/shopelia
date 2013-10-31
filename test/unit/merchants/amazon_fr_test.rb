@@ -29,7 +29,7 @@ class AmazonFrTest < ActiveSupport::TestCase
     @version[:price_shipping_text] = "Livraison gratuite dès 15 euros d'achats."
     @version[:price_text] = "EUR 5,90"
     @version = @helper.process_price_shipping(@version)
-    assert_equal AmazonFr::DEFAULT_SHIPPING_PRICE, @version[:price_shipping_text]
+    assert_equal AmazonFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
   end
 
   test "it should process_price_shipping (3)" do
