@@ -1,5 +1,5 @@
 ---
-"version": "2.3.10"
+"version": "2.3.13"
 "default":
   #### Global options
   ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
@@ -13,6 +13,7 @@
   "run_mode" : "manual"
   "DELAY_BETWEEN_PRODUCTS": 1000 # 1 s
   "DELAY_BEFORE_REASK_MAPPING": 300000 # 5 min
+  "SESSION_RESCUE": 300000 # 5 min
   "MIN_NB_TABS": 0
   "MAX_NB_TABS": 15
   "consum": false
@@ -20,7 +21,7 @@
   #### Chrome options
   "DELAY_BETWEEN_OPTIONS": 1500
   ## wait response from contentscript 60s max, fail after that (required when a lot of sizes for shoes for example).
-  "DELAY_RESCUE": 60000
+  "DELAY_RESCUE": 30000
 
   #### URLs options
   "SHOPELIA_DOMAIN": "https://www.shopelia.com"

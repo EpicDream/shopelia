@@ -291,6 +291,7 @@ Saturn.prototype.openNewTab = function(tabId) {
   this.crawlProduct();
 };
 
+// Virtual, may be reimplement and supercall
 Saturn.prototype.cleanTab = function(tabId) {
 };
 
@@ -303,7 +304,7 @@ Saturn.prototype.closeTab = function(tabId) {
   else if (session) {
     this.sendError(session, 'Tab closed prematurely.');
     session.keepTabOpen = true; // To prevent that endSession() add the tab to pending.
-    this.endSession(session);
+    session.endSession();
   }
   delete this.tabs.opened[tabId];
 };

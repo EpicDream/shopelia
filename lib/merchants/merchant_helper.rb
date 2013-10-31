@@ -1,6 +1,8 @@
+# -*- encoding : utf-8 -*-
 module MerchantHelper
   UNAVAILABLE = "Indisponible"
   AVAILABLE = "En stock"
+  FREE_PRICE = "0.00 €"
 
   def self.availability_hash(url)
     helper = self.get_helper(url)

@@ -49,7 +49,7 @@ chrome.extension.onConnectExternal.addListener(function(port) {
     if (prod.tabId === undefined || prod.url === undefined)
       return saturn.sendError(prod, 'some fields are missing.');
     prod.extensionId = port.sender.id;
-    prod.strategy = 'fast';
+    prod.strategy = prod.strategy || 'fast';
     prod.keepTabOpen = true;
     saturn.onProductReceived(prod);
   });

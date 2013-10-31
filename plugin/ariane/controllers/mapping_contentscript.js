@@ -2,9 +2,11 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery', 'logger', 'html_utils', 'crawler', 'mapping', 'lib/path_utils', 'controllers/toolbar_contentscript'],
+define(['jquery', 'logger', 'html_utils', 'crawler', 'mapping', 'lib/path_utils', 'controllers/toolbar_contentscript', 'arconf'],
 function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
   "use strict";
+
+  logger.level = logger[arconf.log_level];
 
   var mapper = {};
 
@@ -23,12 +25,14 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
       return;
 
     if (msg.action === 'initialCrawl' || msg.action === 'updateCrawl') {
-      updateFieldsMatching();
+      updateFieldsMatching(msg);
       mapper.savePage();
     } else if (msg.action === 'recrawl') {
       chrome.storage.local.get('mappings', function(hash) {
+        if (! hash.mappings[url])
+          return logger.warn('Cannot find '+cUrl+' in\n'+Object.keys(hash.crawlings).join('\n'));
         mapping = new Mapping(hash.mappings[url], url);
-        rematch();
+        rematch(msg.field);
       });
     } else if (msg.action === 'updateConsistency') {
       updateFieldsConsitency(msg.results);
@@ -40,6 +44,8 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
       return;
     started = true;
     chrome.storage.local.get('mappings', function(hash) {
+      if (! hash.mappings[url])
+        return logger.warn('Cannot find '+cUrl+' in\n'+Object.keys(hash.crawlings).join('\n'));
       mapping = new Mapping(hash.mappings[url], url);
       mapper.savePage();
       mapper.init();
@@ -111,7 +117,7 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
       hash.mappings[url] = mapping.toObject();
       chrome.storage.local.set(hash);
 
-      rematch();
+      rematch(fieldId);
     });
   };
 
@@ -123,22 +129,31 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
     });
   };
 
-  function rematch() {
+  function rematch(field) {
     var map = mapping.currentMap,
+      strategy = (field !== undefined && field.search(/option\d/i) === -1 ? 'superFast' : 'fast'),
       results = mapping.checkConsistency();
     buttons.attr('title', ''); // reset title
     updatePageResult();
     chrome.extension.sendMessage({action: "updateConsistency", url: url, results: results});
-    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: map, kind: 'update'});
+    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: map, kind: 'update', strategy: strategy});
   }
 
-  function updateFieldsMatching() {
+  function updateFieldsMatching(options) {
+    options = options || {};
     chrome.storage.local.get('crawlings', function(hash) {
       var crawlResults = hash.crawlings[url].update || hash.crawlings[url].initial;
       if (! crawlResults)
         return;
       logger.info("Crawl results :", crawlResults);
-      buttons.removeClass('mapped').addClass('missing');
+      if (options.strategy === 'superFast') {
+        var but = buttons.filter(":not([id*='option'])");
+        logger.debug(but.length + ' buttons !');
+        but.removeClass('mapped').addClass('missing');
+      } else {
+        logger.debug('Strategy == ' + crawlResults.strategy);
+        buttons.removeClass('mapped').addClass('missing');
+      }
       for (var key in crawlResults)
         if (crawlResults[key]) {
           var b = buttons.filter("#ariane-product-"+key);
@@ -170,33 +185,6 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
     }
   }
 
-  mapper.checkConsistency = function (mapping, field) {
-    var pages = data.pages,
-      fields = field ? [field] : Object.keys(mapping),
-      results = {},
-      page, pageUrl, oldResults, pageDoc, newResults, i;
-
-    for (pageUrl in pages) {
-      if (pageUrl === url) continue;
-      page = pages[pageUrl];
-      oldResults = page.results;
-      pageDoc = Mapping.page2doc(page);
-      newResults = Crawler.fastCrawl(mapping, pageDoc);
-      for (i = fields.length - 1; i >= 0; i--) {
-        field = fields[i];
-        if (oldResults[field] != newResults[field]) {
-          results[field] = results[field] || [];
-          results[field].push({
-            url: page.href,
-            old: oldResults[field],
-            new: newResults[field],
-            msg: "On page '"+page.href+"',\n'" + newResults[field] + "' got, but\n'" + oldResults[field] + "' waited.",
-          });
-        }
-      }
-    }
-    return results;
-  };
 
   return mapper;
 });

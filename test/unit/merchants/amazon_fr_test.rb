@@ -21,31 +21,33 @@ class AmazonFrTest < ActiveSupport::TestCase
 
   test "it should process_price_shipping (1)" do
     @version[:price_shipping_text] = "livraison gratuite"
-    @version = @helper.process_shipping_price(@version)
-    assert_nil @version[:price_shipping]
+    @version = @helper.process_price_shipping(@version)
+    assert_equal "livraison gratuite", @version[:price_shipping_text]
   end
 
   test "it should process_price_shipping (2)" do
     @version[:price_shipping_text] = "Livraison gratuite dès 15 euros d'achats."
     @version[:price_text] = "EUR 5,90"
-    @version = @helper.process_shipping_price(@version)
-    assert_equal "2.79", @version[:price_shipping_text]
+    @version = @helper.process_price_shipping(@version)
+    assert_equal AmazonFr::DEFAULT_SHIPPING_PRICE, @version[:price_shipping_text]
   end
 
   test "it should process_price_shipping (3)" do
     @version[:price_shipping_text] = "Livraison gratuite dès 15 euros d'achats."
     @version[:price_text] = "EUR 15,90"
-    @version = @helper.process_shipping_price(@version)
-    assert_equal "0.0", @version[:price_shipping_text]
+    @version = @helper.process_price_shipping(@version)
+    assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
 
   test "it should process availability" do
+    @version[:price_text] = "EUR 5,90"
     @version[:availability_text] = "Voir les offres de ces vendeurs"
     @version = @helper.process_availability(@version)
-    assert_equal "En stock", @version[:availability_text]
+    assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
 
-    @version[:availability_text] = "Il ne reste plus que 6 exemplaire(s) en stock."
+    @version[:price_text] = ""
+    @version[:availability_text] = "Voir les offres de ces vendeurs"
     @version = @helper.process_availability(@version)
-    assert_equal "En stock", @version[:availability_text]
+    assert_equal MerchantHelper::UNAVAILABLE, @version[:availability_text]
   end
 end

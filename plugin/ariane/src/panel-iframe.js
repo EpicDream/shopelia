@@ -23,13 +23,15 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
   chrome.extension.onMessage.addListener(function(msg, sender) {
     if (msg.action === 'initialCrawl' || msg.action === 'updateCrawl') {
       chrome.storage.local.get(['crawlings', 'mappings'], function(hash) {
+        if (! hash.crawlings[cUrl])
+          return logger.warn('Cannot find '+cUrl+' in\n'+Object.keys(hash.crawlings).join('\n'));
         cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
         cMapping = hash.mappings[cUrl].data.viking[cHost];
         if ($.mobile.activePage.attr("id") === 'pathsPage') {
           panel.updateResult();
           panel.updatePathsList();
         }
-        panel.updateFieldsMatch();
+        panel.updateFieldsMatch(msg);
       });
     } else if (msg.action === 'setField') {
       panel.loadField(msg.field);
@@ -54,11 +56,12 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     });
   };
 
-  panel.updateFieldsMatch = function() {
+  panel.updateFieldsMatch = function (options) {
+    options = options || {};
     fieldsList.find("li a").each(function() {
       if (cCrawling[this.innerText])
         this.classList.add('present');
-      else
+      else if (options.strategy !== 'superFast' || this.innerText.search(/option\d/i) === -1)
         this.classList.remove('present');
     });
   };
@@ -88,7 +91,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
       panel.updateResult();
 
       // LABEL
-      if (cField.search(/^option/) !== -1) {
+      if (cField.search(/option\d/i) !== -1) {
         $(optionLabel).val(cMapping[cField].label).parent().show().prev().show();
       } else
         $(optionLabel).val('').parent().hide().prev().hide();
@@ -222,7 +225,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     chrome.storage.local.get(['mappings'], function(hash) {
       hash.mappings[cUrl].data.viking[cHost][cField].paths.push(newPath);
       chrome.storage.local.set(hash);
-      chrome.extension.sendMessage({action: 'recrawl'});
+      chrome.extension.sendMessage({action: 'recrawl', field: cField});
     });
 
     return false; // To prevent form submission.
@@ -246,7 +249,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
     chrome.storage.local.get(['mappings'], function(hash) {
       hash.mappings[cUrl].data.viking[cHost] = cMapping;
       chrome.storage.local.set(hash);
-      chrome.extension.sendMessage({action: 'recrawl'});
+      chrome.extension.sendMessage({action: 'recrawl', field: cField});
       chrome.extension.sendMessage({action: 'setField', field: ''});
     });
   };
