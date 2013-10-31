@@ -14,6 +14,7 @@ var SaturnSession = function(saturn, prod) {
   $extend(this, prod);
 
   this.strategy = this.strategy || 'normal';
+  this.initialStrategy = this.strategy;
   this.options = new SaturnOptions(this.mapping, this.argOptions);
 };
 
@@ -35,6 +36,10 @@ SaturnSession.prototype.start = function() {
 SaturnSession.prototype.next = function() {
   var t;
   switch (this.strategy) {
+    case "superFast":
+      this.strategy = 'done';
+      this.crawl();
+      break;
     case "fast" :
     case "normal" :
       t = this.options.next({lookInMapping: true, depthOnly: true});
@@ -92,6 +97,10 @@ SaturnSession.prototype.next = function() {
 
     case "done" :
       this.sendFinalVersions();
+      break;
+
+    case "ended" :
+      logger.warn("SaturnSession.next called with strategy == 'ended'.");
       break;
   }
 };

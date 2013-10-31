@@ -131,6 +131,7 @@ ChromeSaturn.prototype.sendResult = function(session, result) {
     result.url = session.url;
     result.tabId = session.tabId;
     result.kind = session.kind;
+    result.strategy = session.initialStrategy;
     saturn.externalPort.postMessage(result);
   } else if (session.id) {// Stop pushed or Local Test
     $.ajax({
