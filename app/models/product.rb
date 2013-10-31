@@ -81,7 +81,8 @@ class Product < ActiveRecord::Base
   end
 
   def price
-    self.product_versions.available.first.try(:price)
+    version = self.product_versions.available.first
+    version ? version.price + version.price_shipping : nil
   end
 
   def assess_versions
