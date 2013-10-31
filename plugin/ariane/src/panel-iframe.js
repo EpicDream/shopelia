@@ -108,7 +108,12 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
   };
 
   panel.updateResult = function() {
-    pathsResult.value = cCrawling[cField] || "Nothing found. :-(";
+    if (! cCrawling[cField]) {
+      pathsResult.value = "Nothing found. :-(";
+    } else if (cField.search(/option\d/i) !== -1) {
+      pathsResult.value = cCrawling[cField].hash;
+    } else
+      pathsResult.value = cCrawling[cField];
     pathsResult.title = pathsResult.value;
     if (pathsResult.value.length > 200)
       pathsResult.value = pathsResult.value.slice(0, 200) + "...";
