@@ -114,5 +114,11 @@ class CashfrontRuleTest < ActiveSupport::TestCase
 
     scope = { merchant:merchants(:amazon), developer:developers(:shopelia), device:devices(:mobile) }
     assert_equal cashfront_rules(:amazon3), CashfrontRule.find_for_scope(scope)
+
+    scope = { merchant:merchants(:amazon), developer:developers(:shopelia) }
+    assert CashfrontRule.find_for_scope(scope).nil?
+
+    scope = { merchant:merchants(:amazon), developer:developers(:shopelia), device:devices(:web) }
+    assert CashfrontRule.find_for_scope(scope).nil?
   end
 end

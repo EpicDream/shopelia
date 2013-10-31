@@ -13,13 +13,15 @@ class CashfrontRule < ActiveRecord::Base
   scope :for_merchant, lambda { |merchant| where(merchant_id:merchant.try(:id)) }
   scope :for_developer, lambda { |developer| where(developer_id:developer.try(:id)) }
   scope :for_device, lambda { |device| where(device_id:device.try(:id)) }
+  scope :without_device, where("device_id is null")
 
   def self.find_for_scope scope={}
-    rule = nil
     rule_req = CashfrontRule.for_merchant(scope[:merchant]).for_developer(scope[:developer])
-    rule = rule_req.send(:for_device, scope[:device]).first if scope[:device].present?
-    rule = rule_req.first if rule.nil?
-    rule
+    if scope[:device].present?
+      rule_req.send(:for_device, scope[:device]).first || rule_req.send(:without_device).first
+    else
+      rule_req.send(:without_device).first
+    end
   end
 
   def rebate price
