@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', './saturn_options', 'core_extensions'], function(logger, SaturnOptions) {
+define(['logger', './saturn_options', 'core_extensions', 'satconf'], function(logger, SaturnOptions) {
 "use strict";
 
 // Je fais la supposition simpliste mais réaliste que pour un produit,
@@ -16,19 +16,18 @@ var SaturnSession = function(saturn, prod) {
   this.strategy = this.strategy || 'normal';
   this.initialStrategy = this.strategy;
   this.options = new SaturnOptions(this.mapping, this.argOptions);
+
+  this.rescueTimeout = setTimeout(function() {
+    this.saturn.sendError(this, "Timeout !");
+    this.endSession();
+  }.bind(this), satconf.SESSION_RESCUE);
 };
 
 SaturnSession.counter = 0;
 
-SaturnSession.SESSION_RESCUE = 10 * 60000; // a session automatically fail after 10min.
-
 SaturnSession.prototype = {};
 
 SaturnSession.prototype.start = function() {
-  this.rescueTimeout = setTimeout(function() {
-    this.saturn.sendError(this, "Timeout !");
-    this.endSession();
-  }.bind(this), SaturnSession.SESSION_RESCUE);
   logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '{'+this.id+'}' : ''), "Start crawling !", this.TEST_ENV ? this : '');
   this.next();
 };
