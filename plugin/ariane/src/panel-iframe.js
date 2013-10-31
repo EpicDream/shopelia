@@ -6,7 +6,7 @@ require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) 
 
   window.panel = {};
 
-  var cUrl = document.referrer, // current url
+  var cUrl = window.top.location.href, // current url
       cHost ='', // current host
       cMapping = {}, // current mapping
       cCrawling = {}, // current crawling
