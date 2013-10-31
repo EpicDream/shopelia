@@ -780,6 +780,14 @@ class OrderTest < ActiveSupport::TestCase
  
   test "it should compute cashback value" do
     assert_equal 0.30, orders(:elarch_amazon_billing).cashfront_value
+
+    CashfrontRule.create!(
+      merchant_id:merchants(:amazon).id,
+      rebate_percentage:6,
+      developer_id:developers(:prixing).id,
+      device_id:devices(:samsung).id,
+      max_rebate_value:10)
+    assert_equal 0.60, orders(:elarch_amazon_billing).cashfront_value
   end
   
   test "[alpha] it should continue order if target price is same than expected" do

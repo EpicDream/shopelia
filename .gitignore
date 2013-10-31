@@ -23,3 +23,5 @@ plugin/*/dist/
 plugin/priv_keys/
 *.sublime-project
 *.sublime-workspace
+
+public/images/collections/

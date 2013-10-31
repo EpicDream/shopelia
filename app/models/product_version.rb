@@ -47,17 +47,20 @@ class ProductVersion < ActiveRecord::Base
     }
   }  
 
-  def cashfront_value price, options={}
-    options ||= {}
-    rule_req = self.product.merchant.cashfront_rules
-    rule_req = rule_req.send(:for_developer, options[:developer])
-    rule = rule_req.first
+  def cashfront_value price, scope
+    scope ||= {}
+    scope[:merchant] = self.product.merchant
+    rule = CashfrontRule.find_for_scope(scope)
     rule ? rule.rebate(price) : 0.0
   end
 
   def self.generate_option_md5 option
     return nil if option.nil?
     Digest::MD5.hexdigest(option["text"].present? ? option["text"].strip : option["src"])
+  end
+
+  def authorize_push_channel
+    Nest.new("product-version")[self.id][:created_at].set(Time.now.to_i)
   end
 
   private
@@ -175,6 +178,8 @@ class ProductVersion < ActiveRecord::Base
   end   
 
   def notify_channel
-    #Pusher.trigger("product-version-#{self.id}", "update", ProductVersionSerializer.new(self).as_json[:product_version])
+    ts = Nest.new("product-version")[self.id][:created_at].get.to_i  
+    Pusher.trigger("product-version-#{self.id}", "update", ProductVersionSerializer.new(self, scope:{short:true}).as_json[:product_version]) if ts > Time.now.to_i - 60*5
+  rescue
   end
 end

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131028130442) do
+ActiveRecord::Schema.define(:version => 20131030214954) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -99,6 +99,36 @@ ActiveRecord::Schema.define(:version => 20131028130442) do
     t.float    "max_rebate_value"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.integer  "device_id"
+  end
+
+  create_table "collection_items", :force => true do |t|
+    t.integer  "collection_id"
+    t.integer  "product_id"
+    t.integer  "user_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "collection_tags", :force => true do |t|
+    t.integer  "collection_id"
+    t.integer  "tag_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "collections", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "uuid"
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.integer  "image_file_size"
+    t.datetime "image_updated_at"
+    t.boolean  "public",             :default => false
   end
 
   create_table "countries", :force => true do |t|
@@ -356,6 +386,7 @@ ActiveRecord::Schema.define(:version => 20131028130442) do
     t.datetime "muted_until"
     t.boolean  "options_completed",   :default => false
     t.datetime "viking_sent_at"
+    t.string   "image_size"
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true
@@ -378,6 +409,12 @@ ActiveRecord::Schema.define(:version => 20131028130442) do
 
   create_table "statuses", :force => true do |t|
     t.integer  "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "tags", :force => true do |t|
+    t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

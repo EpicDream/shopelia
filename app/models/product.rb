@@ -8,6 +8,8 @@ class Product < ActiveRecord::Base
   has_many :events, :dependent => :destroy
   has_many :product_versions, :dependent => :destroy
   has_and_belongs_to_many :developers, :uniq => true
+  has_many :collection_items
+  has_many :collections, :through => :collection_items
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true
@@ -19,6 +21,7 @@ class Product < ActiveRecord::Base
   before_save :truncate_name
   after_save :create_versions
   after_save :clear_failure_if_mute, :if => Proc.new { |product| product.mute? }
+  after_update :set_image_size, :if => Proc.new { |product| product.image_url_changed? || product.image_size.nil? }
   
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
@@ -30,6 +33,7 @@ class Product < ActiveRecord::Base
   scope :viking_pending_batch, lambda { joins(:events).merge(Event.requests).merge(Product.viking_base_request) }
   scope :viking_failure, lambda { where(viking_failure:true).order("updated_at desc").limit(100) }
   scope :expired, where("versions_expires_at is null or versions_expires_at < ?", Time.now)
+  scope :available, joins(:product_versions).merge(ProductVersion.available).uniq
 
   scope :viking_base_request, lambda {
     where("(products.versions_expires_at is null or products.versions_expires_at < ?)" +
@@ -74,6 +78,10 @@ class Product < ActiveRecord::Base
 
   def available?
     self.product_versions.available.count > 0
+  end
+
+  def price
+    self.product_versions.available.first.try(:price)
   end
 
   def assess_versions
@@ -189,8 +197,14 @@ class Product < ActiveRecord::Base
     self.update_column "versions_expires_at", nil
   end
 
+  def set_image_size
+    size = FastImage.size(self.image_url)
+    self.update_column "image_size", size.join("x") unless size.nil?
+  end
+
   def notify_channel
     ts = Nest.new("product")[self.id][:created_at].get.to_i  
-    Pusher.trigger("product-#{self.id}", "update", ProductSerializer.new(self).as_json[:product]) if ts > Time.now.to_i - 60*5
+    Pusher.trigger("product-#{self.id}", "update", ProductSerializer.new(self, scope:{short:true}).as_json[:product]) if ts > Time.now.to_i - 60*5
+  rescue
   end
 end

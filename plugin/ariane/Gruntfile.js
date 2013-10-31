@@ -15,6 +15,7 @@ module.exports = function(grunt) {
           'controllers/toolbar_contentscript.js',
           'test/*.js',
           '../common/lib/*.js',
+          '../common/test/lib/*.js',
         ],
         options: {}
       }
@@ -45,7 +46,10 @@ module.exports = function(grunt) {
     jasmine: {
       src: ['lib/*.js'],
       options: {
-        specs: ['test/*.js'],
+        '--web-security' : false,
+        '--local-to-remote-url-access' : true,
+        '--ignore-ssl-errors' : true,
+        specs: ['test/*.js', '../common/test/lib/*.js',],
         template: require('grunt-template-jasmine-requirejs'),
         templateOptions: {
           requireConfigFile: 'require_config.js'

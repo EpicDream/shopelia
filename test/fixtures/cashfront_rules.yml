@@ -1,5 +1,19 @@
-amazon:
+amazon1:
   merchant: amazon
   developer: prixing  
   rebate_percentage: 3
   max_rebate_value: 10
+
+amazon2:
+  merchant: amazon
+  developer: prixing  
+  rebate_percentage: 5
+  max_rebate_value: 10
+  device: mobile
+
+amazon3:
+  merchant: amazon
+  developer: shopelia
+  rebate_percentage: 10
+  max_rebate_value: 10
+  device: mobile    

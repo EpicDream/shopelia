@@ -12,7 +12,7 @@ class ProductVersionSerializer < ActiveModel::Serializer
   end
 
   def cashfront_value
-    object.cashfront_value object.price, scope ? { developer:scope[:developer] } : nil
+    object.cashfront_value object.price, scope ? { developer:scope[:developer], device:scope[:device] } : nil
   end
 
   def option1
@@ -29,5 +29,9 @@ class ProductVersionSerializer < ActiveModel::Serializer
 
   def option4
     JSON.parse(object.option4) unless object.option4.nil?
+  end
+
+  def include_description?
+    scope.nil? || !scope[:short]
   end
 end

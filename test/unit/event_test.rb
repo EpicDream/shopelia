@@ -60,11 +60,10 @@ class EventTest < ActiveSupport::TestCase
     assert !event.save
   end
 
-  test "it should create event without valid device if action is REQUEST" do
+  test "it should create event without valid device or developer if action is REQUEST" do
     event = Event.new(
       :action => Event::REQUEST,
-      :url => "http://www.google.com/my_product",
-      :developer_id => developers(:prixing).id)
+      :url => "http://www.google.com/my_product")
     assert event.save
   end
 

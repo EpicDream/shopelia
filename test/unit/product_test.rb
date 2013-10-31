@@ -536,4 +536,16 @@ class ProductTest < ActiveSupport::TestCase
       ])
     end
   end
+
+  test "it should set scope available" do 
+    assert_equal 2, Product.available.count
+    product_versions(:dvd).update_attribute :available, false
+    assert_equal 1, Product.available.count
+  end
+
+  test "it should set image size" do 
+    product = products(:usbkey)
+    product.update_attribute :image_url, "http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg"
+    assert_equal "450x383", product.image_size
+  end
 end

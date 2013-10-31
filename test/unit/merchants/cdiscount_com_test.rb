@@ -21,7 +21,7 @@ class CdiscountComTest < ActiveSupport::TestCase
 
     @version[:shipping_info] = "Disponible sous 6h en magasin"
     @version = @helper.process_availability(@version)
-    assert_equal "Indisponible", @version[:availability_text]
+    assert_equal MerchantHelper::UNAVAILABLE, @version[:availability_text]
   end
 
   test "it should canonize" do

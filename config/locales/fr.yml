@@ -222,6 +222,8 @@ fr:
         phone: "Le numéro de téléphone"
         address1: "L'adresse"
         country_id: "Le pays"
+      collection:
+        name: "Le nom"
       meta_order:
         address: "L'adresse"
         payment_card: "Le moyen de paiement"
@@ -250,6 +252,10 @@ fr:
               blank: "doit être renseigné"
             country_id:
               blank: "doit être renseigné"
+        collection:
+          attributes:          
+            name:
+              blank: "doit être renseigné"
         meta_order:
           attributes:
              address:
@@ -273,6 +279,11 @@ fr:
       phone: "Téléphone"
       country: "Pays"
     cart_items:
+      url: "Adresse internet (URL) du produit"
+    collections:
+      name: "Nom de votre collection"
+      add: "URL du produit à ajouter à la collection"
+    collection_items:
       url: "Adresse internet (URL) du produit"
     payment_card:
       number: "Numéro de la carte"
@@ -326,6 +337,18 @@ fr:
     cannot_destroy: "Impossible de supprimer un utilisateur avec des commandes déjà effectuées"
 
   app:
+    catalogue:
+      search: "Rechercher des produits dans le catalogue"
+    collections:
+      submit: "Nouvelle collection"
+      save: "Enregistrer"
+      add: 
+        submit: "Ajout du produit"
+        invalid_url: "Vous devez entrer une adresse valide"
+    collection_items:
+      submit: "Ajouter"
+      bad_url: "L'adresse du produit n'est pas valide"
+      details: "Détails"
     public:
       promise: "Scannez, Achetez"
       tagline: "profitez des prix internet où que vous soyez"

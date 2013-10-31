@@ -40,10 +40,10 @@ class MessageTest < ActiveSupport::TestCase
     assert !@device.reload.pending_answer
   end
 
-  test "it should set autoreplied to false when Georges receives a new message" do
+  test "it shouldn't set autoreplied to false when Georges receives a new message" do
     @device.update_attribute :autoreplied, true
     Message.create(content:"allo",device_id:@device.id)
-    assert !@device.reload.autoreplied
+    assert @device.reload.autoreplied
   end
 
   test "it shouldn't set autoreplied to false when Georges replies" do

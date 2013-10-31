@@ -352,7 +352,7 @@ class Order < ActiveRecord::Base
 
   def cashfront_value
     v = 0.0
-    options = { developer:self.developer }
+    options = { developer:self.developer, device:self.user.devices.order(:updated_at).last }
     self.order_items.each do |item|
       v += item.cashfront_value(options)
     end
