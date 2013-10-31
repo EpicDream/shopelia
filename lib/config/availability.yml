@@ -33,6 +33,7 @@ expedie exceptionnellement sous \d: true
 livraison dans la piece de votre choix: true
 dispo sous \d: true
 reapprovisionne le: true
+plus que \d+ exemplaire: true
 
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false

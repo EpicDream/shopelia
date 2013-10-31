@@ -1,5 +1,6 @@
+# -*- encoding : utf-8 -*-
 class CdiscountCom
-  DEFAULT_PRICE_SHIPPING = "3.99"
+  DEFAULT_PRICE_SHIPPING = "3.99 €"
 
   AVAILABILITY_HASH = {
     "operation commerciale" => false,

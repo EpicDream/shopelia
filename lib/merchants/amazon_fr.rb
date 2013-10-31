@@ -1,12 +1,15 @@
+# -*- encoding : utf-8 -*-
 class AmazonFr
+  DEFAULT_SHIPPING_PRICE = "2.79 €"
 
   def initialize url
     @url = url
   end
 
   def process_availability version
-    version[:availability_text] = "En stock" if version[:availability_text] =~ /Voir les offres de ces vendeurs/
-    version[:availability_text] = "En stock" if version[:availability_text] =~ /plus que \d+ exemplaire/
+    if version[:availability_text] =~ /Voir les offres de ces vendeurs/
+      version[:availability_text] = version[:price_text].present? ? MerchantHelper::AVAILABLE : MerchantHelper::UNAVAILABLE
+    end
     version
   end
 
@@ -30,14 +33,16 @@ class AmazonFr
     end
   end
 
-  def process_shipping_price version
-    if version[:price_shipping_text].present? && m = version[:price_shipping_text].match(/livraison gratuite d.s (\d+) euros d'achats/i)
+  def process_price_shipping version
+    if version[:price_shipping_text].blank?
+      version[:price_shipping_text] = DEFAULT_SHIPPING_PRICE
+    elsif version[:price_shipping_text].present? && m = version[:price_shipping_text].match(/livraison gratuite d.s (\d+) euros d'achats/i)
       limit = MerchantHelper.parse_float m[1]
       current_price = MerchantHelper.parse_float version[:price_text]
       if current_price < limit
-        version[:price_shipping_text] = "2.79"
+        version[:price_shipping_text] = DEFAULT_SHIPPING_PRICE
       else
-        version[:price_shipping_text] = "0.0"
+        version[:price_shipping_text] = MerchantHelper::FREE_PRICE
       end
     end
     version
