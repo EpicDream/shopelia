@@ -1,5 +1,5 @@
 ---
-"version": "0.13.12"
+"version": "0.13.13"
 "default":
   #### Global options
   ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.

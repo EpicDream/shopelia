@@ -14,6 +14,10 @@ define(function() {
     iframe.id = "ari-panel";
     iframe.src = chrome.runtime.getURL('views/panel.html') + "#fieldsPage";
     iframe.classList.add("ari-panel-hide");
+    iframe.style.display = 'none';
+    iframe.onload = function () {
+      iframe.style.display = '';
+    };
     document.documentElement.appendChild(iframe);
   }
 
