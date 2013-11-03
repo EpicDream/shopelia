@@ -16,10 +16,13 @@ namespace :shopelia do
 
     desc "Distribute 10€ Amazon gift to new users"
     task :welcome_gift => :environment do
+      Leftronic.new.push_tts "Attention ! Envoi imminent des chèques cadeaux de 10 euros"
       amazon = Merchant.find_by_domain("amazon.fr")
       shopelia = Developer.find_by_name("Shopelia")
-      Device.where("push_token is not null and created_at > ? and created_at < ?", 10.days.ago, Date.today).each do |device|
+      count = 0
+      Device.where("push_token is not null and created_at > ? and created_at < ?", 2.days.ago, Date.today).each do |device|
         next if device.cashfront_rules.count > 0
+        next if device.user && device.user.orders.completed.count > 0
         CashfrontRule.create!(
           merchant_id:amazon.id,
           rebate_percentage:50,
@@ -28,7 +31,9 @@ namespace :shopelia do
           max_rebate_value:10)
         message = Message.new(content:"Bonjour ! Pour vous souhaiter la bienvenue sur Shopelia, j'ai le plaisir de vous offrir un chèque cadeau de 10€ utilisable immédiatement sur toute la boutique Amazon. N'hésitez pas à me contacter pour toute question :)",device_id:device.id)
         Push.send_message message
+        count += 1
       end
+      puts "Sent #{count} Amazon 10€ vouchers"
     end
   end
 end

@@ -27,9 +27,10 @@ class CashfrontRule < ActiveRecord::Base
   def rebate price
     r = price.to_f * self.rebate_percentage / 100.0
     if self.max_rebate_value.present?
-      r > self.max_rebate_value ? self.max_rebate_value : r
+      r = r > self.max_rebate_value ? self.max_rebate_value : r
     else
       r
     end
+    r.round(2)
   end
 end
