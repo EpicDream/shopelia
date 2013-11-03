@@ -56,6 +56,7 @@ module AlgoliaFeed
       self.merchant_cache  = {}
       self.http_auth = params[:http_auth] || {}
       self.rejected_files = params[:rejected_files] || []
+      @image_size_processor = ImageSizeProcessor.new
     end
 
     def connect(index_name=nil)
@@ -253,6 +254,7 @@ module AlgoliaFeed
       add_merchant_data(record)
       record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
+      record['image_size'] = @image_size_processor.get(record['image_url']) unless record['image_url'].blank?
       set_categories(product, record)
       record
     end
