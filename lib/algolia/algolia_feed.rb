@@ -91,6 +91,8 @@ module AlgoliaFeed
             puts "Got record: #{record}" if self.debug > 2
             check_forbidden(record)
             stats[:accepted] += 1
+            # Set image size
+            record['image_size'] = @image_size_processor.get(record['image_url'])
             self.records << record
           rescue RejectedRecord => e
             puts "Rejecting record: #{e}\n#{e}\n#{e.backtrace.join("\n")}\nRecord: #{record.inspect}" if self.debug > 2
@@ -254,7 +256,6 @@ module AlgoliaFeed
       add_merchant_data(record)
       record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
-      record['image_size'] = @image_size_processor.get(record['image_url']) unless record['image_url'].blank?
       set_categories(product, record)
       record
     end

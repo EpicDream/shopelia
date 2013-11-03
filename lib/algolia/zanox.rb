@@ -49,7 +49,6 @@ module AlgoliaFeed
       record['price_shipping'] = to_cents(record['price_shipping'])
 
       record['image_url'] = best_image(product)
-      record['image_size'] = @image_size_processor.get(record['image_url']) unless record['image_url'].blank?
 
       record
     end
