@@ -54,6 +54,7 @@ module AlgoliaFeed
 
       raise RejectedRecord.new("Invalid image #{record['image_url']}", :rejected_img) if record['image_url'] =~ /(noavailableimage|generiques)/
       record['image_url'].gsub!(/_S\./i, "_L.") if (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
+      record['image_size'] = @image_size_processor.get(record['image_url']) unless record['image_url'].blank?
 
       record['name'] = record['name'].gsub(/\A\!\[Cdata\[ /,'').gsub(/\s+\]\]\Z/, '')
 
