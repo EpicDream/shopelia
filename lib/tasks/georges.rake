@@ -23,8 +23,11 @@ namespace :shopelia do
       Device.where("push_token is not null and created_at > ? and created_at < ?", 2.days.ago, Date.today).each do |device|
         next if device.cashfront_rules.count > 0
         next if device.user && device.user.orders.completed.count > 0
+        next if device.pending_answer?
         first_message = device.messages.where(from_admin:nil).order(:created_at).first
         next if first_message.nil? || first_message.created_at.to_date != Date.yesterday
+        last_message = device.messages.where(from_admin:nil).order(:created_at).last
+        next if last_message.created_at.to_i > Time.now.to_i - 3600
         CashfrontRule.create!(
           merchant_id:amazon.id,
           rebate_percentage:50,
