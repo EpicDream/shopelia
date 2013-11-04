@@ -20,6 +20,7 @@ class Event < ActiveRecord::Base
   before_validation :check_presence_of_device
   before_validation :check_presence_of_developer
   after_create :reset_viking_sent_at
+  after_create :notify_live_product
 
   attr_accessible :url, :product_id, :developer_id, :device_id, :action, :tracker, :ip_address
   attr_accessor :url
@@ -60,8 +61,12 @@ class Event < ActiveRecord::Base
   def reset_viking_sent_at
     if self.product.persisted? && self.product.versions_expired?
       self.product.update_column "viking_sent_at", nil
-      Viking.touch_request
+      Viking.touch_request unless self.action == REQUEST
     end
+  end
+
+  def notify_live_product
+    LeftronicLiveProductWorker.perform_async({:product_id => self.product_id}) if self.request == CLICK
   end
 
   def check_presence_of_device
