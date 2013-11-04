@@ -66,7 +66,7 @@ class Event < ActiveRecord::Base
   end
 
   def notify_live_product
-    LeftronicLiveProductWorker.perform_async({:product_id => self.product_id}) if self.request == CLICK
+    LeftronicLiveProductWorker.perform_async({:product_id => self.product_id}) if self.action == CLICK
   end
 
   def check_presence_of_device
