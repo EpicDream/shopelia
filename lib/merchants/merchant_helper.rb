@@ -20,6 +20,7 @@ module MerchantHelper
     version = m.process_availability(version) if m.respond_to?('process_availability')
     version = m.process_name(version) if m.respond_to?('process_name')
     version = m.process_price(version) if m.respond_to?('process_price')
+    version = m.process_options(version) if m.respond_to?('process_options')
     version
   end
 
