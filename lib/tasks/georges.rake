@@ -35,7 +35,7 @@ namespace :shopelia do
           device_id:device.id,
           max_orders_count:1,
           max_rebate_value:10)
-        message = Message.new(content:"Bonjour ! Suite à notre échange d'hier, j'ai le plaisir de vous offrir un chèque cadeau de 10€ utilisable immédiatement sur toute la boutique Amazon. N'hésitez pas à me contacter pour toute question :)",device_id:device.id)
+        message = Message.new(content:"Bonjour ! Suite à notre dernier échange, j'ai le plaisir de vous offrir un chèque cadeau de 10€ utilisable immédiatement sur toute la boutique Amazon. N'hésitez pas à me contacter pour toute question :)",device_id:device.id)
         Push.send_message message
         count += 1
       end
