@@ -9,6 +9,7 @@ class CashfrontRule < ActiveRecord::Base
 
   attr_accessible :category_id, :developer_id, :device_id, :user_id
   attr_accessible :max_rebate_value, :merchant_id, :rebate_percentage
+  attr_accessible :max_orders_count
 
   scope :for_merchant, lambda { |merchant| where(merchant_id:merchant.try(:id)) }
   scope :for_developer, lambda { |developer| where(developer_id:developer.try(:id)) }
@@ -18,7 +19,11 @@ class CashfrontRule < ActiveRecord::Base
   def self.find_for_scope scope={}
     rule_req = CashfrontRule.for_merchant(scope[:merchant]).for_developer(scope[:developer])
     if scope[:device].present?
-      rule_req.send(:for_device, scope[:device]).first || rule_req.send(:without_device).first
+      rule = rule_req.send(:for_device, scope[:device]).first || rule_req.send(:without_device).first
+      if rule.present?
+        orders_count = scope[:device].user.present? ? scope[:device].user.orders.where("state_name<>'failed'").count : 0
+        rule.max_orders_count.to_i > 0 ? (orders_count > rule.max_orders_count ? nil : rule) : rule
+      end
     else
       rule_req.send(:without_device).first
     end

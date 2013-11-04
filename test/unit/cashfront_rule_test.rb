@@ -121,4 +121,12 @@ class CashfrontRuleTest < ActiveSupport::TestCase
     scope = { merchant:merchants(:amazon), developer:developers(:shopelia), device:devices(:web) }
     assert CashfrontRule.find_for_scope(scope).nil?
   end
+
+  test "it should allow rule only if max orders is not reached" do
+    scope = { merchant:merchants(:amazon), developer:developers(:shopelia), device:devices(:samsung) }
+    assert CashfrontRule.find_for_scope(scope).nil?
+    
+    users(:elarch).orders.destroy_all
+    assert_equal cashfront_rules(:amazon4), CashfrontRule.find_for_scope(scope)
+  end
 end
