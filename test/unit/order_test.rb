@@ -493,7 +493,7 @@ class OrderTest < ActiveSupport::TestCase
 
   test "it should pause order with merchant address error" do
     start_order
-    callback_order "failure", { "status" => "merchant_error" }
+    callback_order "failure", { "status" => "address_error" }
     
     assert_equal :pending_agent, @order.state
     assert_equal "merchant", @order.error_code
