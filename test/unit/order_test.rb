@@ -491,6 +491,15 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "gift_message_failure", @order.message
   end  
 
+  test "it should pause order with merchant address error" do
+    start_order
+    callback_order "failure", { "status" => "merchant_error" }
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "merchant", @order.error_code
+    assert_equal "address_error", @order.message
+  end
+
   test "it should restart paused order" do
     pause_order
     start_order
