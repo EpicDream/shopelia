@@ -25,6 +25,7 @@ namespace :shopelia do
           rebate_percentage:50,
           developer_id:shopelia.id,
           device_id:device.id,
+          max_orders_count:1,
           max_rebate_value:10)
         message = Message.new(content:"Bonjour ! Pour vous souhaiter la bienvenue sur Shopelia, j'ai le plaisir de vous offrir un chèque cadeau de 10€ utilisable immédiatement sur toute la boutique Amazon. N'hésitez pas à me contacter pour toute question :)",device_id:device.id)
         Push.send_message message
