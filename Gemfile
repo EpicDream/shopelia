@@ -44,7 +44,6 @@ gem 'nexmo'
 gem 'pusher'
 gem 'rubyzip', '< 1.0.0'
 gem 'algoliasearch-rails'
-gem 'mailjet'
 gem 'amazon-ecs'
 gem 'pushmeup'
 gem 'net-http-digest_auth', require:false

@@ -49,8 +49,8 @@ class Leftronic
     push_number("saturn_status", Viking.saturn_alive? ? 0 : 100)
   end
 
-  def notify_live_scan name, ean, image_url
-    push_text("livescan", name, ean, image_url)
+  def notify_live_product name, time, image_url
+    push_text("livescan", name, time, image_url)
   end
 
   def clear_board

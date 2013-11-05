@@ -22,12 +22,8 @@ class ImageSizeProcessor
 
   def self.process_all
     processor = ImageSizeProcessor.new
-    count = 0
     begin
       url = processor.process_last
-      count += 1
-      puts "Processed #{count} urls" if count % 1000 == 0
     end while url.present?
-    puts "Processed total #{count} urls"
   end
 end

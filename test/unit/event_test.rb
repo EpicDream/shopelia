@@ -13,6 +13,23 @@ class EventTest < ActiveSupport::TestCase
     assert event.product.present?
   end
   
+  test "it should queue live product worker on click" do
+    assert_difference "LeftronicLiveProductWorker.jobs.count", 0 do
+      Event.create(
+        :action => Event::VIEW,
+        :product_id => products(:headphones).id,
+        :device_id => devices(:web).id,
+        :developer_id => developers(:prixing).id)
+    end
+    assert_difference "LeftronicLiveProductWorker.jobs.count", 1 do
+      Event.create(
+        :action => Event::CLICK,
+        :product_id => products(:headphones).id,
+        :device_id => devices(:web).id,
+        :developer_id => developers(:prixing).id)
+    end
+  end
+
   test "it should create event from url" do
     assert_difference('Product.count', 1) do
       event = Event.new(

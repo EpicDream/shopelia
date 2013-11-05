@@ -73,7 +73,7 @@ class Product < ActiveRecord::Base
   end
   
   def ready?
-    !self.viking_failure && self.versions_expires_at.present? && self.versions_expires_at > Time.now
+    self.viking_failure? || (self.versions_expires_at.present? && self.versions_expires_at > Time.now)
   end
 
   def available?
@@ -82,7 +82,7 @@ class Product < ActiveRecord::Base
 
   def price
     version = self.product_versions.available.first
-    version ? version.price + version.price_shipping : nil
+    version ? (version.price + version.price_shipping).to_f.round(2) : nil
   end
 
   def assess_versions

@@ -16,4 +16,12 @@ amazon3:
   developer: shopelia
   rebate_percentage: 10
   max_rebate_value: 10
-  device: mobile    
+  device: mobile
+
+amazon4:
+  merchant: amazon
+  developer: shopelia
+  rebate_percentage: 10
+  max_rebate_value: 10
+  device: samsung
+  max_orders_count: 1

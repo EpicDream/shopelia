@@ -31,6 +31,9 @@ namespace :shopelia do
 			AlgoliaFeed::AlgoliaFeed.make_production
 		end
 
+    desc "Start image size processing"
+    task :image_processing => :environment do
+      30.times { fork { ImageSizeProcessor.process_all } }
+    end
   end
 end
-
