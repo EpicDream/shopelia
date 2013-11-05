@@ -50,23 +50,27 @@ class RueducommerceFrTest < ActiveSupport::TestCase
     assert_equal RueducommerceFr::DEFAULT_SHIPPING_INFO, @version[:shipping_info]
   end
 
-  test "it should process price_shipping (1)" do
+  test "it should process price_shipping unless if present" do
     @version[:price_shipping_text] = "3,50 €"
-    @version = @helper.process_shipping_price(@version)
+    @version = @helper.process_price_shipping(@version)
     assert_equal "3,50 €", @version[:price_shipping_text]
+  end
 
+  test "it should process price_shipping if empty" do
     @version[:price_shipping_text] = ""
-    @version = @helper.process_shipping_price(@version)
+    @version = @helper.process_price_shipping(@version)
     assert_equal RueducommerceFr::DEFAULT_SHIPPING_PRICE, @version[:price_shipping_text]
   end
 
-  test "it should process price_shipping (2)" do
-    @version[:price_shipping_text] = "3,50 €"
-    @version = @helper.process_shipping_price(@version)
-    assert_nil @version[:price_shipping]
-
+  test "it should process price_shipping if greater than limit" do
     @version[:price_shipping_text] = sprintf("%.2f €", RueducommerceFr::FREE_SHIPPING_LIMIT)
-    @version = @helper.process_shipping_price(@version)
-    assert_equal 0.0, @version[:price_shipping]
+    @version = @helper.process_price_shipping(@version)
+    assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
+  end
+
+  test "it should process price_shipping a partir de" do
+    @version[:price_shipping_text] = "So Colissimo (2 à 4 jours). - expédié sous 4 jours - à partir de 5,49 €"
+    @version = @helper.process_price_shipping(@version)
+    assert_equal "5,49 €", @version[:price_shipping_text]
   end
 end
