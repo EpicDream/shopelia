@@ -467,7 +467,7 @@ class ProductTest < ActiveSupport::TestCase
   test "it should set ready" do
     product = products(:usbkey)
     product.viking_failure = true
-    assert !product.ready?
+    assert product.ready?
 
     product.viking_failure = false
     assert !product.ready?

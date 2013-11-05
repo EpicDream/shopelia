@@ -73,7 +73,7 @@ class Product < ActiveRecord::Base
   end
   
   def ready?
-    !self.viking_failure && self.versions_expires_at.present? && self.versions_expires_at > Time.now
+    self.viking_failure? || (self.versions_expires_at.present? && self.versions_expires_at > Time.now)
   end
 
   def available?
