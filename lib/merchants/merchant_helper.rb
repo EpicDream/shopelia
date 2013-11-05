@@ -34,11 +34,12 @@ module MerchantHelper
   end
 
   # Return nil if cannot find a price.
+  # test encore dans product_version_test.rb pour le moment
   def self.parse_float str
     str = str.downcase
     # special cases
     str = str.gsub(/^.*un total de/, "")
-    str = str.gsub(/\(.*\)/, "")
+    str = str.gsub(/\(.*\)/, "") unless str =~ /\(.*(\beur\b|[$€]).*\)/i
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else

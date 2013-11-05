@@ -35,10 +35,10 @@ class TopgeekNet
   end
 
   def process_options version
-    if version[:option1].present? && version[:option1][:text].blank? &&
-      version[:option1][:src].blank? && version[:option1][:style].present? &&
-      version[:option1][:style] =~ /background\s*:\s*(\w+)\s*;/i
-      version[:option1][:text] = $~[1]
+    if version[:option1].present? && version[:option1]["text"].blank? &&
+      version[:option1]["src"].blank? && version[:option1]["style"].present? &&
+      version[:option1]["style"] =~ /background\s*:\s*(\w+)\s*;/i
+      version[:option1]["text"] = $~[1]
     end
     version
   end

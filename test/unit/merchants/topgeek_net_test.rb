@@ -46,16 +46,16 @@ class TopgeekNetTest < ActiveSupport::TestCase
   end
 
   test "it should process option" do
-    @version[:option1] = {style: "background: FFFFFF;", text: "Blanc", src: ""}
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "Blanc", "src" => ""}
     @version = @helper.process_options(@version)
-    assert_equal "Blanc", @version[:option1][:text]
+    assert_equal "Blanc", @version[:option1]["text"]
 
-    @version[:option1] = {style: "background: FFFFFF;", text: "", src: @url}
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "", "src" => @url}
     @version = @helper.process_options(@version)
-    assert_equal "", @version[:option1][:text]
+    assert_equal "", @version[:option1]["text"]
 
-    @version[:option1] = {style: "background: FFFFFF;", text: "", src: ""}
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "", "src" => ""}
     @version = @helper.process_options(@version)
-    assert_equal "FFFFFF", @version[:option1][:text]
+    assert_equal "FFFFFF", @version[:option1]["text"]
   end
 end
