@@ -2,6 +2,10 @@
 class AmazonFr
   DEFAULT_PRICE_SHIPPING = "2.79 €"
 
+  AVAILABILITY_HASH = {
+    "TVA incluse le cas échéant" => false, # vu juste pour des MP3 à télécharger.s
+  }
+
   def initialize url
     @url = url
   end
