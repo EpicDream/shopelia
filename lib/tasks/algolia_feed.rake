@@ -9,21 +9,21 @@ namespace :shopelia do
 
     desc "Clean Algolia tmp dir"
     task :clean => :environment do
-      FileUtils.rm_rf(Dir.glob("#{AlgoliaFeed::AlgoliaFeed.new.tmpdir}/*"))
+      FileUtils.rm_rf(Dir.glob("#{AlgoliaFeed::FileUtils.new.tmpdir}/*"))
     end
 
     desc "Download Algolia feeds"
     task :download => :environment do
-      fork { AlgoliaFeed::Tradedoubler.download(debug:1) }
-      fork { AlgoliaFeed::PriceMinister.download(debug:1) }
-      fork { AlgoliaFeed::Zanox.download(debug:1) }
-      fork { AlgoliaFeed::Amazon.download(debug:1) }
+      fork { AlgoliaFeed::PriceMinister.new(debug:1).filer.download }
+      fork { AlgoliaFeed::Tradedoubler.new(debug:1).filer.download }
+      fork { AlgoliaFeed::Zanox.new(debug:1).filer.download }
+      fork { AlgoliaFeed::Amazon.new(debug:1).filer.download }
       Process.waitall
     end
 
     desc "Process all Algolia feeds"
     task :process => :environment do
-      AlgoliaFeed::AlgoliaFeed.process_xml_directory(debug: 1)
+      AlgoliaFeed::FileUtils.process_xml_directory(debug: 1)
     end
 
 		desc "Set Algolia production index"

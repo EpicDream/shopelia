@@ -7,8 +7,9 @@ class TradedoublerCom
   def canonize
     if matches = /url\((.+?)\)/.match(@url)
       url =  URI.unescape(matches[1])
-      url = MerchantHelper.canonize(url)
-      return url if url.present?
+      new_url = MerchantHelper.canonize(url)
+      return new_url if new_url.present?
+      return url
     end
     @url
   end

@@ -2,11 +2,10 @@
 
 module AlgoliaFeed
 
-  class PriceMinister < AlgoliaFeed
+  class PriceMinisterFiler < FileUtils
 
     def initialize(params={})
       super
-
       self.urls = params[:urls] || [
         "ftp://prixing:j5Z61eg@priceminister.effiliation.com/prixing_BOOKS_TOP.xml.zip",
         "http://priceminister.effiliation.com/output/commun/effiliation_JARDIN_NEW.xml.gz",
@@ -21,6 +20,16 @@ module AlgoliaFeed
         "http://priceminister.effiliation.com/output/commun/effiliation_SPORT_NEW.xml.gz",
         "http://priceminister.effiliation.com/output/commun/effiliation_ELECTRONICS_NEW.xml.gz"
       ]
+
+      self.parser_class = params[:parser_class] || 'AlgoliaFeed::PriceMinister'
+
+    end
+  end
+
+  class PriceMinister < XmlParser
+
+    def initialize(params={})
+      super
 
       self.product_field = params[:product_field] || 'produit'
 
@@ -38,7 +47,9 @@ module AlgoliaFeed
       }
 
       self.category_fields = params[:category_fields] || ['categorie', 'souscategorie', 'souscategorie2', 'souscategorie3' ]
-
+      params[:parser_class] = self.class
+      self.filer = PriceMinisterFiler.new(params)
+      self
     end
 
     def canonize(url)
