@@ -14,10 +14,10 @@ namespace :shopelia do
 
     desc "Download Algolia feeds"
     task :download => :environment do
-      fork { AlgoliaFeed::PriceMinister.new(debug:1).filer.download }
-      fork { AlgoliaFeed::Tradedoubler.new(debug:1).filer.download }
-      fork { AlgoliaFeed::Zanox.new(debug:1).filer.download }
-      fork { AlgoliaFeed::Amazon.new(debug:1).filer.download }
+      fork { AlgoliaFeed::PriceMinister.new.filer.download }
+      fork { AlgoliaFeed::Tradedoubler.new.filer.download }
+      fork { AlgoliaFeed::Zanox.new.filer.download }
+      fork { AlgoliaFeed::Amazon.new.filer.download }
       Process.waitall
     end
 
@@ -26,10 +26,10 @@ namespace :shopelia do
       AlgoliaFeed::FileUtils.process_xml_directory(debug: 1)
     end
 
-		desc "Set Algolia production index"
-		task :make_prod => :environment do
-			AlgoliaFeed::AlgoliaFeed.make_production
-		end
+    desc "Set Algolia production index"
+    task :make_prod => :environment do
+      AlgoliaFeed::AlgoliaFeed.make_production
+    end
 
     desc "Start image size processing"
     task :image_processing => :environment do

@@ -95,6 +95,9 @@ module AlgoliaFeed
         record[to] = product[from] if product.has_key?(from)
         record[to] = record[to].to_i if (record[to] =~ /\A\d+\Z/ and ['rank'].include?(to))
       end
+      raise RejectedRecord.new("Record has no product URL", :rejected_url) unless (record.has_key?('product_url') and record['product_url'] =~ /\Ahttp/)
+      raise RejectedRecord.new("Record has no price", :rejected_price) unless (record.has_key?('price') and record['price'].to_f > 0)
+      raise RejectedRecord.new("Record has no usable image #{record['image_url']}", :rejected_img) unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
       if record.has_key?('ean')
         record['ean'].split(/\D+/).each do |ean|
           record['_tags'] << "ean:#{ean}" if ean.size > 7
@@ -106,7 +109,6 @@ module AlgoliaFeed
         record.delete('author')
       end
       record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
-      raise RejectedRecord.new("Record has nil product_url", :rejected_url) if record['product_url'].nil?
       record['product_url'] = canonize(record['product_url'])
       raise RejectedRecord.new("Record has nil product_url", :rejected_url) if record['product_url'].nil?
       domain = Utils.extract_domain(record['product_url'])
@@ -140,9 +142,6 @@ module AlgoliaFeed
       end
       forbidden_names = "(#{self.forbidden_names.join('|')})"
       raise RejectedRecord.new("Record has forbidden name #{record['name']}", :rejected_sex) if record['name'] =~ /#{forbidden_names}/
-      raise RejectedRecord.new("Record has no product URL", :rejected_url) unless (record.has_key?('product_url') and record['product_url'] =~ /\Ahttp/)
-      raise RejectedRecord.new("Record has no price", :rejected_price) unless (record.has_key?('price') and record['price'] > 0)
-      raise RejectedRecord.new("Record has no usable image #{record['image_url']}", :rejected_img) unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
 
       # Set image size
       record['image_size'] = @image_size_processor.get(record['image_url'])

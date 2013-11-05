@@ -129,7 +129,7 @@ module AlgoliaFeed
     end
     
     def download(urls=[])
-      urls = self.urls if urls.size > 0
+      urls = self.urls if urls.size == 0
       urls.each do |url|
         begin
           raw_file = retrieve_url(url)
@@ -143,7 +143,7 @@ module AlgoliaFeed
     end
 
     def process_xml_directory(dir=nil, free_children=6)
-      algolia = AlgoliaFeed::AlgoliaFeed.new(debug: self.debug)
+      algolia = AlgoliaFeed.new(debug: self.debug)
       algolia.connect(algolia.index_name)
       algolia.set_index_attributes
       dir = self.tmpdir unless dir.present?
@@ -160,7 +160,7 @@ module AlgoliaFeed
 					ActiveRecord::Base.establish_connection
           class_name = path.split(/\//)[-2]
           worker = class_name.constantize.new(debug: self.debug)
-          worker.connect
+          worker.algolia.connect
           worker.process_xml(path)
 					exit
         end
