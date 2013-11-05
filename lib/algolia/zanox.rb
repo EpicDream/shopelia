@@ -2,7 +2,7 @@
 
 module AlgoliaFeed
 
-  class Zanox < AlgoliaFeed
+  class ZanoxFiler < FileUtils
 
     def initialize(params={})
       super
@@ -18,6 +18,16 @@ module AlgoliaFeed
         "http://productdata.zanox.com/exportservice/v1/rest/19024603C1357169475.xml?ticket=F03A5E4E67A27FD5925A570370AD7885&gZipCompress=yes" # eveiletjeux.com
       ]
 
+      self.parser_class = params[:parser_class] || 'AlgoliaFeed::Zanox'
+      
+    end
+  end
+
+  class Zanox < XmlParser
+
+    def initialize(params={})
+      super
+
       self.conversions = {
         'name'                 => 'name',
         'manufacturer'         => 'brand',
@@ -32,7 +42,9 @@ module AlgoliaFeed
       }
 
       self.category_fields = ['merchantCategory']
-
+      params[:parser_class] = self.class
+      self.filer = ZanoxFiler.new(params)
+      self
     end
 
     def best_image(product)
