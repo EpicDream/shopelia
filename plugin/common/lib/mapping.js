@@ -121,14 +121,12 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
 
   // Mapping must be adapt to be used for search in a page.
   map.adaptMapping= function (mapping) {
-    var field, i, paths, path;
+    var res = $extend(true, mapping),
+      field, i, paths;
     for (field in mapping) {
-      paths = mapping[field].paths || [];
-      for (i = 0; i < paths.length; i++) {
-        path = paths[i];
-        if (path.search(/:visible/) !== -1)
-          paths.push(path.replace(/:visible/,''));
-      }
+      paths = res[field].paths || [];
+      for (i = 0; i < paths.length; i++)
+        paths[i].replace(/:visible/g,'');
     }
     return mapping;
   };

@@ -157,6 +157,10 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
       for (var key in crawlResults)
         if (crawlResults[key]) {
           var b = buttons.filter("#ariane-product-"+key);
+          if (b.length === 0) {
+            logger.warn("No button found with key = "+key);
+            continue;
+          }
           b.removeClass("missing").addClass("mapped");
           if (b[0].title) b[0].title += "\n";
           b[0].title += "Crawl result = '" + crawlResults[key] + "'\n";
