@@ -472,6 +472,10 @@ class ProductTest < ActiveSupport::TestCase
     product.viking_failure = false
     assert !product.ready?
 
+    product.merchant.update_attribute :rejecting_events, true
+    assert product.ready?
+
+    product.merchant.update_attribute :rejecting_events, false
     product.versions_expires_at = 1.hour.from_now
     assert product.ready?
   end
