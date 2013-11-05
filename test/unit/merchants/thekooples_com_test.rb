@@ -8,7 +8,17 @@ class ThekooplesComTest < ActiveSupport::TestCase
     @url = "http://www.thekooples.com/fr/homme/veste-1/veste-homme-8.html"
     @helper = ThekooplesCom.new(@url)
   end
-  
+
+  test "it should process availability" do
+    @version[:availability_text] = "Ooops !!!"
+    @version = @helper.process_availability(@version)
+    assert_equal "Ooops !!!", @version[:availability_text]
+
+    @version[:availability_text] = ""
+    @version = @helper.process_availability(@version)
+    assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
+  end
+
   test "it should process_price_shipping" do
     @version[:price_shipping_text] = "livraison gratuite"
     @version = @helper.process_price_shipping(@version)
