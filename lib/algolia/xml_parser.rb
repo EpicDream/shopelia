@@ -152,6 +152,7 @@ module AlgoliaFeed
       self.url_monetizer.set(record['product_url'], record['url_monetized'])
 
       record['_tags'].each do |tag|
+				next if tag =~ /\Aean:/
         n = self.redis.hget('algolia_tags', tag).to_i
         self.redis.hset('algolia_tags', tag, n + 1)
       end
