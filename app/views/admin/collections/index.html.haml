@@ -1,0 +1,36 @@
+%section.header
+  %header
+    %h1 Collections
+    %h2 Inspiring our users
+
+.container-fluid
+  .row-fluid
+    .span2
+      %article.coolbox
+        %h3 Scope
+        %select.input-medium.filter-option#publicFilter
+          %option{value:1} Public
+          %option{value:0} Private
+      %article.coolbox
+        %h3 Tags
+        - @tags.each do |tag|
+          = collection_tag_to_html(tag)
+    .span10
+      %article.coolbox
+        %h3 Collections list
+        %table.table.table-striped#collections
+          %thead
+            %tr
+              %th Name
+              %th Cover
+              %th Tags
+              %th Items
+          %tbody
+            - @collections.each do |collection|
+              %tr
+                %td= link_to collection.name, admin_collection_path(collection)
+                %td= image_tag collection.image.url, style:"max-width:300px;"
+                %td
+                  - collection.tags.map(&:name).each do |tag|
+                    = collection_tag_to_html(tag)
+                %td= collection.collection_items.count

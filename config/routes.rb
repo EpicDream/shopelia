@@ -46,6 +46,7 @@ Shopelia::Application.routes.draw do
 
   namespace :admin do
     match "/", to: "dashboard#index"
+    resources :collections
     resources :dashboard, :only => :index
     resources :developers, :only => [:index, :new, :create]
     resources :devices, :only => :show
