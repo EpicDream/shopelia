@@ -10,6 +10,14 @@ class StylebopCom
     @url = url
   end
 
+  def canonize
+    if @url =~ /status=404/
+      "http://www.stylebop.com/search/noproductsfound.php?status=404"
+    else
+      @url
+    end
+  end
+
   def process_availability version
     version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
     version
