@@ -108,9 +108,10 @@ module AlgoliaFeed
         record.delete('author')
       end
       record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
+      raise RejectedRecord.new("Record has no product URL", :rejected_url) if record['product_url'].nil?
       record['url_monetized'] = record['product_url']
       record['product_url'] = canonize(record['product_url'])
-      raise RejectedRecord.new("Record has nil product_url", :rejected_url) if record['product_url'].nil?
+      raise RejectedRecord.new("Record has no product URL", :rejected_url) unless (record.has_key?('product_url') and record['product_url'] =~ /\Ahttp/)
       domain = Utils.extract_domain(record['product_url'])
       puts "Identified domain: #{domain}" if self.debug > 2
       unless self.merchant_cache.has_key?(domain)
