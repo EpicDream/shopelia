@@ -30,7 +30,7 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
     } else if (msg.action === 'recrawl') {
       chrome.storage.local.get('mappings', function(hash) {
         if (! hash.mappings[url])
-          return logger.warn('Cannot find '+cUrl+' in\n'+Object.keys(hash.crawlings).join('\n'));
+          return logger.warn('Cannot find '+url+' in\n'+Object.keys(hash.crawlings).join('\n'));
         mapping = new Mapping(hash.mappings[url], url);
         rematch(msg.field);
       });
@@ -45,7 +45,7 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
     started = true;
     chrome.storage.local.get('mappings', function(hash) {
       if (! hash.mappings[url])
-        return logger.warn('Cannot find '+cUrl+' in\n'+Object.keys(hash.crawlings).join('\n'));
+        return logger.warn('Cannot find '+url+' in\n'+Object.keys(hash.crawlings).join('\n'));
       mapping = new Mapping(hash.mappings[url], url);
       mapper.savePage();
       mapper.init();

@@ -44,13 +44,8 @@ define(['chrome_logger', 'mapping'], function(logger, Mapping) {
     chrome.storage.local.get(['openTabs', "mappings"], function(hash) {
       var url = hash.openTabs[tabId];
       var mapping = hash.mappings[url];
-      $.ajax({
-        type : "PUT",
-        url: Mapping.MAPPING_URL+'/'+mapping.id,
-        contentType: 'application/json',
-        data: JSON.stringify(mapping)
-      }).done(function() {
-        logger.debug("("+tabId+") New mapping sended.");
+      Mapping.save(mapping).done(function() {
+        logger.debug("("+tabId+") New mapping #"+mapping.id+" sended.");
         ariane.clean(tabId, true);
       }).fail(function(err) {
         alert("Fail to send new mapping :", err);
