@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery', 'logger', 'html_utils', 'crawler', 'mapping', 'lib/path_utils', 'controllers/toolbar_contentscript', 'arconf'],
+define(['jquery', 'chrome_logger', 'html_utils', 'crawler', 'mapping', 'lib/path_utils', 'controllers/toolbar_contentscript', 'arconf'],
 function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
   "use strict";
 
@@ -30,7 +30,7 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
     } else if (msg.action === 'recrawl') {
       chrome.storage.local.get('mappings', function(hash) {
         if (! hash.mappings[url])
-          return logger.warn('Cannot find '+cUrl+' in\n'+Object.keys(hash.crawlings).join('\n'));
+          return logger.warn('Cannot find '+url+' in\n'+Object.keys(hash.crawlings).join('\n'));
         mapping = new Mapping(hash.mappings[url], url);
         rematch(msg.field);
       });
@@ -45,7 +45,7 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
     started = true;
     chrome.storage.local.get('mappings', function(hash) {
       if (! hash.mappings[url])
-        return logger.warn('Cannot find '+cUrl+' in\n'+Object.keys(hash.crawlings).join('\n'));
+        return logger.warn('Cannot find '+url+' in\n'+Object.keys(hash.crawlings).join('\n'));
       mapping = new Mapping(hash.mappings[url], url);
       mapper.savePage();
       mapper.init();
@@ -157,6 +157,10 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
       for (var key in crawlResults)
         if (crawlResults[key]) {
           var b = buttons.filter("#ariane-product-"+key);
+          if (b.length === 0) {
+            logger.warn("No button found with key = "+key);
+            continue;
+          }
           b.removeClass("missing").addClass("mapped");
           if (b[0].title) b[0].title += "\n";
           b[0].title += "Crawl result = '" + crawlResults[key] + "'\n";

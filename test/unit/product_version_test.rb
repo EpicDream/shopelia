@@ -58,6 +58,7 @@ class ProductVersionTest < ActiveSupport::TestCase
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
             "2��79 6��30", "sur rdv devant chez vous (6 à 10 jours). 2.79 €",
             "livraison à domicile (1 livreur) (le livreur (au pied de l'immeuble si vous êtes en appartement) 2 bla...) 2.79 €",
+            "Livraison dans la pièce de votre choix (EUR 2,79)", "Livraison dans la pièce de votre choix (2.79 €)",
             "Livraison 'classique' à domicile (Livraison dans les 4 à 9 jours à bla. En savoir plus 2.79 €",
             "Colissimo - expédié sous 0h - à partir de 2,79 €",
             "Colissimo Suivi - expédié sous 72h - à partir de 2,79 €",

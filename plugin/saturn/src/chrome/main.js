@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-10-07
 
-require(['logger', 'src/saturn', 'src/chrome/chrome_saturn', 'satconf'], function(logger, Saturn, ChromeSaturn) {
+require(['chrome_logger', 'src/saturn', 'src/chrome/chrome_saturn', 'satconf'], function(logger, Saturn, ChromeSaturn) {
 
 "use strict";
 

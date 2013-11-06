@@ -1,10 +1,9 @@
 # -*- encoding : utf-8 -*-
-class ThekooplesCom
-  DEFAULT_PRICE_SHIPPING = "0.00 €"
-  DEFAULT_SHIPPING_INFO = "The Kooples expédie ses colis avec la solution express TNT en 48 h."
+class StylebopCom
+  DEFAULT_PRICE_SHIPPING = "10.00 €"
+  DEFAULT_SHIPPING_INFO = "Livraison UPS en 2-3 jours ouvrables (France)"
 
   AVAILABILITY_HASH = {
-    "ooops" => false,
   }
 
   def initialize url
@@ -25,5 +24,4 @@ class ThekooplesCom
     version[:shipping_info] = DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
     version
   end
-
 end

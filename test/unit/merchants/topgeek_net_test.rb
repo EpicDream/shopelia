@@ -30,12 +30,12 @@ class TopgeekNetTest < ActiveSupport::TestCase
 
     @version[:availability_text] = ""
     @version = @helper.process_availability(@version)
-    assert_equal "En stock", @version[:availability_text]
+    assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
   end
 
   test "it should process price shipping" do
     @version[:price_shipping_text] = ""
-    @version = @helper.process_shipping_price(@version)
+    @version = @helper.process_price_shipping(@version)
     assert_equal TopgeekNet::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
   end
 
@@ -43,5 +43,19 @@ class TopgeekNetTest < ActiveSupport::TestCase
     @version[:shipping_info] = ""
     @version = @helper.process_shipping_info(@version)
     assert_equal TopgeekNet::DEFAULT_SHIPPING_INFO, @version[:shipping_info]
+  end
+
+  test "it should process option" do
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "Blanc", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "Blanc", @version[:option1]["text"]
+
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "", "src" => @url}
+    @version = @helper.process_options(@version)
+    assert_equal "", @version[:option1]["text"]
+
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "FFFFFF", @version[:option1]["text"]
   end
 end

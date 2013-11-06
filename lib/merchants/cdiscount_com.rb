@@ -4,6 +4,7 @@ class CdiscountCom
 
   AVAILABILITY_HASH = {
     "operation commerciale" => false,
+    "toute l’offre" => false,
   }
 
   def initialize url

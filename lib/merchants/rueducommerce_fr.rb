@@ -27,10 +27,14 @@ class RueducommerceFr
     version
   end
 
-  def process_shipping_price version
-    version[:price_shipping_text] = DEFAULT_SHIPPING_PRICE if version[:price_shipping_text].blank?
-    current_price_shipping = MerchantHelper.parse_float version[:price_shipping_text]
-    version[:price_shipping] = 0.0 if ! current_price_shipping.nil? && current_price_shipping >= FREE_SHIPPING_LIMIT
+  def process_price_shipping version
+    if version[:price_shipping_text].blank?
+      version[:price_shipping_text] = DEFAULT_SHIPPING_PRICE
+    else
+      version[:price_shipping_text] = $~[1] if version[:price_shipping_text] =~ /[aà] partir de (.+)$/i
+      current_price_shipping = MerchantHelper.parse_float version[:price_shipping_text]
+      version[:price_shipping_text] = MerchantHelper::FREE_PRICE if ! current_price_shipping.nil? && current_price_shipping >= FREE_SHIPPING_LIMIT
+    end
     version
   end
 end

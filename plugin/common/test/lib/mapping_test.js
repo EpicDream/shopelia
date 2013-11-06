@@ -213,9 +213,9 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       });
       runs(function () {
         expect(mapping instanceof Mapping).toBe(true);
-        expect(mapping.id).toBe(188);
+        expect(mapping.id).toBe(511);
         expect(mapping.refs instanceof Array).toBe(true);
-        expect(mapping.refs[0]).toBe(511);
+        expect(mapping.refs[0]).toBe(188);
         expect(mapping.host).toBe('default');
         expect(typeof mapping.currentMap).toBe('object');
         expect(mapping._host_mappings["default"]).not.toBe(undefined);

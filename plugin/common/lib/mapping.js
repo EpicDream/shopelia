@@ -75,8 +75,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     }).done(function (hash) {
       if (hash.data && hash.data.ref) {
         map.load(hash.data.ref).done(function(mapp) {
-          mapp.refs.unshift(mapp.id);
-          mapp.id = hash.id;
+          mapp.refs.push(hash.id);
           if (typeof merchant === 'string' && ! toInt)
             mapp.setUrl(merchant);
           deferred.resolve(mapp);
@@ -91,6 +90,21 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
       deferred.reject(err);
     });
     return deferred;
+  };
+
+  map.save = function (mapping, id) {
+    if (typeof mapping === 'object') {
+      id = mapping.id;
+      mapping = JSON.stringify(mapping);
+    } else if (typeof mapping !== 'string')
+      throw "Cannot save mapping #"+id+". Wait an Mapping or an object, got a "+(typeof mapping);
+
+    return $.ajax({
+      type : "PUT",
+      url: map.MAPPING_URL+'/'+id,
+      contentType: 'application/json',
+      data: mapping
+    });
   };
 
   map.getMerchants = function () {
@@ -121,14 +135,12 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
 
   // Mapping must be adapt to be used for search in a page.
   map.adaptMapping= function (mapping) {
-    var field, i, paths, path;
+    var res = $extend(true, mapping),
+      field, i, paths;
     for (field in mapping) {
-      paths = mapping[field].paths || [];
-      for (i = 0; i < paths.length; i++) {
-        path = paths[i];
-        if (path.search(/:visible/) !== -1)
-          paths.push(path.replace(/:visible/,''));
-      }
+      paths = res[field].paths || [];
+      for (i = 0; i < paths.length; i++)
+        paths[i].replace(/:visible/g,'');
     }
     return mapping;
   };
@@ -156,8 +168,16 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
 
   Mapping.prototype = {};
 
+  Mapping.prototype.toJSON = function() {
+    return JSON.stringify(this.toObject());
+  };
+
   Mapping.prototype.toObject = function() {
     return {id: this.id, data: {viking: this._host_mappings, pages: this._pages}};
+  };
+
+  Mapping.prototype.save = function () {
+    return map.save(this);
   };
 
   //TODO: handle frameworks like prestashop, magento, shopify, etc

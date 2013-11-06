@@ -1,19 +1,13 @@
 # -*- encoding : utf-8 -*-
-class ThekooplesCom
-  DEFAULT_PRICE_SHIPPING = "0.00 €"
-  DEFAULT_SHIPPING_INFO = "The Kooples expédie ses colis avec la solution express TNT en 48 h."
+class PixmaniaFr
+  DEFAULT_PRICE_SHIPPING = "5,99 €"
+  DEFAULT_SHIPPING_INFO = "Colis Privé vous livre en 4 à 6 jours ouvrés du lundi au vendredi de 8h à 18h."
 
   AVAILABILITY_HASH = {
-    "ooops" => false,
   }
 
   def initialize url
     @url = url
-  end
-
-  def process_availability version
-    version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
-    version
   end
 
   def process_price_shipping version
@@ -25,5 +19,4 @@ class ThekooplesCom
     version[:shipping_info] = DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
     version
   end
-
 end

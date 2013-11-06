@@ -20,6 +20,7 @@ module MerchantHelper
     version = m.process_availability(version) if m.respond_to?('process_availability')
     version = m.process_name(version) if m.respond_to?('process_name')
     version = m.process_price(version) if m.respond_to?('process_price')
+    version = m.process_options(version) if m.respond_to?('process_options')
     version
   end
 
@@ -33,11 +34,12 @@ module MerchantHelper
   end
 
   # Return nil if cannot find a price.
+  # test encore dans product_version_test.rb pour le moment
   def self.parse_float str
     str = str.downcase
     # special cases
     str = str.gsub(/\A.*un total de/, "")
-    str = str.gsub(/\(.*\)/, "")
+    str = str.gsub(/\(.*\)/, "") unless str =~ /\(.*(\beur\b|[$€]).*\)/i
     str = str.gsub(/\(.*?\./, "")
     str = str.gsub(/\A.*à partir de/, "")
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
