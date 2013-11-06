@@ -3,7 +3,7 @@
     %h1 Order #{@order.uuid}
     %h2 
       = @order.user.name
-    = order_state_to_html(order.state_name)
+    = raw order_state_to_html(@order.state_name)
 
 .container-fluid
   .row-fluid
@@ -112,7 +112,7 @@
                   %td
                     = transaction.mangopay_contribution_message
 
-      - if @order.payment_transactions.any?
+      - if @order.payment_transaction.present?
         %article.coolbox
           %h3 Proxy payment
           %table.table.table-striped
@@ -122,11 +122,10 @@
                 %th Amount
                 %th Code
             %tbody
-              - @order.payment_transactions.each do |transaction|
-                %tr
-                  %td
-                    = transaction.processor
-                  %td
-                    = number_to_currency(transaction.amount.to_f / 100)
-                  %td
-                    = transaction.mangopay_amazon_voucher_code
+              %tr
+                %td
+                  = @order.payment_transaction.processor
+                %td
+                  = number_to_currency(@order.payment_transaction.amount.to_f / 100)
+                %td
+                  = @order.payment_transaction.mangopay_amazon_voucher_code
