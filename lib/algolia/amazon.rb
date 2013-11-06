@@ -2,7 +2,7 @@
 
 module AlgoliaFeed
 
-  class Amazon < AlgoliaFeed
+  class AmazonFiler < FileUtils
 
     def initialize(params={})
       super
@@ -31,6 +31,17 @@ module AlgoliaFeed
         'https://assoc-datafeeds-eu.amazon.com/datafeed/getFeed?filename=fr_amazon_watches.xml.gz'
       ]
 
+      self.http_auth = params[:http_auth] || {:user => 'httpwwwprixin-21', :password => 'fjisnrsd48'}
+    end
+  end
+
+  class Amazon < XmlParser
+
+    # TODO: Missing categories for Amazon
+
+    def initialize(params={})
+      super
+
       self.product_field = params[:product_field] || 'item_data'
 
       self.conversions = {
@@ -48,8 +59,9 @@ module AlgoliaFeed
       }
 
       self.category_fields = params[:category_fields] || ['item_category', 'merchant_cat_path']
-
-      self.http_auth = params[:http_auth] || {:user => 'httpwwwprixin-21', :password => 'fjisnrsd48'}
+      params[:parser_class] = self.class
+      self.filer = AmazonFiler.new(params)
+      self
 
     end
 
@@ -75,6 +87,7 @@ module AlgoliaFeed
       record['price'] = to_cents(record['price'])
       record['price_shipping'] = '0' if record['price_shipping'] =~ /gratuite/i
       record['price_shipping'] = to_cents(record['price_shipping'])
+      record['image_url'].gsub!(/\._.+?_\.jpg\Z/, '.jpg')
       record
     end
   end

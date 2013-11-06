@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131030130625) do
+ActiveRecord::Schema.define(:version => 20131105111749) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -99,6 +99,8 @@ ActiveRecord::Schema.define(:version => 20131030130625) do
     t.float    "max_rebate_value"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.integer  "device_id"
+    t.integer  "max_orders_count"
   end
 
   create_table "collection_items", :force => true do |t|
@@ -128,6 +130,7 @@ ActiveRecord::Schema.define(:version => 20131030130625) do
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
     t.boolean  "public",             :default => false
+    t.string   "image_size"
   end
 
   create_table "countries", :force => true do |t|
@@ -387,6 +390,7 @@ ActiveRecord::Schema.define(:version => 20131030130625) do
     t.datetime "muted_until"
     t.boolean  "options_completed",                  :default => false
     t.datetime "viking_sent_at"
+    t.string   "image_size"
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true
@@ -419,6 +423,18 @@ ActiveRecord::Schema.define(:version => 20131030130625) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "traces", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "device_id"
+    t.string   "ressource"
+    t.string   "action"
+    t.integer  "extra_id"
+    t.string   "extra_text"
+    t.string   "ip_address"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "url_matchers", :force => true do |t|
     t.text     "url"
     t.text     "canonical"
@@ -428,6 +444,13 @@ ActiveRecord::Schema.define(:version => 20131030130625) do
 
   add_index "url_matchers", ["canonical"], :name => "index_url_matchers_on_canonical"
   add_index "url_matchers", ["url"], :name => "index_url_matchers_on_url"
+
+  create_table "user_sessions", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "device_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "user_verification_failures", :force => true do |t|
     t.integer  "user_id"

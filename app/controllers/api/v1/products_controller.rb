@@ -35,7 +35,6 @@ class Api::V1::ProductsController < Api::V1::BaseController
   end
 
   def prepare_scope
-    @scope = { developer:@developer }
-  end
-  
+    @scope = { developer:@developer, device:@device }
+  end  
 end

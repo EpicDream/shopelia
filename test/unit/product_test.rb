@@ -467,11 +467,15 @@ class ProductTest < ActiveSupport::TestCase
   test "it should set ready" do
     product = products(:usbkey)
     product.viking_failure = true
-    assert !product.ready?
+    assert product.ready?
 
     product.viking_failure = false
     assert !product.ready?
 
+    product.merchant.update_attribute :rejecting_events, true
+    assert product.ready?
+
+    product.merchant.update_attribute :rejecting_events, false
     product.versions_expires_at = 1.hour.from_now
     assert product.ready?
   end
@@ -541,5 +545,11 @@ class ProductTest < ActiveSupport::TestCase
     assert_equal 2, Product.available.count
     product_versions(:dvd).update_attribute :available, false
     assert_equal 1, Product.available.count
+  end
+
+  test "it should set image size" do 
+    product = products(:usbkey)
+    product.update_attribute :image_url, "http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg"
+    assert_equal "450x383", product.image_size
   end
 end

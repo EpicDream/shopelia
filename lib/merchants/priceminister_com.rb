@@ -5,7 +5,7 @@ class PriceministerCom
   end
 
   def monetize
-    "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=" + @url.gsub(/#.*$/, "")
+    "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=" + CGI::escape(@url.gsub(/#.*$/, ""))
   end
 
   def canonize

@@ -1,14 +1,17 @@
 namespace :shopelia do
   namespace :tracking do
     
-    desc "Generate request events for all tracked products"
+    desc "Generate request events for all products tracked or present in collections"
     task :request => :environment do
       developer = Developer.find_by_name("Shopelia")
-      Product.joins(:developers).map(&:id).each do |id|
+      tracked_ids = Product.joins(:developers).map(&:id)
+      collections_ids = CollectionItem.select("distinct product_id").map(&:product_id)
+      (tracked_ids + collections_ids).uniq.each do |id|
         Event.create(
           :product_id => id,
           :action => Event::REQUEST,
           :developer_id => developer.id)
+        sleep 0.5
       end
     end
 

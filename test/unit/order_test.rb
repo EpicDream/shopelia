@@ -491,6 +491,15 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "gift_message_failure", @order.message
   end  
 
+  test "it should pause order with merchant address error" do
+    start_order
+    callback_order "failure", { "status" => "address_error" }
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "merchant", @order.error_code
+    assert_equal "address_error", @order.message
+  end
+
   test "it should restart paused order" do
     pause_order
     start_order
@@ -780,6 +789,14 @@ class OrderTest < ActiveSupport::TestCase
  
   test "it should compute cashback value" do
     assert_equal 0.30, orders(:elarch_amazon_billing).cashfront_value
+
+    CashfrontRule.create!(
+      merchant_id:merchants(:amazon).id,
+      rebate_percentage:6,
+      developer_id:developers(:prixing).id,
+      device_id:devices(:samsung).id,
+      max_rebate_value:10)
+    assert_equal 0.60, orders(:elarch_amazon_billing).cashfront_value
   end
   
   test "[alpha] it should continue order if target price is same than expected" do

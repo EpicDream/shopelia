@@ -10,7 +10,7 @@ class PriceministerComTest < ActiveSupport::TestCase
   end
 
   test "it should monetize" do
-    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html", PriceministerCom.new("http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html#sort=0&filter=10&s2m_exaffid=977275").monetize
+    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=http%3A%2F%2Fwww.priceminister.com%2Foffer%2Fbuy%2F103220572", @helper.monetize
   end
 
   test "it should canonize" do

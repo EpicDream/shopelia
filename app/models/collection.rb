@@ -11,9 +11,12 @@ class Collection < ActiveRecord::Base
 
   before_validation :generate_uuid
 
+  has_attached_file :image, :url => "/images/collections/:id/img.jpg", :path => "#{Rails.public_path}/images/collections/:id/img.jpg"
+  after_post_process :save_image_dimensions
+
   attr_accessible :description, :name, :user_id, :public, :image
 
-  has_attached_file :image, :url => "/images/collections/:id/img.jpg", :path => "#{Rails.public_path}/images/collections/:id/img.jpg"
+  scope :public, where(public:true)
 
   def to_param
     param = self.uuid + (self.name.present? ? "-#{self.name}" : "")
@@ -21,20 +24,21 @@ class Collection < ActiveRecord::Base
   end
 
   def belongs_to? user
-    self.user_id == user.id
-  end
-
-  def size
-    self.collection_items.count
+    user && self.user_id == user.id
   end
 
   def items
-    self.collection_items.order("collection_items.created_at ASC")
+    self.products.available
   end
 
   private
 
   def generate_uuid
     self.uuid = SecureRandom.hex(4) if self.uuid.nil?
+  end
+
+  def save_image_dimensions
+    geo = Paperclip::Geometry.from_file(image.queued_for_write[:original])
+    self.image_size = "#{geo.width.to_i}x#{geo.height.to_i}"
   end
 end

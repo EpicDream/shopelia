@@ -1,7 +1,7 @@
 class Product < ActiveRecord::Base
   include AlgoliaSearch
 
-  VERSIONS_EXPIRATION_DELAY_IN_HOURS = 4
+  VERSIONS_EXPIRATION_DELAY_IN_HOURS = 8
 
   belongs_to :product_master
   belongs_to :merchant
@@ -21,6 +21,7 @@ class Product < ActiveRecord::Base
   before_save :truncate_name
   after_save :create_versions
   after_save :clear_failure_if_mute, :if => Proc.new { |product| product.mute? }
+  after_update :set_image_size, :if => Proc.new { |product| product.image_url_changed? || (product.image_url.present? && product.image_size.blank?) }
   
   attr_accessible :versions, :merchant_id, :url, :name, :description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
@@ -72,7 +73,7 @@ class Product < ActiveRecord::Base
   end
   
   def ready?
-    !self.viking_failure && self.versions_expires_at.present? && self.versions_expires_at > Time.now
+    (self.merchant.present? && self.merchant.rejecting_events?) || self.viking_failure? || (self.versions_expires_at.present? && self.versions_expires_at > Time.now)
   end
 
   def available?
@@ -80,7 +81,8 @@ class Product < ActiveRecord::Base
   end
 
   def price
-    self.product_versions.available.first.try(:price)
+    version = self.product_versions.available.first
+    version ? (version.price + version.price_shipping).to_f.round(2) : nil
   end
 
   def assess_versions
@@ -167,11 +169,13 @@ class Product < ActiveRecord::Base
       end
       version = self.reload.product_versions.available.order(:updated_at).first
       if version.present?
+        old_image_url = self.image_url
         self.update_column "name", version.name
         self.update_column "brand", version.brand
         self.update_column "reference", version.reference
         self.update_column "image_url", version.image_url
         self.update_column "description", version.description
+        set_image_size if version.image_url != old_image_url && self.image_size.blank?
       end
       self.update_column "versions_expires_at", Product.versions_expiration_date
       self.reload
@@ -194,6 +198,11 @@ class Product < ActiveRecord::Base
   def clear_failure_if_mute
     self.update_column "viking_failure", false
     self.update_column "versions_expires_at", nil
+  end
+
+  def set_image_size
+    size = FastImage.size(self.image_url)
+    self.update_column "image_size", size.join("x") unless size.nil?
   end
 
   def notify_channel

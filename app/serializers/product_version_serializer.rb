@@ -12,7 +12,7 @@ class ProductVersionSerializer < ActiveModel::Serializer
   end
 
   def cashfront_value
-    object.cashfront_value object.price, scope ? { developer:scope[:developer] } : nil
+    object.cashfront_value object.price, scope ? { developer:scope[:developer], device:scope[:device] } : nil
   end
 
   def option1

@@ -19,6 +19,8 @@ class User < ActiveRecord::Base
   has_many :billing_transactions
   has_many :payment_transactions, :through => :orders
   has_many :collections, :dependent => :destroy
+  has_many :user_sessions
+  has_many :traces
 
   belongs_to :nationality, :class_name => "Country"
   belongs_to :developer
