@@ -84,7 +84,8 @@ module AlgoliaFeed
 
       raise RejectedRecord.new("Item has no rank", :rejected_rank) unless record.has_key?('rank')
       raise RejectedRecord.new("Item rank is too low", :rejected_rank) if record['rank'] > 500_000
-      record['price'] = to_cents(record['price'])
+      raise RejectedRecord.new("Record has no usable image #{record['image_url']}", :rejected_img) unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
+       record['price'] = to_cents(record['price'])
       record['price_shipping'] = '0' if record['price_shipping'] =~ /gratuite/i
       record['price_shipping'] = to_cents(record['price_shipping'])
       record['image_url'].gsub!(/\._.+?_\.jpg\Z/, '.jpg')
