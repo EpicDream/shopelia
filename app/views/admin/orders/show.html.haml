@@ -2,8 +2,8 @@
   %header
     %h1 Order #{@order.uuid}
     %h2 
-      order_state_to_html(order.state_name)
       = @order.user.name
+    order_state_to_html(order.state_name)
 
 .container-fluid
   .row-fluid
@@ -27,7 +27,7 @@
           %strong Cashfront :
           = number_to_currency @order.expected_cashfront_value
 
-      - if @order.state_name == :completed
+      - if @order.state == :completed
         %article.coolbox
           %h3 Billed
           %strong Price product :
@@ -58,10 +58,10 @@
             %strong Cashfront :
             = number_to_currency @order.expected_cashfront_value
 
-      - if @order.state_name == :completed
+      - if @order.state == :completed
         %article.coolbox
           %h3 Shipping info
-          @order.shipping_info
+          = @order.shipping_info
 
       %article.coolbox
         %h3 Address
@@ -87,7 +87,7 @@
             - @order.order_items.each do |item|
               %tr
                 %td
-                  = item.product_version.try(:name)
+                  = link_to item.product_version.name, item.product_version.product.url
                 %td
                   = item.quantity
                 %td
