@@ -87,6 +87,8 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert_equal('Philip J. Neimark', item['brand'])
     assert_equal(404, item['price'])
     assert_equal(299, item['price_shipping'])
+    assert(item['_tags'].include?('category:Occult'))
+    assert_equal('Livres anglais et étrangers/Subjects/Religion & Spirituality/Occult/Spiritualism', item['category'])
   end
 
   def test_zanox
