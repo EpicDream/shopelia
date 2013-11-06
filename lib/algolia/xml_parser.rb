@@ -16,7 +16,7 @@ module AlgoliaFeed
 
   class XmlParser
 
-    attr_accessor :records, :conversions, :product_field, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields, :algolia, :filer
+    attr_accessor :records, :conversions, :product_field, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields, :algolia, :filer, :url_monetizer, :redis
 
     def initialize(params={})
       self.conversions     = params[:conversions]     || {}
@@ -27,6 +27,8 @@ module AlgoliaFeed
       self.category_fields = params[:category_fields] || []   
       self.merchant_cache  = {}
       @image_size_processor = ImageSizeProcessor.new
+      self.url_monetizer = UrlMonetizer.new
+      self.redis = Redis.new
 
       self.algolia = AlgoliaFeed.new(params)
       self.filer = params[:filer] || 'AlgoliaFeed::FileUtils'
@@ -95,9 +97,6 @@ module AlgoliaFeed
         record[to] = product[from] if product.has_key?(from)
         record[to] = record[to].to_i if (record[to] =~ /\A\d+\Z/ and ['rank'].include?(to))
       end
-      raise RejectedRecord.new("Record has no product URL", :rejected_url) unless (record.has_key?('product_url') and record['product_url'] =~ /\Ahttp/)
-      raise RejectedRecord.new("Record has no price", :rejected_price) unless (record.has_key?('price') and record['price'].to_f > 0)
-      raise RejectedRecord.new("Record has no usable image #{record['image_url']}", :rejected_img) unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
       if record.has_key?('ean')
         record['ean'].split(/\D+/).each do |ean|
           record['_tags'] << "ean:#{ean}" if ean.size > 7
@@ -109,6 +108,7 @@ module AlgoliaFeed
         record.delete('author')
       end
       record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
+      record['url_monetized'] = record['product_url']
       record['product_url'] = canonize(record['product_url'])
       raise RejectedRecord.new("Record has nil product_url", :rejected_url) if record['product_url'].nil?
       domain = Utils.extract_domain(record['product_url'])
@@ -128,12 +128,14 @@ module AlgoliaFeed
       record['saturn'] = self.merchant_cache[domain][:saturn]
       record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
-      record['origin_product_url'] = record['product_url']
       set_categories(product, record)
       record
     end
 
     def post_process(record)
+      raise RejectedRecord.new("Record has no product URL", :rejected_url) unless (record.has_key?('product_url') and record['product_url'] =~ /\Ahttp/)
+      raise RejectedRecord.new("Record has no price", :rejected_price) unless (record.has_key?('price') and record['price'].to_f > 0)
+      raise RejectedRecord.new("Record has no usable image #{record['image_url']}", :rejected_img) unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
       forbidden_categories = "(#{self.forbidden_cats.join('|')})"
       record['_tags'].each do |tag|
         next unless tag=~/category:/
@@ -147,8 +149,12 @@ module AlgoliaFeed
       record['image_size'] = @image_size_processor.get(record['image_url'])
       record.delete('image_size') if record['image_size'].nil?
 
-      UrlMonetizer.new.set(record['product_url'], record['origin_product_url']) if record['product_url'] != record['origin_product_url']
-      record.delete('origin_product_url')
+      self.url_monetizer.set(record['product_url'], record['url_monetized'])
+
+      record['_tags'].each do |tag|
+        n = self.redis.hget('algolia_tags', tag).to_i
+        self.redis.hset('algolia_tags', tag, n + 1)
+      end
     end
 
     def canonize(url)
