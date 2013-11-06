@@ -1,5 +1,5 @@
 class OrdersDatatable
-  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :time_ago_in_words, :truncate, :admin_order_path, :order_state_to_html, to: :@view
+  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :time_ago_in_words, :truncate, :admin_order_path, :order_state_to_html, :admin_user_path, :admin_order_path, to: :@view
 
   def initialize(view, filters = {})
     @view = view
@@ -22,10 +22,10 @@ class OrdersDatatable
       product = order.order_items.first.product
       [
         order_state_to_html(order.state_name),
-        link_to(product.nil? ? "-" : product.name, "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
+        link_to(product.nil? ? "-" : product.name, admin_order_path(order)),
         order.merchant.name,
         number_to_currency(order.state == :completed ? order.billed_price_total : order.expected_price_total),
-        link_to(order.user.name, user_path(user)),
+        link_to(order.user.name, admin_user_path(order.user)),
         order.created_at.strftime("%d/%m/%Y"),
         order.message,
         order.error_code,
