@@ -1,0 +1,14 @@
+#live-chat
+  %header.clearfix
+    %h4
+      - if @device.user
+        #{@device.user.first_name} #{@device.user.last_name}
+      - else
+        Device ID : #{@device.id}
+    %span.chat-message-counter= @device.messages.from_user.count
+  .chat
+    .chat-history
+      #messages
+        = render partial: "admin/georges/messages/message", collection: @messages
+    = render partial: "admin/georges/messages/form"
+

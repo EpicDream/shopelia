@@ -3,6 +3,9 @@ class Admin::Georges::MessagesController < Admin::AdminController
 
   def index
     @messages = @device.messages.order(:created_at)
+    respond_to do |format|
+      format.js
+    end
   end
 
   def create

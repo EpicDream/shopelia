@@ -1,0 +1,2 @@
+$('#chat-user').empty();
+$("<%= escape_javascript(render :partial => "messages", messages: @messages) %>").appendTo("#chat-user");

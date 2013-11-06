@@ -1,6 +1,8 @@
 = form_for([:admin,:georges,@device,Message.new], remote: true, :html => { :id => 'message_form' }) do |f|
-  = f.text_area :content ,:rows => 10, :class => "span5"
+  = f.text_field :content , autofocus: "", placeholder: "Type your message?", type: "text"
   %label.checkbox
     %input.checkbox{type:"checkbox",id:"data-checkbox", checked:false} send product urls
-  = f.text_area :products_urls, :rows => 10, :class => "span5"
-  = f.submit "Validate", :class => 'btn btn-success btn-large'
+  = f.text_area :products_urls, :rows => 10
+  = f.submit "Répondre", :class => 'button-flat-empty '
+
+

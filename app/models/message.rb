@@ -24,6 +24,11 @@ class Message < ActiveRecord::Base
     end
   end
 
+  def self.from_user
+    where(from_admin: false)
+  end
+
+
   private
 
   def set_pending_answer

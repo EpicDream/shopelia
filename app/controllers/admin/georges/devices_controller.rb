@@ -1,9 +1,9 @@
 class Admin::Georges::DevicesController < Admin::AdminController
 
   def index
+    @devices = Device.all
     respond_to do |format|
       format.html
-      format.json { render json: ::Georges::DevicesDatatable.new(view_context) }
     end
   end
 

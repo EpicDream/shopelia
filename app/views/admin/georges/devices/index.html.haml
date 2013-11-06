@@ -1,30 +1,12 @@
-%section.header
-  %header
-    %h1 Messages
-    %h2 Talk with users, make their dream come true
-
-.container-fluid
-  .row-fluid
-    .span2
-      %article.coolbox
-        %h3 Filters
-        %select.input-small#pendingAnswerFilter
-          %option{value:0}
-            All
-          %option{value:1}
-            Waiting for answer
-          %option{value:2}
-            Closed
-    .span10
-      %article.coolbox
-        %h3 Devices list
-        %table.table.table-striped#devices{data:{source:"#{admin_georges_devices_url(format: 'json')}"}}
-          %thead
-            %tr
-              %th Device id
-              %th Products
-              %th Messages
-              %th Last message
-              %th Received
-              %th &nbsp;
-          %tbody
+#chatroom
+  #chat-list-users
+    - @devices.each do |device|
+      = link_to admin_georges_device_messages_path(device), :remote => true do
+        .user-row
+          - if device.user
+            #{device.user.first_name} #{device.user.last_name}
+          - else
+            device.id
+  #chat-user
+  #chat-feature
+    fefe

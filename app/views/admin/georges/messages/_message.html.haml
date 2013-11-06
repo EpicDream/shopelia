@@ -1,14 +1,27 @@
-%div{class: "from-#{message.from_admin ? 'admin':'user'}"}
-  %p= message.content
-  - message.data.each do |url|
-    = render Product.fetch(url)
-  %br
-  %small
-    - if message.from_admin
-      - if message.read_at
-        Read #{distance_of_time_in_words_to_now message.read_at} ago
-      - else
-        Sent #{distance_of_time_in_words_to_now message.created_at} ago
-    - else
-      Sent #{distance_of_time_in_words_to_now message.created_at} ago
-.clear
+.chat-message.clearfix
+  - if message.from_admin
+    = image_tag("admin/georges/messages/logo-georges.png", height: "32", width:"32")
+    .chat-message-content.clearfix
+      %span.chat-time
+        - if message.read_at
+          Read #{distance_of_time_in_words_to_now message.read_at} ago
+        - else
+          Sent #{distance_of_time_in_words_to_now message.created_at} ago
+      %h5 Georges
+      %p
+        = message.content
+        - message.data.each do |url|
+          = render Product.fetch(url)
+  - else
+    %img{alt: "", height: "32", src: "http://lorempixum.com/32/32/people", width: "32"}
+      .chat-message-content.clearfix
+        %span.chat-time
+          Sent #{distance_of_time_in_words_to_now message.created_at} ago
+        %h5
+          - if message.device.user
+            #{message.device.user.first_name}
+          - else
+            Device ID : #{message.device.id}
+        %p
+          = message.content
+  %hr
