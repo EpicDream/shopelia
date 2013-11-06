@@ -62,10 +62,23 @@ ActiveRecord::Schema.define(:version => 20131105111749) do
     t.integer  "mangopay_contribution_id"
     t.integer  "mangopay_contribution_amount"
     t.string   "mangopay_contribution_message"
+    t.integer  "mangopay_destination_wallet_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
-    t.integer  "mangopay_destination_wallet_id"
     t.integer  "mangopay_transfer_id"
+  end
+
+  create_table "campaign_products", :force => true do |t|
+    t.integer  "campaign_id"
+    t.integer  "product_id"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  create_table "campaigns", :force => true do |t|
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.string   "name"
   end
 
   create_table "cart_items", :force => true do |t|
@@ -130,7 +143,10 @@ ActiveRecord::Schema.define(:version => 20131105111749) do
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
     t.boolean  "public",             :default => false
+<<<<<<< Updated upstream
     t.string   "image_size"
+=======
+>>>>>>> Stashed changes
   end
 
   create_table "countries", :force => true do |t|
@@ -307,7 +323,6 @@ ActiveRecord::Schema.define(:version => 20131105111749) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
-    t.string   "payment_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
     t.integer  "developer_id"
@@ -340,7 +355,6 @@ ActiveRecord::Schema.define(:version => 20131105111749) do
     t.datetime "updated_at",                   :null => false
     t.integer  "amount"
     t.integer  "mangopay_source_wallet_id"
-    t.integer  "virtual_card_id"
   end
 
   create_table "product_masters", :force => true do |t|
@@ -495,17 +509,5 @@ ActiveRecord::Schema.define(:version => 20131105111749) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
-
-  create_table "virtual_cards", :force => true do |t|
-    t.string   "provider"
-    t.string   "number"
-    t.string   "exp_month"
-    t.string   "exp_year"
-    t.string   "cvv"
-    t.float    "amount"
-    t.integer  "cvd_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
 
 end
