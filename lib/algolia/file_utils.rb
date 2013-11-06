@@ -146,6 +146,7 @@ module AlgoliaFeed
       algolia = AlgoliaFeed.new(debug: self.debug)
       algolia.connect(algolia.index_name)
       algolia.set_index_attributes
+      XmlParser.new.redis.del('algolia_tags')
       dir = self.tmpdir unless dir.present?
       trap('CLD') {
         free_children += 1
@@ -161,7 +162,11 @@ module AlgoliaFeed
           class_name = path.split(/\//)[-2]
           worker = class_name.constantize.new(debug: self.debug)
           worker.algolia.connect
-          worker.process_xml(path)
+          begin
+            worker.process_xml(path)
+          rescue => e
+            puts "Parsing of #{path} failed: #{e}\n#{e.backtrace.join("\n")}"
+          end
 					exit
         end
       end

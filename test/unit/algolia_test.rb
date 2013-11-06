@@ -11,6 +11,7 @@ class AlgoliaTest < ActiveSupport::TestCase
       algolia.connect('testing')
       algolia.index.delete
     end
+    AlgoliaFeed::XmlParser.new.redis.del('algolia_tags')
   end
 
   def test_algolia_download_http_and_gunzip
@@ -58,6 +59,7 @@ class AlgoliaTest < ActiveSupport::TestCase
       assert_equal 'http://www.priceminister.com/offer/buy/206799878', url
     end
     assert_equal(3, record['_tags'].collect{ |tag| tag if tag=~ /category:/}.compact.size)
+    assert_equal('1', pm.redis.hget('algolia_tags', 'category:Mode'))
   end
 
   def test_amazon_aparel
@@ -99,6 +101,18 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert_equal('http://online.carrefour.fr/electromenager-multimedia/hp/cartouche-encre-n-342-couleur_a00000318_frfr.html', item['product_url'])
   end
 
+  def test_broken_zanox
+    skip
+    zn = AlgoliaFeed::Zanox.new(index_name: 'testing', debug:0, tmpdir: '/tmp')
+    zn.algolia.connect('testing')
+    e = nil
+    begin
+      zn.process_xml("#{Rails.root}/test/data/broken_zanox.xml")
+    rescue => e
+    end
+    assert(e != nil)
+  end
+
   def test_tradedoubler
     td = AlgoliaFeed::Tradedoubler.new(index_name: 'testing', debug:0, tmpdir: '/tmp')
     td.algolia.connect('testing')
@@ -109,5 +123,6 @@ class AlgoliaTest < ActiveSupport::TestCase
     item = hits.first
     assert_equal('monshowroom.com', item['merchant_name'])
     assert_equal('http://www.monshowroom.com/fr/zoom/un-jour-mon-prince/pochette-irisee-mini-pompon/150708', item['product_url'])
+    assert_equal("http://pdt.tradedoubler.com/click?a(2299963)p(77225)prod(1526414519)ttid(5)url(http%3A%2F%2Feulerian.monshowroom.com%2Fdynclick%2Fmonshowroom-fr%2F%3Fetf-name%3DFlux-tradedoubler_nouveautes%26etf-prdref%3D150708%26eparam%3D%5BTD_AFFILIATE_ID%5D%26eurl%3Dhttp%253A%252F%252Fwww.monshowroom.com%252Ffr%252Fzoom%252Fun-jour-mon-prince%252Fpochette-irisee-mini-pompon%252F150708%253Futm_source%253Dtradedoubler%2526utm_medium%253Daffiliation%2526utm_term%253D%257BKEYWORD%257D)", td.url_monetizer.get('http://www.monshowroom.com/fr/zoom/un-jour-mon-prince/pochette-irisee-mini-pompon/150708'))
   end
 end
