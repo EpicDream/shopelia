@@ -11,6 +11,8 @@ var helper = {};
 helper.help = function (session) {
   if (session.url.search(/^https?:\/\/www\.priceminister\.com/) !== -1) {
     this.priceminister.help(session);
+  } else if (session.url.search(/^https?:\/\/www\.rueducommerce\.fr/) !== -1) {
+    this.rueducommerce.help(session);
   }
 };
 
@@ -44,6 +46,16 @@ helper.priceminister.onNextStep = function () {
     else
       that.saturn.openUrl(that, newUrl);
   });
+};
+
+helper.rueducommerce = {};
+
+helper.rueducommerce.help = function (session) {
+  session.helper = this;
+};
+
+helper.rueducommerce.before_crawling = function(callback) {
+  setTimeout(callback, 1000);
 };
 
 return helper;

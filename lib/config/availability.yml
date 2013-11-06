@@ -34,6 +34,9 @@ livraison dans la piece de votre choix: true
 dispo sous \d: true
 reapprovisionne le: true
 plus que \d+ exemplaire: true
+livraison incluse: true
+\d+ articles disponibles: true
+dernier exemplaire: true
 
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
@@ -66,3 +69,4 @@ for personalized service on this item please call: false
 cet article n’est malheureusement plus disponible: false
 page est introuvable: false
 n'existe pas: false
+en cours de r.approvisionnement: false
