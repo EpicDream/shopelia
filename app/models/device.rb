@@ -3,6 +3,8 @@ class Device < ActiveRecord::Base
   has_many :events
   has_many :messages
   has_many :cashfront_rules
+  has_many :user_sessions
+  has_many :traces
   
   validates :uuid, :presence => true, :uniqueness => true
   
