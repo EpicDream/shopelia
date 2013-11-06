@@ -1,5 +1,7 @@
 #chatroom
   #chat-list-users
+    #chat-list-users-header
+      Users
     - @devices.each do |device|
       = link_to admin_georges_device_messages_path(device), :remote => true do
         .user-row

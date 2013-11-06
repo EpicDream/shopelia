@@ -1,2 +1,5 @@
 $("<%= escape_javascript(render @message) %>").appendTo("#messages");
+$(".chat-history").animate({
+    scrollTop: $("#messages").height()
+}, 200);
 $('#message_form')[0].reset();
