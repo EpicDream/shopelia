@@ -16,7 +16,7 @@ class Api::V1::TracesControllerTest < ActionController::TestCase
 
   test "it should create event without user" do
     assert_difference "TracesWorker.jobs.count" do
-      post :create, trace:@trace, visitor:@device.uuid, format: :json
+      post :create, traces:[@trace], visitor:@device.uuid, format: :json
       assert_response :success
     end
     
@@ -38,7 +38,7 @@ class Api::V1::TracesControllerTest < ActionController::TestCase
     @trace[:extra_id] = 1
 
     assert_difference "TracesWorker.jobs.count" do
-      post :create, trace:@trace, visitor:@device.uuid, format: :json
+      post :create, traces:[@trace], visitor:@device.uuid, format: :json
       assert_response :success
     end
     
