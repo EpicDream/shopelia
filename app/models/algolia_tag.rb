@@ -11,7 +11,7 @@ class AlgoliaTag < ActiveRecord::Base
       kind, name = key.split(/\:/)
       count = redis.hget("algolia_tags", key).to_i
       next if count < 10
-      name = name.squeeze
+      name = name.squeeze(" ")
       AlgoliaTag.create(name:name, kind:kind, count:count) if name.length < 80
     end
   end
