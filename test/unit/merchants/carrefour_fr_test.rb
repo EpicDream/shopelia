@@ -31,6 +31,10 @@ class CarrefourFrTest < ActiveSupport::TestCase
     @version[:price_shipping_text] = ""
     @version = @helper.process_price_shipping(@version)
     assert_equal CarrefourFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
+
+    @version[:price_shipping_text] = "LIVRAISON INCLUSE"
+    @version = @helper.process_price_shipping(@version)
+    assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
 
   test "it should process_shipping_info" do
