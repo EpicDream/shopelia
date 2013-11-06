@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery-ui', 'logger', 'src/ari-panel'], function($, logger, panel) {
+define(['jquery-ui', 'chrome_logger', 'src/ari-panel'], function($, logger, panel) {
   "use strict";
 
   var vk_toolbar = {},

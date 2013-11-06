@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['logger', 'mapping'], function(logger, Mapping) {
+define(['chrome_logger', 'mapping'], function(logger, Mapping) {
   "use strict";
 
   var ariane = {};

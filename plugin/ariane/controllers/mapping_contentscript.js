@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery', 'logger', 'html_utils', 'crawler', 'mapping', 'lib/path_utils', 'controllers/toolbar_contentscript', 'arconf'],
+define(['jquery', 'chrome_logger', 'html_utils', 'crawler', 'mapping', 'lib/path_utils', 'controllers/toolbar_contentscript', 'arconf'],
 function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
   "use strict";
 

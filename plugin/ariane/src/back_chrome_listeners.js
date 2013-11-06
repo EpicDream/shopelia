@@ -1,4 +1,4 @@
-//
+// Back Chrome Listeners
 // Author : Vincent RENAUDINEAU
 // Created : 2013-08-26
 
@@ -13,7 +13,10 @@ require(['src/ariane', 'logger'], function(ariane, logger) {
     if (msg.errorMsg)
       return alert(msg.errorMsg);
     chrome.storage.local.get('crawlings', function(hash) {
-      hash.crawlings[msg.url][msg.kind] = msg.versions[0];
+      if (msg.kind === 'initial')
+        hash.crawlings[msg.url] = {initial: msg.versions[0]};
+      else
+        hash.crawlings[msg.url][msg.kind] = msg.versions[0];
       chrome.storage.local.set(hash);
       chrome.tabs.sendMessage(msg.tabId, {action: msg.kind+'Crawl', strategy: msg.strategy});
     });
