@@ -74,11 +74,15 @@ module Shopelia
     # Pusher App
     Pusher.url = "http://654ffe989dceb4af5e03:cd54721d7ae7b6fbff42@api.pusherapp.com/apps/54299"
 
+    # Mailjet
+    config.action_mailer.delivery_method = :mailjet
+
     # GCM
     GCM.host = 'https://android.googleapis.com/gcm/send'
     GCM.format = :json
     GCM.key = "AIzaSyDGlTm2cS2g1QA7IrsLyL7l63BxioIsJpE"
 
+    # Static image server
     config.image_host = "https://www.shopelia.com"
   end
 end
