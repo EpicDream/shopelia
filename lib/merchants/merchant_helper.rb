@@ -39,6 +39,7 @@ module MerchantHelper
     str = str.gsub(/\A.*un total de/, "")
     str = str.gsub(/\(.*\)/, "")
     str = str.gsub(/\(.*?\./, "")
+    str = str.gsub(/\A.*à partir de/, "")
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else
