@@ -29,6 +29,7 @@ namespace :shopelia do
     desc "Set Algolia production index"
     task :make_prod => :environment do
       AlgoliaFeed::AlgoliaFeed.make_production
+      AlgoliaTag.build_from_redis
     end
 
     desc "Start image size processing"

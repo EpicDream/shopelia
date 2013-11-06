@@ -6,13 +6,13 @@ class AlgoliaTag < ActiveRecord::Base
 
   def self.build_from_redis
     redis = Redis.new
-    AlgoliaTag.transaction do 
-      AlgoliaTag.destroy_all
-      redis.hkeys("algolia_tags").each do |key|
-        kind, name = key.split(/\:/)
-        count = redis.hget(key).to_i
-        AlgoliaTag.create(name:name, kind:kind, count:count)
-      end
+    AlgoliaTag.delete_all
+    redis.hkeys("algolia_tags").each do |key|
+      kind, name = key.split(/\:/)
+      count = redis.hget("algolia_tags", key).to_i
+      next if count < 10
+      name = name.squeeze
+      AlgoliaTag.create(name:name, kind:kind, count:count) if name.length < 80
     end
   end
 end
