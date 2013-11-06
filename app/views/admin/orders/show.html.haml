@@ -1,16 +1,94 @@
-%h1 Commande 
-%h3= @order.uuid
-%h1 Adresse de livraison
-%h3= @order.meta_order.address.inspect
-%h1 Produit
-%h3= @order.products.inspect
-%h1 Prix
-%h3= @order.expected_price_total
-%h1 Marchand
-%h3= @order.merchant.inspect
-%h1 Status
-%h3= @order.state
-%h3= @order.error_code
-%h3= @order.message
+%section.header
+  %header
+    %h1 Order #{@order.uuid}
+    %h2 
+      order_state_to_html(order.state_name)
+      = @order.user.name
 
+.container-fluid
+  .row-fluid
+    .span3
+      %article.coolbox
+        %h3 Vulcain
+        = link_to "Vulcain stats", "https://vulcain.shopelia.fr:444/admin/logs/#{@order.uuid}"
 
+      %article.coolbox
+        %h3 Expected
+        %strong Price product :
+        = number_to_currency @order.expected_price_product
+        %br
+        %strong Price shipping :
+        = number_to_currency @order.expected_price_shipping
+        %br
+        %strong Price total :
+        = number_to_currency @order.expected_price_total
+        - if @order.expected_cashfront_value.to_f > 0
+          %br
+          %strong Cashfront :
+          = number_to_currency @order.expected_cashfront_value
+
+      - if @order.state_name == :completed
+        %article.coolbox
+          %h3 Billed
+          %strong Price product :
+          = number_to_currency @order.billed_price_product
+          %br
+          %strong Price shipping :
+          = number_to_currency @order.billed_price_shipping
+          %br
+          %strong Price total :
+          = number_to_currency @order.billed_price_total
+          - if @order.expected_cashfront_value.to_f > 0
+            %br
+            %strong Cashfront :
+            = number_to_currency @order.expected_cashfront_value
+      - else
+        %article.coolbox
+          %h3 Prepared
+          %strong Price product :
+          = number_to_currency @order.prepared_price_product
+          %br
+          %strong Price shipping :
+          = number_to_currency @order.prepared_price_shipping
+          %br
+          %strong Price total :
+          = number_to_currency @order.prepared_price_total
+          - if @order.expected_cashfront_value.to_f > 0
+            %br
+            %strong Cashfront :
+            = number_to_currency @order.expected_cashfront_value
+
+      - if @order.state_name == :completed
+        %article.coolbox
+          %h3 Shipping info
+          @order.shipping_info
+
+      %article.coolbox
+        %h3 Address
+        = render @order.meta_order.address
+      %article.coolbox
+        %h3 Payment card
+        = render @order.meta_order.payment_card
+      %article.coolbox
+        %h3 Merchant account
+        = render @order.merchant_account
+      %br
+
+    .span9
+      %article.coolbox
+        %h3 Order items
+        %table.table.table-striped
+          %thead
+            %tr
+              %th Product
+              %th Quantity
+              %th Price
+          %tbody
+            - @order.order_items.each do |item|
+              %tr
+                %td
+                  = item.product_version.try(:name)
+                %td
+                  = item.quantity
+                %td
+                  = number_to_currency(item.price)

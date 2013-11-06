@@ -14,7 +14,15 @@ class PixmaniaFrTest < ActiveSupport::TestCase
   end
 
   test "it should process price shipping" do
+    @version[:price_shipping_text] = "5.50"
+    @version = @helper.process_price_shipping(@version)
+    assert_equal "5.50", @version[:price_shipping_text]
+
     @version[:price_shipping_text] = ""
+    @version = @helper.process_price_shipping(@version)
+    assert_equal PixmaniaFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
+
+    @version[:price_shipping_text] = "Modes de livraison"
     @version = @helper.process_price_shipping(@version)
     assert_equal PixmaniaFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
   end

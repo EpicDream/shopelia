@@ -13,12 +13,15 @@ body.ariane .ari-surround { outline: red dashed 1px;}
 }
 
 #arianeDiv * {
+  width: initial;
+  height: initial;
   background: initial;
   font: initial;
   color: initial;
   margin: initial;
   padding: initial;
   border: initial;
+  vertical-align: initial;
 }
 
 #ariane-toolbar {
