@@ -41,12 +41,9 @@ body {
 }
 
 #chat-list-users-header {
-  cursor: pointer;
   padding: 14px 24px;
   border: 1px solid #d3d3d3;
-  border-bottom: none;
-  color: #fff;
-  background: #293239;
+  background: darken(#fff,5%);
 }
 
 #chat-user {
@@ -145,7 +142,6 @@ p { margin: 0; }
 
 #live-chat header {
   background: #293239;
-  border-radius: 5px 5px 0 0;
   color: #fff;
   cursor: pointer;
   padding: 16px 24px;
@@ -209,12 +205,19 @@ p { margin: 0; }
 
 .chat-history {
   height: 400px;
-  padding: 8px 24px;
   overflow-y: scroll;
 }
 
 .chat-message {
-  margin: 16px 0;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
+  background: #fff;
+}
+
+.admin {
+  background: darken(#fff,5%) ;
 }
 
 .chat-message img {
@@ -284,7 +287,6 @@ $button-flat-empty-border-width: 2px;
 
   &:active {
     background: darken($bg, 5%);
-    @include translateY($button-flat-simple-active-slide);
   }
 }
 

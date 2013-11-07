@@ -1,5 +1,5 @@
-.chat-message.clearfix
-  - if message.from_admin
+- if message.from_admin
+  .chat-message.admin.clearfix
     = image_tag("admin/georges/messages/logo-georges.png", height: "32", width:"32")
     .chat-message-content.clearfix
       %span.chat-time
@@ -12,7 +12,8 @@
         = message.content
         - message.data.each do |url|
           = render Product.fetch(url)
-  - else
+- else
+  .chat-message.clearfix
     %img{alt: "", height: "32", src: "http://lorempixum.com/32/32/people", width: "32"}
       .chat-message-content.clearfix
         %span.chat-time
@@ -24,4 +25,4 @@
             Device ID : #{message.device.id}
         %p
           = message.content
-  %hr
+%hr

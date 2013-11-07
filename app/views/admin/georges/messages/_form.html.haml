@@ -1,13 +1,12 @@
 = form_for([:admin,:georges,@device,Message.new], remote: true, :html => { :id => 'message_form' }) do |f|
-  = f.text_area :content , autofocus: "", placeholder: "Type your message?", type: "text" , rows: 2
+  = f.text_area :content , autofocus: "", placeholder: "Type your message?", type: "text" , rows: 2, required:true
   .spacer20
   = f.submit "Répondre", :class => 'button-flat-empty'
   .spacer20
   %hr
   .spacer20
   .button-flat-empty + Produits
-  -#.spacer10
-  -#.button-flat-empty User Options
+  .button-flat-empty User Options
   -#.button-flat-empty Noter l'app
 
 
