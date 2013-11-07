@@ -55,10 +55,6 @@ module AlgoliaFeed
       record
     end
 
-# require 'algolia/algolia_feed'
-# x = AlgoliaFeed::Tradedoubler.new(tmpdir:'/var/lib/db/algolia', debug:1, index_name: 'tradedoubler')
-# x.process_directory
-
   end
 end
 

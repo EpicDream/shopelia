@@ -146,7 +146,7 @@ module AlgoliaFeed
       algolia = AlgoliaFeed.new(debug: self.debug)
       algolia.connect(algolia.index_name)
       algolia.set_index_attributes
-      XmlParser.new.redis.del('algolia_tags')
+      Tagger.clear_redis
       dir = self.tmpdir unless dir.present?
       trap('CLD') {
         free_children += 1
