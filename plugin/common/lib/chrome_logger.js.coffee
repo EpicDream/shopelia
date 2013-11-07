@@ -150,21 +150,25 @@ define 'chrome_logger', ['logger'], (logger) ->
     logger.db.transaction (tx) ->
       tx.executeSql 'INSERT INTO logs (time, level, caller, content) VALUES (?, ?, ?, ?)', [Date.now(), logger[level] || level, caller, content]
 
-  logger.readFromDB = (level_min) ->
+  logger.readFromDB = (level_min, nb) ->
     level_min ?= logger.ALL
     level_min = logger[level_min] unless typeof level_min is 'number'
     logger.db.transaction (tx) ->
-      tx.executeSql 'SELECT * FROM logs WHERE level <= ?;', [level_min], (tx, results) ->
+      tx.executeSql 'SELECT * FROM logs WHERE level <= ? LIMIT ?;', [level_min, nb || 1000], (tx, results) ->
         for i in [0...results.rows.length]
           row = results.rows.item(i)
           header = logger.header(logger.code2str[row.level], row.caller, new Date(row.time))
-          console.log(row.content)
+          console.log("%c"+row.content, logger.chromify(logger.code2str[row.level], '', [])[1])
 
   logger.cleanDB = (limit) ->
     limit ?= Date.now() - 1000*60*60*24 # yesterday
     limit -= 0 # convert limit to timestamp
     logger.db.transaction (tx) ->
       tx.executeSql "DELETE FROM logs WHERE time <= ?;", [limit]
+
+  # Clean DB every hour
+  logger.cleanDB();
+  setInterval(logger.cleanDB, 1000*60*60);
 
   #///////  END LOG TO DB ///////
 
