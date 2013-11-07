@@ -20,6 +20,8 @@ module MerchantHelper
     version = m.process_availability(version) if m.respond_to?('process_availability')
     version = m.process_name(version) if m.respond_to?('process_name')
     version = m.process_price(version) if m.respond_to?('process_price')
+    version = m.process_price_strikeout(version) if m.respond_to?('process_price_strikeout')
+    version = m.process_image_url(version) if m.respond_to?('process_image_url')
     version = m.process_options(version) if m.respond_to?('process_options')
     version
   end
@@ -45,11 +47,14 @@ module MerchantHelper
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
       0.0
     else
+      # match les "1 000€90", "1.000€90", "1 000€", "1 000,80", etc
       if m = str.match(/\A\D*(\d+)\D(\d{3}) ?\D ?(\d+)/)
         m[1].to_f * 1000 + m[2].to_f + m[3].to_f / 100
-      elsif m = str.match(/\A\D*(\d+)\D(\d{3})/)
+      # match les "1 000", "1.000", etc
+      elsif m = str.match(/\A\D*(\d+) ?\D ?(\d{3})/)
         m[1].to_f * 1000 + m[2].to_f
-      elsif m = str.match(/\A\D*(\d+)\D*\Z/) || m = str.match(/\A\D*(\d+)\D{1,2}(\d+)/)
+      # match les "80", "10.00", "10€90", "10 € 90", etc
+      elsif m = str.match(/\A\D*(\d+)\D*\Z/) || m = str.match(/\A\D*(\d+) ?\D{1,2} ?(\d+)/)
         m[1].to_f + m[2].to_f / 100
       else
         nil

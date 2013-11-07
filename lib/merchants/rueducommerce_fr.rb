@@ -37,4 +37,9 @@ class RueducommerceFr
     end
     version
   end
+
+  def process_image_url version
+    version[:image_url] = nil if version[:image_url] =~ %r{eros/img/ProductSheet/ajax-loader.gif}
+    version
+  end
 end
