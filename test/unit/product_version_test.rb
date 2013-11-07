@@ -86,7 +86,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
 
   test "it should parse free shipping" do
-    str = [ "LIVRAISON GRATUITE", "free shipping", "Livraison offerte" ]
+    str = [ "LIVRAISON GRATUITE", "free shipping", "Livraison offerte", "Standard - expédié sous 72h - Frais de port offers" ]
     str.each do |s|
       @version.price_shipping_text = s
       @version.save

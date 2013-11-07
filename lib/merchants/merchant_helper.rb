@@ -44,7 +44,7 @@ module MerchantHelper
     str = str.gsub(/\(.*\)/, "") unless str =~ /\(.*(\beur\b|[$€]).*\)/i
     str = str.gsub(/\(.*?\.(?!.*?\))/, "")
     str = str.gsub(/\A.*à partir de/, "")
-    if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
+    if str =~ /gratuit/ || str =~ /free/ || str =~ /offer[ts]/
       0.0
     else
       # match les "1 000€90", "1.000€90", "1 000€", "1 000,80", etc

@@ -4,6 +4,7 @@ class CarrefourFr
   DEFAULT_SHIPPING_INFO = "A la remise de votre colis au transporteur, livraison en 2 à 4 jours du lundi au samedi directement chez vous."
 
   AVAILABILITY_HASH = {
+    "\d+ produit" => false # search-result
   }
 
   def initialize url
