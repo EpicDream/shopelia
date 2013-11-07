@@ -76,3 +76,8 @@ zalando:
   url: "http://www.zalando.fr"
   vendor: "ZalandoFr"
   domain: "zalando.fr"
+
+conforama:
+  name: "Conforama"
+  url: "http://www.conforama.fr"
+  domain: "conforama.fr"
