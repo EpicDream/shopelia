@@ -155,11 +155,9 @@ function onFinished() {
 
 vk_toolbar.startAriane = function (crawl_mode) {
   if (! jStep) // Fix to fast .js files load.
-    return setTimeout((function (mode){
-      return function () {
-        return vk_toolbar.startAriane(mode);
-      };
-    })(crawl_mode), 100);
+    return setTimeout(function () {
+        vk_toolbar.startAriane(crawl_mode);
+      }, 100);
 
   if (crawl_mode)
     jStep.val("extract").prop("disabled", true);

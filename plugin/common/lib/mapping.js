@@ -93,18 +93,45 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   };
 
   map.save = function (mapping, id) {
+    var deferred = new $.Deferred();
+
     if (typeof mapping === 'object') {
       id = mapping.id;
       mapping = JSON.stringify(mapping);
     } else if (typeof mapping !== 'string')
       throw "Cannot save mapping #"+id+". Wait an Mapping or an object, got a "+(typeof mapping);
 
-    return $.ajax({
+    $.ajax({
       type : "PUT",
+      tryCount: 0,
+      retryLimit: 5,
       url: map.MAPPING_URL+'/'+id,
       contentType: 'application/json',
       data: mapping
+    }).done(function () {
+      deferred.resolve();
+    }).fail(function (xhr, textStatus, errorThrown) {
+      if (textStatus === 'timeout' || xhr.status === 502) {
+        setTimeout(function () {
+          $.ajax(this);
+        }.bind(this), 2000);
+      } else if (xhr.status == 500 && this.tryCount < this.retryLimit) {
+        this.tryCount++;
+        setTimeout(function () {
+          $.ajax(this);
+        }.bind(this), 2000);
+      } else if (xhr.status == 413) {
+        logger.warn("Mapping is too large to be sended by html. Remove first page.");
+        var map = JSON.parse(mapping);
+        map.data.pages.splice(0,1);
+        this.data = JSON.stringify(map);
+        $.ajax(this);
+      } else {
+        deferred.reject();
+      }
     });
+
+    return deferred;
   };
 
   map.getMerchants = function () {
