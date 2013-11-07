@@ -1,5 +1,9 @@
 class PriceministerCom
 
+  AVAILABILITY_HASH = {
+    "[\d\s]+ r.sultats?" => false, # Redirection vers recherche quand trouve pas.
+  }
+
   def initialize url
     @url = url
   end
@@ -15,7 +19,7 @@ class PriceministerCom
   end
 
   def process_availability version
-    version[:availability_text] = "En stock" if version[:availability_text].blank?
+    version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
     version
   end
 
