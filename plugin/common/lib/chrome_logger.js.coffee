@@ -138,7 +138,7 @@ define 'chrome_logger', ['logger'], (logger) ->
   #//          LOG TO LOCAL DB
   #////////////////////////////////////////
 
-  logger.db = openDatabase 'viking_logger', '1.0', 'Viking Logger',  4*1024*1024
+  logger.db = openDatabase 'viking_logger', '1.0', 'Viking Logger',  30*1024*1024
   logger.db.transaction (tx) ->
     tx.executeSql "CREATE TABLE IF NOT EXISTS logs(time BIGINT, level INT, caller VARCHAR, content TEXT)"
 
