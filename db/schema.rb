@@ -143,10 +143,7 @@ ActiveRecord::Schema.define(:version => 20131105111749) do
     t.integer  "image_file_size"
     t.datetime "image_updated_at"
     t.boolean  "public",             :default => false
-<<<<<<< Updated upstream
     t.string   "image_size"
-=======
->>>>>>> Stashed changes
   end
 
   create_table "countries", :force => true do |t|
