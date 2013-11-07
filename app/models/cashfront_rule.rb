@@ -21,8 +21,8 @@ class CashfrontRule < ActiveRecord::Base
     if scope[:device].present?
       rule = rule_req.send(:for_device, scope[:device]).first || rule_req.send(:without_device).first
       if rule.present?
-        orders_count = scope[:device].user.present? ? scope[:device].user.orders.where("state_name<>'failed'").count : 0
-        rule.max_orders_count.to_i > 0 ? (orders_count > rule.max_orders_count ? nil : rule) : rule
+        orders_count = scope[:device].user.present? ? scope[:device].user.orders.where(state_name:'completed').count : 0
+        rule.max_orders_count.to_i > 0 ? (orders_count >= rule.max_orders_count ? nil : rule) : rule
       end
     else
       rule_req.send(:without_device).first
