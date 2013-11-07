@@ -8,6 +8,7 @@ module AlgoliaFeed
       super
 
       self.urls = params[:urls] || ['http://content.webgains.com/affiliates/datafeed.html?action=download&campaign=145659&username=shopelia&password=pichon69&format=xml&zipformat=gzip_notar&fields=extended&programs=all&allowedtags=all&categories=all']
+
       self.parser_class = params[:parser_class] || 'AlgoliaFeed::Webgains'
     end
   end
