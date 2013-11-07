@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131105111749) do
+ActiveRecord::Schema.define(:version => 20131106211320) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -30,6 +30,14 @@ ActiveRecord::Schema.define(:version => 20131105111749) do
     t.string   "phone"
     t.string   "first_name"
     t.string   "last_name"
+  end
+
+  create_table "algolia_tags", :force => true do |t|
+    t.string   "name"
+    t.string   "kind"
+    t.integer  "count"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "audits", :force => true do |t|

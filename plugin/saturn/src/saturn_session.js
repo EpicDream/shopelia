@@ -59,7 +59,10 @@ SaturnSession.prototype.next = function() {
           this.strategy = 'full';
         } else
           this.strategy = 'done';
-        this.crawl();
+        if (this.helper && this.helper.before_crawling)
+          this.helper.before_crawling(function() { this.crawl(); }.bind(this));
+        else
+          this.crawl();
       }
       break;
 
