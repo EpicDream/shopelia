@@ -128,7 +128,8 @@ logger._log = function(level, caller, args) {
   console.assert(typeof caller === 'string', 'caller must be a string');
   console.assert(typeof args === 'object' && args instanceof Array, 'args must be an Array');
 
-  return logger._log2(level, caller, args);
+  try { return logger._log2(level, caller, args); }
+  catch(err) { return []; }
 };
 
 // No argument check
