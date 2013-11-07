@@ -60,7 +60,7 @@ class ProductVersionTest < ActiveSupport::TestCase
             "livraison à domicile (1 livreur) (le livreur (au pied de l'immeuble si vous êtes en appartement) 2 bla...) 2.79 €",
             "Livraison dans la pièce de votre choix (EUR 2,79)", "Livraison dans la pièce de votre choix (2.79 €)",
             "Livraison 'classique' à domicile (Livraison dans les 4 à 9 jours à bla. En savoir plus 2.79 €",
-            "Colissimo - expédié sous 0h - à partir de 2,79 €",
+            "Colissimo - expédié sous 0h - à partir de 2,79 €", "=  2 € 79",
             "Colissimo Suivi - expédié sous 72h - à partir de 2,79 €",
             "Livraison Standard - expédié sous 18 jours - à partir de 2,79 €",
             "Livraison colissimo 48H - expédié sous 48h - à partir de 2,79 €",
@@ -195,7 +195,8 @@ class ProductVersionTest < ActiveSupport::TestCase
               "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
               "disponible sous 4 semaines", "Seulement 1 en stock", "in stock but may require an extra 1-2 days to process.",
               "Conditions spéciales :- livraison : 10 semaines", "livraison des fichiers", "attention : dernières pièces disponibles",
-              "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery.", "expected ship date" ]
+              "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery.", "expected ship date",
+              "disponible" ]
     array.each do |str|
       assert_difference "Incident.count", 0 do
         version = ProductVersion.create(

@@ -18,6 +18,11 @@ class SuissesFr
     end
   end
 
+  def process_price_strikeout version
+    version[:price_strikeout_text] = nil if version[:price_strikeout_text] == "€"
+    version
+  end
+
   def process_price_shipping version
     version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
     version

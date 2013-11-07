@@ -73,4 +73,14 @@ class RueducommerceFrTest < ActiveSupport::TestCase
     @version = @helper.process_price_shipping(@version)
     assert_equal "5,49 €", @version[:price_shipping_text]
   end
+
+  test "it should process image_url ajaxLoader" do
+    @version[:image_url] = "http://s1.static69.com/eros/img/ProductSheet/ajax-loader.gif"
+    @version = @helper.process_image_url(@version)
+    assert_nil @version[:image_url]
+
+    @version[:image_url] = "http://s3.static69.com/m/image-offre/1/4/7/4/14740dfd07bcceae5eb12b418c44b3e1-500x500.jpg"
+    @version = @helper.process_image_url(@version)
+    assert_not_nil @version[:image_url]
+  end
 end
