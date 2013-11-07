@@ -4,6 +4,7 @@ class PixmaniaFr
   DEFAULT_SHIPPING_INFO = "Colis Privé vous livre en 4 à 6 jours ouvrés du lundi au vendredi de 8h à 18h."
 
   AVAILABILITY_HASH = {
+    "affiner votre recherche" => false
   }
 
   def initialize url
