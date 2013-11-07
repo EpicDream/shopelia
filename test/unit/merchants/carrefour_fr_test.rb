@@ -31,9 +31,13 @@ class CarrefourFrTest < ActiveSupport::TestCase
     @version[:price_shipping_text] = ""
     @version = @helper.process_price_shipping(@version)
     assert_equal CarrefourFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
+
+    @version[:price_shipping_text] = "LIVRAISON INCLUSE"
+    @version = @helper.process_price_shipping(@version)
+    assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
 
-  test "it should process_shipping_info" do
+  test "it should process_shipping_info default value" do
     @version[:shipping_info] = "Délai de 2 semaines."
     @version = @helper.process_shipping_info(@version)
     assert_equal "Délai de 2 semaines.", @version[:shipping_info]
@@ -41,5 +45,15 @@ class CarrefourFrTest < ActiveSupport::TestCase
     @version[:shipping_info] = ""
     @version = @helper.process_shipping_info(@version)
     assert_equal CarrefourFr::DEFAULT_SHIPPING_INFO, @version[:shipping_info]
+  end
+
+  test "it should process_shipping_info clean" do
+    @version[:shipping_info] = "Livré chez vous sous 5 jours ouvrés\nFrais de livraison : 9,90 €\nEn savoir plus sur la livraison"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal "Livré chez vous sous 5 jours ouvrés\nFrais de livraison : 9,90 €\n", @version[:shipping_info]
+
+    @version[:shipping_info] = "Dernier exemplaire\nLIVRAISON GRATUITE\nDélais et tarifs de livraison pour ce produit"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal "Dernier exemplaire\nLIVRAISON GRATUITE\n", @version[:shipping_info]
   end
 end

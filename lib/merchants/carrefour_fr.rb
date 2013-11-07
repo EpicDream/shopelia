@@ -20,12 +20,18 @@ class CarrefourFr
   end
 
   def process_price_shipping version
-    version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
+    if version[:price_shipping_text].blank?
+      version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING
+    elsif version[:price_shipping_text] =~ /LIVRAISON INCLUSE/i
+      version[:price_shipping_text] = MerchantHelper::FREE_PRICE
+    end
     version
   end
 
   def process_shipping_info version
     version[:shipping_info] = DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
+    version[:shipping_info].sub!(/D.lais et tarifs de livraison pour ce produit/i, '')
+    version[:shipping_info].sub!("En savoir plus sur la livraison", '')
     version
   end
 end

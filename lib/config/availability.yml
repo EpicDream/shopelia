@@ -37,6 +37,7 @@ plus que \d+ exemplaire: true
 livraison incluse: true
 \d+ articles disponibles: true
 dernier exemplaire: true
+^disponible: true
 
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
@@ -50,6 +51,7 @@ aucun vendeur ne propose ce produit: false
 out of stock: false
 \d+ d'occasion: false
 non disponible: false
+pas disponible: false
 n.?est plus disponible: false
 a ete vendu: false
 est plus vendu: false

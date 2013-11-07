@@ -13,6 +13,12 @@ class StylebopComTest < ActiveSupport::TestCase
     assert MerchantHelper.send(:from_url, @url).kind_of?(StylebopCom)
   end
 
+  test "it should canonize" do
+    assert_equal @url, @helper.canonize
+    helper = StylebopCom.new("http://www.stylebop.com/search/noproductsfound.php?id=157800&status=404")
+    assert_equal "http://www.stylebop.com/search/noproductsfound.php?status=404", helper.canonize
+  end
+
   test "it should process availability" do
     @version[:availability_text] = "Ce produit n'est plus en stock"
     @version = @helper.process_availability(@version)

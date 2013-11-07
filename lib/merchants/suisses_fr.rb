@@ -1,7 +1,7 @@
-# -*- encoding : utf-8 -*-
-class StylebopCom
-  DEFAULT_PRICE_SHIPPING = "10.00 €"
-  DEFAULT_SHIPPING_INFO = "Livraison UPS en 2-3 jours ouvrables (France)"
+  # -*- encoding : utf-8 -*-
+class SuissesFr
+  DEFAULT_PRICE_SHIPPING = "5.95 €"
+  DEFAULT_SHIPPING_INFO = "Articles livrés à domicile sous 6 à 8 jours."
 
   AVAILABILITY_HASH = {
   }
@@ -11,15 +11,15 @@ class StylebopCom
   end
 
   def canonize
-    if @url =~ /status=404/
-      "http://www.stylebop.com/search/noproductsfound.php?status=404"
+    if @url =~ /3suisses.fr\/([\w-]+\/)+([\w-]+)(\?.*)?$/
+      "http://www.3suisses.fr/"+$~[2]
     else
       @url
     end
   end
 
-  def process_availability version
-    version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
+  def process_price_strikeout version
+    version[:price_strikeout_text] = nil if version[:price_strikeout_text] == "€"
     version
   end
 

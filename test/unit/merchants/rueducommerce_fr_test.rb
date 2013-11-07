@@ -37,7 +37,7 @@ class RueducommerceFrTest < ActiveSupport::TestCase
     @version[:availability_text] = ""
     @version[:price_text] = "3,50 €"
     @version = @helper.process_availability(@version)
-    assert_equal "En stock", @version[:availability_text]
+    assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
   end
 
   test "it should process shipping_info" do
@@ -59,11 +59,22 @@ class RueducommerceFrTest < ActiveSupport::TestCase
   test "it should process price_shipping if empty" do
     @version[:price_shipping_text] = ""
     @version = @helper.process_price_shipping(@version)
-    assert_equal RueducommerceFr::DEFAULT_SHIPPING_PRICE, @version[:price_shipping_text]
+    assert_equal RueducommerceFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
   end
 
   test "it should process price_shipping if greater than limit" do
-    @version[:price_shipping_text] = sprintf("%.2f €", RueducommerceFr::FREE_SHIPPING_LIMIT)
+    @version[:price_shipping_text] = ""
+    @version[:price_text] = sprintf("%.2f €", RueducommerceFr::FREE_SHIPPING_LIMIT-1)
+    @version = @helper.process_price_shipping(@version)
+    assert_equal RueducommerceFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
+
+    @version[:price_shipping_text] = "5.17 €"
+    @version[:price_text] = sprintf("%.2f €", RueducommerceFr::FREE_SHIPPING_LIMIT-1)
+    @version = @helper.process_price_shipping(@version)
+    assert_equal "5.17 €", @version[:price_shipping_text]
+
+    @version[:price_shipping_text] = ""
+    @version[:price_text] = sprintf("%.2f €", RueducommerceFr::FREE_SHIPPING_LIMIT)
     @version = @helper.process_price_shipping(@version)
     assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
@@ -72,5 +83,15 @@ class RueducommerceFrTest < ActiveSupport::TestCase
     @version[:price_shipping_text] = "So Colissimo (2 à 4 jours). - expédié sous 4 jours - à partir de 5,49 €"
     @version = @helper.process_price_shipping(@version)
     assert_equal "5,49 €", @version[:price_shipping_text]
+  end
+
+  test "it should process image_url ajaxLoader" do
+    @version[:image_url] = "http://s1.static69.com/eros/img/ProductSheet/ajax-loader.gif"
+    @version = @helper.process_image_url(@version)
+    assert_nil @version[:image_url]
+
+    @version[:image_url] = "http://s3.static69.com/m/image-offre/1/4/7/4/14740dfd07bcceae5eb12b418c44b3e1-500x500.jpg"
+    @version = @helper.process_image_url(@version)
+    assert_not_nil @version[:image_url]
   end
 end
