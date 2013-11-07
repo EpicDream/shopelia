@@ -30,6 +30,8 @@ class CarrefourFr
 
   def process_shipping_info version
     version[:shipping_info] = DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
+    version[:shipping_info].sub!(/D.lais et tarifs de livraison pour ce produit/i, '')
+    version[:shipping_info].sub!("En savoir plus sur la livraison", '')
     version
   end
 end

@@ -35,6 +35,6 @@ class PriceministerComTest < ActiveSupport::TestCase
 
     @version[:availability_text] = ""
     @version = @helper.process_availability(@version)
-    assert_equal "En stock", @version[:availability_text]
+    assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
   end
 end
