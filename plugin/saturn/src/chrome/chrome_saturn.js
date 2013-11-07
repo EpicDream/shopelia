@@ -120,6 +120,10 @@ ChromeSaturn.prototype.sendError = function(session, msg) {
       url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
       contentType: 'application/json',
       data: JSON.stringify({versions: [], errorMsg: msg})
+    }).fail(function(xhr, textStatus, errorThrown ) {
+      if (textStatus === 'timeout' || xhr.status === 502) {
+        $.ajax(this);
+      }
     });
   Saturn.prototype.sendError.call(this, session, msg);
 };
@@ -135,10 +139,19 @@ ChromeSaturn.prototype.sendResult = function(session, result) {
     saturn.externalPort.postMessage(result);
   } else if (session.id) {// Stop pushed or Local Test
     $.ajax({
+      tryCount: 0,
+      retryLimit: 1,
       type : "PUT",
       url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
       contentType: 'application/json',
       data: JSON.stringify(result)
+    }).fail(function(xhr, textStatus, errorThrown) {
+      if (textStatus === 'timeout' || xhr.status === 502) {
+        $.ajax(this);
+      } else if (xhr.status == 500 && this.tryCount < this.retryLimit) {
+        this.tryCount++;
+        $.ajax(this);
+      }
     });
   } else
     Saturn.prototype.sendResult.call(this, session, result);
