@@ -61,7 +61,7 @@ module MerchantHelper
   private
 
   def self.get_helper url
-    Utils.extract_domain(url).gsub(/[\.-]/, "_").camelize.constantize
+    Utils.extract_domain(url).gsub(/[\.-]/, '_').gsub(/^\d+/, '').camelize.constantize
   rescue
     nil
   end
