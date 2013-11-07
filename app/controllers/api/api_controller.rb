@@ -2,6 +2,7 @@ class Api::ApiController < ActionController::Base
   prepend_before_filter :get_auth_token
   before_filter :authenticate_developer!
   before_filter :authenticate_user!
+  before_filter :set_api_locale
   after_filter :remove_session_cookie
   before_filter :set_navigator_properties
   before_filter :retrieve_tracker
@@ -13,6 +14,10 @@ class Api::ApiController < ActionController::Base
   
   private
   
+  def set_api_locale
+    I18n.locale = "fr"
+  end
+
   def get_auth_token
     params[:auth_token] = request.headers["X-Shopelia-AuthToken"] if params[:auth_token].blank?
   end
