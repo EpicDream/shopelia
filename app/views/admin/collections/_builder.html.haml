@@ -47,7 +47,7 @@
           = hidden_field_tag "collection_id", @collection.id
       .modal-footer
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
-        %button.btn.btn-primary#catalogue-add-urls-confirm{type: "button"} Add products
+        %button.btn.btn-primary#catalogue-add-urls-confirm{type: "button", "data-loading-text" => "Processing..."} Add products
 
 :javascript
   $(document).ready(function() {
@@ -64,6 +64,7 @@
   function showAddUrlsModal() {
     $("#catalogue-add-urls-modal").modal('show');
     $('#catalogue-add-urls-confirm').on('click', function() {
+      $('#catalogue-add-urls-confirm').button('loading')
       $('#catalogue-add-urls-forms').submit();
     });
   }
