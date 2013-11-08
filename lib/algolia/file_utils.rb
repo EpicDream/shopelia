@@ -56,6 +56,8 @@ module AlgoliaFeed
         end
 
         h = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https')
+				h.read_timeout = 600
+				h.continue_timeout = 600
         req = Net::HTTP::Get.new uri.request_uri
         res = h.request req
   
