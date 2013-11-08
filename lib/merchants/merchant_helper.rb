@@ -22,6 +22,7 @@ module MerchantHelper
     version = m.process_price(version) if m.respond_to?('process_price')
     version = m.process_price_strikeout(version) if m.respond_to?('process_price_strikeout')
     version = m.process_image_url(version) if m.respond_to?('process_image_url')
+    version = m.process_images(version) if m.respond_to?('process_images')
     version = m.process_options(version) if m.respond_to?('process_options')
     version
   end

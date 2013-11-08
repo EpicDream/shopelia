@@ -33,4 +33,15 @@ class CdiscountCom
     version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
     version
   end
+
+  def process_image_url version
+    version[:image_url].sub!(%r{/\d\d\dx\d\d\d/}, '/700x700/') if version[:image_url].present?
+    version
+  end
+
+  def process_images version
+    return version unless version[:images].kind_of?(Array)
+    version[:images].map! { |url| url.sub(%r{/\d\d\dx\d\d\d/}, '/700x700/') }
+    version
+  end
 end

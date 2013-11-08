@@ -50,4 +50,22 @@ class AmazonFrTest < ActiveSupport::TestCase
     @version = @helper.process_availability(@version)
     assert_equal MerchantHelper::UNAVAILABLE, @version[:availability_text]
   end
+
+  test "it should process images" do
+    @version[:images] = nil
+    @version = @helper.process_images(@version)
+    assert_nil @version[:images]
+
+    @version[:images] = []
+    @version = @helper.process_images(@version)
+    assert_equal [], @version[:images]
+
+    @version[:images] = ["http://ecx.images-amazon.com/images/I/41t9qVjDcLL._SX38_SY50_CR,0,0,38,50_.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://ecx.images-amazon.com/images/I/41t9qVjDcLL.jpg"], @version[:images]
+
+    @version[:images] = ["http://ecx.images-amazon.com/images/I/41HlKgbXReL._SS45_.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://ecx.images-amazon.com/images/I/41HlKgbXReL.jpg"], @version[:images]
+  end
 end

@@ -38,4 +38,24 @@ class CdiscountComTest < ActiveSupport::TestCase
     @version = @helper.process_price_shipping(@version)
     assert_equal "4,90 €", @version[:price_shipping_text]
   end
+
+  test "it should process image_url ajaxLoader" do
+    @version[:image_url] = "http://i2.cdscdn.com/pdt2/0/8/k/3/300x300/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg"
+    @version = @helper.process_image_url(@version)
+    assert_equal "http://i2.cdscdn.com/pdt2/0/8/k/3/700x700/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg", @version[:image_url]
+  end
+
+  test "it should process images" do
+    @version[:images] = nil
+    @version = @helper.process_images(@version)
+    assert_nil @version[:images]
+
+    @version[:images] = []
+    @version = @helper.process_images(@version)
+    assert_equal [], @version[:images]
+
+    @version[:images] = ["http://i2.cdscdn.com/pdt2/0/8/k/1/040x040/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://i2.cdscdn.com/pdt2/0/8/k/1/700x700/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg"], @version[:images]
+  end
 end
