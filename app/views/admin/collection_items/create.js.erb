@@ -1,0 +1,6 @@
+<% if @item.errors.empty? %>
+  <% @item.product.authorize_push_channel %>
+  $("#collection-items").prepend("<%= escape_javascript(render @item) %>")
+  showSpinners();
+  monitorCollectionItems();
+<% end %>

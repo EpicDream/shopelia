@@ -1,0 +1,5 @@
+= form_for [:admin,@collection], html:{class:'form-inline'} do |f|
+  = f.text_field :name, type:"text", placeholder:"Name"
+  = f.select :public, [['Public', true], ['Private', false]]
+  = f.file_field :image
+  = f.submit "Update", class:"btn btn-success"

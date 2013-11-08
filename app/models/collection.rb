@@ -5,11 +5,10 @@ class Collection < ActiveRecord::Base
   has_many :products, :through => :collection_items
   has_many :tags, :through => :collection_tags
 
-  validates :user, :presence => true
-  validates :name, :presence => true
   validates :uuid, :presence => true, :uniqueness => true
 
   before_validation :generate_uuid
+  after_save :set_home_tag
 
   has_attached_file :image, :url => "/images/collections/:id/img.jpg", :path => "#{Rails.public_path}/images/collections/:id/img.jpg"
   after_post_process :save_image_dimensions
@@ -40,5 +39,15 @@ class Collection < ActiveRecord::Base
   def save_image_dimensions
     geo = Paperclip::Geometry.from_file(image.queued_for_write[:original])
     self.image_size = "#{geo.width.to_i}x#{geo.height.to_i}"
+  end
+
+  def set_home_tag
+    if self.public_changed?
+      if self.public?
+        self.tags << Tag.find_by_name("__Home")
+      else
+        self.tags.where(name:"__Home").destroy_all
+      end
+    end
   end
 end

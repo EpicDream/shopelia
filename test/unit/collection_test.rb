@@ -33,4 +33,17 @@ class CollectionsTest < ActiveSupport::TestCase
   test "it should associate with tags" do
     assert_equal 3, @collection.tags.count
   end
+
+  test "it should set __Home tag when public" do
+    collection = Collection.create
+
+    assert_difference "collection.tags.count" do
+      collection.update_attribute :public, true
+    end
+    assert_equal "__Home", collection.tags.first.name
+
+    assert_difference "collection.tags.count", -1 do
+      collection.update_attribute :public, false
+    end
+  end
 end

@@ -2,7 +2,7 @@ class @ProductsFeed
   constructor: (@indexName, dataCallback) ->
     @tags = []
     @page = 0
-    @hitsPerPage = 100
+    @hitsPerPage = 500
     algolia = new AlgoliaSearch("JUFLKNI0PS", '03832face9510ee5a495b06855dfa38b')
     @index = algolia.initIndex(@indexName)
     window.dataCallback = dataCallback
@@ -19,7 +19,6 @@ class @ProductsFeed
     @index.search @query, @_prepareResults, hitsPerPage: @hitsPerPage, page: @page
 
   _prepareResults: (success, content) ->
-    console.log(content);
     eans = {}
     tags = {}
     products = []
@@ -52,7 +51,7 @@ class @ProductsFeed
         tagsMerchant += "<span class='label label-warning'>" +
           tag.replace("merchant_name:", "") +
           "</span> "
-      else if tag.match("^category")
+      else if tag.match("^category") && tuples[i][1] > 10
         tagsCategory += "<span class='label label-default'>" +
           tag.replace("category:", "") +
           "</span> "
