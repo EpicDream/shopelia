@@ -3,7 +3,7 @@ class Admin::CollectionsController < Admin::AdminController
 
   def index
     @collections = Collection.where("collections.name is not null").order("collections.created_at DESC")
-    @tags = @collections.joins(:tags).select("distinct(tags.name)").map(&:name)
+    @tags = @collections.joins(:tags).map(&:tags).map{|t| t.first.name}.uniq
   end
 
   def show
