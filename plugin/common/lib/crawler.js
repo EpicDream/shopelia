@@ -146,8 +146,10 @@ Crawler.setOption = function(paths, value, doc) {
   if (elems[0].tagName == "OPTION") {
     elems[0].selected = true;
     elems[0].parentNode.dispatchEvent(new CustomEvent("change", {"canBubble":false, "cancelable":true}));
-  } else
-    elems[0].click();
+  } else {
+    elems[0].dispatchEvent(new CustomEvent("mouseover", {"canBubble":true, "cancelable":true}));
+    elems[0].dispatchEvent(new CustomEvent("click", {"canBubble":true, "cancelable":true}));
+  }
 
   return true;
 };
