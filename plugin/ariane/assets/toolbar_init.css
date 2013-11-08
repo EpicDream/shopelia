@@ -22,6 +22,10 @@ body.ariane .ari-surround { outline: red dashed 1px;}
   padding: initial;
   border: initial;
   vertical-align: initial;
+  text-transform: initial;
+  float: initial;
+  text-indent: initial;
+  -webkit-appearance: initial;
 }
 
 #ariane-toolbar {
