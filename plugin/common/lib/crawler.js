@@ -10,27 +10,44 @@ var Crawler = {};
 var OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$/i;
 
 //
-function searchImagesOptions(elems) {
-  var size = elems.length;
+Crawler.searchImages = function (field, elems) {
+  var res;
 
-  elems = elems.find("img:visible").addBack("img:visible");
-  if (elems.length === size)
-    return elems;
-  else if (location.host.match("amazon")) {
-    elems = elems.end().end().find(".swatchInnerImage[style]").filter(function(i, e) {
+  if (field === 'images' && location.host.match("fnac.com")) {
+    res = elems.filter("[style]").filter(function(i, e) {
       return $(this).css("background-image").search(/url\(.*\)/) !== -1;
+    }).each(function() {
+      var url = $(this).css("background-image").match(/url\((.*)\)/)[1];
+      $(this).attr("src", url);
     });
-    if (elems.length === size)
-      elems = elems.each(function() {
-        var url = $(this).css("background-image").match(/url\((.*)\)/)[1];
-        $(this).parent().parent().attr("src", url);
-      }).parent().parent();
-    else
-      elems = $();
-  } else
-    elems = $();
+  } else {
+    res = elems.find("img").addBack("img").sort(function(i1, i2) {
+      return (i2.height * i2.width) - (i1.height * i1.width);
+    });
+  }
 
-  return elems;
+  return res;
+};
+
+//
+function searchImagesOptions(elems) {
+  var size = elems.length,
+    res;
+
+  if (location.host.match("amazon")) {
+    res = elems.find(".swatchInnerImage[style]").filter(function(i, e) {
+      return $(this).css("background-image").search(/url\(.*\)/) !== -1;
+    }).each(function() {
+      var url = $(this).css("background-image").match(/url\((.*)\)/)[1];
+      $(this).parent().parent().attr("src", url);
+    }).parent().parent();
+  } else
+    res = elems.find("img:visible").addBack("img:visible");
+
+  if (res.length !== size)
+    res = $();
+
+  return res;
 }
 
 //
@@ -173,9 +190,7 @@ Crawler.searchField = function (field, paths, doc) {
     if (elems.length === 0)
       continue;
     if (field === 'image_url' || field === 'images') {
-      elems = elems.add(elems.find("img")).filter("img").sort(function(i1, i2) {
-        return (i2.height * i2.width) - (i1.height * i1.width);
-      });
+      elems = Crawler.searchImages(field, elems);
       if (field === 'image_url')
         elems = elems.eq(0);
     }
@@ -188,7 +203,7 @@ Crawler.searchField = function (field, paths, doc) {
 //
 Crawler.parseImage = function (elems) {
   return elems.toArray().map(function (img) {
-    return img.src;
+    return img.getAttribute("src");
   }).unique();
 };
 

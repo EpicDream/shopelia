@@ -121,9 +121,9 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
           $.ajax(this);
         }.bind(this), 2000);
       } else if (xhr.status == 413) {
-        logger.warn("Mapping is too large to be sended by html. Remove first page.");
+        logger.warn("Mapping is too large to be sended by html. Remove pages.");
         var map = JSON.parse(mapping);
-        map.data.pages.splice(0,1);
+        delete map.data.pages;
         this.data = JSON.stringify(map);
         $.ajax(this);
       } else {
