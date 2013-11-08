@@ -3,6 +3,7 @@ require.config({
     core_extensions: "vendor/core_extensions",
     uri: "vendor/uri",
     logger: "vendor/logger",
+    chrome_logger: "vendor/chrome_logger",
     sprintf: "vendor/sprintf",
     sorted_array: "vendor/sorted_array",
     "jquery-ui": "vendor/jquery-ui",

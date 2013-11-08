@@ -1,5 +1,5 @@
 
-require(['logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) {
+require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logger, $) {
   "use strict";
 
   logger.level = logger.ALL;

@@ -24,6 +24,17 @@ module AdminHelper
     end
     "<span class='label #{klass}'>#{state.camelize}</span>"
   end
+
+  def collection_tag_to_html tag
+    if tag =~ /\A__/
+      name = tag.gsub("__", "")
+      klass = "success"
+    else
+      name = tag
+      klass = "warning"
+    end
+    "<span class='label #{klass}'>#{name}</span>"
+  end
   
   def event_action_to_html action
     case action

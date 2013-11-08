@@ -1,0 +1,70 @@
+.container-fluid
+  .row-fluid
+    .span2
+      .spacer15
+      =render "form"
+      %input#catalogue-search.form-control{placeholder: "Search catalogue by keywords", spellcheck: "false", type: "text"}
+      %p#search-info
+      %button.btn.btn-info.display-none#catalogue-previous-page
+        %i.icon-chevron-left.icon-white
+      %button.btn.btn-info.display-none#catalogue-next-page
+        %i.icon-chevron-right.icon-white
+      %button.btn.btn-success#catalogue-add-shuffle
+        %i.icon-plus.icon-white
+        shuffle
+      %button.btn.btn-success#catalogue-add-urls
+        %i.icon-plus.icon-white
+        urls
+      .spacer10
+      %p#tags-merchant
+      %p#tags-category
+    .span8
+      .row
+        #catalogue
+          - 16.times do |i|
+            .span3{style:"margin-left:10px;"}
+              .catalogue-box.display-none{id: "catalogue-box-#{i}"}
+                .catalogue-product
+                  %img.catalogue-img{id: "catalogue-box-img-#{i}"}
+                .catalogue-price{id: "catalogue-box-price-#{i}"}
+                .catalogue-name{id: "catalogue-box-name-#{i}"}
+                .catalogue-merchant{id: "catalogue-box-merchant-#{i}"}
+    .span2
+      .row-fluid
+        #collection-items
+          = render @collection.collection_items
+
+#catalogue-add-urls-modal.modal.fade
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", type: "button"} ×
+        %h4.modal-title Add products by url
+      .modal-body
+        = form_tag admin_collection_items_path, id:"catalogue-add-urls-forms" do
+          %p Enter URLs of products to add (one URL per line)
+          = text_area_tag "urls", "", rows:"10", cols:"80", style:"width:95%", id:"catalogue-add-urls-field"
+          = hidden_field_tag "collection_id", @collection.id
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+        %button.btn.btn-primary#catalogue-add-urls-confirm{type: "button", "data-loading-text" => "Processing..."} Add products
+
+:javascript
+  $(document).ready(function() {
+    monitorCollectionItems();
+    window.catalogue = new Catalogue(16, #{@collection.id});
+    $("#catalogue-add-shuffle").on("click", function() {
+      $("#catalogue-add-urls-field").val(window.catalogue.shuffle(50));
+      showAddUrlsModal();
+    });
+    $("#catalogue-add-urls").on("click", function() {
+      showAddUrlsModal();
+    });
+  });
+  function showAddUrlsModal() {
+    $("#catalogue-add-urls-modal").modal('show');
+    $('#catalogue-add-urls-confirm').on('click', function() {
+      $('#catalogue-add-urls-confirm').button('loading')
+      $('#catalogue-add-urls-forms').submit();
+    });
+  }

@@ -16,7 +16,7 @@ module AlgoliaFeed
 
   class XmlParser
 
-    attr_accessor :records, :conversions, :product_field, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields, :algolia, :filer, :url_monetizer, :redis
+    attr_accessor :records, :conversions, :product_field, :forbidden_cats, :forbidden_names, :debug, :merchant_cache, :category_fields, :algolia, :filer, :url_monetizer, :img_processor, :tagger
 
     def initialize(params={})
       self.conversions     = params[:conversions]     || {}
@@ -26,9 +26,9 @@ module AlgoliaFeed
       self.debug           = params[:debug]           || 0
       self.category_fields = params[:category_fields] || []   
       self.merchant_cache  = {}
-      @image_size_processor = ImageSizeProcessor.new
+      self.img_processor = ImageSizeProcessor.new
       self.url_monetizer = UrlMonetizer.new
-      self.redis = Redis.new
+      self.tagger = Tagger.new
 
       self.algolia = AlgoliaFeed.new(params)
       self.filer = params[:filer] || 'AlgoliaFeed::FileUtils'
@@ -107,10 +107,12 @@ module AlgoliaFeed
         record['brand'] = record['author']
         record.delete('author')
       end
+      record.delete('brand') if record['brand'] == 'NONAME'
       record['_tags'] << "brand:#{record['brand']}" if record.has_key?('brand')
+      raise RejectedRecord.new("Record has no product URL", :rejected_url) if record['product_url'].nil?
       record['url_monetized'] = record['product_url']
       record['product_url'] = canonize(record['product_url'])
-      raise RejectedRecord.new("Record has nil product_url", :rejected_url) if record['product_url'].nil?
+      raise RejectedRecord.new("Record has no product URL", :rejected_url) unless (record.has_key?('product_url') and record['product_url'] =~ /\Ahttp/)
       domain = Utils.extract_domain(record['product_url'])
       puts "Identified domain: #{domain}" if self.debug > 2
       unless self.merchant_cache.has_key?(domain)
@@ -146,14 +148,14 @@ module AlgoliaFeed
       raise RejectedRecord.new("Record has forbidden name #{record['name']}", :rejected_sex) if record['name'] =~ /#{forbidden_names}/
 
       # Set image size
-      record['image_size'] = @image_size_processor.get(record['image_url'])
+      record['image_size'] = self.img_processor.get(record['image_url'])
       record.delete('image_size') if record['image_size'].nil?
 
       self.url_monetizer.set(record['product_url'], record['url_monetized'])
 
       record['_tags'].each do |tag|
-        n = self.redis.hget('algolia_tags', tag).to_i
-        self.redis.hset('algolia_tags', tag, n + 1)
+				next if tag =~ /\Aean:/
+        self.tagger.increment(tag)
       end
     end
 

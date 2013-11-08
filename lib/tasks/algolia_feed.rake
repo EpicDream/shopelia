@@ -18,6 +18,7 @@ namespace :shopelia do
       fork { AlgoliaFeed::Tradedoubler.new.filer.download }
       fork { AlgoliaFeed::Zanox.new.filer.download }
       fork { AlgoliaFeed::Amazon.new.filer.download }
+      fork { AlgoliaFeed::Webgains.new.filer.download }
       Process.waitall
     end
 
@@ -29,6 +30,7 @@ namespace :shopelia do
     desc "Set Algolia production index"
     task :make_prod => :environment do
       AlgoliaFeed::AlgoliaFeed.make_production
+      AlgoliaFeed::Tagger.build_from_redis
     end
 
     desc "Start image size processing"

@@ -1,5 +1,5 @@
 
-require(['logger', 'crawler', "satconf"], function(logger, Crawler) {
+require(['chrome_logger', 'crawler', "satconf"], function(logger, Crawler) {
   "use strict";
 
 // logger.level = logger.ALL;

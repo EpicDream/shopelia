@@ -37,7 +37,7 @@ module AlgoliaFeed
 
   class Amazon < XmlParser
 
-    # TODO: Missing categories for Amazon
+    attr_accessor :categories_xml
 
     def initialize(params={})
       super
@@ -76,7 +76,9 @@ module AlgoliaFeed
     end
 
     def product_hash(xml)
-      super(Nokogiri::XML(xml).xpath('//item_data/item_basic_data').to_s)
+      n = Nokogiri::XML(xml)
+      self.categories_xml = n.xpath('//item_data/merch_cat_list')
+      super(n.xpath('//item_data/item_basic_data').to_s)
     end
 
     def process_product(product)
@@ -84,12 +86,29 @@ module AlgoliaFeed
 
       raise RejectedRecord.new("Item has no rank", :rejected_rank) unless record.has_key?('rank')
       raise RejectedRecord.new("Item rank is too low", :rejected_rank) if record['rank'] > 500_000
+      raise RejectedRecord.new("Record has no usable image #{record['image_url']}", :rejected_img) unless (record.has_key?('image_url') and record['image_url'] =~ /\Ahttp/)
       record['price'] = to_cents(record['price'])
       record['price_shipping'] = '0' if record['price_shipping'] =~ /gratuite/i
       record['price_shipping'] = to_cents(record['price_shipping'])
       record['image_url'].gsub!(/\._.+?_\.jpg\Z/, '.jpg')
       record
     end
+
+    def set_categories(product, record)
+      categories = {}
+      self.categories_xml.children.each do |cat|
+        record['category'] = cat.xpath('merch_cat_path').text unless record.has_key?('category')
+        cat.xpath('merch_cat_path').text.split(/\//).each do |subcat|
+          categories[subcat] = true
+        end
+      end
+      categories.keys.each do |cat|
+        record['_tags'] << "category:#{cat}"
+      end
+      self.categories_xml = nil
+    end
+
+
   end
 end
 

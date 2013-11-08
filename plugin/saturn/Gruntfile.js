@@ -5,6 +5,19 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: pkg,
+    // Check syntax and other stuff
+    coffee_jshint: {
+      options: {
+        loopfunc: true,
+        browser: true,
+        devel: true,
+        globals: ['window', 'document', 'console', 'module', 'define', 'require', 'chrome'],
+      },
+      source: {
+        src: ['../common/lib/*.js.coffee'],
+      },
+    },
+    // Check syntax and other stuff
     jshint: {
       files: [
         'Gruntfile.js',
@@ -34,6 +47,17 @@ module.exports = function(grunt) {
         flatten: true,
         dest: 'vendor/',
       }
+    },
+    // Compile *.coffee files to *.js files
+    coffee: {
+      compile: {
+        options: {
+          bare: true
+        },
+        files: {
+          'vendor/chrome_logger.js': '../common/lib/chrome_logger.js.coffee',
+        }
+      },
     },
     // Launch all tests
     jasmine: {
@@ -104,6 +128,7 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
+          'vendor/chrome_logger.js',
           "build/crawler.js",
           "src/chrome/chrome_crawler.js",
         ],
@@ -137,8 +162,10 @@ module.exports = function(grunt) {
   });
 
   // Predefined tasks
+  grunt.loadNpmTasks('grunt-coffee-jshint');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -183,7 +210,8 @@ module.exports = function(grunt) {
 
   // Alias
   grunt.registerTask('default', ['dev-prod']);
-  grunt.registerTask('test', ['version', 'jshint', 'config:test', 'copy', 'jasmine:main']);
+  grunt.registerTask('cof', ['coffee_jshint', 'default']);
+  grunt.registerTask('test', ['version', 'jshint', 'config:test', 'copy', 'coffee', 'jasmine:main']); 
   grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev']);
   grunt.registerTask('dev-prod', ['test', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
   grunt.registerTask('prod-dev', ['test', 'config:prod-dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);

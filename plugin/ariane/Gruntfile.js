@@ -5,6 +5,19 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: pkg,
+    // Check syntax and other stuff
+    coffee_jshint: {
+      options: {
+        loopfunc: true,
+        browser: true,
+        devel: true,
+        globals: ['window', 'document', 'console', 'module', 'define', 'require', 'chrome'],
+      },
+      source: {
+        src: ['../common/lib/*.js.coffee'],
+      },
+    },
+    // Check syntax and other stuff
     jslint: {
       all: {
         src: [
@@ -20,6 +33,7 @@ module.exports = function(grunt) {
         options: {}
       }
     },
+    // Check syntax and other stuff
     jshint: {
       files: [
         'Gruntfile.js',
@@ -33,6 +47,7 @@ module.exports = function(grunt) {
         loopfunc: true
       }
     },
+    // Copy all needed libs to "vendor/" repository
     copy: {
       main: {
         expand: true,
@@ -41,6 +56,17 @@ module.exports = function(grunt) {
         flatten: true,
         dest: 'vendor/',
       }
+    },
+    // Compile *.coffee files to *.js files
+    coffee: {
+      compile: {
+        options: {
+          bare: true
+        },
+        files: {
+          'vendor/chrome_logger.js': '../common/lib/chrome_logger.js.coffee',
+        }
+      },
     },
     // Launch all tests
     jasmine: {
@@ -81,7 +107,7 @@ module.exports = function(grunt) {
           baseUrl: '',
           mainConfigFile: "require_config.js",
           optimize: "none",
-          include: ['logger', 'jquery', 'jquery-ui', 'jquery-mobile'],
+          include: ['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'],
           out: 'build/panel1.js',
         }
       },
@@ -153,9 +179,11 @@ module.exports = function(grunt) {
   });
 
   // Predefined tasks
+  grunt.loadNpmTasks('grunt-coffee-jshint');
   grunt.loadNpmTasks('grunt-jslint');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-coffee');
   grunt.loadNpmTasks('grunt-contrib-jasmine');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -202,7 +230,8 @@ module.exports = function(grunt) {
 
   // Alias
   grunt.registerTask('default', ['dev']);
-  grunt.registerTask('test', ['version', 'jshint', 'copy', 'jasmine']);
+  grunt.registerTask('cof', ['coffee_jshint', 'default']);
+  grunt.registerTask('test', ['version', 'jshint', 'copy', 'coffee', 'jasmine']);
   grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
   grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod']);
 };

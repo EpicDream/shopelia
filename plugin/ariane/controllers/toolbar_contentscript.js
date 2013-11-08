@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define(['jquery-ui', 'logger', 'src/ari-panel'], function($, logger, panel) {
+define(['jquery-ui', 'chrome_logger', 'src/ari-panel'], function($, logger, panel) {
   "use strict";
 
   var vk_toolbar = {},
@@ -153,9 +153,11 @@ function onFinished() {
 /*                           Utilities                        */
 /* ********************************************************** */
 
-vk_toolbar.startAriane = function(crawl_mode) {
+vk_toolbar.startAriane = function (crawl_mode) {
   if (! jStep) // Fix to fast .js files load.
-    return setTimeout('vk_toolbar.startAriane('+(crawl_mode === true)+')', 100);
+    return setTimeout(function () {
+        vk_toolbar.startAriane(crawl_mode);
+      }, 100);
 
   if (crawl_mode)
     jStep.val("extract").prop("disabled", true);
@@ -165,12 +167,12 @@ vk_toolbar.startAriane = function(crawl_mode) {
   onStepChanged();
 };
 
-vk_toolbar.setCurrentField = function(field) {
+vk_toolbar.setCurrentField = function (field) {
   jButtons.filter(".current-field").removeClass("current-field");
   jButtons.filter("#ariane-product-"+field).addClass("current-field");
 };
 
-vk_toolbar.getCurrentFieldId = function() {
+vk_toolbar.getCurrentFieldId = function () {
   return (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-product-/, '');
 };
   

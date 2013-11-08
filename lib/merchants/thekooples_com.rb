@@ -11,6 +11,11 @@ class ThekooplesCom
     @url = url
   end
 
+  def process_availability version
+    version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
+    version
+  end
+
   def process_price_shipping version
     version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
     version

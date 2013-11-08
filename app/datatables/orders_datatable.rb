@@ -1,5 +1,5 @@
 class OrdersDatatable
-  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :time_ago_in_words, :truncate, :admin_order_path, :order_state_to_html, to: :@view
+  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :time_ago_in_words, :truncate, :admin_order_path, :order_state_to_html, :admin_user_path, :admin_order_path, to: :@view
 
   def initialize(view, filters = {})
     @view = view
@@ -22,11 +22,11 @@ class OrdersDatatable
       product = order.order_items.first.product
       [
         order_state_to_html(order.state_name),
-        link_to(product.nil? ? "-" : product.name, "https://vulcain.shopelia.fr:444/admin/logs/#{order.uuid}"),
+        link_to(product.nil? ? "-" : product.name, admin_order_path(order)),
         order.merchant.name,
         number_to_currency(order.state == :completed ? order.billed_price_total : order.expected_price_total),
-        h(order.user.name),
-        time_ago_in_words(order.updated_at),
+        link_to(order.user.name, admin_user_path(order.user)),
+        order.created_at.strftime("%d/%m/%Y"),
         order.message,
         order.error_code,
         order.state_name == "pending_agent" ? "<button type=\"button\" class=\"btn btn-success\" data-uuid=\"#{order.uuid}\" style=\"visibility:hidden\">Kanaveral</button> <button type=\"button\" class=\"btn btn-warning btn-modal\" data-url=\"#{admin_order_path(order)}\" data-state=\"retry\" style=\"visibility:hidden\">Vulcain</button> <button type=\"button\" class=\"btn btn-danger btn-modal\" data-url=\"#{admin_order_path(order)}\" data-state=\"cancel\" style=\"visibility:hidden\">Cancel</button>" : ""

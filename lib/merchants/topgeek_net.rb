@@ -20,17 +20,26 @@ class TopgeekNet
   end
 
   def process_availability version
-    version[:availability_text] = "En stock" if version[:availability_text].blank?
+    version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
     version
   end
 
-  def process_shipping_price version
+  def process_price_shipping version
     version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
     version
   end
 
   def process_shipping_info version
     version[:shipping_info] = DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
+    version
+  end
+
+  def process_options version
+    if version[:option1].present? && version[:option1]["text"].blank? &&
+      version[:option1]["src"].blank? && version[:option1]["style"].present? &&
+      version[:option1]["style"] =~ /background\s*:\s*(#?\w+)\s*;/i
+      version[:option1]["text"] = $~[1]
+    end
     version
   end
 end
