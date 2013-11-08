@@ -9,12 +9,13 @@ class Admin::CollectionsController < Admin::AdminController
   def show
   end
 
+  def new
+    @collection = Collection.create
+  end
+
   def update
-    if @collection.update_attributes params[:collection]
-      redirect_to admin_collection_path(@collection)
-    else
-      render "edit"
-    end
+    @collection.update_attributes params[:collection]
+    redirect_to edit_admin_collection_path(@collection)
   end
 
   private

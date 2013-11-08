@@ -2,6 +2,10 @@
   %header
     %h1 Collections
     %h2 Inspiring our users
+    .action-buttons
+      %a.btn.btn-large.btn-success{href: new_admin_collection_path, type: "button"}
+        %i.icon-plus.icon-white
+        New collection
 
 .container-fluid
   .row-fluid
@@ -28,8 +32,8 @@
           %tbody
             - @collections.each do |collection|
               %tr
-                %td= link_to collection.name, admin_collection_path(collection)
-                %td= image_tag collection.image.url, style:"max-width:300px;"
+                %td= link_to collection.name || collection.uuid, admin_collection_path(collection)
+                %td= collection.image.present? ? image_tag(collection.image.url, style:"max-width:300px;") : ""
                 %td
                   - collection.tags.map(&:name).each do |tag|
                     = collection_tag_to_html(tag)

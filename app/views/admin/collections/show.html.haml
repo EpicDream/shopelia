@@ -7,9 +7,14 @@
         %i.icon-edit.icon-white
         Edit collection
     .collection-header-title
-      = image_tag @collection.image.url
+      = image_tag @collection.image.url if @collection.image.present?
 
 
 .container-fluid
   .row-fluid
     = render @collection.collection_items
+
+:javascript
+  $(document).ready(function() {
+    monitorCollectionItems();
+  });

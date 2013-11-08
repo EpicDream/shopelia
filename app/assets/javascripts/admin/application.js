@@ -10,3 +10,7 @@
 //= require admin/jquery.sparkline.min
 //= require lib/pusher.min
 //= require lib/spin
+//= require lib/algoliasearch.min
+//= require monitor
+//= require products-feed
+//= require catalogue

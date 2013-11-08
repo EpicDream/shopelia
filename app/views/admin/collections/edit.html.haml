@@ -1,0 +1,8 @@
+%section.header
+  %header
+    %h1 Collection
+    %h2= @collection.name
+    .collection-header-title
+      = image_tag @collection.image.url if @collection.image.present?  
+
+= render "builder"
