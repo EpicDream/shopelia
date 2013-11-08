@@ -19,6 +19,8 @@ module AlgoliaFeed
     end
 
     def build_from_redis
+      # This method is called after several hours of cron work - PG connection is probably down
+      ActiveRecord::Base.connection.reconnect!
       AlgoliaTag.delete_all
       self.redis.hkeys(TAGS_HASH).each do |key|
         kind, name = key.split(/\:/)
