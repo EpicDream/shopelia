@@ -11,6 +11,7 @@ module Scrapers
         def self.scrape product_id
           product = Product.find(product_id)
           scraper = new(product)
+          scraper.run
         end
 
         def initialize product
@@ -29,7 +30,7 @@ module Scrapers
         def reviews_of_page index
           xpath = "//table[@id='productReviews']//div[@class='reviews-voting-stripe']/ancestor::div[2]"
           page = @agent.get reviews_url(index)
-          page.search(xpath).map { |html| Amazon::Review.new(html)}
+          page.search(xpath).map { |html| Amazon::Review.new(html, @product.id)}
         end
       
         def reviews_url page=1

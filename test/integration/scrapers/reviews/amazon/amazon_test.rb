@@ -6,6 +6,7 @@ class AmazonTest < ActiveSupport::TestCase
   
   setup do
     @product = Product.new(url:URL)
+    @product.id = 1
     @scraper = Scrapers::Reviews::Amazon::Scraper.new(@product)
   end
   
@@ -25,6 +26,17 @@ class AmazonTest < ActiveSupport::TestCase
     assert_equal 'A1NKS428YJSR4K', review.author
     assert_equal 5, review.rank
     assert_equal expected_content, review.content
+  end
+  
+  test "reviews of first page as hashes" do
+    reviews = @scraper.reviews_of_page(1)
+    reviews.each do |review|
+      review = review.to_hash
+      assert review[:rank].between?(0, 5)
+      assert review[:author].length > 10
+      assert review[:content].length > 2
+      assert_equal 1, review[:product_id]
+    end
   end
   
 end

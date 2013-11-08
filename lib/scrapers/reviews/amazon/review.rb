@@ -2,10 +2,15 @@ module Scrapers
   module Reviews
     module Amazon
       class Review
-        attr_reader :rank, :author, :content
+        attr_reader :rank, :author, :content, :product_id
         
-        def initialize html
+        def initialize html, product_id=nil
           @html = html
+          @product_id = product_id
+        end
+        
+        def to_hash
+          {rank:rank, author:author, content:content, product_id:@product_id}
         end
         
         def rank
