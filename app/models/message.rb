@@ -12,7 +12,8 @@ class Message < ActiveRecord::Base
   validates :device, :presence => true
 
   attr_accessible :content, :data, :device_id, :read, :products_urls, :from_admin
-  attr_accessor :products_urls, :autoreply
+  attr_accessible :collection_uuid, :gift_gender, :gift_age, :gift_budget, :gift_card
+  attr_accessor :products_urls, :gift_card
 
   def build_push_data
     self.data.map do |url|
@@ -21,6 +22,31 @@ class Message < ActiveRecord::Base
         name:product.name,
         image_url:product.image_url,
         price:product.product_versions.first.price }
+    end
+  end
+
+  def as_push
+    hash = {
+      message:self.content,
+      message_id:self.id
+    }    
+    if self.data.any?
+      hash = hash.merge({
+        type:'Georges',
+        products:self.build_push_data
+      })
+    elsif self.gift_card
+      hash = hash.merge({type:'card_gift'})
+    elsif self.collection_uuid.present?
+      collection = Collection.find_by_uuid(self.collection_uuid)
+      product = collection.collection_items.order(:created_at).first.product
+      hash = hash.merge({
+        type:'card_collection',
+        collection_uuid:self.collection_uuid,
+        collection_size:collection.collection_items.count,
+        image_url:product.image_url,
+        image_size:product.image_size
+      })
     end
   end
 
