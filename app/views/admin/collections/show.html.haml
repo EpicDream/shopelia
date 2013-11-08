@@ -7,7 +7,7 @@
         %i.icon-edit.icon-white
         Edit collection
     .collection-header-title
-      = image_tag @collection.image.url if @collection.image.present?
+      = image_tag @collection.image.url, style:"max-height: 100px;" if @collection.image.present?
 
 
 .container-fluid
