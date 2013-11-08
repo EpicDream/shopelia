@@ -1,3 +1,5 @@
+@import "collection_builder.css.scss";
+
 html, body { height: 100%; }
 
 body {
@@ -51,8 +53,10 @@ body {
 }
 
 #chat-feature{
+  padding: 40px;
   border: 1px solid black;
   width: 55%;
+  height: 100%;
 }
 
 .user-row {

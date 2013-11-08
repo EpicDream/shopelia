@@ -21,6 +21,13 @@ class Admin::Georges::MessagesController < Admin::AdminController
     end
   end
 
+  def collection_builder
+    @collection = Collection.create
+    respond_to do |format|
+      format.js
+    end
+  end
+
   def check
     @products = []
     developer = Developer.find_by_name("Shopelia")

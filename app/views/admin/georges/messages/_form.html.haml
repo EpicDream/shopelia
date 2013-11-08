@@ -5,7 +5,9 @@
   .spacer20
   %hr
   .spacer20
-  .button-flat-empty + Produits
+  = link_to admin_georges_device_messages_collection_builder_path, :remote => true do
+    .button-flat-empty
+      + Produits
   .button-flat-empty User Options
   -#.button-flat-empty Noter l'app
 
