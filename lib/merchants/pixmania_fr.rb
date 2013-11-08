@@ -20,4 +20,15 @@ class PixmaniaFr
     version[:shipping_info] = DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
     version
   end
+
+  def process_image_url version
+    version[:image_url].sub!(%r{/\w(_\d+\.\w+)$}, '/l\\1') if version[:image_url].present?
+    version
+  end
+
+  def process_images version
+    return version unless version[:images].kind_of?(Array)
+    version[:images].map! { |url| url.sub(%r{/\w(_\d+\.\w+)$}, '/l\\1') }
+    version
+  end
 end
