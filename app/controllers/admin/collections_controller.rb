@@ -2,8 +2,8 @@ class Admin::CollectionsController < Admin::AdminController
   before_filter :retrieve_collection, :only => [:show, :edit, :update]
 
   def index
-    @collections = Collection.order("collections.created_at DESC")
-    @tags = @collections.joins(:tags).map(&:tags).map{|t| t.first.name}.uniq
+    @collections = Collection.where("collections.name is not null").order("collections.created_at DESC")
+    @tags = @collections.joins(:tags).select("distinct(tags.name)").map(&:name)
   end
 
   def show

@@ -4,7 +4,7 @@ class Admin::CollectionItemsController < Admin::AdminController
   def create
     if params[:urls].present?
       collection = Collection.find(params[:collection_id])
-      params[:urls].split("\n").each { |url| CollectionItem.create(url:url, collection_id:collection.id) }
+      params[:urls].split("\n").each { |url| CollectionItem.create(url:url, collection_id:collection.id) unless url =~ /^https/ }
       redirect_to edit_admin_collection_path(collection)
     else
       @item = CollectionItem.create(params[:collection_item])

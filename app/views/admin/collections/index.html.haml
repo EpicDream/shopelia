@@ -18,7 +18,7 @@
       %article.coolbox
         %h3 Tags
         - @tags.each do |tag|
-          = collection_tag_to_html(tag)
+          = raw collection_tag_to_html(tag)
     .span10
       %article.coolbox
         %h3 Collections list
@@ -36,5 +36,5 @@
                 %td= collection.image.present? ? image_tag(collection.image.url, style:"max-width:300px;") : ""
                 %td
                   - collection.tags.map(&:name).each do |tag|
-                    = collection_tag_to_html(tag)
+                    = raw collection_tag_to_html(tag)
                 %td= collection.collection_items.count
