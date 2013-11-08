@@ -27,27 +27,31 @@ class Message < ActiveRecord::Base
 
   def as_push
     hash = {
+      type:'Georges',
       message:self.content,
       message_id:self.id
     }    
-    if self.data.any?
+    if self.data.present?
       hash = hash.merge({
-        type:'Georges',
         products:self.build_push_data
       })
     elsif self.gift_card
-      hash = hash.merge({type:'card_gift'})
+      hash = hash.merge({
+        survey:'gift'
+      })
     elsif self.collection_uuid.present?
       collection = Collection.find_by_uuid(self.collection_uuid)
       product = collection.collection_items.order(:created_at).first.product
       hash = hash.merge({
-        type:'card_collection',
-        collection_uuid:self.collection_uuid,
-        collection_size:collection.collection_items.count,
-        image_url:product.image_url,
-        image_size:product.image_size
+        collection:{
+          collection_uuid:self.collection_uuid,
+          collection_size:collection.collection_items.count,
+          image_url:product.image_url,
+          image_size:product.image_size
+        }
       })
     end
+    hash
   end
 
   private
