@@ -58,7 +58,6 @@ class Message < ActiveRecord::Base
     hash
   end
 
->>>>>>> 8bca5521bbf1e47f69803c4aad2ec972f88789ea
   private
 
   def set_pending_answer

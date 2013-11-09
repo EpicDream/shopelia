@@ -3,7 +3,6 @@
 html, body { height: 100%; }
 
 body {
-  min-height: 100%;
   width: 100%;
   min-width: 1200px;
   padding: 0;
@@ -11,7 +10,7 @@ body {
 }
 
 #chatroom {
-  position: fixed; top: 50px; width:100%;
+  position: absolute; top: 50px; width:100%;
   border: 1px solid #d3d3d3;
   min-height: 100%;
   width: 100%;
@@ -54,7 +53,6 @@ body {
 
 #chat-feature{
   padding: 40px;
-  border: 1px solid black;
   width: 55%;
   height: 100%;
 }
@@ -199,7 +197,7 @@ p { margin: 0; }
 }
 
 
-#message_content {
+#message_form > textarea {
   width:  300px;
 }
 
@@ -231,6 +229,9 @@ p { margin: 0; }
 
 .chat-message-content {
   margin-left: 56px;
+  p {
+    word-break:break-all;
+  }
 }
 
 .chat-time {

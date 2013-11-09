@@ -10,8 +10,10 @@
       %h5 Georges
       %p
         = message.content
-        - message.data.each do |url|
-          = render Product.fetch(url)
+      %span.chat-time
+        - if message.collection_uuid && !message.collection_uuid.empty?
+          = link_to("Collection n° " + message.collection_uuid, Collection.find_by_uuid(message.collection_uuid), target: '_blank' )
+
 - else
   .chat-message.clearfix
     %img{alt: "", height: "32", src: "http://lorempixum.com/32/32/people", width: "32"}

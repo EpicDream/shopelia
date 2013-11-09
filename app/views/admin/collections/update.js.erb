@@ -1,4 +1,6 @@
 $("#chat-feature").text("Collection ready to send");
-var content = $("#message_content");
-var currentContent = content.val();
-content.val(currentContent + "<%= escape_javascript(@collection.uuid)%>");
+var content = $("#message_collection_uuid");
+content.val("<%= escape_javascript(@collection.uuid)%>");
+var link = $("#collection-link");
+link.remove();
+content.after("<%= escape_javascript(link_to("Collection n°" + @collection.uuid , @collection, :target => "_blank", :id => "collection-link")) %>");
