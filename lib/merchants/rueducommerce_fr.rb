@@ -41,4 +41,10 @@ class RueducommerceFr
     version[:image_url] = nil if version[:image_url] =~ %r{eros/img/ProductSheet/ajax-loader.gif}
     version
   end
+
+  def process_images version
+    return version unless version[:images].kind_of?(Array)
+    version[:images].map! { |url| url.sub(%r{/small/}, '/big/') }
+    version
+  end
 end

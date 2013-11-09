@@ -51,4 +51,11 @@ class AmazonFr
     end
     version
   end
+
+  def process_images version
+    #TODO: faire la meme chose pour image_url, mais elle peut être vraiment grande...
+    return version unless version[:images].kind_of?(Array)
+    version[:images].map! { |url| url.sub(/\._.+?_\.(\w+)$/, '.\\1') }
+    version
+  end
 end

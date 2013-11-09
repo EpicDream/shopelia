@@ -94,4 +94,18 @@ class RueducommerceFrTest < ActiveSupport::TestCase
     @version = @helper.process_image_url(@version)
     assert_not_nil @version[:image_url]
   end
+
+  test "it should process images" do
+    @version[:images] = nil
+    @version = @helper.process_images(@version)
+    assert_nil @version[:images]
+
+    @version[:images] = []
+    @version = @helper.process_images(@version)
+    assert_equal [], @version[:images]
+
+    @version[:images] = ["http://s1.static69.com/mobile/images/produits/small/SGH-GALAXY-S-IV-16GO-FROST-WHITE.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://s1.static69.com/mobile/images/produits/big/SGH-GALAXY-S-IV-16GO-FROST-WHITE.jpg"], @version[:images]
+  end
 end
