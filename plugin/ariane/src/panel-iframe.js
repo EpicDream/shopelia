@@ -291,6 +291,7 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
 
     chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
       cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
+      if (! hash.mappings[cUrl]) return;
       var hosts = Object.keys(hash.mappings[cUrl].data.viking),
           i;
       for (i in hosts)

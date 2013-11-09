@@ -23,4 +23,14 @@ class PriceministerCom
     version
   end
 
+  def process_image_url version
+    version[:image_url].sub!(/_\w+\.(\w+)$/, '.\\1') if version[:image_url].present?
+    version
+  end
+
+  def process_images version
+    return version unless version[:images].kind_of?(Array)
+    version[:images].map! { |url| url.sub(/_\w+\.(\w+)$/, '.\\1') }
+    version
+  end
 end

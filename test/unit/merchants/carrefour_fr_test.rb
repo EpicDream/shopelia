@@ -56,4 +56,24 @@ class CarrefourFrTest < ActiveSupport::TestCase
     @version = @helper.process_shipping_info(@version)
     assert_equal "Dernier exemplaire\nLIVRAISON GRATUITE\n", @version[:shipping_info]
   end
+
+  test "it should process image_url ajaxLoader" do
+    @version[:image_url] = "http://brain.pan.e-merchant.com/5/7/21818175/g_21818175.jpg"
+    @version = @helper.process_image_url(@version)
+    assert_equal "http://brain.pan.e-merchant.com/5/7/21818175/l_21818175.jpg", @version[:image_url]
+  end
+
+  test "it should process images" do
+    @version[:images] = nil
+    @version = @helper.process_images(@version)
+    assert_nil @version[:images]
+
+    @version[:images] = []
+    @version = @helper.process_images(@version)
+    assert_equal [], @version[:images]
+
+    @version[:images] = ["http://brain.pan.e-merchant.com/5/7/21818175/m_21818175.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://brain.pan.e-merchant.com/5/7/21818175/l_21818175.jpg"], @version[:images]
+  end
 end
