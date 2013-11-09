@@ -1,0 +1,4 @@
+$("#chat-feature").text("Collection ready to send");
+var content = $("#message_content");
+var currentContent = content.val();
+content.val(currentContent + "<%= escape_javascript(@collection.uuid)%>");

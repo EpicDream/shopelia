@@ -2,7 +2,7 @@
   .row-fluid
     .span2
       .spacer15
-      =render "collections/form"
+      =render("admin/collections/form" , georges: georges)
       %input#catalogue-search.form-control{placeholder: "Search catalogue by keywords", spellcheck: "false", type: "text"}
       %p#search-info
       %button.btn.btn-info.display-none#catalogue-previous-page
@@ -47,6 +47,7 @@
     });
   });
   function showAddUrlsModal() {
+    $("#catalogue-add-urls-modal").removeClass('hidden');
     $("#catalogue-add-urls-modal").modal('show');
     $('#catalogue-add-urls-confirm').on('click', function() {
       $('#catalogue-add-urls-confirm').button('loading')

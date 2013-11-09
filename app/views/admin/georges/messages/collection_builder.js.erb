@@ -1,4 +1,5 @@
 $('#chat-feature').empty();
-$("#catalogue-add-urls-modal").remove();
-$("<%= escape_javascript(render "admin/collections/builder") %>").appendTo("#chat-feature");
+var catalogue = $("#catalogue-add-urls-modal");
+catalogue.remove();
+$("<%= escape_javascript(render "admin/collections/builder", georges: true ) %>").appendTo("#chat-feature");
 $("body").append($("<%= escape_javascript(render "admin/collections/modal", collection: @collection) %>"));

@@ -15,7 +15,10 @@ class Admin::CollectionsController < Admin::AdminController
 
   def update
     @collection.update_attributes params[:collection]
-    redirect_to edit_admin_collection_path(@collection)
+      respond_to do |format|
+        format.html {redirect_to edit_admin_collection_url(@collection)}
+        format.js
+      end
   end
 
   private
