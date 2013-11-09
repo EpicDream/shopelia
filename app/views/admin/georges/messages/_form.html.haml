@@ -2,15 +2,28 @@
   = f.text_area :content , autofocus: "", placeholder: "Type your message?", type: "text" , rows: 2, required:true
   = f.hidden_field :collection_uuid
   .spacer20
-  = f.submit "Répondre", :class => 'button-flat-empty'
+  = f.submit "Send", :class => 'button-flat-empty'
   .spacer20
   %hr
   .spacer20
   = link_to admin_georges_device_messages_collection_builder_path, :remote => true do
     .button-flat-empty
-      + Produits
-  .button-flat-empty User Options
+      Add Collection
+  = f.hidden_field :gift_card ,{value: 0}
+  #gift-card-button.button-flat-empty Send Gift Card
   -#.button-flat-empty Noter l'app
 
-
+:javascript
+  var giftCardButton = $('#gift-card-button')
+  giftCardButton.click(function(){
+    var giftCard = $("#message_gift_card")
+    var value = giftCard.val()
+    if(value == "0") {
+       giftCardButton.addClass("button-flat-empty-inverse-success")
+       giftCard.val(1);
+    } else {
+       giftCardButton.removeClass("button-flat-empty-inverse-success")
+       giftCard.val(0);
+    }
+  })
 

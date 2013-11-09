@@ -1,4 +1,5 @@
 @import "collection_builder.css.scss";
+@import "variables.css.scss";
 
 html, body { height: 100%; }
 
@@ -244,6 +245,17 @@ p { margin: 0; }
   margin: 0 0 0 80px;
 }
 
+//Colors
+
+$green: #3cc8ad;
+$darkGreen: #00A185;
+$lightGrey: #f8f8f8;
+$grey: #798288;
+$lightBlue: #00bbff;
+$blue: #0181a6;
+$darkBlue: #021037;
+$red: #e74c3c;
+
 //Buttons
 
 // variables
@@ -336,6 +348,14 @@ $color: #707070;
   @include button-flat-empty-inverse($color, white);
 }
 
+.button-flat-empty-inverse-success {
+  @include button-flat-empty-inverse($darkGreen, white);
+}
+
+
+#gift-card-button {
+  cursor: hand;
+}
 
 
 //Spacers
