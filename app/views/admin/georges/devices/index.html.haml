@@ -1,15 +1,6 @@
 #chatroom
   #chat-list-users
-    #chat-list-users-header
-      Users
-    - @devices.each do |device|
-      = link_to admin_georges_device_messages_path(device), :remote => true do
-        .user-row
-          - if device.user
-            #{device.user.first_name} #{device.user.last_name}
-          - else
-            #{device.id}
+    = render "list_users"
   #chat-user
   #chat-feature
 #collection_to_send
-

@@ -5,6 +5,7 @@ class Message < ActiveRecord::Base
   before_validation :ensure_device_pushable
   before_save :serialize_data
   after_create :set_pending_answer
+  after_update :set_pending_answer_for_card
   after_create :notify
 
   serialize :data, Array
@@ -64,6 +65,10 @@ class Message < ActiveRecord::Base
     self.device.update_attribute :pending_answer, !self.from_admin?
   end
 
+  def set_pending_answer_for_card
+    self.device.update_attribute :pending_answer, true if self.gift_budget_changed?
+  end
+ 
   def serialize_data
     if self.products_urls.present?
       self.data =  self.products_urls.split(/\r?\n/).compact

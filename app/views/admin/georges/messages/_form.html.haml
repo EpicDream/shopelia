@@ -1,5 +1,5 @@
 = form_for([:admin,:georges,@device,Message.new], remote: true, :html => { :id => 'message_form' }) do |f|
-  = f.text_area :content , autofocus: "", placeholder: "Type your message?", type: "text" , rows: 2, required:true
+  = f.text_area :content , autofocus: "", placeholder: "Type your message?", type: "text" , rows: 4, required:true
   = f.hidden_field :collection_uuid
   .spacer20
   = f.submit "Send", :class => 'button-flat-empty'
@@ -21,6 +21,9 @@
     if(value == "0") {
        giftCardButton.addClass("button-flat-empty-inverse-success")
        giftCard.val(1);
+       if ($('#message_content').val() == '') {
+         $('#message_content').val("Afin de mieux vous servir, merci de répondre à ces trois questions.");
+       }
     } else {
        giftCardButton.removeClass("button-flat-empty-inverse-success")
        giftCard.val(0);
