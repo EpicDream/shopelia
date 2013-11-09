@@ -117,7 +117,7 @@ Shopelia::Application.routes.draw do
         resources :verify, :only => :create
       end
       namespace :georges do
-        resources :messages, :only => :create do
+        resources :messages, :only => [:create, :update] do
           get :read, :on => :member
         end
       end

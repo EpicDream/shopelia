@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131106211320) do
+ActiveRecord::Schema.define(:version => 20131108153220) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -280,10 +280,14 @@ ActiveRecord::Schema.define(:version => 20131106211320) do
     t.text     "content"
     t.text     "data"
     t.boolean  "from_admin"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
     t.integer  "device_id"
     t.datetime "read_at"
+    t.string   "collection_uuid"
+    t.string   "gift_gender"
+    t.string   "gift_age"
+    t.string   "gift_budget"
   end
 
   create_table "meta_orders", :force => true do |t|

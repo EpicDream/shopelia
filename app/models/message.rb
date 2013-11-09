@@ -12,7 +12,8 @@ class Message < ActiveRecord::Base
   validates :device, :presence => true
 
   attr_accessible :content, :data, :device_id, :read, :products_urls, :from_admin
-  attr_accessor :products_urls, :autoreply
+  attr_accessible :collection_uuid, :gift_gender, :gift_age, :gift_budget, :gift_card
+  attr_accessor :products_urls, :gift_card
 
   def build_push_data
     self.data.map do |url|
@@ -28,7 +29,36 @@ class Message < ActiveRecord::Base
     where(from_admin: false)
   end
 
+  def as_push
+    hash = {
+      type:'Georges',
+      message:self.content,
+      message_id:self.id
+    }    
+    if self.data.present?
+      hash = hash.merge({
+        products:self.build_push_data
+      })
+    elsif self.gift_card
+      hash = hash.merge({
+        survey:'gift'
+      })
+    elsif self.collection_uuid.present?
+      collection = Collection.find_by_uuid(self.collection_uuid)
+      product = collection.collection_items.order(:created_at).first.product
+      hash = hash.merge({
+        collection:{
+          collection_uuid:self.collection_uuid,
+          collection_size:collection.collection_items.count,
+          image_url:product.image_url,
+          image_size:product.image_size
+        }
+      })
+    end
+    hash
+  end
 
+>>>>>>> 8bca5521bbf1e47f69803c4aad2ec972f88789ea
   private
 
   def set_pending_answer
