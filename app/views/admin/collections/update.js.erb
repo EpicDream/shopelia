@@ -3,4 +3,4 @@ var content = $("#message_collection_uuid");
 content.val("<%= escape_javascript(@collection.uuid)%>");
 var link = $("#collection-link");
 link.remove();
-content.after("<%= escape_javascript(link_to("Collection n°" + @collection.uuid , @collection, :target => "_blank", :id => "collection-link")) %>");
+content.after("<%= escape_javascript(render "admin/georges/messages/collection_link") %>");
