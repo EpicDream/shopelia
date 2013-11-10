@@ -1,5 +1,5 @@
 class Admin::Georges::DevicesController < Admin::AdminController
-  before_filter :retrieve_device, :only => :update
+  before_filter :retrieve_device, :only => [:update, :end]
 
   def index
     if params[:device_id].present?
@@ -17,6 +17,10 @@ class Admin::Georges::DevicesController < Admin::AdminController
     respond_to do |format|
       format.js
     end
+  end
+
+  def end
+    @device.update_attributes(pending_answer:false)
   end
 
   private

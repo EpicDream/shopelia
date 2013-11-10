@@ -12,6 +12,9 @@
       %button.btn.btn-success#catalogue-add-shuffle
         %i.icon-plus.icon-white
         shuffle
+      %button.btn.btn-success#catalogue-add-top
+        %i.icon-plus.icon-white
+        top
       %button.btn.btn-success#catalogue-add-urls
         %i.icon-plus.icon-white
         urls
@@ -39,7 +42,11 @@
     monitorCollectionItems();
     window.catalogue = new Catalogue(16, #{@collection.id});
     $("#catalogue-add-shuffle").on("click", function() {
-      $("#catalogue-add-urls-field").val(window.catalogue.shuffle(50));
+      $("#catalogue-add-urls-field").val(window.catalogue.shuffle(20));
+      showAddUrlsModal();
+    });
+    $("#catalogue-add-top").on("click", function() {
+      $("#catalogue-add-urls-field").val(window.catalogue.top(20));
       showAddUrlsModal();
     });
     $("#catalogue-add-urls").on("click", function() {
