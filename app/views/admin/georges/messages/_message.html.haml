@@ -2,7 +2,7 @@
   .chat-message.admin.clearfix{data:{id:"#{message.id}"}}
     = image_tag("admin/georges/messages/logo-georges.png", height: "32", width:"32")
     .chat-message-content.clearfix
-      %span.chat-time
+      %span.chat-time#read_at
         - if message.read_at
           Read #{distance_of_time_in_words_to_now message.read_at} ago
         - else
@@ -10,7 +10,7 @@
       %h5 Georges
       %p
         = message.content
-        %p#gift_card{class:"#{message.gift_budget.present? ? '' : 'display-none'}"}
+        %p#gift_card
           %span.label.label-info#gender= message.gift_gender
           %span.label.label-info#age= message.gift_age
           %span.label.label-info#budget= message.gift_budget

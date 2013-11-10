@@ -1,4 +1,4 @@
-- @devices = Device.where(pending_answer:true)
+- @devices = Device.where(pending_answer:true).order("updated_at desc")
 - @devices_history = Message.joins(:device).order("messages.created_at desc").limit(100).map(&:device).uniq.first(20) - @devices
 #chat-list-users-header
   Waiting for answer
