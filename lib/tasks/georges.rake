@@ -7,7 +7,7 @@ namespace :shopelia do
       Device.where(pending_answer:true,autoreplied:false).each do |device|
         last_message = device.messages.last
         if last_message.created_at.to_i < Time.now.to_i - 60
-          message = Message.new(content:"J'ai bien reçu votre demande, je suis en train de m'en occuper. Je reviens vers vous rapidement. Merci pour votre patience.",device_id:device.id,autoreply:true)
+          message = Message.new(content:"Je m'occupe de votre demande et vous reviens vers vous au plus vite ! Merci de votre patience.",device_id:device.id,autoreply:true)
           Push.send_message message
           device.update_attribute :autoreplied, true
         end
