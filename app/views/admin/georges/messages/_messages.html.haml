@@ -1,4 +1,4 @@
-#live-chat
+#live-chat{"data-device-id" => "#{@device.id}"}
   %header.clearfix
     %h4
       - if @device.user
@@ -33,13 +33,13 @@
     });
     window.channels[channel].bind("card_gift", function(data) {
       id = data["id"];
-      $("[data-id=" + id + "]").find("#gender").html(data["gift_gender"]);
-      $("[data-id=" + id + "]").find("#age").html(data["gift_age"]);
-      $("[data-id=" + id + "]").find("#budget").html(data["gift_budget"]);
+      $("[data-message-id=" + id + "]").find("#gender").html(data["gift_gender"]);
+      $("[data-message-id=" + id + "]").find("#age").html(data["gift_age"]);
+      $("[data-message-id=" + id + "]").find("#budget").html(data["gift_budget"]);
       $(".chat-history").animate({scrollTop: $("#messages").height()}, 200);
     });
     window.channels[channel].bind("read", function(data) {
       id = data["id"];
-      $("[data-id=" + id + "]").find("#read_at").html("Read");
+      $("[data-message-id=" + id + "]").find("#read_at").html("Read");
     });
   }
