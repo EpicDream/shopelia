@@ -5,4 +5,4 @@
     .collection-header-title
       = image_tag @collection.image.url, style:"max-height: 100px;" if @collection.image.present?  
 
-= render "builder"
+= render "builder" , georges: false

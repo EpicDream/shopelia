@@ -1,0 +1,45 @@
+#live-chat
+  %header.clearfix
+    %h4
+      - if @device.user
+        = link_to @device.user.name, admin_user_path(@device.user)
+      - else
+        = link_to "Device #{@device.id}", admin_device_path(@device)
+      = @device.os
+      = @device.version
+    %span.chat-message-counter= @device.messages.from_user.count
+  .chat
+    .chat-history
+      #messages
+        = render partial: "admin/georges/messages/message", collection: @messages
+    = render partial: "admin/georges/messages/form"
+
+:javascript
+  $(".chat-history").animate({
+      scrollTop: $("#messages").height()
+  }, 0);
+  if (window.pusher === undefined) {
+    window.pusher = new Pusher("654ffe989dceb4af5e03");
+    window.channels = [];
+  }
+  channel = "georges-room-#{@device.id}";
+  if (window.channels[channel] === undefined) {
+    window.channels[channel] = window.pusher.subscribe(channel);
+    window.channels[channel].bind("new", function(data) {
+      $.ajax({
+        url: "/admin/georges/devices/#{@device.id}/messages/" + data["id"] + "/append_chat",
+        dataType: "script"
+      });
+    });
+    window.channels[channel].bind("card_gift", function(data) {
+      id = data["id"];
+      $("[data-id=" + id + "]").find("#gender").html(data["gift_gender"]);
+      $("[data-id=" + id + "]").find("#age").html(data["gift_age"]);
+      $("[data-id=" + id + "]").find("#budget").html(data["gift_budget"]);
+      $(".chat-history").animate({scrollTop: $("#messages").height()}, 200);
+    });
+    window.channels[channel].bind("read", function(data) {
+      id = data["id"];
+      $("[data-id=" + id + "]").find("#read_at").html("Read");
+    });
+  }

@@ -3,6 +3,9 @@ class Admin::Georges::MessagesController < Admin::AdminController
 
   def index
     @messages = @device.messages.order(:created_at)
+    respond_to do |format|
+      format.js
+    end
   end
 
   def create
@@ -15,6 +18,20 @@ class Admin::Georges::MessagesController < Admin::AdminController
     else
       
       render :action => 'index'
+    end
+  end
+
+  def collection_builder
+    @collection = Collection.create
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def append_chat
+    @message = Message.find(params[:id])
+    respond_to do |format|
+      format.js
     end
   end
 

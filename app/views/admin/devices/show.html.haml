@@ -33,7 +33,14 @@
         %strong Referrer :
         %br
         = @device.referrer
-      %br
+      - if @device.user.present?
+        %article.coolbox
+          %h3 User
+          = link_to @device.user.name, admin_user_path(@device.user)
+      - if @device.push_token.present?
+        %article.coolbox
+          %h3 Georges
+          = link_to "Chat", admin_georges_devices_path(device_id:@device.id)
     .span9
       %article.coolbox
         %h3 Events
