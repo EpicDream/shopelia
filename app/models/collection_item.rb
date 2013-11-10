@@ -9,9 +9,9 @@ class CollectionItem < ActiveRecord::Base
   attr_accessible :collection_id, :product_id, :url, :feed
   attr_accessor :url, :feed
 
+  before_validation :build_from_feed, if:Proc.new{ |item| item.feed.present? }
   before_validation :check_url_validity, if:Proc.new{ |item| item.url.present? }
   before_validation :find_or_create_product, if:Proc.new{ |item| item.url.present? && item.errors.empty? }
-  before_validation :build_from_feed, if:Proc.new{ |item| item.feed.present? }
   after_create :generate_event
 
   private
@@ -24,7 +24,23 @@ class CollectionItem < ActiveRecord::Base
   end
   
   def build_from_feed
-    
+    if feed[:saturn].to_i == 1
+      self.url = feed[:product_url]
+    else
+      product = Product.fetch(feed[:product_url])
+      version = {}
+      version[:price] = "#{feed[:price].to_f / 100} #{feed[:currency]}"
+      version[:price_shipping] = "#{feed[:price_shipping].to_f / 100} #{feed[:currency]}"
+      version[:description] = feed[:description]
+      version[:name] = feed[:name]
+      version[:brand] = feed[:brand]
+      version[:availability] = "En stock"
+      version[:image_url] = feed[:image_url]
+      product.versions = [ version ]
+      product.options_completed = true
+      product.save
+      self.product_id = product.id
+    end
   end
 
   def find_or_create_product
@@ -37,6 +53,6 @@ class CollectionItem < ActiveRecord::Base
       :product_id => self.product_id,
       :action => Event::REQUEST,
       :tracker => "display-collection"
-    })
+    }) if self.product.merchant.viking_data.present?
   end
 end
