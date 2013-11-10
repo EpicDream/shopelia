@@ -14,6 +14,11 @@ module MerchantHelper
   def self.process_version url, version
     m = self.from_url(url)
     return version unless m.present?
+
+    # Clean up image_url
+    version[:image_url] = "http:#{version[:image_url]}" if version[:image_url] =~ /\A\/\//
+
+    # Process version
     version = m.process_shipping_price(version) if m.respond_to?('process_shipping_price')
     version = m.process_price_shipping(version) if m.respond_to?('process_price_shipping')
     version = m.process_shipping_info(version) if m.respond_to?('process_shipping_info')
