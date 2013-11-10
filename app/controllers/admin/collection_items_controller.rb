@@ -2,12 +2,16 @@ class Admin::CollectionItemsController < Admin::AdminController
   before_filter :retrieve_item, :only => [:show, :destroy]
 
   def create
+    @items = []
     if params[:urls].present?
       collection = Collection.find(params[:collection_id])
-      params[:urls].split(/\r?\n/).each { |url| CollectionItem.create(url:url, collection_id:collection.id) unless url =~ /^https/ }
-      redirect_to edit_admin_collection_path(collection)
+      params[:urls].split(/\r?\n/).each do |url| 
+        item = CollectionItem.new(url:url, collection_id:collection.id) 
+        @items << item if item.save
+      end
     else
-      @item = CollectionItem.create(params[:collection_item])
+      item = CollectionItem.new(params[:collection_item])
+      @items << item if item.save
     end
   end
 

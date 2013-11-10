@@ -4,4 +4,4 @@
 <p>
 <%= @message.content %>
 <p>
-<%= link_to "Répondre", admin_georges_device_messages_url(@message.device) %>
+<%= link_to "Répondre", admin_georges_devices_url(device_id:@message.device.id) %>

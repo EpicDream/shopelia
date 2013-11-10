@@ -101,5 +101,16 @@ class @Catalogue
         added[url] = 1
         urls = urls + url + "\n"
         i++
-    console.log urls
     urls
+
+  top: (size) ->
+    urls = ""
+    max_size = window.catalogueProducts.length
+    if size > max_size
+      size = max_size
+    i = 0
+    while i < size
+      url =  window.catalogueProducts[i]["product_url"]
+      urls = urls + url + "\n"
+      i++
+    urls      

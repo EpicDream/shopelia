@@ -5,8 +5,8 @@
         = link_to @device.user.name, admin_user_path(@device.user)
       - else
         = link_to "Device #{@device.id}", admin_device_path(@device)
-      = @device.os
-      = @device.version
+      = @device.phone
+      = "Shopelia v#{@device.version}"
     %span.chat-message-counter= @device.messages.from_user.count
   .chat
     .chat-history
