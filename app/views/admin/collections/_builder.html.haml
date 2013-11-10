@@ -42,11 +42,11 @@
     monitorCollectionItems();
     window.catalogue = new Catalogue(16, #{@collection.id});
     $("#catalogue-add-shuffle").on("click", function() {
-      $("#catalogue-add-urls-field").val(window.catalogue.shuffle(20));
+      $("#catalogue-add-urls-field").val(window.catalogue.shuffle(50));
       showAddUrlsModal();
     });
     $("#catalogue-add-top").on("click", function() {
-      $("#catalogue-add-urls-field").val(window.catalogue.top(20));
+      $("#catalogue-add-urls-field").val(window.catalogue.top(50));
       showAddUrlsModal();
     });
     $("#catalogue-add-urls").on("click", function() {
