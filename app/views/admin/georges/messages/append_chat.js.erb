@@ -1,8 +1,10 @@
 $("<%= escape_javascript(render @message) %>").appendTo("#messages");
 $(".chat-history").animate({scrollTop: $("#messages").height()}, 200);
-$('#message_form')[0].reset();
-$("#collection-link").remove();
-$("#message_collection_uuid").attr("value", "");
+<% if @message.from_admin? %>
+  $('#message_form')[0].reset();
+  $("#collection-link").remove();
+  $("#message_collection_uuid").attr("value", "");
 
-$('#gift-card-button').removeClass("button-flat-empty-inverse-success");
-$("#message_gift_card").val(0);
+  $('#gift-card-button').removeClass("button-flat-empty-inverse-success");
+  $("#message_gift_card").val(0);
+<% end %>
