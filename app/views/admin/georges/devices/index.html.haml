@@ -2,5 +2,7 @@
   #chat-list-users
     = render "list_users"
   #chat-user
+    - if @device.present?
+      = render "admin/georges/messages/messages"
   #chat-feature
 #collection_to_send
