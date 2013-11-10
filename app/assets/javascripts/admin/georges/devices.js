@@ -11,9 +11,11 @@ $(document).ready(function() {
   }
   lobby = window.pusher.subscribe("georges-lobby")
   lobby.bind("refresh", function(data) {
-    $.ajax({
-      url: "/admin/georges/devices/lobby",
-      dataType: "script"
-    });
+    setTimeout(function() {
+      $.ajax({
+        url: "/admin/georges/devices/lobby",
+        dataType: "script"
+      });      
+    }, 500);
   });
 });
