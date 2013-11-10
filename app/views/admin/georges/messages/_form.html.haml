@@ -10,7 +10,11 @@
     .button-flat-empty
       Add Collection
   = f.hidden_field :gift_card ,{value: 0}
-  #gift-card-button.button-flat-empty Send Gift Card
+  #gift-card-button.button-flat-empty Add survey
+  - if @device.pending_answer?
+    = link_to end_admin_georges_device_path(@device), :remote => true do
+      .button-flat-empty
+        End
   -#.button-flat-empty Noter l'app
 
 :javascript

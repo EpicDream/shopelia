@@ -66,6 +66,7 @@ Shopelia::Application.routes.draw do
       resources :devices do
         match "/messages/check", to: "messages#check"
         get "/messages/collection_builder", to: "messages#collection_builder"
+        get :end, :on => :member
         resources :messages do
           get :append_chat, :on => :member
         end
