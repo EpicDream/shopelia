@@ -110,7 +110,6 @@ class @Catalogue
       size = max_size
     i = 0
     while i < size
-      console.log i
       url =  window.catalogueProducts[i]["product_url"]
       urls = urls + url + "\n"
       i++
