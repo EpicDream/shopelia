@@ -6,7 +6,7 @@
   .spacer20
   %hr
   .spacer20
-  = link_to admin_georges_device_messages_collection_builder_path, :remote => true do
+  = link_to admin_georges_device_messages_collection_builder_path(@device), :remote => true do
     .button-flat-empty
       Add Collection
   = f.hidden_field :gift_card ,{value: 0}

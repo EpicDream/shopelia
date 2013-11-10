@@ -2,9 +2,11 @@
   %header.clearfix
     %h4
       - if @device.user
-        #{@device.user.first_name} #{@device.user.last_name}
+        = link_to @device.user.name, admin_user_path(@device.user)
       - else
-        Device ID : #{@device.id}
+        = link_to "Device #{@device.id}", admin_device_path(@device)
+      = @device.os
+      = @device.version
     %span.chat-message-counter= @device.messages.from_user.count
   .chat
     .chat-history
@@ -13,6 +15,9 @@
     = render partial: "admin/georges/messages/form"
 
 :javascript
+  $(".chat-history").animate({
+      scrollTop: $("#messages").height()
+  }, 0);
   if (window.pusher === undefined) {
     window.pusher = new Pusher("654ffe989dceb4af5e03");
     window.channels = [];
