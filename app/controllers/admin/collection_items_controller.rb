@@ -6,13 +6,8 @@ class Admin::CollectionItemsController < Admin::AdminController
     if params[:urls].present?
       collection = Collection.find(params[:collection_id])
       params[:urls].split(/\r?\n/).each do |url| 
-        logger.error url
         item = CollectionItem.new(url:url, collection_id:collection.id) 
-        if item.save
-          @items << item 
-        else
-          logger.error item.errors.full_messages.inspect
-        end
+        @items << item if item.save
       end
     else
       item = CollectionItem.new(params[:collection_item])
