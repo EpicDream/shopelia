@@ -16,6 +16,6 @@ $(document).ready(function() {
         url: "/admin/georges/devices/lobby",
         dataType: "script"
       });      
-    }, 500);
+    }, 2000);
   });
 });
