@@ -25,7 +25,7 @@ class Api::V1::Georges::MessagesController < Api::V1::BaseController
 
   api :GET, "/api/georges/messages/:id/read", "Mark message as read"
   def read
-    @message.update_attribute :read_at, Time.now
+    @message.update_attributes(read_at:Time.now)
     head :no_content
   end
 

@@ -62,9 +62,13 @@ Shopelia::Application.routes.draw do
       get :mute, :on => :member
     end
     namespace :georges do
+      get "/devices/lobby", to: "devices#lobby"
       resources :devices do
         match "/messages/check", to: "messages#check"
-        resources :messages
+        get "/messages/collection_builder", to: "messages#collection_builder"
+        resources :messages do
+          get :append_chat, :on => :member
+        end
       end
     end
   end

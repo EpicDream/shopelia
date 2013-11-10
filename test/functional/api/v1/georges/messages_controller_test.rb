@@ -26,12 +26,13 @@ class Api::V1::Georges::MessagesControllerTest < ActionController::TestCase
   end
 
   test "it should update message with gift card info" do
-    message = Message.create!(device_id:@device.id, content:"toto")
+    message = Message.create!(device_id:@device.id, content:"toto",from_admin:true)
     put :update, id:message.id, message:{gift_gender:"H", gift_age:"0-7", gift_budget:"50€"}, format: :json
 
     assert_response :success
     assert_equal "H", message.reload.gift_gender
     assert_equal "0-7", message.reload.gift_age
     assert_equal "50€", message.reload.gift_budget
+    assert message.device.pending_answer?
   end
 end

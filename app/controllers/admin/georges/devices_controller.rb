@@ -1,20 +1,20 @@
 class Admin::Georges::DevicesController < Admin::AdminController
+  before_filter :retrieve_device, :only => :update
 
-  def index
+  def update
+    @device.update_attributes(params[:device])
+    redirect_to admin_georges_devices_url
+  end
+
+  def lobby
     respond_to do |format|
-      format.html
-      format.json { render json: ::Georges::DevicesDatatable.new(view_context) }
+      format.js
     end
   end
 
-  def update
-    @device =  Device.find(params[:id])
-    if @device.update_attributes(params[:device])
-      respond_to do |format|
-        format.html {
-          redirect_to admin_georges_devices_url
-        }
-      end
-    end
+  private
+
+  def retrieve_device
+    @device = Device.find(params[:id])
   end
 end

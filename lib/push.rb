@@ -4,7 +4,7 @@ module Push
     return unless message.device.push_token.present?
     if Rails.env.test?
       $push_delivery_count += 1
-    elsif Rails.env.production?
+    else
       GCM.send_notification message.device.push_token, message.as_push
     end
   end
