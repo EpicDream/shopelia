@@ -16,7 +16,7 @@
           %span.label.label-info#budget= message.gift_budget
       %span.chat-time
         - if message.collection_uuid && !message.collection_uuid.empty?
-          = link_to("Collection n° " + message.collection_uuid, Collection.find_by_uuid(message.collection_uuid), target: '_blank' )
+          = link_to("Collection n° " + message.collection_uuid, edit_admin_collection_path(Collection.find_by_uuid(message.collection_uuid)), target: '_blank' )
 
 - else
   .chat-message.clearfix{data:{id:"#{message.id}"}}
