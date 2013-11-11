@@ -19,7 +19,10 @@ class @Catalogue
     $("#catalogue-previous-page").on "click", ->
       that.pageDown()
     $(".catalogue-box").on "click", ->
-      that.addToCollection $(@).data("product-url")
+      if $(@).data("saturn") == "1"
+        that.addToCollection $(@).data("product-url")
+      else
+        that.addToCollectionByFeed $(@).data("feed-json")
 
   dataCallback: (result) ->
     window.cataloguePage = 0
@@ -56,6 +59,8 @@ class @Catalogue
         $("#catalogue-box-name-" + i).html product["name"]
         $("#catalogue-box-merchant-" + i).html product["merchant"]["name"]
         $("#catalogue-box-" + i).data('product-url', product["product_url"])
+        $("#catalogue-box-" + i).data('saturn', product["saturn"])
+        $("#catalogue-box-" + i).data('feed-json', JSON.stringify([product]))
       else
         $("#catalogue-box-" + i).removeClass "display-none"
         $("#catalogue-box-" + i).addClass "display-none"
@@ -86,31 +91,35 @@ class @Catalogue
       dataType: "script"
       type: "post"
       contentType: "application/json"
-      data: JSON.stringify(collection_item:{collection_id: window.collectionId,url: url})        
+      data: JSON.stringify(collection_item:{collection_id: window.collectionId,url: url})
+
+  addToCollectionByFeed: (product) ->
+    $.ajax
+      url: "/admin/collection_items"
+      dataType: "script"
+      type: "post"
+      data: {collection_id: window.collectionId,feed: product}
 
   shuffle: (size) ->
-    urls = ""
+    items = []
     max_size = window.catalogueProducts.length
     if size > max_size
       size = max_size
     added = {}
     i = 0
     while i < size
-      url =  window.catalogueProducts[Math.floor(Math.random() * max_size)]["product_url"]
-      if added[url] == undefined
-        added[url] = 1
-        urls = urls + url + "\n"
+      item = window.catalogueProducts[Math.floor(Math.random() * max_size)]
+      if added[item["product_url"]] == undefined
+        added[item["product_url"]] = 1
+        items.push item
         i++
-    urls
+    items
 
   top: (size) ->
-    urls = ""
+    items = []
     max_size = window.catalogueProducts.length
     if size > max_size
       size = max_size
-    i = 0
-    while i < size
-      url =  window.catalogueProducts[i]["product_url"]
-      urls = urls + url + "\n"
-      i++
-    urls      
+    for i in [0..size] by 1
+      items.push window.catalogueProducts[i]
+    items
