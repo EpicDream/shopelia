@@ -1,5 +1,5 @@
 - if message.from_admin
-  .chat-message.admin.clearfix{data:{id:"#{message.id}"}}
+  .chat-message.admin.clearfix{"data-message-id" => "#{message.id}"}
     = image_tag("admin/georges/messages/logo-georges.png", height: "32", width:"32")
     .chat-message-content.clearfix
       %span.chat-time#read_at
