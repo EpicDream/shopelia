@@ -5,8 +5,12 @@ class PixmaniaFrTest < ActiveSupport::TestCase
 
   setup do
     @version = {}
-    @url = "http://www.pixmania.fr/bridge/nikon-coolpix-p520-noir/21169997-a.html"
+    @url = "http://www.pixmania.fr/coffret-activites-manuelles/joustra-pate-a-sel-creativ-les-animaux-de-la-mer/18997441-a.html#CodePromo=oui&srcid=346&key=Ejx%2BdTcUHhNTUFMsADMNUXdJSHxcRlttaWEVM3NKYEd9fTEHZ2pSUFcpATsMX3hKR3EpLw%3D%3D&merch=22888"
     @helper = PixmaniaFr.new(@url)
+  end
+
+  test "it should canonize" do
+    assert_equal "http://www.pixmania.fr/coffret-activites-manuelles/joustra-pate-a-sel-creativ-les-animaux-de-la-mer/18997441-a.html", @helper.canonize
   end
 
   test "it should find class from url" do
