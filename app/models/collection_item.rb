@@ -40,6 +40,7 @@ class CollectionItem < ActiveRecord::Base
       product.versions = [ version ]
       product.options_completed = true
       product.save
+      product.update_column "versions_expires_at", 1.month.from_now
       self.product_id = product.id
     end
   end

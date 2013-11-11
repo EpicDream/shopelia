@@ -64,6 +64,7 @@ class CollectionItemTest < ActiveSupport::TestCase
     assert_equal 1, product.product_versions.available.count
     assert product.ready?
     assert product.options_completed?
+    assert product.versions_expires_at.to_i > 29.days.from_now.to_i
 
     version = product.product_versions.first
     assert_equal "Barbapapa", version.name
