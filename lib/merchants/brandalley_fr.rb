@@ -1,5 +1,5 @@
 # -*- encoding : utf-8 -*-
-class BrandallayFr
+class BrandalleyFr
   DEFAULT_PRICE_SHIPPING = "4.90 €"
   FREE_SHIPPING_LIMIT = 60.0
 
@@ -11,7 +11,11 @@ class BrandallayFr
   end
 
   def canonize
-    @url
+    if m = @url.match(/&eurl=([^&]+)/)
+      m[1]
+    else
+      nil
+    end
   end
 
   def process_price_shipping version
