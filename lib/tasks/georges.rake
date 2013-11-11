@@ -42,5 +42,17 @@ namespace :shopelia do
       end
       puts "Sent #{count} Amazon 10€ vouchers"
     end
+
+    desc "Reminder for all holders of 10€ Amazon gift"
+    task :welcome_gift_reminder => :environment do
+      amazon = Merchant.find_by_domain("amazon.fr")
+      shopelia = Developer.find_by_name("Shopelia")
+      CashfrontRule.where(merchant_id:amazon.id,developer_id:shopelia.id).where("device_id is not null").each do |rule|
+        next if rule.created_at.to_i > 3.days.ago.to_i 
+        next if rule.device.user && rule.device.user.orders.completed.count > 0
+        message = Message.new(content:"Bonjour :) Votre chèque cadeau de 10€ sur la boutique Amazon vous attend toujours. C'est le moment d'en profiter !",device_id:rule.device.id)
+        Push.send_message message
+      end
+    end
   end
 end
