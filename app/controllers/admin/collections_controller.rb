@@ -1,8 +1,8 @@
 class Admin::CollectionsController < Admin::AdminController
-  before_filter :retrieve_collection, :only => [:show, :edit, :update]
+  before_filter :retrieve_collection, :only => [:show, :edit, :update, :up, :down]
 
   def index
-    @collections = Collection.where("collections.name is not null").order("created_at")
+    @collections = Collection.where("length(collections.name) > 0").order("rank asc, created_at")
     @tags = @collections.joins(:tags).map(&:tags).map{|t| t.first.name}.uniq
   end
 
@@ -19,6 +19,16 @@ class Admin::CollectionsController < Admin::AdminController
         format.html {redirect_to edit_admin_collection_url(@collection)}
         format.js
       end
+  end
+
+  def up
+    @collection.update_attributes(rank:(@collection.rank - 1))
+    redirect_to admin_collections_path
+  end
+
+  def down
+    @collection.update_attributes(rank:(@collection.rank + 1))
+    redirect_to admin_collections_path
   end
 
   private

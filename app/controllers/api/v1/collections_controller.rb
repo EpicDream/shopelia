@@ -7,7 +7,7 @@ class Api::V1::CollectionsController < Api::V1::BaseController
 
   api :GET, "/collections", "Get all collections by tags"
   def index
-    render json: @collections.sort_by(&:created_at).map{ |c| CollectionSerializer.new(c, scope:@scope).as_json[:collection] }
+    render json: @collections.sort_by{|h| [h.rank,h.created_at]}.map{ |c| CollectionSerializer.new(c, scope:@scope).as_json[:collection] }
   end
 
   api :GET, "/collections/:uuid", "Get collection's product"

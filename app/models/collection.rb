@@ -8,12 +8,13 @@ class Collection < ActiveRecord::Base
   validates :uuid, :presence => true, :uniqueness => true
 
   before_validation :generate_uuid
+  before_validation :generate_rank
   after_save :set_home_tag
 
   has_attached_file :image, :url => "/images/collections/:id/img.jpg", :path => "#{Rails.public_path}/images/collections/:id/img.jpg"
   after_post_process :save_image_dimensions
 
-  attr_accessible :description, :name, :user_id, :public, :image
+  attr_accessible :description, :name, :user_id, :public, :image, :rank
 
   scope :public, where(public:true)
 
@@ -34,6 +35,10 @@ class Collection < ActiveRecord::Base
 
   def generate_uuid
     self.uuid = SecureRandom.hex(4) if self.uuid.nil?
+  end
+
+  def generate_rank
+    self.rank = 1 if self.public? && self.rank.nil?
   end
 
   def save_image_dimensions

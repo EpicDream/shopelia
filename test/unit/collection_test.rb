@@ -26,6 +26,13 @@ class CollectionsTest < ActiveSupport::TestCase
     assert_equal "description", collection.description
   end
 
+  test "it should set rank when public" do
+    @collection.public = true
+    @collection.save
+
+    assert_equal 1, @collection.rank
+  end
+
   test "it should associate with products" do
     assert_equal 2, @collection.products.count
   end

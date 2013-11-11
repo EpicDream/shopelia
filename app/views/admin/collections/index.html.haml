@@ -25,6 +25,7 @@
         %table.table.table-striped#collections
           %thead
             %tr
+              %th Rank
               %th Name
               %th Cover
               %th Tags
@@ -32,7 +33,13 @@
           %tbody
             - @collections.each do |collection|
               %tr
-                %td= link_to collection.name || collection.uuid, admin_collection_path(collection)
+                %td
+                  %a.btn.btn-info.collection-up{href:"#{up_admin_collection_path(collection)}"}
+                    %i.icon-arrow-up.icon-white
+                  %strong= collection.rank
+                  %a.btn.btn-info.collection-down{href:"#{down_admin_collection_path(collection)}"}
+                    %i.icon-arrow-down.icon-white
+                %td= link_to (collection.name.blank? ? collection.uuid : collection.name), admin_collection_path(collection)
                 %td= collection.image.present? ? image_tag(collection.image.url, style:"max-width:300px;") : ""
                 %td
                   - collection.tags.map(&:name).each do |tag|
