@@ -34,6 +34,7 @@ class CollectionItem < ActiveRecord::Base
       version[:description] = feed[:description]
       version[:name] = feed[:name]
       version[:brand] = feed[:brand]
+      version[:shipping_info] = feed[:shipping_info]
       version[:availability] = "En stock"
       version[:image_url] = feed[:image_url]
       product.versions = [ version ]

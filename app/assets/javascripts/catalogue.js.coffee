@@ -19,7 +19,10 @@ class @Catalogue
     $("#catalogue-previous-page").on "click", ->
       that.pageDown()
     $(".catalogue-box").on "click", ->
-      that.addToCollection $(@).data("product-url")
+      if $(@).data("saturn") == "1"
+        that.addToCollection $(@).data("product-url")
+      else
+        that.addToCollectionByFeed $(@).data("feed-json")
 
   dataCallback: (result) ->
     window.cataloguePage = 0
@@ -56,6 +59,8 @@ class @Catalogue
         $("#catalogue-box-name-" + i).html product["name"]
         $("#catalogue-box-merchant-" + i).html product["merchant"]["name"]
         $("#catalogue-box-" + i).data('product-url', product["product_url"])
+        $("#catalogue-box-" + i).data('saturn', product["saturn"])
+        $("#catalogue-box-" + i).data('feed-json', JSON.stringify([product]))
       else
         $("#catalogue-box-" + i).removeClass "display-none"
         $("#catalogue-box-" + i).addClass "display-none"
@@ -86,7 +91,14 @@ class @Catalogue
       dataType: "script"
       type: "post"
       contentType: "application/json"
-      data: JSON.stringify(collection_item:{collection_id: window.collectionId,url: url})        
+      data: JSON.stringify(collection_item:{collection_id: window.collectionId,url: url})
+
+  addToCollectionByFeed: (product) ->
+    $.ajax
+      url: "/admin/collection_items"
+      dataType: "script"
+      type: "post"
+      data: {collection_id: window.collectionId,feed: product}
 
   shuffle: (size) ->
     items = []

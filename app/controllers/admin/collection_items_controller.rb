@@ -3,10 +3,15 @@ class Admin::CollectionItemsController < Admin::AdminController
 
   def create
     @items = []
+    collection = Collection.find(params[:collection_id]) if params[:collection_id].present?
     if params[:urls].present?
-      collection = Collection.find(params[:collection_id])
       params[:urls].split(/\r?\n/).each do |url| 
         item = CollectionItem.new(url:url, collection_id:collection.id) 
+        @items << item if item.save
+      end
+    elsif params[:feed].present?
+      JSON.parse(params[:feed]).each do |feed|
+        item = CollectionItem.new(feed:feed.symbolize_keys, collection_id:collection.id) 
         @items << item if item.save
       end
     else

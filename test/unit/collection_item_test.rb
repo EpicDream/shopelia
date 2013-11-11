@@ -72,7 +72,8 @@ class CollectionItemTest < ActiveSupport::TestCase
     assert_equal "<p>Pages: 10, Album, Les Livres du Dragon d'Or</p>", version.description
     assert_equal 4.28, version.price
     assert_equal 0, version.price_shipping
-    assert_equal "En stock", version.shipping_info
+    assert_equal "ok", version.shipping_info
+    assert_equal "En stock", version.availability_info
   end
 
   def example_feed
@@ -83,6 +84,7 @@ class CollectionItemTest < ActiveSupport::TestCase
       product_url:"http://www.amazon.fr/dp/2821201710",
       price:428,
       price_shipping:0,
+      shipping_info:"ok",
       image_url:"http://ecx.images-amazon.com/images/I/41VYewm9YrL.jpg",
       saturn:"1"
    }
