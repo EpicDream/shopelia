@@ -44,8 +44,10 @@ end
 
 require_relative 'file_utils'
 require_relative 'xml_parser'
+require_relative 'tagger'
 require_relative 'price_minister'
 require_relative 'tradedoubler'
 require_relative 'zanox'
 require_relative 'amazon'
+require_relative 'webgains'
 

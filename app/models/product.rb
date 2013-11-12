@@ -81,7 +81,7 @@ class Product < ActiveRecord::Base
   end
 
   def price
-    version = self.product_versions.available.first
+    version = self.product_versions.available.order("price_shipping + price").first
     version ? (version.price + version.price_shipping).to_f.round(2) : nil
   end
 
@@ -175,7 +175,7 @@ class Product < ActiveRecord::Base
         self.update_column "reference", version.reference
         self.update_column "image_url", version.image_url
         self.update_column "description", version.description
-        set_image_size if version.image_url != old_image_url && self.image_size.blank?
+        set_image_size if version.image_url =~ /\Ahttp/ && self.image_size.blank?
       end
       self.update_column "versions_expires_at", Product.versions_expiration_date
       self.reload

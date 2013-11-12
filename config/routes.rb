@@ -46,6 +46,11 @@ Shopelia::Application.routes.draw do
 
   namespace :admin do
     match "/", to: "dashboard#index"
+    resources :collections do
+      get :up, :on => :member
+      get :down, :on => :member
+    end
+    resources :collection_items
     resources :dashboard, :only => :index
     resources :developers, :only => [:index, :new, :create]
     resources :devices, :only => :show
@@ -60,9 +65,14 @@ Shopelia::Application.routes.draw do
       get :mute, :on => :member
     end
     namespace :georges do
+      get "/devices/lobby", to: "devices#lobby"
       resources :devices do
         match "/messages/check", to: "messages#check"
-        resources :messages
+        get "/messages/collection_builder", to: "messages#collection_builder"
+        get :end, :on => :member
+        resources :messages do
+          get :append_chat, :on => :member
+        end
       end
     end
   end
@@ -114,7 +124,7 @@ Shopelia::Application.routes.draw do
         resources :verify, :only => :create
       end
       namespace :georges do
-        resources :messages, :only => :create do
+        resources :messages, :only => [:create, :update] do
           get :read, :on => :member
         end
       end

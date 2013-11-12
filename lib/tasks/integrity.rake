@@ -40,5 +40,16 @@ namespace :shopelia do
       end
     end
 
+    desc "Cleanup of unused and expired objects"
+    task :cleanup => :environment do
+      Event.where(action:Event::REQUEST).where("created_at < ?", 1.day.ago).delete_all
+      Collection.where("name is null or length(name) = 0").where("created_at < ?", 1.month.ago).destroy_all
+      Collection.where("name is null or length(name) = 0").where("created_at < ?", 1.day.ago).each do |collection|
+        collection.destroy if collection.collection_items.count == 0
+      end
+      Merchant.where("name=domain").each do |merchant|
+        merchant.destroy if merchant.events.count == 0
+      end
+    end
   end
 end

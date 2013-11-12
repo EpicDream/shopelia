@@ -11,6 +11,10 @@ class PixmaniaFr
     @url = url
   end
 
+  def canonize
+    @url.gsub(/#.*\Z/, "")
+  end
+
   def process_price_shipping version
     version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank? || version[:price_shipping_text] =~ /Modes de livraison/i
     version

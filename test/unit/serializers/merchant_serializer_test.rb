@@ -19,7 +19,13 @@ class MerchantSerializerTest < ActiveSupport::TestCase
     assert_equal @merchant.domain, hash[:merchant][:domain]
     assert_equal 1, hash[:merchant][:accepting_orders]
     assert_equal 1, hash[:merchant][:allow_quantities]
+    assert_equal 0, hash[:merchant][:saturn]
   end
 
-end
+  test "it should set saturn" do
+    merchant_serializer = MerchantSerializer.new(merchants(:amazon))
+    hash = merchant_serializer.as_json
 
+    assert_equal 1, hash[:merchant][:saturn]
+  end
+end

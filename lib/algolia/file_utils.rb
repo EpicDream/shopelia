@@ -56,6 +56,8 @@ module AlgoliaFeed
         end
 
         h = Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https')
+				h.read_timeout = 600
+				h.continue_timeout = 600
         req = Net::HTTP::Get.new uri.request_uri
         res = h.request req
   
@@ -146,7 +148,7 @@ module AlgoliaFeed
       algolia = AlgoliaFeed.new(debug: self.debug)
       algolia.connect(algolia.index_name)
       algolia.set_index_attributes
-      XmlParser.new.redis.del('algolia_tags')
+      Tagger.clear_redis
       dir = self.tmpdir unless dir.present?
       trap('CLD') {
         free_children += 1
