@@ -1,6 +1,10 @@
 @import "collection_builder.css.scss";
 @import "variables.css.scss";
 
+* {
+  margin: 0;
+}
+
 html, body { height: 100%; }
 
 body {
@@ -11,8 +15,8 @@ body {
 }
 
 #chatroom {
-  position: absolute; top: 50px; width:100%;
-  border: 1px solid #d3d3d3;
+  position: absolute;
+  width:100%;
   min-height: 100%;
   width: 100%;
   min-width: 1200px;
@@ -197,6 +201,9 @@ p { margin: 0; }
   width: 28px;
 }
 
+#message_form {
+  margin-bottom: 0;
+}
 
 #message_form > textarea {
   width: 100%;
@@ -207,9 +214,9 @@ p { margin: 0; }
 }
 
 .chat-history {
-  height: 400px;
   overflow-y: scroll;
 }
+
 
 .chat-message {
   padding-top: 16px;
