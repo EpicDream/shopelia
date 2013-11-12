@@ -9,8 +9,23 @@ class BrandalleyFrTest < ActiveSupport::TestCase
     @helper = BrandalleyFr.new(@url)
   end
 
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(BrandalleyFr)
+  end
+
   test "it should canonize" do
     assert_equal "http://www.brandalley.fr/fiche-Produit/Rayon-1177913", @helper.canonize
+  end
+
+  test "it should process availability" do
+    text = "Indisponible"
+    @version[:availability_text] = text
+    @version = @helper.process_availability(@version)
+    assert_equal text, @version[:availability_text]
+
+    @version[:availability_text] = "taille selectionnee : 38 - plus que 3"
+    @version = @helper.process_availability(@version)
+    assert_equal "plus que 3", @version[:availability_text]
   end
 
   test "it should process price_shipping if empty" do
