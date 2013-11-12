@@ -1,7 +1,9 @@
 module Scrapers
   module Reviews
-    class Syncronizer
-      def self.synchronize reviews
+    class Synchronizer
+      def self.synchronize review
+        review = ProductReview.new(review)
+        review.save
       end
     end
   end
