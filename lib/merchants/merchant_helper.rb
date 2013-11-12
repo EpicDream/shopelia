@@ -68,6 +68,17 @@ module MerchantHelper
     end
   end
 
+  def self.parse_rating str
+    if str =~ /^\d([,\.]\d)?$/
+      $~[0].to_f
+    elsif str =~ %r{(\d(?:[,\.]\d)?) ?/ ?\d}
+      $~[1].to_f
+    elsif str =~ /^(\d[,\.]\d) .toiles sur 5/ # Amazon
+      $~[1].to_f
+    else
+      nil
+    end
+  end
 
   private
 

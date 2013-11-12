@@ -13,4 +13,20 @@ class MerchantHelperTest < ActiveSupport::TestCase
 
     assert_equal "http://amazon.fr/image.jpg", @version[:image_url]
   end
+
+  test "it should parse_rating" do
+    array = [ "4", "4.0", "4/5", "4.0/5", "(4.0/5)",
+      "4 / 5", "4.0 / 5", "(4.0 / 5)",
+      "4.0 étoiles sur 5"]
+    array.each do |str|
+      assert_equal 4.0, MerchantHelper.parse_rating(str)
+    end
+
+    array = [ "3.5", "3.5/5", "(3.5/5)",
+      "3.5 / 5", "(3.5 / 5)",
+      "3.5 étoiles sur 5"]
+    array.each do |str|
+      assert_equal 3.5, MerchantHelper.parse_rating(str)
+    end
+  end
 end
