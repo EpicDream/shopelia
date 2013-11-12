@@ -20,7 +20,7 @@ class BrandalleyFr
   end
 
   def process_availability version
-    version[:availability_text] = $~[1] if version[:availability_text] =~ /^taille selectionnee : .+? - (.*)$/
+    version[:availability_text] = $~[1] if version[:availability_text] =~ /^taille (?:selectionnee : .+?|unique) - (.*)$/
     version
   end
 

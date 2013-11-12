@@ -26,6 +26,10 @@ class BrandalleyFrTest < ActiveSupport::TestCase
     @version[:availability_text] = "taille selectionnee : 38 - plus que 3"
     @version = @helper.process_availability(@version)
     assert_equal "plus que 3", @version[:availability_text]
+
+    @version[:availability_text] = "taille unique - plus que 4"
+    @version = @helper.process_availability(@version)
+    assert_equal "plus que 4", @version[:availability_text]
   end
 
   test "it should process price_shipping if empty" do
