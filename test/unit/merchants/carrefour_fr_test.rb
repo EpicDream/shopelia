@@ -9,6 +9,10 @@ class CarrefourFrTest < ActiveSupport::TestCase
     @helper = CarrefourFr.new(@url)
   end
 
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(CarrefourFr)
+  end
+
   test "it should canonize" do
     assert_equal "http://online.carrefour.fr/electromenager-multimedia/hp/cartouche-encre-n-342-couleur_a00000318_frfr.html", @helper.canonize
   end

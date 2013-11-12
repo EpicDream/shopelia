@@ -290,8 +290,8 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
     $(pathOkBtn).click(panel.onPathOkBtnClicked);
 
     chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
-      cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
       if (! hash.mappings[cUrl]) return;
+      cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
       var hosts = Object.keys(hash.mappings[cUrl].data.viking),
           i;
       for (i in hosts)

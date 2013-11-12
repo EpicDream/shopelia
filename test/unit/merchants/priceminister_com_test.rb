@@ -9,6 +9,10 @@ class PriceministerComTest < ActiveSupport::TestCase
     @helper = PriceministerCom.new(@url)
   end
 
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(PriceministerCom)
+  end
+
   test "it should monetize" do
     assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=http%3A%2F%2Fwww.priceminister.com%2Foffer%2Fbuy%2F103220572", @helper.monetize
   end
