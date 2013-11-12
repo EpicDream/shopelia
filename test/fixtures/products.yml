@@ -52,3 +52,14 @@ tamaris:
   url: "http://www.zalando.fr/fr/tetris/2-lampe-tetris-modulable-5032331032486.html"
   image_url: "http://www.zalando.fr/1244-large_choco/lampe-tetris-modulable.jpg"
   viking_failure: false
+
+game_of_throne:
+  name: "Game of thrones"
+  merchant: amazon
+  url: http://www.amazon.fr/Game-Thrones-Le-Tr%C3%B4ne-Fer/dp/B00AAZ9F6K
+  image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
+  description: "Description"
+  brand: "brand"
+  reference: "reference"
+  viking_failure: false
+  options_completed: true

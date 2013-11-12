@@ -89,6 +89,7 @@ group :test do
   gem "simplecov", :require => false
   gem "codeclimate-test-reporter"
   gem "capybara"
+  gem "mocha", :require => false
 end
 
 group :assets do
