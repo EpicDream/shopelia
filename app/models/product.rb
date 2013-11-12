@@ -10,6 +10,7 @@ class Product < ActiveRecord::Base
   has_and_belongs_to_many :developers, :uniq => true
   has_many :collection_items
   has_many :collections, :through => :collection_items
+  has_many :product_reviews
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true

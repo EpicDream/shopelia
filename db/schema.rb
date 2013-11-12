@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131108153220) do
+ActiveRecord::Schema.define(:version => 20131112102011) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -23,8 +23,8 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.integer  "state_id"
     t.integer  "country_id"
     t.boolean  "is_default"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "company"
     t.string   "access_info"
     t.string   "phone"
@@ -145,15 +145,15 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
   create_table "countries", :force => true do |t|
     t.string   "iso"
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "developers", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "email",                  :default => "", :null => false
     t.string   "encrypted_password",     :default => "", :null => false
     t.string   "reset_password_token"
@@ -203,8 +203,8 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
   create_table "email_redirections", :force => true do |t|
     t.string   "user_name"
     t.string   "destination"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "events", :force => true do |t|
@@ -236,8 +236,8 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.string   "login"
     t.string   "password"
     t.boolean  "is_default"
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.boolean  "merchant_created", :default => false
     t.integer  "address_id"
   end
@@ -247,8 +247,8 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.string   "logo"
     t.string   "url"
     t.string   "tc_url"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "vendor"
     t.boolean  "accepting_orders",    :default => false
     t.string   "billing_solution"
@@ -292,8 +292,8 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.integer  "order_id"
     t.integer  "quantity",           :default => 1
     t.float    "price",              :default => 0.0
-    t.datetime "created_at",                          :null => false
-    t.datetime "updated_at",                          :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "product_version_id"
   end
 
@@ -303,8 +303,8 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.string   "uuid"
     t.string   "state_name"
     t.text     "message"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "retry_count"
@@ -337,8 +337,8 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.string   "exp_month"
     t.string   "exp_year"
     t.string   "cvv"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.integer  "mangopay_id"
     t.text     "crypted"
   end
@@ -357,6 +357,16 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
   create_table "product_masters", :force => true do |t|
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "product_reviews", :force => true do |t|
+    t.integer  "product_id"
+    t.integer  "rating"
+    t.string   "author"
+    t.text     "content"
+    t.date     "published_at"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "product_versions", :force => true do |t|
@@ -390,8 +400,8 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.integer  "merchant_id"
     t.text     "url"
     t.text     "image_url"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
@@ -418,14 +428,14 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.string   "iso"
     t.string   "name"
     t.integer  "country_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "statuses", :force => true do |t|
     t.integer  "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "tags", :force => true do |t|
@@ -487,8 +497,8 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.integer  "failed_attempts",        :default => 0
     t.datetime "locked_at"
     t.string   "authentication_token"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "first_name"
     t.string   "last_name"
     t.integer  "civility"
