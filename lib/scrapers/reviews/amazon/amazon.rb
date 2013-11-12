@@ -23,7 +23,15 @@ module Scrapers
       
         def run
           PAGES.each do |index|
-            Reviews::Syncronizer.synchronize reviews_of_page(index)
+            reviews = reviews_of_page(index)
+            break if reviews.none?
+            reviews.each do |review|
+              begin
+                Scrapers::Reviews::Synchronizer.synchronize review.to_hash
+              rescue => e
+                report_incident_at_page(index)
+              end
+            end
           end
         end
 
@@ -38,6 +46,15 @@ module Scrapers
         end
       
         private
+        
+        def report_incident_at_page index
+          Incident.create(
+            :issue => "Amazon reviews scraper",
+            :severity => Incident::INFORMATIVE,
+            :description => "url : #{reviews_url(index)}",
+            :resource_type => 'Product',
+            :resource_id => @product.id)
+        end
       
         def asin url
           url[/[^\/]+$/]
