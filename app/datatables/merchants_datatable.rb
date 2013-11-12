@@ -31,7 +31,8 @@ class MerchantsDatatable
         raw("#{number_with_delimiter(orders)} <div class='rate'>#{conversion_rate(orders, clicks)}</div>"),
         number_to_currency(merchant.orders.completed.sum(:billed_price_total)),
         merchant.vendor,
-        semaphore(merchant.vulcain_test_pass)
+        semaphore(merchant.vulcain_test_pass),
+        semaphore(merchant.viking_data.present?)
       ]
     end
   end
@@ -41,7 +42,9 @@ class MerchantsDatatable
   end
 
   def fetch_merchants
-    merchants = Merchant.where("vendor is #{@filters[:vulcain] == 1 ? "not" : ""} null").order(:id)
+    merchants = Merchant.scoped
+    merchants = merchants.where("vendor is #{@filters[:vulcain] == 'with' ? "not" : ""} null").order(:id) if @filters[:vulcain].present?
+    merchants = merchants.where("viking_data is #{@filters[:saturn] == 'with' ? "not" : ""} null").order(:id) if @filters[:saturn].present?
     merchants = merchants.where("name like :search or vendor like :search or url like :search", search: "%#{params[:sSearch]}%") if params[:sSearch].present?
     merchants.page(page).per_page(per_page)
   end

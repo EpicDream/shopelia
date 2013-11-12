@@ -11,7 +11,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   map.MAPPING_URL = map.SHOPELIA_DOMAIN + "/api/viking/merchants";
 
   map.FIELDS = [
-    'name', 'brand', 'description', 'price', 'price_strikeout', 'price_shipping', 'shipping_info', 'availability', 'image_url', 'images', 'rank'
+    'name', 'brand', 'description', 'price', 'price_strikeout', 'price_shipping', 'shipping_info', 'availability', 'image_url', 'images', 'rating'
   ];
   map.MANDATORY_FIELDS = [
     'name', 'price', 'price_shipping', 'availability'
