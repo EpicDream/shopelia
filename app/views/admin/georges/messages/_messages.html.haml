@@ -1,5 +1,5 @@
 #live-chat{"data-device-id" => "#{@device.id}"}
-  %header.clearfix
+  %header.clearfix#chat-header
     %h4
       - if @device.user
         = link_to @device.user.name, admin_user_path(@device.user)
