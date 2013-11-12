@@ -52,6 +52,10 @@ module AlgoliaFeed
         record['image_url'].gsub!(/150x150\.jpg/, '300x300.jpg')
       end
 
+      if record['merchant_name'] == 'Pixmania'
+        record['image_url'].gsub!(/\/s_/, '/l_')
+      end
+
       record
     end
 
