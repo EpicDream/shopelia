@@ -1,7 +1,7 @@
 class PriceministerCom
 
   AVAILABILITY_HASH = {
-    "[\d\s]+ r.sultats?" => false, # Redirection vers recherche quand trouve pas.
+    "[\d\s]+ resultats" => false, # Redirection vers recherche quand trouve pas.
   }
 
   def initialize url

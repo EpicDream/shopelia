@@ -4,7 +4,13 @@ require 'test_helper'
 class EveiletjeuxComTest < ActiveSupport::TestCase
 
   setup do
-    @helper = EveiletjeuxCom.new("http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367")
+    @version = {}
+    @url = "http://www.eveiletjeux.com/bac-a-sable-pop-up/produit/306367"
+    @helper = EveiletjeuxCom.new(@url)
+  end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(EveiletjeuxCom)
   end
 
   test "it should monetize" do

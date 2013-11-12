@@ -9,6 +9,10 @@ class SuissesFrTest < ActiveSupport::TestCase
     @helper = SuissesFr.new(@url)
   end
 
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(SuissesFr)
+  end
+
   test "it should canonize" do
     assert_equal "http://www.3suisses.fr/ballerines-tennis-ruban-satin-femme-R20001364", @helper.canonize
   end

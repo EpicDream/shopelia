@@ -5,7 +5,12 @@ class EtsyComTest < ActiveSupport::TestCase
 
   setup do
     @version = {}
-    @helper = EtsyCom.new("http://www.etsy.com/fr/listing/151377819/childrens-teal-infinity-scarf-knit-kids?ref=hp_so_tr_10")
+    @url = "http://www.etsy.com/fr/listing/151377819/childrens-teal-infinity-scarf-knit-kids?ref=hp_so_tr_10"
+    @helper = EtsyCom.new(@url)
+  end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(EtsyCom)
   end
 
   test "it should process shipping price (1)" do

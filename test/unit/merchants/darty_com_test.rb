@@ -4,7 +4,13 @@ require 'test_helper'
 class DartyComTest < ActiveSupport::TestCase
 
   setup do
-    @helper = DartyCom.new("http://www.darty.com/nav/achat/gros_electromenager/refrigerateur_congelateur-refrigerateur-cong/refrigerateur_congelateur_bas/samsung_rl56gsbsw.html?bla")
+    @version = {}
+    @url = "http://www.darty.com/nav/achat/gros_electromenager/refrigerateur_congelateur-refrigerateur-cong/refrigerateur_congelateur_bas/samsung_rl56gsbsw.html?bla"
+    @helper = DartyCom.new(@url)
+  end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(DartyCom)
   end
 
   test "it should monetize" do
