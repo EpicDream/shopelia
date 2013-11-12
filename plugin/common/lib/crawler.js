@@ -203,7 +203,7 @@ Crawler.searchField = function (field, paths, doc) {
 //
 Crawler.parseImage = function (elems) {
   return elems.toArray().map(function (img) {
-    return img.getAttribute("src");
+    return img.src || img.getAttribute("src");
   }).unique();
 };
 
