@@ -213,6 +213,21 @@ class ProductVersionTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test "it should parse rating" do
+    assert_difference "Incident.count", 0 do
+      version = ProductVersion.create(
+        product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        rating_text: "(4.1/5)",
+        name:"toto",
+        availability_text:"En stock")
+      assert_equal 4.1, version.rating
+    end
+  end
   
   test "it should search availability in MerchantHelper" do
     str = "Prête à décorer votre intérieur !"

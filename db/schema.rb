@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131108153220) do
+ActiveRecord::Schema.define(:version => 20131112112409) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -383,6 +383,7 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.string   "option2_md5"
     t.string   "option3_md5"
     t.string   "option4_md5"
+    t.float    "rating"
   end
 
   create_table "products", :force => true do |t|
@@ -402,6 +403,7 @@ ActiveRecord::Schema.define(:version => 20131108153220) do
     t.boolean  "options_completed",   :default => false
     t.datetime "viking_sent_at"
     t.string   "image_size"
+    t.float    "rating"
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true

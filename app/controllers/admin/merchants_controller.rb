@@ -43,7 +43,8 @@ class Admin::MerchantsController < Admin::AdminController
 
   def prepare_filters
     @filters = {
-      :vulcain => params[:vulcain].to_i
+      :vulcain => params[:vulcain],
+      :saturn => params[:saturn]
     }
   end  
 end

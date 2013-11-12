@@ -10,11 +10,11 @@ class ProductVersion < ActiveRecord::Base
   validates :product, :presence => true
   
   attr_accessible :description, :price, :price_shipping
-  attr_accessible :price_strikeout, :product_id, :shipping_info, :available
+  attr_accessible :price_strikeout, :product_id, :shipping_info, :available, :rating
   attr_accessible :image_url, :brand, :name, :available, :reference
-  attr_accessible :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
+  attr_accessible :availability_text, :rating_text, :price_text, :price_shipping_text, :price_strikeout_text
   attr_accessible :option1, :option2, :option3, :option4
-  attr_accessor :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
+  attr_accessor :availability_text, :rating_text, :price_text, :price_shipping_text, :price_strikeout_text
 
   alias_attribute :size, :option1
   alias_attribute :color, :option2
@@ -24,6 +24,7 @@ class ProductVersion < ActiveRecord::Base
   before_validation :parse_price_shipping, :if => Proc.new { |v| v.price_shipping_text.present? }
   before_validation :parse_price_strikeout, :if => Proc.new { |v| v.price_strikeout_text.present? }
   before_validation :parse_available, :if => Proc.new { |v| v.availability_text.present? }
+  before_validation :parse_rating, :if => Proc.new { |v| v.rating_text.present? }
   before_validation :sanitize_description, :if => Proc.new { |v| v.description.present? }
   before_validation :crop_shipping_info
   before_validation :prepare_options
@@ -153,6 +154,11 @@ class ProductVersion < ActiveRecord::Base
     end
     generate_incident "Cannot parse availability : #{a}" if key.nil?
     self.available = key.nil? ? true : dic[key]
+    true
+  end
+
+  def parse_rating
+    self.rating = MerchantHelper.parse_rating(self.rating_text)
     true
   end
   

@@ -15,6 +15,7 @@ var Index = {
       "sAjaxSource": $('#merchants').data('source'),
       "fnServerData": function ( sSource, aoData, fnCallback ) {
         aoData.push( { "name":"vulcain", "value":$('#vulcainFilter').val() } );
+        aoData.push( { "name":"saturn", "value":$('#saturnFilter').val() } );
         $.getJSON( sSource, aoData, function (json) { 
           fnCallback(json)
         } );
