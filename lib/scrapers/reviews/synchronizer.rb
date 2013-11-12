@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 module Scrapers
   module Reviews
     class Synchronizer
