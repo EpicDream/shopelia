@@ -13,6 +13,11 @@ module Scrapers
           {rank:rank, author:author, content:content, product_id:@product_id}
         end
         
+        def date
+          text = @html.search(".//nobr[1]").text
+          Date.parse(text)
+        end
+        
         def rank
           text = @html.search(".swSprite").text
           text.match(/(\d\.0)\s+étoiles/).captures.first.to_i

@@ -25,6 +25,7 @@ class AmazonTest < ActiveSupport::TestCase
     assert_equal 10, reviews.count
     assert_equal 'A1NKS428YJSR4K', review.author
     assert_equal 5, review.rank
+    assert_equal Date.parse("5 novembre 2013"), review.date
     assert_equal expected_content, review.content
   end
   
