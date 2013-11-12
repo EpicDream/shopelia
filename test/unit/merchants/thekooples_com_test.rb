@@ -9,6 +9,10 @@ class ThekooplesComTest < ActiveSupport::TestCase
     @helper = ThekooplesCom.new(@url)
   end
 
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(ThekooplesCom)
+  end
+
   test "it should process availability" do
     @version[:availability_text] = "Ooops !!!"
     @version = @helper.process_availability(@version)
