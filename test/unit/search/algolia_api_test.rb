@@ -9,4 +9,9 @@ class Search::AlgoliaApiTest < ActiveSupport::TestCase
     assert_match /http/, result[:image_url]
     assert_match /http/, result[:urls].first
   end
+
+  test "it should set brand" do
+    result = Search::AlgoliaApi.ean("5051889363910")
+    assert_match /warner/, result[:brand].downcase
+  end
 end
