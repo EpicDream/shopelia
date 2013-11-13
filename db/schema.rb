@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131113155606) do
+ActiveRecord::Schema.define(:version => 20131113172131) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -196,6 +196,7 @@ ActiveRecord::Schema.define(:version => 20131113155606) do
     t.string   "version"
     t.boolean  "pending_answer"
     t.boolean  "autoreplied",    :default => false
+    t.boolean  "is_dev"
   end
 
   add_index "devices", ["uuid"], :name => "index_devices_on_uuid"
