@@ -17,6 +17,10 @@ class PixmaniaFrTest < ActiveSupport::TestCase
     assert MerchantHelper.send(:from_url, @url).kind_of?(PixmaniaFr)
   end
 
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("affiner votre recherche", @url)
+  end
+
   test "it should process price shipping" do
     @version[:price_shipping_text] = "5.50"
     @version = @helper.process_price_shipping(@version)

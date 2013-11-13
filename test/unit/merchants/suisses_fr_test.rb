@@ -17,6 +17,16 @@ class SuissesFrTest < ActiveSupport::TestCase
     assert_equal "http://www.3suisses.fr/ballerines-tennis-ruban-satin-femme-R20001364", @helper.canonize
   end
 
+  test "it should process price" do
+    @version[:price_text] = "3 € 90"
+    @version = @helper.process_price(@version)
+    assert_equal "3 € 90", @version[:price_text]
+
+    @version[:price_text] = "3 depuis € 90"
+    @version = @helper.process_price(@version)
+    assert_equal "3€ 90",  @version[:price_text]
+  end
+
   test "it should process price_strikeout" do
     @version[:price_strikeout_text] = "3 € 90"
     @version = @helper.process_price_strikeout(@version)

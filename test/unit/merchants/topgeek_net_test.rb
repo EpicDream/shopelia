@@ -33,6 +33,10 @@ class TopgeekNetTest < ActiveSupport::TestCase
     assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
   end
 
+  test "it should parse specific availability" do
+    assert_equal true, MerchantHelper.parse_availability("Prête à décorer votre intérieur !", @url)
+  end
+
   test "it should process price shipping" do
     @version[:price_shipping_text] = ""
     @version = @helper.process_price_shipping(@version)
@@ -61,5 +65,8 @@ class TopgeekNetTest < ActiveSupport::TestCase
     @version[:option1] = {"style" => "background: #F60409;", "text" => "", "src" => ""}
     @version = @helper.process_options(@version)
     assert_equal "#F60409", @version[:option1]["text"]
+    @version[:option1] = {"style" => "background-color:#c6865a;", "text" => "", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "#c6865a", @version[:option1]["text"]
   end
 end
