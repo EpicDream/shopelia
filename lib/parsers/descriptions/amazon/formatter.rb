@@ -1,21 +1,6 @@
 module Descriptions
   module Amazon
     
-    class FormatterDetector
-      def initialize nodeset
-        @nodeset = nodeset.dup
-      end
-      
-      def formatters
-        
-        table = @nodeset.xpath(".//table").first
-        return TableFormatter if table
-        
-        ul = @nodeset.xpath(".//ul").first
-        return UlLiFormatter if ul
-      end
-    end
-    
     class PFormatter
       
       def initialize nodeset 
@@ -47,21 +32,25 @@ module Descriptions
       
       attr_reader :key
       
-      def initialize nodeset
-        @nodeset = nodeset
+      def initialize node
         @headers = headers()
-        @tables = @nodeset.xpath(".//table")
+        @table = node
       end
       
       def representation
-        @tables.inject({}) { |hash, table|  
-          hash[@headers.shift] = table_to_keys_values(table)
-          hash
-        }
+        # @tables.inject({}) { |hash, table|  
+        #   hash[@headers.shift] = table_to_keys_values(table)
+        #   hash
+        # }
+        { key => "toto" }
+        
       end
       
       def key
-        keys.first || DEFAULT_KEY
+        xpath = (1..5).map { |n| ".//preceding-sibling::h#{n}" } 
+        xpath += [".//preceding::div[@class='secHeader']//text()[normalize-space()]"]
+        xpath = xpath.join(" | ")
+        @table.xpath(xpath).map(&:text).last || DEFAULT_KEY
       end
       
       def table_to_keys_values table
@@ -74,47 +63,76 @@ module Descriptions
       end
       
       def headers
-        @nodeset.xpath(".//div[@class='secHeader']/span").map(&:text) #specific
+        # @table.xpath(".//div[@class='secHeader']/span").map(&:text) #specific
       end
       
       def keys
-        @nodeset.xpath(".//*[self::h1 or self::h2 or self::h3 or self::h4]").map(&:text)
+        # @nodeset.xpath(".//*[self::h1 or self::h2 or self::h3 or self::h4]").map(&:text)
       end
       
     end
     
-    class UlLiFormatter
-      DEFAULT_KEY = "Résumé"
+    class UlFormatter
+      DEFAULT_KEY = "Summary"
       
-      def initialize nodeset
-        @ul = nodeset.xpath(".//ul").first
+      def initialize node
+        @ul = node
         @lis = @ul.xpath(".//li")
       end
       
       def representation
-        @lis.map(&:text)
+        { key => @lis.map(&:text) }
       end
       
       def key
-        DEFAULT_KEY
+        xpath = (1..5).map { |n| 
+          "./#{@ul.path.delete('?')}/preceding-sibling::h#{n}"
+        }.join(" | ")
+        
+        @ul.xpath(xpath).map(&:text).last || DEFAULT_KEY
       end
       
     end
     
+    class FormatterDetector
+      NODES = ['table', 'ul', 'p']
+      
+      def initialize nodeset
+        @nodeset = nodeset.dup
+      end
+      
+      def formatters
+        NODES.map { |node|  
+          @nodeset.xpath(".//#{node}").map { |xnode| 
+            "Descriptions::Amazon::#{node.capitalize}Formatter".constantize.new(xnode) 
+          }
+        }.flatten
+      end
+    end
+    
     class Formatter
+      DEFAULT_KEY = "Header"
       
       def initialize html
         @html = html
         @fragment = Nokogiri::HTML.fragment html
+        @key = key()
       end
       
-      def hash_representation
-        formatter = node_formatter.new(@fragment)
-        {formatter.key => formatter.representation}
+      def representation
+        representation = { @key => [] }
+        formatters.inject(representation) { |hash, formatter|  
+          hash[@key] << formatter.representation
+          hash
+        }
       end
       
-      def node_formatter
-        FormatterDetector.new(@fragment).formatter
+      def key
+        @fragment.xpath(".//*[self::h1 or self::h2]").map(&:text).first || DEFAULT_KEY
+      end
+      
+      def formatters
+        FormatterDetector.new(@fragment).formatters
       end
     end
   end

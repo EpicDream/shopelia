@@ -9,35 +9,43 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   end
   
   test "formatter detector detect ul-li type" do
-    formatter = formatter_for('sandisk_header')
+    formatters = formatter_for('sandisk_header').formatters
     
-    assert_equal Descriptions::Amazon::UlLiFormatter, formatter.node_formatter
+    assert_equal [Descriptions::Amazon::UlFormatter], formatters.map(&:class)
   end
   
-  test "formatter detector detect table type" do
-    formatter = formatter_for('sandisk_descriptif')
+  test "formatter detector detect tables type" do
+    formatters = formatter_for('sandisk_descriptif').formatters
     
-    assert_equal Descriptions::Amazon::TableFormatter, formatter.node_formatter
+    assert_equal [Descriptions::Amazon::TableFormatter]*2, formatters.map(&:class)
+  end
+  
+  test "formatter detector detect ul, table, p types" do
+    formatters = formatter_for('sandisk_descriptions').formatters
+    
+    expected = ["P", "Table", "Ul"].map { |name| "Descriptions::Amazon::#{name}Formatter".constantize }
+    assert_equal expected.to_set, formatters.map(&:class).to_set
   end
   
   test "convert lis to array with lis text contents for sandisk sample" do
     representation = representation_for('sandisk_header')
+    content = representation["Header"].first["Summary"]
     
-    assert_equal 5, representation["Résumé"].count
-    assert_equal "Garantie du fabricant: 1 an", representation["Résumé"][0]
+    assert_equal 5, content.count
+    assert_equal "Garantie du fabricant: 1 an", content[0]
   end
   
   test "convert lis to array with lis text contents for tigrou sample" do
     representation = representation_for('tigrou_header')
+    content = representation["Header"].first["Summary"]
 
-    assert_equal 5, representation["Résumé"].count
-    assert_equal "Age minimum: 2 ans", representation["Résumé"][0]
+    assert_equal 5, content.count
+    assert_equal "Age minimum: 2 ans", content[0]
   end
   
   test "convert simple tables to keys-values for sandisk sample" do
     representation = representation_for('sandisk_descriptif')
     puts representation.inspect
-    
     descriptif = representation["Informations sur le produit"]["Descriptif technique"]
     infos = representation["Informations sur le produit"]["Informations complémentaires"]
     
@@ -54,7 +62,13 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
     @fragment = Nokogiri::HTML.fragment html
     formatter = Descriptions::Amazon::PFormatter.new(@fragment)
     
-    puts formatter.representation.inspect
+    # puts formatter.representation.inspect
+    ps = @fragment.xpath(".//p")
+    ps.each { |p| p.remove }
+    ps.each { |p| 
+      puts p.text
+      puts p.xpath(".//ancestor::div[1]").inspect
+     }
   end
   
   private
@@ -69,6 +83,6 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   end
   
   def representation_for sample
-    formatter_for(sample).hash_representation
+    formatter_for(sample).representation
   end
 end
