@@ -4,12 +4,7 @@ module MerchantHelper
   AVAILABLE = "En stock"
   FREE_PRICE = "0.00 €"
 
-  def self.availability_hash(url)
-    helper = self.get_helper(url)
-    return {} if helper.nil?
-    return helper::AVAILABILITY_HASH if helper.const_defined?(:AVAILABILITY_HASH)
-    return {}
-  end
+  GLOBAL_AVAILABILITY = "#{Rails.root}/lib/config/availability.yml"
 
   def self.process_version url, version
     m = self.from_url(url)
@@ -80,6 +75,13 @@ module MerchantHelper
     end
   end
 
+  def self.parse_availability str, url=nil
+    a = str.unaccent.downcase
+    dic = self.specific_availability(url).merge YAML.load(File.open(GLOBAL_AVAILABILITY))
+    key = dic.keys.detect { |key| key if a =~ /#{key}/i }
+    dic[key]
+  end
+
   private
 
   def self.get_helper url
@@ -95,5 +97,12 @@ module MerchantHelper
     else
       klass.new(url)
     end
+  end
+
+  def self.specific_availability url
+    helper = self.get_helper(url)
+    return {} if helper.nil?
+    return helper::AVAILABILITY_HASH if helper.const_defined?(:AVAILABILITY_HASH)
+    return {}
   end
 end

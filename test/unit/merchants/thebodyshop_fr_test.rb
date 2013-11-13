@@ -20,9 +20,9 @@ class ThebodyshopFrTest < ActiveSupport::TestCase
   end
 
   test "it should process_price_shipping (2)" do
-    @version[:price_text] = "40,90 €"
+    @version[:price_text] = "#{ThebodyshopFr::FREE_PRICE_SHIPPING_LIMIT} €"
     @version = @helper.process_shipping_price(@version)
-    assert_equal "0.00", @version[:price_shipping_text]
+    assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
 
   test "it should process availability" do

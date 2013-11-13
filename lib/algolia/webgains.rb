@@ -2,7 +2,7 @@
 
 module AlgoliaFeed
 
-  class WebgainsFiler < FileUtils
+  class WebgainsFiler < Filer
 
     def initialize(params={})
       super
@@ -88,7 +88,7 @@ module AlgoliaFeed
         'product_name'    => 'name',
         'price'           => 'price',
         'deeplink'        => 'product_url',
-        'description '    => 'description',
+        'description'     => 'description',
         'image_url'       => 'image_url',
         'currency'        => 'currency',
         'in_stock'        => 'availability',
@@ -100,16 +100,20 @@ module AlgoliaFeed
         'Author'          => 'author'
       }
 
-      self.category_fields = ['categories', 'merchant_category']
+      self.category_fields = ['categories/category', 'merchant_category']
 
       params[:parser_class] = self.class
       self.filer = WebgainsFiler.new(params)
       self
     end
 
-   # def set_categories
+    def set_categories(product,record)
+      super(product, record)
+      product.each_pair do |k,v|
+        record['_tags'] << "category:#{v}" if k =~ /\Acategories\/category/
+      end
 
-   # end
+    end
 
     def process_product(product)
       record = super

@@ -28,6 +28,11 @@ class CdiscountComTest < ActiveSupport::TestCase
     assert_equal MerchantHelper::UNAVAILABLE, @version[:availability_text]
   end
 
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("operation commerciale, ", @url)
+    assert_equal false, MerchantHelper.parse_availability("toute l’offre :", @url)
+  end
+
   test "it should canonize" do
     assert_equal "http://www.cdiscount.com/dp.asp?sku=81367657", CdiscountCom.new("http://www.cdiscount.com/dp.asp?sku=81367657").canonize
     assert_equal "http://www.cdiscount.com/dp.asp?sku=JAMO_S606HGB", CdiscountCom.new("http://www.cdiscount.com/dp.asp?sku=JAMO_S606HGB").canonize
