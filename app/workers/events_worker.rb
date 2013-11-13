@@ -15,6 +15,7 @@ class EventsWorker
   end
 
   def create_event hash
+    return if hash["product_id"].blank? && hash["url"].blank?
     Event.create!(
       :url => hash["url"],
       :product_id => hash["product_id"],
