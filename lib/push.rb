@@ -24,6 +24,6 @@ module Push
       :alert => message.content.first(100), 
       :badge => 1, 
       :sound => 'default', 
-      :other => {:message_id => message.id})
+      :other => {:id => message.id})
   end
 end
