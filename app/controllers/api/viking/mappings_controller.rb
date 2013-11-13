@@ -15,7 +15,7 @@ class Api::Viking::MappingsController < Api::V1::BaseController
   api :GET, "/mappings/:id", "Get mapping by id"
   def show
     if params[:url].present?
-      @merchant = Merchant.find_by_url(params[:url])
+      @merchant = Merchant.from_url(params[:url])
       @mapping = @merchant.mapping if @merchant.present?
     elsif params[:merchant_id].present?
       @merchant = Merchant.find(params[:merchant_id])
@@ -28,8 +28,7 @@ class Api::Viking::MappingsController < Api::V1::BaseController
 
   api :POST, "/mappings", "Create a new mapping"
   def create
-    p "", params, ""
-    @mapping = Mapping.new(params[:mapping])
+    @mapping = Mapping.new(params[:data])
     if @mapping.save
       render json: @mapping, status: :created
     else
@@ -39,9 +38,8 @@ class Api::Viking::MappingsController < Api::V1::BaseController
 
   api :PUT, "/mappings/:id", "Update mapping by id"
   def update
-    p "", params, ""
     @mapping = Mapping.find(params[:id])
-    if @mapping.update_attributes(params[:mapping])
+    if @mapping.update_attributes(params[:data])
       head :no_content
     else
       render json: @mapping.errors, status: :unprocessable_entity
