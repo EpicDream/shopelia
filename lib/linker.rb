@@ -3,7 +3,7 @@ class Linker
   UA = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36"
   
   def self.clean url
-    @canonizer = UrlCanonizer.new.
+    @canonizer = UrlCanonizer.new
     count = 0
     url = URI.unescape(url) if url =~ /^http%3A%2F%2F/
     canonical = MerchantHelper.canonize(url) || self.by_rule(url) || @canonizer.get(url)
