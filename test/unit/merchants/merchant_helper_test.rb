@@ -15,7 +15,7 @@ class MerchantHelperTest < ActiveSupport::TestCase
   end
 
   test "it should parse float" do
-    str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79",
+    str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", "2€ 79",
             "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��",
             "2��79 6��30", "sur rdv devant chez vous (6 à 10 jours). 2.79 €",
             "livraison à domicile (1 livreur) (le livreur (au pied de l'immeuble si vous êtes en appartement) 2 bla...) 2.79 €",
@@ -99,7 +99,7 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
               "For Personalized Service on this item please call 1-800-227-3528 and our Product Specialists will gladly answer all questions and provide additional information. Please note that special conditions and guarantee limitations apply to this product.",
               "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture", "Ouille, cette page est introuvable !!!",
-              "Epuisé", "pas disponible" ]
+              "Epuisé", "pas disponible", "Currently unavailable., Currently unavailable." ]
     array.each do |str|
       assert_equal false, MerchantHelper.parse_availability(str)
     end

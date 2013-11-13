@@ -10,13 +10,6 @@ class AmazonFr
     @url = url
   end
 
-  def process_availability version
-    if version[:availability_text] =~ /Voir les offres de ces vendeurs/
-      version[:availability_text] = version[:price_text].present? ? MerchantHelper::AVAILABLE : MerchantHelper::UNAVAILABLE
-    end
-    version
-  end
-
   def canonize
     if m = @url.match(/\/dp\/([A-Z0-9]+)/)
       "http://www.amazon.fr/dp/#{m[1]}"
@@ -37,6 +30,13 @@ class AmazonFr
     end
   end
 
+  def process_availability version
+    if version[:availability_text] =~ /Voir les offres de ces vendeurs/i
+      version[:availability_text] = version[:price_text].present? ? MerchantHelper::AVAILABLE : MerchantHelper::UNAVAILABLE
+    end
+    version
+  end
+
   def process_price_shipping version
     if version[:price_shipping_text].blank?
       version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING
@@ -49,6 +49,11 @@ class AmazonFr
         version[:price_shipping_text] = MerchantHelper::FREE_PRICE
       end
     end
+    version
+  end
+
+  def process_shipping_info version
+    version[:shipping_info] = nil if version[:shipping_info] =~ /Voir les offres de ces vendeurs/i
     version
   end
 

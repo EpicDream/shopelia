@@ -28,6 +28,18 @@ class AmazonFrTest < ActiveSupport::TestCase
     assert_equal false, MerchantHelper.parse_availability("TVA incluse le cas échéant", @url)
   end
 
+  test "it should process availability" do
+    @version[:price_text] = "EUR 5,90"
+    @version[:availability_text] = "Voir les offres de ces vendeurs."
+    @version = @helper.process_availability(@version)
+    assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
+
+    @version[:price_text] = ""
+    @version[:availability_text] = "Voir les offres de ces vendeurs."
+    @version = @helper.process_availability(@version)
+    assert_equal MerchantHelper::UNAVAILABLE, @version[:availability_text]
+  end
+
   test "it should process_price_shipping (1)" do
     @version[:price_shipping_text] = "livraison gratuite"
     @version = @helper.process_price_shipping(@version)
@@ -48,16 +60,14 @@ class AmazonFrTest < ActiveSupport::TestCase
     assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
 
-  test "it should process availability" do
-    @version[:price_text] = "EUR 5,90"
-    @version[:availability_text] = "Voir les offres de ces vendeurs"
-    @version = @helper.process_availability(@version)
-    assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
+  test "it should process shipping_info" do
+    @version[:shipping_info] = "Sous 2 à 3 semaines"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal "Sous 2 à 3 semaines", @version[:shipping_info]
 
-    @version[:price_text] = ""
-    @version[:availability_text] = "Voir les offres de ces vendeurs"
-    @version = @helper.process_availability(@version)
-    assert_equal MerchantHelper::UNAVAILABLE, @version[:availability_text]
+    @version[:shipping_info] = "Voir les offres de ces vendeurs."
+    @version = @helper.process_shipping_info(@version)
+    assert_nil @version[:shipping_info]
   end
 
   test "it should process images" do
