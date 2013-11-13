@@ -9,6 +9,7 @@ usbkey:
   reference: "reference"
   viking_failure: false
   options_completed: true
+  rating: 4.2
 
 headphones:
   product_master: headphones

@@ -18,7 +18,7 @@ class ThebodyshopFr
       if current_price < FREE_PRICE_SHIPPING_LIMIT
         version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING
       else
-        version[:price_shipping_text] = "0.00"
+        version[:price_shipping_text] = MerchantHelper::FREE_PRICE
       end
     end
     version

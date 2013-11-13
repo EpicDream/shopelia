@@ -32,6 +32,10 @@ class BrandalleyFrTest < ActiveSupport::TestCase
     assert_equal "plus que 4", @version[:availability_text]
   end
 
+  test "it should parse specific availability" do
+    assert_equal true, MerchantHelper.parse_availability("plus que 2", @url)
+  end
+
   test "it should process price_shipping if empty" do
     @version[:price_shipping_text] = ""
     @version = @helper.process_price_shipping(@version)

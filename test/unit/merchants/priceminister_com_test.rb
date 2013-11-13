@@ -42,6 +42,11 @@ class PriceministerComTest < ActiveSupport::TestCase
     assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
   end
 
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("15 résultats", @url)
+    assert_equal false, MerchantHelper.parse_availability("1 252  resultats", @url)
+  end
+
   test "it should process image_url ajaxLoader" do
     @version[:image_url] = "http://pmcdn.priceminister.com/photo/apple-iphone-4-16gb-telephone-intelligent-smartphone-mobile-947746009_ML.jpg"
     @version = @helper.process_image_url(@version)
