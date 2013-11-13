@@ -8,8 +8,9 @@ class EventsWorker
     # do nothing
   rescue ActiveRecord::RecordInvalid
   rescue ActiveRecord::RecordNotFound
-    UrlMatcher.find_by_url(Linker.clean hash["url"]).try(:destroy)
-    UrlMatcher.find_by_url(hash["url"]).try(:destroy)
+    canonizer = UrlCanonizer.new
+    canonizer.del(Linker.clean hash["url"])
+    canonizer.del(hash["url"])
     create_event hash
   end
 
