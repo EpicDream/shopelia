@@ -4,7 +4,7 @@ class BrandalleyFr
   FREE_SHIPPING_LIMIT = 60.0
 
   AVAILABILITY_HASH = {
-    'plus que \d+' => true,
+    /plus que \d+/ => true,
   }
 
   def initialize url

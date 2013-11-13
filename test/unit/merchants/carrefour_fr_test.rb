@@ -27,6 +27,11 @@ class CarrefourFrTest < ActiveSupport::TestCase
     assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
   end
 
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("15 produits", @url)
+    assert_equal false, MerchantHelper.parse_availability("1 produit", @url)
+  end
+
   test "it should process_price_shipping" do
     @version[:price_shipping_text] = "livraison gratuite"
     @version = @helper.process_price_shipping(@version)
