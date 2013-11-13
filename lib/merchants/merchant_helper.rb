@@ -14,6 +14,11 @@ module MerchantHelper
   def self.process_version url, version
     m = self.from_url(url)
     return version unless m.present?
+
+    # Clean up image_url
+    version[:image_url] = "http:#{version[:image_url]}" if version[:image_url] =~ /\A\/\//
+
+    # Process version
     version = m.process_shipping_price(version) if m.respond_to?('process_shipping_price')
     version = m.process_price_shipping(version) if m.respond_to?('process_price_shipping')
     version = m.process_shipping_info(version) if m.respond_to?('process_shipping_info')
@@ -22,6 +27,7 @@ module MerchantHelper
     version = m.process_price(version) if m.respond_to?('process_price')
     version = m.process_price_strikeout(version) if m.respond_to?('process_price_strikeout')
     version = m.process_image_url(version) if m.respond_to?('process_image_url')
+    version = m.process_images(version) if m.respond_to?('process_images')
     version = m.process_options(version) if m.respond_to?('process_options')
     version
   end
@@ -44,7 +50,7 @@ module MerchantHelper
     str = str.gsub(/\(.*\)/, "") unless str =~ /\(.*(\beur\b|[$€]).*\)/i
     str = str.gsub(/\(.*?\.(?!.*?\))/, "")
     str = str.gsub(/\A.*à partir de/, "")
-    if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
+    if str =~ /gratuit/ || str =~ /free/ || str =~ /offer[ts]/
       0.0
     else
       # match les "1 000€90", "1.000€90", "1 000€", "1 000,80", etc
@@ -62,6 +68,17 @@ module MerchantHelper
     end
   end
 
+  def self.parse_rating str
+    if str =~ /^\d([,\.]\d)?$/
+      $~[0].to_f
+    elsif str =~ %r{(\d(?:[,\.]\d)?) ?/ ?\d}
+      $~[1].to_f
+    elsif str =~ /^(\d[,\.]\d) .toiles sur 5/ # Amazon
+      $~[1].to_f
+    else
+      nil
+    end
+  end
 
   private
 

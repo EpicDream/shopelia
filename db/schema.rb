@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131106211320) do
+ActiveRecord::Schema.define(:version => 20131112112409) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -139,6 +139,7 @@ ActiveRecord::Schema.define(:version => 20131106211320) do
     t.datetime "image_updated_at"
     t.boolean  "public",             :default => false
     t.string   "image_size"
+    t.integer  "rank"
   end
 
   create_table "countries", :force => true do |t|
@@ -267,10 +268,14 @@ ActiveRecord::Schema.define(:version => 20131106211320) do
     t.text     "content"
     t.text     "data"
     t.boolean  "from_admin"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
     t.integer  "device_id"
     t.datetime "read_at"
+    t.string   "collection_uuid"
+    t.string   "gift_gender"
+    t.string   "gift_age"
+    t.string   "gift_budget"
   end
 
   create_table "meta_orders", :force => true do |t|
@@ -354,6 +359,16 @@ ActiveRecord::Schema.define(:version => 20131106211320) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "product_reviews", :force => true do |t|
+    t.integer  "product_id"
+    t.integer  "rating"
+    t.string   "author"
+    t.text     "content"
+    t.date     "published_at"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
   create_table "product_versions", :force => true do |t|
     t.integer  "product_id"
     t.float    "price"
@@ -378,6 +393,7 @@ ActiveRecord::Schema.define(:version => 20131106211320) do
     t.string   "option2_md5"
     t.string   "option3_md5"
     t.string   "option4_md5"
+    t.float    "rating"
   end
 
   create_table "products", :force => true do |t|
@@ -397,6 +413,7 @@ ActiveRecord::Schema.define(:version => 20131106211320) do
     t.boolean  "options_completed",   :default => false
     t.datetime "viking_sent_at"
     t.string   "image_size"
+    t.float    "rating"
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true

@@ -5,8 +5,13 @@ class AmazonFrTest < ActiveSupport::TestCase
 
   setup do
     @version = {}
-    @helper = AmazonFr.new("http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY")
+    @url = "http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY"
+    @helper = AmazonFr.new(@url)
     @helper2 = AmazonFr.new("http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY")
+  end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(AmazonFr)
   end
   
   test "it should monetize" do
@@ -49,5 +54,23 @@ class AmazonFrTest < ActiveSupport::TestCase
     @version[:availability_text] = "Voir les offres de ces vendeurs"
     @version = @helper.process_availability(@version)
     assert_equal MerchantHelper::UNAVAILABLE, @version[:availability_text]
+  end
+
+  test "it should process images" do
+    @version[:images] = nil
+    @version = @helper.process_images(@version)
+    assert_nil @version[:images]
+
+    @version[:images] = []
+    @version = @helper.process_images(@version)
+    assert_equal [], @version[:images]
+
+    @version[:images] = ["http://ecx.images-amazon.com/images/I/41t9qVjDcLL._SX38_SY50_CR,0,0,38,50_.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://ecx.images-amazon.com/images/I/41t9qVjDcLL.jpg"], @version[:images]
+
+    @version[:images] = ["http://ecx.images-amazon.com/images/I/41HlKgbXReL._SS45_.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://ecx.images-amazon.com/images/I/41HlKgbXReL.jpg"], @version[:images]
   end
 end

@@ -26,11 +26,31 @@ class CollectionsTest < ActiveSupport::TestCase
     assert_equal "description", collection.description
   end
 
+  test "it should set rank when public" do
+    @collection.public = true
+    @collection.save
+
+    assert_equal 1, @collection.rank
+  end
+
   test "it should associate with products" do
     assert_equal 2, @collection.products.count
   end
 
   test "it should associate with tags" do
     assert_equal 3, @collection.tags.count
+  end
+
+  test "it should set __Home tag when public" do
+    collection = Collection.create
+
+    assert_difference "collection.tags.count" do
+      collection.update_attribute :public, true
+    end
+    assert_equal "__Home", collection.tags.first.name
+
+    assert_difference "collection.tags.count", -1 do
+      collection.update_attribute :public, false
+    end
   end
 end

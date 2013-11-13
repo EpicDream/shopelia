@@ -86,7 +86,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
 
   test "it should parse free shipping" do
-    str = [ "LIVRAISON GRATUITE", "free shipping", "Livraison offerte" ]
+    str = [ "LIVRAISON GRATUITE", "free shipping", "Livraison offerte", "Standard - expédié sous 72h - Frais de port offers" ]
     str.each do |s|
       @version.price_shipping_text = s
       @version.save
@@ -197,7 +197,7 @@ class ProductVersionTest < ActiveSupport::TestCase
               "disponible sous 4 semaines", "Seulement 1 en stock", "in stock but may require an extra 1-2 days to process.",
               "Conditions spéciales :- livraison : 10 semaines", "livraison des fichiers", "attention : dernières pièces disponibles",
               "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery.", "expected ship date",
-              "disponible" ]
+              "disponible", "Délai 3 à 5 jours", "1 article disponible" ]
     array.each do |str|
       assert_difference "Incident.count", 0 do
         version = ProductVersion.create(
@@ -211,6 +211,21 @@ class ProductVersionTest < ActiveSupport::TestCase
         assert_equal true, version.available, "#{str.inspect} failed !"
         assert_equal str, version.availability_info
       end
+    end
+  end
+
+  test "it should parse rating" do
+    assert_difference "Incident.count", 0 do
+      version = ProductVersion.create(
+        product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        rating_text: "(4.1/5)",
+        name:"toto",
+        availability_text:"En stock")
+      assert_equal 4.1, version.rating
     end
   end
   

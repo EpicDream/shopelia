@@ -57,5 +57,9 @@ class TopgeekNetTest < ActiveSupport::TestCase
     @version[:option1] = {"style" => "background: FFFFFF;", "text" => "", "src" => ""}
     @version = @helper.process_options(@version)
     assert_equal "FFFFFF", @version[:option1]["text"]
+
+    @version[:option1] = {"style" => "background: #F60409;", "text" => "", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "#F60409", @version[:option1]["text"]
   end
 end

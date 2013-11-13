@@ -1,7 +1,7 @@
 class PriceministerCom
 
   AVAILABILITY_HASH = {
-    "[\d\s]+ r.sultats?" => false, # Redirection vers recherche quand trouve pas.
+    "[\d\s]+ resultats" => false, # Redirection vers recherche quand trouve pas.
   }
 
   def initialize url
@@ -23,4 +23,14 @@ class PriceministerCom
     version
   end
 
+  def process_image_url version
+    version[:image_url].sub!(/_\w+\.(\w+)$/, '.\\1') if version[:image_url].present?
+    version
+  end
+
+  def process_images version
+    return version unless version[:images].kind_of?(Array)
+    version[:images].map! { |url| url.sub(/_\w+\.(\w+)$/, '.\\1') }
+    version
+  end
 end

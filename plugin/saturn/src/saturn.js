@@ -92,7 +92,7 @@ Saturn.prototype.updateNbTabs = function() {
     var nbMaxOpenable = satconf.MAX_NB_TABS - Object.keys(this.tabs.opened).length,
         nbWanted = satconf.MIN_NB_TABS + prodLength - pending.length,
         nbTabToOpen = nbMaxOpenable >= nbWanted ? nbWanted : nbMaxOpenable;
-    if (nbTabToOpen === 0 && prodLength > 0)
+    if (nbTabToOpen <= 0 && prodLength > 0)
       logger.warn("WARNING : Too many product to crawl ("+prodLength+") and max tabs opened ("+satconf.MAX_NB_TABS+") !");
     for (i = 0; i < nbTabToOpen ; i++)
       this.openNewTab();
@@ -154,6 +154,7 @@ Saturn.prototype.processMapping = function(mapping, prod, merchantId) {
     this.sendWarning({id: prod.id}, 'merchant_id='+merchantId+' is not supported (url='+prod.url+')');
     return false;
   } else if (! mapping.data.ref) {
+    delete mapping.data.pages;
     this.mappings[mapping.id] = mapping;
     this.mappings[mapping.id].date = new Date();
   }

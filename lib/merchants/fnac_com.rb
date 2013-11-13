@@ -1,4 +1,9 @@
+# -*- encoding : utf-8 -*-
 class FnacCom
+
+  AVAILABILITY_HASH = {
+    "Allez vers la version simple" => false, # pas trouvé, tombe sur la recherche
+  }
 
   def initialize url
     @url = url

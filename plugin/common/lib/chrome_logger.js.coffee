@@ -10,7 +10,7 @@ define 'chrome_logger', ['logger'], (logger) ->
   logger._oldFormat = logger.format
 
   logger.file_level = 0
-  logger.db_level = 5
+  logger.db_level = 3
 
   logger.format = (level, caller, args) ->
     format = logger._oldFormat(level, caller, args)
@@ -160,15 +160,14 @@ define 'chrome_logger', ['logger'], (logger) ->
           header = logger.header(logger.code2str[row.level], row.caller, new Date(row.time))
           console.log("%c"+row.content, logger.chromify(logger.code2str[row.level], '', [])[1])
 
-  logger.cleanDB = (limit) ->
-    limit ?= Date.now() - 1000*60*60*24 # yesterday
-    limit -= 0 # convert limit to timestamp
+  logger.cleanDB = (minutes) ->
+    limit = Date.now() - 1000*60*(minutes || 60*2) # 2 heures
     logger.db.transaction (tx) ->
       tx.executeSql "DELETE FROM logs WHERE time <= ?;", [limit]
 
   # Clean DB every hour
-  logger.cleanDB();
-  setInterval(logger.cleanDB, 1000*60*60);
+  setInterval(logger.cleanDB, 1000*60*30); # 30 minutes
+  setTimeout(logger.cleanDB, 200);
 
   #///////  END LOG TO DB ///////
 

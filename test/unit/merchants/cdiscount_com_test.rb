@@ -9,6 +9,10 @@ class CdiscountComTest < ActiveSupport::TestCase
     @helper = CdiscountCom.new(@url)
   end
 
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(CdiscountCom)
+  end
+
   test "it should monetize" do
     assert_equal "http://pdt.tradedoubler.com/click?a(2238732)p(72222)prod(765856165)ttid(5)url(http%3A%2F%2Fwww.cdiscount.com%2Felectromenager%2Faspirateur-nettoyeur-vapeur%2Fdirt-devil-m2828-3%2Ff-110140405-dirtm28283.html)", @helper.monetize
   end
@@ -37,5 +41,25 @@ class CdiscountComTest < ActiveSupport::TestCase
     @version[:price_shipping_text] = "4,90 €"
     @version = @helper.process_price_shipping(@version)
     assert_equal "4,90 €", @version[:price_shipping_text]
+  end
+
+  test "it should process image_url ajaxLoader" do
+    @version[:image_url] = "http://i2.cdscdn.com/pdt2/0/8/k/3/300x300/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg"
+    @version = @helper.process_image_url(@version)
+    assert_equal "http://i2.cdscdn.com/pdt2/0/8/k/3/700x700/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg", @version[:image_url]
+  end
+
+  test "it should process images" do
+    @version[:images] = nil
+    @version = @helper.process_images(@version)
+    assert_nil @version[:images]
+
+    @version[:images] = []
+    @version = @helper.process_images(@version)
+    assert_equal [], @version[:images]
+
+    @version[:images] = ["http://i2.cdscdn.com/pdt2/0/8/k/1/040x040/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://i2.cdscdn.com/pdt2/0/8/k/1/700x700/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg"], @version[:images]
   end
 end

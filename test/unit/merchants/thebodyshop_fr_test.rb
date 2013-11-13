@@ -5,8 +5,12 @@ class ThebodyshopFrTest < ActiveSupport::TestCase
 
   setup do
     @version = {}
-    @helper = ThebodyshopFr.new("http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY")
-    @helper2 = ThebodyshopFr.new("http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY")
+    @url = "http://www.thebodyshop.fr/parfums/pour-lui/baume-apres-rasage-kistna.aspx"
+    @helper = ThebodyshopFr.new(@url)
+  end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(ThebodyshopFr)
   end
   
   test "it should process_price_shipping (1)" do

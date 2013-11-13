@@ -10,6 +10,7 @@ class Product < ActiveRecord::Base
   has_and_belongs_to_many :developers, :uniq => true
   has_many :collection_items
   has_many :collections, :through => :collection_items
+  has_many :product_reviews
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true
@@ -23,7 +24,7 @@ class Product < ActiveRecord::Base
   after_save :clear_failure_if_mute, :if => Proc.new { |product| product.mute? }
   after_update :set_image_size, :if => Proc.new { |product| product.image_url_changed? || (product.image_url.present? && product.image_size.blank?) }
   
-  attr_accessible :versions, :merchant_id, :url, :name, :description
+  attr_accessible :versions, :merchant_id, :url, :name, :description, :rating
   attr_accessible :product_master_id, :image_url, :versions_expires_at
   attr_accessible :brand, :reference, :viking_failure, :muted_until
   attr_accessible :options_completed, :viking_sent_at, :batch
@@ -81,7 +82,7 @@ class Product < ActiveRecord::Base
   end
 
   def price
-    version = self.product_versions.available.first
+    version = self.product_versions.available.order("price_shipping + price").first
     version ? (version.price + version.price_shipping).to_f.round(2) : nil
   end
 
@@ -131,6 +132,7 @@ class Product < ActiveRecord::Base
         version[:price_shipping_text] = version[:price_shipping]
         version[:price_strikeout_text] = version[:price_strikeout]
         version[:availability_text] = version[:availability]
+        version[:rating_text] = version[:rating]
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
 
@@ -162,6 +164,7 @@ class Product < ActiveRecord::Base
             :image_url => nil,
             :images => nil,
             :available => nil,
+            :rating => nil,
             :name => nil,
             :shipping_info => nil)
           v.update_attributes version
@@ -175,7 +178,8 @@ class Product < ActiveRecord::Base
         self.update_column "reference", version.reference
         self.update_column "image_url", version.image_url
         self.update_column "description", version.description
-        set_image_size if version.image_url != old_image_url && self.image_size.blank?
+        self.update_column "rating", version.rating
+        set_image_size if version.image_url =~ /\Ahttp/ && self.image_size.blank?
       end
       self.update_column "versions_expires_at", Product.versions_expiration_date
       self.reload

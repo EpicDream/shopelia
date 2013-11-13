@@ -9,6 +9,10 @@ class RueducommerceFrTest < ActiveSupport::TestCase
     @helper = RueducommerceFr.new(@url)
   end
 
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(RueducommerceFr)
+  end
+
   test "it should monetize" do
     assert_equal "http://ad.zanox.com/ppc/?25390102C2134048814&ulp=[[www.rueducommerce.fr%2Fm%2Fps%2Fmpid%3AMP-0006DM7671064]]", @helper.monetize
   end
@@ -93,5 +97,19 @@ class RueducommerceFrTest < ActiveSupport::TestCase
     @version[:image_url] = "http://s3.static69.com/m/image-offre/1/4/7/4/14740dfd07bcceae5eb12b418c44b3e1-500x500.jpg"
     @version = @helper.process_image_url(@version)
     assert_not_nil @version[:image_url]
+  end
+
+  test "it should process images" do
+    @version[:images] = nil
+    @version = @helper.process_images(@version)
+    assert_nil @version[:images]
+
+    @version[:images] = []
+    @version = @helper.process_images(@version)
+    assert_equal [], @version[:images]
+
+    @version[:images] = ["http://s1.static69.com/mobile/images/produits/small/SGH-GALAXY-S-IV-16GO-FROST-WHITE.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://s1.static69.com/mobile/images/produits/big/SGH-GALAXY-S-IV-16GO-FROST-WHITE.jpg"], @version[:images]
   end
 end
