@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131112112409) do
+ActiveRecord::Schema.define(:version => 20131113155606) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -451,7 +451,7 @@ ActiveRecord::Schema.define(:version => 20131112112409) do
   create_table "traces", :force => true do |t|
     t.integer  "user_id"
     t.integer  "device_id"
-    t.string   "ressource"
+    t.string   "resource"
     t.string   "action"
     t.integer  "extra_id"
     t.string   "extra_text"
@@ -459,16 +459,6 @@ ActiveRecord::Schema.define(:version => 20131112112409) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
-
-  create_table "url_matchers", :force => true do |t|
-    t.text     "url"
-    t.text     "canonical"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "url_matchers", ["canonical"], :name => "index_url_matchers_on_canonical"
-  add_index "url_matchers", ["url"], :name => "index_url_matchers_on_url"
 
   create_table "user_sessions", :force => true do |t|
     t.integer  "user_id"
