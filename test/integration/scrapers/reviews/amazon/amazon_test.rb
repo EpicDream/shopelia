@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'test__helper'
 require 'scrapers/reviews/amazon/amazon'
 

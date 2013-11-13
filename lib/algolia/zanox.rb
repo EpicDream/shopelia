@@ -2,7 +2,7 @@
 
 module AlgoliaFeed
 
-  class ZanoxFiler < FileUtils
+  class ZanoxFiler < Filer
 
     def initialize(params={})
       super
@@ -19,7 +19,7 @@ module AlgoliaFeed
       ]
 
       self.parser_class = params[:parser_class] || 'AlgoliaFeed::Zanox'
-      
+
     end
   end
 
@@ -49,8 +49,8 @@ module AlgoliaFeed
 
     def best_image(product)
       return product['largeImage']  if product.has_key?('largeImage')
-			return product['mediumImage'] if product.has_key?('mediumImage')
-			return product['smallImage']  if product.has_key?('smallImage')
+      return product['mediumImage'] if product.has_key?('mediumImage')
+      return product['smallImage']  if product.has_key?('smallImage')
       raise RejectedRecord.new("Record has no images", :rejected_img)
     end
 

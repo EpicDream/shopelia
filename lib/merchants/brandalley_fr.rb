@@ -4,7 +4,7 @@ class BrandalleyFr
   FREE_SHIPPING_LIMIT = 60.0
 
   AVAILABILITY_HASH = {
-    'plus que \d+' => true,
+    /plus que \d+/ => true,
   }
 
   def initialize url
@@ -20,7 +20,7 @@ class BrandalleyFr
   end
 
   def process_availability version
-    version[:availability_text] = $~[1] if version[:availability_text] =~ /^taille (?:selectionnee : .+?|unique) - (.*)$/
+    version[:availability_text] = $~[1] if version[:availability_text] =~ /^(?:taille|teinte) (?:selectionnee : .+?|unique) - (.*)$/
     version
   end
 

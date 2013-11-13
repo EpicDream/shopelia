@@ -3,12 +3,16 @@ class ProductSerializer < ActiveModel::Serializer
   
   attributes :id, :image_url, :name, :url, :merchant, :description, :master_id
   attributes :versions, :brand, :reference, :ready, :options_completed, :price
-  attributes :image_size
+  attributes :image_size, :rating
  
   def ready
     object.ready? ? 1 : 0
   end
  
+  def rating
+    object.rating.to_f.round(2)
+  end
+
   def options_completed
     object.options_completed? ? 1 : 0
   end
