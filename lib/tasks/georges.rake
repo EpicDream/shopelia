@@ -1,4 +1,5 @@
 # -*- encoding : utf-8 -*-
+
 namespace :shopelia do
   namespace :georges do
     
@@ -7,7 +8,7 @@ namespace :shopelia do
       Device.where(pending_answer:true,autoreplied:false).each do |device|
         last_message = device.messages.last
         if last_message.created_at.to_i < Time.now.to_i - 60
-          message = Message.new(content:"J'ai bien reçu votre demande, je suis en train de m'en occuper. Je reviens vers vous rapidement. Merci pour votre patience.",device_id:device.id,autoreply:true)
+          message = Message.new(content:"Je m'occupe de votre demande et vous reviens vers vous au plus vite ! Merci de votre patience.",device_id:device.id,autoreply:true)
           Push.send_message message
           device.update_attribute :autoreplied, true
         end
@@ -40,6 +41,18 @@ namespace :shopelia do
         count += 1
       end
       puts "Sent #{count} Amazon 10€ vouchers"
+    end
+
+    desc "Reminder for all holders of 10€ Amazon gift"
+    task :welcome_gift_reminder => :environment do
+      amazon = Merchant.find_by_domain("amazon.fr")
+      shopelia = Developer.find_by_name("Shopelia")
+      CashfrontRule.where(merchant_id:amazon.id,developer_id:shopelia.id).where("device_id is not null").each do |rule|
+        next if rule.created_at.to_i > 3.days.ago.to_i 
+        next if rule.device.user && rule.device.user.orders.completed.count > 0
+        message = Message.new(content:"Bonjour :) Votre chèque cadeau de 10€ sur la boutique Amazon vous attend toujours. C'est le moment d'en profiter !",device_id:rule.device.id)
+        Push.send_message message
+      end
     end
   end
 end

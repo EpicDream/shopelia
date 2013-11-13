@@ -235,6 +235,7 @@ class ProductTest < ActiveSupport::TestCase
         image_url: "http://www.amazon.fr/image.jpg",
         name: "name",
         price: "10 EUR",
+        rating: "3.5/5",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         price_shipping: "3.5",
@@ -248,6 +249,7 @@ class ProductTest < ActiveSupport::TestCase
         image_url: "http://www.amazon.fr/image2.jpg",
         name: "name2",
         price: "12 EUR",
+        rating: "3.5/5",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         price_shipping: "3.5",
@@ -257,6 +259,7 @@ class ProductTest < ActiveSupport::TestCase
 
     assert_equal "name2", product.name
     assert_equal "brand", product.brand
+    assert_equal 3.5, product.rating
     assert_equal "reference4", product.reference
     assert_equal "http://www.amazon.fr/image2.jpg", product.image_url
     assert_equal "<p>description2</p>", product.description
@@ -430,7 +433,7 @@ class ProductTest < ActiveSupport::TestCase
 
     assert !product.viking_failure
     assert_equal 7.20, product.product_versions.first.price_shipping
-  end  
+  end
 
   test "it should pre process versions using merchant helper (2)" do
     product = products(:dvd)
@@ -447,7 +450,25 @@ class ProductTest < ActiveSupport::TestCase
 
     assert !product.viking_failure
     assert_equal 2.79, product.product_versions.first.price_shipping
-  end 
+  end
+
+  test "it should pre process versions using merchant helper (3)" do
+    product = products(:dvd)
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        rating: "3.5 / 5",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        price_shipping: "Livraison gratuite dès 15 euros d'achats"
+      }]);
+
+    assert !product.viking_failure
+    assert_equal 3.5, product.product_versions.first.rating
+  end
 
   test "it should fail viking if shipping price is blank and no default shipping price is set for merchant" do
     product = products(:tamaris)

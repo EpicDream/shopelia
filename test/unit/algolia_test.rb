@@ -150,7 +150,7 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert_equal(1, hits.size)
     item = hits.first
     assert_equal('eden-deco.fr', item['merchant_name'])
-    assert_equal('http://www.eden-deco.fr/bougie-spirale-ivoire-24cm-cerabella-1001.html?referer=webgains&siteid=145659&source=webgains', item['product_url'])
+    assert_equal('http://www.eden-deco.fr/bougie-spirale-ivoire-24cm-cerabella-1001.html?referer=webgains', item['product_url'])
     assert(item['_tags'].include?('category:Bougies et Bougeoires'))
     assert(item['_tags'].include?('category:Bougies Festives'))
   end

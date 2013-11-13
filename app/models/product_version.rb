@@ -1,8 +1,6 @@
 # -*- encoding : utf-8 -*-
 class ProductVersion < ActiveRecord::Base
 
-  AVAILABILITY = "#{Rails.root}/lib/config/availability.yml"
-
   belongs_to :product, :touch => true
   has_many :order_items
   has_many :cart_items
@@ -10,11 +8,11 @@ class ProductVersion < ActiveRecord::Base
   validates :product, :presence => true
   
   attr_accessible :description, :price, :price_shipping
-  attr_accessible :price_strikeout, :product_id, :shipping_info, :available
+  attr_accessible :price_strikeout, :product_id, :shipping_info, :available, :rating
   attr_accessible :image_url, :brand, :name, :available, :reference
-  attr_accessible :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
+  attr_accessible :availability_text, :rating_text, :price_text, :price_shipping_text, :price_strikeout_text
   attr_accessible :option1, :option2, :option3, :option4
-  attr_accessor :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
+  attr_accessor :availability_text, :rating_text, :price_text, :price_shipping_text, :price_strikeout_text
 
   alias_attribute :size, :option1
   alias_attribute :color, :option2
@@ -24,6 +22,7 @@ class ProductVersion < ActiveRecord::Base
   before_validation :parse_price_shipping, :if => Proc.new { |v| v.price_shipping_text.present? }
   before_validation :parse_price_strikeout, :if => Proc.new { |v| v.price_strikeout_text.present? }
   before_validation :parse_available, :if => Proc.new { |v| v.availability_text.present? }
+  before_validation :parse_rating, :if => Proc.new { |v| v.rating_text.present? }
   before_validation :sanitize_description, :if => Proc.new { |v| v.description.present? }
   before_validation :crop_shipping_info
   before_validation :prepare_options
@@ -144,15 +143,16 @@ class ProductVersion < ActiveRecord::Base
   
   def parse_available
     self.availability_info = self.availability_text
-    a = self.availability_text.unaccent.downcase
-    dic = MerchantHelper.availability_hash(product.url)
-    key = dic.keys.detect {|key| key if a =~ /#{key}/i }
-    if key.nil?
-      dic = YAML.load(File.open(AVAILABILITY))
-      key = dic.keys.detect {|key| key if a =~ /#{key}/i }
+    self.available = MerchantHelper.parse_availability(self.availability_text, product.url)
+    if self.available.nil?
+      generate_incident "Cannot parse availability : #{self.availability_info}"
+      self.available = true
     end
-    generate_incident "Cannot parse availability : #{a}" if key.nil?
-    self.available = key.nil? ? true : dic[key]
+    true
+  end
+
+  def parse_rating
+    self.rating = MerchantHelper.parse_rating(self.rating_text)
     true
   end
   

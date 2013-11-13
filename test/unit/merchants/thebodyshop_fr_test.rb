@@ -5,8 +5,12 @@ class ThebodyshopFrTest < ActiveSupport::TestCase
 
   setup do
     @version = {}
-    @helper = ThebodyshopFr.new("http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY")
-    @helper2 = ThebodyshopFr.new("http://www.amazon.fr/Port-designs-Detroit-tablettes-pouces/dp/B00BIXXTCY?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B00BIXXTCY")
+    @url = "http://www.thebodyshop.fr/parfums/pour-lui/baume-apres-rasage-kistna.aspx"
+    @helper = ThebodyshopFr.new(@url)
+  end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(ThebodyshopFr)
   end
   
   test "it should process_price_shipping (1)" do
@@ -16,9 +20,9 @@ class ThebodyshopFrTest < ActiveSupport::TestCase
   end
 
   test "it should process_price_shipping (2)" do
-    @version[:price_text] = "40,90 €"
+    @version[:price_text] = "#{ThebodyshopFr::FREE_PRICE_SHIPPING_LIMIT} €"
     @version = @helper.process_shipping_price(@version)
-    assert_equal "0.00", @version[:price_shipping_text]
+    assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
 
   test "it should process availability" do

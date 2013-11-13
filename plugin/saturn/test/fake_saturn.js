@@ -7,7 +7,6 @@ define(['src/saturn'], function(Saturn) {
 
 var FakeSaturn = function() {
   Saturn.apply(this, arguments);
-  this.TEST_ENV = false;
   this.results = {};
   this.currentValue = {};
   this.tabCpt = 0;

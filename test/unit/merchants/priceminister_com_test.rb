@@ -9,6 +9,10 @@ class PriceministerComTest < ActiveSupport::TestCase
     @helper = PriceministerCom.new(@url)
   end
 
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(PriceministerCom)
+  end
+
   test "it should monetize" do
     assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=http%3A%2F%2Fwww.priceminister.com%2Foffer%2Fbuy%2F103220572", @helper.monetize
   end
@@ -36,5 +40,30 @@ class PriceministerComTest < ActiveSupport::TestCase
     @version[:availability_text] = ""
     @version = @helper.process_availability(@version)
     assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
+  end
+
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("15 résultats", @url)
+    assert_equal false, MerchantHelper.parse_availability("1 252  resultats", @url)
+  end
+
+  test "it should process image_url ajaxLoader" do
+    @version[:image_url] = "http://pmcdn.priceminister.com/photo/apple-iphone-4-16gb-telephone-intelligent-smartphone-mobile-947746009_ML.jpg"
+    @version = @helper.process_image_url(@version)
+    assert_equal "http://pmcdn.priceminister.com/photo/apple-iphone-4-16gb-telephone-intelligent-smartphone-mobile-947746009.jpg", @version[:image_url]
+  end
+
+  test "it should process images" do
+    @version[:images] = nil
+    @version = @helper.process_images(@version)
+    assert_nil @version[:images]
+
+    @version[:images] = []
+    @version = @helper.process_images(@version)
+    assert_equal [], @version[:images]
+
+    @version[:images] = ["http://pmcdn.priceminister.com/photo/947746009_XS.jpg"]
+    @version = @helper.process_images(@version)
+    assert_equal ["http://pmcdn.priceminister.com/photo/947746009.jpg"], @version[:images]
   end
 end

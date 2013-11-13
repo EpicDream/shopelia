@@ -8,6 +8,10 @@ class SephoraFrTest < ActiveSupport::TestCase
     @url = "http://www.sephora.fr/Maquillage/Teint/Fonds-de-Teint/Naked-Skin-Weightless-Ultra-Definition-Liquid-Makeup-Fond-de-Teint-Liquide/P1064003;jsessionid=0357A78FD68BB001852051897A0C0334.wfr1g"
     @helper = SephoraFr.new(@url)
   end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(SephoraFr)
+  end
   
   test "it should process_price_shipping" do
     @version[:price_shipping_text] = "livraison gratuite"

@@ -4,7 +4,13 @@ require 'test_helper'
 class FnacComTest < ActiveSupport::TestCase
 
   setup do
-    @helper = FnacCom.new("http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4#bl=MMtvh")
+    @version = {}
+    @url = "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4#bl=MMtvh"
+    @helper = FnacCom.new(@url)
+  end
+
+  test "it should find class from url" do
+    assert MerchantHelper.send(:from_url, @url).kind_of?(FnacCom)
   end
 
   test "it should monetize" do
@@ -13,5 +19,9 @@ class FnacComTest < ActiveSupport::TestCase
 
   test "it should canonize" do
     assert_equal "http://www.fnac.com/Tous-les-Enregistreurs/Enregistreur-DVD-Enregistreur-Blu-ray/nsh180760/w-4", @helper.canonize
+  end
+
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("Allez vers la version simple", @url)
   end
 end

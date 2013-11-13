@@ -2,11 +2,11 @@
 require(['chrome_logger', 'crawler', "satconf"], function(logger, Crawler) {
   "use strict";
 
-// logger.level = logger.ALL;
+logger.level = logger[satconf.log_level];
 
 chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   if (sender.id != chrome.runtime.id) return;
-  logger.info("ProductCrawl task received", hash);
+  logger.debug("ProductCrawl task received", hash);
   var key = "option"+(hash.option),
     result;
   switch(hash.action) {

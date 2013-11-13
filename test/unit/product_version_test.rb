@@ -53,56 +53,13 @@ class ProductVersionTest < ActiveSupport::TestCase
     end
   end
 
-  test "it should parse float" do
-    str = [ "2.79€", "2,79 EUR", "bla bla 2.79", "2€79", 
-            "2��79", "2,79 €7,30 €", "2€79 6€30", "2,79 ��7,30 ��", 
-            "2��79 6��30", "sur rdv devant chez vous (6 à 10 jours). 2.79 €",
-            "livraison à domicile (1 livreur) (le livreur (au pied de l'immeuble si vous êtes en appartement) 2 bla...) 2.79 €",
-            "Livraison dans la pièce de votre choix (EUR 2,79)", "Livraison dans la pièce de votre choix (2.79 €)",
-            "Livraison 'classique' à domicile (Livraison dans les 4 à 9 jours à bla. En savoir plus 2.79 €",
-            "Colissimo - expédié sous 0h - à partir de 2,79 €", "=  2 € 79",
-            "Colissimo Suivi - expédié sous 72h - à partir de 2,79 €",
-            "Livraison Standard - expédié sous 18 jours - à partir de 2,79 €",
-            "Livraison colissimo 48H - expédié sous 48h - à partir de 2,79 €",
-            "So Colissimo (2 à 4 jours). - expédié sous 4 jours - à partir de 2,79 €",
-            "Livré par Gls sous 48 à 72h contre signature - expédié sous 72h - à partir de 2,79 €" ]
-    str.each { |s| check_price s, 2.79 }
-
-    str = [ "2", "2€", "Bla bla 2 €" ]
-    str.each { |s| check_price s, 2 }
-
-    str = [ "1 739,95 €", "1739€95", "1 739 € 95", "1 739€95", "1 739€ 95", "1739 €95", "1739.95", "bla 1 739.95 EUR" ]
-    str.each { |s| check_price s, 1739.95 }
-
-    str = [ "1 739€", "1739€", "bla bla 1739 E bla" ]
-    str.each { |s| check_price s, 1739 }
-
-    str = [ "12 739€", "12 739€", "bla 12739" ]
-    str.each { |s| check_price s, 12739 }
-
-    # Special cases
-    check_price "+ Eco Part : 1,50€ soit un total de 136,48€", 136.48
-    check_price "so colissimo (2 à 4 jours). 11.99 €", 11.99
-  end
-
-  test "it should parse free shipping" do
-    str = [ "LIVRAISON GRATUITE", "free shipping", "Livraison offerte", "Standard - expédié sous 72h - Frais de port offers" ]
-    str.each do |s|
-      @version.price_shipping_text = s
-      @version.save
-      assert_equal 0, @version.price_shipping, s
+  test "it should not generate incident if shipping is correctly parsed" do
+    assert_difference "Incident.count", 0 do
+      check_price "2.79€", 2.79
+      check_price "LIVRAISON GRATUITE", 0.0
     end
   end
 
-  test "it should fail bad prices" do
-    str = [ ".", "invalid" ]
-    str.each do |s|
-      @version.price_text = s
-      @version.save
-      assert_equal nil, @version.price, s
-    end
-  end
-  
   test "it should generate incident if shipping is not correctly parsed" do
     assert_difference "Incident.count", 1 do
       @version.price_shipping_text = "Invalid string"
@@ -166,18 +123,8 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
 
   test "it should set available info to false" do
-    array = [ "Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock", 
-              "temporairement en rupture de stock.", "sur commande", "article indisponible",
-              "ce produit est epuise", "sans stock pour vos criteres", "bientot disponible",
-              "produit epuise", "inscrivez-vous pour etre prevenu lorsque cet article sera disponible",
-              "retrait gratuit en magasin", "dans plus de 50 magasins", "dans 48 magasins",
-              "non disponible", "Désolés, cet article a été vendu. Vous aimerez peut-être ceci",
-              "Mince alors. Cet article n'est plus disponible.", "Ce magasin est en vacances",
-              "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
-              "For Personalized Service on this item please call 1-800-227-3528 and our Product Specialists will gladly answer all questions and provide additional information. Please note that special conditions and guarantee limitations apply to this product.",
-              "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture", "Ouille, cette page est introuvable !!!",
-              "Epuisé", "pas disponible" ]
-    array.each do |str|
+    assert_difference "Incident.count", 0 do
+      str = MerchantHelper::UNAVAILABLE
       version = ProductVersion.create(
         product_id:@product.id,
         price:"2.79",
@@ -192,69 +139,33 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
 
   test "it should set available info to true" do
-    array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
-              "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
-              "disponible sous 4 semaines", "Seulement 1 en stock", "in stock but may require an extra 1-2 days to process.",
-              "Conditions spéciales :- livraison : 10 semaines", "livraison des fichiers", "attention : dernières pièces disponibles",
-              "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery.", "expected ship date",
-              "disponible" ]
-    array.each do |str|
-      assert_difference "Incident.count", 0 do
-        version = ProductVersion.create(
-          product_id:@product.id,
-          price:"2.79",
-          price_shipping:"1",
-          shipping_info:"toto",
-          image_url:"toto",
-          name:"toto",
-          availability_text:str)
-        assert_equal true, version.available, "#{str.inspect} failed !"
-        assert_equal str, version.availability_info
-      end
+    assert_difference "Incident.count", 0 do
+      str = MerchantHelper::AVAILABLE
+      version = ProductVersion.create(
+        product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:str)
+      assert_equal true, version.available, "#{str.inspect} failed !"
+      assert_equal str, version.availability_info
     end
   end
-  
-  test "it should search availability in MerchantHelper" do
-    str = "Prête à décorer votre intérieur !"
+
+  test "it should parse rating" do
     assert_difference "Incident.count", 0 do
       version = ProductVersion.create(
-        product_id:products(:lampe).id,
+        product_id:@product.id,
         price:"2.79",
         price_shipping:"1",
         shipping_info:"toto",
         image_url:"toto",
+        rating_text: "(4.1/5)",
         name:"toto",
-        availability_text:str)
-
-      assert_equal true, version.available, "#{str.inspect} failed !"
-    end
-
-    str = "operation commerciale"
-    assert_difference "Incident.count", 0 do
-      version = ProductVersion.create(
-        product_id:products(:cd).id,
-        price:"2.79",
-        price_shipping:"1",
-        shipping_info:"toto",
-        image_url:"toto",
-        name:"toto",
-        availability_text:str)
-
-      assert_equal false, version.available, "#{str.inspect} failed !"
-    end
-
-    str = "vos modeles preferes"
-    assert_difference "Incident.count", 0 do
-      version = ProductVersion.create(
-        product_id:products(:tamaris).id,
-        price:"2.79",
-        price_shipping:"1",
-        shipping_info:"toto",
-        image_url:"toto",
-        name:"toto",
-        availability_text:str)
-
-      assert_equal false, version.available, "#{str.inspect} failed !"
+        availability_text:"En stock")
+      assert_equal 4.1, version.rating
     end
   end
 
@@ -281,8 +192,22 @@ class ProductVersionTest < ActiveSupport::TestCase
         shipping_info:"toto",
         image_url:"toto",
         name:"toto",
-        availability_text:"en precommande")
+        availability_text: MerchantHelper::AVAILABLE)
       assert version.available
+    end
+  end
+
+  test "it shouldnt generate incident if availability is known and mapped to false" do
+    assert_difference "Incident.count", 0 do
+      version = ProductVersion.create(
+        product_id:@product.id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text: MerchantHelper::UNAVAILABLE)
+      assert !version.available
     end
   end
   

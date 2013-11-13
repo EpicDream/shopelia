@@ -9,6 +9,7 @@ class Device < ActiveRecord::Base
   validates :uuid, :presence => true, :uniqueness => true
   
   before_validation :generate_uuid
+  after_update :notify_georges_lobby
 
   attr_accessible :push_token, :os, :os_version, :version, :build
   attr_accessible :referrer, :phone, :user_agent, :email, :uuid
@@ -32,6 +33,10 @@ class Device < ActiveRecord::Base
   
   private
   
+  def notify_georges_lobby    
+    Pusher.trigger("georges-lobby", "refresh", {}) if self.pending_answer_changed?
+  end
+
   def generate_uuid
     self.uuid = SecureRandom.hex(16) if self.uuid.nil?
   end

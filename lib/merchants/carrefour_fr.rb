@@ -4,7 +4,7 @@ class CarrefourFr
   DEFAULT_SHIPPING_INFO = "A la remise de votre colis au transporteur, livraison en 2 à 4 jours du lundi au samedi directement chez vous."
 
   AVAILABILITY_HASH = {
-    "\d+ produit" => false # search-result
+    /\d+ produit/ => false # search-result
   }
 
   def initialize url
@@ -33,6 +33,17 @@ class CarrefourFr
     version[:shipping_info] = DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
     version[:shipping_info].sub!(/D.lais et tarifs de livraison pour ce produit/i, '')
     version[:shipping_info].sub!("En savoir plus sur la livraison", '')
+    version
+  end
+
+  def process_image_url version
+    version[:image_url].sub!(%r{/\w(_\w+\.\w+)$}, '/l\\1') if version[:image_url].present?
+    version
+  end
+
+  def process_images version
+    return version unless version[:images].kind_of?(Array)
+    version[:images].map! { |url| url.sub(%r{/\w(_\w+\.\w+)$}, '/l\\1') }
     version
   end
 end

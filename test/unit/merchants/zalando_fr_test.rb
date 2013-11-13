@@ -12,4 +12,8 @@ class ZalandoFrTest < ActiveSupport::TestCase
   test "it should find class from url" do
     assert MerchantHelper.send(:from_url, @url).kind_of?(ZalandoFr)
   end
+
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("Vos modèles préférés", @url)
+  end
 end

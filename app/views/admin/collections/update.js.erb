@@ -1,0 +1,6 @@
+$("#chat-feature").text("Collection ready to send");
+var content = $("#message_collection_uuid");
+content.val("<%= escape_javascript(@collection.uuid)%>");
+var link = $("#collection-link");
+link.remove();
+content.after("<%= escape_javascript(render "admin/georges/messages/collection_link") %>");
