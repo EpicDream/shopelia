@@ -70,6 +70,13 @@ class LinkerTest < ActiveSupport::TestCase
       Linker.monetize "http://www.newshop.com/productC"
     end
   end
+
+  test "it shouldn't generate incident if url monetizer has a value" do
+    UrlMonetizer.new.set("http://www.newshop.com/productA", "http://www.newshop.com/productA/aff")
+    assert_difference "Incident.count", 0 do
+      Linker.monetize "http://www.newshop.com/productA"
+    end
+  end
  
   test "it should not change non monetizable link" do
     url = "http://www.prixing.fr"
