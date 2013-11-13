@@ -15,7 +15,7 @@ module AlgoliaFeed
 
   class Filer
  
-    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class
+    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params
 
     def self.download(params={})
       self.new(params).download
@@ -26,6 +26,7 @@ module AlgoliaFeed
     end
 
     def initialize(params={})
+      self.params         = params
       self.urls           = params[:urls]           || []
       self.tmpdir         = params[:tmpdir]         || '/home/shopelia/shopelia/tmp/algolia'
       self.debug          = params[:debug]          || 0
@@ -103,6 +104,14 @@ module AlgoliaFeed
       else
         decoded_file = raw_file.gsub(/\.raw\Z/, '')
       end
+      while File.exists?(decoded_file)
+        if m = /\-(\d+)\.xml\Z/.match(decoded_file)
+          x = m[1].to_i + 1
+          decoded_file.gsub!(/\-\d+\.xml\Z/, "-#{x}.xml")
+        else
+          decoded_file.gsub!(/\.xml\Z/, '-1.xml')
+        end
+      end
       file_type = FileMagic.new.file(raw_file)
       if file_type =~ /^gzip compressed data/
         File.open(decoded_file, 'wb') do |f|
@@ -152,7 +161,7 @@ module AlgoliaFeed
     end
 
     def process_xml_directory(dir=nil, free_children=6)
-      algolia = AlgoliaFeed.new(debug: self.debug)
+      algolia = AlgoliaFeed.new(self.params)
       algolia.connect(algolia.index_name)
       algolia.set_index_attributes
       Tagger.clear_redis
@@ -169,7 +178,7 @@ module AlgoliaFeed
         fork do
           ActiveRecord::Base.establish_connection
           class_name = path.split(/\//)[-2]
-          worker = class_name.constantize.new(debug: self.debug)
+          worker = class_name.constantize.new(self.params)
           worker.algolia.connect
           begin
             worker.process_xml(path)
