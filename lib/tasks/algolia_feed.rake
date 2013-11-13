@@ -9,7 +9,7 @@ namespace :shopelia do
 
     desc "Clean Algolia tmp dir"
     task :clean => :environment do
-      FileUtils.rm_rf(Dir.glob("#{AlgoliaFeed::FileUtils.new.tmpdir}/*"))
+      FileUtils.rm_rf(Dir.glob("#{AlgoliaFeed::Filer.new.tmpdir}/*"))
     end
 
     desc "Download Algolia feeds"
@@ -24,7 +24,7 @@ namespace :shopelia do
 
     desc "Process all Algolia feeds"
     task :process => :environment do
-      AlgoliaFeed::FileUtils.process_xml_directory(debug: 1)
+      AlgoliaFeed::Filer.process_xml_directory(debug: 1)
     end
 
     desc "Set Algolia production index"

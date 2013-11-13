@@ -2,7 +2,7 @@
 
 module AlgoliaFeed
 
-  class PriceMinisterFiler < FileUtils
+  class PriceMinisterFiler < Filer
 
     def initialize(params={})
       super
