@@ -44,6 +44,7 @@ class LinkerTest < ActiveSupport::TestCase
   end
  
   test "it should generate incident if link is not monetizable" do
+    UrlMonetizer.new.del("http://www.newshop.com/productA")
     assert_difference "Incident.count", 1 do
       Linker.monetize "http://www.newshop.com/productA"
     end
