@@ -2,27 +2,29 @@ module Descriptions
   module Amazon
     
     class PFormatter
+      DEFAULT_KEY = "Informations"
       
-      def initialize nodeset 
-        @nodeset = nodeset
-        @paragraphs = @nodeset.xpath(".//div/p")
+      def initialize node 
+        @paragraph = node
       end
       
       def representation
-        @paragraphs.inject({}) { |hash, paragraph|
-          key = header_of(paragraph)
-          hash[key] ||= []
-          hash[key] << paragraph.text
-          hash
-        }
+        !inside_table? && @paragraph.text
+      end
+      
+      def key
+        header_of(@paragraph)
+      end
+      
+      private
+      
+      def inside_table?
+        @paragraph.xpath(".//ancestor::table").any?
       end
       
       def header_of paragraph
-        xpath = (1..5).map { |n| 
-          "./#{paragraph.path.delete('?')}/preceding-sibling::h#{n}"
-        }.join(" | ")
-        node = @nodeset.xpath(xpath).first
-        node.text if node
+        xpath = (1..5).map { |n| ".//preceding-sibling::h#{n}" }.join(" | ")
+        @paragraph.xpath(xpath).map(&:text).last || DEFAULT_KEY
       end
       
     end
@@ -33,17 +35,15 @@ module Descriptions
       attr_reader :key
       
       def initialize node
-        @headers = headers()
         @table = node
       end
       
       def representation
-        # @tables.inject({}) { |hash, table|  
-        #   hash[@headers.shift] = table_to_keys_values(table)
-        #   hash
-        # }
-        { key => "toto" }
-        
+        if simple_table?
+          table_to_hash()
+        else
+          @table.to_s
+        end
       end
       
       def key
@@ -53,8 +53,8 @@ module Descriptions
         @table.xpath(xpath).map(&:text).last || DEFAULT_KEY
       end
       
-      def table_to_keys_values table
-        table.xpath(".//tr").inject({}) { |hash, tr|  
+      def table_to_hash
+        @table.xpath(".//tr").inject({}) { |hash, tr|  
           key, value = tr.xpath(".//td/text()").map(&:text)
           next hash if key.blank? || value.blank?
           hash[key] = value
@@ -62,12 +62,8 @@ module Descriptions
         }
       end
       
-      def headers
-        # @table.xpath(".//div[@class='secHeader']/span").map(&:text) #specific
-      end
-      
-      def keys
-        # @nodeset.xpath(".//*[self::h1 or self::h2 or self::h3 or self::h4]").map(&:text)
+      def simple_table?
+        @table.xpath(".//tr").first.xpath(".//td").count <= 2
       end
       
     end
@@ -81,14 +77,11 @@ module Descriptions
       end
       
       def representation
-        { key => @lis.map(&:text) }
+        @lis.map(&:text)
       end
       
       def key
-        xpath = (1..5).map { |n| 
-          "./#{@ul.path.delete('?')}/preceding-sibling::h#{n}"
-        }.join(" | ")
-        
+        xpath = (1..5).map { |n| ".//preceding-sibling::h#{n}" }.join(" | ")
         @ul.xpath(xpath).map(&:text).last || DEFAULT_KEY
       end
       
@@ -120,9 +113,15 @@ module Descriptions
       end
       
       def representation
-        representation = { @key => [] }
-        formatters.inject(representation) { |hash, formatter|  
-          hash[@key] << formatter.representation
+        {@key => merged_representations}
+      end
+      
+      def merged_representations
+        formatters.inject({}) { |hash, formatter|
+          key, content = formatter.key, formatter.representation
+          next hash if content.blank?
+          hash[key] ||= []
+          hash[key] << content
           hash
         }
       end
