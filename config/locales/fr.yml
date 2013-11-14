@@ -364,7 +364,9 @@ fr:
         text: "La transaction est effectuée sur des serveurs sécurisés. Nous ne stockons aucune donnée de carte bancaire."
       terms: "CGU"
       help: "Aide"
+      legal: "Mentions légales"
       security: "Sécurité"
+      confidentiality: "Charte de confidentialité"
       send_app:
         invalid_entry: "Veuillez entrez un email ou un numéro de téléphone valide"
         error: "Nous n'avons pas pu vous envoyer le lien pour télécharger l'application. Veuillez vérifier les informations saisies."

@@ -2,7 +2,9 @@ require 'api_constraints'
 
 Shopelia::Application.routes.draw do
 
-  match "/cgu" => "home#general_terms_of_use"
+  match "/cgu" => "home#general_terms_of_use"  
+  match "/legal" => "home#legal"
+  match "/confidentiality" => "home#confidentiality"
   match "/security" => "home#security"
   match "/download" => "home#download"
   match "/connect", to: "home#connect"
