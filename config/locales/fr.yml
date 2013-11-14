@@ -336,6 +336,12 @@ fr:
     invalid_birthdate: "Vous devez avoir au minimum 16 ans pour vous enregistrer"
     cannot_destroy: "Impossible de supprimer un utilisateur avec des commandes déjà effectuées"
 
+  georges:
+    available: ""
+    sleeping: "Georges dort, il vous répond à son réveil."
+    holiday: "Georges est en congé, mais il revient vite :)"
+    overworked: "Georges croule sous les demandes, il s'occupe de vous au plus vite !"
+
   app:
     catalogue:
       search: "Rechercher des produits dans le catalogue"
