@@ -1,3 +1,5 @@
+require 'net/ftp'
+
 module Customers
   class CadeauShaker
     
@@ -17,7 +19,7 @@ module Customers
       @log = []
     end
     
-    def upload_file filename
+    def self.upload_file filename
       file = File.new(filename)
       Net::FTP.open(FTP_HOST, FTP_LOGIN, FTP_PWD) do |ftp|
         ftp.putbinaryfile(file)
