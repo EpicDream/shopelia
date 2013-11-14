@@ -159,6 +159,10 @@ Shopelia::Application.routes.draw do
         get :alive
       end
       resources :merchants, :only => [:show, :update, :index]
+      namespace :merchants do
+        post :link
+      end
+      resources :mappings, :only => [:index, :update, :show, :create]
     end
     namespace :vulcain do
       resources :merchants, :only => :update
