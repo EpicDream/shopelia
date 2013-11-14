@@ -2,7 +2,7 @@
 
 module AlgoliaFeed
 
-  class TradedoublerFiler < FileUtils
+  class TradedoublerFiler < Filer
 
     def initialize(params={})
       super
@@ -22,7 +22,7 @@ module AlgoliaFeed
         'name'         => 'name',
         'productUrl'   => 'product_url',
         'imageUrl'     => 'image_url',
-        'description ' => 'description',
+        'description'  => 'description',
         'currency'     => 'currency',
         'availability' => 'availability',
         'ean'          => 'ean',

@@ -47,7 +47,7 @@ namespace :shopelia do
       Collection.where("name is null or length(name) = 0").where("created_at < ?", 1.day.ago).each do |collection|
         collection.destroy if collection.collection_items.count == 0
       end
-      Merchant.where("name=domain").each do |merchant|
+      Merchant.where("name=domain and viking_data is null").each do |merchant|
         merchant.destroy if merchant.events.count == 0
       end
     end

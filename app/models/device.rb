@@ -13,7 +13,7 @@ class Device < ActiveRecord::Base
 
   attr_accessible :push_token, :os, :os_version, :version, :build
   attr_accessible :referrer, :phone, :user_agent, :email, :uuid
-  attr_accessible :pending_answer
+  attr_accessible :pending_answer, :is_dev
   
   def self.fetch uuid, ua
     Device.find_by_uuid(uuid) || Device.create(uuid:uuid,user_agent:ua)
@@ -27,10 +27,28 @@ class Device < ActiveRecord::Base
     device.version = hash["version"]
     device.build = hash["build"].to_i
     device.phone = hash["phone"]
+    device.is_dev = hash["dev"].to_i == 1
     device.save
     device
   end
   
+  def android?
+    self.os == 'Android'
+  end
+
+  def ios?
+    self.os == 'iOS'
+  end
+
+  def authorize_push_channel
+    Nest.new("device")[self.id][:created_at].set(Time.now.to_i)
+  end
+
+  def push_channel_authorized?
+    ts = Nest.new("device")[self.id][:created_at].get.to_i
+    ts > Time.now.to_i - 2.hours.to_i
+  end
+
   private
   
   def notify_georges_lobby    

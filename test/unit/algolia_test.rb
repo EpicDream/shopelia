@@ -16,7 +16,7 @@ class AlgoliaTest < ActiveSupport::TestCase
 
   def test_algolia_download_http_and_gunzip
     url = "http://productdata.zanox.com/exportservice/v1/rest/19024603C1357169475.xml?ticket=F03A5E4E67A27FD5925A570370AD7885&gZipCompress=yes"
-    algolia = AlgoliaFeed::FileUtils.new(debug:0, tmpdir:'/tmp')
+    algolia = AlgoliaFeed::Filer.new(debug:0, tmpdir:'/tmp')
     raw_file = algolia.retrieve_url(url)
     decoded_file = algolia.decompress_datafile(raw_file)
     assert(FileMagic.new.file(decoded_file) =~ /\AXML\s/)
@@ -26,7 +26,7 @@ class AlgoliaTest < ActiveSupport::TestCase
 
   def test_algolia_download_ftp_and_unzip
     url = "ftp://prixing:j5Z61eg@priceminister.effiliation.com/prixing_BOOKS_TOP.xml.zip"
-    algolia = AlgoliaFeed::FileUtils.new(debug: 0, tmpdir:'/tmp')
+    algolia = AlgoliaFeed::Filer.new(debug: 0, tmpdir:'/tmp')
     raw_file = algolia.retrieve_url(url)
     decoded_file = algolia.decompress_datafile(raw_file)
     assert(FileMagic.new.file(decoded_file) =~ /\AXML\s/)
@@ -45,7 +45,7 @@ class AlgoliaTest < ActiveSupport::TestCase
   end
 
   def test_priceminister
-    pm = AlgoliaFeed::PriceMinister.new(index_name: 'testing', tmpdir: '/tmp')
+    pm = AlgoliaFeed::PriceMinister.new(index_name: 'testing', tmpdir: '/tmp', debug:0)
     pm.algolia.connect('testing')
     pm.process_xml("#{Rails.root}/test/data/price_minister.xml")
     sleep 1
@@ -54,10 +54,8 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert(Time.now.to_i - record['timestamp'] < 5)
     assert_equal("Mode > Cosmetique-Produit-de-beaute > Cigarette Electronique (Autre)", record['category'])
     assert_equal('http://www.priceminister.com/offer/buy/206799878', record['product_url'])
-    assert_difference "UrlMatcher.count", 0 do 
-      url = pm.canonize('http://track.effiliation.com/servlet/effi.redir?id_compteur=ID_COMPTEUR&url=http://www.priceminister.com/offer/buy/206799878/sort1/filter10/sort1%3Ft%3DTRACKING_CODE')
-      assert_equal 'http://www.priceminister.com/offer/buy/206799878', url
-    end
+    url = pm.canonize('http://track.effiliation.com/servlet/effi.redir?id_compteur=ID_COMPTEUR&url=http://www.priceminister.com/offer/buy/206799878/sort1/filter10/sort1%3Ft%3DTRACKING_CODE')
+    assert_equal 'http://www.priceminister.com/offer/buy/206799878', url
     assert_equal(3, record['_tags'].collect{ |tag| tag if tag=~ /category:/}.compact.size)
     assert_equal('1', Redis.new.hget(AlgoliaFeed::Tagger::TAGS_HASH, 'category:Mode'))
   end
@@ -154,5 +152,25 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert(item['_tags'].include?('category:Bougies et Bougeoires'))
     assert(item['_tags'].include?('category:Bougies Festives'))
   end
+
+  def test_publicidees
+    pi = AlgoliaFeed::Publicidees.new(index_name: 'testing', debug:0, tmpdir: '/tmp')
+    pi.algolia.connect('testing')
+
+    pi.process_xml("#{Rails.root}/test/data/publicidees.xml")
+    sleep 1
+    hits = pi.algolia.index.search('')['hits']
+    assert_equal(1, hits.size)
+    item = hits.first
+    assert_equal('chausport.com', item['merchant_name'])
+    assert_equal('http://www.chausport.com/p/adidas-adi-rise-2-0-bebe-bleue-316.html', item['product_url'])
+    assert(item['_tags'].include?('category:Baskets'))
+    assert(item['_tags'].include?('category:Chaussures Bébé'))
+  end
+  
+
+
+
+
 
 end

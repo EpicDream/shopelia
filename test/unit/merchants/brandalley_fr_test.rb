@@ -34,6 +34,8 @@ class BrandalleyFrTest < ActiveSupport::TestCase
 
   test "it should parse specific availability" do
     assert_equal true, MerchantHelper.parse_availability("plus que 2", @url)
+    assert_equal false, MerchantHelper.parse_availability("1829 article(s)\nHomme prêt-à-porter t-shirts & polos t-shirts manches courtes", @url)
+    assert_equal false, MerchantHelper.parse_availability("ACCÉDER À LA BOUTIQUE", @url)
   end
 
   test "it should process price_shipping if empty" do

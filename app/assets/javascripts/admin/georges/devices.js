@@ -4,6 +4,14 @@ $(document).ready(function() {
     $(this).toggleClass('user-row-select');
   });
 
+  $("#georges-status").on('change', function() {
+    $.ajax({
+      url: "/admin/georges/status",
+      dataType: "json",
+      data: {status:$("#georges-status").val()}
+    });    
+  });
+
   // Georges sync using Pusher lib
   if (window.pusher === undefined) {
     window.pusher = new Pusher("654ffe989dceb4af5e03");

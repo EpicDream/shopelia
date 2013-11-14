@@ -24,10 +24,16 @@ namespace :shopelia do
           products << product_serializer.as_json
         end
         if products.count > 0
-          filename = "/tmp/products-feed-#{SecureRandom.hex(4)}-#{Time.now.strftime("%Y-%m-%d")}.xml"
-          File.open(filename, "w") { |file| file.write products.to_xml }
-          `gzip #{filename}`
-          Emailer.send_products_feed_to_developer(developer, filename + '.gz').deliver
+          if (developer.name == "CadeauShaker")
+            filename = "/tmp/products-feed.xml"
+            File.open(filename, "w") { |file| file.write products.to_xml }
+            Customers::CadeauShaker.upload_file(filename)
+			    else
+            filename = "/tmp/products-feed-#{SecureRandom.hex(4)}-#{Time.now.strftime("%Y-%m-%d")}.xml"
+            File.open(filename, "w") { |file| file.write products.to_xml }
+            `gzip #{filename}`
+            Emailer.send_products_feed_to_developer(developer, filename + '.gz').deliver
+          end
         end
       end
     end

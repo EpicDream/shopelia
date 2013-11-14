@@ -8,7 +8,7 @@ class Api::V1::TracesControllerTest < ActionController::TestCase
     @device = devices(:samsung)
     @user = users(:elarch)
     @trace = {
-      ressource:"George",
+      resource:"George",
       action:"message",
       extra_text:"bla"
     }
@@ -28,7 +28,7 @@ class Api::V1::TracesControllerTest < ActionController::TestCase
     assert_equal @device.id, trace.device_id
     assert trace.user_id.nil?
     assert trace.extra_id.nil?
-    assert_equal "George", trace.ressource
+    assert_equal "George", trace.resource
     assert_equal "message", trace.action
     assert_equal "bla", trace.extra_text
   end

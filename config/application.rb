@@ -82,6 +82,22 @@ module Shopelia
     GCM.format = :json
     GCM.key = "AIzaSyDGlTm2cS2g1QA7IrsLyL7l63BxioIsJpE"
 
+    # APNS
+    config.apns = {
+        development: {
+            host: 'gateway.sandbox.push.apple.com',
+            pem: "#{Rails.root}/keys/apple/development.pem",
+            port: 2195,
+            pass: ""
+        },
+        production: {
+            host: 'gateway.push.apple.com',
+            pem: "#{Rails.root}/keys/apple/production.pem",
+            port: 2195,
+            pass: ""
+        },
+    }
+
     # Static image server
     config.image_host = "https://www.shopelia.com"
   end

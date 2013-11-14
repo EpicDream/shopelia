@@ -31,7 +31,7 @@ module AlgoliaFeed
       self.tagger = Tagger.new
 
       self.algolia = AlgoliaFeed.new(params)
-      self.filer = params[:filer] || 'AlgoliaFeed::FileUtils'
+      self.filer = params[:filer] || 'AlgoliaFeed::Filer'
       params[:parser_class] = self.class
       self.filer = self.filer.constantize.new(params)
       self
@@ -82,12 +82,33 @@ module AlgoliaFeed
     end
 
     def product_hash(xml)
-      xml_product = Nokogiri::XML(xml).children.first
       product = {}
-      xml_product.children.each do |c|
-        product[c.name] = c.text if c.text=~/\S/
+      xml_product = Nokogiri::XML(xml) { |config| config.nonet.noblanks }
+      xml_product.children.first.children.each do |child|
+        add_xml_node('', child, product)
       end
       product
+    end
+
+    def add_xml_node(path, child, product)
+      puts "Add XML Node: path: #{path} child: #{child} class: #{child.class} attributes: #{child.attributes} product: #{product}" if self.debug > 2
+      if [Nokogiri::XML::Text, Nokogiri::XML::CDATA].include?(child.class)
+        product[path] = child.text
+      else
+        if path.present?
+          path = "#{path}/#{child.name}"
+        else
+          path = child.name
+        end
+        attributes = []
+        child.attributes.each do |attr|
+          attributes << "#{attr[0]}=#{attr[1]}"
+        end
+        path = "#{path}-#{attributes.join('-')}" if attributes.size > 0
+        child.children.each do |c|
+          add_xml_node(path, c, product)
+        end
+      end
     end
 
     def process_product(product)
@@ -154,7 +175,7 @@ module AlgoliaFeed
       self.url_monetizer.set(record['product_url'], record['url_monetized'])
 
       record['_tags'].each do |tag|
-				next if tag =~ /\Aean:/
+        next if tag =~ /\Aean:/
         self.tagger.increment(tag)
       end
     end
