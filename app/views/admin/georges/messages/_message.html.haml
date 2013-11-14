@@ -29,8 +29,8 @@
             #{message.device.user.first_name}
           - else
             Device ID : #{message.device.id}
-        %p
-          = message.content
+        %p.chat-message-search
+          = link_to admin_georges_device_messages_collection_builder_path(@device), :remote => true do
+            - message.content
+
 %hr
-
-

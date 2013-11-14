@@ -1,5 +1,5 @@
 #live-chat{"data-device-id" => "#{@device.id}"}
-  %header.clearfix
+  %header.clearfix#chat-header
     %h4
       - if @device.user
         = link_to @device.user.name, admin_user_path(@device.user)
@@ -43,3 +43,24 @@
       $("[data-message-id=" + id + "]").find("#read_at").html("Read");
     });
   }
+
+  function searchMessageContent(callback) {
+    var checkExist = setInterval(function() {
+               if ($('#catalogue-search').length) {
+                  callback();
+                  clearInterval(checkExist);
+               }
+            }, 200);
+  }
+
+
+  $('.chat-message-search').click(function(){
+      var that = $(this);
+      searchMessageContent(function(){
+        var searchText = that.text().trim();
+        $('#catalogue-search').val(searchText);
+        $('#catalogue-search').trigger('keyup');
+
+      })
+  })
+

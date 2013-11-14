@@ -2,7 +2,7 @@
 
 module AlgoliaFeed
 
-  class TradedoublerFiler < FileUtils
+  class TradedoublerFiler < Filer
 
     def initialize(params={})
       super
@@ -22,7 +22,7 @@ module AlgoliaFeed
         'name'         => 'name',
         'productUrl'   => 'product_url',
         'imageUrl'     => 'image_url',
-        'description ' => 'description',
+        'description'  => 'description',
         'currency'     => 'currency',
         'availability' => 'availability',
         'ean'          => 'ean',
@@ -50,6 +50,10 @@ module AlgoliaFeed
       if record['merchant_name'] == 'Rue du Commerce'
         record['image_url'].gsub!(/\/large\//, '/xl/')
         record['image_url'].gsub!(/150x150\.jpg/, '300x300.jpg')
+      end
+
+      if record['merchant_name'] == 'Pixmania'
+        record['image_url'].gsub!(/\/s_/, '/l_')
       end
 
       record

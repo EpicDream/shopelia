@@ -11,6 +11,7 @@ class Product < ActiveRecord::Base
   has_and_belongs_to_many :developers, :uniq => true
   has_many :collection_items
   has_many :collections, :through => :collection_items
+  has_many :product_reviews
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true
@@ -204,9 +205,14 @@ class Product < ActiveRecord::Base
     self.update_column "versions_expires_at", nil
   end
 
-  def set_image_size
-    size = FastImage.size(self.image_url)
+  def set_image_size retry_fetch=true
+    return if self.image_url.blank?
+    size = FastImage.size(self.image_url, :raise_on_failure=>true)
     self.update_column "image_size", size.join("x") unless size.nil?
+  rescue 
+    return unless retry_fetch
+    `curl #{self.image_url} > /dev/null 2>&1`
+    set_image_size(false)
   end
 
   def notify_channel

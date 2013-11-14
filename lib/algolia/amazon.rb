@@ -2,7 +2,7 @@
 
 module AlgoliaFeed
 
-  class AmazonFiler < FileUtils
+  class AmazonFiler < Filer
 
     def initialize(params={})
       super

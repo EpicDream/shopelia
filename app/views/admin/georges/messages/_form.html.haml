@@ -1,5 +1,5 @@
 = form_for([:admin,:georges,@device,Message.new], remote: true, :html => { :id => 'message_form' }) do |f|
-  = f.text_area :content , autofocus: "", placeholder: "Type your message?", type: "text" , rows: 4, required:true
+  = f.text_area :content , placeholder: "Type your message?", type: "text" , rows: 4, required:true
   = f.hidden_field :collection_uuid
   .spacer20
   = f.submit "Send", :class => 'button-flat-empty'
@@ -33,4 +33,7 @@
        giftCard.val(0);
     }
   })
+
+  var formHeight = $(window).height() - $('#message_form').outerHeight() - $('#chat-header').outerHeight() - $('.navbar').outerHeight();
+  $('.chat-history').css("height", formHeight)
 

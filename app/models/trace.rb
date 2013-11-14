@@ -3,11 +3,11 @@ class Trace < ActiveRecord::Base
   belongs_to :user
 
   validates :device, :presence => true
-  validates :ressource, :presence => true
+  validates :resource, :presence => true
   validates :action, :presence => true
   validates :ip_address, :presence => true
 
-  attr_accessible :ressource, :action, :device_id, :extra_id, :extra_text, :user_id, :ip_address
+  attr_accessible :resource, :action, :device_id, :extra_id, :extra_text, :user_id, :ip_address
 
   after_create :update_user_session
 
