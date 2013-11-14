@@ -106,15 +106,11 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   
   test "complete product file windows8(c'est de la dobe)" do
     html = description("windows8")
-    representation = Descriptions::Amazon::Formatter.format(html)
-    
-    puts representation.inspect
-    # infos = representation["Informations sur le produit"]["Descriptif technique"].first
-    # 
-    # assert_equal representation.keys, ["Header", "Informations sur le produit", "Descriptions du produit"]
-    # assert_equal "240 g", infos["Poids de l'article"]
+    rep = Descriptions::Amazon::Formatter.format(html)
+
+    assert_equal ["Microsoft", "Windows", "Pro", "Licence"], rep["Header"]["Summary"].first
+    assert_equal rep["Détails sur le produit"]["Summary"].first[0], "Dimensions du produit:         13,8 x 19,2 x 0,2 cm ; 54 g"
   end
-  
   
   private
   
