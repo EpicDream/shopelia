@@ -40,6 +40,15 @@ class Device < ActiveRecord::Base
     self.os == 'iOS'
   end
 
+  def authorize_push_channel
+    Nest.new("device")[self.id][:created_at].set(Time.now.to_i)
+  end
+
+  def push_channel_authorized?
+    ts = Nest.new("device")[self.id][:created_at].get.to_i
+    ts > Time.now.to_i - 2.hours.to_i
+  end
+
   private
   
   def notify_georges_lobby    

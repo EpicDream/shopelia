@@ -1,0 +1,16 @@
+.row-fluid
+  .span2
+    = raw trace_resource_to_html(trace.resource)
+  .span2
+    = trace.action
+  .span5
+    - if trace.resource == "Georges" || trace.resource == "Scan"
+      = trace.extra_text
+    - elsif trace.resource == "Collection"
+      - c = Collection.find_by_uuid(trace.extra_text)
+      = link_to c.name || c.uuid, admin_collection_path(c), target:"_blank"
+    - elsif trace.resource == "Product"
+      - p = Product.find(trace.extra_id)
+      = link_to p.name, p.url, target:"_blank"
+  .span3
+    = trace.created_at.in_time_zone("Paris")

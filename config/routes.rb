@@ -69,6 +69,7 @@ Shopelia::Application.routes.draw do
     get "/georges/status", to: "georges#status"
     namespace :georges do
       get "/devices/lobby", to: "devices#lobby"
+      resources :traces, :only => :show
       resources :devices do
         match "/messages/check", to: "messages#check"
         get "/messages/collection_builder", to: "messages#collection_builder"
