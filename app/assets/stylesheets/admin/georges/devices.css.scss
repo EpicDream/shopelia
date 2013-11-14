@@ -46,6 +46,11 @@ body {
 
 }
 
+#chat-list-status {
+  padding: 14px 24px 0px;
+  border: 1px solid #d3d3d3;
+  background: darken(#fff,5%);  
+}
 #chat-list-users-header,#chat-list-history-header {
   padding: 14px 24px;
   border: 1px solid #d3d3d3;
