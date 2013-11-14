@@ -9,18 +9,16 @@ define(['logger', './saturn_options', 'core_extensions', 'satconf'], function(lo
 // il y a le même nombre d'option quelque soit l'option choisie.
 
 var SaturnSession = function(saturn, prod) {
-  SaturnSession.counter++;
   this.saturn = saturn;
   $extend(this, prod);
 
+  this.id = ++SaturnSession.counter;
+  this.prod_id = prod.id;
   this.strategy = this.strategy || 'normal';
   this.initialStrategy = this.strategy;
   this.options = new SaturnOptions(this.mapping, this.argOptions);
 
-  this.rescueTimeout = setTimeout(function() {
-    this.saturn.sendError(this, "Timeout !");
-    this.endSession();
-  }.bind(this), satconf.SESSION_RESCUE);
+  this.rescueTimeout = setTimeout(this.onTimeout, satconf.SESSION_RESCUE);
 };
 
 SaturnSession.counter = 0;
@@ -28,7 +26,7 @@ SaturnSession.counter = 0;
 SaturnSession.prototype = {};
 
 SaturnSession.prototype.start = function() {
-  logger.info(this.logId(), "Start crawling !", logger.level >= logger.DEBUG ? this : "(#"+this.id+", url="+this.url+")");
+  logger.info(this.logId(), "Start crawling !", logger.level >= logger.DEBUG ? this : "(url="+this.url+")");
   this.next();
 };
 
@@ -118,7 +116,7 @@ SaturnSession.prototype.createSubTasks = function() {
   for (var i = 1 ; i < hashes.length ; i++) {
     var hashCode = hashes[i];
     var prod = {
-      id: this.id,
+      id: this.prod_id,
       batch_mode: true,
       url: this.url,
       mapping: this.mapping, //Sharing
@@ -183,7 +181,7 @@ SaturnSession.prototype.subTaskEnded = function(subSession) {
   delete this._subTasks[subSession._subTaskId];
   if (Object.keys(this._subTasks).length === 0) {
     delete this._subTasks;
-    if (this.strategy === 'done')
+    if (this.strategy === 'done' || this.strategy === 'ended')
       // last subtask ended, send final result.
       this.sendFinalVersions();
     // else, this subtask is not yet ended,
@@ -205,15 +203,24 @@ SaturnSession.prototype.sendPartialVersion = function() {
 SaturnSession.prototype.sendFinalVersions = function() {
   if (this._subTasks) {
     logger.info(this.logId(), "Main subTask finished, wait for others...");
+    this.preEndSession();
   } else if (typeof this._onSubTaskFinished === 'function') {
     logger.info(this.logId(), "SubTask finished !");
     this._onSubTaskFinished(this);
-    this.endSession(this);
+    this.endSession();
   } else {
     this.saturn.sendResult(this, {versions: [this._firstVersion], options_completed: true}); //
     logger.info(this.logId(), "Finish crawling !");
-    this.endSession(this);
+    this.endSession();
   }
+};
+
+//
+SaturnSession.prototype.preEndSession = function() {
+  this.strategy = 'ended'; // prevent
+  clearTimeout(this.rescueTimeout);
+  this.rescueTimeout = setTimeout(this.onTimeout, satconf.SESSION_RESCUE * 10);
+  this.saturn.freeTab(this.tabId);
 };
 
 //
@@ -224,8 +231,17 @@ SaturnSession.prototype.endSession = function() {
 };
 
 //
+SaturnSession.prototype.onTimeout = function() {
+  this.saturn.sendError(this, "Timeout !");
+  this.endSession();
+};
+
+//
 SaturnSession.prototype.logId = function () {
-  return (this.tabId ? '('+this.tabId+')' : '')+(this.id ? '{'+this.id+'}' : '');
+  var s = this.id ? '#'+this.id : '';
+  s += this.prod_id ? '/'+this.prod_id : '';
+  s += this.tabId ? '@'+this.tabId : '';
+  return s;
 };
 
 return SaturnSession;

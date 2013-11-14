@@ -100,10 +100,10 @@ ChromeSaturn.prototype.parseCurrentPage = function(tab) {
 ChromeSaturn.prototype.sendWarning = function(session, msg) {
   if (session.extensionId) {
     saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], warnMsg: msg});
-  } else if (session.id) // Stop pushed or Local Test
+  } else if (session.prod_id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
-      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
       contentType: 'application/json',
       data: JSON.stringify({versions: [], warnMsg: msg})
     });
@@ -114,10 +114,10 @@ ChromeSaturn.prototype.sendWarning = function(session, msg) {
 ChromeSaturn.prototype.sendError = function(session, msg) {
   if (session.extensionId) {
     saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], errorMsg: msg});
-  } else if (session.id) // Stop pushed or Local Test
+  } else if (session.prod_id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
-      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
       contentType: 'application/json',
       data: JSON.stringify({versions: [], errorMsg: msg})
     }).fail(function(xhr, textStatus, errorThrown ) {
@@ -137,12 +137,12 @@ ChromeSaturn.prototype.sendResult = function(session, result) {
     result.kind = session.kind;
     result.strategy = session.initialStrategy;
     saturn.externalPort.postMessage(result);
-  } else if (session.id) {// Stop pushed or Local Test
+  } else if (session.prod_id) {// Stop pushed or Local Test
     $.ajax({
       tryCount: 0,
       retryLimit: 1,
       type : "PUT",
-      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
       contentType: 'application/json',
       data: JSON.stringify(result)
     }).fail(function(xhr, textStatus, errorThrown) {
