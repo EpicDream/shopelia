@@ -1,7 +1,7 @@
 class Api::Viking::MerchantsController < Api::V1::BaseController
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_developer!
-  before_filter :retrieve_merchant, :only => [:show, :update, :create]
+  before_filter :retrieve_merchant, :only => [:show, :update, :create, :link]
   before_filter :retrieve_merchant_by_url, :only => [:index]
 
   def_param_group :merchant do
@@ -35,6 +35,16 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
     end
   end
 
+  api :POST, "/viking/merchants/:id", "Update merchant information"
+  def link
+    if Mapping.find(params[:data]).present?
+      @merchant.update_attribute :mapping_id, params[:data]
+      head :no_content
+    else
+      render json: @merchant.errors, status: :unprocessable_entity
+    end
+  end
+
   private
   
   def retrieve_merchant
@@ -42,6 +52,6 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
   end
 
   def retrieve_merchant_by_url
-    @merchant = Merchant.from_url(params[:url])
+    @merchant = Merchant.from_url(params[:url], false)
   end
 end
