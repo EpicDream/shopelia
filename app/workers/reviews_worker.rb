@@ -3,8 +3,10 @@ require 'scrapers/reviews/amazon/amazon'
 class ReviewsWorker
   include Sidekiq::Worker
 
-  def perform merchant, product_id
-    merchant = merchant.constantize
-    Scrapers::Reviews::merchant::Scraper.scrape(product_id)
+  def perform hash
+    product = Product.find(hash["product_id"])
+    if product.merchant.domain == "amazon.fr"
+      Scrapers::Reviews::merchant::Scraper.scrape(product_id)
+    end
   end
 end
