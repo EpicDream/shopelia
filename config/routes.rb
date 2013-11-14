@@ -148,6 +148,7 @@ Shopelia::Application.routes.draw do
       end
     end
     namespace :viking do
+      resources :mappings, :only => [:index, :update, :show, :create]
       resources :products, :only => [:index, :update]
       namespace :products do
         get :failure
@@ -155,6 +156,9 @@ Shopelia::Application.routes.draw do
         get :alive
       end
       resources :merchants, :only => [:show, :update, :index]
+      namespace :merchants do
+        post :link
+      end
     end
     namespace :vulcain do
       resources :merchants, :only => :update

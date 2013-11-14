@@ -22,9 +22,9 @@ class Linker
     end
     canonical
   rescue Errno::ETIMEDOUT
-    orig
+    orig || url
   rescue
-    orig
+    orig || url
   end
 
   def self.monetize url
