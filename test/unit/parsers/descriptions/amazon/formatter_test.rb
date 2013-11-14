@@ -6,39 +6,41 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   #tigrou : http://www.amazon.fr/gp/product/B002MZZ2LI
   #les croods : http://www.amazon.fr/Croods-Kev-Adams/dp/B00CAUAA3U
   #tv lg : http://www.amazon.fr/LG-22EN33S-Ecran-1920-1080/dp/B00BBWLKQO
+  #Window 8 : http://www.amazon.fr/Windows-Pro-OEM-64-bit-poste/dp/B00971Y91Y/ref=pd_sim_sw_3
   
   setup do
   end
   
   test "formatter detector detect ul-li type" do
-    formatters = formatter_for('sandisk_header').formatters
+    formatters = formatter_for('sandisk', 0).formatters
     
     assert_equal [Descriptions::Amazon::UlFormatter], formatters.map(&:class)
   end
   
   test "formatter detector detect tables type" do
-    formatters = formatter_for('sandisk_descriptif').formatters
+    formatters = formatter_for('sandisk', 1).formatters
+    expected = ["Table", "Text"].map { |name| "Descriptions::Amazon::#{name}Formatter".constantize }
     
-    assert_equal [Descriptions::Amazon::TableFormatter]*2, formatters.map(&:class)
+    assert_equal expected.to_set, formatters.map(&:class).to_set
   end
   
   test "formatter detector detect ul, table, p types" do
-    formatters = formatter_for('sandisk_descriptions').formatters
+    formatters = formatter_for('sandisk', 2).formatters
     
-    expected = ["P", "Table", "Ul"].map { |name| "Descriptions::Amazon::#{name}Formatter".constantize }
+    expected = ["P", "Table", "Ul", "Text"].map { |name| "Descriptions::Amazon::#{name}Formatter".constantize }
     assert_equal expected.to_set, formatters.map(&:class).to_set
   end
   
   test "convert lis to array with lis text contents for sandisk sample" do
-    representation = representation_for('sandisk_header')
+    representation = representation_for('sandisk', 0)
     content = representation["Header"]["Summary"].first
-    
+
     assert_equal 5, content.count
     assert_equal "Garantie du fabricant: 1 an", content[0]
   end
   
   test "convert lis to array with lis text contents for tigrou sample" do
-    representation = representation_for('tigrou_header')
+    representation = representation_for('tigrou', 0)
     
     content = representation["Header"]["Summary"].first
 
@@ -47,7 +49,7 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   end
   
   test "convert simple tables to keys-values for sandisk sample" do
-    representation = representation_for('sandisk_descriptif')
+    representation = representation_for('sandisk', 1)
     descriptif = representation["Informations sur le produit"]["Descriptif technique"].first
     infos = representation["Informations sur le produit"]["Informations complémentaires"].first
     
@@ -59,27 +61,60 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   end
   
   test "convert paragraphs, merge with same key" do
-    representation = representation_for('sandisk_paragraphs')
+    representation = representation_for('sandisk', 2)
     content = representation["Descriptions du produit"]["Lecteurs MP3 SanDisk Sansa™ Clip+"]
     item = "Le petit lecteur MP3 portable qui offre un son de qualité ! Divertissez-vous davantage."
     
-    assert_equal 1, representation["Descriptions du produit"].keys.count
     assert_equal 3, content.count
     assert_equal item, content[1]
   end
   
+  test "convert div with text at root" do
+    representation = representation_for('tigrou', 2)
+    descr = representation["Descriptions du produit"]["Descriptions du produit"]
+    
+    assert descr[1] =~ /^Déguisement.*?Disney/  
+  end
+  
   test "convert block with uls, p and tables. p inside table must be skipped" do
-    representation = representation_for('sandisk_descriptions')
-    table = representation["Descriptions du produit"]["Matrice de capacité de lecture"].first
+    representation = representation_for('sandisk', 2)
     foncs = representation["Descriptions du produit"]["Liste des fonctionnalités"].first
-
-    expected_keys = ["Matrice de capacité de lecture", "Liste des fonctionnalités", "Configuration système minimale", "Contenu de l'emballage", "Lecteurs MP3 SanDisk Sansa™ Clip+"]
+    expected_keys = ["Liste des fonctionnalités", "Configuration système minimale", "Contenu de l'emballage", "Lecteurs MP3 SanDisk Sansa™ Clip+", "Descriptions du produit"]
 
     assert_equal expected_keys.to_set, representation["Descriptions du produit"].keys.to_set
-    assert table =~ /^<table/
     assert_equal 9, foncs.count
-    assert foncs.include?("Batterie longue durée rechargeable offrant jusqu'à 15 heures† d'écoute en continu ")
+    assert foncs.include?("Lecture des fichiers MP3, WMA, secure WMA, Audible, Ogg Vorbis et FLAC, ainsi que des livres audio et des podcasts")
   end
+  
+  test "complete product file sandisk" do
+    html = description("sandisk")
+    representation = Descriptions::Amazon::Formatter.format(html)
+    infos = representation["Informations sur le produit"]["Descriptif technique"].first
+    
+    assert_equal representation.keys, ["Header", "Informations sur le produit", "Descriptions du produit"]
+    assert_equal "SanDisk", infos["Marque"]
+  end
+  
+  test "complete product file tigrou" do
+    html = description("tigrou")
+    representation = Descriptions::Amazon::Formatter.format(html)
+    infos = representation["Informations sur le produit"]["Descriptif technique"].first
+    
+    assert_equal representation.keys, ["Header", "Informations sur le produit", "Descriptions du produit"]
+    assert_equal "240 g", infos["Poids de l'article"]
+  end
+  
+  test "complete product file windows8(c'est de la dobe)" do
+    html = description("windows8")
+    representation = Descriptions::Amazon::Formatter.format(html)
+    
+    puts representation.inspect
+    # infos = representation["Informations sur le produit"]["Descriptif technique"].first
+    # 
+    # assert_equal representation.keys, ["Header", "Informations sur le produit", "Descriptions du produit"]
+    # assert_equal "240 g", infos["Poids de l'article"]
+  end
+  
   
   private
   
@@ -87,12 +122,13 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
     File.read("#{Rails.root}/test/fixtures/descriptions/#{sample}.html")
   end
   
-  def formatter_for sample
+  def formatter_for sample, index
     html = description(sample)
-    Descriptions::Amazon::Formatter.new(html)
+    blocks = html.split("<!-- SHOPELIA-END-BLOCK -->").delete_if { |block| block.blank? }
+    Descriptions::Amazon::Formatter.new(blocks[index])
   end
   
-  def representation_for sample
-    formatter_for(sample).representation
+  def representation_for sample, index
+    formatter_for(sample, index).representation
   end
 end

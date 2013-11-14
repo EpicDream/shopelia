@@ -1,19 +1,62 @@
 module Descriptions
   module Amazon
     
-    class PFormatter
+    class KeyCleaner
+      SKIP = /commentaires? client/
+      
+      def self.clean key
+        return nil if key =~ SKIP
+        key
+      end
+    end
+    
+    class ContentCleaner
+      SKIP = /commentaires? client|meilleures ventes d'Amazon/
+      
+      def self.clean value
+        return nil if value =~ SKIP || value.strip.length == 1 
+        value.gsub(/\n|\t/, '').strip
+      end
+    end
+    
+    class TextFormatter #<node>/text()
       DEFAULT_KEY = "Informations"
+      
+      def initialize node
+        @text = node
+      end
+      
+      def representation
+        ContentCleaner.clean @text.text
+      end
+      
+      def key
+        KeyCleaner.clean header_of(@text)
+      end
+      
+      private
+      
+      def header_of div
+        xpath = (1..5).map { |n| ".//preceding::h#{n}" }.join(" | ")
+        @text.xpath(xpath).map(&:text).last || DEFAULT_KEY
+      end
+      
+    end
+    
+    class PFormatter
+      DEFAULT_KEY = nil
       
       def initialize node 
         @paragraph = node
       end
       
       def representation
-        !inside_table? && @paragraph.text
+        #!inside_table? && 
+        ContentCleaner.clean(@paragraph.text)
       end
       
       def key
-        header_of(@paragraph)
+        KeyCleaner.clean header_of(@paragraph)
       end
       
       private
@@ -39,11 +82,16 @@ module Descriptions
       end
       
       def representation
+        return if skip?
         if simple_table?
           table_to_hash()
         else
-          @table.to_s
+          nil #@table.to_s
         end
+      end
+      
+      def skip?
+        @table.xpath(".//ul").any? #table for layout
       end
       
       def key
@@ -77,18 +125,21 @@ module Descriptions
       end
       
       def representation
-        @lis.map(&:text)
+        @lis.map {|li| 
+          li.xpath(".//script").map(&:remove)
+          ContentCleaner.clean li.text
+        }.compact
       end
       
       def key
         xpath = (1..5).map { |n| ".//preceding-sibling::h#{n}" }.join(" | ")
-        @ul.xpath(xpath).map(&:text).last || DEFAULT_KEY
+        KeyCleaner.clean(@ul.xpath(xpath).map(&:text).last || DEFAULT_KEY)
       end
       
     end
     
     class FormatterDetector
-      NODES = ['table', 'ul', 'p']
+      NODES = ['table', 'ul', 'p', 'div/text()[normalize-space()]']
       
       def initialize nodeset
         @nodeset = nodeset.dup
@@ -96,8 +147,10 @@ module Descriptions
       
       def formatters
         NODES.map { |node|  
-          @nodeset.xpath(".//#{node}").map { |xnode| 
-            "Descriptions::Amazon::#{node.capitalize}Formatter".constantize.new(xnode) 
+          @nodeset.xpath(".//#{node}").map { |xnode|
+            node = 'text' if node == 'div/text()[normalize-space()]' #TODO
+            klass = "Descriptions::Amazon::#{node.camelize}Formatter"
+            formatter = klass.constantize.new(xnode) 
           }
         }.flatten
       end
@@ -105,6 +158,7 @@ module Descriptions
     
     class Formatter
       DEFAULT_KEY = "Header"
+      BLOCKS_SEPARATOR = "<!-- SHOPELIA-END-BLOCK -->"
       
       def initialize html
         @html = html
@@ -112,14 +166,19 @@ module Descriptions
         @key = key()
       end
       
+      def self.format html_blocks
+        blocks = html_blocks.split(BLOCKS_SEPARATOR).delete_if { |block| block.blank? }
+        blocks.inject({}) { |hash, html| hash.merge!(new(html).representation) }
+      end
+      
       def representation
-        {@key => merged_representations}
+        { @key => merged_representations }
       end
       
       def merged_representations
         formatters.inject({}) { |hash, formatter|
           key, content = formatter.key, formatter.representation
-          next hash if content.blank?
+          next hash if content.blank? || key.blank?
           hash[key] ||= []
           hash[key] << content
           hash
