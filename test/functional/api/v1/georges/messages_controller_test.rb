@@ -2,7 +2,8 @@
 require 'test_helper'
 
 class Api::V1::Georges::MessagesControllerTest < ActionController::TestCase
-  
+  include Devise::TestHelpers
+
   setup do
     @device = devices(:mobile)
   end
@@ -15,6 +16,15 @@ class Api::V1::Georges::MessagesControllerTest < ActionController::TestCase
     end
     assert_equal "toto", Message.last.content
     assert_equal @device.id, Message.last.device_id
+  end
+
+  test "it should get all messages for device" do
+    post :create, message:"toto", visitor:@device.uuid, format: :json
+    post :create, message:"titi", visitor:@device.uuid, format: :json
+
+    get :index, format: :json
+    assert_response :success
+    assert_equal 2, json_response.count
   end
 
   test "it should set message read_at" do
