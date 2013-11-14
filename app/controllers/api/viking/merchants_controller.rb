@@ -52,6 +52,6 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
   end
 
   def retrieve_merchant_by_url
-    @merchant = Merchant.from_url(params[:url])
+    @merchant = Merchant.from_url(params[:url], false)
   end
 end

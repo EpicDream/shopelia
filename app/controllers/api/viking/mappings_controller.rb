@@ -15,7 +15,7 @@ class Api::Viking::MappingsController < Api::V1::BaseController
   api :GET, "/mappings/:id", "Get mapping by id"
   def show
     if params[:url].present?
-      @merchant = Merchant.from_url(params[:url])
+      @merchant = Merchant.from_url(params[:url], false)
       @mapping = @merchant.mapping if @merchant.present?
     elsif params[:merchant_id].present?
       @merchant = Merchant.find(params[:merchant_id])
