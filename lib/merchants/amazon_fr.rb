@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 class AmazonFr
   DEFAULT_PRICE_SHIPPING = "2.79 €"
+  DEFAULT_SHIPPING_INFO_1 = "Prix et délais variables en fonction du vendeur."
+  DEFAULT_SHIPPING_INFO_2 = "Délais variables en fonction du vendeur."
 
   AVAILABILITY_HASH = {
     /TVA incluse le cas .ch.ant/i => false, # vu juste pour des MP3 à télécharger
@@ -54,6 +56,10 @@ class AmazonFr
 
   def process_shipping_info version
     version[:shipping_info] = nil if version[:shipping_info] =~ /Voir les offres de ces vendeurs/i
+    if version[:shipping_info].blank?
+      prc_shp_txt = version[:price_shipping_text]
+      version[:shipping_info] = prc_shp_txt.blank? || prc_shp_txt == DEFAULT_PRICE_SHIPPING ? DEFAULT_SHIPPING_INFO_1 : DEFAULT_SHIPPING_INFO_2
+    end
     version
   end
 

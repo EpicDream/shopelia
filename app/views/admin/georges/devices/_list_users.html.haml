@@ -1,5 +1,9 @@
 - @devices = Device.where(pending_answer:true).order("updated_at desc")
-- @devices_history = Message.joins(:device).order("messages.created_at desc").limit(100).map(&:device).uniq.first(20) - @devices
+- @devices_history = Message.joins(:device).order("messages.created_at desc").limit(500).map(&:device).uniq.first(100) - @devices
+#chat-list-status
+  %select.input-medium#georges-status
+    - GeorgesStatus::STATUSES.each do |status|
+      %option{value:status, selected:status == GeorgesStatus.get}= status
 #chat-list-users-header
   Waiting for answer
 - @devices.each do |device|

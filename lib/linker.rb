@@ -3,9 +3,10 @@ class Linker
   UA = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36"
   
   def self.clean url
+    @canonizer = UrlCanonizer.new
     count = 0
     url = URI.unescape(url) if url =~ /^http%3A%2F%2F/
-    canonical = MerchantHelper.canonize(url) || self.by_rule(url) ||  UrlMatcher.find_by_url(url).try(:canonical)
+    canonical = MerchantHelper.canonize(url) || self.by_rule(url) || @canonizer.get(url)
     if canonical.nil?
       orig = url
       begin
@@ -16,20 +17,20 @@ class Linker
       end while res.code =~ /^30/ && count < 10
 
       canonical = self.clean_url url
-      UrlMatcher.create(url:orig,canonical:canonical)
-      UrlMatcher.create(url:canonical,canonical:canonical)
+      @canonizer.set(orig, canonical)
+      @canonizer.set(canonical, canonical)
     end
     canonical
   rescue Errno::ETIMEDOUT
-    orig
+    orig || url
   rescue
-    orig
+    orig || url
   end
 
   def self.monetize url
     return nil if url.blank?
     url = url.unaccent
-    m = MerchantHelper.monetize(url)
+    MerchantHelper.monetize(url)
   rescue
     merchant = Merchant.find_or_create_by_domain(Utils.extract_domain(url))
     if Incident.where(issue:"Linker",resource_type:"Merchant",resource_id:merchant.id,processed:false).where("description like 'Url not monetized%'").count == 0

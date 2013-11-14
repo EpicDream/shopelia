@@ -42,23 +42,9 @@ class LinkerTest < ActiveSupport::TestCase
       assert_equal h[:out], Linker.clean(h[:in])
     end
   end
-  
-  test "it should use url matcher" do
-    assert_difference("UrlMatcher.count", 2) do
-      assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
-    end
-    assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", UrlMatcher.first.canonical
-    
-    assert_difference("UrlMatcher.count", 0) do
-      Linker.clean("http://tracking.lengow.com/shortUrl/53-1110-2759446/")
-    end   
-
-    assert_difference("UrlMatcher.count", 0) do
-      assert_equal "http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4", Linker.clean("http://www.fnac.com/Logitech-Performance-Mouse-MX-Souris-Optique-Laser-Sans-fil/a2759446/w-4")
-    end
-  end
  
   test "it should generate incident if link is not monetizable" do
+    UrlMonetizer.new.del("http://www.newshop.com/productA")
     assert_difference "Incident.count", 1 do
       Linker.monetize "http://www.newshop.com/productA"
     end
@@ -68,6 +54,13 @@ class LinkerTest < ActiveSupport::TestCase
     Incident.last.update_attribute :processed, true
     assert_difference "Incident.count", 1 do
       Linker.monetize "http://www.newshop.com/productC"
+    end
+  end
+
+  test "it shouldn't generate incident if url monetizer has a value" do
+    UrlMonetizer.new.set("http://www.newshop.com/productA", "http://www.newshop.com/productA/aff")
+    assert_difference "Incident.count", 0 do
+      Linker.monetize "http://www.newshop.com/productA"
     end
   end
  

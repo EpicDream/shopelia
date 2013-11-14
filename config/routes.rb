@@ -2,7 +2,9 @@ require 'api_constraints'
 
 Shopelia::Application.routes.draw do
 
-  match "/cgu" => "home#general_terms_of_use"
+  match "/cgu" => "home#general_terms_of_use"  
+  match "/legal" => "home#legal"
+  match "/confidentiality" => "home#confidentiality"
   match "/security" => "home#security"
   match "/download" => "home#download"
   match "/connect", to: "home#connect"
@@ -64,6 +66,7 @@ Shopelia::Application.routes.draw do
       get :retry, :on => :member
       get :mute, :on => :member
     end
+    get "/georges/status", to: "georges#status"
     namespace :georges do
       get "/devices/lobby", to: "devices#lobby"
       resources :devices do
@@ -123,8 +126,9 @@ Shopelia::Application.routes.draw do
         resources :reset, :only => :create
         resources :verify, :only => :create
       end
+      get "/georges/status", to: "georges#status"
       namespace :georges do
-        resources :messages, :only => [:create, :update] do
+        resources :messages, :only => [:index, :create, :update] do
           get :read, :on => :member
         end
       end
@@ -155,6 +159,10 @@ Shopelia::Application.routes.draw do
         get :alive
       end
       resources :merchants, :only => [:show, :update, :index]
+      namespace :merchants do
+        post :link
+      end
+      resources :mappings, :only => [:index, :update, :show, :create]
     end
     namespace :vulcain do
       resources :merchants, :only => :update

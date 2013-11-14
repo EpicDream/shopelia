@@ -54,10 +54,8 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert(Time.now.to_i - record['timestamp'] < 5)
     assert_equal("Mode > Cosmetique-Produit-de-beaute > Cigarette Electronique (Autre)", record['category'])
     assert_equal('http://www.priceminister.com/offer/buy/206799878', record['product_url'])
-    assert_difference "UrlMatcher.count", 0 do 
-      url = pm.canonize('http://track.effiliation.com/servlet/effi.redir?id_compteur=ID_COMPTEUR&url=http://www.priceminister.com/offer/buy/206799878/sort1/filter10/sort1%3Ft%3DTRACKING_CODE')
-      assert_equal 'http://www.priceminister.com/offer/buy/206799878', url
-    end
+    url = pm.canonize('http://track.effiliation.com/servlet/effi.redir?id_compteur=ID_COMPTEUR&url=http://www.priceminister.com/offer/buy/206799878/sort1/filter10/sort1%3Ft%3DTRACKING_CODE')
+    assert_equal 'http://www.priceminister.com/offer/buy/206799878', url
     assert_equal(3, record['_tags'].collect{ |tag| tag if tag=~ /category:/}.compact.size)
     assert_equal('1', Redis.new.hget(AlgoliaFeed::Tagger::TAGS_HASH, 'category:Mode'))
   end

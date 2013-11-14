@@ -1,9 +1,15 @@
+require 'net/ftp'
+
 module Customers
   class CadeauShaker
     
     ORDERS_URL = "http://www.cadeaushaker.fr/commande.php?source=shopelia"
     ACCOUNT_EMAIL = "service-client@cadeaushaker.fr"
     DEVELOPER_NAME = "CadeauShaker"
+
+    FTP_HOST = "sd2639.sivit.org"
+    FTP_LOGIN = "shopelia"
+    FTP_PWD = "eric"
 
     def initialize
       @user = User.find_by_email!(ACCOUNT_EMAIL)
@@ -13,6 +19,13 @@ module Customers
       @log = []
     end
     
+    def self.upload_file filename
+      file = File.new(filename)
+      Net::FTP.open(FTP_HOST, FTP_LOGIN, FTP_PWD) do |ftp|
+        ftp.putbinaryfile(file)
+      end
+    end
+
     def self.run
       c = self.new
       content = c.fetch(ORDERS_URL)
