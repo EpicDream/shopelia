@@ -38,7 +38,7 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
   api :POST, "/viking/merchants/:id", "Update merchant information"
   def link
     if Mapping.find(params[:data]).present?
-      @merchant.update_attribute :mapping_id, params[:data]
+      @merchant.update_attributes :mapping_id, params[:data]
       head :no_content
     else
       render json: @merchant.errors, status: :unprocessable_entity
