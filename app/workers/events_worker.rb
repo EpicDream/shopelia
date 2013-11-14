@@ -16,7 +16,7 @@ class EventsWorker
 
   def create_event hash
     return if hash["product_id"].blank? && hash["url"].blank?
-    Event.create!(
+    event = Event.create!(
       :url => hash["url"],
       :product_id => hash["product_id"],
       :action => hash["action"],
@@ -24,5 +24,7 @@ class EventsWorker
       :device_id => hash["device_id"],
       :tracker => hash["tracker"],
       :ip_address => hash["ip_address"])
+    # Launch review scraper
+    ReviewsWorker.perform_async({:product_id => event.product_id})
   end
 end
