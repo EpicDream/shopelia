@@ -9,6 +9,7 @@ class TradedoublerCom
       url =  URI.unescape(matches[1])
       new_url = MerchantHelper.canonize(url)
       return new_url if new_url.present?
+      return url unless url =~ /lengow/
     end
     nil
   end
