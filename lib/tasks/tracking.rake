@@ -26,8 +26,12 @@ namespace :shopelia do
         if products.count > 0
           filename = "/tmp/products-feed-#{SecureRandom.hex(4)}-#{Time.now.strftime("%Y-%m-%d")}.xml"
           File.open(filename, "w") { |file| file.write products.to_xml }
-          `gzip #{filename}`
-          Emailer.send_products_feed_to_developer(developer, filename + '.gz').deliver
+          if (developer.name == "CadeauShaker")
+            `gzip #{filename}`
+            Emailer.send_products_feed_to_developer(developer, filename + '.gz').deliver
+          else
+            Customer::CadeauShaker.upload_file(filename)
+          end
         end
       end
     end

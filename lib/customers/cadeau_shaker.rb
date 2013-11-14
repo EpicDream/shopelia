@@ -5,6 +5,10 @@ module Customers
     ACCOUNT_EMAIL = "service-client@cadeaushaker.fr"
     DEVELOPER_NAME = "CadeauShaker"
 
+    FTP_HOST = "sd2639.sivit.org"
+    FTP_LOGIN = "shopelia"
+    FTP_PWD = "eric"
+
     def initialize
       @user = User.find_by_email!(ACCOUNT_EMAIL)
       @developer = Developer.find_by_name!(DEVELOPER_NAME)
@@ -13,6 +17,13 @@ module Customers
       @log = []
     end
     
+    def upload_file filename
+      file = File.new(filename)
+      Net::FTP.open(FTP_HOST, FTP_LOGIN, FTP_PWD) do |ftp|
+        ftp.putbinaryfile(file)
+      end
+    end
+
     def self.run
       c = self.new
       content = c.fetch(ORDERS_URL)
