@@ -6,7 +6,7 @@ class ReviewsWorker
   def perform hash
     product = Product.find(hash["product_id"])
     if product.merchant.domain == "amazon.fr"
-      Scrapers::Reviews::merchant::Scraper.scrape(product_id)
+      Scrapers::Reviews::Amazon::Scraper.scrape(product.id)
     end
   end
 end

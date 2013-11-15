@@ -11,7 +11,7 @@ class UrlCanonizer
   end
 
   def del url
-    @redis.del(CACHE, url)
+    @redis.hdel(CACHE, url)
   end
 
   def set url, canonized_url
