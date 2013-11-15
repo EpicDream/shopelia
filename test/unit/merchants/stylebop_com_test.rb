@@ -29,6 +29,10 @@ class StylebopComTest < ActiveSupport::TestCase
     assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
   end
 
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("Recherche par:", @url)
+  end
+
   test "it should process price shipping" do
     @version[:price_shipping_text] = ""
     @version = @helper.process_price_shipping(@version)

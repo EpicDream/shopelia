@@ -7,9 +7,9 @@ module AlgoliaFeed
     def initialize(params={})
       super
 
-      self.urls = params[:urls] || ['http://pf.tradedoubler.com/export/export?myFeed=13838434952299963&myFormat=13838434952299963']
+      self.urls = params[:urls] || ['http://pf.tradedoubler.com/export/export?myFeed=13845087402299963&myFormat=13845087402299963']
       self.parser_class = params[:parser_class] || 'AlgoliaFeed::Tradedoubler'
-      self.rejected_files = params[:rejected_files] || ['feed_15992.xml' , 'feed_17385.xml', 'feed_11034.xml', 'feed_21226.xml']
+      self.rejected_files = params[:rejected_files] || []
     end
   end
 
@@ -43,7 +43,11 @@ module AlgoliaFeed
       record = super
 
       record['price'] = to_cents(record['price'])
-      record['price_shipping'] = to_cents(record['price_shipping'])
+      if record['merchant_name'] == 'Yves Rocher'
+        record['price_shipping'] = int(record['price_shipping'])
+      else
+        record['price_shipping'] = to_cents(record['price_shipping'])
+      end
 
       record.delete('brand') if record['brand'] == 'NONAME'
 
