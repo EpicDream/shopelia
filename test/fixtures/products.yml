@@ -64,3 +64,13 @@ game_of_throne:
   reference: "reference"
   viking_failure: false
   options_completed: true
+  
+le_donjon:
+  name: "Le Donjon"
+  merchant: amazon
+  url: http://www.amazon.fr/dp/2353250335
+  image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
+  description: "Description"
+  brand: "brand"
+  reference: "reference"
+
