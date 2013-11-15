@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 require 'parsers/descriptions/amazon/formatter'
 
 module Descriptions
