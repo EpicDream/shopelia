@@ -50,7 +50,10 @@ class String
     'AE'    => 'Æ',
     'ae'    => 'æ',
     'OE'    => 'Œ',
-    'oe'    => 'œ'
+    'oe'    => 'œ',
+    # Spaces
+    ' '      => "\u00a0",
+
   }
 
   def unaccent
