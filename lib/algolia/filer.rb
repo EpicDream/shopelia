@@ -152,12 +152,38 @@ module AlgoliaFeed
       end
       decoded_file
     end
-    
+
     def download(urls=[])
       urls = self.urls if urls.size == 0
       urls.each do |url|
         self.download_url(url)
       end
+    end
+
+    def fork_test
+      puts "[#{$$}] Master is starting."
+      c = 0
+      n = 10
+      pp = 0
+
+      while c < 100
+        pp = 1000
+        while true
+          px = Sys::ProcTable.ps.select{ |p| p.ppid == $$ && p.state != 'Z'}
+          break if px.size <= n
+          puts "Acrive children: #{px.size} - sleep 1"
+          sleep 1
+        end
+        c += 1
+        fork do
+          x = Random.rand(10)
+          puts "[#{$$}] Started - Sleeping for #{x}s"
+          sleep(x)
+          puts "[#{$$}] Done"
+          exit
+        end
+      end
+      Process.waitall
     end
 
     def process_xml_directory(dir=nil, free_children=6)

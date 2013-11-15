@@ -189,7 +189,7 @@ module AlgoliaFeed
       self.category_fields.each do |field_name|
         next unless product.has_key?(field_name)
         field = product[field_name]
-        categories << field.split(/\s+(?:\-|\>|\/)\s+/)
+        categories << field.split(/(?:\s+\-\s+|\s*\>\s*|\s*\/\s*)/)
       end
       categories.flatten.each do |c|
         record['_tags'] << "category:#{c.to_s}"
