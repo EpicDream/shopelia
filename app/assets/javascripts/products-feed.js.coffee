@@ -3,12 +3,17 @@ class @ProductsFeed
     @tags = []
     @page = 0
     @hitsPerPage = 500
+    @priceMin = 0
+    @priceMax = 0
     algolia = new AlgoliaSearch("JUFLKNI0PS", '03832face9510ee5a495b06855dfa38b')
     @index = algolia.initIndex(@indexName)
     window.dataCallback = dataCallback
 
-  sendQuery: (query) ->
+  sendQuery: (query, tags, priceMin, priceMax) ->
     @query = query
+    @tags = tags
+    @priceMin = priceMin
+    @priceMax = priceMax
     @refreshData()
 
   setPage: (page) ->
@@ -16,7 +21,17 @@ class @ProductsFeed
     @refreshData()
 
   refreshData: ->
-    @index.search @query, @_prepareResults, hitsPerPage: @hitsPerPage, page: @page
+    params = { hitsPerPage: @hitsPerPage, page: @page }
+    if @tags.length > 0
+      params["tags"] = @tags.join(",")
+    numericFilters = ""
+    if @priceMin > 0 
+      numericFilters = "price>" + (@priceMin * 100) + ","
+    if @priceMax > 0 
+      numericFilters += "price<" + (@priceMax * 100)
+    if numericFilters.length > 0
+      params["numericFilters"] = numericFilters
+    @index.search @query, @_prepareResults, params
 
   _prepareResults: (success, content) ->
     eans = {}
@@ -48,11 +63,11 @@ class @ProductsFeed
     for i in [0..tuples.length-1] by 1
       tag = tuples[i][0]
       if tag.match("^merchant_name")
-        tagsMerchant += "<span class='label label-warning'>" +
+        tagsMerchant += "<span id='" + tag + "' class='label label-warning label-tag'>" +
           tag.replace("merchant_name:", "") +
           "</span> "
       else if tag.match("^category") && tuples[i][1] > 10
-        tagsCategory += "<span class='label label-default'>" +
+        tagsCategory += "<span id='" + tag + "' class='label label-default label-tag'>" +
           tag.replace("category:", "") +
           "</span> "
     window.dataCallback { "products":products, "tagsCategory": tagsCategory, "tagsMerchant": tagsMerchant }

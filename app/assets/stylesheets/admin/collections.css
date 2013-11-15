@@ -147,8 +147,6 @@
 #tags_category, #tags_merchant {
   text-align: left;
 }
-
-#catalogue-previous-page {
-}
-#catalogue-next-page {
+.label-tag {
+  cursor: pointer;
 }
