@@ -5,8 +5,20 @@
       .row
         .span12
           =render("admin/collections/form" , georges: georges)
-          %input#catalogue-search.form-control{placeholder: "Search catalogue by keywords", spellcheck: "false", type: "text", style:"width: #{georges ? '80' : '100'}%"}
+          %input#catalogue-search.catalogue-refresh.form-control{placeholder: "Search catalogue by keywords", spellcheck: "false", type: "text", style:"width: #{georges ? '80' : '100'}%"}
+          %table
+            %tr
+              %td
+                min
+              %td 
+                %input#catalogue-price-min.catalogue-refresh.form-control{style:"width:50px;"}
+              %td
+                max
+              %td
+                %input#catalogue-price-max.catalogue-refresh.form-control{style:"width:50px;"}
           %p#search-info
+          %p#filter-tags
+          .spacer10
       .row
         .span6
           %button.btn.btn-info.display-none#catalogue-previous-page

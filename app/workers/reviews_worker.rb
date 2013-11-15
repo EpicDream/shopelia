@@ -1,10 +1,10 @@
-require 'scrapers/reviews/amazon/amazon'
- 
+require 'scrapers/reviews/scrapers'
+
 class ReviewsWorker
   include Sidekiq::Worker
 
-  def perform merchant, product_id
-    merchant = merchant.constantize
-    Scrapers::Reviews::merchant::Scraper.scrape(product_id)
+  def perform hash
+    product = Product.find hash["product_id"]
+    Scrapers::Reviews.scrape(product)
   end
 end

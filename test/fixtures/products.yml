@@ -58,7 +58,6 @@ game_of_throne:
   name: "Game of thrones"
   merchant: amazon
   url: http://www.amazon.fr/Game-Thrones-Le-Tr%C3%B4ne-Fer/dp/B00AAZ9F6K
-  image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
   description: "Description"
   brand: "brand"
   reference: "reference"
@@ -70,3 +69,19 @@ masque:
   url: "http://www.priceminister.com/offer/buy/185724540/masque-latex-gollum-le-seigneur-des-anneaux.html"
   image_url: "http://pmcdn.priceminister.com/photo/masque-latex-gollum-le-seigneur-des-anneaux-931266814_ML.jpg"
   viking_failure: false
+
+le_donjon:
+  name: "Le Donjon"
+  merchant: amazon
+  url: http://www.amazon.fr/dp/2353250335
+  description: "Description"
+  brand: "brand"
+  reference: "reference"
+
+grand_theft_auto:
+  name: "Grand Theft Auto"
+  merchant: priceminister
+  url: http://www.priceminister.com/offer/buy/180624024/grand-theft-auto-v.html
+  description: "Description"
+  brand: "brand"
+  reference: "reference"

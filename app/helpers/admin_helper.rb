@@ -25,6 +25,18 @@ module AdminHelper
     "<span class='label #{klass}'>#{state.camelize}</span>"
   end
 
+  def trace_resource_to_html resource
+    klass = case resource
+    when "Georges" then "label-info"
+    when "Product" then "label-warning"
+    when "Collection" then "label-important"
+    when "Search" then ""
+    when "Scan" then "label-inverse"
+    when "Home" then "label-success"
+    end
+    "<span class='label #{klass}'>#{resource}</span>"
+  end
+
   def collection_tag_to_html tag
     if tag =~ /\A__/
       name = tag.gsub("__", "")

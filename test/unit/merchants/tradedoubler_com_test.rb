@@ -9,7 +9,7 @@ class TradedoublerComTest < ActiveSupport::TestCase
         out: 'http://www.cdiscount.com/dp.asp?sku=3596971684129'
       },
       { in: "http://pdt.tradedoubler.com/click?a(2056816)p(3436)prod(1182483695)ttid(5)url(http%3A%2F%2Fwww.yoox.com%2Fitem.asp%3Fcod10%3D35187059%26tp%3D14681%26utm_source%3Dtradedoubler_fr%26utm_medium%3Daffiliazione%26utm_campaign%3Daffiliazione_fr%26tskay%3D2FA4E164)",
-        out: nil
+        out: "http://www.yoox.com/item.asp?cod10=35187059&tp=14681&utm_source=tradedoubler_fr&utm_medium=affiliazione&utm_campaign=affiliazione_fr&tskay=2FA4E164"
       }
     ]
     urls.each do |url|

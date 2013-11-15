@@ -5,4 +5,12 @@ class Tag < ActiveRecord::Base
   validates :name, :presence => true, :uniqueness => true
 
   attr_accessible :name
+
+  before_destroy :check_tag_not_used
+
+  private
+
+  def check_tag_not_used
+    self.collection_tags.empty?
+  end
 end
