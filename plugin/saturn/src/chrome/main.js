@@ -14,10 +14,10 @@ window.saturn = saturn;
 
 // On contentscript ask next step (next color/size tuple).
 chrome.extension.onMessage.addListener(function(msg, sender, response) {
-  if (sender.id != chrome.runtime.id || ! sender.tab || ! saturn.sessions[sender.tab.id])
+  if (sender.id != chrome.runtime.id || ! sender.tab || ! saturn.sessions.byTabId[sender.tab.id])
     return;
-  if (msg == "nextStep" && saturn.sessions[sender.tab.id].then)
-    saturn.sessions[sender.tab.id].then();
+  if (msg == "nextStep" && saturn.sessions.byTabId[sender.tab.id].then)
+    saturn.sessions.byTabId[sender.tab.id].then();
 });
 
 // On extension button clicked.

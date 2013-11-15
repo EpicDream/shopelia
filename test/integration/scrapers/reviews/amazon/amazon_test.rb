@@ -66,4 +66,11 @@ class AmazonTest < ActiveSupport::TestCase
     assert_equal expected_description, incident.description
   end
   
+  test "Le Donjon de Naheulbeuk product, one review has no author" do
+    skip
+    @product = products(:le_donjon)
+    Scrapers::Reviews::Amazon::Scraper.scrape(@product.id)
+    assert_equal 29, @product.product_reviews.count
+  end
+  
 end
