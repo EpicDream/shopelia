@@ -27,7 +27,9 @@ module Scrapers
         
         def author
           href = @html.xpath('.//a[1]').first.attributes['href'].value
-          href.match(/profile\/(.*?)\//).captures.first rescue nil
+          href.match(/profile\/(.*?)\//).captures.first
+        rescue
+          nil
         end
         
         def content
