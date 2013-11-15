@@ -9,6 +9,8 @@ class Scrapers::Reviews::ScrapersTest < ActiveSupport::TestCase
     @product.id = 1
   end
   
+  #TODO factorize
+  
   test "scraper module for domain amazon" do
     klass = Scrapers::Reviews.scraper('amazon')
     assert_equal Scrapers::Reviews::Amazon::Scraper, klass
@@ -17,6 +19,11 @@ class Scrapers::Reviews::ScrapersTest < ActiveSupport::TestCase
   test "scraper module for domain priceminister" do
     klass = Scrapers::Reviews.scraper('priceminister')
     assert_equal Scrapers::Reviews::Priceminister::Scraper, klass
+  end
+  
+  test "scraper module for domain rueducommerce" do
+    klass = Scrapers::Reviews.scraper('rue_du_commerce')
+    assert_equal Scrapers::Reviews::RueDuCommerce::Scraper, klass
   end
   
   test "scrape find merchant via product from amazon" do
@@ -32,6 +39,14 @@ class Scrapers::Reviews::ScrapersTest < ActiveSupport::TestCase
     
     Scrapers::Reviews.requires('priceminister')
     Scrapers::Reviews::Priceminister::Scraper.expects(:scrape).with(@product.id)
+    Scrapers::Reviews.scrape(@product)
+  end
+  
+  test "scrape find merchant via product from rueducommerce" do
+    @product.stubs(:merchant).returns(stub(domain:'rueducommerce.fr'))
+    
+    Scrapers::Reviews.requires('rue_du_commerce')
+    Scrapers::Reviews::RueDuCommerce::Scraper.expects(:scrape).with(@product.id)
     Scrapers::Reviews.scrape(@product)
   end
 
