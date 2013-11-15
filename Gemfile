@@ -85,8 +85,6 @@ group :development do
 end
 
 group :test do
-  #gem "turn", "~> 0.8.3"
-  gem "simplecov", :require => false
   gem "codeclimate-test-reporter"
   gem "capybara"
   gem "mocha", :require => false
