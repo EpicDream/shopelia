@@ -43,7 +43,11 @@ module AlgoliaFeed
       record = super
 
       record['price'] = to_cents(record['price'])
-      record['price_shipping'] = to_cents(record['price_shipping'])
+      if record['merchant_name'] == 'Yves Rocher'
+        record['price_shipping'] = int(record['price_shipping'])
+      else
+        record['price_shipping'] = to_cents(record['price_shipping'])
+      end
 
       record.delete('brand') if record['brand'] == 'NONAME'
 
