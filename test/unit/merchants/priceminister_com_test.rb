@@ -46,6 +46,8 @@ class PriceministerComTest < ActiveSupport::TestCase
     assert_equal false, MerchantHelper.parse_availability("15 résultats", @url)
     assert_equal false, MerchantHelper.parse_availability("1\u00a0252\u00a0 resultats", @url)
 
+    assert_equal false, MerchantHelper.parse_availability("Aucun résultat ne correspond à votre recherche", @url)
+
     assert_equal false, MerchantHelper.parse_availability("Top Ventes", @url)
   end
 
