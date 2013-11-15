@@ -18,12 +18,6 @@ class MessageTest < ActiveSupport::TestCase
     assert message.save, message.errors.full_messages.join("\n")
   end
 
-  test "it shouldn't create empty message" do
-    message = Message.new(device_id:@device.id)
-    assert !message.save
-    assert_equal I18n.t('messages.errors.empty'), message.errors.full_messages.first
-  end
-
   test "it should serialize products_urls and create events" do
     products_urls = "http://www.toto.com\nhttp://www.titi.com"
     assert_difference "EventsWorker.jobs.count", 2 do
