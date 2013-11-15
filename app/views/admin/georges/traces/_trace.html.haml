@@ -8,9 +8,15 @@
       = trace.extra_text
     - elsif trace.resource == "Collection"
       - c = Collection.find_by_uuid(trace.extra_text)
-      = link_to c.name || c.uuid, admin_collection_path(c), target:"_blank"
+      - if c.present?
+        = link_to c.name || c.uuid, admin_collection_path(c), target:"_blank"
+      - else
+        Unknown
     - elsif trace.resource == "Product"
-      - p = Product.find(trace.extra_id)
-      = link_to p.name, p.url, target:"_blank"
+      - p = Product.find_by_id(trace.extra_id)
+      - if p.present?
+        = link_to p.name, p.url, target:"_blank"
+      - else
+        Unknown
   .span3
     = trace.created_at.in_time_zone("Paris")
