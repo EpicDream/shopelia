@@ -2,7 +2,7 @@ module Descriptions
   module Amazon
     
     class KeyCleaner
-      SKIP = /commentaires? client/
+      SKIP = /commentaires? client|Politique de retour|Votre avis/
       
       def self.clean key
         return nil if key =~ SKIP
@@ -37,7 +37,9 @@ module Descriptions
       private
       
       def header_of div
-        xpath = (1..5).map { |n| ".//preceding::h#{n}" }.join(" | ")
+        xpath = (1..5).map { |n| ".//preceding::h#{n}" }
+        xpath += [".//preceding::div[@class='secHeader']//text()[normalize-space()]"]
+        xpath = xpath.join(" | ")
         @text.xpath(xpath).map(&:text).last || DEFAULT_KEY
       end
       
@@ -86,12 +88,12 @@ module Descriptions
         if simple_table?
           table_to_hash()
         else
-          nil #@table.to_s
+          #@table.to_s
         end
       end
       
       def skip?
-        @table.xpath(".//ul").any? #table for layout
+        @table.xpath(".//tr").count <= 1 #table for layout
       end
       
       def key
@@ -105,13 +107,15 @@ module Descriptions
         @table.xpath(".//tr").inject({}) { |hash, tr|  
           key, value = tr.xpath(".//td/text()").map(&:text)
           next hash if key.blank? || value.blank?
-          hash[key] = value
+          hash[key] = ContentCleaner.clean(value)
           hash
         }
       end
       
       def simple_table?
         @table.xpath(".//tr").first.xpath(".//td").count <= 2
+      rescue
+        false
       end
       
     end

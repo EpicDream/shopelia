@@ -112,6 +112,20 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
     assert_equal rep["Détails sur le produit"]["Summary"].first[0], "Dimensions du produit:         13,8 x 19,2 x 0,2 cm ; 54 g"
   end
   
+  test "complete product file les croods" do
+    html = description("croods")
+    rep = Descriptions::Amazon::Formatter.format(html)
+    #puts JSON.pretty_generate(rep)
+  end
+  
+  test "complete product file tv lg" do
+    html = description("tvlg")
+    rep = Descriptions::Amazon::Formatter.format(html)
+    
+    assert_equal ["LG Electronics", "22EN33S-B", "Écran", "LED"], rep["Header"]["Summary"].first
+    assert_equal "50,9 x 18,1 x 38,7 cm", rep["Informations sur le produit"]["Descriptif technique"].first["Dimensions du produit (L x l x h)"]
+  end
+  
   private
   
   def description sample
