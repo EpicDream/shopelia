@@ -1,8 +1,6 @@
 ENV['CODECLIMATE_REPO_TOKEN'] = "ca2789d1f39a05e6a153ca9b548f617909b6b9d7f86721714af809b9520ce3ef"
 ENV["RAILS_ENV"] = "test"
 
-require 'simplecov'
-SimpleCov.start
 require "codeclimate-test-reporter"
 CodeClimate::TestReporter.start
 
