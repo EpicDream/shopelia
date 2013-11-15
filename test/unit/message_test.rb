@@ -10,6 +10,7 @@ class MessageTest < ActiveSupport::TestCase
     message = Message.new(content:"allo",device_id:@device.id)
     assert message.save, message.errors.full_messages.join("\n")
     assert_equal "allo", message.content
+    assert message.rating.nil?
   end
 
   test "it should create message with data only" do
@@ -77,5 +78,27 @@ class MessageTest < ActiveSupport::TestCase
     data = message.build_push_data
     assert_equal 2, data.count
     assert_equal ["http://www.amazon.com","http://www.amazon.fr"].to_set, data.map{|e| e[:product_url]}.to_set
+  end
+
+  test "it should send rating card" do
+    message = Message.new(device_id:@device.id,rating_card:1,from_admin:true)
+    assert message.save
+    assert_equal 0, message.rating
+  end
+
+  test "it should update device with rating" do 
+    m = Message.create(device_id:@device.id,rating_card:1,from_admin:true)
+    message = Message.find(m.id)
+    message.update_attribute :rating, 5
+    assert_equal 5, message.reload.rating
+    assert_equal 5, @device.reload.rating
+  end
+
+  test "it should autoreply when updating with rating" do
+    assert_difference "$push_delivery_count", 2 do
+      m = Message.create(device_id:@device.id,rating_card:1,from_admin:true)
+      message = Message.find(m.id)
+      message.update_attribute :rating, 1
+    end
   end
 end
