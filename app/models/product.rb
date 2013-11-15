@@ -104,6 +104,10 @@ class Product < ActiveRecord::Base
   def authorize_push_channel
     Nest.new("product")[self.id][:created_at].set(Time.now.to_i)
   end
+  
+  def has_review_for_author? author
+    !!product_reviews.where(author:author).first
+  end
 
   private
   

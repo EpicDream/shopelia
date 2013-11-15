@@ -4,6 +4,7 @@ require 'scrapers/reviews/amazon/amazon'
 
 class AmazonTest < ActiveSupport::TestCase
   fixtures :products
+  fixtures :product_reviews
   
   URL = "http://www.amazon.fr/Game-Thrones-Le-Tr%C3%B4ne-Fer/dp/B00AAZ9F6K"
   
@@ -66,11 +67,26 @@ class AmazonTest < ActiveSupport::TestCase
     assert_equal expected_description, incident.description
   end
   
-  test "Le Donjon de Naheulbeuk product, one review has no author" do
-    skip
-    @product = products(:le_donjon)
-    Scrapers::Reviews::Amazon::Scraper.scrape(@product.id)
-    assert_equal 29, @product.product_reviews.count
+  test "if first review exists in database stop scraping" do
+    product = products(:le_donjon)
+    review = product_reviews(:le_donjon)
+    
+    scraper = Scrapers::Reviews::Amazon::Scraper.new(product)
+    scraper.stubs(:reviews_of_page).with(1).returns([review_stub(review.author, product)])
+    scraper.stubs(:reviews_of_page).with(2).returns([])
+    
+    Scrapers::Reviews::Synchronizer.expects(:synchronize).never
+    
+    scraper.run
   end
   
+  private
+  
+  def review_stub author, product
+    review = Scrapers::Reviews::Amazon::Review.new(nil)
+    hash_review = {rating:1, author:author, content:"", published_at:Time.now, product_id:product.id}
+    review.stubs(:to_hash).returns(hash_review)
+    review.stubs(:author).returns(author)
+    review
+  end
 end
