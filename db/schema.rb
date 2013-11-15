@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131114170812) do
+ActiveRecord::Schema.define(:version => 20131115100908) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -379,6 +379,8 @@ ActiveRecord::Schema.define(:version => 20131114170812) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  add_index "product_reviews", ["product_id", "author"], :name => "index_product_reviews_on_product_id_and_author"
 
   create_table "product_versions", :force => true do |t|
     t.integer  "product_id"
