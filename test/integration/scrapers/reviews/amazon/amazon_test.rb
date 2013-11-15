@@ -2,7 +2,7 @@
 require 'test__helper'
 require 'scrapers/reviews/amazon/amazon'
 
-class AmazonTest < ActiveSupport::TestCase
+class Scrapers::Reviews::AmazonTest < ActiveSupport::TestCase
   fixtures :products
   fixtures :product_reviews
   
