@@ -7,7 +7,7 @@ class Api::Viking::MappingsController < Api::V1::BaseController
     if params[:url].present? || params[:merchant_id].present?
       self.show
     else
-      @mappings = Mapping.all
+      @mappings = Mapping.order(:id).all
       render json: @mappings.to_json
     end
   end

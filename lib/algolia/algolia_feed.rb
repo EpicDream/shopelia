@@ -31,7 +31,7 @@ module AlgoliaFeed
     end
 
     def set_index_attributes
-      self.index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference'], "customRanking" => ["asc(rank)"]})
+      self.index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference', 'price'], "customRanking" => ["asc(rank)"]})
     end
 
     def send_batch(records)

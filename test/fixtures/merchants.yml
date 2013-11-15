@@ -82,3 +82,9 @@ conforama:
   name: "Conforama"
   url: "http://www.conforama.fr"
   domain: "conforama.fr"
+
+pprgroup:
+  name: "Conforama"
+  url: "http://www.conforama.fr"
+  domain: "pprgroup.net"
+
