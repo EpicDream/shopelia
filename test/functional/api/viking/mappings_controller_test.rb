@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class Api::Viking::MappingsControllerTest < ActionController::TestCase
+  include Devise::TestHelpers
+
   fixtures :mappings, :merchants
 
   setup do
