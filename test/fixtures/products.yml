@@ -64,3 +64,9 @@ game_of_throne:
   reference: "reference"
   viking_failure: false
   options_completed: true
+
+masque:
+  name: "Masque Latex '' Gollum '' Le Seigneur Des Anneaux"
+  url: "http://www.priceminister.com/offer/buy/185724540/masque-latex-gollum-le-seigneur-des-anneaux.html"
+  image_url: "http://pmcdn.priceminister.com/photo/masque-latex-gollum-le-seigneur-des-anneaux-931266814_ML.jpg"
+  viking_failure: false

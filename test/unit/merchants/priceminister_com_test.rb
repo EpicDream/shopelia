@@ -44,7 +44,7 @@ class PriceministerComTest < ActiveSupport::TestCase
 
   test "it should parse specific availability" do
     assert_equal false, MerchantHelper.parse_availability("15 résultats", @url)
-    assert_equal false, MerchantHelper.parse_availability("1 252  resultats", @url)
+    assert_equal false, MerchantHelper.parse_availability("1\u00a0252\u00a0 resultats", @url)
   end
 
   test "it should process image_url ajaxLoader" do
