@@ -48,10 +48,11 @@ class Collection < ActiveRecord::Base
 
   def set_home_tag
     if self.public_changed?
+      tag = Tag.find_by_name("__Home")
       if self.public?
-        self.tags << Tag.find_by_name("__Home")
+        self.tags << tag
       else
-        self.tags.where(name:"__Home").destroy_all
+        self.collection_tags.where(tag_id:tag.id).destroy_all
       end
     end
   end

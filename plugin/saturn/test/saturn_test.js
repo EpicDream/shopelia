@@ -263,22 +263,22 @@ describe("Saturn", function() {
       spyOn(saturn, 'cleanTab').andCallThrough();
       spyOn(saturn, 'openUrl').andCallThrough();
       spyOn(saturn, 'crawlProduct');
-      expect(Object.keys(saturn.sessions).length).toBe(0);
+      expect(Object.keys(saturn.sessions.byTabId).length).toBe(0);
       
       saturn.createSession({id: 42, url: ''}, 1);
       saturn.productsBeingProcessed[42] = true;
       
-      expect(Object.keys(saturn.sessions).length).toBe(1);
-      expect(saturn.sessions[1] instanceof SaturnSession).toBe(true);
+      expect(Object.keys(saturn.sessions.byTabId).length).toBe(1);
+      expect(saturn.sessions.byTabId[1] instanceof SaturnSession).toBe(true);
       expect(saturn.cleanTab).toHaveBeenCalled();
-      var session = saturn.sessions[1];
+      var session = saturn.sessions.byTabId[1];
       expect(typeof session.then).toBe('function');
       expect(saturn.openUrl).toHaveBeenCalled();
       expect(session.start).toHaveBeenCalled(); // via session.next()
 
       saturn.endSession(session);
       
-      expect(typeof saturn.sessions[1]).toBe('undefined');
+      expect(typeof saturn.sessions.byTabId[1]).toBe('undefined');
       expect(saturn.productsBeingProcessed[42]).toBe(undefined);
       expect(saturn.crawlProduct).toHaveBeenCalled();
     });
@@ -455,9 +455,9 @@ describe("Saturn", function() {
         expect(saturn.onProductsReceived.calls.length).toBe(0);
         saturn._productToExtract.push(prod);
       });
-      waitsFor(function() {return Object.keys(saturn.sessions).length > 0 || Object.keys(saturn.results).length > 0;}, "Session creation is to long.", saturn.DELAY_BETWEEN_PRODUCTS * 10);
+      waitsFor(function() {return Object.keys(saturn.sessions.byTabId).length > 0 || Object.keys(saturn.results).length > 0;}, "Session creation is to long.", saturn.DELAY_BETWEEN_PRODUCTS * 10);
       waitsFor(function() {return Object.keys(saturn.results).length > 0;}, "Crawling is to long to start.", 1000);
-      waitsFor(function() {return Object.keys(saturn.sessions).length === 0;}, "Crawling is to long to end.", 2000);
+      waitsFor(function() {return Object.keys(saturn.sessions.byTabId).length === 0;}, "Crawling is to long to end.", 2000);
 
       runs(function() {
         expect(saturn.results[42]).not.toBe(undefined);

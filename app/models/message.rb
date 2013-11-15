@@ -35,7 +35,9 @@ class Message < ActiveRecord::Base
     hash = {
       type:'Georges',
       message:self.content,
-      message_id:self.id
+      message_id:self.id,
+      georges:self.from_admin ? 1 : 0,
+      timestamp:self.created_at.to_i
     }    
     if self.data.present?
       hash = hash.merge({

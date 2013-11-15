@@ -15,6 +15,6 @@ class UrlMonetizer
   end
 
   def del url
-    @redis.del(CACHE, url)
+    @redis.hdel(CACHE, url)
   end
 end
