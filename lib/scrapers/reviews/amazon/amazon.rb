@@ -26,7 +26,7 @@ module Scrapers
         def run
           PAGES.each do |index|
             reviews = reviews_of_page(index)
-            break if reviews.none?
+            break if stop_scraping?(reviews)
             reviews.each do |review|
               begin
                 Scrapers::Reviews::Synchronizer.synchronize review.to_hash
@@ -48,6 +48,10 @@ module Scrapers
         end
       
         private
+        
+        def stop_scraping? reviews
+          reviews.none? || @product.has_review_for_author?(reviews.first.author)
+        end
         
         def report_incident_at_page index
           Incident.create(
