@@ -79,5 +79,10 @@ grand_theft_auto:
   description: "Description"
   brand: "brand"
   reference: "reference"
+  
+les_sims:
+  name: "Les Sims 4"
+  merchant: rueducommerce
+  url: http://www.rueducommerce.fr/Jeux-Consoles/Jeux-PC-et-accessoires/Jeux-PC/ELECTRONIC-ARTS/446710-Les-Sims-3-PC.htm
 
 
