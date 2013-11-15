@@ -14,6 +14,9 @@
           %span.label.label-info#gender= message.gift_gender
           %span.label.label-info#age= message.gift_age
           %span.label.label-info#budget= message.gift_budget
+        - if message.rating.present?
+          %p#review_card
+            %span.label.label-success#rating= message.rating == 0 ? "Pending rating" : "Rating: #{message.rating}"
       %span.chat-time
         - if message.collection_uuid && !message.collection_uuid.empty?
           = link_to("Collection n° " + message.collection_uuid, edit_admin_collection_path(Collection.find_by_uuid(message.collection_uuid)), target: '_blank' )

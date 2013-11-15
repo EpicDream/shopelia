@@ -38,6 +38,10 @@
       $("[data-message-id=" + id + "]").find("#budget").html(data["gift_budget"]);
       $(".chat-history").animate({scrollTop: $("#messages").height()}, 200);
     });
+    window.channels[channel].bind("card_rating", function(data) {
+      id = data["id"];
+      $("[data-message-id=" + id + "]").find("#rating").html("Rating: " + data["rating"]);
+    });
     window.channels[channel].bind("read", function(data) {
       id = data["id"];
       $("[data-message-id=" + id + "]").find("#read_at").html("Read");
