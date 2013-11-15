@@ -9,7 +9,6 @@ module Descriptions
     def format description, url
       Descriptions::Amazon::Formatter.format(description).to_json
     rescue => e
-      puts e.backtrace.inspect
       report_incident_for url
     end
     
