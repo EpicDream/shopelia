@@ -15,6 +15,7 @@ module Search
       })
       item = res.items.first
       { name:CGI.unescapeHTML(item.get_element('ItemAttributes').get('Title')),
+        brand:CGI.unescapeHTML(item.get_element('ItemAttributes').get('Brand') || item.get_element('ItemAttributes').get('Author')),
         image_url:item.get_element('LargeImage').get('URL'),
         urls:[ Linker.clean(item.get('DetailPageURL')) ]
       }

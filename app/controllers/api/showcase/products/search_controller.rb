@@ -14,11 +14,6 @@ class Api::Showcase::Products::SearchController < Api::V1::BaseController
   def prepare_params
     @ean = params[:ean]
     @tracker = params[:tracker]
-    if params[:visitor]
-      @device = Device.fetch(params[:visitor], request.env['HTTP_USER_AGENT'])
-    else
-      render :json => {"Error" => "Missing visitor param"}, status: :bad_request and return
-    end
   end
 
   def prepare_result

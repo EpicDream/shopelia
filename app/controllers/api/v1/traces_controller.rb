@@ -8,7 +8,7 @@ class Api::V1::TracesController < Api::V1::BaseController
       TracesWorker.perform_async({
         :user_id => current_user.try(:id),
         :device_id => @device.id,
-        :ressource => trace[:ressource],
+        :resource => trace[:resource],
         :action => trace[:action],
         :extra_id => trace[:extra_id],
         :extra_text => trace[:extra_text],

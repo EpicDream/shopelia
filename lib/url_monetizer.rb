@@ -14,4 +14,7 @@ class UrlMonetizer
     @redis.hset(CACHE, canonized_url, original_url)
   end
 
+  def del url
+    @redis.hdel(CACHE, url)
+  end
 end

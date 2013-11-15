@@ -1,6 +1,10 @@
 # -*- encoding : utf-8 -*-
+require 'parsers/descriptions/formatter'
+
 class AmazonFr
   DEFAULT_PRICE_SHIPPING = "2.79 €"
+  DEFAULT_SHIPPING_INFO_1 = "Prix et délais variables en fonction du vendeur."
+  DEFAULT_SHIPPING_INFO_2 = "Délais variables en fonction du vendeur."
 
   AVAILABILITY_HASH = {
     /TVA incluse le cas .ch.ant/i => false, # vu juste pour des MP3 à télécharger
@@ -54,6 +58,10 @@ class AmazonFr
 
   def process_shipping_info version
     version[:shipping_info] = nil if version[:shipping_info] =~ /Voir les offres de ces vendeurs/i
+    if version[:shipping_info].blank?
+      prc_shp_txt = version[:price_shipping_text]
+      version[:shipping_info] = prc_shp_txt.blank? || prc_shp_txt == DEFAULT_PRICE_SHIPPING ? DEFAULT_SHIPPING_INFO_1 : DEFAULT_SHIPPING_INFO_2
+    end
     version
   end
 
@@ -61,6 +69,11 @@ class AmazonFr
     #TODO: faire la meme chose pour image_url, mais elle peut être vraiment grande...
     return version unless version[:images].kind_of?(Array)
     version[:images].map! { |url| url.sub(/\._.+?_\.(\w+)$/, '.\\1') }
+    version
+  end
+  
+  def process_description version
+    version[:json_description] = Descriptions::Formatter.format(version[:description], @url)
     version
   end
 end

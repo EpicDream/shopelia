@@ -8,7 +8,7 @@ class Api::Viking::MerchantsControllerTest < ActionController::TestCase
   end
 
   test "it should find merchant by url" do
-    get :index, url:"http://www.rueducommerce.fr/bla", format: :json
+    get :index, url:"http://www.rueducommerce.fr/bla"
     assert_response :success
     assert_equal merchants(:rueducommerce).id, json_response["id"]
   end
@@ -28,11 +28,18 @@ class Api::Viking::MerchantsControllerTest < ActionController::TestCase
   end
   
   test "it should update merchant data" do
-    post :update, id:@merchant.id, data:{"bla" => "bing"}
+    put :update, id:@merchant.id, data:{"bla" => "bing"}
     
     assert_response :success
     assert_equal ({"bla" => "bing"}.to_json), @merchant.reload.viking_data
   end
-  
+
+  test "it should update merchant mapping_id" do
+    map = mappings(:fnac_map)
+    assert_nil @merchant.mapping_id
+    put :update, id: @merchant.id, mapping_id: map.id
+    assert_response 204
+    assert_equal map.id, @merchant.reload.mapping_id
+  end
 end
 

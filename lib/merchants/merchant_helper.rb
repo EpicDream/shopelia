@@ -24,11 +24,12 @@ module MerchantHelper
     version = m.process_image_url(version) if m.respond_to?('process_image_url')
     version = m.process_images(version) if m.respond_to?('process_images')
     version = m.process_options(version) if m.respond_to?('process_options')
+    version = m.process_description(version) if m.respond_to?('process_description')
     version
   end
 
   def self.monetize url
-    self.from_url(url).monetize
+    UrlMonetizer.new.get(url) || self.from_url(url).monetize
   end
 
   def self.canonize url

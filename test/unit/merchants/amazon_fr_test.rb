@@ -65,9 +65,25 @@ class AmazonFrTest < ActiveSupport::TestCase
     @version = @helper.process_shipping_info(@version)
     assert_equal "Sous 2 à 3 semaines", @version[:shipping_info]
 
-    @version[:shipping_info] = "Voir les offres de ces vendeurs."
+    @version[:shipping_info] = ""
+    @version[:price_shipping_text] = ""
     @version = @helper.process_shipping_info(@version)
-    assert_nil @version[:shipping_info]
+    assert_equal AmazonFr::DEFAULT_SHIPPING_INFO_1, @version[:shipping_info]
+
+    @version[:shipping_info] = ""
+    @version[:price_shipping_text] = AmazonFr::DEFAULT_PRICE_SHIPPING
+    @version = @helper.process_shipping_info(@version)
+    assert_equal AmazonFr::DEFAULT_SHIPPING_INFO_1, @version[:shipping_info]
+
+    @version[:shipping_info] = ""
+    @version[:price_shipping_text] = "12,90 €"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal AmazonFr::DEFAULT_SHIPPING_INFO_2, @version[:shipping_info]
+
+    @version[:shipping_info] = "Voir les offres de ces vendeurs."
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_shipping_info(@version)
+    assert_equal AmazonFr::DEFAULT_SHIPPING_INFO_1, @version[:shipping_info]
   end
 
   test "it should process images" do
@@ -86,5 +102,11 @@ class AmazonFrTest < ActiveSupport::TestCase
     @version[:images] = ["http://ecx.images-amazon.com/images/I/41HlKgbXReL._SS45_.jpg"]
     @version = @helper.process_images(@version)
     assert_equal ["http://ecx.images-amazon.com/images/I/41HlKgbXReL.jpg"], @version[:images]
+  end
+  
+  test "it should be able to process description to build a formatted json description" do
+    @version[:description] = ""
+    @version = @helper.process_description(@version)
+    assert_equal({}.to_json, @version[:json_description])
   end
 end
