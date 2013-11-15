@@ -1,7 +1,6 @@
 class Message < ActiveRecord::Base
   belongs_to :device
 
-  before_validation :ensure_content
   before_validation :ensure_device_pushable
   before_validation :set_rating
   before_save :serialize_data
@@ -126,10 +125,6 @@ class Message < ActiveRecord::Base
     end
   end
 
-  def ensure_content
-    self.errors.add(:base, I18n.t('messages.errors.empty')) unless self.content.present? || self.products_urls.present? || self.collection_uuid.present? || self.gift_card.present? || self.appstore_card.present? || self.rating_card.present?
-  end
-
   def ensure_device_pushable
     self.errors.add(:base, I18n.t('messages.errors.device_not_pushable')) unless self.device.push_token.present?
   end
@@ -144,7 +139,7 @@ class Message < ActiveRecord::Base
         message = Message.new(device_id:self.device_id,from_admin:true,appstore_card:1)
         Push.send_message message
       else
-        message = Message.create(content:I18n.t('georges.autoreply_rating'),device_id:self.device_id,from_admin:true)
+        message = Message.create(content:I18n.t('georges.autoreply.bad_rating'),device_id:self.device_id,from_admin:true)
       end
       self.device.update_attributes(rating:self.rating)
     end
