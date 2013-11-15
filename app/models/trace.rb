@@ -9,10 +9,19 @@ class Trace < ActiveRecord::Base
 
   attr_accessible :resource, :action, :device_id, :extra_id, :extra_text, :user_id, :ip_address
 
+  before_validation :retrieve_product
   after_create :update_user_session
   after_create :notify_push_channel, :if => Proc.new { |trace| trace.device.push_channel_authorized? }
 
   private
+
+  def retrieve_product
+    if self.resource == 'Product' && self.extra_text.present?
+      p = Product.fetch(self.extra_text)
+      self.extra_id = p.id
+      self.extra_text = nil
+    end
+  end
 
   def update_user_session
     current_session = device.user_sessions.order(:updated_at).last

@@ -44,4 +44,11 @@ class TraceTest < ActiveSupport::TestCase
       Trace.create(user_id:@user.id, device_id:@device.id, resource:@resource, action:@action, extra_text:@extra_text, ip_address:@ip_address)
     end
   end
+
+  test "it should create trace for product from url" do
+    @resource = 'Product'
+    @extra_text = products(:usbkey).url
+    trace = Trace.create(user_id:@user.id, device_id:@device.id, resource:@resource, action:@action, extra_text:@extra_text, ip_address:@ip_address)
+    assert_equal products(:usbkey).id, trace.extra_id
+  end
 end
