@@ -25,7 +25,7 @@ class Product < ActiveRecord::Base
   after_save :clear_failure_if_mute, :if => Proc.new { |product| product.mute? }
   after_update :set_image_size, :if => Proc.new { |product| product.image_url_changed? || (product.image_url.present? && product.image_size.blank?) }
   
-  attr_accessible :versions, :merchant_id, :url, :name, :description, :rating
+  attr_accessible :versions, :merchant_id, :url, :name, :description, :rating, :json_description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
   attr_accessible :brand, :reference, :viking_failure, :muted_until
   attr_accessible :options_completed, :viking_sent_at, :batch

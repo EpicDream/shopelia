@@ -1,3 +1,5 @@
+# -*- encoding : utf-8 -*-
+
 require 'test__helper'
 require 'parsers/descriptions/amazon/formatter'
 

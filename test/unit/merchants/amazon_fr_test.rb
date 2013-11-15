@@ -103,4 +103,10 @@ class AmazonFrTest < ActiveSupport::TestCase
     @version = @helper.process_images(@version)
     assert_equal ["http://ecx.images-amazon.com/images/I/41HlKgbXReL.jpg"], @version[:images]
   end
+  
+  test "it should be able to process description to build a formatted json description" do
+    @version[:description] = ""
+    @version = @helper.process_description(@version)
+    assert_equal({}.to_json, @version[:json_description])
+  end
 end
