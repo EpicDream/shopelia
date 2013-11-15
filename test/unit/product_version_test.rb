@@ -154,6 +154,21 @@ class ProductVersionTest < ActiveSupport::TestCase
     end
   end
 
+  test "it should search availability into specific merchant helper" do
+    assert_difference "Incident.count", 0 do
+      str = "1\u00a0508\u00a0 résultats"
+      version = ProductVersion.create(
+        product_id:products(:masque).id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:str)
+      assert_equal false, version.available, "#{str.inspect} failed !"
+    end
+  end
+
   test "it should parse rating" do
     assert_difference "Incident.count", 0 do
       version = ProductVersion.create(

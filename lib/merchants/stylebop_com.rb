@@ -4,6 +4,7 @@ class StylebopCom
   DEFAULT_SHIPPING_INFO = "Livraison UPS en 2-3 jours ouvrables (France)"
 
   AVAILABILITY_HASH = {
+    "Recherche par" => false,
   }
 
   def initialize url

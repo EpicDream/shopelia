@@ -166,6 +166,7 @@ Crawler.setOption = function(paths, value, doc) {
   } else {
     elems[0].dispatchEvent(new CustomEvent("mouseover", {"canBubble":true, "cancelable":true}));
     elems[0].dispatchEvent(new CustomEvent("click", {"canBubble":true, "cancelable":true}));
+    try { elems[0].click(); } catch(err) {}
   }
 
   return true;

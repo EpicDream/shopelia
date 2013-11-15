@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Api::Viking::MerchantsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  
+
   setup do
     @merchant = merchants(:amazon)
   end

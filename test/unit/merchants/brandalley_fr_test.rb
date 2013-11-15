@@ -30,6 +30,10 @@ class BrandalleyFrTest < ActiveSupport::TestCase
     @version[:availability_text] = "taille unique - plus que 4"
     @version = @helper.process_availability(@version)
     assert_equal "plus que 4", @version[:availability_text]
+
+    @version[:availability_text] = "TAILLE UNIQUE - DISPONIBLE"
+    @version = @helper.process_availability(@version)
+    assert_equal "DISPONIBLE", @version[:availability_text]
   end
 
   test "it should parse specific availability" do
