@@ -2,7 +2,7 @@
 
 module Scrapers
   module Reviews
-    module PriceMinister
+    module Priceminister
       class Review
         attr_reader :rank, :author, :content, :product_id
         

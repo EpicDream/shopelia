@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 require 'test__helper'
-require 'scrapers/reviews/price_minister/price_minister'
+require 'scrapers/reviews/priceminister/priceminister'
 
-class Scrapers::Reviews::PriceMinisterTest < ActiveSupport::TestCase
+class Scrapers::Reviews::PriceministerTest < ActiveSupport::TestCase
   fixtures :products
   fixtures :product_reviews
   
@@ -10,7 +10,7 @@ class Scrapers::Reviews::PriceMinisterTest < ActiveSupport::TestCase
   
   setup do
     @product = products(:grand_theft_auto)
-    @scraper = Scrapers::Reviews::PriceMinister::Scraper.new(@product)
+    @scraper = Scrapers::Reviews::Priceminister::Scraper.new(@product)
   end
   
   test "reviews url page 1 and 2 from product url, with sort by date desc" do
@@ -50,16 +50,16 @@ class Scrapers::Reviews::PriceMinisterTest < ActiveSupport::TestCase
     skip
     @product = products(:grand_theft_auto)
     
-    Scrapers::Reviews::PriceMinister::Scraper.scrape(@product.id)
+    Scrapers::Reviews::Priceminister::Scraper.scrape(@product.id)
     assert_equal 100, @product.product_reviews.count
   end
   
   test "create incident" do
     Scrapers::Reviews::Synchronizer.stubs(:synchronize).raises
-    Scrapers::Reviews::PriceMinister::Scraper::PAGES = (1..1)
+    Scrapers::Reviews::Priceminister::Scraper::PAGES = (1..1)
     @product = products(:grand_theft_auto)
     
-    Scrapers::Reviews::PriceMinister::Scraper.scrape(@product.id)
+    Scrapers::Reviews::Priceminister::Scraper.scrape(@product.id)
     
     incidents = Incident.all
     incident = incidents.first
@@ -73,7 +73,7 @@ class Scrapers::Reviews::PriceMinisterTest < ActiveSupport::TestCase
     product = products(:grand_theft_auto)
     review = product_reviews(:grand_theft_auto)
     
-    scraper = Scrapers::Reviews::PriceMinister::Scraper.new(product)
+    scraper = Scrapers::Reviews::Priceminister::Scraper.new(product)
     scraper.stubs(:reviews_of_page).with(1).returns([review_stub(review.author, product)])
     scraper.stubs(:reviews_of_page).with(2).returns([])
     
@@ -85,7 +85,7 @@ class Scrapers::Reviews::PriceMinisterTest < ActiveSupport::TestCase
   private
   
   def review_stub author, product
-    review = Scrapers::Reviews::PriceMinister::Review.new(nil)
+    review = Scrapers::Reviews::Priceminister::Review.new(nil)
     hash_review = {rating:1, author:author, content:"", published_at:Time.now, product_id:product.id}
     review.stubs(:to_hash).returns(hash_review)
     review.stubs(:author).returns(author)

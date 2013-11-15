@@ -2,7 +2,7 @@
 
 module Scrapers
   module Reviews
-    module PriceMinister
+    module Priceminister
       require_relative 'review'
       require_relative '../synchronizer'
       
@@ -44,7 +44,7 @@ module Scrapers
         def reviews_of_page index
           data = reviews_url(index)
           page = @agent.post(data[:url], data[:form_data], {'X-AjaxRequest' => 1})
-          page.search('.reviewItem').map { |html| PriceMinister::Review.new(html, @product.id)}
+          page.search('.reviewItem').map { |html| Priceminister::Review.new(html, @product.id)}
         end
       
         def reviews_url page=1
