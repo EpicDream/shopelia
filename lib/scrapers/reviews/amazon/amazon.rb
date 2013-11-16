@@ -35,6 +35,8 @@ module Scrapers
               end
             end
           end
+        rescue
+          report_incident_at_page("all")
         end
 
         def reviews_of_page index
