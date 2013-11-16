@@ -63,7 +63,7 @@ class Scrapers::Reviews::PriceministerTest < ActiveSupport::TestCase
     
     incidents = Incident.all
     incident = incidents.first
-    expected_description = "url : http://www.priceminister.com/review?action=list&productid=180624024" 
+    expected_description = "url : http://www.priceminister.com/review?action=list&productid=180624024, page : 1" 
   
     assert_equal 10, Incident.count
     assert_equal expected_description, incident.description

@@ -24,10 +24,10 @@ module Scrapers
           @product_id = product_id(@product.url)
           @agent = Mechanize.new
           @agent.user_agent_alias = 'Mac Safari'
-          @agent.get(@product.url)
         end
       
         def run
+          @agent.get(@product.url)
           PAGES.each do |index|
             reviews = reviews_of_page(index)
             break if stop_scraping?(reviews)
@@ -39,6 +39,8 @@ module Scrapers
               end
             end
           end
+        rescue
+          report_incident_at_page("all")
         end
 
         def reviews_of_page index
@@ -57,17 +59,17 @@ module Scrapers
           reviews.none? || @product.has_review_for_author?(reviews.first.author)
         end
         
-        def report_incident_at_page index
+        def report_incident_at_page index=nil
           Incident.create(
             :issue => "PriceMinister reviews scraper",
             :severity => Incident::INFORMATIVE,
-            :description => "url : #{URL[@product_id]}",
+            :description => "url : #{URL[@product_id]}, page : #{index}",
             :resource_type => 'Product',
             :resource_id => @product.id)
         end
       
         def product_id url
-          url =~ /\/(\d+)\//
+          url =~ /\/(\d+)/
           $1
         end
       
