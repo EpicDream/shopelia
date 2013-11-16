@@ -16,7 +16,7 @@ class Trace < ActiveRecord::Base
   private
 
   def retrieve_product
-    if self.resource == 'Product' && self.extra_text.present?
+    if self.resource == 'Product' && self.extra_text.present? && self.extra_text =~ /^Ahttp/
       p = Product.fetch(self.extra_text)
       self.extra_id = p.id
       self.extra_text = nil
