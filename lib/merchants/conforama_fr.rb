@@ -19,7 +19,7 @@ class ConforamaFr
   end
 
   def process_availability version
-    # version[:availability_text] = MerchantHelper::UNAVAILABLE if version[:availability_text].blank?
+    version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
     version
   end
 
