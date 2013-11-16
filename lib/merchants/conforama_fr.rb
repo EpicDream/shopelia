@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class ConforamaFr
   DEFAULT_PRICE_SHIPPING = "8 €"
-  DEFAULT_SHIPPING_INFO = "Colis Privé"
+  DEFAULT_SHIPPING_INFO = "Sous réserve de disponibilité dans le Conforama de votre région. Vérification après commande"
 
   AVAILABILITY_HASH = {
   }
@@ -29,7 +29,7 @@ class ConforamaFr
   end
 
   def process_shipping_info version
-    version[:shipping_info] = MerchantHelper::DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
+    version[:shipping_info] = DEFAULT_SHIPPING_INFO
     version
   end
 end

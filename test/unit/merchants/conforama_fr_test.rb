@@ -30,6 +30,11 @@ class ConforamaFrTest < ActiveSupport::TestCase
   test "it should parse specific availability" do
   end
 
+  test "it should set shipping info" do
+    @version = @helper.process_shipping_info(@version)
+    assert_match /Conforama/, @version[:shipping_info]
+  end
+
   test "it should process price_shipping if empty" do
     @version[:price_shipping_text] = ""
     @version = @helper.process_price_shipping(@version)
