@@ -30,7 +30,9 @@ class Linker
   def self.monetize url
     return nil if url.blank?
     url = url.unaccent
-    MerchantHelper.monetize(url)
+    url_m = MerchantHelper.monetize(url)
+    raise if url_m.blank?
+    url_m 
   rescue
     merchant = Merchant.find_or_create_by_domain(Utils.extract_domain(url))
     if Incident.where(issue:"Linker",resource_type:"Merchant",resource_id:merchant.id,processed:false).where("description like 'Url not monetized%'").count == 0

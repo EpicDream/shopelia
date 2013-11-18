@@ -2,9 +2,11 @@
 class PriceministerCom
 
   AVAILABILITY_HASH = {
-    /[\d\s]+ r.sultats/i => false, # Redirection vers recherche quand trouve pas.
+    /[\d\s]+ r.sultat/i => false, # Redirection vers recherche quand trouve pas.
     "Aucun resultat" => false,
     "Top Ventes" => false, # rediriger sur l'accueil
+    "Les produits les plus vus du moment dans" => true,
+    "Les PriceMembers ayant vu" => true,
   }
 
   def initialize url

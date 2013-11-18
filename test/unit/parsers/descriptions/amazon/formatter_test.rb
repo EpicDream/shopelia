@@ -128,6 +128,10 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
     assert_equal "50,9 x 18,1 x 38,7 cm", rep["Informations sur le produit"]["Descriptif technique"].first["Dimensions du produit (L x l x h)"]
   end
   
+  test "return empty hash if description is nil" do
+    assert_equal({}, Descriptions::Amazon::Formatter.format(nil))
+  end
+  
   private
   
   def description sample

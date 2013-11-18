@@ -7,6 +7,18 @@ class MerchantHelperTest < ActiveSupport::TestCase
     @version = {}
   end
 
+  test "it should use url monetizer" do 
+    url = "http://www.alinea.fr/product"
+    UrlMonetizer.new.set(url, "http://www.alinea.fr/product-m")
+    assert_equal "http://www.alinea.fr/product-m", MerchantHelper.monetize(url)
+  end
+
+  test "it should use merchant monetize before url monetizer" do
+    url = "http://www.priceminister.com/offer/buy/141950480"
+    UrlMonetizer.new.set(url, "http://www.priceminister.com/offer/buy/141950480?m")
+    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=http%3A%2F%2Fwww.priceminister.com%2Foffer%2Fbuy%2F141950480", MerchantHelper.monetize(url)
+  end
+
   test "it should process image_url" do 
     @version[:image_url] = "//amazon.fr/image.jpg"
     @version = MerchantHelper.process_version("http://www.amazon.fr", @version)
@@ -99,7 +111,8 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
               "For Personalized Service on this item please call 1-800-227-3528 and our Product Specialists will gladly answer all questions and provide additional information. Please note that special conditions and guarantee limitations apply to this product.",
               "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture", "Ouille, cette page est introuvable !!!",
-              "Epuisé", "pas disponible", "Currently unavailable., Currently unavailable." ]
+              "Epuisé", "pas disponible", "Currently unavailable., Currently unavailable.", "Rupture de stock",
+              "Erreur: Désolé, mais le produit que vous avez demandé n'a pas été trouvé !" ]
     array.each do |str|
       assert_equal false, MerchantHelper.parse_availability(str)
     end

@@ -75,7 +75,7 @@ le_donjon:
 grand_theft_auto:
   name: "Grand Theft Auto"
   merchant: priceminister
-  url: http://www.priceminister.com/offer/buy/180624024/grand-theft-auto-v.html
+  url: http://www.priceminister.com/offer/buy/180624024
   description: "Description"
   brand: "brand"
   reference: "reference"
