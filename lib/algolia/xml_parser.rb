@@ -157,8 +157,8 @@ module AlgoliaFeed
       self.merchant_cache[domain][:products_count] += 1
       record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
-      record['price'].gsub!(/,/, '.')
-      record['shipping_price'].gsub!(/,/, '.')
+      record['price'].gsub!(/,/, '.') if record.has_key?('price')
+      record['price_shipping'].gsub!(/,/, '.') if record.has_key?('price_shipping')
       set_categories(product, record)
       record
     end
