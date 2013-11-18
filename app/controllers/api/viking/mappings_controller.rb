@@ -1,6 +1,7 @@
 class Api::Viking::MappingsController < Api::V1::BaseController
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_developer!
+  before_filter :preprocess_params, :only => [:create, :update]
 
   api :GET, "/mappings", "Get mapping by url"
   def index
@@ -23,12 +24,14 @@ class Api::Viking::MappingsController < Api::V1::BaseController
     else
       @mapping = Mapping.find(params[:id])
     end
+
+    @mapping[:mapping] = JSON.parse @mapping[:mapping]
     render json: @mapping.to_json
   end
 
   api :POST, "/mappings", "Create a new mapping"
   def create
-    @mapping = Mapping.new(params[:data])
+    @mapping = Mapping.new(params)
     if @mapping.save
       render json: @mapping, status: :created
     else
@@ -39,10 +42,18 @@ class Api::Viking::MappingsController < Api::V1::BaseController
   api :PUT, "/mappings/:id", "Update mapping by id"
   def update
     @mapping = Mapping.find(params[:id])
-    if @mapping.update_attributes(params[:data])
+    if @mapping.update_attributes(params)
       head :no_content
     else
       render json: @mapping.errors, status: :unprocessable_entity
     end
   end
+
+  private
+
+  def preprocess_params
+    params[:mapping] = params[:mapping].to_json if params[:mapping].present? && ! params[:mapping].kind_of?(String)
+    true
+  end
+
 end
