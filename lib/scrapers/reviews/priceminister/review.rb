@@ -29,7 +29,7 @@ module Scrapers
         end
         
         def content
-          @html.xpath('.//blockquote[@itemprop="reviewBody"]').text.delete("\n").strip
+          @html.xpath('.//blockquote[@itemprop="reviewBody"]').text.clean
         end
         
       end

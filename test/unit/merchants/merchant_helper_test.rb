@@ -111,7 +111,8 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
               "For Personalized Service on this item please call 1-800-227-3528 and our Product Specialists will gladly answer all questions and provide additional information. Please note that special conditions and guarantee limitations apply to this product.",
               "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture", "Ouille, cette page est introuvable !!!",
-              "Epuisé", "pas disponible", "Currently unavailable., Currently unavailable." ]
+              "Epuisé", "pas disponible", "Currently unavailable., Currently unavailable.", "Rupture de stock",
+              "Erreur: Désolé, mais le produit que vous avez demandé n'a pas été trouvé !" ]
     array.each do |str|
       assert_equal false, MerchantHelper.parse_availability(str)
     end

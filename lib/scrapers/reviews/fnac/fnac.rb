@@ -2,7 +2,7 @@
 
 module Scrapers
   module Reviews
-    module RueDuCommerce
+    module Fnac
       require_relative 'review'
       require_relative '../synchronizer'
       require_relative '../scraper'
@@ -11,9 +11,13 @@ module Scrapers
         include Scrapers::Reviews::Scraper
 
         def reviews_of_page index
-          page = @agent.get(@product.url)
-          xpath = ".//div[@class='bottomAvis']/preceding-sibling::table[1]//tr[@itemtype='http://schema.org/Review']"
-          page.search(xpath).map { |html| RueDuCommerce::Review.new(html, @product.id)}
+          xpath = '//*[@id="avisinternautes"]//ul/li'
+          page = @agent.get reviews_url(index)
+          page.search(xpath).map { |html| Fnac::Review.new(html, @product.id)}
+        end
+
+        def reviews_url page=1
+          @product.url
         end
       
       end

@@ -37,7 +37,7 @@ class Api::Viking::MappingsControllerTest < ActionController::TestCase
   
   test "it should create mapping" do
     assert_difference "Mapping.count" do
-      post :create, data: {"domain" => "amazon.fr", "mapping" => '{"default":{"name":{"paths":["#name"]}}}'}
+      post :create, {"domain" => "amazon.fr", "mapping" => '{"default":{"name":{"paths":["#name"]}}}'}
       assert_response :success
       assert json_response["id"].present?
       assert_equal "amazon.fr", json_response["domain"]
@@ -45,9 +45,19 @@ class Api::Viking::MappingsControllerTest < ActionController::TestCase
     end
   end
   
+  test "it should create mapping from object" do
+    assert_difference "Mapping.count" do
+      post :create, {"domain" => "amazon.fr", "mapping" => {"default"=>{"name"=>{"paths"=>["#name"]}}}}
+      assert_response :success
+      assert json_response["id"].present?
+      assert_equal "amazon.fr", json_response["domain"]
+      assert_kind_of String, json_response["mapping"]
+    end
+  end
+
   test "it should update mapping" do
     assert_equal '{"default":{"price":{"paths":["#path.to.price"]}}}', @mapping.mapping
-    post :update, id:@mapping.id, data:{"mapping" => '{"default":{"price":{"paths":["#updatedPath.to.price"]}}}'}
+    post :update, {"id" => @mapping.id, "mapping" => {default:{price:{paths:["#updatedPath.to.price"]}}}}
     assert_response :success
     assert_equal '{"default":{"price":{"paths":["#updatedPath.to.price"]}}}', @mapping.reload.mapping
   end

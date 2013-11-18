@@ -13,6 +13,18 @@ class MessageTest < ActiveSupport::TestCase
     assert message.rating.nil?
   end
 
+  test "it should create message from user even without push token" do 
+    @device.update_attribute :push_token, nil    
+    message = Message.new(content:"allo",device_id:@device.id)
+    assert message.save
+  end
+
+  test "it shouldn't create message from admin without push token" do 
+    @device.update_attribute :push_token, nil    
+    message = Message.new(content:"allo",device_id:@device.id, from_admin:true)
+    assert !message.save
+  end
+
   test "it should create message with data only" do
     message = Message.new(products_urls:"http://www.amazon.fr",device_id:@device.id)
     assert message.save, message.errors.full_messages.join("\n")
@@ -45,12 +57,6 @@ class MessageTest < ActiveSupport::TestCase
     @device.update_attribute :autoreplied, true
     Message.create(content:"allo",device_id:@device.id,from_admin:true)
     assert @device.reload.autoreplied
-  end
-
-  test "it should create a message if device is not pushable" do
-    message = Message.new(content:"allo",device_id:devices(:web).id)
-    assert !message.save
-    assert_equal I18n.t('messages.errors.device_not_pushable'), message.errors.full_messages.first
   end
 
   test "it should send message to admin when user writes to Georges" do

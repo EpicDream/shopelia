@@ -57,4 +57,25 @@ class BrandalleyFrTest < ActiveSupport::TestCase
     @version = @helper.process_price_shipping(@version)
     assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
+
+  test "it should process option" do
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "Blanc", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "Blanc", @version[:option1]["text"]
+
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "", "src" => @url}
+    @version = @helper.process_options(@version)
+    assert_equal "", @version[:option1]["text"]
+
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "FFFFFF", @version[:option1]["text"]
+
+    @version[:option1] = {"style" => "background: #F60409;", "text" => "", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "#F60409", @version[:option1]["text"]
+    @version[:option1] = {"style" => "background-color:#c6865a;margin:2px;width:10px;height:12px;", "text" => "", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "#c6865a", @version[:option1]["text"]
+  end
 end

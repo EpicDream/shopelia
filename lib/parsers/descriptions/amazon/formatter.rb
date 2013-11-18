@@ -172,6 +172,7 @@ module Descriptions
       end
       
       def self.format html_blocks
+        return {} if html_blocks.nil?
         blocks = html_blocks.split(BLOCKS_SEPARATOR).delete_if { |block| block.blank? }
         blocks.inject({}) { |hash, html| hash.merge!(new(html).representation) }
       end

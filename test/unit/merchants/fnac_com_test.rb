@@ -24,4 +24,36 @@ class FnacComTest < ActiveSupport::TestCase
   test "it should parse specific availability" do
     assert_equal false, MerchantHelper.parse_availability("Allez vers la version simple", @url)
   end
+
+  test "it should process_price_shipping" do
+    @version[:price_shipping_text] = "Livraison gratuite (?)"
+    @version = @helper.process_price_shipping(@version)
+    assert_equal "Livraison gratuite (?)", @version[:price_shipping_text]
+
+    @version[:price_shipping_text] = "Livraison rapide offerte pour les produits vendus et expédiés par Fnac.com uniquement (Hors MarketPlace et Tirage Photo)."
+    @version = @helper.process_price_shipping(@version)
+    assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
+  end
+
+  test "it should process_shipping_info" do
+    @version[:shipping_info] = "Livraison en 2 jours ouvrés"
+    @version[:price_shipping_text] = "3 € 50"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal "Livraison en 2 jours ouvrés", @version[:shipping_info]
+
+    @version[:shipping_info] = "Livraison en 2 jours ouvrés"
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_shipping_info(@version)
+    assert_equal "Livraison en 2 jours ouvrés", @version[:shipping_info]
+
+    @version[:shipping_info] = ""
+    @version[:price_shipping_text] = "3 € 50"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal FnacCom::DEFAULT_SHIPPING_INFO, @version[:shipping_info]
+
+    @version[:shipping_info] = ""
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_shipping_info(@version)
+    assert_equal FnacCom::DEFAULT_SHIPPING_INFO_PLUS_PRICE, @version[:shipping_info]
+  end
 end

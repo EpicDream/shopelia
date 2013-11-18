@@ -51,7 +51,8 @@ class Scrapers::Reviews::PriceministerTest < ActiveSupport::TestCase
     @product = products(:grand_theft_auto)
     
     Scrapers::Reviews::Priceminister::Scraper.scrape(@product.id)
-    assert_equal 100, @product.product_reviews.count
+
+    assert_equal 10, @product.product_reviews.count
   end
   
   test "create incident" do
@@ -63,7 +64,7 @@ class Scrapers::Reviews::PriceministerTest < ActiveSupport::TestCase
     
     incidents = Incident.all
     incident = incidents.first
-    expected_description = "url : http://www.priceminister.com/review?action=list&productid=180624024, page : 1" 
+    expected_description = "url : http://www.priceminister.com/offer/buy/180624024, index : 1"
   
     assert_equal 10, Incident.count
     assert_equal expected_description, incident.description
