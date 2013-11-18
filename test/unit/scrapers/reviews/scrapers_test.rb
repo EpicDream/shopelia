@@ -3,51 +3,38 @@ require 'test__helper'
 require 'scrapers/reviews/scrapers'
 
 class Scrapers::Reviews::ScrapersTest < ActiveSupport::TestCase
+  MERCHANTS = { "amazon" => "amazon.fr", "priceminister" => "priceminister.com", 
+                "rue_du_commerce" => "rueducommerce.fr", "fnac" => "fnac.com" }
   
   setup do
     @product = Product.new
     @product.id = 1
   end
   
-  #TODO factorize
-  
-  test "scraper module for domain amazon" do
-    klass = Scrapers::Reviews.scraper('amazon')
-    assert_equal Scrapers::Reviews::Amazon::Scraper, klass
+  test "scraper module for merchant domain" do
+    MERCHANTS.keys.each { |merchant| run_scraper_module_spec_for(merchant) }
   end
   
-  test "scraper module for domain priceminister" do
-    klass = Scrapers::Reviews.scraper('priceminister')
-    assert_equal Scrapers::Reviews::Priceminister::Scraper, klass
+  test "scrape find merchant via product" do
+    MERCHANTS.keys.each { |merchant| run_scrape_find_merchant_via_product_spec_for(merchant)}
   end
   
-  test "scraper module for domain rueducommerce" do
-    klass = Scrapers::Reviews.scraper('rue_du_commerce')
-    assert_equal Scrapers::Reviews::RueDuCommerce::Scraper, klass
-  end
+  private
   
-  test "scrape find merchant via product from amazon" do
-    @product.stubs(:merchant).returns(stub(domain:'amazon.fr'))
+  def run_scrape_find_merchant_via_product_spec_for merchant
+    @product.stubs(:merchant).returns(stub(domain:MERCHANTS[merchant]))
     
-    Scrapers::Reviews.requires('amazon')
-    Scrapers::Reviews::Amazon::Scraper.expects(:scrape).with(@product.id)
+    Scrapers::Reviews.requires(merchant)
+    klass = "Scrapers::Reviews::#{merchant.camelize}::Scraper".constantize
+    klass.expects(:scrape).with(@product.id)
     Scrapers::Reviews.scrape(@product)
   end
   
-  test "scrape find merchant via product from priceminister" do
-    @product.stubs(:merchant).returns(stub(domain:'priceminister.com'))
+  def run_scraper_module_spec_for merchant
+    klass = Scrapers::Reviews.scraper(merchant)
+    expected_klass = "Scrapers::Reviews::#{merchant.camelize}::Scraper".constantize
     
-    Scrapers::Reviews.requires('priceminister')
-    Scrapers::Reviews::Priceminister::Scraper.expects(:scrape).with(@product.id)
-    Scrapers::Reviews.scrape(@product)
+    assert_equal expected_klass, klass, "scraper module failure for #{merchant}"
   end
   
-  test "scrape find merchant via product from rueducommerce" do
-    @product.stubs(:merchant).returns(stub(domain:'rueducommerce.fr'))
-    
-    Scrapers::Reviews.requires('rue_du_commerce')
-    Scrapers::Reviews::RueDuCommerce::Scraper.expects(:scrape).with(@product.id)
-    Scrapers::Reviews.scrape(@product)
-  end
-
 end
