@@ -8,8 +8,6 @@ module Descriptions
     #TODO temp, same formatter may be used for all merchants
     
     def format description, url
-      Rails.logger = Logger.new("#{Rails.root}/log/descriptions_formatter.log")
-      Rails.logger.info("#{url}\n#{description}\n\n")
       Descriptions::Amazon::Formatter.format(description).to_json
     rescue => e
       report_incident_for url
