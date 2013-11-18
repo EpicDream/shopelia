@@ -5,7 +5,7 @@ module Scrapers
     extend self
     DOMAINS = {
       "amazon.fr" => 'amazon',
-      "priceminister.com" => 'priceminister',
+      # "priceminister.com" => 'priceminister',
       "rueducommerce.fr" => 'rue_du_commerce'
     }
     
