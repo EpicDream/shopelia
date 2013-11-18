@@ -44,7 +44,7 @@ module AlgoliaFeed
 
       record['price'] = to_cents(record['price'])
       if record['merchant_name'] == 'Yves Rocher'
-        record['price_shipping'] = int(record['price_shipping'])
+        record['price_shipping'] = (record['price_shipping']).to_f.round
       else
         record['price_shipping'] = to_cents(record['price_shipping'])
       end
