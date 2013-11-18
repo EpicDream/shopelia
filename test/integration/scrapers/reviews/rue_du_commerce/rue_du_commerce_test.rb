@@ -49,7 +49,7 @@ class Scrapers::Reviews::RueDuCommerceTest < ActiveSupport::TestCase
     
     incidents = Incident.all
     incident = incidents.first
-    expected_description = "url : http://www.rueducommerce.fr/Jeux-Consoles/Jeux-PC-et-accessoires/Jeux-PC/ELECTRONIC-ARTS/446710-Les-Sims-3-PC.htm, page: 1" 
+    expected_description = "url : http://www.rueducommerce.fr/Jeux-Consoles/Jeux-PC-et-accessoires/Jeux-PC/ELECTRONIC-ARTS/446710-Les-Sims-3-PC.htm, index : 1"
   
     assert_equal 4, Incident.count
     assert_equal expected_description, incident.description
