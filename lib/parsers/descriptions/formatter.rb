@@ -13,6 +13,7 @@ module Descriptions
       Descriptions::Amazon::Formatter.format(description).to_json
     rescue => e
       report_incident_for url
+      return nil
     end
     
     def report_incident_for url
