@@ -157,6 +157,8 @@ module AlgoliaFeed
       self.merchant_cache[domain][:products_count] += 1
       record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
+      record['price'].gsub!(/,/, '.')
+      record['shipping_price'].gsub!(/,/, '.')
       set_categories(product, record)
       record
     end
@@ -195,7 +197,7 @@ module AlgoliaFeed
       self.category_fields.each do |field_name|
         next unless product.has_key?(field_name)
         field = product[field_name]
-        categories << field.split(/(?:\s+\-\s+|\s*\>\s*|\s*\/\s*)/)
+        categories << field.split(/(?:\s+\-\s+|\s*\>\s*|\s*\/\s*|\s*\|\s*)/)
       end
       categories.flatten.each do |c|
         record['_tags'] << "category:#{c.to_s}"
