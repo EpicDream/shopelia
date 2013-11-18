@@ -33,7 +33,7 @@ module Scrapers
         end
         
         def content
-          @html.xpath('./text()[normalize-space()]').text.delete("\n").strip
+          @html.xpath('./text()[normalize-space()]').text.clean
         end
         
       end

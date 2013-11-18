@@ -6,7 +6,8 @@ module Scrapers
     DOMAINS = {
       "amazon.fr" => 'amazon',
       # "priceminister.com" => 'priceminister',
-      "rueducommerce.fr" => 'rue_du_commerce'
+      "rueducommerce.fr" => 'rue_du_commerce',
+      "fnac.com" => "fnac"
     }
     
     def requires merchant

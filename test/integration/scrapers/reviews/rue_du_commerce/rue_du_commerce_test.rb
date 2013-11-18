@@ -6,8 +6,6 @@ class Scrapers::Reviews::RueDuCommerceTest < ActiveSupport::TestCase
   fixtures :products
   fixtures :product_reviews
   
-  URL = "http://www.priceminister.com/offer/buy/180624024/grand-theft-auto-v.html"
-  
   setup do
     @product = products(:les_sims)
     @scraper = Scrapers::Reviews::RueDuCommerce::Scraper.new(@product)
