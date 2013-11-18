@@ -136,6 +136,7 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert_equal('monshowroom.com', item['merchant_name'])
     assert_equal('http://www.monshowroom.com/fr/zoom/un-jour-mon-prince/pochette-irisee-mini-pompon/150708', item['product_url'])
     assert_equal("http://pdt.tradedoubler.com/click?a(2299963)p(77225)prod(1526414519)ttid(5)url(http%3A%2F%2Feulerian.monshowroom.com%2Fdynclick%2Fmonshowroom-fr%2F%3Fetf-name%3DFlux-tradedoubler_nouveautes%26etf-prdref%3D150708%26eparam%3D%5BTD_AFFILIATE_ID%5D%26eurl%3Dhttp%253A%252F%252Fwww.monshowroom.com%252Ffr%252Fzoom%252Fun-jour-mon-prince%252Fpochette-irisee-mini-pompon%252F150708%253Futm_source%253Dtradedoubler%2526utm_medium%253Daffiliation%2526utm_term%253D%257BKEYWORD%257D)", td.url_monetizer.get('http://www.monshowroom.com/fr/zoom/un-jour-mon-prince/pochette-irisee-mini-pompon/150708'))
+    assert_equal(1, Merchant.find_by_domain('monshowroom.com').products_count)
   end
 
 
