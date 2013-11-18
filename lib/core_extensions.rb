@@ -64,6 +64,10 @@ class String
     _str
   end
   
+  def clean
+    gsub(/\n|\r|\t/, ' ').strip
+  end
+  
 end
 
 class Date

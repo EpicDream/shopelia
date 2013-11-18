@@ -2,7 +2,7 @@
 
 module Scrapers
   module Reviews
-    module Amazon
+    module Fnac
       class Review
         attr_reader :rank, :author, :content, :product_id
         
@@ -16,24 +16,25 @@ module Scrapers
         end
         
         def date
-          text = @html.search(".//nobr[1]").text
-          DateTime.parse_international(text)
+          text = @html.search(".//div[@class='lieuDateUser']").text
+          text =~ /(\d+\/\d+\/\d+)/
+          DateTime.parse_international($1)
         end
         
         def rating
-          text = @html.search(".swSprite").text
-          text.match(/(\d\.0)\s+étoiles/).captures.first.to_i
+          stars = @html.search("i.i_star").count
         end
         
         def author
-          href = @html.xpath('.//a[1]').first.attributes['href'].value
-          href.match(/profile\/(.*?)\//).captures.first
+          div = @html.search("div.userData").attribute('id').value
         rescue
           nil
         end
         
         def content
-          @html.xpath('./text()[normalize-space()]').text.clean
+          title = @html.xpath('.//div[@class="comment"]//div[@class="title"]').text.clean
+          context = @html.xpath('.//div[@class="comment"]//div[@class="context"]').text.clean
+          "#{title}. #{context}"
         end
         
       end

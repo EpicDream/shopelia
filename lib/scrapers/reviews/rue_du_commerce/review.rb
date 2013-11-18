@@ -30,7 +30,7 @@ module Scrapers
         end
         
         def content
-          @html.xpath('.//div[@itemprop="description"]').text.delete("\n").strip
+          @html.xpath('.//div[@itemprop="description"]').text.clean
         end
         
       end

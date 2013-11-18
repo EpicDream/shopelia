@@ -85,4 +85,8 @@ les_sims:
   merchant: rueducommerce
   url: http://www.rueducommerce.fr/Jeux-Consoles/Jeux-PC-et-accessoires/Jeux-PC/ELECTRONIC-ARTS/446710-Les-Sims-3-PC.htm
 
+enceintes_ihome:
+  name: "iHome iA17"
+  merchant: fnac
+  url: http://www.fnac.com/iHome-iA17/a3488733/w-4
 
