@@ -54,6 +54,28 @@ class CdiscountComTest < ActiveSupport::TestCase
     assert_equal "http://i2.cdscdn.com/pdt2/0/8/k/3/700x700/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg", @version[:image_url]
   end
 
+  test "it should process_shipping_info" do
+    @version[:shipping_info] = "Livraison en 2 jours ouvrés"
+    @version[:price_shipping_text] = "3 € 50"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal "Livraison en 2 jours ouvrés", @version[:shipping_info]
+
+    @version[:shipping_info] = "Livraison en 2 jours ouvrés"
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_shipping_info(@version)
+    assert_equal "Livraison en 2 jours ouvrés", @version[:shipping_info]
+
+    @version[:shipping_info] = ""
+    @version[:price_shipping_text] = "3 € 50"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal CdiscountCom::DEFAULT_SHIPPING_INFO, @version[:shipping_info]
+
+    @version[:shipping_info] = ""
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_shipping_info(@version)
+    assert_equal CdiscountCom::DEFAULT_SHIPPING_INFO_PLUS_PRICE, @version[:shipping_info]
+  end
+
   test "it should process images" do
     @version[:images] = nil
     @version = @helper.process_images(@version)
