@@ -137,6 +137,7 @@ module AlgoliaFeed
       else
         FileUtils.copy_file(raw_file, decoded_file)
       end
+#      `xmllint --format --output #{decoded_file} --nocdata #{decoded_file}`
       decoded_file
     end
 

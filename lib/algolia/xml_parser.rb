@@ -5,7 +5,6 @@ require 'nokogiri'
 
 module AlgoliaFeed
 
-
   class RejectedRecord < ScriptError; 
     attr_accessor :reason
     def initialize(str, reason)
@@ -77,6 +76,10 @@ module AlgoliaFeed
           end
         end
         self.algolia.send_batch(self.records)
+        self.merchant_cache.each_pair do |domain, m|
+          merchant = Merchant.find(m[:id])
+          merchant.update_attribute(:products_count, m[:products_count])
+        end
         puts "[#{Time.now}] #{decoded_file} - Time: #{Time.now - file_start} - #{stats.inspect}" if self.debug > 0
       end  
     end
@@ -139,9 +142,11 @@ module AlgoliaFeed
       unless self.merchant_cache.has_key?(domain)
         merchant = Merchant.find_or_create_by_domain(domain)
         self.merchant_cache[domain] = {
-          :name   => merchant.name,
-          :data   => MerchantSerializer.new(merchant).as_json[:merchant],
-          :saturn => merchant.viking_data.present? ? '1' : '0'
+          :id             => merchant.id,
+          :name           => merchant.name,
+          :data           => MerchantSerializer.new(merchant).as_json[:merchant],
+          :saturn         => merchant.viking_data.present? ? '1' : '0',
+          :products_count => 0
         }
       end
       return unless self.merchant_cache[domain].has_key?(:name)
@@ -149,8 +154,11 @@ module AlgoliaFeed
       record['merchant_name'] = self.merchant_cache[domain][:name]
       record['_tags'] << "merchant_name:#{self.merchant_cache[domain][:name]}"
       record['saturn'] = self.merchant_cache[domain][:saturn]
+      self.merchant_cache[domain][:products_count] += 1
       record['currency'] = 'EUR' unless record.has_key?('currency')
       record['timestamp'] = Time.now.to_i
+      record['price'].gsub!(/,/, '.') if record.has_key?('price')
+      record['price_shipping'].gsub!(/,/, '.') if record.has_key?('price_shipping')
       set_categories(product, record)
       record
     end
@@ -189,7 +197,7 @@ module AlgoliaFeed
       self.category_fields.each do |field_name|
         next unless product.has_key?(field_name)
         field = product[field_name]
-        categories << field.split(/(?:\s+\-\s+|\s*\>\s*|\s*\/\s*)/)
+        categories << field.split(/(?:\s+\-\s+|\s*\>\s*|\s*\/\s*|\s*\|\s*)/)
       end
       categories.flatten.each do |c|
         record['_tags'] << "category:#{c.to_s}"
