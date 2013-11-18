@@ -126,7 +126,7 @@ class Message < ActiveRecord::Base
   end
 
   def ensure_device_pushable
-    self.errors.add(:base, I18n.t('messages.errors.device_not_pushable')) unless self.device.push_token.present?
+    self.errors.add(:base, I18n.t('messages.errors.device_not_pushable')) if self.device.push_token.nil? && self.from_admin?
   end
 
   def autorespond_on_rating
