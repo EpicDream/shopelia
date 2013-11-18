@@ -49,7 +49,7 @@ class Scrapers::Reviews::AmazonTest < ActiveSupport::TestCase
     
     Scrapers::Reviews::Amazon::Scraper.scrape(@product.id)
     
-    assert_equal 100, @product.product_reviews.count
+    assert_equal 10, @product.product_reviews.count
   end
   
   test "create incident" do
@@ -61,8 +61,9 @@ class Scrapers::Reviews::AmazonTest < ActiveSupport::TestCase
     
     incidents = Incident.all
     incident = incidents.first
-    expected_description = "url : http://www.amazon.fr/product-reviews/B00AAZ9F6K/?pageNumber=1&showViewpoints=0&sortBy=bySubmissionDateDescending" 
+    expected_description = "url : http://www.amazon.fr/Game-Thrones-Le-Tr%C3%B4ne-Fer/dp/B00AAZ9F6K, index : 1"
   
+    assert_equal "Reviews Scraper : Scrapers::Reviews::Amazon::Scraper", incident.issue
     assert_equal 10, Incident.count
     assert_equal expected_description, incident.description
   end
