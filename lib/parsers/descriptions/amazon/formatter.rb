@@ -6,7 +6,7 @@ module Descriptions
       SKIP = /commentaires? client|Politique de retour|Votre avis/
       
       def self.clean key
-        return nil if key =~ SKIP
+        return nil if key =~ SKIP || key.blank?
         key
       end
     end
@@ -15,7 +15,7 @@ module Descriptions
       SKIP = /commentaires? client|meilleures ventes d'Amazon/
       
       def self.clean value
-        return nil if value =~ SKIP || value.strip.length == 1 
+        return nil if value =~ SKIP || value.strip.length <= 1
         value.gsub(/\n|\t/, '').strip
       end
     end
@@ -32,7 +32,7 @@ module Descriptions
       end
       
       def key
-        KeyCleaner.clean header_of(@text)
+        KeyCleaner.clean(header_of(@text)) || DEFAULT_KEY
       end
       
       private

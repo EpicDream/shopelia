@@ -132,6 +132,14 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
     assert_equal({}, Descriptions::Amazon::Formatter.format(nil))
   end
   
+  test "if key for text zone is blank string , consider it as nil" do
+    html = description("plancha-cuve")
+    
+    result = Descriptions::Amazon::Formatter.format(html)
+    
+    assert result["Header"]["Informations"].first =~ /indépendants avec 6 niveaux de températures /
+  end
+  
   private
   
   def description sample
