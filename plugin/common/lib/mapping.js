@@ -7,8 +7,9 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
 
   var map = {};
   
-  map.SHOPELIA_DOMAIN = "https://www.shopelia.fr";
-  map.MAPPING_URL = map.SHOPELIA_DOMAIN + "/api/viking/merchants";
+  map.SHOPELIA_DOMAIN = "https://www.shopelia.com";
+  map.MAPPING_URL = map.SHOPELIA_DOMAIN + "/api/viking/mappings";
+  map.MERCHANT_URL = map.SHOPELIA_DOMAIN + "/api/viking/merchants";
 
   map.FIELDS = [
     'name', 'brand', 'description', 'price', 'price_strikeout', 'price_shipping', 'shipping_info', 'availability', 'image_url', 'images', 'rating'
@@ -54,15 +55,22 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   // Return a jqXHR object. See jQuery.Deferred().
   map.load = function(merchant) {
     var deferred = new $.Deferred(),
-      query, toInt;
+      query, toInt, url;
     if (typeof merchant === 'string') {
       toInt = parseInt(merchant, 10);
       if (toInt)
-        query = '/'+toInt;
+        query = '?merchant_id='+toInt;
       else
-        query = "?url="+merchant;
+        query = "?url="+(url = merchant);
     } else if (typeof merchant === 'number') {
-      query = '/'+merchant;
+      query = '?merchant_id='+merchant;
+    } else if (typeof merchant === 'object' && merchant.id) {
+      query = '/'+merchant.id;
+    } else if (typeof merchant === 'object' && merchant.merchant_id) {
+      query = '?merchant_id='+merchant.merchant_id;
+    } else if (typeof merchant === 'object' && merchant.url) {
+      query = '?url='+merchant.url;
+      url = merchant.url;
     } else {
       logger.error("`Mapping.load' ArgumentError : Wait a string or a number, got a "+(typeof merchant));
       return deferred.reject("ArgumentError");
@@ -73,18 +81,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
       dataType: "json",
       url: map.MAPPING_URL+query,
     }).done(function (hash) {
-      if (hash.data && hash.data.ref) {
-        map.load(hash.data.ref).done(function(mapp) {
-          mapp.refs.push(hash.id);
-          if (typeof merchant === 'string' && ! toInt)
-            mapp.setUrl(merchant);
-          deferred.resolve(mapp);
-        }).fail(function(err) {
-          logger.error("Fail to retrieve mapping for merchantId "+merchant, err);
-          deferred.reject(err);
-        });
-      } else
-        deferred.resolve(new Mapping(hash, typeof merchant === 'string' && ! toInt ? merchant : undefined));
+      deferred.resolve(new Mapping(hash, url));
     }).fail(function(err) {
       logger.error("Fail to retrieve mapping for merchantId "+merchant, err);
       deferred.reject(err);
@@ -138,8 +135,24 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     return $.ajax({
       type : "GET",
       dataType: "json",
-      url: map.MAPPING_URL,
+      url: map.MERCHANT_URL,
     });
+  };
+
+  map.getMappings = function () {
+    var deferred = new $.Deferred();
+
+    $.ajax({
+      type : "GET",
+      dataType: "json",
+      url: map.MAPPING_URL,
+    }).done(function (array) {
+      deferred.resolve(array.map(function (hash) {
+        return new Mapping(hash);
+      }));
+    });
+
+    return deferred;
   };
 
   // Return the doc (default to current document) has a viking's page.
@@ -172,22 +185,24 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     return mapping;
   };
 
-  var Mapping = function (merchant, url) {
-    this._data = merchant.data || {};
-    this.id = merchant.id;
-    this.url = url;
-    this.refs = [];
-    this._pages = this._data.pages || {};
+  var Mapping = function (map, url) {
+    $extend(this, map);
+    this._pages = {};
+    if (this.pages)
+      for (var i = 0; i < this.pages.length; i++) {
+        var page = this.pages[i];
+        this._pages[page.url] = page;
+      }
 
-    if (this._data.viking)
-      this._host_mappings = this._data.viking;
-    else
+    if (! this.mapping)
       this._initMerchantData(url);
 
-    if (this._host_mappings["default"])
+    if (this.mapping["default"])// Choose default first
       this.setHost("default");
-    else if (url)
+    else if (url)// url domain then,
       this.setUrl(url);
+    else// mapping domain at end.
+      this.setHost(this.domain);
     
     this._$ = $;
     this._origin = document;
@@ -200,7 +215,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   };
 
   Mapping.prototype.toObject = function() {
-    return {id: this.id, data: {viking: this._host_mappings, pages: this._pages}};
+    return {id: this.id, domain: this.domain, url: this.url, mapping: $extend(true, this.mapping)}; // , pages: this._pages.values()
   };
 
   Mapping.prototype.save = function () {
@@ -211,27 +226,25 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   Mapping.prototype._initMerchantData = function (url) {
     var i;
     this.host = 'default';
-    this._data = this._data || {};
-    this._host_mappings = {};
-    this._host_mappings['default'] = {};
+    this.mapping = {};
+    this.mapping['default'] = {};
     for (i = map.FIELDS.length - 1 ; i >= 0 ; i--)
-      this._host_mappings['default'][map.FIELDS[i]] = {paths: []};
+      this.mapping['default'][map.FIELDS[i]] = {paths: []};
   };
 
   // Build a single host agnostic mapping by merging different host mapping.
   //TODO: Better handle frameworks/ref/default mapping.
   Mapping.prototype._buildMapping = function (host) {
     host = host || this.host;
-    var mappings = this._host_mappings,
-      result = {};
-    logger.debug("Going to build a mapping for host", host, "between", $.map(mappings,function(v, k){return k;}) );
+    var result = {};
+    logger.debug("Going to build a mapping for host", host, "between", $.map(this.mapping,function(v, k){return k;}) );
     while (host !== "") {
-      if (mappings[host])
-        result = $.extend(false, {}, mappings[host], result);
+      if (this.mapping[host])
+        result = $.extend(false, {}, this.mapping[host], result);
       host = host.replace(/^[\w-]+(\.|$)/, '');
     }
-    if (mappings["default"])
-      result = $.extend(false, {}, mappings["default"], result);
+    if (this.mapping["default"])
+      result = $.extend(false, {}, this.mapping["default"], result);
     return result;
   };
 
@@ -239,11 +252,10 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   // Result contains at least one host, the host given in argument.
   Mapping.prototype._compatibleHosts = function () {
     var host = this.host,
-      mappings = this._host_mappings,
       result = [host];
     host = host.replace(/^[\w-]+(\.|$)/, '');
     while (host !== "") {
-      if (mappings[host])
+      if (this.mapping[host])
         result.push(host);
       host = host.replace(/^[\w-]+(\.|$)/, '');
     }
@@ -256,11 +268,9 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   };
 
   Mapping.prototype.setHost = function (host) {
-    this.host = host;
-    if (this._host_mappings["default"] !== undefined)
-      this.host = "default";
-    else if (! this._host_mappings[this.host])
-      this._host_mappings[this.host] = {};
+    this.host = host || "default";
+    if (! this.mapping[this.host])
+      this.mapping[this.host] = {};
     this.compatibleHosts = this._compatibleHosts();
     this.currentMap = this._buildMapping();
   };
@@ -276,9 +286,9 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     host = host || this.host;
 
     // On initialize la structure si elle n'existant pas.
-    if (! this._host_mappings[host])
-      this._host_mappings[host] = {};
-    mapping = this._host_mappings[host];
+    if (! this.mapping[host])
+      this.mapping[host] = {};
+    mapping = this.mapping[host];
     if (! mapping[field]) mapping[field] = {paths: []};
     if (! mapping[field].paths) mapping[field].paths = [];
 
