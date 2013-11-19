@@ -14,6 +14,10 @@ class Api::Viking::MappingsControllerTest < ActionController::TestCase
     get :index
     assert_response :success
     assert_kind_of Array, json_response
+    assert_kind_of Hash, json_response[0]
+    assert_kind_of Integer, json_response[0]["id"]
+    assert_kind_of Hash, json_response[0]["mapping"]
+    assert_kind_of String, json_response[0]["domain"]
   end
 
   test "it should find mapping by url" do
