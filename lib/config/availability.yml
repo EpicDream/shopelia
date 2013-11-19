@@ -48,6 +48,7 @@ epuise: false
 bientot disponible: false
 sans stock pour vos criteres: false
 indisponible: false
+introuvable: false
 en rupture: false
 rupture de stock: false
 aucun vendeur ne propose ce produit: false
@@ -73,6 +74,6 @@ no longer available: false
 for personalized service on this item please call: false
 cet article n’est malheureusement plus disponible: false
 page est introuvable: false
-n'existe pas: false
+n'existe (pas|plus): false
 en cours de r.approvisionnement: false
 n.a pas ete trouve: false
