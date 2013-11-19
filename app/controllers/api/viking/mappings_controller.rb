@@ -9,6 +9,7 @@ class Api::Viking::MappingsController < Api::V1::BaseController
       self.show
     else
       @mappings = Mapping.order(:id).all
+      @mappings.each { |m| m[:mapping] = JSON.parse m[:mapping] }
       render json: @mappings.to_json
     end
   end
