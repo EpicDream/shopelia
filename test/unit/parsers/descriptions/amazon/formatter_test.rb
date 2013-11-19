@@ -161,6 +161,7 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   end
   
   test "something interesting" do
+    skip
     html = description("sample")
     
     rep = Descriptions::Amazon::Formatter.format(html)
