@@ -38,6 +38,12 @@ class Api::Viking::MappingsControllerTest < ActionController::TestCase
     assert_equal @mapping.id, json_response["id"]
     assert_equal @mapping.domain, json_response["domain"]
   end
+
+  test "it should handle mapping not found" do
+    get :index, merchant_id: merchants(:priceminister).id
+    assert_response :success
+    assert_equal({}, json_response)
+  end
   
   test "it should create mapping" do
     assert_difference "Mapping.count" do
