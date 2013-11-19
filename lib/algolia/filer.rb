@@ -137,7 +137,8 @@ module AlgoliaFeed
       else
         FileUtils.copy_file(raw_file, decoded_file)
       end
-#      `xmllint --format --output #{decoded_file} --nocdata #{decoded_file}`
+      xmllint = `/usr/bin/xmllint --format --output #{decoded_file} --encode UTF-8 --nocdata --recover #{decoded_file}`
+      puts xmllint if xmllint =~ /\S/
       decoded_file
     end
 
@@ -165,7 +166,6 @@ module AlgoliaFeed
       algolia = AlgoliaFeed.new(self.params)
       algolia.connect(algolia.index_name)
       algolia.set_index_attributes
-      Tagger.clear_redis
       dir = self.tmpdir unless dir.present?
       Find.find(dir) do |path|
         next unless File.file?(path)

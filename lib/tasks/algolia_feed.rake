@@ -7,9 +7,11 @@ namespace :shopelia do
     task :run => [:clean, :download, :process, :make_prod] do
     end
 
-    desc "Clean Algolia tmp dir"
+    desc "Clean Algolia"
     task :clean => :environment do
       FileUtils.rm_rf(Dir.glob("#{AlgoliaFeed::Filer.new.tmpdir}/*"))
+      Merchant.update_all('products_count = NULL')
+      AlgoliaFeed::Tagger.clear_redis
     end
 
     desc "Download Algolia feeds"
