@@ -63,7 +63,7 @@ game_of_throne:
   reference: "reference"
   viking_failure: false
   options_completed: true
-  
+
 le_donjon:
   name: "Le Donjon"
   merchant: amazon
@@ -79,7 +79,7 @@ grand_theft_auto:
   description: "Description"
   brand: "brand"
   reference: "reference"
-  
+
 les_sims:
   name: "Les Sims 4"
   merchant: rueducommerce
@@ -90,3 +90,7 @@ enceintes_ihome:
   merchant: fnac
   url: http://www.fnac.com/iHome-iA17/a3488733/w-4
 
+masque:
+  name: "Masque Latex ''Orc De Moria'' Le Seigneur Des Anneaux"
+  merchant: priceminister
+  url: http://www.priceminister.com/offer/buy/189396871/masque-latex-orc-de-moria-le-seigneur-des-anneaux.html
