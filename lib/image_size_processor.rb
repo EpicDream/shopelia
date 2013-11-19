@@ -13,7 +13,6 @@ class ImageSizeProcessor
     @redis.hset CACHE, url, size.join("x") unless size.nil?
     url
   rescue
-    puts url
   end
 
   def get url
