@@ -73,7 +73,7 @@ class AmazonFr
   end
   
   def process_description version
-    # version[:json_description] = Descriptions::Formatter.format(version[:description], @url)
+    version[:json_description] = Descriptions::Formatter.format(version[:description], @url)
     version
   end
 end
