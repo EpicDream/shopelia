@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131115191906) do
+ActiveRecord::Schema.define(:version => 20131118092919) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -272,6 +272,7 @@ ActiveRecord::Schema.define(:version => 20131115191906) do
     t.boolean  "rejecting_events",    :default => false
     t.boolean  "multiple_addresses",  :default => false
     t.integer  "mapping_id"
+    t.integer  "products_count"
   end
 
   add_index "merchants", ["mapping_id"], :name => "index_merchants_on_mapping_id"
