@@ -178,7 +178,8 @@ module Descriptions
       end
       
       def representation
-        { @key => merged_representations }
+        content = merged_representations
+        content.empty? ? {} : { @key => content }
       end
       
       def merged_representations
