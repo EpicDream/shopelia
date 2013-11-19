@@ -4,7 +4,7 @@
   .span2
     = trace.action
   .span5
-    - if trace.resource == "Georges" || trace.resource == "Scan"
+    - if trace.resource == "Georges" || trace.resource == "Scan" || trace.resource == "Search"
       = trace.extra_text
     - elsif trace.resource == "Collection"
       - c = Collection.find_by_uuid(trace.extra_text)

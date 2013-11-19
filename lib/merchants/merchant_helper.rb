@@ -29,7 +29,7 @@ module MerchantHelper
   end
 
   def self.monetize url
-    UrlMonetizer.new.get(url) || self.from_url(url).monetize
+    self.from_url(url).try(:monetize) || UrlMonetizer.new.get(url)  
   end
 
   def self.canonize url

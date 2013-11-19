@@ -63,13 +63,7 @@ game_of_throne:
   reference: "reference"
   viking_failure: false
   options_completed: true
-
-masque:
-  name: "Masque Latex '' Gollum '' Le Seigneur Des Anneaux"
-  url: "http://www.priceminister.com/offer/buy/185724540/masque-latex-gollum-le-seigneur-des-anneaux.html"
-  image_url: "http://pmcdn.priceminister.com/photo/masque-latex-gollum-le-seigneur-des-anneaux-931266814_ML.jpg"
-  viking_failure: false
-
+  
 le_donjon:
   name: "Le Donjon"
   merchant: amazon
@@ -81,7 +75,18 @@ le_donjon:
 grand_theft_auto:
   name: "Grand Theft Auto"
   merchant: priceminister
-  url: http://www.priceminister.com/offer/buy/180624024/grand-theft-auto-v.html
+  url: http://www.priceminister.com/offer/buy/180624024
   description: "Description"
   brand: "brand"
   reference: "reference"
+  
+les_sims:
+  name: "Les Sims 4"
+  merchant: rueducommerce
+  url: http://www.rueducommerce.fr/Jeux-Consoles/Jeux-PC-et-accessoires/Jeux-PC/ELECTRONIC-ARTS/446710-Les-Sims-3-PC.htm
+
+enceintes_ihome:
+  name: "iHome iA17"
+  merchant: fnac
+  url: http://www.fnac.com/iHome-iA17/a3488733/w-4
+

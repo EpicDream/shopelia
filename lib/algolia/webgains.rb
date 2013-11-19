@@ -72,7 +72,8 @@ module AlgoliaFeed
         'http://content.webgains.com/affiliates/datafeed.html?action=download&campaign=145659&username=shopelia&password=pichon69&format=xml&zipformat=gzip_notar&fields=extended&feeds=330&allowedtags=all&categories=all',
         'http://content.webgains.com/affiliates/datafeed.html?action=download&campaign=145659&username=shopelia&password=pichon69&format=xml&zipformat=gzip_notar&fields=extended&feeds=3367&allowedtags=all&categories=all',
         'http://content.webgains.com/affiliates/datafeed.html?action=download&campaign=145659&username=shopelia&password=pichon69&format=xml&zipformat=gzip_notar&fields=extended&feeds=1553&allowedtags=all&categories=all',
-        'http://content.webgains.com/affiliates/datafeed.html?action=download&campaign=145659&username=shopelia&password=pichon69&format=xml&zipformat=gzip_notar&fields=extended&feeds=4549&allowedtags=all&categories=all'
+        'http://content.webgains.com/affiliates/datafeed.html?action=download&campaign=145659&username=shopelia&password=pichon69&format=xml&zipformat=gzip_notar&fields=extended&feeds=4549&allowedtags=all&categories=all',
+        'http://content.webgains.com/affiliates/datafeed.html?action=download&campaign=145659&username=shopelia&password=pichon69&format=xml&zipformat=gzip_notar&fields=extended&feeds=3465&allowedtags=all&categories=all'
               ]
 
       self.parser_class = params[:parser_class] || 'AlgoliaFeed::Webgains'

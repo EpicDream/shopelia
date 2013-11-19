@@ -19,6 +19,7 @@ namespace :shopelia do
       fork { AlgoliaFeed::Zanox.new.filer.download }
       fork { AlgoliaFeed::Amazon.new.filer.download }
       fork { AlgoliaFeed::Webgains.new.filer.download }
+      fork { AlgoliaFeed::Publicidees.new.filer.download }
       Process.waitall
     end
 

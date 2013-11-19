@@ -155,6 +155,7 @@ class ProductVersionTest < ActiveSupport::TestCase
   end
 
   test "it should search availability into specific merchant helper" do
+    skip
     assert_difference "Incident.count", 0 do
       str = "1\u00a0508\u00a0 résultats"
       version = ProductVersion.create(

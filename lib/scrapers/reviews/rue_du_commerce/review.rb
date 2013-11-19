@@ -2,7 +2,7 @@
 
 module Scrapers
   module Reviews
-    module Amazon
+    module RueDuCommerce
       class Review
         attr_reader :rank, :author, :content, :product_id
         
@@ -16,24 +16,21 @@ module Scrapers
         end
         
         def date
-          text = @html.search(".//nobr[1]").text
-          DateTime.parse_international(text)
+          meta = @html.search('.//meta[@itemprop="datePublished"]').first
+          DateTime.parse_international(meta.attribute("content").value)
         end
         
         def rating
-          text = @html.search(".swSprite").text
-          text.match(/(\d\.0)\s+étoiles/).captures.first.to_i
+          meta = @html.search('.//meta[@itemprop="ratingValue"]').first
+          meta.attribute("content").value.to_i
         end
         
         def author
-          href = @html.xpath('.//a[1]').first.attributes['href'].value
-          href.match(/profile\/(.*?)\//).captures.first
-        rescue
-          nil
+          @html.xpath('.//b[@itemprop="author"]').first.text
         end
         
         def content
-          @html.xpath('./text()[normalize-space()]').text.clean
+          @html.xpath('.//div[@itemprop="description"]').text.clean
         end
         
       end

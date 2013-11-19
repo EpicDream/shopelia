@@ -6,7 +6,7 @@ module Descriptions
       SKIP = /commentaires? client|Politique de retour|Votre avis/
       
       def self.clean key
-        return nil if key =~ SKIP
+        return nil if key =~ SKIP || key.blank?
         key
       end
     end
@@ -15,7 +15,7 @@ module Descriptions
       SKIP = /commentaires? client|meilleures ventes d'Amazon/
       
       def self.clean value
-        return nil if value =~ SKIP || value.strip.length == 1 
+        return nil if value =~ SKIP || value.strip.length <= 1
         value.gsub(/\n|\t/, '').strip
       end
     end
@@ -32,7 +32,7 @@ module Descriptions
       end
       
       def key
-        KeyCleaner.clean header_of(@text)
+        KeyCleaner.clean(header_of(@text)) || DEFAULT_KEY
       end
       
       private
@@ -71,6 +71,36 @@ module Descriptions
       def header_of paragraph
         xpath = (1..5).map { |n| ".//preceding-sibling::h#{n}" }.join(" | ")
         @paragraph.xpath(xpath).map(&:text).last || DEFAULT_KEY
+      end
+      
+    end
+    
+    class DivTableFormatter
+      DEFAULT_KEY = "Informations"
+      attr_reader :key
+      
+      def initialize node
+        @table = node
+      end
+      
+      def representation
+        table_to_hash
+      end
+      
+      def key
+        xpath = (1..5).map { |n| ".//preceding-sibling::h#{n}" } 
+        xpath += [".//preceding::div[@class='tsSectionHeader']//text()[normalize-space()]"]
+        xpath = xpath.join(" | ")
+        @table.xpath(xpath).map(&:text).last || DEFAULT_KEY
+      end
+      
+      def table_to_hash
+        @table.xpath(".//div[@class='tsRow']").inject({}) { |hash, tr|  
+          key, value = tr.xpath(".//span/text()").map(&:text)
+          next hash if key.blank? || value.blank?
+          hash[key] = ContentCleaner.clean(value)
+          hash
+        }
       end
       
     end
@@ -144,7 +174,9 @@ module Descriptions
     end
     
     class FormatterDetector
-      NODES = ['table', 'ul', 'p', 'div/text()[normalize-space()]']
+      NODES = ['table', 'ul', 'p']
+      TEXT_NODES = ['/', '/p/', '/p/font/', '/b/'].map { |node| "div#{node}text()[normalize-space()]" }
+      DIV_TABLE = ['div[@class="tsTable"]']
       
       def initialize nodeset
         @nodeset = nodeset.dup
@@ -153,7 +185,21 @@ module Descriptions
       def formatters
         NODES.map { |node|  
           @nodeset.xpath(".//#{node}").map { |xnode|
-            node = 'text' if node == 'div/text()[normalize-space()]' #TODO
+            node = 'div_table' if node == 
+            klass = "Descriptions::Amazon::#{node.camelize}Formatter"
+            formatter = klass.constantize.new(xnode) 
+          }
+        }.flatten +
+        TEXT_NODES.map { |node|
+          @nodeset.xpath(".//#{node}").map { |xnode|
+            node = 'text'
+            klass = "Descriptions::Amazon::#{node.camelize}Formatter"
+            formatter = klass.constantize.new(xnode) 
+          }
+        }.flatten +
+        DIV_TABLE.map { |node|
+          @nodeset.xpath(".//#{node}").map { |xnode|
+            node = 'div_table'
             klass = "Descriptions::Amazon::#{node.camelize}Formatter"
             formatter = klass.constantize.new(xnode) 
           }
@@ -162,22 +208,25 @@ module Descriptions
     end
     
     class Formatter
-      DEFAULT_KEY = "Header"
+      DEFAULT_KEY = "BLOCK"
       BLOCKS_SEPARATOR = "<!-- SHOPELIA-END-BLOCK -->"
       
-      def initialize html
+      def initialize html, block_key=nil
         @html = html
         @fragment = Nokogiri::HTML.fragment html
-        @key = key()
+        @key = key() || block_key
       end
       
       def self.format html_blocks
+        return {} if html_blocks.nil?
+        index = 0
         blocks = html_blocks.split(BLOCKS_SEPARATOR).delete_if { |block| block.blank? }
-        blocks.inject({}) { |hash, html| hash.merge!(new(html).representation) }
+        blocks.inject({}) { |hash, html| hash.merge!(new(html, "#{DEFAULT_KEY}-#{index += 1}").representation) }
       end
       
       def representation
-        { @key => merged_representations }
+        content = merged_representations
+        content.empty? ? {} : { @key => content }
       end
       
       def merged_representations
@@ -191,7 +240,7 @@ module Descriptions
       end
       
       def key
-        @fragment.xpath(".//*[self::h1 or self::h2]").map(&:text).first || DEFAULT_KEY
+        @fragment.xpath(".//*[self::h1 or self::h2]").map(&:text).first
       end
       
       def formatters

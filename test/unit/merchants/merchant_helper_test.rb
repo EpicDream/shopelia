@@ -7,6 +7,18 @@ class MerchantHelperTest < ActiveSupport::TestCase
     @version = {}
   end
 
+  test "it should use url monetizer" do 
+    url = "http://www.alinea.fr/product"
+    UrlMonetizer.new.set(url, "http://www.alinea.fr/product-m")
+    assert_equal "http://www.alinea.fr/product-m", MerchantHelper.monetize(url)
+  end
+
+  test "it should use merchant monetize before url monetizer" do
+    url = "http://www.priceminister.com/offer/buy/141950480"
+    UrlMonetizer.new.set(url, "http://www.priceminister.com/offer/buy/141950480?m")
+    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=http%3A%2F%2Fwww.priceminister.com%2Foffer%2Fbuy%2F141950480", MerchantHelper.monetize(url)
+  end
+
   test "it should process image_url" do 
     @version[:image_url] = "//amazon.fr/image.jpg"
     @version = MerchantHelper.process_version("http://www.amazon.fr", @version)
