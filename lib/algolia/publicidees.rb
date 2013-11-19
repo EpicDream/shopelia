@@ -11,7 +11,6 @@ module AlgoliaFeed
     def download
       self.urls = []
       meta_file = download_url(self.meta_url)
-      meta_file = '/var/lib/db/algolia/AlgoliaFeed::Publicidees/xml.xml'
       File.open(meta_file, 'rb') do |f|
         reader = Nokogiri::XML::Reader(f) { |config| config.nonet.noblanks }
         reader.each do |r|
@@ -57,7 +56,7 @@ module AlgoliaFeed
       self.category_fields = ['category/merchant/name', 'storeData/Categories', 'storeData/data-type=Sous_Categorie', 'storeData/data-type=Sous_Famille', 'storeData/Sub_category1', 'storeData/Sub_category2']
 
       params[:parser_class] = self.class
-      self.filer = WebgainsFiler.new(params)
+      self.filer = PublicideesFiler.new(params)
       self
     end
 
