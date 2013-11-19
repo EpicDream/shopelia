@@ -35,7 +35,7 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   
   test "convert lis to array with lis text contents for sandisk sample" do
     representation = representation_for('sandisk', 0)
-    content = representation["Header"]["Summary"].first
+    content = representation["BLOCK-1"]["Summary"].first
 
     assert_equal 5, content.count
     assert_equal "Garantie du fabricant: 1 an", content[0]
@@ -44,7 +44,7 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   test "convert lis to array with lis text contents for tigrou sample" do
     representation = representation_for('tigrou', 0)
     
-    content = representation["Header"]["Summary"].first
+    content = representation["BLOCK-1"]["Summary"].first
 
     assert_equal 5, content.count
     assert_equal "Age minimum: 2 ans", content[0]
@@ -67,7 +67,7 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
     content = representation["Descriptions du produit"]["Lecteurs MP3 SanDisk Sansa™ Clip+"]
     item = "Le petit lecteur MP3 portable qui offre un son de qualité ! Divertissez-vous davantage."
     
-    assert_equal 3, content.count
+    assert_equal 6, content.count
     assert_equal item, content[1]
   end
   
@@ -93,7 +93,7 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
     representation = Descriptions::Amazon::Formatter.format(html)
     infos = representation["Informations sur le produit"]["Descriptif technique"].first
     
-    assert_equal representation.keys, ["Header", "Informations sur le produit", "Descriptions du produit"]
+    assert_equal representation.keys, ["BLOCK-1", "Informations sur le produit", "Descriptions du produit"]
     assert_equal "SanDisk", infos["Marque"]
   end
   
@@ -102,7 +102,7 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
     representation = Descriptions::Amazon::Formatter.format(html)
     infos = representation["Informations sur le produit"]["Descriptif technique"].first
     
-    assert_equal representation.keys, ["Header", "Informations sur le produit", "Descriptions du produit"]
+    assert_equal representation.keys, ["BLOCK-1", "Informations sur le produit", "Descriptions du produit"]
     assert_equal "240 g", infos["Poids de l'article"]
   end
   
@@ -110,21 +110,22 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
     html = description("windows8")
     rep = Descriptions::Amazon::Formatter.format(html)
 
-    assert_equal ["Microsoft", "Windows", "Pro", "Licence"], rep["Header"]["Summary"].first
+    assert_equal ["Microsoft", "Windows", "Pro", "Licence"], rep["BLOCK-1"]["Summary"].first
     assert_equal rep["Détails sur le produit"]["Summary"].first[0], "Dimensions du produit:         13,8 x 19,2 x 0,2 cm ; 54 g"
   end
   
   test "complete product file les croods" do
     html = description("croods")
     rep = Descriptions::Amazon::Formatter.format(html)
-    #puts JSON.pretty_generate(rep)
+    
+    assert rep["Détails sur le produit"]["Summary"].first[0] =~ /Acteurs.*Nicolas Cage/
   end
   
   test "complete product file tv lg" do
     html = description("tvlg")
     rep = Descriptions::Amazon::Formatter.format(html)
     
-    assert_equal ["LG Electronics", "22EN33S-B", "Écran", "LED"], rep["Header"]["Summary"].first
+    assert_equal ["LG Electronics", "22EN33S-B", "Écran", "LED"], rep["BLOCK-1"]["Summary"].first
     assert_equal "50,9 x 18,1 x 38,7 cm", rep["Informations sur le produit"]["Descriptif technique"].first["Dimensions du produit (L x l x h)"]
   end
   
@@ -135,9 +136,37 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   test "if key for text zone is blank string , consider it as nil" do
     html = description("plancha-cuve")
     
-    result = Descriptions::Amazon::Formatter.format(html)
+    rep = Descriptions::Amazon::Formatter.format(html)
+    assert rep["BLOCK-1"]["Informations"].first =~ /indépendants avec 6 niveaux de températures /
+  end
+  
+  test "text in div/p and div/p/font" do
+    html = description("casque-hama")
     
-    assert result["Header"]["Informations"].first =~ /indépendants avec 6 niveaux de températures /
+    rep = Descriptions::Amazon::Formatter.format(html)
+    
+    assert rep["BLOCK-1"]["Descriptions du produit"].include?("Référence fabricant: 00011592")
+    assert rep["BLOCK-1"]["Points forts"].first =~ /Oreillettes de grande taille englobant/
+  end
+  
+  test "fucking mother table with divs" do
+    html = description("blouse")
+    
+    rep = Descriptions::Amazon::Formatter.format(html)
+
+    infos = rep["BLOCK-1"]["Informations"].first
+    assert_equal 11, infos.keys.count
+    assert infos["Département"] == "femme"
+    assert infos["Type de manche"] == "Manches longues"
+  end
+  
+  test "something interesting" do
+    html = description("sample")
+    
+    rep = Descriptions::Amazon::Formatter.format(html)
+    puts JSON.pretty_generate(rep)
+    # assert result["BLOCK-1"]["Informations"].first =~ /indépendants avec 6 niveaux de températures /
+    
   end
   
   private
@@ -149,7 +178,7 @@ class Descriptions::Amazon::FormatterTest < ActiveSupport::TestCase
   def formatter_for sample, index
     html = description(sample)
     blocks = html.split("<!-- SHOPELIA-END-BLOCK -->").delete_if { |block| block.blank? }
-    Descriptions::Amazon::Formatter.new(blocks[index])
+    Descriptions::Amazon::Formatter.new(blocks[index], "BLOCK-#{index + 1}")
   end
   
   def representation_for sample, index
