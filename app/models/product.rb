@@ -87,6 +87,10 @@ class Product < ActiveRecord::Base
     version ? (version.price + version.price_shipping).to_f.round(2) : nil
   end
 
+  def monetized_url
+    UrlMonetizer.new.get(self.url)
+  end
+
   def assess_versions
     ok = false
     self.product_versions.each do |version|

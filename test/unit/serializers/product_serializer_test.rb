@@ -6,6 +6,7 @@ class ProductSerializerTest < ActiveSupport::TestCase
   setup do
     @product = products(:usbkey)
     @product.update_attribute :versions_expires_at, 4.hours.from_now
+    UrlMonetizer.new.set(@product.url, "http://www.monetized.com")
   end
   
   test "it should correctly serialize product" do
@@ -17,6 +18,7 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal @product.brand, hash[:product][:brand]
     assert_equal @product.reference, hash[:product][:reference]
     assert_equal @product.url, hash[:product][:url]
+    assert_equal "http://www.monetized.com", hash[:product][:monetized_url]
     assert_equal @product.image_url, hash[:product][:image_url]
     assert_equal @product.description, hash[:product][:description]
     assert_equal @product.merchant.name, hash[:product][:merchant][:name]
