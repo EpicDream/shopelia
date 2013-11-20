@@ -18,7 +18,7 @@ class PixmaniaFrTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal false, MerchantHelper.parse_availability("affiner votre recherche", @url)
+    assert_equal false, MerchantHelper.parse_availability("affiner votre recherche", @url)[:avail]
   end
 
   test "it should process price shipping" do

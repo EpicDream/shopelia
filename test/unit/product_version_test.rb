@@ -169,6 +169,34 @@ class ProductVersionTest < ActiveSupport::TestCase
     end
   end
 
+  test "it should replace availability_info if specific match" do
+    assert_difference "Incident.count", 0 do
+      str = "Plus que 1 exemplaire"
+      version = ProductVersion.create(
+        product_id:products(:masque).id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:str)
+      assert_equal str, version.availability_info
+    end
+
+    assert_difference "Incident.count", 0 do
+      str = "Les produits les plus vus du moment dans"
+      version = ProductVersion.create(
+        product_id:products(:masque).id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:str)
+      assert_equal MerchantHelper::AVAILABLE, version.availability_info
+    end
+  end
+
   test "it should parse rating" do
     assert_difference "Incident.count", 0 do
       version = ProductVersion.create(

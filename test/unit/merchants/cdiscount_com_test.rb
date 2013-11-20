@@ -29,8 +29,8 @@ class CdiscountComTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal false, MerchantHelper.parse_availability("operation commerciale, ", @url)
-    assert_equal false, MerchantHelper.parse_availability("toute l’offre :", @url)
+    assert_equal false, MerchantHelper.parse_availability("operation commerciale, ", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("toute l’offre :", @url)[:avail]
   end
 
   test "it should canonize" do

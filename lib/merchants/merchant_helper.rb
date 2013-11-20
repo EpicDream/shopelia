@@ -78,9 +78,12 @@ module MerchantHelper
 
   def self.parse_availability str, url=nil
     a = str.unaccent.downcase
-    dic = self.specific_availability(url).merge YAML.load(File.open(GLOBAL_AVAILABILITY))
+    dic = self.specific_availability(url)
     key = dic.keys.detect { |key| key if a =~ /#{key}/i }
-    dic[key]
+    return {avail: dic[key], key: key, specific: true} if ! key.nil?
+    dic = YAML.load(File.open(GLOBAL_AVAILABILITY))
+    key = dic.keys.detect { |key| key if a =~ /#{key}/i }
+    {avail: dic[key], key: key, specific: false}
   end
 
   private

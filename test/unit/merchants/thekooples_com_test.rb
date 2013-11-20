@@ -24,7 +24,7 @@ class ThekooplesComTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal false, MerchantHelper.parse_availability("Ooops !!!", @url)
+    assert_equal false, MerchantHelper.parse_availability("Ooops !!!", @url)[:avail]
   end
 
   test "it should process_price_shipping" do
