@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131119105432) do
+ActiveRecord::Schema.define(:version => 20131120145530) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -220,6 +220,10 @@ ActiveRecord::Schema.define(:version => 20131119105432) do
     t.boolean  "monetizable"
     t.integer  "device_id"
   end
+
+  add_index "events", ["developer_id"], :name => "index_events_on_developer_id"
+  add_index "events", ["device_id"], :name => "index_events_on_device_id"
+  add_index "events", ["product_id"], :name => "index_events_on_product_id"
 
   create_table "incidents", :force => true do |t|
     t.integer  "severity"

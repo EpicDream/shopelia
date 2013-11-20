@@ -183,22 +183,23 @@ module Descriptions
       end
       
       def formatters
+        # ./ and .// cause on max version of libxml of debian 6 .// does not work
         NODES.map { |node|  
-          @nodeset.xpath(".//#{node}").map { |xnode|
+          @nodeset.xpath("./#{node} | .//#{node}").map { |xnode|
             node = 'div_table' if node == 
             klass = "Descriptions::Amazon::#{node.camelize}Formatter"
             formatter = klass.constantize.new(xnode) 
           }
         }.flatten +
         TEXT_NODES.map { |node|
-          @nodeset.xpath(".//#{node}").map { |xnode|
+          @nodeset.xpath("./#{node} | .//#{node}").map { |xnode|
             node = 'text'
             klass = "Descriptions::Amazon::#{node.camelize}Formatter"
             formatter = klass.constantize.new(xnode) 
           }
         }.flatten +
         DIV_TABLE.map { |node|
-          @nodeset.xpath(".//#{node}").map { |xnode|
+          @nodeset.xpath("./#{node} | .//#{node}").map { |xnode|
             node = 'div_table'
             klass = "Descriptions::Amazon::#{node.camelize}Formatter"
             formatter = klass.constantize.new(xnode) 

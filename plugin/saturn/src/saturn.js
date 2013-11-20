@@ -19,21 +19,6 @@ var Saturn = function() {
 };
 
 //
-function buildMapping(uri, hash) {
-  var host = uri.host();
-  // logger.debug("Going to build a mapping for host", host, "between", jQuery.map(hash,function(v, k){return k;}) );
-  var resMapping = hash["default"] || {};
-  while (host !== "") {
-    if (hash[host])
-      resMapping = $extend(true, {}, hash[host], resMapping);
-    host = host.replace(/^[^\.]+(\.|$)/, '');
-  }
-  resMapping.option1 = resMapping.option1 || resMapping.colors;
-  resMapping.option2 = resMapping.option2 || resMapping.sizes;
-  return resMapping;
-}
-
-//
 function preProcessData(data) {
   data.argOptions = data.options || data.argOptions || {};
   return data;
@@ -147,16 +132,13 @@ Saturn.prototype.onProductsReceived = function(prods) {
 
 //
 Saturn.prototype.processMapping = function(mapping, prod, merchantId) {
-  if (! mapping) {
-    this.sendError({prod_id: prod.id}, 'mapping is undefined for merchant_id='+merchantId);
-    return false;
-  } else if (! mapping.data || (! mapping.data.viking && ! mapping.data.ref)) {
+  if (! mapping.id) {
     this.sendWarning({prod_id: prod.id}, 'merchant_id='+merchantId+' is not supported (url='+prod.url+')');
     return false;
-  } else if (! mapping.data.ref) {
-    delete mapping.data.pages;
-    this.mappings[mapping.id] = mapping;
-    this.mappings[mapping.id].date = new Date();
+  } else {
+    delete mapping.pages;
+    this.mappings[merchantId] = mapping;
+    this.mappings[merchantId].date = new Date();
   }
   return true;
 };
@@ -168,24 +150,25 @@ Saturn.prototype.onProductReceived = function(prod) {
   var merchantId = prod.merchant_id || prod.url;
   prod.uri = new Uri(prod.url);
   prod.receivedTime = new Date();
+  // If mapping is already defined, add it
   if (prod.mapping !== undefined) {
     this.addProductToQueue(prod);
+  // Else if cache available and not outdated
   } else if (this.mappings[merchantId] && (prod.receivedTime - this.mappings[merchantId].date) < satconf.DELAY_BEFORE_REASK_MAPPING) {
     logger.debug("mapping from cache", merchantId, this.mappings[merchantId]);
-    prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
+    prod.mapping = this.mappings[merchantId].currentMap;
     this.addProductToQueue(prod);
+  // Else, load mapping.
   } else
-    this.loadMapping(merchantId, this.onMappingReceived(prod, merchantId), this.onMappingFail(prod, merchantId));
+    this.loadMapping(merchantId).done(this.onMappingReceived(prod, merchantId)).fail(this.onMappingFail(prod, merchantId));
 };
 
 Saturn.prototype.onMappingReceived = function(prod, merchantId) {
   return function(mapping) {
     if (! this.processMapping(mapping, prod, merchantId))
       return;
-    else if (mapping.data.ref)
-      this.loadMapping(mapping.data.ref, this.onMappingReceived(prod, mapping.data.ref), this.onMappingFail(prod, mapping.data.ref));
     else {
-      prod.mapping = buildMapping(prod.uri, mapping.data.viking);
+      prod.mapping = mapping.currentMap;
       this.addProductToQueue(prod);
     }
   }.bind(this);
@@ -195,7 +178,7 @@ Saturn.prototype.onMappingFail = function(prod, merchantId) {
   return function(err) {
     if (this.mappings[merchantId]) {
       logger.warn("Error when getting mapping to extract :", err, "for", prod, '. Get the last valid one.');
-      prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
+      prod.mapping = this.mappings[merchantId].currentMap;
       this.addProductToQueue(prod);
     } else
       this.sendError({prod_id: prod.id}, "Error when getting mapping for merchant_id="+merchantId+" : "+err);

@@ -14,6 +14,6 @@ class ZalandoFrTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal false, MerchantHelper.parse_availability("Vos modèles préférés", @url)
+    assert_equal false, MerchantHelper.parse_availability("Vos modèles préférés", @url)[:avail]
   end
 end

@@ -143,7 +143,9 @@ class ProductVersion < ActiveRecord::Base
   
   def parse_available
     self.availability_info = self.availability_text
-    self.available = MerchantHelper.parse_availability(self.availability_text, product.url)
+    res = MerchantHelper.parse_availability(self.availability_text, product.url)
+    self.available = res[:avail]
+    self.availability_info = MerchantHelper::AVAILABLE if res[:specific] && res[:avail]
     if self.available.nil?
       generate_incident "Cannot parse availability : #{self.availability_info}"
       self.available = true

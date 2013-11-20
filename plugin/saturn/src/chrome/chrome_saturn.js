@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(["jquery", "chrome_logger", "src/saturn", 'satconf', 'core_extensions'], function($, logger, Saturn) {
+define(["jquery", "chrome_logger", "src/saturn", "mapping", 'satconf', 'core_extensions'], function($, logger, Saturn, Mapping) {
 
 "use strict";
 
@@ -66,19 +66,7 @@ ChromeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCal
 // and return jqXHR object.
 ChromeSaturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
   logger.debug("Going to get mapping for merchantId '"+merchantId+"'");
-  if (typeof merchantId === 'string') {
-    var toInt = parseInt(merchantId, 10);
-    if (toInt)
-      merchantId = toInt;
-    else
-      merchantId = "?url="+merchantId;
-  }
-
-  return $.ajax({
-    type : "GET",
-    dataType: "json",
-    url: satconf.MAPPING_URL+merchantId
-  }).done(doneCallback).fail(failCallback);
+  return Mapping.load(merchantId);
 };
 
 // Get merchant_id from url.

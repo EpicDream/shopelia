@@ -170,6 +170,7 @@ function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
 
   function updatePageResult() {
     var page = mapping.getPage(url);
+    if (! page) return;
     page.results = Crawler.fastCrawl(mapping.currentMap, Mapping.page2doc(page));
     logger.debug("New page results =", page.results);
     chrome.storage.local.get(['mappings'], function (hash) {

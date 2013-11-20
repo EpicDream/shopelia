@@ -25,9 +25,12 @@ class Api::Viking::MappingsController < Api::V1::BaseController
     else
       @mapping = Mapping.find(params[:id])
     end
-
-    @mapping[:mapping] = JSON.parse @mapping[:mapping]
-    render json: @mapping.to_json
+    if @mapping.present?
+      @mapping[:mapping] = JSON.parse @mapping[:mapping]
+      render json: @mapping.to_json
+    else
+      render json: {}.to_json
+    end
   end
 
   api :POST, "/mappings", "Create a new mapping"
