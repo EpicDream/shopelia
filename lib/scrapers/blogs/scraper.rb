@@ -15,9 +15,15 @@ module Scrapers
         post.xpath('.//img').map(&src).compact
       end
       
+      def texts post
+        post.xpath(".//text()").text
+      end
+      
       def posts
         page = @agent.get(@url)
-        page.search("article, div.post, div.blogselection div")
+        posts = page.search("article, div.post, div.blogselection div")
+        posts.map { |post| post.xpath(".//script").map(&:remove) }
+        posts
       end
       
       private

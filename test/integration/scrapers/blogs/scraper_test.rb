@@ -7,14 +7,20 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
   
   setup do
     @scraper = Scrapers::Blogs::Scraper.new
+    @scraper.url = "http://www.leblogdebetty.com/"
+    @@posts ||= @scraper.posts
   end
     
-  test "get images urls of post" do
-    @scraper.url = "http://www.leblogdebetty.com/"
-    posts = @scraper.posts
-    urls = @scraper.images posts.first
+  test "scrape images urls of post" do
+    urls = @scraper.images @@posts.first
     
     assert urls.count > 1
+  end
+  
+  test "scrape texts blocks of post" do
+    texts = @scraper.texts @@posts.first
+    puts texts.inspect
+    assert texts.count >= 1
   end
   
   test "find articles blocks for each site" do
