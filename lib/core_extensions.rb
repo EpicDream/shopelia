@@ -96,3 +96,11 @@ class Date
     return string
   end
 end
+
+module YAML
+  def self.load_relative_file(path)
+    caller_path = caller.first.match(/(.*)\/.*?:/).captures.first
+    path = caller_path + "/" + path
+    YAML.load_file(path)
+  end
+end
