@@ -20,7 +20,7 @@ class BhdiscountComTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal true, MerchantHelper.parse_availability("Delais produit", @url)
+    assert_equal true, MerchantHelper.parse_availability("Delais produit", @url)[:avail]
   end
 
   test "it should process price_shipping if empty" do

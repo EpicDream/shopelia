@@ -25,7 +25,7 @@ class AmazonFrTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal false, MerchantHelper.parse_availability("TVA incluse le cas échéant", @url)
+    assert_equal false, MerchantHelper.parse_availability("TVA incluse le cas échéant", @url)[:avail]
   end
 
   test "it should process availability" do

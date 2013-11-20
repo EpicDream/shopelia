@@ -7,6 +7,7 @@ class PriceministerCom
     "Top Ventes" => false, # rediriger sur l'accueil
     "Les produits les plus vus du moment dans" => true,
     "Les PriceMembers ayant vu" => true,
+    /Les produits de '.*?' avec les meilleurs avis/i => true,
   }
 
   def initialize url
