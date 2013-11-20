@@ -85,7 +85,7 @@ class MerchantHelperTest < ActiveSupport::TestCase
   end
 
   test "it should parse_availability to true" do
-    assert_equal true, MerchantHelper.parse_availability(MerchantHelper::AVAILABLE)
+    assert_equal true, MerchantHelper.parse_availability(MerchantHelper::AVAILABLE)[:avail]
 
     array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
               "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
@@ -95,12 +95,12 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "disponible", "Délai 3 à 5 jours", "1 article disponible", "Plus que 7 produits chez notre fournisseur",
               "Plus que 9 produits disponibles" ]
     array.each do |str|
-      assert_equal true, MerchantHelper.parse_availability(str)
+      assert_equal true, MerchantHelper.parse_availability(str)[:avail]
     end
   end
 
   test "it should parse_availability to false" do
-    assert_equal false, MerchantHelper.parse_availability(MerchantHelper::UNAVAILABLE)
+    assert_equal false, MerchantHelper.parse_availability(MerchantHelper::UNAVAILABLE)[:avail]
 
     array = [ "Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock",
               "temporairement en rupture de stock.", "sur commande", "article indisponible",
@@ -116,14 +116,14 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "Erreur: Désolé, mais le produit que vous avez demandé n'a pas été trouvé !",
               "La page que vous recherchez est introuvable.", "Ce produit n'existe plus ! Mais..." ]
     array.each do |str|
-      assert_equal false, MerchantHelper.parse_availability(str)
+      assert_equal false, MerchantHelper.parse_availability(str)[:avail]
     end
   end
 
   test "it should parse_availability to nil" do
     array = [ "35 €", "Vert", "Peut être qu'il est dispo, peut être pas", "Erreur 500" ]
     array.each do |str|
-      assert_equal nil, MerchantHelper.parse_availability(str)
+      assert_equal nil, MerchantHelper.parse_availability(str)[:avail]
     end
   end
 end

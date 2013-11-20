@@ -22,7 +22,7 @@ class FnacComTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal false, MerchantHelper.parse_availability("Allez vers la version simple", @url)
+    assert_equal false, MerchantHelper.parse_availability("Allez vers la version simple", @url)[:avail]
   end
 
   test "it should process_price_shipping" do
