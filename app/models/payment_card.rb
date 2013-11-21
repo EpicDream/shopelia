@@ -49,7 +49,7 @@ class PaymentCard < ActiveRecord::Base
         return { status:"error", message:"Impossible to inject payment card in Payline form: #{e.inspect}" }
       end
     else
-      return { status:"error", message:"Impossible to create mangopay payment card object: #{remote_card.inpect}" }
+      return { status:"error", message:"Impossible to create mangopay payment card object: #{remote_card.inspect}" }
     end
       
     # Wait for card approval
@@ -108,6 +108,8 @@ class PaymentCard < ActiveRecord::Base
 
     self.number = decrypted[0..15]
     self.cvv = decrypted[22..24]
+
+  rescue SecurityError
   end
   
   def destroy_mangopay_payment_card

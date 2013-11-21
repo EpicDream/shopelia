@@ -1,8 +1,8 @@
-//
+// Back Chrome Listeners
 // Author : Vincent RENAUDINEAU
 // Created : 2013-08-26
 
-require(['ariane', 'logger'], function(ariane, logger) {
+require(['src/ariane', 'logger'], function(ariane, logger) {
 
 "use strict";
 
@@ -13,9 +13,12 @@ require(['ariane', 'logger'], function(ariane, logger) {
     if (msg.errorMsg)
       return alert(msg.errorMsg);
     chrome.storage.local.get('crawlings', function(hash) {
-      hash.crawlings[msg.url][msg.kind] = msg.versions[0];
+      if (msg.kind === 'initial')
+        hash.crawlings[msg.url] = {initial: msg.versions[0]};
+      else
+        hash.crawlings[msg.url][msg.kind] = msg.versions[0];
       chrome.storage.local.set(hash);
-      chrome.tabs.sendMessage(msg.tabId, {action: msg.kind+'Crawl'});
+      chrome.tabs.sendMessage(msg.tabId, {action: msg.kind+'Crawl', strategy: msg.strategy});
     });
   });
 
@@ -57,7 +60,8 @@ require(['ariane', 'logger'], function(ariane, logger) {
       port.postMessage(msg);
     } else if (msg.action === "finish" || msg.action === "abort") {
       ariane.sendFinishedStatement(tabId, msg.reason);
-    }
+    } else
+      chrome.tabs.sendMessage(tabId, msg);
   });
 
   // On shortcuts emited, transmit it to contentscript.

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1" />
-    <title>Shopelia - Votre commande a confirmée par le marchand</title>
+    <title>Shopelia - Commande passée avec succès !</title>
     <%= render "order_style" %>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   </head>
@@ -28,7 +28,7 @@
                               <!--Article Title-->
                               <tr>
                                 <td width="42" align="left" valign="top" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:24px; color:#ffffff;"><%= image_tag("emails/icon_check.png", width:32, height:32) %></td>
-                                <td align="left" valign="middle" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:24px; color:#ffffff;">Félicitations ! Commande réussie</td>
+                                <td align="left" valign="middle" style="font-family: Helvetica, Arial, sans-serif; font-weight:bold; font-size:24px; color:#ffffff;">Commande passée avec succès !</td>
                               </tr>
                               <!--End Article Title-->
                               <tr>
@@ -179,7 +179,7 @@
                             Votre achat a été effectué chez <%= @vendor %> avec le compte suivant&nbsp;:
                             <p>
                               <span style="font-size: 13px">
-                                <%= link_to @vendor_url, @vendor_url, style:"color:#0088cc; text-decoration: none; font-weight: bold;" %><br>
+                                <%= link_to @vendor, @vendor_url, style:"color:#0088cc; text-decoration: none; font-weight: bold;" %><br>
                                 <b>Identifiant :</b> <%= @account.login %><br>
                                 <b>Mot de passe :</b> <%= @account.password %>
                               </span>

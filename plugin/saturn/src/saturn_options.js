@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-10
 
-(function() {
+define(["src/tree", 'satconf'], function(Tree) {
   //
   var SaturnOptions = function(mapping, argOptions) {
     this._optionTree = new Tree();
@@ -63,8 +63,8 @@
       // Si la valeur est donnée en argument pour cette option,
       // on ajoute que celle là (si on la trouve).
       if (currentArg) {
-        for (i = 0; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++) {
-          var stringified = JSON.stringify(values[i]);
+        for (i = 0; i < values.length && (! satconf.TEST_ENV || i < 3); i++) {
+          var stringified = values[i].hash;
           if (currentArg === stringified) {
             this._currentNode.addChildAt(stringified, values[i]);
             currentArg = null; // pour indiquer qu'on l'a trouvé.
@@ -74,9 +74,16 @@
       }
       // si la valeur n'est pas donnée ou qu'on l'a pas trouvée,
       // on les ajoute toutes.
-      if (currentArg !== null)
-        for (i = 0; i < values.length && (! saturn || ! saturn.TEST_ENV || i < 3); i++)
-          this._currentNode.addChildAt(JSON.stringify(values[i]), values[i]);
+      if (currentArg !== null) {
+        // On place l'élément sélectionné en premier.
+        for (i = 1; i < values.length && (satconf.env !== "dev" || i < 3); i++)
+          if (values[i].selected) {
+            values.unshift(values.splice(i, 1)[0]);
+            break;
+          }
+        for (i = 0; i < values.length && (satconf.env !== "dev" || i < 3); i++)
+          this._currentNode.addChildAt(values[i].hash, values[i]);
+      }
     }
     return this;
   };
@@ -142,10 +149,12 @@
   // If version's is a hash, complete it.
   SaturnOptions.prototype.currentVersion = function(version) {
     version = version || this._currentNode.version || {};
-    var path = this._currentNode.path();
-    for (var i = path.length - 1; i >= 0; i--) {
-      if (path[i] !== 'null')
-        version['option'+(i+1)] = JSON.parse(path[i]);
+    var node = this._currentNode, i = node.depth();
+    while (i > 0) {
+      if (node.value !== null)
+        version['option'+i] = node.value;
+      node = node.parent();
+      i--;
     }
     return version;
   };
@@ -189,11 +198,6 @@
     return versions;
   };
 
-  if ("object" == typeof module && module && "object" == typeof module.exports)
-    exports = module.exports = SaturnOptions;
-  else if ("function" == typeof define && define.amd)
-    define("saturn_options", ["tree"], function(){return SaturnOptions;});
-  else
-    window.SaturnOptions = SaturnOptions;
+  return SaturnOptions;
 
-})();
+});

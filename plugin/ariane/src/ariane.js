@@ -2,7 +2,7 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define('ariane', ['logger', 'viking'], function(logger, viking) {
+define(['chrome_logger', 'mapping'], function(logger, Mapping) {
   "use strict";
 
   var ariane = {};
@@ -13,23 +13,20 @@ define('ariane', ['logger', 'viking'], function(logger, viking) {
 
   // Que ce soit via le bouton dans admin/viking ou via le bouton de l'extension.
   ariane.init = function(tab, url) {
-    viking.loadMapping(url, function(merchantHash) {
+    Mapping.load(url).done(function(mapping) {
       chrome.storage.local.get(['mappings', 'openTabs', 'crawlings'], function(hash) {
-        if (! merchantHash) {
+        if (! mapping) {
           alert("Fail to retrieve mapping. Retry.");
           return ariane.clean(tab.id);
-        } else if (typeof merchantHash.data !== 'object') {
-          logger.info("Merchant "+merchantHash.id+" is a new merchant.");
-          merchantHash.data = viking.initMerchantData(url);
-          chrome.tabs.update(tab.id, {url: url});
         }
-        logger.debug("Init Ariane for tab", tab.id, ", merchantHash", merchantHash, "and previous hash", hash);
+        logger.debug("Init Ariane for tab", tab.id, ", mapping", mapping, "and previous hash", hash);
         hash.openTabs[tab.id] = url;
-        hash.mappings[url] = merchantHash;
+        hash.mappings[url] = mapping.toObject();
         hash.crawlings[url] = {};
         chrome.storage.local.set(hash);
+        ariane.loadContentScript(tab.id);
       });
-    }, function(err) {
+    }).fail(function(err) {
       alert("Fail to retrieve mapping. Retry.");
       ariane.clean(tab.id);
     });
@@ -38,7 +35,7 @@ define('ariane', ['logger', 'viking'], function(logger, viking) {
   // Inject libraries and contentscript into the page.
   ariane.loadContentScript = function(tabId) {
     chrome.tabs.executeScript(tabId,
-      {code: "require(['mapper'], function(mapper) {mapper.start();});"}
+      {code: "require(['controllers/mapping_contentscript'], function(mapper) {mapper.start();});"}
     );
   };
 
@@ -47,13 +44,8 @@ define('ariane', ['logger', 'viking'], function(logger, viking) {
     chrome.storage.local.get(['openTabs', "mappings"], function(hash) {
       var url = hash.openTabs[tabId];
       var mapping = hash.mappings[url];
-      $.ajax({
-        type : "PUT",
-        url: viking.MAPPING_URL+'/'+mapping.id,
-        contentType: 'application/json',
-        data: JSON.stringify(mapping)
-      }).done(function() {
-        logger.debug("("+tabId+") New mapping sended.");
+      Mapping.save(mapping).done(function() {
+        logger.debug("("+tabId+") New mapping #"+mapping.id+" sended.");
         ariane.clean(tabId, true);
       }).fail(function(err) {
         alert("Fail to send new mapping :", err);
@@ -64,12 +56,13 @@ define('ariane', ['logger', 'viking'], function(logger, viking) {
   // Clean data for this tab.
   // All data are saved in global variable $e for debugging purpose.
   ariane.clean = function(tabId, deleteTab) {
-    chrome.storage.local.get(['openTabs', "mappings"], function(hash) {
+    chrome.storage.local.get(['openTabs', "mappings", "crawlings"], function(hash) {
       var url = hash.openTabs[tabId];
       if (url === undefined)
         return;
       delete hash.openTabs[tabId];
       delete hash.mappings[url];
+      delete hash.crawlings[url];
       chrome.storage.local.set(hash);
     });
     if (deleteTab !== false)

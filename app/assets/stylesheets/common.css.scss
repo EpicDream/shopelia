@@ -1,0 +1,66 @@
+//Sticky Footer
+
+#wrap {
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin: 0 auto -80px;
+  padding: 0 0 80px;
+}
+
+// Footer
+
+footer {
+  height: 80px;
+  background-color: white;
+  border-top: 1px solid #d1d4d7;
+  color: $blue;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  .container {
+    height: 80px;
+    ul:first-of-type {
+      li {
+        padding-top: 10px;
+      }
+    }
+    li {
+      margin-left: 10px;
+    }
+    padding-top: 20px;
+  }
+}
+
+.clearfix {
+  clear: both;
+}
+
+.navbar-brand {
+  padding-bottom: 0px;
+}
+
+.logo-navbar {
+  margin-top: -15px;
+  height: 45px;
+}
+
+.display-none {
+  display: none;
+}
+
+.right {
+  text-align: right;
+}
+
+
+.spacer5 { height: 5px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer10 { height: 10px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer15 { height: 15px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer20 { height: 20px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer25 { height: 25px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer30 { height: 30px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer35 { height: 35px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer40 { height: 40px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer45 { height: 45px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer50 { height: 50px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer100 { height: 100px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer200 { height: 200px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }

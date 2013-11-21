@@ -2,13 +2,12 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-(function() {
+define(["jquery", "chrome_logger", "src/saturn", "mapping", 'satconf', 'core_extensions'], function($, logger, Saturn, Mapping) {
+
 "use strict";
 
 var ChromeSaturn = function() {
   Saturn.apply(this, arguments);
-  this.TEST_ENV = navigator.appVersion.match(/chromium/i) !== null;
-  this.DELAY_RESCUE = 60000; // wait response from contentscript 60s max, fail after that (required when a lot of sizes for shoes for example).
 
   this.results = {}; // for debugging purpose, when there are no results sended by ajax.
 };
@@ -32,10 +31,18 @@ ChromeSaturn.prototype.cleanTab = function(tabId) {
 };
 
 ChromeSaturn.prototype.openUrl = function(session, url) {
-  chrome.tabs.update(session.tabId, {url: url}, function(tab) {
+  chrome.tabs.get(session.tabId, function(tab) {
+    if (tab.url !== url)
+      chrome.tabs.update(session.tabId, {url: url}, function(tab) {
+        // Priceminister fix when reload the same page with an #anchor set.
+        if (url.match(/#\w+(=\w+)?/))
+          chrome.tabs.update(session.tabId, {url: url});
+      });
     // Priceminister fix when reload the same page with an #anchor set.
-    if (url.match(new RegExp(tab.url+"#\\w+(=\\w+)?$")))
+    else if (url.match(/#\w+(=\w+)?/))
       chrome.tabs.update(session.tabId, {url: url});
+    else
+      session.next();
   });
 };
 
@@ -51,7 +58,7 @@ ChromeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCal
   return $.ajax({
     type : "GET",
     dataType: "json",
-    url: this.PRODUCT_EXTRACT_URL+(this.TEST_ENV ? "?consum=false" : '')
+    url: satconf.PRODUCT_EXTRACT_URL+(satconf.consum ? '' : "?consum=false")
   }).done(doneCallback).fail(failCallback);
 };
 
@@ -59,19 +66,7 @@ ChromeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCal
 // and return jqXHR object.
 ChromeSaturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
   logger.debug("Going to get mapping for merchantId '"+merchantId+"'");
-  if (typeof merchantId === 'string') {
-    var toInt = parseInt(merchantId, 10);
-    if (toInt)
-      merchantId = toInt;
-    else
-      merchantId = "?url="+merchantId;
-  }
-
-  return $.ajax({
-    type : "GET",
-    dataType: "json",
-    url: this.MAPPING_URL+merchantId
-  }).done(doneCallback).fail(failCallback);
+  return Mapping.load(merchantId);
 };
 
 // Get merchant_id from url.
@@ -80,7 +75,7 @@ ChromeSaturn.prototype.getMerchantId = function(url, callback) {
   return $.ajax({
     type: "GET",
     dataType: "json",
-    url: this.MAPPING_URL.slice(0,-1) + "?url=" + url
+    url: satconf.MAPPING_URL.slice(0,-1) + "?url=" + url
   });
 };
 
@@ -90,15 +85,33 @@ ChromeSaturn.prototype.parseCurrentPage = function(tab) {
 };
 
 //
+ChromeSaturn.prototype.sendWarning = function(session, msg) {
+  if (session.extensionId) {
+    saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], warnMsg: msg});
+  } else if (session.prod_id) // Stop pushed or Local Test
+    $.ajax({
+      type : "PUT",
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
+      contentType: 'application/json',
+      data: JSON.stringify({versions: [], warnMsg: msg})
+    });
+  Saturn.prototype.sendWarning.call(this, session, msg);
+};
+
+//
 ChromeSaturn.prototype.sendError = function(session, msg) {
   if (session.extensionId) {
     saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], errorMsg: msg});
-  } else if (session.id) // Stop pushed or Local Test
+  } else if (session.prod_id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
-      url: this.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
       contentType: 'application/json',
       data: JSON.stringify({versions: [], errorMsg: msg})
+    }).fail(function(xhr, textStatus, errorThrown ) {
+      if (textStatus === 'timeout' || xhr.status === 502) {
+        $.ajax(this);
+      }
     });
   Saturn.prototype.sendError.call(this, session, msg);
 };
@@ -110,13 +123,23 @@ ChromeSaturn.prototype.sendResult = function(session, result) {
     result.url = session.url;
     result.tabId = session.tabId;
     result.kind = session.kind;
+    result.strategy = session.initialStrategy;
     saturn.externalPort.postMessage(result);
-  } else if (session.id) {// Stop pushed or Local Test
+  } else if (session.prod_id) {// Stop pushed or Local Test
     $.ajax({
+      tryCount: 0,
+      retryLimit: 1,
       type : "PUT",
-      url: this.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
       contentType: 'application/json',
       data: JSON.stringify(result)
+    }).fail(function(xhr, textStatus, errorThrown) {
+      if (textStatus === 'timeout' || xhr.status === 502) {
+        $.ajax(this);
+      } else if (xhr.status == 500 && this.tryCount < this.retryLimit) {
+        this.tryCount++;
+        $.ajax(this);
+      }
     });
   } else
     Saturn.prototype.sendResult.call(this, session, result);
@@ -149,71 +172,13 @@ ChromeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
   };
 
   if (typeof callback === 'function') {
-    command.rescueTimer = window.setTimeout(this.onTimeout(command), this.DELAY_RESCUE);
+    command.rescueTimer = window.setTimeout(this.onTimeout(command), satconf.DELAY_RESCUE);
     command.then = this.onResultReceived(command);
   }
 
   chrome.tabs.sendMessage(session.tabId, cmd, command.then);
 };
 
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = ChromeSaturn;
-else if ("function" == typeof define && define.amd)
-  define("chrome_saturn", ["jquery", "saturn"],function(){return ChromeSaturn;});
-else
-  window.ChromeSaturn = ChromeSaturn;
+return ChromeSaturn;
 
-})();
-
-// Default to debug until Chrome propose tabs for each levels.
-logger.level = logger.DEBUG;
-
-var saturn = new window.ChromeSaturn();
-
-// On contentscript ask next step (next color/size tuple).
-chrome.extension.onMessage.addListener(function(msg, sender, response) {
-  if (sender.id != chrome.runtime.id || ! sender.tab || ! saturn.sessions[sender.tab.id])
-    return;
-  if (msg == "nextStep" && saturn.sessions[sender.tab.id].then)
-    saturn.sessions[sender.tab.id].then();
 });
-
-// On extension button clicked.
-chrome.browserAction.onClicked.addListener(function(tab) {
-  if (! saturn.TEST_ENV) {
-    if (saturn.crawl) {
-      logger.info("Button pressed, Saturn is paused.");
-      saturn.pause();
-    } else {
-      logger.info("Button pressed, Saturn is resumed.");
-      saturn.resume();
-    }
-  } else {
-    logger.info("Button pressed, going to crawl current page...");
-    saturn.parseCurrentPage(tab);
-  }
-});
-
-chrome.tabs.onRemoved.addListener(function(tabId) {
-  Saturn.prototype.closeTab.call(saturn, tabId);
-});
-
-// Inter-extension messaging. Usefull for Ariane.
-chrome.extension.onConnectExternal.addListener(function(port) {
-  console.log("port=", port);
-  if (port.sender.id !== "aomdggmelcianmnecnijkolfnafpdbhm")
-    return logger.warning('Extension', port.sender.id, "try to connect to us");
-  saturn.externalPort = port;
-  port.onMessage.addListener(function(prod) {
-    console.log(prod);
-    if (prod.tabId === undefined || prod.url === undefined)
-      return saturn.sendError(prod, 'some fields are missing.');
-    prod.extensionId = port.sender.id;
-    prod.strategy = 'fast';
-    prod.keepTabOpen = true;
-    saturn.onProductReceived(prod);
-  });
-});
-
-if (! saturn.TEST_ENV)
-  saturn.start();

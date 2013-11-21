@@ -1,4 +1,8 @@
+require "#{Rails.root}/app/serializers/viking/product_serializer"
+include Viking
+
 class Api::Viking::ProductsController < Api::V1::BaseController
+
   skip_before_filter :authenticate_user!
   skip_before_filter :authenticate_developer!
   before_filter :retrieve_product, :only => :update
@@ -37,6 +41,7 @@ class Api::Viking::ProductsController < Api::V1::BaseController
   api :PUT, "/viking/products", "Update product"
   param_group :product
   def update
+    Viking.touch_reply
     if @versions.blank?
       @product.update_column "viking_failure", true
       @product.update_column "versions_expires_at", Product.versions_expiration_date

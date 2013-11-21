@@ -2,15 +2,19 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define('toolbar', ['jquery', 'logger'], function($, logger) {
+define(['jquery-ui', 'chrome_logger', 'src/ari-panel'], function($, logger, panel) {
   "use strict";
 
-  var toolbar = {},
+  var vk_toolbar = {},
       css_link,
       jAriane,
       jToolbar,
       jStep,
       jButtons;
+
+/* ********************************************************** */
+/*                        Initialisation                      */
+/* ********************************************************** */
 
 function loadAriane() {
   // Create DIV
@@ -42,7 +46,7 @@ function build() {
     text: false,
     icons: {primary: "ui-icon-cancel"}
   });
-  jToolbar.find(".ari.-next").button({
+  jToolbar.find(".ari-next").button({
     text: false,
     icons: {primary: "ui-icon-circle-arrow-e"}
   }).addClass("ui-corner-right");
@@ -50,18 +54,25 @@ function build() {
     text: false,
     icons: {primary: "ui-icon-circle-check"}
   }).hide();
+  jToolbar.find(".ari-panel-ctrl").button({
+    text: false,
+    icons: {primary: "ui-icon-newwin"}
+  });
 
   // Link events
   jToolbar.find(".ari-next").click(onNext);
   jToolbar.find(".ari-finish").click(onFinished);
   jToolbar.find(".ari-abort").click(onAborted);
+  jToolbar.find(".ari-panel-ctrl").click(onPanelCtrlClicked);
   jStep.change(onStepChanged);
   jButtons.click(onButtonClicked);
 
   //
-  toolbar.toolbarElem = jToolbar[0];
-  toolbar.stepElem = jStep[0];
-  toolbar.buttons = jButtons.toArray();
+  vk_toolbar.toolbarElem = jToolbar[0];
+  vk_toolbar.stepElem = jStep[0];
+  vk_toolbar.abortElem = jToolbar.find(".ari-abort");
+  vk_toolbar.finishElem = jToolbar.find(".ari-finish");
+  vk_toolbar.buttons = jButtons.toArray();
 }
 
   loadAriane();
@@ -69,6 +80,24 @@ function build() {
 /* ********************************************************** */
 /*                          On Event                          */
 /* ********************************************************** */
+
+chrome.extension.onMessage.addListener(function(msg, sender) {
+  if (msg === "next-step") {
+    var buttons = jButtons.filter(":visible");
+    var e = buttons.filter(".current-field");
+    var idx = buttons.index(e);
+    if (! e)
+      buttons.first().addClass("current-field");
+    else if (idx+1 < buttons.length) {
+      e.removeClass("current-field");
+      buttons.eq(idx+1).addClass("current-field");
+    } else {
+      e.removeClass("current-field");
+    }
+  } else if (msg.action === 'setField') {
+    vk_toolbar.setCurrentField(msg.field);
+  }
+});
 
 function onStepChanged(event) {
   var field_for_step = {
@@ -102,7 +131,11 @@ function onNext() {
 }
 
 function onButtonClicked(event) {
-  jButtons.filter(".current-field").add(event.currentTarget).toggleClass("current-field");
+  chrome.extension.sendMessage({action: 'setField', field: event.currentTarget.id.replace(/ariane-product-/, '')});
+}
+
+function onPanelCtrlClicked() {
+  panel.toggle();
 }
 
 function onAborted() {
@@ -120,9 +153,11 @@ function onFinished() {
 /*                           Utilities                        */
 /* ********************************************************** */
 
-toolbar.startAriane = function(crawl_mode) {
+vk_toolbar.startAriane = function (crawl_mode) {
   if (! jStep) // Fix to fast .js files load.
-    return setTimeout('toolbar.startAriane('+(crawl_mode === true)+')', 100);
+    return setTimeout(function () {
+        vk_toolbar.startAriane(crawl_mode);
+      }, 100);
 
   if (crawl_mode)
     jStep.val("extract").prop("disabled", true);
@@ -132,31 +167,14 @@ toolbar.startAriane = function(crawl_mode) {
   onStepChanged();
 };
 
-toolbar.getCurrentFieldId = function() {
-  var fieldId = (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-/, '').replace(/product-/, '');
-  return fieldId;
+vk_toolbar.setCurrentField = function (field) {
+  jButtons.filter(".current-field").removeClass("current-field");
+  jButtons.filter("#ariane-product-"+field).addClass("current-field");
 };
 
-/* ********************************************************** */
-/*                        Initialisation                      */
-/* ********************************************************** */
-
-chrome.extension.onMessage.addListener(function(msg, sender) {
-  if (sender.id != chrome.runtime.id || msg != "next-step")
-    return;
-
-  var buttons = jButtons.filter(":visible");
-  var e = buttons.filter(".current-field");
-  var idx = buttons.index(e);
-  if (! e)
-    buttons.first().addClass("current-field");
-  else if (idx+1 < buttons.length) {
-    e.removeClass("current-field");
-    buttons.eq(idx+1).addClass("current-field");
-  } else {
-    e.removeClass("current-field");
-  }
-});
+vk_toolbar.getCurrentFieldId = function () {
+  return (jToolbar.find("button.current-field:visible").attr("id") || "").replace(/ariane-product-/, '');
+};
   
-  return toolbar;
+  return vk_toolbar;
 });

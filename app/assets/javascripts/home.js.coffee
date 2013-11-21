@@ -1,7 +1,3 @@
-# Place all the behaviors and hooks related to the matching controller here.
-# All this logic will automatically be available in application.js.
-# You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
-
 if navigator.userAgent.indexOf("iPhone") != -1
   iWebkit = undefined
   unless iWebkit
@@ -18,22 +14,33 @@ window.shopeliaFastClick = (buttonArray) ->
   )
 
 $(document).ready ->
-  ShopeliaCheckout.init
-    developer: "e35c8cbbcfd7f83e4bb09eddb5a3f4c461c8d30a71dc498a9fdefe217e0fcd44"
-    tracker: "shopelia-web"
+  if $("body.action-connect").length > 0
+    Connect.init()
+  else if $("body.action-index").length > 0
+    Index.init()
 
-  $("#product-bar").on "input", ->
-    $(this).popover "hide"
+Connect =
+  init: ->
+    $("#signin-form").on "ajax:error", (data, xhr, response) ->
+      $("#signin-error-text").html(xhr.responseText)
+      $("#signin-error-box").show("fast")
+    $("#signup-form").on "ajax:error", (data, xhr, response) ->
+      $("#signup-error-text").html(xhr.responseText)
+      $("#signup-error-box").show("fast")
 
-  $("#shopelia-form").submit (e) ->
-    e.preventDefault()
-    $button = $("#btn-order")
-    url = $("[name='url']").val()
-    if url.match(/amazon.fr/)
-      $button.attr "data-shopelia-url", url
-      ShopeliaCheckout.update()
-      $button.click()
-      $button.unbind "click"
-    else
-      $("#product-bar").popover "show"
-
+Index =
+  init: ->
+    $(window).resize ->
+      $btnDownload.tooltip('hide');
+    $btnDownload = $(".btn-download")
+    $btnDownload.tooltip({
+      'animation': true,
+      'placement': 'right',
+      'trigger': 'click',
+      'html': true,
+      'title': $("#downloadTooltip").html()
+    })
+    $btnDownload.on 'shown.bs.tooltip', () ->
+      $("#send-link-input").focus()
+      $('#send-link-btn').click (e) ->
+        $('#send-link-btn').button("loading")

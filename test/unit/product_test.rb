@@ -235,6 +235,7 @@ class ProductTest < ActiveSupport::TestCase
         image_url: "http://www.amazon.fr/image.jpg",
         name: "name",
         price: "10 EUR",
+        rating: "3.5/5",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         price_shipping: "3.5",
@@ -248,6 +249,7 @@ class ProductTest < ActiveSupport::TestCase
         image_url: "http://www.amazon.fr/image2.jpg",
         name: "name2",
         price: "12 EUR",
+        rating: "3.5/5",
         price_strikeout: "2.58 EUR",
         shipping_info: "info shipping",
         price_shipping: "3.5",
@@ -257,6 +259,7 @@ class ProductTest < ActiveSupport::TestCase
 
     assert_equal "name2", product.name
     assert_equal "brand", product.brand
+    assert_equal 3.5, product.rating
     assert_equal "reference4", product.reference
     assert_equal "http://www.amazon.fr/image2.jpg", product.image_url
     assert_equal "<p>description2</p>", product.description
@@ -320,6 +323,7 @@ class ProductTest < ActiveSupport::TestCase
         option1: {"text" => "rouge"},
         option2: {"text" => "34"}
       }])
+    product.viking_reset
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",
@@ -335,7 +339,7 @@ class ProductTest < ActiveSupport::TestCase
         option2: {"text" => "34"}
       }])
       
-    assert_equal 3, product.product_versions.count
+    assert_equal 1, product.reload.product_versions.available.count
     assert_equal [false, true].to_set, product.product_versions.map(&:available).to_set
   end
   
@@ -376,7 +380,7 @@ class ProductTest < ActiveSupport::TestCase
   end  
 
   test "it shouldn't set viking_failure if availability is false and anything is missing" do
-    product = products(:headphones)
+    product = products(:nounours)
     
     product.update_attributes(versions:[
       { availability:"out of stock",
@@ -429,10 +433,45 @@ class ProductTest < ActiveSupport::TestCase
 
     assert !product.viking_failure
     assert_equal 7.20, product.product_versions.first.price_shipping
-  end  
+  end
+
+  test "it should pre process versions using merchant helper (2)" do
+    product = products(:dvd)
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        price_shipping: "Livraison gratuite dès 15 euros d'achats"
+      }]);
+
+    assert !product.viking_failure
+    assert_equal 2.79, product.product_versions.first.price_shipping
+  end
+
+  test "it should pre process versions using merchant helper (3)" do
+    product = products(:dvd)
+    product.update_attributes(versions:[
+      { availability:"in stock",
+        brand: "brand",
+        description: "description",
+        image_url: "http://www.amazon.fr/image.jpg",
+        name: "name",
+        rating: "3.5 / 5",
+        price: "10 EUR",
+        price_strikeout: "2.58 EUR",
+        price_shipping: "Livraison gratuite dès 15 euros d'achats"
+      }]);
+
+    assert !product.viking_failure
+    assert_equal 3.5, product.product_versions.first.rating
+  end
 
   test "it should fail viking if shipping price is blank and no default shipping price is set for merchant" do
-    product = products(:headphones)
+    product = products(:tamaris)
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",
@@ -449,19 +488,38 @@ class ProductTest < ActiveSupport::TestCase
   test "it should set ready" do
     product = products(:usbkey)
     product.viking_failure = true
-    assert !product.ready?
+    assert product.ready?
 
     product.viking_failure = false
     assert !product.ready?
 
+    product.merchant.update_attribute :rejecting_events, true
+    assert product.ready?
+
+    product.merchant.update_attribute :rejecting_events, false
     product.versions_expires_at = 1.hour.from_now
     assert product.ready?
+  end
+
+  test "it should overwrite version without option when receiving first version with options" do
+    product = Product.create!(url:"http://www.amazon.fr/toto")
+    assert_equal 1, product.product_versions.count
+
+    assert_difference("ProductVersion.count", 0) do
+      product.update_attributes(versions:[
+        { option1: {"text" => "rouge"},
+          option2: {"text" => "34"}
+        }
+      ])
+    end
+
+    assert_equal "rouge", JSON.parse(product.reload.product_versions.first.option1)["text"]
   end
 
   test "it shouldn't create new version when updating" do
     product = Product.create!(url:"http://www.amazon.fr/toto")
 
-    assert_difference("ProductVersion.count", 2) do
+    assert_difference("ProductVersion.count", 1) do
       product.update_attributes(versions:[
         { option1: {"text" => "rouge"},
           option2: {"text" => "34"}
@@ -502,5 +560,17 @@ class ProductTest < ActiveSupport::TestCase
         }
       ])
     end
+  end
+
+  test "it should set scope available" do 
+    assert_equal 2, Product.available.count
+    product_versions(:dvd).update_attribute :available, false
+    assert_equal 1, Product.available.count
+  end
+
+  test "it should set image size" do 
+    product = products(:usbkey)
+    product.update_attribute :image_url, "http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg"
+    assert_equal "450x383", product.image_size
   end
 end

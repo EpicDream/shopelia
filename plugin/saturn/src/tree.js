@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-12
 
-(function() {
+define([], function() {
   "use strict";
 
   var Tree = function(parent, previousSibling, nextSibling) {
@@ -169,11 +169,11 @@
     return child;
   };
 
-  if ("object" == typeof module && module && "object" == typeof module.exports)
-    exports = module.exports = Tree;
-  else if ("function" == typeof define && define.amd)
-    define("tree", [], function(){return Tree;});
-  else
-    window.Tree = Tree;
+  // if ("object" == typeof module && module && "object" == typeof module.exports)
+  //   exports = module.exports = Tree;
+  // else if ("function" == typeof define && define.amd)
+  return Tree;
+  // else
+  //   window.Tree = Tree;
 
-})();
+});

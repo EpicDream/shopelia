@@ -26,6 +26,7 @@ class OrderTest < ActiveSupport::TestCase
       :expected_price_total => 100.356,
       :expected_price_product => 90.356,
       :expected_price_shipping => 10.001,
+      :informations => "Options",
       :tracker => 'toto')
     assert order.persisted?, order.errors.full_messages.join(",")
     assert_equal :preparing, order.state
@@ -36,6 +37,7 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal 10, order.expected_price_shipping
     assert_equal 100.36, order.expected_price_total
     assert_equal "toto", order.tracker
+    assert_equal "Options", order.informations
 
     meta = order.meta_order
     assert meta.present?
@@ -175,6 +177,8 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "it shouldn't be able to create same order in a 5 minutes delay" do
+    CashfrontRule.destroy_all
+
     order = Order.create(
       :user_id => @user.id,
       :developer_id => @developer.id,
@@ -318,6 +322,7 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "it should clean urls" do
+    CashfrontRule.destroy_all
     order = Order.new(
       :user_id => @user.id,
       :developer_id => @developer.id,
@@ -328,7 +333,7 @@ class OrderTest < ActiveSupport::TestCase
         :image_url => "http://www.amazon.fr/logo.jpg" } ],
       :address_id => @address.id,
       :expected_price_total => 100)
-    assert order.save
+    assert order.save, order.errors.full_messages.join(",")
     assert_equal 1, order.reload.order_items.count
     assert_equal "http://www.amazon.fr/dp/B00BIXXTCY", order.order_items.first.product.url
   end
@@ -476,6 +481,24 @@ class OrderTest < ActiveSupport::TestCase
     assert_equal "merchant", @order.error_code
     assert_equal "stock", @order.message
   end  
+
+  test "it should pause order with gift message failure" do
+    start_order
+    callback_order "failure", { "status" => "gift_message_failure" }
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "vulcain", @order.error_code
+    assert_equal "gift_message_failure", @order.message
+  end  
+
+  test "it should pause order with merchant address error" do
+    start_order
+    callback_order "failure", { "status" => "address_error" }
+    
+    assert_equal :pending_agent, @order.state
+    assert_equal "merchant", @order.error_code
+    assert_equal "address_error", @order.message
+  end
 
   test "it should restart paused order" do
     pause_order
@@ -725,7 +748,7 @@ class OrderTest < ActiveSupport::TestCase
     @order.update_attribute :state_name, "querying"
     assert_equal 0, Order.canceled.count
     
-    @order.update_attribute :updated_at, Time.now - 3.hours
+    @order.update_attribute :updated_at, Time.now - 13.hours
     assert_equal 1, Order.canceled.count    
   end
   
@@ -766,6 +789,14 @@ class OrderTest < ActiveSupport::TestCase
  
   test "it should compute cashback value" do
     assert_equal 0.30, orders(:elarch_amazon_billing).cashfront_value
+
+    CashfrontRule.create!(
+      merchant_id:merchants(:amazon).id,
+      rebate_percentage:6,
+      developer_id:developers(:prixing).id,
+      device_id:devices(:samsung).id,
+      max_rebate_value:10)
+    assert_equal 0.60, orders(:elarch_amazon_billing).cashfront_value
   end
   
   test "[alpha] it should continue order if target price is same than expected" do

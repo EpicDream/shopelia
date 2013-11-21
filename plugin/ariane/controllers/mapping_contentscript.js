@@ -2,16 +2,19 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-define('mapper', ['jquery', 'logger', 'viking', 'html_utils', 'path_utils', 'toolbar'], 
-function($, logger, viking, hu, pu, toolbar) {
+define(['jquery', 'chrome_logger', 'html_utils', 'crawler', 'mapping', 'lib/path_utils', 'controllers/toolbar_contentscript', 'arconf'],
+function($, logger, hu, Crawler, Mapping, pu, ari_toolbar) {
   "use strict";
+
+  logger.level = logger[arconf.log_level];
 
   var mapper = {};
 
   var buttons = [],
       url = window.location.href,
-      host = viking.getHost(url),
-      data;
+      host = Mapping.getHost(url),
+      started = false,
+      mapping;
 
   /* ********************************************************** */
   /*                        Initialisation                      */
@@ -22,19 +25,35 @@ function($, logger, viking, hu, pu, toolbar) {
       return;
 
     if (msg.action === 'initialCrawl' || msg.action === 'updateCrawl') {
-      updateFieldMatching();
+      updateFieldsMatching(msg);
+      mapper.savePage();
+    } else if (msg.action === 'recrawl') {
+      chrome.storage.local.get('mappings', function(hash) {
+        if (! hash.mappings[url])
+          return logger.warn('Cannot find '+url+' in\n'+Object.keys(hash.mappings).join('\n'));
+        mapping = new Mapping(hash.mappings[url], url);
+        rematch(msg.field);
+      });
+    } else if (msg.action === 'updateConsistency') {
+      updateFieldsConsitency(msg.results);
     }
   });
 
   mapper.start = function() {
+    if (started)
+      return;
+    started = true;
     chrome.storage.local.get('mappings', function(hash) {
-      mapper.mapping = data = hash.mappings[url].data;
+      if (! hash.mappings[url])
+        return logger.warn('Cannot find '+url+' in\n'+Object.keys(hash.mappings).join('\n'));
+      mapping = new Mapping(hash.mappings[url], url);
+      mapper.savePage();
       mapper.init();
     });
   };
 
   mapper.init = function() {
-    buttons = $("#ariane-toolbar button[id^='ariane-product-']");
+    buttons = $(ari_toolbar.toolbarElem).find("button[id^='ariane-product-']");
     buttons.addClass("missing");
 
     $("body").click(onBodyClick);
@@ -55,8 +74,8 @@ function($, logger, viking, hu, pu, toolbar) {
         event.relatedTarget.classList.add("ari-surround");
     });
 
-    toolbar.startAriane(true);
-    updateFieldMatching();
+    ari_toolbar.startAriane(true);
+    updateFieldsMatching();
   };
 
   /* ********************************************************** */
@@ -70,7 +89,7 @@ function($, logger, viking, hu, pu, toolbar) {
 
     event.preventDefault();
 
-    var fieldId = toolbar.getCurrentFieldId();
+    var fieldId = ari_toolbar.getCurrentFieldId();
     if (! fieldId)
       return alert("Aucun champ sélectionné.");
 
@@ -91,155 +110,86 @@ function($, logger, viking, hu, pu, toolbar) {
     var elems = $(path);
     elems.effect("highlight", {color: "#00cc00" }, "slow");
     logger.info("setMapping('"+fieldId+"', '"+path+"')", elems.length, "element(s) found.");
-    var context = elems.length == 1 ? hu.getElementContext(elems[0]) : {};
 
-    var map = {};
-    map[fieldId] = {path: path, context: context};
-    mergeMappings(map);
+    mapping.addPath(fieldId, path);
 
     chrome.storage.local.get('mappings', function(hash) {
-      hash.mappings[url].data = data;
+      hash.mappings[url] = mapping.toObject();
       chrome.storage.local.set(hash);
-    });
 
-    rematchWithMapping(viking.buildMapping(url, data));
+      rematch(fieldId);
+    });
   };
 
-  function rematchWithMapping(mapping) {
-    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: mapping, kind: 'update'});
+  mapper.savePage = function () {
+    chrome.storage.local.get(['mappings'], function (hash) {
+      mapping.saveCurrentPage();
+      hash.mappings[url] = mapping.toObject();
+      chrome.storage.local.set(hash);
+    });
+  };
+
+  function rematch(field) {
+    var map = mapping.currentMap,
+      strategy = (field !== undefined && field.search(/option\d/i) === -1 ? 'superFast' : 'fast'),
+      results = mapping.checkConsistency();
+    buttons.attr('title', ''); // reset title
+    updatePageResult();
+    chrome.extension.sendMessage({action: "updateConsistency", url: url, results: results});
+    chrome.extension.sendMessage({action: "crawlPage", url: url, mapping: map, kind: 'update', strategy: strategy});
   }
 
-  function updateFieldMatching() {
+  function updateFieldsMatching(options) {
+    options = options || {};
     chrome.storage.local.get('crawlings', function(hash) {
       var crawlResults = hash.crawlings[url].update || hash.crawlings[url].initial;
       if (! crawlResults)
         return;
       logger.info("Crawl results :", crawlResults);
-      buttons.removeClass('mapped').addClass('missing');
+      if (options.strategy === 'superFast') {
+        var but = buttons.filter(":not([id*='option'])");
+        logger.debug(but.length + ' buttons !');
+        but.removeClass('mapped').addClass('missing');
+      } else {
+        logger.debug('Strategy == ' + crawlResults.strategy);
+        buttons.removeClass('mapped').addClass('missing');
+      }
       for (var key in crawlResults)
         if (crawlResults[key]) {
           var b = buttons.filter("#ariane-product-"+key);
+          if (b.length === 0) {
+            logger.warn("No button found with key = "+key);
+            continue;
+          }
           b.removeClass("missing").addClass("mapped");
+          if (b[0].title) b[0].title += "\n";
+          b[0].title += "Crawl result = '" + crawlResults[key] + "'\n";
         }
     });
   }
 
-  // Merge new mapping in the previous one.
-  // Try to know if a mapping must be added before (it is more specific)
-  // or after (it is less specific) existing ones.
-  function mergeMappings(currentMap) {
-    // GOING TO MERGE NEW MAPPING WITH OLD ONES
-    // create new host rule if it did not exist.
-    logger.debug('Going to merge', currentMap, 'in', data.viking);
+  function updatePageResult() {
+    var page = mapping.getPage(url);
+    if (! page) return;
+    page.results = Crawler.fastCrawl(mapping.currentMap, Mapping.page2doc(page));
+    logger.debug("New page results =", page.results);
+    chrome.storage.local.get(['mappings'], function (hash) {
+      hash.mappings[url] = mapping.toObject();
+      chrome.storage.local.set(hash);
+    });
+  }
 
-    //
-    var possibleHosts = viking.compatibleHosts(host, data);
-
-    for (var key in currentMap) {
-      // if no new map, continue
-      if (! currentMap[key])
-        continue;
-
-      // On choisit le bon host, général ou spécific.
-      var goodHost;
-      if (possibleHosts.length > 1) {
-        goodHost = prompt("Pour quel host ce chemin est-il valide ?\n"+possibleHosts.join("\n"));
-        if (! goodHost) {
-          logger.warn("key '"+key+"' with new path '"+newPath+"' skiped.");
-          continue;
-        }
-      } else
-        goodHost = possibleHosts[0];
-
-      // On initialize la structure si elle n'existant pas.
-      if (! data.viking[goodHost])
-        data.viking[goodHost] = {};
-      var mapping = data.viking[goodHost];
-      if (! mapping[key]) mapping[key] = {path: [], context: []};
-      if (! mapping[key].path) mapping[key].path = [];
-      if (! mapping[key].context) mapping[key].context = [];
-
-      var newPath = currentMap[key].path;
-      var oldPath = mapping[key].path;
-      logger.debug('Merge for key "'+key+'", "'+newPath+'" in "'+oldPath+'"');
-
-      // if it did not exist, just create it and continue.
-      if (! oldPath) {
-        mapping[key] = {path: [newPath], context: [currentMap[key].context]};
-        continue;
-      }
-      // if old version, update it.
-      if (! (oldPath instanceof Array)) {
-        mapping[key] = {path: [oldPath], context: [mapping[key].context]};
-        oldPath = mapping[key].path;
-      }
-      // if already contains it, pass
-      if (oldPath.filter(function(e) {return e.indexOf(newPath) !== -1;}).length > 0) {
-        logger.debug(oldPath, "already contains", newPath);
-        continue;
-      }
-
-      var newMatch = $(newPath);
-      for (var i = 0, l = oldPath.length ; i < l ; i++) {
-        var previousMatch = $(oldPath[i]);
-        // if elems is already match
-        if (previousMatch.length == newMatch.length && $.makeArray(previousMatch) == $.makeArray(newMatch)) {
-          if (confirm(currentMap[key]+"\nL'élément était déjà capturé : remplacer le path ? ("+oldPath[i]+")")) {
-            oldPath.splice(i,1,newPath);
-            mapping[key].context.splice(i,1,currentMap[key].context);
-            break;
-          } else if (confirm("Le placer avant ?")) {
-            oldPath.splice(i,0,newPath);
-            mapping[key].context.splice(i,0,currentMap[key].context);
-            break;
-          } else if (! confirm("Le placer après ?")) {
-            continue;
-          }
-        } else if (previousMatch.length > newMatch.length) {
-          if (confirm(currentMap[key]+"\nL'élément était déjà capturé, mais d'autres éléments aussi : remplacer le path ? ("+oldPath[i]+")")) {
-            oldPath.splice(i,1,newPath);
-            mapping[key].context.splice(i,1,currentMap[key].context);
-            break;
-          } else if (confirm("Le placer avant ?")) {
-            oldPath.splice(i,0,newPath);
-            mapping[key].context.splice(i,0,currentMap[key].context);
-            break;
-          } else if (! confirm("Le placer après ?")) {
-            continue;
-          }
-          break;
-        } else {
-          logger.debug("concat ? before ? after ?", previousMatch, newMatch);
-          if (confirm("Pour la clé "+key+": "+newMatch.length+" éléments capturés avec le nouveau path, "+previousMatch.length+" avec l'ancien (path n°"+i+" = '"+oldPath[i]+"''): concaténer les paths ?")) {
-            oldPath[i] += ", "+newPath;
-            mapping[key].context.splice(i,1,currentMap[key].context);
-            break;
-          } else if (confirm("Remplacer le path ? ('"+oldPath[i]+"' => '"+newPath+"')")) {
-            oldPath.splice(i,1,newPath);
-            mapping[key].context.splice(i,1,currentMap[key].context);
-            break;
-          } else if (confirm("Le placer avant ?")) {
-            oldPath.splice(i,0,newPath);
-            mapping[key].context.splice(i,0,currentMap[key].context);
-            break;
-          } else if (confirm("Le placer après ?")) {
-            oldPath.splice(i+1,0,newPath);
-            mapping[key].context.splice(i+1,0,currentMap[key].context);
-            break;
-          } else if (i < l-1 && ! confirm("Passer au path suivant ?")) {
-            continue;
-          }
-        }
-      }
-      // Par défaut on rajoute à la suite
-      if (i == l) {
-        if (l > 0)
-          alert("On ajoute ce path à la suite des autres.");
-        oldPath.push(newPath);
-        mapping[key].context.push(currentMap[key].context);
-      }
+  function updateFieldsConsitency(results) {
+    var b, key;
+    logger.info("Consistency results :", results);
+    buttons.removeClass('inconstistent');
+    for (key in results) {
+      b = buttons.filter("#ariane-product-"+key);
+      b.addClass("inconstistent");
+      b[0].title += results[key].map(function(e) {return "\n" + e.msg + "\n";}).join('');
     }
   }
+
 
   return mapper;
 });

@@ -20,6 +20,10 @@ body {
   margin: 30px;
 }
 
+.display-none {
+  display: none;
+}
+
 section.header header {
   background-color: #3d3d45;
   background-image: -webkit-linear-gradient(#3d3d45, #29292f);
@@ -235,3 +239,73 @@ section.header header h2 {
   font-size: 10px;
   color: #787cd8
 }
+
+.product, .product-img {
+  position:relative;
+  z-index:2;
+}
+.product-img {
+  max-width:150px;
+  max-height:150px;
+  display: block;
+  margin: 0 auto;
+}
+.product {
+  background: #fff;
+  min-width:150px;
+  min-height:150px;
+  width:150px;
+  height:150px;
+  margin:auto;
+}
+.product-title, .product-price, .product-spinner {
+  position:absolute;
+  z-index:3;
+}
+.product-title {
+  color:#222;
+  font-size:1em;
+  font-weight:400;
+  bottom:0px;
+  width: 100%;
+  height: 40px;
+  overflow: hidden;
+}
+.product-price{
+  color:#e74c3c;
+  font-size:1em;
+  font-weight:700;
+  font-family:'helvetica neue';
+  right:15px;
+  top:12px;
+}
+.product-spinner {
+  background:rgba(255,255,255,.85);
+  right: 15px;
+  top: 15px;
+  width: 30px;
+  height: 30px;
+}
+.product .spinner {
+  top: 5px;
+  left: 15px;
+}
+
+.action-buttons {
+  position: absolute;
+  right: 30px;
+  top: 75px;
+}
+
+.spacer5 { height: 5px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer10 { height: 10px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer15 { height: 15px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer20 { height: 20px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer25 { height: 25px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer30 { height: 30px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer35 { height: 35px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer40 { height: 40px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer45 { height: 45px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer50 { height: 50px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer100 { height: 100px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }
+.spacer200 { height: 200px; width: 100%; font-size: 0; margin: 0; padding: 0; border: 0; display: block; }

@@ -18,6 +18,9 @@ class User < ActiveRecord::Base
   has_many :events, :through => :devices
   has_many :billing_transactions
   has_many :payment_transactions, :through => :orders
+  has_many :collections, :dependent => :destroy
+  has_many :user_sessions
+  has_many :traces
 
   belongs_to :nationality, :class_name => "Country"
   belongs_to :developer
@@ -29,6 +32,10 @@ class User < ActiveRecord::Base
   validates :email, :presence => true
   validates :civility, :inclusion => { :in => [ CIVILITY_MR, CIVILITY_MME, CIVILITY_MLLE ] }, :allow_nil => true
   validates :developer, :presence => true
+  validates :first_name, length:{minimum:2}, allow_nil: true
+  validates :last_name, length:{minimum:2}, allow_nil: true
+  validates_format_of :first_name, :without => /\d/, message:I18n.t('activerecord.errors.no_number_allowed')
+  validates_format_of :last_name, :without => /\d/, message:I18n.t('activerecord.errors.no_number_allowed')
   validates_confirmation_of :password
   validate :user_must_be_16_yo
 

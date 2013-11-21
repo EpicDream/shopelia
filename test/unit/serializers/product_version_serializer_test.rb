@@ -23,6 +23,7 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
     assert_equal @product.description, hash[:product_version][:description]
     assert_equal "Rouge", hash[:product_version][:option1]["text"]
     assert_equal "34", hash[:product_version][:option2]["text"]
+    assert_equal @product.rating, hash[:product_version][:rating]
     assert hash[:product_version][:option2_md5].present?
     assert hash[:product_version][:option2_md5].present?
     assert hash[:product_version][:option3].nil?
@@ -44,5 +45,10 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
     assert_equal 0.30, hash[:product_version][:cashfront_value]
   end
 
+  test "it should serialize without description" do
+    product_serializer = ProductVersionSerializer.new(product_versions(:dvd), scope:{short:true})
+    hash = product_serializer.as_json
+      
+    assert hash[:product_version][:description].nil?
+  end
 end
-

@@ -26,6 +26,10 @@ class Leftronic
     push_number("vulcain_#{merchant.vendor}_status", merchant.vulcain_test_pass? ? 0 : 100)
   end
 
+  def push_tts text
+    push("shopelia_sound",{"html" => "<audio id='sound'><source src='http://api.voicerss.org/?key=e5b7fa2bae8840be9e8cca2c6ac36676&src=#{CGI::escape(text)}&hl=fr-fr&r=0&c=mp3&f=48khz_16bit_stereo' type='audio/mpeg'></audio><script>document.getElementById('sound').play();</script>"})
+   end
+
   def notify_users_count
     push_number("shopelia_users_count", User.count)
   end
@@ -43,6 +47,10 @@ class Leftronic
     result = Product.where("versions_expires_at>?", Time.now).group(:viking_failure).count
     push_number("viking_success_rate", (result[false].to_i + result[:true].to_i) > 0 ? result[false].to_f * 100 / (result[false].to_f + result[true].to_f) : 0)
     push_number("saturn_status", Viking.saturn_alive? ? 0 : 100)
+  end
+
+  def notify_live_product name, time, image_url
+    push_text("livescan", name, time, image_url)
   end
 
   def clear_board

@@ -6,6 +6,8 @@ class Merchant < ActiveRecord::Base
   has_many :orders
   has_many :cashfront_rules
 
+  belongs_to :mapping
+
   validates :name, :presence => true, :uniqueness => true
   validates :domain, :presence => true, :uniqueness => true
   validates :vendor, :uniqueness => true, :allow_nil => true
@@ -13,10 +15,14 @@ class Merchant < ActiveRecord::Base
   
   scope :accepting_orders, :conditions => ['accepting_orders = ? and vendor is not null', true]
   
-  attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain, :viking_data, :accepting_orders
+  attr_accessible :id, :name, :vendor, :url, :tc_url, :logo, :domain, :mapping_id, :viking_data, :accepting_orders
+  attr_accessible :billing_solution, :injection_solution, :cvd_solution, :should_clean_args, :allow_quantities
+  attr_accessible :rejecting_events, :multiple_addresses
   
   before_validation :populate_name
+  before_validation :nullify_vendor
   before_destroy :check_presence_of_orders
+  before_destroy :clean_incidents
   after_update :notify_leftronic_vulcain_test_semaphore
   
   def self.from_url url, create=true
@@ -35,9 +41,17 @@ class Merchant < ActiveRecord::Base
   def populate_name
     self.name = self.domain if self.name.blank?
   end
+
+  def nullify_vendor
+    self.vendor = nil if self.vendor.blank?
+  end
   
   def check_presence_of_orders
     self.orders.count == 0
+  end
+
+  def clean_incidents
+    Incident.where(resource_type:'Merchant', resource_id:self.id).destroy_all
   end
 
   def notify_leftronic_vulcain_test_semaphore

@@ -13,31 +13,28 @@ class Api::V1::ProductsController < Api::V1::BaseController
   api :POST, "/api/products", "Get products information"
   param :urls, Hash, "Urls of the product to get", :required => true
   def create
-    render :json => ActiveModel::ArraySerializer.new(@products, scope:@scope)
+    render :json => @products.map{ |p| ProductSerializer.new(p, scope:@scope).as_json[:product] }
   end
 
   private
 
   def prepare_product
     @product = Product.fetch(params[:url])
-    if @product.present? && @product.persisted?
-      # retrieve created versions
-      @product.reload
-    else
-      @product = nil 
-    end
+    rescue
   end
   
   def prepare_products
     @products = []
     (params[:urls] || []).each do |url|
-      product = Product.fetch(url)
-      @products << product.reload if product.present? && product.persisted?
+      begin
+        product = Product.fetch(url)
+        @products << product
+      rescue
+      end
     end
   end
 
   def prepare_scope
-    @scope = { developer:@developer }
-  end
-  
+    @scope = { developer:@developer, device:@device }
+  end  
 end

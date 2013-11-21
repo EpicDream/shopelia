@@ -4,7 +4,7 @@ namespace :shopelia do
     desc "Manage orders life cycle"
     task :monitor => :environment do
       Order.delayed.each { |order| order.notify_creation }
-      Order.expired.each { |order| order.shopelia_time_out }
+      #Order.expired.each { |order| order.shopelia_time_out }
       Order.canceled.each { |order| order.reject "price_rejected" }
       Order.preparing_stale.each { |order| order.vulcain_time_out }
 
@@ -16,5 +16,11 @@ namespace :shopelia do
       Leftronic.new.push_number("shopelia_status", status)			
     end
 
+    desc "Manage batched orders"
+    task :batch => :environment do
+      Order.queued.each do |order|
+        order.start_from_queue if !order.queue_busy?
+      end
+    end
   end
 end

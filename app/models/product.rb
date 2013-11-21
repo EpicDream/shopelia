@@ -1,10 +1,17 @@
+# -*- encoding : utf-8 -*-
 class Product < ActiveRecord::Base
-  VERSIONS_EXPIRATION_DELAY_IN_HOURS = 4
+  include AlgoliaSearch
+
+  VERSIONS_EXPIRATION_DELAY_IN_HOURS = 8
 
   belongs_to :product_master
   belongs_to :merchant
   has_many :events, :dependent => :destroy
   has_many :product_versions, :dependent => :destroy
+  has_and_belongs_to_many :developers, :uniq => true
+  has_many :collection_items
+  has_many :collections, :through => :collection_items
+  has_many :product_reviews
   
   validates :merchant, :presence => true
   validates :product_master, :presence => true
@@ -16,8 +23,9 @@ class Product < ActiveRecord::Base
   before_save :truncate_name
   after_save :create_versions
   after_save :clear_failure_if_mute, :if => Proc.new { |product| product.mute? }
+  after_update :set_image_size, :if => Proc.new { |product| product.image_url_changed? || (product.image_url.present? && product.image_size.blank?) }
   
-  attr_accessible :versions, :merchant_id, :url, :name, :description
+  attr_accessible :versions, :merchant_id, :url, :name, :description, :rating, :json_description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
   attr_accessible :brand, :reference, :viking_failure, :muted_until
   attr_accessible :options_completed, :viking_sent_at, :batch
@@ -26,6 +34,8 @@ class Product < ActiveRecord::Base
   scope :viking_pending, lambda { joins(:events).merge(Event.buttons).merge(Product.viking_base_request) }
   scope :viking_pending_batch, lambda { joins(:events).merge(Event.requests).merge(Product.viking_base_request) }
   scope :viking_failure, lambda { where(viking_failure:true).order("updated_at desc").limit(100) }
+  scope :expired, where("versions_expires_at is null or versions_expires_at < ?", Time.now)
+  scope :available, joins(:product_versions).merge(ProductVersion.available).uniq
 
   scope :viking_base_request, lambda {
     where("(products.versions_expires_at is null or products.versions_expires_at < ?)" +
@@ -33,11 +43,16 @@ class Product < ActiveRecord::Base
       "and products.viking_sent_at is null", Time.now, 12.hours.ago, Time.now).order("events.created_at desc").limit(100)
   }
   
+  algoliasearch index_name: "products-#{Rails.env}" do
+    attribute :name, :description, :url, :image_url, :brand, :reference
+    attributesToIndex [:name, :brand, :description]
+  end
+
   def self.fetch url
     return nil if url.nil?
     p = Product.find_or_create_by_url(Linker.clean(url))
     p.save! if !p.persisted? && p.errors.empty?
-    p
+    p.reload unless p.nil?
   end
   
   def versions_expired?
@@ -60,7 +75,20 @@ class Product < ActiveRecord::Base
   end
   
   def ready?
-    !self.viking_failure && self.versions_expires_at.present? && self.versions_expires_at > Time.now
+    (self.merchant.present? && self.merchant.rejecting_events?) || self.viking_failure? || (self.versions_expires_at.present? && self.versions_expires_at > Time.now)
+  end
+
+  def available?
+    self.product_versions.available.count > 0
+  end
+
+  def price
+    version = self.product_versions.available.order("price_shipping + price").first
+    version ? (version.price + version.price_shipping).to_f.round(2) : nil
+  end
+
+  def monetized_url
+    UrlMonetizer.new.get(self.url)
   end
 
   def assess_versions
@@ -77,6 +105,14 @@ class Product < ActiveRecord::Base
     self.update_column "viking_failure", !ok
   end
   
+  def authorize_push_channel
+    Nest.new("product")[self.id][:created_at].set(Time.now.to_i)
+  end
+  
+  def has_review_for_author? author
+    !!product_reviews.where(author:author).first
+  end
+
   private
   
   def truncate_name
@@ -105,13 +141,22 @@ class Product < ActiveRecord::Base
         version[:price_shipping_text] = version[:price_shipping]
         version[:price_strikeout_text] = version[:price_strikeout]
         version[:availability_text] = version[:availability]
+        version[:rating_text] = version[:rating]
         version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
         [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
 
         # Pre-process versions
         version = MerchantHelper.process_version(self.url, version)
 
-        v = self.product_versions.where(
+        if version[:option1] || version[:option2] || version[:option3] || version[:option4]
+          v = self.product_versions.where(
+            option1_md5:nil,
+            option2_md5:nil,
+            option3_md5:nil,
+            option4_md5:nil).first
+        end
+
+        v ||= self.product_versions.where(
           option1_md5:ProductVersion.generate_option_md5(version[:option1]),
           option2_md5:ProductVersion.generate_option_md5(version[:option2]),
           option3_md5:ProductVersion.generate_option_md5(version[:option3]),
@@ -128,6 +173,7 @@ class Product < ActiveRecord::Base
             :image_url => nil,
             :images => nil,
             :available => nil,
+            :rating => nil,
             :name => nil,
             :shipping_info => nil)
           v.update_attributes version
@@ -135,16 +181,20 @@ class Product < ActiveRecord::Base
       end
       version = self.reload.product_versions.available.order(:updated_at).first
       if version.present?
+        old_image_url = self.image_url
         self.update_column "name", version.name
         self.update_column "brand", version.brand
         self.update_column "reference", version.reference
         self.update_column "image_url", version.image_url
         self.update_column "description", version.description
+        self.update_column "rating", version.rating
+        set_image_size if version.image_url =~ /\Ahttp/ && self.image_size.blank?
       end
       self.update_column "versions_expires_at", Product.versions_expiration_date
       self.reload
       self.assess_versions
       self.reload
+      notify_channel
     elsif self.product_versions.empty?
       ProductVersion.create!(product_id:self.id,available:false)
     end
@@ -162,5 +212,20 @@ class Product < ActiveRecord::Base
     self.update_column "viking_failure", false
     self.update_column "versions_expires_at", nil
   end
-  
+
+  def set_image_size retry_fetch=true
+    return if self.image_url.blank?
+    size = FastImage.size(self.image_url, :raise_on_failure=>true)
+    self.update_column "image_size", size.join("x") unless size.nil?
+  rescue 
+    return unless retry_fetch
+    `curl #{self.image_url} > /dev/null 2>&1`
+    set_image_size(false)
+  end
+
+  def notify_channel
+    ts = Nest.new("product")[self.id][:created_at].get.to_i  
+    Pusher.trigger("product-#{self.id}", "update", ProductSerializer.new(self, scope:{short:true}).as_json[:product]) if ts > Time.now.to_i - 60*5
+  rescue
+  end
 end

@@ -64,11 +64,41 @@ module Shopelia
     # Compile assets
     config.assets.compile = true
 
+    # Redis
     config.redis_config = {
       :host => '127.0.0.1',
       :port => 6379,
       :timeout => 20
     }
 
+    # Pusher App
+    Pusher.url = "http://654ffe989dceb4af5e03:cd54721d7ae7b6fbff42@api.pusherapp.com/apps/54299"
+
+    # Mailjet
+    config.action_mailer.delivery_method = :mailjet
+
+    # GCM
+    GCM.host = 'https://android.googleapis.com/gcm/send'
+    GCM.format = :json
+    GCM.key = "AIzaSyDGlTm2cS2g1QA7IrsLyL7l63BxioIsJpE"
+
+    # APNS
+    config.apns = {
+        development: {
+            host: 'gateway.sandbox.push.apple.com',
+            pem: "#{Rails.root}/keys/apple/development.pem",
+            port: 2195,
+            pass: ""
+        },
+        production: {
+            host: 'gateway.push.apple.com',
+            pem: "#{Rails.root}/keys/apple/production.pem",
+            port: 2195,
+            pass: ""
+        },
+    }
+
+    # Static image server
+    config.image_host = "https://www.shopelia.com"
   end
 end

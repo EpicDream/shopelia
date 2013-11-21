@@ -6,10 +6,14 @@
 //
 //= require fastclick
 //= require jquery
-//= require rails.validations
-//= require rails.validations.simple_form
 //= require jquery_ujs
-//= require bootstrap
+//= require twitter/bootstrap
+//= require lib/spin
+//= require lib/pusher.min
+//= require lib/algoliasearch.min
+//= require lib/bootstrap-paginator.min
+//= require monitor
+//= require products-feed
 
 $(document).ready(function() {
   $(".modal-button").on('click', function(event) {
@@ -33,5 +37,6 @@ $(document).ready(function() {
       })
     } 
   );
+  showSpinners();
+  //monitorCartItems();
 });
-

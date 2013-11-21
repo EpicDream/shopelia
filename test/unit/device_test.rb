@@ -19,4 +19,33 @@ class DeviceTest < ActiveSupport::TestCase
     end
   end
   
+  test "it should create device from user_agent" do
+    ua = "shopelia:os[Android]:build[1]:version[1.0.1]:os_version[4.4]:phone[Samsung Galaxy]:uuid[abcdefghi]:dev[1]"
+    assert_difference "Device.count" do 
+      device = Device.from_user_agent(ua)
+      assert_equal "abcdefghi", device.uuid
+      assert_equal "Samsung Galaxy", device.phone
+      assert_equal "4.4", device.os_version
+      assert_equal "1.0.1", device.version
+      assert_equal 1, device.build
+      assert_equal "Android", device.os
+      assert device.android?
+      assert device.is_dev?
+    end
+  end
+
+  test "it should fetch and update device from user_agent" do 
+    ua = "shopelia:os[iOS]:build[1]:version[1.0.1]:os_version[4.4]:phone[Samsung Galaxy]:uuid[#{devices(:mobile).uuid}]"
+    assert_difference "Device.count", 0 do 
+      device = Device.from_user_agent(ua)
+      assert_equal devices(:mobile).uuid, device.uuid
+      assert_equal "Samsung Galaxy", device.phone
+      assert_equal "4.4", device.os_version
+      assert_equal "1.0.1", device.version
+      assert_equal 1, device.build
+      assert_equal "iOS", device.os
+      assert device.ios?
+      assert !device.is_dev?
+    end
+  end
 end

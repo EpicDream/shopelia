@@ -24,11 +24,35 @@ module AdminHelper
     end
     "<span class='label #{klass}'>#{state.camelize}</span>"
   end
+
+  def trace_resource_to_html resource
+    klass = case resource
+    when "Georges" then "label-info"
+    when "Product" then "label-warning"
+    when "Collection" then "label-important"
+    when "Search" then ""
+    when "Scan" then "label-inverse"
+    when "Home" then "label-success"
+    end
+    "<span class='label #{klass}'>#{resource}</span>"
+  end
+
+  def collection_tag_to_html tag
+    if tag =~ /\A__/
+      name = tag.gsub("__", "")
+      klass = "success"
+    else
+      name = tag
+      klass = "warning"
+    end
+    "<span class='label #{klass}'>#{name}</span>"
+  end
   
   def event_action_to_html action
     case action
     when Event::VIEW then "<span class='label label-warning'>view</span>"
     when Event::CLICK then "<span class='label label-success'>click</span>"
+    when Event::REQUEST then "<span class='label'>request</span>"
     end
   end
 
@@ -42,8 +66,8 @@ module AdminHelper
       tmp += '<span class="label">Name</span> ' if v.name.nil?
       tmp += '<span class="label">Image url</span> ' if v.image_url.nil?
       tmp += '<span class="label">Shipping info</span> ' if v.shipping_info.nil?
+      tmp += '<span class="label">Availability info</span> ' if v.availability_info.nil?
       tmp += '<span class="label">Description</span> ' if v.description.nil?
-      tmp += '<span class="label">Availability</span> ' if v.available.nil?
       result += split_versions ? tmp.length > 0 ? "{#{v.id}} [ #{tmp} ] " : "" : tmp
     end
     result.blank? ? "Empty data" : result

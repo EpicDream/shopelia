@@ -2,6 +2,7 @@ class Api::ApiController < ActionController::Base
   prepend_before_filter :get_auth_token
   before_filter :authenticate_developer!
   before_filter :authenticate_user!
+  before_filter :set_api_locale
   after_filter :remove_session_cookie
   before_filter :set_navigator_properties
   before_filter :retrieve_tracker
@@ -13,6 +14,10 @@ class Api::ApiController < ActionController::Base
   
   private
   
+  def set_api_locale
+    I18n.locale = "fr"
+  end
+
   def get_auth_token
     params[:auth_token] = request.headers["X-Shopelia-AuthToken"] if params[:auth_token].blank?
   end
@@ -27,16 +32,19 @@ class Api::ApiController < ActionController::Base
   end
   
   def set_navigator_properties
-    ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
+    @user_agent = ENV['HTTP_USER_AGENT'] = request.env['HTTP_USER_AGENT']
   end
 
   def retrieve_tracker
-    @tracker = cookies[:tracker]
+    @tracker = cookies[:tracker] || params[:tracker]
   end
 
   def retrieve_device
-    visitor = cookies[:visitor] || params[:visitor]
-    @device = Device.find_by_uuid(visitor) unless visitor.blank?
+    if @user_agent =~ /^shopelia\:/
+      @device = Device.from_user_agent(@user_agent)
+    else
+      visitor = cookies[:visitor] || params[:visitor]
+      @device = Device.find_by_uuid(visitor) unless visitor.blank?
+    end
   end
-
 end

@@ -209,8 +209,11 @@ fr:
   activerecord:
     attributes:
       user:
-        email: "Adresse email"
+        email: "Email"
         password: "Mot de passe"
+        password_confirmation: "Confirmation"
+        first_name: "Prénom"
+        last_name: "Nom"
       address:
         first_name: "Le prénom"
         last_name: "Le nom"
@@ -219,6 +222,8 @@ fr:
         phone: "Le numéro de téléphone"
         address1: "L'adresse"
         country_id: "Le pays"
+      collection:
+        name: "Le nom"
       meta_order:
         address: "L'adresse"
         payment_card: "Le moyen de paiement"
@@ -229,6 +234,7 @@ fr:
         cvv: "Le code de vérification"
         
     errors:
+      no_number_allowed: "ne peut pas contenir de chiffres"
       models:
         address:
           attributes:
@@ -246,6 +252,10 @@ fr:
               blank: "doit être renseigné"
             country_id:
               blank: "doit être renseigné"
+        collection:
+          attributes:          
+            name:
+              blank: "doit être renseigné"
         meta_order:
           attributes:
              address:
@@ -253,24 +263,39 @@ fr:
              payment_card:
                blank: "doit être renseigné"
 
-  simple_form:
-    placeholders:
-      address:
-        first_name: "Prénom"
-        last_name: "Nom"
-        address1: "Adresse"
-        address2: "Complément d'adresse"
-        zip: "Code postal"
-        city: "Ville"
-        phone: "Téléphone"
-        country: "Pays"
-      payment_card:
-        number: "Numéro de la carte"
-        cvv: "CVV"
+  placeholders:
+    user:
+      email: "Votre email"
+      password: "Votre mot de passe"
+      first_name: "Votre prénom"
+      last_name: "Votre nom"
+    address:
+      first_name: "Prénom"
+      last_name: "Nom"
+      address1: "Adresse"
+      address2: "Complément d'adresse"
+      zip: "Code postal"
+      city: "Ville"
+      phone: "Téléphone"
+      country: "Pays"
+    cart_items:
+      url: "Adresse internet (URL) du produit"
+    collections:
+      name: "Nom de votre collection"
+      add: "URL du produit à ajouter à la collection"
+    collection_items:
+      url: "Adresse internet (URL) du produit"
+    payment_card:
+      number: "Numéro de la carte"
+      cvv: "CVV"
 
   addresses:
     add: "Ajouter l'adresse"
     success: "L'adresse a été créée avec succès"
+
+  messages:
+    errors:
+      device_not_pushable: "Le device n'a pas de push token, impossible de créer un message"
 
   billing_transactions:
     errors:
@@ -305,22 +330,86 @@ fr:
     registration:
       finalize:
         title: "Informations manquantes"
-        tagline: "Afin de pouvoir passer une commande avec Shopélia, vous devez ajouter
-                 une adresse de livraison et une carte de paiement"
+        tagline: "Afin de pouvoir passer une commande avec Shopélia, vous devez ajouter une adresse de livraison et une carte de paiement"
         add_address: "Ajouter une addresse"
         add_payment_card: "Ajouter une carte"
     invalid_birthdate: "Vous devez avoir au minimum 16 ans pour vous enregistrer"
     cannot_destroy: "Impossible de supprimer un utilisateur avec des commandes déjà effectuées"
 
+  georges:
+    available: ""
+    sleeping: "Georges dort, il vous répond à son réveil."
+    holiday: "Georges est en congé, mais il revient vite :)"
+    overworked: "Georges croule sous les demandes, il s'occupe de vous au plus vite !"
+    autoreply:
+      bad_rating: "Votre satisfaction est ma priorité ! Que dois-je améliorer afin que le service Shopelia soit à la hauteur de vos attentes ?"
+
   app:
+    catalogue:
+      search: "Rechercher des produits dans le catalogue"
+    collections:
+      submit: "Nouvelle collection"
+      save: "Enregistrer"
+      add: 
+        submit: "Ajout du produit"
+        invalid_url: "Vous devez entrer une adresse valide"
+    collection_items:
+      submit: "Ajouter"
+      bad_url: "L'adresse du produit n'est pas valide"
+      details: "Détails"
+    public:
+      promise: "Scannez, Achetez"
+      tagline: "profitez des prix internet où que vous soyez"
+      download_app: "Télécharger l'application"
+      simple:
+        title: "Simple"
+        text: "Scannez le code-barres du produit dont vous avez envie. Nous vous proposons une liste de prix et de sites marchands, en incluant les frais de livraison pour éviter les mauvaises surprises."
+      practical:
+        title: "Pratique"
+        text: "C’est votre 1er achat avec Shopelia: ajoutez vos informations personnelles et bancaires pour créer votre compte et valider votre commande. Et pour les achats suivants, votre e-mail et mot de passe suffisent, quel que soit le marchand chez qui vous souhaitez commander."
+      secure: 
+        title: "Sécurisé"
+        text: "La transaction est effectuée sur des serveurs sécurisés. Nous ne stockons aucune donnée de carte bancaire."
+      terms: "CGU"
+      help: "Aide"
+      legal: "Mentions légales"
+      security: "Sécurité"
+      confidentiality: "Charte de confidentialité"
+      send_app:
+        invalid_entry: "Veuillez entrez un email ou un numéro de téléphone valide"
+        error: "Nous n'avons pas pu vous envoyer le lien pour télécharger l'application. Veuillez vérifier les informations saisies."
+        success: "Le lien de téléchargement a bien été envoyé ! vous le recevrez dans quelques instants. A tout de suite sur l'application Shopelia !"
+      download:
+        tooltip: "Ouvrez <strong>shopelia.com/download</strong> sur votre mobile ou <strong>recevez le lien de téléchargement sur votre téléphone ou email</strong>"
+        send: "Envoyer"
+        placeholder: "Tel. ou Email"
+        wait: " ... "
+        sms_message: "Pour télécharger l'application Shopelia, cliquez ici %{url}"
+    signin:
+      title: "Déjà membre ?"
+      unauthorized: "Erreur dans l'email ou le mot de passe"
+      submit: "Se connecter"
+    signup:
+      title: "Nouvel utilisateur"
+      submit: "Créer son compte"
+      invalid_credentials: "Erreur dans l'email ou le mot de passe"
+    signout:
+      submit: "Se déconnecter"
+    password:
+      reset: "Réinitialiser mon mot de passe"
+      forgot: "Mot de passe oublié ?"
+      change: "Changement du mot de passe"
+      send_instructions: "Recevoir les instructions"
+      instructions_sent: "Les informations pour réinitialiser votre mot de passe vous ont été envoyées par email. Nous vous invitons à consulter votre boite email (pensez à vérifier votre dossier SPAM)."
+      instructions_fail: "Erreur dans l'email. Merci de vérifier et recommencer."
+    cart_items:
+      submit: "Ajouter au panier"
+      bad_url: "L'adresse du produit n'est pas valide"
+      details: "Détails"
     cancel: "Annuler"
     close: "Fermer"
+    confirm: "Valider"
     wait: "Patientez..."
     new_session: "Se connecter sur Shopelia"
-    sign_in: "Se connecter"
-    forgot_your_password: "Mot de passe oublié ?"
-    invalid_credentials: "Erreur dans l'email ou le mot de passe"
-    send_me_reset_password_instructions: "Réinitialiser mon mot de passe"
     my_addresses: "Mes adresses"
     my_payment_cards: "Mes cartes"
-    

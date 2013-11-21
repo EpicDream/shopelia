@@ -5,7 +5,6 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
   regions: {
     userFields: "#user-fields",
     addressFields: "#address-fields",
-    cardFields: "#card-fields"
   }
 
   ui: {
@@ -22,11 +21,9 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
     $(@el).fadeIn('slow')
     @userFieldsView = new Shopelia.Views.UserFields()
     @addressFieldsView = new Shopelia.Views.AddressFields()
-    @cardFieldsView = new Shopelia.Views.CardFields()
 
     @userFields.show(@userFieldsView)
     @addressFields.show(@addressFieldsView)
-    @cardFields.show(@cardFieldsView)
     @initializeForm({'security':true})
 
   getUserFromForm: ->
@@ -34,7 +31,7 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
       userJson = @userFieldsView.getFormResult()
       address = new Shopelia.Models.Address(@addressFieldsView.getFormResult())
       address.set("phone",userJson.phone)
-      card = new Shopelia.Models.PaymentCard(@cardFieldsView.getFormResult())
+
 
       user = new Shopelia.Models.User({
                                       "email": userJson.email,
@@ -42,7 +39,6 @@ class Shopelia.Views.SignUp extends Shopelia.Views.Form
                                       "last_name":  address.get("last_name"),
                                       })
       user.get('addresses').add(address)
-      user.get("payment_cards").add(card.disableWrapping())
       user
     else
       undefined

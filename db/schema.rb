@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131004083347) do
+ActiveRecord::Schema.define(:version => 20131120145530) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -30,6 +30,14 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.string   "phone"
     t.string   "first_name"
     t.string   "last_name"
+  end
+
+  create_table "algolia_tags", :force => true do |t|
+    t.string   "name"
+    t.string   "kind"
+    t.integer  "count"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "audits", :force => true do |t|
@@ -86,6 +94,8 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "uuid"
+    t.integer  "kind"
   end
 
   create_table "cashfront_rules", :force => true do |t|
@@ -97,6 +107,39 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.float    "max_rebate_value"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.integer  "device_id"
+    t.integer  "max_orders_count"
+  end
+
+  create_table "collection_items", :force => true do |t|
+    t.integer  "collection_id"
+    t.integer  "product_id"
+    t.integer  "user_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "collection_tags", :force => true do |t|
+    t.integer  "collection_id"
+    t.integer  "tag_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  create_table "collections", :force => true do |t|
+    t.integer  "user_id"
+    t.string   "uuid"
+    t.string   "name"
+    t.text     "description"
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.integer  "image_file_size"
+    t.datetime "image_updated_at"
+    t.boolean  "public",             :default => false
+    t.string   "image_size"
+    t.integer  "rank"
   end
 
   create_table "countries", :force => true do |t|
@@ -109,16 +152,52 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
   create_table "developers", :force => true do |t|
     t.string   "name"
     t.string   "api_key"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.string   "email",                  :default => "", :null => false
+    t.string   "encrypted_password",     :default => "", :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "unconfirmed_email"
   end
+
+  add_index "developers", ["confirmation_token"], :name => "index_developers_on_confirmation_token"
+  add_index "developers", ["email"], :name => "index_developers_on_email"
+  add_index "developers", ["reset_password_token"], :name => "index_developers_on_reset_password_token"
+
+  create_table "developers_products", :id => false, :force => true do |t|
+    t.integer "developer_id"
+    t.integer "product_id"
+  end
+
+  add_index "developers_products", ["product_id"], :name => "index_developers_products_on_product_id"
 
   create_table "devices", :force => true do |t|
     t.string   "uuid"
     t.text     "user_agent"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
     t.integer  "user_id"
+    t.string   "push_token"
+    t.string   "os"
+    t.string   "os_version"
+    t.string   "phone"
+    t.string   "referrer"
+    t.integer  "build"
+    t.string   "version"
+    t.boolean  "pending_answer"
+    t.boolean  "autoreplied",    :default => false
+    t.boolean  "is_dev"
+    t.integer  "rating"
   end
 
   add_index "devices", ["uuid"], :name => "index_devices_on_uuid"
@@ -142,6 +221,10 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.integer  "device_id"
   end
 
+  add_index "events", ["developer_id"], :name => "index_events_on_developer_id"
+  add_index "events", ["device_id"], :name => "index_events_on_device_id"
+  add_index "events", ["product_id"], :name => "index_events_on_product_id"
+
   create_table "incidents", :force => true do |t|
     t.integer  "severity"
     t.string   "issue"
@@ -151,6 +234,13 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.integer  "resource_id"
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
+  end
+
+  create_table "mappings", :force => true do |t|
+    t.text     "mapping"
+    t.string   "domain"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "merchant_accounts", :force => true do |t|
@@ -180,10 +270,30 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.string   "domain"
     t.boolean  "should_clean_args",   :default => false
     t.text     "viking_data"
-    t.boolean  "allow_iframe",        :default => true
     t.boolean  "vulcain_test_pass"
     t.string   "vulcain_test_output"
     t.boolean  "allow_quantities",    :default => true
+    t.boolean  "rejecting_events",    :default => false
+    t.boolean  "multiple_addresses",  :default => false
+    t.integer  "mapping_id"
+    t.integer  "products_count"
+  end
+
+  add_index "merchants", ["mapping_id"], :name => "index_merchants_on_mapping_id"
+
+  create_table "messages", :force => true do |t|
+    t.text     "content"
+    t.text     "data"
+    t.boolean  "from_admin"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
+    t.integer  "device_id"
+    t.datetime "read_at"
+    t.string   "collection_uuid"
+    t.string   "gift_gender"
+    t.string   "gift_age"
+    t.string   "gift_budget"
+    t.integer  "rating"
   end
 
   create_table "meta_orders", :force => true do |t|
@@ -235,6 +345,7 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.integer  "meta_order_id"
     t.float    "expected_cashfront_value"
     t.text     "gift_message"
+    t.string   "informations"
   end
 
   create_table "payment_cards", :force => true do |t|
@@ -267,6 +378,18 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "product_reviews", :force => true do |t|
+    t.integer  "product_id"
+    t.integer  "rating"
+    t.string   "author"
+    t.text     "content"
+    t.date     "published_at"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "product_reviews", ["product_id", "author"], :name => "index_product_reviews_on_product_id_and_author"
+
   create_table "product_versions", :force => true do |t|
     t.integer  "product_id"
     t.float    "price"
@@ -291,6 +414,8 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.string   "option2_md5"
     t.string   "option3_md5"
     t.string   "option4_md5"
+    t.float    "rating"
+    t.text     "json_description"
   end
 
   create_table "products", :force => true do |t|
@@ -309,9 +434,20 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.datetime "muted_until"
     t.boolean  "options_completed",   :default => false
     t.datetime "viking_sent_at"
+    t.string   "image_size"
+    t.float    "rating"
+    t.text     "json_description"
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true
+
+  create_table "scan_logs", :force => true do |t|
+    t.string   "ean"
+    t.integer  "device_id"
+    t.integer  "prices_count"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
 
   create_table "states", :force => true do |t|
     t.string   "iso"
@@ -327,15 +463,32 @@ ActiveRecord::Schema.define(:version => 20131004083347) do
     t.datetime "updated_at", :null => false
   end
 
-  create_table "url_matchers", :force => true do |t|
-    t.text     "url"
-    t.text     "canonical"
+  create_table "tags", :force => true do |t|
+    t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
 
-  add_index "url_matchers", ["canonical"], :name => "index_url_matchers_on_canonical"
-  add_index "url_matchers", ["url"], :name => "index_url_matchers_on_url"
+  create_table "traces", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "device_id"
+    t.string   "resource"
+    t.string   "action"
+    t.integer  "extra_id"
+    t.string   "extra_text"
+    t.string   "ip_address"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "traces", ["device_id"], :name => "index_traces_on_device_id"
+
+  create_table "user_sessions", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "device_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "user_verification_failures", :force => true do |t|
     t.integer  "user_id"

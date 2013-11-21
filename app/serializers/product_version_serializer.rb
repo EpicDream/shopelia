@@ -3,7 +3,7 @@ class ProductVersionSerializer < ActiveModel::Serializer
   
   attributes :id, :name, :description, :image_url, :price
   attributes :price_shipping, :price_strikeout, :shipping_info, :available
-  attributes :cashfront_value, :availability_info
+  attributes :cashfront_value, :availability_info, :rating
   attributes :option1, :option2, :option3, :option4
   attributes :option1_md5, :option2_md5, :option3_md5, :option4_md5
   
@@ -11,8 +11,12 @@ class ProductVersionSerializer < ActiveModel::Serializer
     object.available? ? 1 : 0
   end
 
+  def rating
+    object.rating.to_f.round(2)
+  end
+
   def cashfront_value
-    object.cashfront_value object.price, scope ? { developer:scope[:developer] } : nil
+    object.cashfront_value object.price, scope ? { developer:scope[:developer], device:scope[:device] } : nil
   end
 
   def option1
@@ -29,5 +33,9 @@ class ProductVersionSerializer < ActiveModel::Serializer
 
   def option4
     JSON.parse(object.option4) unless object.option4.nil?
+  end
+
+  def include_description?
+    scope.nil? || !scope[:short]
   end
 end

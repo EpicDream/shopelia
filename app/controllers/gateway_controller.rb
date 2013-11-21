@@ -4,14 +4,16 @@ class GatewayController < ApplicationController
   before_filter :retrieve_device
 
   def index
-    EventsWorker.perform_async({
-      :url => @url,
-      :developer_id => @developer.id,
-      :action => Event::CLICK,
-      :tracker => @tracker,
-      :device_id => @device.id,
-      :ip_address => request.remote_ip
-    })
+    if @device.present? && @url =~ /^http/
+      EventsWorker.perform_async({
+        :url => @url,
+        :developer_id => @developer.id,
+        :action => Event::CLICK,
+        :tracker => @tracker,
+        :device_id => @device.id,
+        :ip_address => request.remote_ip
+      })
+    end
     
     redirect_to "https://www.shopelia.com/checkout?url=#{CGI::escape(@url)}&developer=#{@developer.api_key}"
   end
@@ -29,6 +31,7 @@ class GatewayController < ApplicationController
     
   def retrieve_device 
     ua = request.env['HTTP_USER_AGENT']
+    return if Event.is_bot?(ua)
     if params[:visitor]
       @device = Device.fetch(params[:visitor], ua)
     else

@@ -5,3 +5,9 @@ web:
 mobile:
   uuid: "uuid2"
   user_agent: "mobile"
+  push_token: "token"
+
+samsung:
+  uuid: "uuid3"
+  user_agent: "samsung"
+  user: elarch

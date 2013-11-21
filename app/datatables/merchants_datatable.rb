@@ -1,8 +1,9 @@
 class MerchantsDatatable
-  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :number_with_delimiter, :conversion_rate, :semaphore, :raw, to: :@view
+  delegate :params, :h, :link_to, :image_tag, :number_to_currency, :number_with_delimiter, :conversion_rate, :semaphore, :raw, :admin_merchant_path, to: :@view
 
-  def initialize(view)
+  def initialize(view, filters={})
     @view = view
+    @filters = filters
   end
 
   def as_json(options = {})
@@ -23,14 +24,15 @@ class MerchantsDatatable
       orders = merchant.orders.completed.count
       [
         merchant.id,
-        link_to(merchant.name, merchant.url),
+        link_to(merchant.name, admin_merchant_path(merchant)),
         image_tag(merchant.logo.blank? ? "empty.png" : merchant.logo, class:"merchant-logo"),
         views,
         raw("#{number_with_delimiter(clicks)} <div class='rate'>#{conversion_rate(clicks, views)}</div>"),
         raw("#{number_with_delimiter(orders)} <div class='rate'>#{conversion_rate(orders, clicks)}</div>"),
         number_to_currency(merchant.orders.completed.sum(:billed_price_total)),
         merchant.vendor,
-        semaphore(merchant.vulcain_test_pass)
+        semaphore(merchant.vulcain_test_pass),
+        semaphore(merchant.viking_data.present?)
       ]
     end
   end
@@ -40,11 +42,11 @@ class MerchantsDatatable
   end
 
   def fetch_merchants
-    merchants = Merchant.order(:id).page(page).per_page(per_page)
-    if params[:sSearch].present?
-      merchants = merchants.where("name like :search or vendor like :search or url like :search", search: "%#{params[:sSearch]}%")
-    end
-    merchants
+    merchants = Merchant.scoped.order(:id)
+    merchants = merchants.where("vendor is #{@filters[:vulcain] == 'with' ? "not" : ""} null") if @filters[:vulcain].present?
+    merchants = merchants.where("viking_data is #{@filters[:saturn] == 'with' ? "not" : ""} null") if @filters[:saturn].present?
+    merchants = merchants.where("name like :search or vendor like :search or url like :search", search: "%#{params[:sSearch]}%") if params[:sSearch].present?
+    merchants.page(page).per_page(per_page)
   end
 
   def page

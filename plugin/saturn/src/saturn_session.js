@@ -2,47 +2,51 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-(function() {
+define(['logger', './saturn_options', 'core_extensions', 'satconf'], function(logger, SaturnOptions) {
 "use strict";
 
 // Je fais la supposition simpliste mais réaliste que pour un produit,
 // il y a le même nombre d'option quelque soit l'option choisie.
 
 var SaturnSession = function(saturn, prod) {
-  SaturnSession.counter++;
   this.saturn = saturn;
   $extend(this, prod);
 
+  this.id = ++SaturnSession.counter;
+  this.prod_id = prod.id;
   this.strategy = this.strategy || 'normal';
+  this.initialStrategy = this.strategy;
   this.options = new SaturnOptions(this.mapping, this.argOptions);
+
+  this.rescueTimeout = setTimeout(this.onTimeout, satconf.SESSION_RESCUE);
 };
 
 SaturnSession.counter = 0;
 
-SaturnSession.SESSION_RESCUE = 10 * 60000; // a session automatically fail after 10min.
-
 SaturnSession.prototype = {};
 
 SaturnSession.prototype.start = function() {
-  this.rescueTimeout = setTimeout(function() {
-    this.saturn.sendError(this, "Timeout !");
-    this.endSession();
-  }.bind(this), SaturnSession.SESSION_RESCUE);
-  logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '{'+this.id+'}' : ''), "Start crawling !", this.TEST_ENV ? this : '');
+  logger.info(this.logId(), "Start crawling !", logger.level >= logger.DEBUG ? this : "(url="+this.url+")");
   this.next();
 };
 
 SaturnSession.prototype.next = function() {
   var t;
   switch (this.strategy) {
+    case "superFast":
+      this.strategy = 'done';
+      this.crawl();
+      break;
     case "fast" :
     case "normal" :
       t = this.options.next({lookInMapping: true, depthOnly: true});
       if (t !== null) {
-        if (t[1] === undefined)
+        if (t[1] === undefined) {
           this.getOptions(t[0]);
-        else
+        } else if (! t[1].selected) {
           this.setOption(t[0], t[1]);
+        } else
+          this.next();
       } else {
         var nbOption = this.options.currentNbOption() - Object.keys(this.argOptions).length;
         if (this.strategy === 'fast') {
@@ -53,7 +57,10 @@ SaturnSession.prototype.next = function() {
           this.strategy = 'full';
         } else
           this.strategy = 'done';
-        this.crawl();
+        if (this.helper && this.helper.before_crawling)
+          this.helper.before_crawling(function() { this.crawl(); }.bind(this));
+        else
+          this.crawl();
       }
       break;
 
@@ -91,42 +98,48 @@ SaturnSession.prototype.next = function() {
     case "done" :
       this.sendFinalVersions();
       break;
+
+    case "ended" :
+      logger.warn("SaturnSession.next called with strategy == 'ended'.");
+      break;
   }
 };
 
 SaturnSession.prototype.createSubTasks = function() {
   var firstOption = this.options.firstOption({nonAlone: true}),
-      option, values;
+      option, hashes;
   if (! firstOption) // Possible if there is only a single choice
     return;
   option = firstOption.depth()+1;
-  values = Object.keys(firstOption._childrenH);
+  hashes = Object.keys(firstOption._childrenH);
   this._subTasks = {};
-  for (var i = 1 ; i < values.length ; i++) {
-    var value = values[i];
+  for (var i = 1 ; i < hashes.length ; i++) {
+    var hashCode = hashes[i];
     var prod = {
-      id: this.id,
+      id: this.prod_id,
+      batch_mode: true,
       url: this.url,
       mapping: this.mapping, //Sharing
       merchant_id: this.merchant_id,
       strategy: 'normal',
       argOptions: $extend(true, {}, this.options.argOptions),
       _onSubTaskFinished: this.subTaskEnded.bind(this),
-      _subTaskId: value,
+      _subTaskId: hashCode,
     };
-    prod.argOptions[option] = value;
-    this._subTasks[value] = prod;
-    firstOption.removeChild(firstOption.childAt(value));
+    prod.argOptions[option] = hashCode;
+    this._subTasks[hashCode] = prod;
+    firstOption.removeChild(firstOption.childAt(hashCode));
     this.saturn.addProductToQueue(prod);
   }
-  this.options.argOptions[option] = values[0];
+  this.options.argOptions[option] = hashes[0];
 };
 
 SaturnSession.prototype.getOptions = function(option) {
   this.currentAction = "getOptions";
   var cmd = {action: this.currentAction, mapping: this.mapping, option: option};
   this.saturn.evalAndThen(this, cmd, function(values) {
-    logger.debug("in getOption, result :", values);
+    logger.info(this.logId(), (! (values instanceof Array) && '?' || values.length)+" versions for option"+option);
+    logger.debug(values);
     if (! values) {
       this.saturn.sendError(this, "No options return for getOptions(option="+option+")");
       return this.endSession();
@@ -145,12 +158,14 @@ SaturnSession.prototype.setOption = function(option, value) {
 SaturnSession.prototype.crawl = function() {
   this.currentAction = "crawl";
   this.saturn.evalAndThen(this, {action: this.currentAction, mapping: this.mapping}, function(version) {
-    logger.debug("in crawl, result :", version);
     var d = this;
-    if (! version) {
+    if (typeof version !== 'object') {
       this.saturn.sendError("No result return for crawl");
       return this.endSession();
     }
+    logger.info(this.logId(), "Parse results : ", '{name="'+version.name+
+      '", avail="'+version.availability+'", price="'+version.price+'"}');
+    logger.debug(this.logId(), "Parse results : ", version);
 
     if (Object.keys(version).length > 0) {
       this.options.setCurrentVersion(version);
@@ -166,7 +181,7 @@ SaturnSession.prototype.subTaskEnded = function(subSession) {
   delete this._subTasks[subSession._subTaskId];
   if (Object.keys(this._subTasks).length === 0) {
     delete this._subTasks;
-    if (this.strategy === 'done')
+    if (this.strategy === 'done' || this.strategy === 'ended')
       // last subtask ended, send final result.
       this.sendFinalVersions();
     // else, this subtask is not yet ended,
@@ -187,16 +202,25 @@ SaturnSession.prototype.sendPartialVersion = function() {
 // 
 SaturnSession.prototype.sendFinalVersions = function() {
   if (this._subTasks) {
-    logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '['+this.id+']' : ''), "Main subTask finished, wait for others...", this.TEST_ENV ? this : '');
+    logger.info(this.logId(), "Main subTask finished, wait for others...");
+    this.preEndSession();
   } else if (typeof this._onSubTaskFinished === 'function') {
-    logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '{'+this.id+'}' : ''), "SubTask finished !", this.TEST_ENV ? this : '');
+    logger.info(this.logId(), "SubTask finished !");
     this._onSubTaskFinished(this);
-    this.endSession(this);
+    this.endSession();
   } else {
     this.saturn.sendResult(this, {versions: [this._firstVersion], options_completed: true}); //
-    logger.info((this.tabId ? '('+this.tabId+')' : '')+(this.id ? '{'+this.id+'}' : ''), "Finish crawling !", this.TEST_ENV ? this : '');
-    this.endSession(this);
+    logger.info(this.logId(), "Finish crawling !");
+    this.endSession();
   }
+};
+
+//
+SaturnSession.prototype.preEndSession = function() {
+  this.strategy = 'ended'; // prevent
+  clearTimeout(this.rescueTimeout);
+  this.rescueTimeout = setTimeout(this.onTimeout, satconf.SESSION_RESCUE * 10);
+  this.saturn.freeTab(this.tabId);
 };
 
 //
@@ -206,11 +230,20 @@ SaturnSession.prototype.endSession = function() {
   this.saturn.endSession(this);
 };
 
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = SaturnSession;
-else if ("function" == typeof define && define.amd)
-  define("saturn_session", ["saturn_options"], function(){return SaturnSession;});
-else
-  window.SaturnSession = SaturnSession;
+//
+SaturnSession.prototype.onTimeout = function() {
+  this.saturn.sendError(this, "Timeout !");
+  this.endSession();
+};
 
-})();
+//
+SaturnSession.prototype.logId = function () {
+  var s = this.id ? '#'+this.id : '';
+  s += this.prod_id ? '/'+this.prod_id : '';
+  s += this.tabId ? '@'+this.tabId : '';
+  return s;
+};
+
+return SaturnSession;
+
+});

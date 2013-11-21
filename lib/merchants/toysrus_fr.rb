@@ -9,7 +9,7 @@ class ToysrusFr
   end
 
   def canonize
-    if m = @url.match(/productId=([\d]+)/)
+    if m = URI.unescape(@url).match(/productId=([\d]+)/)
       "http://www.toysrus.fr/product/index.jsp?productId=#{m[1]}"
     else
       nil

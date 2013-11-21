@@ -14,7 +14,6 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     
     assert_response :success   
     assert_equal 3, json_response.count
-    assert_equal [nil, true].to_set, json_response.map { |e| e["batch"] }.to_set
 
     get :index
     assert_equal 0, json_response.count    
@@ -90,24 +89,7 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     assert_response :success
     assert_match /amazon.fr\/1/, json_response["url"]
   end
-  
-  test "it should send alive data (for Viking monitoring)" do
-    populate_events
-    event = Event.last
-    event.update_attribute :created_at, 5.minutes.ago
-    event.product.update_attribute :updated_at, 10.minutes.ago
     
-    get :alive
-    assert_response :success
-    assert_equal 0, json_response["alive"]
-    
-    event.product.update_attribute :updated_at, Time.now
-    
-    get :alive
-    assert_response :success
-    assert_equal 1, json_response["alive"]
-  end
-  
   test "it should reset versions when sending product to viking" do
     populate_events
     product = Product.find_by_url("http://www.amazon.fr/1")

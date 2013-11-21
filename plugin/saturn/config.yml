@@ -1,0 +1,62 @@
+---
+"version": "2.5.2"
+"default":
+  #### Global options
+  ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
+  "env": "prod"
+
+  #### Logger options. Look in logger.js to view all possible values.
+  "log_level" : "ALL"
+
+  #### Saturn options
+  ## in ['auto', 'manual']. Default is to 'auto' in prod env, 'manual' otherwise.
+  "run_mode" : "manual"
+  "DELAY_BETWEEN_PRODUCTS": 1000 # 1 s
+  "DELAY_BEFORE_REASK_MAPPING": 300000 # 5 min
+  "SESSION_RESCUE": 300000 # 5 min
+  "MIN_NB_TABS": 0
+  "MAX_NB_TABS": 15
+  "consum": false
+
+  #### Chrome options
+  "DELAY_BETWEEN_OPTIONS": 1500
+  ## wait response from contentscript 60s max, fail after that (required when a lot of sizes for shoes for example).
+  "DELAY_RESCUE": 30000
+
+  #### URLs options
+  "SHOPELIA_DOMAIN": "https://www.shopelia.com"
+  "PRODUCT_EXTRACT_URL": "https://www.shopelia.com/api/viking/products"
+  "MAPPING_URL": "https://www.shopelia.com/api/viking/merchants/"
+  "PRODUCT_EXTRACT_UPDATE": "https://www.shopelia.com/api/viking/products/"
+
+#### Specific Profiles
+## For Jasmine
+"test":
+  "env": "test"
+  "log_level" : "NONE"
+  "MIN_NB_TABS": 0
+  "MAX_NB_TABS": 15
+## For dev, code is not uglified, log ALL, manual crawl, don't crawl all option
+"dev":
+  "env": "dev"
+  "MAX_NB_TABS": 5
+## When all is OK, test in prod condition but code is not uglified, log ALL, manual crawl
+#"dev-prod": See "default"
+## When all is OK, test in prod condition but code is not uglified and log ALL
+"prod-dev":
+  "consum": true
+  "run_mode" : "auto"
+## When all is OK, test in prod condition but don't consum product from real prod.
+"staging":
+  "run_mode" : "auto"
+  "log_level" : "WARN"
+  "PRODUCT_EXTRACT_URL": "https://staging.shopelia.com/api/viking/products"
+  "MAPPING_URL": "https://www.shopelia.com/api/viking/merchants/"
+  "PRODUCT_EXTRACT_UPDATE": "https://staging.shopelia.com/api/viking/products/"
+  "consum": true
+  "DELAY_BETWEEN_PRODUCTS": 5000 # 5 s
+"prod":
+  "run_mode" : "auto"
+  "log_level" : "WARN"
+  "consum": true
+  "DELAY_BETWEEN_PRODUCTS": 500 # 500 ms

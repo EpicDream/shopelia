@@ -1,20 +1,18 @@
 # -*- encoding : utf-8 -*-
 class ProductVersion < ActiveRecord::Base
 
-  AVAILABILITY = "#{Rails.root}/lib/config/availability.yml"
-
   belongs_to :product, :touch => true
   has_many :order_items
   has_many :cart_items
   
   validates :product, :presence => true
   
-  attr_accessible :description, :price, :price_shipping
-  attr_accessible :price_strikeout, :product_id, :shipping_info, :available
+  attr_accessible :description, :price, :price_shipping, :json_description
+  attr_accessible :price_strikeout, :product_id, :shipping_info, :available, :rating
   attr_accessible :image_url, :brand, :name, :available, :reference
-  attr_accessible :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
+  attr_accessible :availability_text, :rating_text, :price_text, :price_shipping_text, :price_strikeout_text
   attr_accessible :option1, :option2, :option3, :option4
-  attr_accessor :availability_text, :price_text, :price_shipping_text, :price_strikeout_text
+  attr_accessor :availability_text, :rating_text, :price_text, :price_shipping_text, :price_strikeout_text
 
   alias_attribute :size, :option1
   alias_attribute :color, :option2
@@ -24,11 +22,14 @@ class ProductVersion < ActiveRecord::Base
   before_validation :parse_price_shipping, :if => Proc.new { |v| v.price_shipping_text.present? }
   before_validation :parse_price_strikeout, :if => Proc.new { |v| v.price_strikeout_text.present? }
   before_validation :parse_available, :if => Proc.new { |v| v.availability_text.present? }
+  before_validation :parse_rating, :if => Proc.new { |v| v.rating_text.present? }
   before_validation :sanitize_description, :if => Proc.new { |v| v.description.present? }
   before_validation :crop_shipping_info
   before_validation :prepare_options
   before_validation :assess_version
   before_destroy :check_not_related_to_any_order
+
+  after_update :notify_channel, :if => Proc.new { |v| v.available.present? }
 
   scope :available, where(available:true)
 
@@ -45,17 +46,20 @@ class ProductVersion < ActiveRecord::Base
     }
   }  
 
-  def cashfront_value price, options={}
-    options ||= {}
-    rule_req = self.product.merchant.cashfront_rules
-    rule_req = rule_req.send(:for_developer, options[:developer])
-    rule = rule_req.first
+  def cashfront_value price, scope
+    scope ||= {}
+    scope[:merchant] = self.product.merchant
+    rule = CashfrontRule.find_for_scope(scope)
     rule ? rule.rebate(price) : 0.0
   end
 
   def self.generate_option_md5 option
     return nil if option.nil?
     Digest::MD5.hexdigest(option["text"].present? ? option["text"].strip : option["src"])
+  end
+
+  def authorize_push_channel
+    Nest.new("product-version")[self.id][:created_at].set(Time.now.to_i)
   end
 
   private
@@ -105,23 +109,9 @@ class ProductVersion < ActiveRecord::Base
   end
 
   def parse_float str
-    str = str.downcase
-    # special cases
-    str = str.gsub(/^.*un total de/, "")
-    str = str.gsub(/\(.*\)/, "")
-    if str =~ /gratuit/ || str =~ /free/ || str =~ /offert/
-      0.0
-    else
-      if m = str.match(/^[^\d]*(\d+)[^\d](\d\d\d) ?[^\d] ?(\d+)/)
-        m[1].to_f * 1000 + m[2].to_f + m[3].to_f / 100
-      elsif m = str.match(/^[^\d]*(\d+)[^\d](\d\d\d)/)
-        m[1].to_f * 1000 + m[2].to_f
-      elsif m = str.match(/^[^\d]*(\d+)[^\d]*$/) || m = str.match(/^[^\d]*(\d+)[^\d]{1,2}(\d+)/)
-        m[1].to_f + m[2].to_f / 100
-      else 
-        generate_incident "Cannot parse price : #{str}"
-      end
-    end
+    res = MerchantHelper.parse_float(str)
+    generate_incident "Cannot parse price : #{str}" if res.nil?
+    res
   end
   
   def generate_incident str
@@ -133,7 +123,7 @@ class ProductVersion < ActiveRecord::Base
       :severity => Incident::IMPORTANT)
     nil
   end
-            
+
   def crop_shipping_info
     self.shipping_info = self.shipping_info[0..249] if self.shipping_info && self.shipping_info.length > 250
   end
@@ -153,11 +143,18 @@ class ProductVersion < ActiveRecord::Base
   
   def parse_available
     self.availability_info = self.availability_text
-    a = self.availability_text.unaccent.downcase
-    dic = YAML.load(File.open(AVAILABILITY))
-    key = dic.keys.detect {|key| key if a =~ /#{key}/i }
-    generate_incident "Cannot parse availability : #{a}" if key.nil?
-    self.available = key.nil? ? true : dic[key]
+    res = MerchantHelper.parse_availability(self.availability_text, product.url)
+    self.available = res[:avail]
+    self.availability_info = MerchantHelper::AVAILABLE if res[:specific] && res[:avail]
+    if self.available.nil?
+      generate_incident "Cannot parse availability : #{self.availability_info}"
+      self.available = true
+    end
+    true
+  end
+
+  def parse_rating
+    self.rating = MerchantHelper.parse_rating(self.rating_text)
     true
   end
   
@@ -181,4 +178,10 @@ class ProductVersion < ActiveRecord::Base
   def truncate_name
     self.name = self.name[0..249] if self.name && self.name.length > 250
   end   
+
+  def notify_channel
+    ts = Nest.new("product-version")[self.id][:created_at].get.to_i  
+    Pusher.trigger("product-version-#{self.id}", "update", ProductVersionSerializer.new(self, scope:{short:true}).as_json[:product_version]) if ts > Time.now.to_i - 60*5
+  rescue
+  end
 end

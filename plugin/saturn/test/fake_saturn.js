@@ -2,12 +2,11 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-19
 
-(function() {
+define(['src/saturn', 'mapping'], function(Saturn, Mapping) {
 "use strict";
 
 var FakeSaturn = function() {
   Saturn.apply(this, arguments);
-  this.TEST_ENV = false;
   this.results = {};
   this.currentValue = {};
   this.tabCpt = 0;
@@ -43,29 +42,36 @@ FakeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCallb
 
 // GET mapping for url's host,
 // and return jqXHR object.
-FakeSaturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
-  if (merchantId === 2)
-    doneCallback({
-      "id":2,
-      "data":{
-        "viking":{
-          "amazon.fr":{
-            "availability":{"path":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']"]},
-            "description":{"path":["#productDescription div.content, #ps-content div.content","#feature-bullets-atf .content, .techD:first .content, #artistCentralTeaser > div","#technical-specs_feature_div .content, .content .tsTable","#technicalProductFeaturesATF","div.bucket h2:contains(\"Description\") + div.content"]},
-            "image_url":{"path":"#main-image, #prodImage, #original-main-image"},
-            "name":{"path":"span#btAsinTitle"},
-            "price":{"path":["span#actualPriceValue b, span#buyingPriceValue b","#secondaryUsedAndNew a:not([href*=\"condition=used\"]) + .price"]},
-            "price_strikeout":{"path":"span#listPriceValue"},
-            "shipping_info":{"path":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']"]},
-            "price_shipping":{"path":["#actualPriceExtraMessaging, #pricePlusShippingQty .plusShippingText","table.qpDivTop div.cBox table td:first"],"default_value":"GRATUIT sans minimum d achat pour les livres, les chaussures et les vêtements.\nGRATUIT à partir de 15 EUR d achats pour les autres produits, ou 2,79 EUR par envoi en dessous de 15 EUR d achat."},
-            "sizes":{"path":["#dropdown_selected_size_name option.dropdownAvailable, #dropdown_selected_size_name option.dropdownSelect, div.buying > select#asinRedirect",".variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchSelect, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchAvailable, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchUnavailable"]},
-            "colors":{"path":[".variations div#selected_color_name + div .swatchSelect, .variations div#selected_color_name + div .swatchAvailable, .variations div#selected_color_name + div .swatchUnavailable","select#dropdown_selected_color_name"]}
+FakeSaturn.prototype.loadMapping = function(merchantId) {
+  return {
+    done: function (fct) {
+      if (merchantId === 2)
+        fct(new Mapping({
+          "id":2,
+          "domain":"amazon.fr",
+          "mapping":{
+            "amazon.fr":{
+              "availability":{"paths":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']"]},
+              "description":{"paths":["#productDescription div.content, #ps-content div.content","#feature-bullets-atf .content, .techD:first .content, #artistCentralTeaser > div","#technical-specs_feature_div .content, .content .tsTable","#technicalProductFeaturesATF","div.bucket h2:contains(\"Description\") + div.content"]},
+              "image_url":{"paths":["#main-image, #prodImage, #original-main-image"]},
+              "name":{"paths":["span#btAsinTitle"]},
+              "price":{"paths":["span#actualPriceValue b, span#buyingPriceValue b","#secondaryUsedAndNew a:not([href*=\"condition=used\"]) + .price"]},
+              "price_strikeout":{"paths":["span#listPriceValue"]},
+              "shipping_info":{"paths":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']"]},
+              "price_shipping":{"paths":["#actualPriceExtraMessaging, #pricePlusShippingQty .plusShippingText","table.qpDivTop div.cBox table td:first"]},
+              "option1":{"paths":[".variations div#selected_color_name + div .swatchSelect, .variations div#selected_color_name + div .swatchAvailable, .variations div#selected_color_name + div .swatchUnavailable","select#dropdown_selected_color_name"]},
+              "option2":{"paths":["#dropdown_selected_size_name option.dropdownAvailable, #dropdown_selected_size_name option.dropdownSelect, div.buying > select#asinRedirect",".variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchSelect, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchAvailable, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchUnavailable"]},
+            }
           }
-        }
-      }
-    });
-  else
-    failCallback('unsupported');
+        }));
+      return this;
+    },
+    fail: function (fct) {
+      if (merchantId !== 2)
+        fct('unsupported');
+      return this;
+    }
+  };
 };
 
 // 
@@ -80,13 +86,14 @@ FakeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
     case "getOptions" :
       switch (cmd.option) {
         case 1:
-          result = [{text: 'color1'}, {text: 'color2'}];
+          result = [{text: 'color1', hash: 'color1'}, {text: 'color2', hash: 'color2'}];
           break;
         case 2:
-          result = [{text: 'size1'}, {text: 'size2'}];
+          result = [{text: 'size1', hash: 'size1'}, {text: 'size2', hash: 'size2'}];
           break;
         default:
-          result = [{text: 'option'+cmd.option+'1'}, {text: 'option-'+cmd.option+'-2'}];
+          result = [{text: 'option-'+cmd.option+'-1', hash: 'option-'+cmd.option+'-1'},
+                    {text: 'option-'+cmd.option+'-2', hash: 'option-'+cmd.option+'-2'}];
       }
       break;
     case 'setOption' :
@@ -105,12 +112,6 @@ FakeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
     session.then();
 };
 
-
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  exports = module.exports = FakeSaturn;
-else if ("function" == typeof define && define.amd)
-  define("fake_saturn", ["saturn"], function(){return FakeSaturn;});
-else
-  window.FakeSaturn = FakeSaturn;
+return FakeSaturn;
  
-})();
+});

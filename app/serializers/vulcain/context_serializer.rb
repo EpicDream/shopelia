@@ -8,7 +8,7 @@ class Vulcain::ContextSerializer < ActiveModel::Serializer
   end
 
   def order
-    if object.cvd_solution.nil?
+    if object.cvd_solution.blank?
       credentials = Vulcain::PaymentCardSerializer.new(object.meta_order.payment_card).as_json[:payment_card]
     elsif object.cvd_solution == "amazon" 
       t = PaymentTransaction.where(order_id:object.id).first

@@ -30,17 +30,6 @@
         <div class="spacer10"></div>
         <div class="line"></div>
         <div class="spacer5"></div>
-<div class="field-title clearfix">
-    <img class="pull-left" src="/assets/html_app/shopelia-carte.png">
-    <h5 class="pull-left">MÉTHODE DE PAIEMENT</h5>
-</div>
-
-    <div class="offset1 clearfix">
-        <%= @card('number') %>
-    </div>
-        <div class="spacer10"></div>
-        <div class="line"></div>
-        <div class="spacer5"></div>
 
         <table class="table table-borderless" id="total-price-table">
             <tr>

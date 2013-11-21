@@ -45,6 +45,11 @@
         %strong IP address :
         = @user.ip_address
       %article.coolbox
+        %h3 Devices
+        - @user.devices.where("push_token is not null").each do |device|
+          = link_to device.phone, admin_device_path(device)
+          %br
+      %article.coolbox
         %h3 Addresses
         = render @user.addresses
       %article.coolbox
