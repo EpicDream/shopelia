@@ -1,5 +1,6 @@
 class PaymentTransaction < ActiveRecord::Base
   belongs_to :order
+  belongs_to :virtual_card
   has_one :user, :through => :order
 
   validates :order, :presence => true
@@ -12,6 +13,12 @@ class PaymentTransaction < ActiveRecord::Base
   scope :amazon, where(processor:"amazon")
 
   def process
+    return { status:"error", message:"missing user mangopay object" } if self.user.mangopay_id.nil?
+    return { status:"error", message:"missing source mangopay wallet" } if self.mangopay_source_wallet_id.nil?
+
+    wallet = MangoPay::Wallet.details(self.mangopay_source_wallet_id)
+    return { status:"error", message:"Wallet doesn't have enough money. Has #{wallet['Amount']} but need #{self.amount}" } if wallet['Amount'] < self.amount
+
     if self.processor == "amazon"
       return { status:"created" } unless self.mangopay_amazon_voucher_id.nil?
       return { status:"error", message:"missing user mangopay object" } if self.user.mangopay_id.nil?
@@ -36,6 +43,20 @@ class PaymentTransaction < ActiveRecord::Base
       else
         { status:"error", message:"Impossible to create amazon voucher : #{voucher.inspect}" }
       end
+
+    elsif self.processor == "virtualis"
+      return { status:"error", message:"transaction already processed" } unless self.virtual_card_id.nil?
+
+      card = VirtualCard.new(
+        amount: (self.amount.to_f / 100).round(2),
+        provider: "virtualis")
+      if card.save
+        self.update_attribute :virtual_card_id, card.id
+        { status: "created" }
+      else
+        { status:"error", message:"Impossible to create virtualis card : #{card.errors.full_messages.join(",")}" }
+      end
+
     else
       { status:"error", message:"Invalid processor : #{self.processor}" }
     end

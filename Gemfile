@@ -41,6 +41,7 @@ gem 'httpclient'
 gem 'sidekiq'
 gem 'sinatra', require: false
 gem 'slim'
+gem 'credit_card_validator'
 gem 'nexmo'
 gem 'pusher'
 gem 'rubyzip', '< 1.0.0'

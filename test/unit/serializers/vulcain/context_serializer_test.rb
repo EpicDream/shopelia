@@ -71,4 +71,14 @@ class Vulcain::ContextSerializerTest < ActiveSupport::TestCase
     assert_equal "JTUJ-SC5P4S-6N3F", context[:order][:credentials][:voucher]
   end
 
+  test "it should send back virtualis cvd" do
+    @order = orders(:elarch_rueducommerce_billing)
+    t = PaymentTransaction.create(order_id:@order.id)
+    t.update_attribute :virtual_card_id, virtual_cards(:card).id
+
+    order_serializer = Vulcain::ContextSerializer.new(@order.reload)
+    context = order_serializer.as_json[:context]
+
+    assert_equal "41111111111111111", context[:order][:credentials][:number]
+  end
 end

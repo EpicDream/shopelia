@@ -7,7 +7,7 @@ require 'active_support/inflector'
 module Virtualis
 
   class Configuration
-    attr_accessor :endpoint_url, :messages_path, :efs, :identifiant, :contrat, :certificate, :key, :logger
+    attr_accessor :endpoint_url, :messages_path, :efs, :identifiant, :contrat, :certificate, :key, :add_timestamp, :logger
   end
 
   class << self
@@ -26,4 +26,5 @@ require_relative 'message'
 require_relative 'request'
 require_relative 'bean'
 require_relative 'card'
+require_relative 'report'
 

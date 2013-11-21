@@ -193,10 +193,19 @@ class Order < ActiveRecord::Base
               # Billing success
               if self.meta_order.fullfilled? || billing_transaction.success
 
-                # Limonetik CVD & injection
-                if self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
-                  callback_vulcain(true)
-                  self.state = :pending_injection
+                # Virtualis CVD
+                if self.cvd_solution == "virtualis" && self.injection_solution == "vulcain"
+                  self.state = :preparing
+                  
+                  payment_transaction = PaymentTransaction.create!(order_id:self.id) 
+                  payment_result = payment_transaction.process
+
+                  if payment_result[:status] == "created"
+                    callback_vulcain(true)
+                  else
+                    callback_vulcain(false)
+                    fail(payment_result[:message], :shopelia)
+                  end
                   
                 # Amazon vouchers
                 elsif self.cvd_solution == "amazon" && self.injection_solution == "vulcain"
@@ -225,6 +234,11 @@ class Order < ActiveRecord::Base
                     fail(payment_result[:message], :shopelia)
                   end
                   
+                # Limonetik
+                elsif self.cvd_solution == "limonetik" && self.injection_solution == "limonetik"
+                  callback_vulcain(true)
+                  self.state = :pending_injection
+
                 # Invalid CVD solution
                 else
                   callback_vulcain(false)
