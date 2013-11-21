@@ -162,14 +162,25 @@ module AlgoliaFeed
       end
     end
 
-    def process_xml_directory(dir=nil, children=6)
+    def count_children(pid)
+      begin
+        return Sys::ProcTable.ps.select{ |p| p.ppid == pid && p.state != 'Z'}.size
+      rescue => e
+        puts "ps failed: #{e}" if self.debug > 1
+        return nil
+      end
+    end
+
+    def process_xml_directory(dir=nil, max_children=6)
       algolia = AlgoliaFeed.new(self.params)
       algolia.connect(algolia.index_name)
       algolia.set_index_attributes
       dir = self.tmpdir unless dir.present?
       Find.find(dir) do |path|
         next unless File.file?(path)
-        while Sys::ProcTable.ps.select{ |p| p.ppid == $$ && p.state != 'Z'}.size >= children
+        while true
+          children_count = count_children($$)
+          break if children_count.is_a?(Integer) && children_count < max_children
           sleep 1
         end
         fork do

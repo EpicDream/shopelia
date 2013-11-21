@@ -10,6 +10,10 @@ namespace :shopelia do
     desc "Clean Algolia"
     task :clean => :environment do
       FileUtils.rm_rf(Dir.glob("#{AlgoliaFeed::Filer.new.tmpdir}/*"))
+      index_name = AlgoliaFeed::AlgoliaFeed.new.index_name
+      if Algolia.list_indexes['items'].collect { |h| h['name'] }.include?(index_name)
+        Algolia::Index.new(index_name).delete
+      end
       Merchant.update_all('products_count = NULL')
       AlgoliaFeed::Tagger.clear_redis
     end
