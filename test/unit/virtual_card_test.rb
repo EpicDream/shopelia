@@ -15,7 +15,7 @@ class VirtualCardTest < ActiveSupport::TestCase
     assert_equal 4, card.exp_year.length
     assert_equal 3, card.cvv.length
 
-    r = Virtualis::Card.detail({reference: card.cvd_id.to_s})
+    r = Virtualis::Card.detail({reference: card.cvd_id})
     assert_equal('ok', r['status'])
   end
 end

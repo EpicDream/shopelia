@@ -27,7 +27,7 @@ class VirtualCard < ActiveRecord::Base
   def generate_virtualis_cvd
     card = Virtualis::Card.create({montant:(self.amount * 100).to_i.to_s, duree:'12'})
     if card['status'] == 'ok'
-      self.cvd_id = card['numeroReference'].to_i
+      self.cvd_id = card['numeroReference']
       clone_card(card)
     else
       self.errors.add(:base, card['error_str'])
