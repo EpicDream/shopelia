@@ -9,16 +9,22 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     @blog = Scrapers::Blogs::Blog.new
   end
   
-  test "find articles blocks for each site" do
-    skip
-    missing = []
+  test "check posts for each site" do
+    #skip
+    missing = {}
     Scrapers::Blogs::URLS.each do |url|
       @blog.url = url
       posts = @blog.posts
-      missing << url if posts.count.zero?
+      missing[url] = ["No posts for #{url}"] if posts.none?
+      posts.each do |post|
+        errors = []
+        errors << "Missing Content : #{post.link}" if (post.content.blank? && post.description.blank?) rescue nil
+        errors << "Missing Images : #{post.link}" if post.images.none?
+        errors << "Missing Date : #{post.link}" if post.date.nil?
+        missing[url] = errors if errors.any?
+      end
     end
-    
-    assert missing.empty?, "Some blogs have no posts : #{missing.inspect}"
+    puts missing.inspect
   end
   
 end
