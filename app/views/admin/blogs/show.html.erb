@@ -1,0 +1,34 @@
+<%= link_to 'index', admin_blogs_url %>
+<% @posts.each do |post| %>
+  <div class="blog-post">
+    <h5>Intitulé</h5>
+      <span><%= post.title %></span>
+    <h5>Date</h5>
+      <span><%= post.date %></span>
+    <h5>Auteur</h5>
+      <span><%= post.author %></span>
+    <h5>Lien vers l'article</h5>
+      <span><%= link_to post.link, post.link, target: :blank %></span>
+    <h5>Contenu</h5>
+      <p><%= post.description %></p>
+      <p><%= post.content %></p>
+    <h5>Images</h5>
+      <ul>
+        <% post.images.each do |link| %>
+         <li><%= link_to link, link, target: :blank %></li>
+        <% end %>
+      </ul>
+    <h5>Produits</h5>
+    <ul>
+      <% post.products.each do |link| %>
+      <li><%= link_to link, link, target: :blank %></li>
+      <% end %>
+    </ul>
+    <h5>Catégories</h5>
+    <ul>
+      <% post.categories.each do |name| %>
+       <li><%= name %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

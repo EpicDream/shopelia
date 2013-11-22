@@ -38,6 +38,8 @@ module Scrapers
           post
         end
       rescue => e
+        # puts e.inspect
+        # puts e.backtrace.join("\n")
         #report incident
         []
       end

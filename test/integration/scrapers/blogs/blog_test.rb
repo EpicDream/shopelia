@@ -27,6 +27,11 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     puts missing.inspect
   end
   
+  test "blog" do
+    @blog.url = "http://www.dieu-crea-la-femme.com/"
+    posts = @blog.posts
+  end
+  
 end
 
   
