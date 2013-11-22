@@ -8,6 +8,7 @@ module Scrapers
     
     class Scraper
       attr_accessor :url
+      DATE_PATTERN = /(\d{1,2}[\s\.\/]+[a-zA-Z\d]+[\s\.\/]+\d{2,4})/
       
       def initialize url=nil
         @url = url
@@ -28,15 +29,22 @@ module Scrapers
       end
       
       def date block
-        "TODO"
+        block.text =~ DATE_PATTERN
+        unless $1
+          header = block.search(".//preceding::h2").last
+          header.text =~ DATE_PATTERN
+        end
+        Date.parse_international($1) if $1
       end
       
       def link block
-        "TODO"
+        node = header(block).search('.//a').first
+        node && node.attribute("href").value
       end
       
       def title block
-        "TODO"
+        node = header(block)
+        node && node.text
       end
       
       def posts
@@ -62,6 +70,12 @@ module Scrapers
       def url=url
         @posts = nil
         @url = url
+      end
+      
+      private
+      
+      def header block
+        block.xpath(".//preceding::h2 | .//preceding::h1 | .//preceding::h3").last
       end
       
     end

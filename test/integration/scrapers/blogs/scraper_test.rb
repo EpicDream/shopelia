@@ -46,6 +46,26 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert products.count >= 1
   end
   
+  test "scrape date, link and title" do
+    assert @post.title.length >= 2
+    assert @post.date >= Date.parse("2012-01-01")
+    assert @post.link =~ /http:\/\/www.leblogdebetty/
+  end
+  
+  test "scrape date for http://www.alamode2sasou.com/" do
+    @scraper.url = "http://www.alamode2sasou.com/"
+    posts = @scraper.posts
+    assert posts.first.date >= Date.parse("2012-01-01")
+  end
+  
+  test "scrape date for http://www.adenorah.com/" do
+    @scraper.url = "http://www.adenorah.com/"
+    posts = @scraper.posts
+    puts posts.first.date
+    assert posts.first.date >= Date.parse("2012-01-01")
+  end
+  
+  
 end
 
   
