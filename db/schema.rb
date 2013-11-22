@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131122134248) do
+ActiveRecord::Schema.define(:version => 20131122163241) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -372,6 +372,21 @@ ActiveRecord::Schema.define(:version => 20131122134248) do
     t.datetime "updated_at",                   :null => false
     t.integer  "amount"
     t.integer  "mangopay_source_wallet_id"
+  end
+
+  create_table "posts", :force => true do |t|
+    t.integer  "blog_id"
+    t.datetime "published_at"
+    t.string   "link"
+    t.text     "content"
+    t.text     "description"
+    t.string   "title"
+    t.string   "author"
+    t.text     "categories"
+    t.text     "images"
+    t.text     "products"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "product_masters", :force => true do |t|

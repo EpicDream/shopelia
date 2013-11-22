@@ -20,7 +20,8 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
         errors = []
         errors << "Missing Content : #{post.link}" if (post.content.blank? && post.description.blank?) rescue nil
         errors << "Missing Images : #{post.link}" if post.images.none?
-        errors << "Missing Date : #{post.link}" if post.date.nil?
+        errors << "Missing Date : #{post.link}" if post.published_at.nil?
+        errors << "Missing Link" if post.link.nil?
         missing[url] = errors if errors.any?
       end
     end
@@ -28,8 +29,9 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
   end
   
   test "blog" do
-    @blog.url = "http://www.dieu-crea-la-femme.com/"
+    @blog.url = "http://www.etpourquoipascoline.fr/"
     posts = @blog.posts
+    puts posts.first.inspect
   end
   
 end

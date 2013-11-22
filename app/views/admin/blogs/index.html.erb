@@ -2,6 +2,6 @@
   <%= select_tag 'select-blog-url', options_from_collection_for_select(@blogs, :id, :url), :prompt => "Blog" %>  
   <%= form_for([:admin, Blog.new]) do |f| %>
     <%= f.text_field :url, placeholder:"url du blog"%>
-    <%= f.submit %>
+    <%= f.submit("Créer", :class => 'btn btn-large btn-success') %>
   <% end %>
 </div>

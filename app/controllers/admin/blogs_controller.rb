@@ -1,5 +1,3 @@
-require 'scrapers/blogs/blog'
-
 class Admin::BlogsController < Admin::AdminController
   
   def index
@@ -7,14 +5,19 @@ class Admin::BlogsController < Admin::AdminController
   end
   
   def show
-    @blog = Blog.find(params[:id])
-    blog = Scrapers::Blogs::Blog.new(@blog.url)
-    @posts = blog.posts
+    @blog = Blog.where(id:params[:id]).includes(:posts).first
+    if params[:fetch]
+      @blog.fetch
+    end
   end
   
   def create
-    @blog = Blog.create(params[:blog])
-    redirect_to admin_blog_url(@blog)
+    @blog = Blog.new(params[:blog])
+    if @blog.save
+      redirect_to admin_blog_url(@blog)
+    else
+      redirect_to admin_blogs_url
+    end
   end
   
 end

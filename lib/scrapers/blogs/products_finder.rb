@@ -29,7 +29,7 @@ module Scrapers
       def links block
         links = block.xpath(".//a").map(&href).compact
         links.delete_if { |link| 
-          URI(link).host == URI(@url).host
+          URI(link).host == URI(@url).host rescue true
         }  
       end
       
@@ -45,7 +45,6 @@ module Scrapers
           href.value if href
         }
       end
-      
       
     end
   end

@@ -1,10 +1,11 @@
 <%= link_to 'index', admin_blogs_url %>
-<% @posts.each do |post| %>
+
+<% @blog.posts.each do |post| %>
   <div class="blog-post">
     <h5>Intitulé</h5>
       <span><%= post.title %></span>
     <h5>Date</h5>
-      <span><%= post.date %></span>
+      <span><%= post.published_at %></span>
     <h5>Auteur</h5>
       <span><%= post.author %></span>
     <h5>Lien vers l'article</h5>

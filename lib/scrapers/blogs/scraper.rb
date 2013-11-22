@@ -52,7 +52,7 @@ module Scrapers
         blocks.map { |block| 
           block.xpath(".//script").map(&:remove) 
           post = Post.new
-          post.date = date(block)
+          post.published_at = date(block)
           post.link = link(block)
           post.content = content(block)
           post.title = title(block)
