@@ -277,6 +277,23 @@ class ProductVersionTest < ActiveSupport::TestCase
     assert_equal 3, version.cashfront_value(100, developer:developers(:prixing))
   end
 
+  test "it should create product images" do 
+    assert_difference "ProductImage.count", 2 do
+      @version = ProductVersion.create!(
+      product_id:products(:dvd).id,
+      price:"100",
+      images:[
+        "http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg", 
+        "http://ecx.images-amazon.com/images/I/81zxTIH-A3L._SX342_.jpg"
+      ])
+    end
+    @version.reload
+
+    assert_difference "ProductImage.count", -1 do
+      @version.update_attributes(images:["http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg"])
+    end
+  end
+
   test "it should sanitize description (1)" do
     @version.description = <<__END
 
