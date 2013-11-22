@@ -16,7 +16,10 @@ class Scrapers::Reviews::ScrapersTest < ActiveSupport::TestCase
   end
   
   test "scrape find merchant via product" do
-    MERCHANTS.keys.each { |merchant| run_scrape_find_merchant_via_product_spec_for(merchant)}
+    MERCHANTS.keys.each { |merchant| 
+      next if merchant =~ /priceminister/
+      run_scrape_find_merchant_via_product_spec_for(merchant)
+    }
   end
   
   private

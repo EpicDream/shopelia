@@ -11,7 +11,20 @@ module AlgoliaFeed
         'http://content.webgains.com/affiliates/datafeed.html?action=download&campaign=145659&username=shopelia&password=pichon69&format=xml&zipformat=gzip_notar&fields=extended&programs=all&allowedtags=all&categories=all'
       ]
 
+      self.clean_xml = false
+
       self.parser_class = params[:parser_class] || 'AlgoliaFeed::Webgains'
+    end
+
+    def decompress_datafile(raw_file, dir=nil, decoded_file=nil)
+      path = super
+      contents = File.read(path)
+      contents.gsub!(/\uFFFE/, '') # Remove broken UTF8
+      File.open(path, 'wb') do |f|
+        f.puts contents
+      end
+      xmllint(path)
+      path
     end
   end
 
