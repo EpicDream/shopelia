@@ -13,14 +13,9 @@ module Scrapers
       end
       
       def products
-        candidate = nil
-        @blocks.each do |block|
-          next unless may_include_products?(block)
-          candidate = block
-        end
-        candidate ||= @blocks.last
-        return {} unless candidate 
-        {text:candidate.text, links:links(candidate)}
+        @blocks.map do |block|
+          links(block)
+        end.flatten
       end
       
       def blocks
