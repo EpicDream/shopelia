@@ -27,4 +27,14 @@ class ImageSizeProcessor
       url = processor.process_last
     end while url.present?
   end
+
+  def self.get_image_size url, retry_fetch=true
+    return unless url =~ /^http/
+    size = FastImage.size(url, :raise_on_failure=>true)
+    size.join("x") unless size.nil?
+  rescue 
+    return unless retry_fetch
+    `curl #{url} > /dev/null 2>&1`
+    self.get_image_size(url, false)
+  end    
 end

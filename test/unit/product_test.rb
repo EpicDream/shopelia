@@ -573,4 +573,16 @@ class ProductTest < ActiveSupport::TestCase
     product.update_attribute :image_url, "http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg"
     assert_equal "450x383", product.image_size
   end
+
+  test "it should create product images" do
+    product = products(:dvd)
+    assert_difference "ProductImage.count", 2 do 
+      product.update_attributes(versions:[
+        { images:[
+            "http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg", 
+            "http://ecx.images-amazon.com/images/I/81zxTIH-A3L._SX342_.jpg"
+          ]
+        }]);
+    end
+  end
 end
