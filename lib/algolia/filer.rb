@@ -15,7 +15,7 @@ module AlgoliaFeed
 
   class Filer
  
-    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params
+    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params, :clean_xml
 
     def self.download(params={})
       self.new(params).download
@@ -33,6 +33,7 @@ module AlgoliaFeed
       self.http_auth      = params[:http_auth]      || {}
       self.rejected_files = params[:rejected_files] || []
       self.parser_class   = params[:parser_class]   || 'AlgoliaFeed::XmlParser'
+      self.clean_xml      = params[:clean_xml]      || true
       self
     end
 
@@ -137,9 +138,14 @@ module AlgoliaFeed
       else
         FileUtils.copy_file(raw_file, decoded_file)
       end
-      xmllint = `/usr/bin/xmllint --format --output #{decoded_file} --encode UTF-8 --nocdata --recover #{decoded_file}`
-      puts xmllint if xmllint =~ /\S/
+      xmllint(decoded_file) if self.clean_xml
       decoded_file
+    end
+
+    def xmllint(path)
+      xmllint = `/usr/bin/xmllint --format --output #{path} --encode UTF-8 --nocdata --recover #{path}`
+      puts xmllint if xmllint =~ /\S/
+      file
     end
 
     def download_url(url)
