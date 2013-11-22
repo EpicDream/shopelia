@@ -29,6 +29,7 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal 1, hash[:product][:ready]
     assert_equal 1, hash[:product][:options_completed]
     assert_equal 1, hash[:product][:versions].count
+    assert_equal 1, hash[:product][:saturn]
     
     product_versions(:usbkey).update_attribute :available, false
     @product.update_attribute :versions_expires_at, 1.hour.ago
@@ -60,5 +61,13 @@ class ProductSerializerTest < ActiveSupport::TestCase
 
     assert hash[:product][:description].nil?
     assert hash[:product][:versions].nil?
+  end
+
+  test "it should set saturn at 0 if merchant hasn't any mapping" do
+    merchants(:rueducommerce).update_attribute :mapping_id, nil
+    product_serializer = ProductSerializer.new(@product)
+    hash = product_serializer.as_json
+
+    assert_equal 0, hash[:product][:saturn]
   end
 end
