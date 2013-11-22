@@ -9,6 +9,7 @@ module Scrapers
       def initialize html, url
         @html = html
         @url = url
+        @uri = URI(url)
         @blocks = blocks()
       end
       
@@ -26,8 +27,10 @@ module Scrapers
       private
       
       def links block
-        links = block.xpath(".//a").map(&href)
-        links.delete_if { |link| link =~ Regexp.new(@url) }
+        links = block.xpath(".//a").map(&href).compact
+        links.delete_if { |link| 
+          URI(link).host == URI(@url).host
+        }  
       end
       
       def may_include_products? block
@@ -38,7 +41,8 @@ module Scrapers
       
       def href
         Proc.new { |a| 
-          a.attribute('href').value
+          href = a.attribute('href') 
+          href.value if href
         }
       end
       
