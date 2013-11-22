@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131120145530) do
+ActiveRecord::Schema.define(:version => 20131121142609) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -70,9 +70,9 @@ ActiveRecord::Schema.define(:version => 20131120145530) do
     t.integer  "mangopay_contribution_id"
     t.integer  "mangopay_contribution_amount"
     t.string   "mangopay_contribution_message"
+    t.integer  "mangopay_destination_wallet_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
-    t.integer  "mangopay_destination_wallet_id"
     t.integer  "mangopay_transfer_id"
   end
 
@@ -541,7 +541,7 @@ ActiveRecord::Schema.define(:version => 20131120145530) do
     t.string   "exp_year"
     t.string   "cvv"
     t.float    "amount"
-    t.integer  "cvd_id"
+    t.string   "cvd_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
