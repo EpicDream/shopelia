@@ -36,7 +36,9 @@ module Scrapers
       end
       
       def may_include_products? block
-        !block.text.blank? && block.xpath(".//a").any?
+        !block.text.encode("UTF-8", :undef => :replace, :invalid => :replace).blank? && block.xpath(".//a").any?
+      rescue #theses girls puts some little hearts ... not utf-8
+        false
       end
       
       def href

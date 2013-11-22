@@ -17,6 +17,7 @@ module Scrapers
           end
         end 
       rescue
+        #report info incident
         []
       end
       

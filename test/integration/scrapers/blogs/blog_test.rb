@@ -10,13 +10,15 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
   end
   
   test "find articles blocks for each site" do
-    #skip
-    Scrapers::Blogs::URLS[11..-1].each do |url|
+    skip
+    missing = []
+    Scrapers::Blogs::URLS.each do |url|
       @blog.url = url
       posts = @blog.posts
-      assert posts.count > 0, "no entries found for url #{url}"
-      puts url
+      missing << url if posts.count.zero?
     end
+    
+    assert missing.empty?, "Some blogs have no posts : #{missing.inspect}"
   end
   
 end
