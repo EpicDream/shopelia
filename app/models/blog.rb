@@ -7,8 +7,8 @@ class Blog < ActiveRecord::Base
   validates :url, uniqueness:true, presence:true, :on => :create
   
   def fetch
-    posts = Scrapers::Blogs::Blog.new(self.url).posts.map(&:modelize)
-    self.posts << posts
+    self.posts << Scrapers::Blogs::Blog.new(url).posts.map(&:modelize)
+    self.reload
   end
   
 end
