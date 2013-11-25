@@ -1,7 +1,21 @@
-<%= link_to 'index', admin_blogs_url %>
+<%= link_to "Retour à l'index", admin_blogs_url, class:'back-link' %>
+<%= link_to "Récupérer les nouveaux articles", admin_blog_url(@blog, :fetch => true), class:"btn fetch-post-link" %>
 
-<% @blog.posts.each do |post| %>
-  <div class="blog-post">
+<div class="coolbox blog-post posts-outline">
+  <p>
+    <%= link_to @blog.url, @blog.url %>
+  </p>
+  <ol>
+    <% @blog.posts.each_with_index do |post, index| %>
+      <li>
+        <%= link_to "#{post.title} (#{l(post.published_at)})", "#post-#{index}" %>
+      </li>
+    <% end %>
+  </ol>
+</div>
+
+<% @blog.posts.each_with_index do |post, index| %>
+  <div class="blog-post coolbox" id="post-<%= index%>">
     <h5>Intitulé</h5>
       <span><%= post.title %></span>
     <h5>Date</h5>

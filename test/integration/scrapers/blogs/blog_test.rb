@@ -28,6 +28,11 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     puts missing.inspect
   end
   
+  test "blog" do
+    @blog.url = "http://www.lauraoupas.com/"
+    puts @blog.posts.inspect
+  end
+  
 end
 
   

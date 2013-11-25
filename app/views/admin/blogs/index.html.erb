@@ -1,7 +1,15 @@
-<div>
-  <%= select_tag 'select-blog-url', options_from_collection_for_select(@blogs, :id, :url), :prompt => "Blog" %>  
-  <%= form_for([:admin, Blog.new]) do |f| %>
-    <%= f.text_field :url, placeholder:"url du blog"%>
-    <%= f.submit("Créer", :class => 'btn btn-large btn-success') %>
-  <% end %>
+<div class="coolbox blogs">
+  <div >
+    <%= label_tag 'select-blog-url', "Choisir un blog" %>
+    <%= select_tag 'select-blog-url', options_from_collection_for_select(@blogs, :id, :url), :prompt => "" %>  
+  </div>
+
+  <div>
+    <%= form_for([:admin, Blog.new]) do |f| %>
+      <%= f.label :url, "Créer un nouveau blog" %>
+    
+      <%= f.text_field :url, placeholder:"url du blog"%>
+      <%= f.submit("Intégrer", :class => 'btn') %>
+    <% end %>
+  </div>
 </div>
