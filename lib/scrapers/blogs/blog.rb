@@ -34,10 +34,8 @@ module Scrapers
         end
         
         @posts
-      rescue
-        # puts e.inspect
-        # puts e.backtrace.join("\n")
-        #report incident
+      rescue => e
+        report_incident(e)
         []
       end
       
@@ -59,6 +57,16 @@ module Scrapers
         post.content = @scraper.content(block)
         post.products = @scraper.products(block)
         post
+      end
+      
+      def report_incident e
+        Rails.logger.error("== Blogs scraper == #{e.inspect}\n")
+        Rails.logger.error("#{e.backtrace.join("\n")}\n")
+        Incident.create(
+          :issue => "Scrapers::Blog#posts",
+          :severity => Incident::IMPORTANT,
+          :description => "Exception raised for whole posts of blog #{@url}",
+          :resource_type => 'Blog')
       end
       
     end

@@ -16,11 +16,8 @@ module Scrapers
           feed.items.map do |item|
             Post.new.from(item)
           end
-        end 
-      rescue => e
-        # puts e.inspect
-        # puts e.backtrace.join("\n")
-        #report info incident
+        end
+      rescue
         []
       end
       
