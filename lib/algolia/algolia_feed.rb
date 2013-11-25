@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'algoliasearch'
- 
+
 module AlgoliaFeed
 
 # TODO: Admin page
