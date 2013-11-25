@@ -10,7 +10,7 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
   end
   
   test "check posts for each site" do
-    #skip
+    skip
     missing = {}
     Scrapers::Blogs::URLS.each do |url|
       @blog.url = url
@@ -26,12 +26,6 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
       end
     end
     puts missing.inspect
-  end
-  
-  test "blog" do
-    @blog.url = "http://www.etpourquoipascoline.fr/"
-    posts = @blog.posts
-    puts posts.first.inspect
   end
   
 end

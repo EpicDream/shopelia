@@ -34,7 +34,7 @@ module Scrapers
           header = block.search(".//preceding::h2").last
           header.text =~ DATE_PATTERN
         end
-        Date.parse_international($1) if $1
+        (Date.parse_international($1) if $1) || Time.now
       end
       
       def link block

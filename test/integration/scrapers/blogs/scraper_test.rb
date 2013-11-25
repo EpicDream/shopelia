@@ -61,10 +61,8 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
   test "scrape date for http://www.adenorah.com/" do
     @scraper.url = "http://www.adenorah.com/"
     posts = @scraper.posts
-    puts posts.first.published_at
     assert posts.first.published_at >= Date.parse("2012-01-01")
   end
-  
   
 end
 

@@ -22,22 +22,19 @@ module Scrapers
       def posts
         return @posts if @posts
         feed =  RSSFeed.new(@url)
-        posts = feed.items
 
-        if posts.none? # && !feed.exists?
-          @scraper.url = @url
-          return @scraper.posts
-        end
-        
-        @posts = posts.map do |post|
-          post.description = Description.extract(post.html_description)
-          post.images = Images.extract(post.html_content)
-          post.content = Content.extract(post.html_content)
-          post.products = ProductsFinder.new(post.html_content, @url).products
+        @posts = feed.items.map do |post|
           post = scrape(post) unless complete?(post)
           post
         end
-      rescue => e
+
+        if @posts.none?
+          @scraper.url = @url
+          @posts = @scraper.posts
+        end
+        
+        @posts
+      rescue
         # puts e.inspect
         # puts e.backtrace.join("\n")
         #report incident

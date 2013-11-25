@@ -5,6 +5,7 @@ require 'open-uri'
 module Scrapers
   module Blogs
     class RSSFeed
+      
       def initialize url
         @url = "#{url.gsub(/\/$/, '')}/feed/"
       end

@@ -4,7 +4,6 @@ module Scrapers
   module Blogs
     class Post 
       attr_accessor :published_at, :link, :content, :description, :images, :products, :title, :author, :categories
-      attr_accessor :html_description, :html_content
       
       def initialize
         @images = []
@@ -15,11 +14,13 @@ module Scrapers
       def from item #rss item
         self.published_at = item.pubDate
         self.link = item.link
-        self.html_content = Nokogiri::HTML.fragment item.content_encoded
-        self.html_description = Nokogiri::HTML.fragment item.description
         self.title = item.title
         self.author = item.author
         self.categories = item.categories.map(&category_name)
+        self.description = Description.extract(item.description)
+        self.images = Images.extract(item.content_encoded)
+        self.content = Content.extract(item.content_encoded)
+        self.products = ProductsFinder.new(item.content_encoded, self.link).products
         self
       end
       

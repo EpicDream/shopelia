@@ -14,9 +14,9 @@ class Scrapers::Blogs::PostTest < ActiveSupport::TestCase
     post.link = "htpp://"
     post.images = ["http://blog.com/image_1.jpg"]
     
-    mpost = post.modelize(::Post)
+    mpost = post.modelize()
     assert_equal post.published_at, mpost.published_at
     assert_equal post.link, mpost.link
-    assert_equal post.images, JSON.parse(mpost.images)
+    assert_equal post.images, mpost.images
   end
 end
