@@ -145,7 +145,7 @@ module AlgoliaFeed
     def xmllint(path)
       xmllint = `/usr/bin/xmllint --format --output #{path} --encode UTF-8 --nocdata --recover #{path}`
       puts xmllint if xmllint =~ /\S/
-      file
+      path
     end
 
     def download_url(url)
