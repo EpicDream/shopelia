@@ -5,7 +5,13 @@ module Scrapers
     class Post 
       attr_accessor :published_at, :link, :content, :description, :images, :products, :title, :author, :categories
       attr_accessor :html_description, :html_content
-  
+      
+      def initialize
+        @images = []
+        @products = []
+        @categories = []
+      end
+      
       def from item #rss item
         self.published_at = item.pubDate
         self.link = item.link
