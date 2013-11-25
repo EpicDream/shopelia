@@ -104,3 +104,11 @@ module YAML
     YAML.load_file(path)
   end
 end
+
+class ActiveRecord::Base
+  def self.json_attributes attributes
+    attributes.each do |attribute|
+      define_method(attribute) { JSON.parse(read_attribute(attribute))}
+    end
+  end
+end
