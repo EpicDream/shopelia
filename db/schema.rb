@@ -230,6 +230,7 @@ ActiveRecord::Schema.define(:version => 20131126093550) do
 
   create_table "images", :force => true do |t|
     t.string   "url"
+    t.string   "type"
     t.datetime "created_at",           :null => false
     t.datetime "updated_at",           :null => false
     t.string   "picture_file_name"
@@ -237,7 +238,7 @@ ActiveRecord::Schema.define(:version => 20131126093550) do
     t.integer  "picture_file_size"
     t.datetime "picture_updated_at"
     t.string   "picture_fingerprint"
-    t.string   "picture_size"
+    t.string   "picture_sizes"
   end
 
   create_table "incidents", :force => true do |t|
