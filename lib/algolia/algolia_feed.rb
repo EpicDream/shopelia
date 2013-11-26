@@ -16,7 +16,7 @@ module AlgoliaFeed
     end
 
     def initialize(params={})
-      self.batch_size      = params[:batch_size]      || 1000
+      self.batch_size      = params[:batch_size]      || 10000
       self.index_name      = params[:index_name]      || 'products-feed-fr-new'
       self.prod_index_name = params[:prod_index_name] || 'products-feed-fr'
       self.debug           = params[:debug]           || 0
