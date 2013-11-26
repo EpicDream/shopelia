@@ -168,6 +168,7 @@ Shopelia::Application.routes.draw do
     namespace :customers do
       namespace :merkav do
         resources :merkav_transactions, :as => "transactions", :only => [:index, :create, :show]
+        resources :stats, :only => :index
       end
     end
   end

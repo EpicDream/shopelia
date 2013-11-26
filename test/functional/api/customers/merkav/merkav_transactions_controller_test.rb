@@ -8,7 +8,7 @@ class Api::Customers::Merkav::MerkavTransactionsControllerTest < ActionControlle
   end
 
   test "it should create a new merkav transaction" do
-    assert_difference "MerkavTransaction.count" do
+    assert_difference ["MerkavTransaction.count","MerkavWorker.jobs.count"] do
       post :create, merkav_transaction:{amount:100,vad_id:1}, format: :json
       assert_response :success
       @id = json_response["id"]

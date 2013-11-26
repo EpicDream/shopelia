@@ -1,5 +1,5 @@
 class MerkavTransaction < ActiveRecord::Base
-  belongs_to :virtual_cards
+  belongs_to :virtual_card
 
   validates :amount, :inclusion => 100..10000
   validates :vad_id, :presence => true
