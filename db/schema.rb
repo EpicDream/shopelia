@@ -228,6 +228,10 @@ ActiveRecord::Schema.define(:version => 20131126093550) do
     t.integer  "device_id"
   end
 
+  add_index "events", ["developer_id"], :name => "index_events_on_developer_id"
+  add_index "events", ["device_id"], :name => "index_events_on_device_id"
+  add_index "events", ["product_id"], :name => "index_events_on_product_id"
+
   create_table "images", :force => true do |t|
     t.string   "url"
     t.string   "type"
@@ -386,6 +390,7 @@ ActiveRecord::Schema.define(:version => 20131126093550) do
     t.datetime "updated_at",                   :null => false
     t.integer  "amount"
     t.integer  "mangopay_source_wallet_id"
+    t.integer  "virtual_card_id"
   end
 
   create_table "posts", :force => true do |t|
@@ -402,6 +407,16 @@ ActiveRecord::Schema.define(:version => 20131126093550) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
   end
+
+  create_table "product_images", :force => true do |t|
+    t.text     "url"
+    t.integer  "product_version_id"
+    t.string   "size"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
+  add_index "product_images", ["product_version_id"], :name => "index_product_images_on_product_version_id"
 
   create_table "product_masters", :force => true do |t|
     t.datetime "created_at", :null => false
@@ -563,5 +578,17 @@ ActiveRecord::Schema.define(:version => 20131126093550) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "virtual_cards", :force => true do |t|
+    t.string   "provider"
+    t.string   "number"
+    t.string   "exp_month"
+    t.string   "exp_year"
+    t.string   "cvv"
+    t.float    "amount"
+    t.string   "cvd_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
 end

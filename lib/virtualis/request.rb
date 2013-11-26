@@ -25,6 +25,7 @@ module Virtualis
       signer.private_key = Virtualis.configuration.key
       signer.security_token_id = SecureRandom.uuid
       node = signer.document.xpath("//soap:Body").first
+      signer.timestamp! if Virtualis.configuration.add_timestamp
       signer.digest! node, {id:SecureRandom.uuid}
       signer.sign!
       signer.to_xml

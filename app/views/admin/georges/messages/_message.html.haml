@@ -19,7 +19,9 @@
             %span.label.label-success#rating= message.rating == 0 ? "Pending rating" : "Rating: #{message.rating}"
       %span.chat-time
         - if message.collection_uuid && !message.collection_uuid.empty?
-          = link_to("Collection n° " + message.collection_uuid, edit_admin_collection_path(Collection.find_by_uuid(message.collection_uuid)), target: '_blank' )
+          collection = Collection.find_by_uuid(message.collection_uuid)
+          if collection.present?
+            = link_to("Collection n° " + message.collection_uuid, edit_admin_collection_path(collection), target: '_blank' )
 
 - else
   .chat-message.clearfix{data:{id:"#{message.id}"}}

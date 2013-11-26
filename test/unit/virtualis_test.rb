@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 require 'test_helper'
-
 class VirtualisTest < ActiveSupport::TestCase
 
   def test_virtualis_message_detail_carte_virtuelle
@@ -60,4 +59,23 @@ class VirtualisTest < ActiveSupport::TestCase
       assert_equal('8', result['resultat'])
     end
   end
+
+  def test_virtualis_good_reports
+    data = Virtualis::Report.parse("#{Rails.root}/test/data/virtualis/report_ok_1.csv")
+    assert_equal(27, data[:creation].size)
+    assert_equal(25, data[:authorization].size)
+    assert_equal(0, data[:compensation].size)
+    data = Virtualis::Report.parse("#{Rails.root}/test/data/virtualis/report_ok_2.csv")
+    assert_equal(66, data[:creation].size)
+    assert_equal(82, data[:authorization].size)
+    assert_equal(83, data[:compensation].size)
+  end
+  
+  def test_virtualis_broken_reports
+    data = Virtualis::Report.parse("#{Rails.root}/test/data/virtualis/report_ko_1.csv")
+    assert_equal(1, data[:errors].size)
+    data = Virtualis::Report.parse("#{Rails.root}/test/data/virtualis/report_ko_2.csv")
+    assert_equal(1, data[:errors].size)
+  end
+
 end

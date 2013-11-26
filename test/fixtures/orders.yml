@@ -43,6 +43,7 @@ elarch_rueducommerce_billing:
   prepared_price_total: 16.0
   expected_cashfront_value: 0.0
   created_at: <%= 10.minutes.ago %>
+  cvd_solution: "virtualis"
 
 elarch_amazon_billing:
   meta_order: elarch_billing

@@ -6,7 +6,7 @@ module AlgoliaFeed
 
     require 'nokogiri'
 
-    attr_accessor :meta_url
+    attr_accessor :meta_url, :rejected_feeds
 
     def download
       self.urls = []
@@ -16,6 +16,9 @@ module AlgoliaFeed
         reader.each do |r|
           next unless r.name == 'global_feed' && r.node_type == Nokogiri::XML::Reader::TYPE_ELEMENT
           url = Nokogiri::XML(r.outer_xml).text
+          if m = /progid=(\d+)/.match(url)
+            next if self.rejected_feeds.include?(m[1])
+          end
           self.urls << url if url.size > 0 and url =~ /\Ahttp:/
         end
       end
@@ -27,6 +30,7 @@ module AlgoliaFeed
       super
 
       self.meta_url = 'http://affilie.publicidees.com/xmlProgAff.php?partid=37027&key=487bba1ccb0e433d1c3a18d02936e817'
+      self.rejected_feeds = ['1981', '2970']
       self.parser_class = params[:parser_class] || 'AlgoliaFeed::Publicidees'
     end
   end

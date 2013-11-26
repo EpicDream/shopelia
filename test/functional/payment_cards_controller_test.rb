@@ -21,9 +21,10 @@ class PaymentCardsControllerTest < ActionController::TestCase
   end
 
   test "should create card via ajax" do
+
     assert_difference('PaymentCard.count') do
       xhr :post, :create, :payment_card => {
-        :number => "1234123412341234",
+        :number => "5105105105105100",
         :exp_month => "02",
         :exp_year => "2015",
         :cvv => "123"
