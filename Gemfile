@@ -34,7 +34,6 @@ gem 'devise-i18n-views'
 gem 'rails-i18n'
 gem 'backbone-on-rails', '1.0.0.0'
 gem 'http_accept_language', '~> 2.0.0.pre'
-gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
 gem 'sanitize'
 gem 'httpclient'
