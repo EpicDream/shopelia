@@ -76,6 +76,13 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.integer  "mangopay_transfer_id"
   end
 
+  create_table "blogs", :force => true do |t|
+    t.string   "url"
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
   create_table "cart_items", :force => true do |t|
     t.string   "uuid"
     t.integer  "cart_id"
@@ -224,6 +231,19 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
   add_index "events", ["developer_id"], :name => "index_events_on_developer_id"
   add_index "events", ["device_id"], :name => "index_events_on_device_id"
   add_index "events", ["product_id"], :name => "index_events_on_product_id"
+
+  create_table "images", :force => true do |t|
+    t.string   "url"
+    t.string   "type"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+    t.string   "picture_file_name"
+    t.string   "picture_content_type"
+    t.integer  "picture_file_size"
+    t.datetime "picture_updated_at"
+    t.string   "picture_fingerprint"
+    t.string   "picture_sizes"
+  end
 
   create_table "incidents", :force => true do |t|
     t.integer  "severity"
@@ -384,6 +404,21 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.integer  "amount"
     t.integer  "mangopay_source_wallet_id"
     t.integer  "virtual_card_id"
+  end
+
+  create_table "posts", :force => true do |t|
+    t.integer  "blog_id"
+    t.datetime "published_at"
+    t.string   "link"
+    t.text     "content"
+    t.text     "description"
+    t.string   "title"
+    t.string   "author"
+    t.text     "categories"
+    t.text     "images"
+    t.text     "products"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "product_images", :force => true do |t|

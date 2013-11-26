@@ -1,0 +1,49 @@
+<%= link_to "Retour à l'index", admin_blogs_url, class:'back-link' %>
+<%= link_to "Récupérer les nouveaux articles", admin_blog_url(@blog, :fetch => true), class:"btn fetch-post-link" %>
+
+<div class="coolbox blog-post posts-outline">
+  <p>
+    <%= link_to @blog.url, @blog.url %>
+  </p>
+  <ol>
+    <% @blog.posts.each_with_index do |post, index| %>
+      <li>
+        <%= link_to "#{post.title} (#{l(post.published_at)})", "#post-#{index}" %>
+      </li>
+    <% end %>
+  </ol>
+</div>
+
+<% @blog.posts.each_with_index do |post, index| %>
+  <div class="blog-post coolbox" id="post-<%= index%>">
+    <h5>Intitulé</h5>
+      <span><%= post.title %></span>
+    <h5>Date</h5>
+      <span><%= post.published_at %></span>
+    <h5>Auteur</h5>
+      <span><%= post.author %></span>
+    <h5>Lien vers l'article</h5>
+      <span><%= link_to post.link, post.link, target: :blank %></span>
+    <h5>Contenu</h5>
+      <p><%= post.description %></p>
+      <p><%= post.content %></p>
+    <h5>Images</h5>
+      <ul>
+        <% post.images.each do |link| %>
+         <li><%= link_to link, link, target: :blank %></li>
+        <% end %>
+      </ul>
+    <h5>Produits</h5>
+    <ul>
+      <% post.products.each do |link| %>
+      <li><%= link_to link, link, target: :blank %></li>
+      <% end %>
+    </ul>
+    <h5>Catégories</h5>
+    <ul>
+      <% post.categories.each do |name| %>
+       <li><%= name %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
