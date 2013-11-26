@@ -3,19 +3,21 @@ class Image < ActiveRecord::Base
   
   attr_accessible :url
   alias_attribute :sizes, :picture_sizes
+  validates :url, presence:true
+  validates :picture, presence:true, on: :create
   
   has_attached_file :picture, 
                     :styles => SIZES, 
                     :url  => "/assets/images/:fmd5/:style/:md5.:extension",
                     :path => ":rails_root/public/assets/images/:fmd5/:style/:md5.:extension"
                                         
-  before_create :create_files
+  before_validation :create_files
   after_post_process { self.picture_sizes = formats.to_json }
-  
+
   private
   
   def create_files
-    self.picture = URI.parse self.url
+    self.picture = URI.parse self.url rescue nil
   end
   
   def formats

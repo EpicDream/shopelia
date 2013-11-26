@@ -22,4 +22,11 @@ class ImageTest < ActiveSupport::TestCase
     assert_equal sizes.to_json, @image.picture_sizes
   end
   
+  test "add model error if picture can't be created from url" do
+    image = Image.create(url:"http://")
+    
+    assert_equal 1, image.errors.count
+    assert !image.valid?
+  end
+  
 end
