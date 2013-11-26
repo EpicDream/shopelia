@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131122163241) do
+ActiveRecord::Schema.define(:version => 20131126093550) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -226,6 +226,18 @@ ActiveRecord::Schema.define(:version => 20131122163241) do
     t.datetime "updated_at",   :null => false
     t.boolean  "monetizable"
     t.integer  "device_id"
+  end
+
+  create_table "images", :force => true do |t|
+    t.string   "url"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+    t.string   "picture_file_name"
+    t.string   "picture_content_type"
+    t.integer  "picture_file_size"
+    t.datetime "picture_updated_at"
+    t.string   "picture_fingerprint"
+    t.string   "picture_size"
   end
 
   create_table "incidents", :force => true do |t|
