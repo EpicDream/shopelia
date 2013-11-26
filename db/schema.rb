@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131126093550) do
+ActiveRecord::Schema.define(:version => 20131126122913) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -300,6 +300,19 @@ ActiveRecord::Schema.define(:version => 20131126093550) do
   end
 
   add_index "merchants", ["mapping_id"], :name => "index_merchants_on_mapping_id"
+
+  create_table "merkav_transactions", :force => true do |t|
+    t.integer  "virtual_card_id"
+    t.string   "token"
+    t.string   "optkey"
+    t.integer  "amount"
+    t.datetime "executed_at"
+    t.string   "status"
+    t.integer  "merkav_transaction_id"
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
+    t.integer  "vad_id"
+  end
 
   create_table "messages", :force => true do |t|
     t.text     "content"

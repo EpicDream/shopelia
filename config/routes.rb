@@ -166,6 +166,12 @@ Shopelia::Application.routes.draw do
     namespace :vulcain do
       resources :merchants, :only => :update
     end
+    namespace :customers do
+      namespace :merkav do
+        resources :merkav_transactions, :as => "transactions", :only => [:index, :create, :show]
+        resources :stats, :only => :index
+      end
+    end
   end
 
   match "about" => "home#about"
