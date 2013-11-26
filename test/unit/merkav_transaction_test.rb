@@ -3,12 +3,16 @@ require 'test_helper'
 class MerkavTransactionTest < ActiveSupport::TestCase
   
   test "it should create merkav transaction" do
-    assert MerkavTransaction.new(amount:100).save
+    assert MerkavTransaction.new(amount:100, vad_id:1).save
   end
 
   test "it shouldn't create merkav transaction with invalid amount" do 
+    assert !MerkavTransaction.new(amount:1, vad_id:1).save
+    assert !MerkavTransaction.new(amount:50000, vad_id:1).save
+  end
+
+  test "it shouldn't create merkav transaction without vad_id" do 
     assert !MerkavTransaction.new(amount:1).save
-    assert !MerkavTransaction.new(amount:50000).save
   end
 
   test "it should generate CVV" do 

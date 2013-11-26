@@ -2,8 +2,9 @@ class MerkavTransaction < ActiveRecord::Base
   belongs_to :virtual_cards
 
   validates :amount, :inclusion => 100..10000
+  validates :vad_id, :presence => true
 
-  attr_accessible :amount, :executed_at, :merkav_transaction_id, :optkey, :status, :token
+  attr_accessible :amount, :vad_id
 
   def generate_virtual_card
     card = VirtualCard.new(amount:self.amount, provider:"virtualis")
