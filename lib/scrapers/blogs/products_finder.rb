@@ -15,9 +15,10 @@ module Scrapers
       
       def products
         @blocks.inject({}) do |products, block|
-          block.xpath(".//a").each { |a| 
-            next if remove?(href[a])
-            products.merge!({"#{a.text}" => href[a]})
+          block.xpath(".//a").each { |a|
+            link = href[a]
+            next if products.values.include?(link) || remove?(link)
+            products.merge!({"#{a.text}" => link})
           }
           products
         end
