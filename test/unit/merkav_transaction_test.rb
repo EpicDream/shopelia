@@ -26,6 +26,11 @@ class MerkavTransactionTest < ActiveSupport::TestCase
       assert_equal "ok", result[:status]
     end
     assert_not_nil transaction.virtual_card_id
+
+    assert_difference "VirtualCard.count", 0 do 
+      result = transaction.generate_virtual_card
+      assert_equal "error", result[:status]
+    end
   end
 
   test "it should fail creation if quota is exceeded" do

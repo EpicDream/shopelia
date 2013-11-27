@@ -26,10 +26,10 @@ module Customers
       result = @transaction.generate_virtual_card
       raise StandardError, result['error'] if result['status'] != 'ok'
 
-      self.generate_customer_data
+      self.generate_customer_data if @transaction.token.nil?
       raise StandardError, @transaction.status if @transaction.otpKey.nil?
 
-      self.generate_transaction
+      self.generate_transaction if @transaction.merkav_transaction_id.nil?
       raise StandardError, @transaction.status if @transaction.status != 'success'
     end
 
