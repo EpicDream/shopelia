@@ -12,7 +12,7 @@ module Scrapers
           next unless dimensions = FastImage.size(href)
           next if dimensions[0] < MIN_WIDTH
           href
-        end
+        end.compact
       end
       
       private

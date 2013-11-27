@@ -8,7 +8,7 @@ module Scrapers
     
     class Scraper
       attr_accessor :url
-      DATE_PATTERN = /(\d{1,2}[\s\.\/]*[a-zA-Z\d]+[\s\.\/]*\d{2,4})/
+      DATE_PATTERN = /(\d{1,2}[\s\.\/]+[a-zA-Z\d]+[\s\.\/]+\d{2,4})/
       
       def initialize url=nil
         @url = url
@@ -34,7 +34,8 @@ module Scrapers
           header = block.search(".//preceding::h2").last
           header.text =~ DATE_PATTERN if header
         end
-        (Date.parse_international($1) if $1) || Time.now
+        date = Date.parse_international($1) if $1 rescue nil
+        date || Time.now
       end
       
       def link block
