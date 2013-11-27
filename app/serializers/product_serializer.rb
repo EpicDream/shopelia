@@ -3,10 +3,14 @@ class ProductSerializer < ActiveModel::Serializer
   
   attributes :id, :image_url, :name, :url, :merchant, :description, :master_id
   attributes :versions, :brand, :reference, :ready, :options_completed, :price
-  attributes :image_size, :rating
+  attributes :image_size, :rating, :monetized_url, :saturn
  
   def ready
     object.ready? ? 1 : 0
+  end
+
+  def saturn
+    object.merchant.mapping_id.present? ? 1 : 0
   end
  
   def rating

@@ -44,7 +44,7 @@ namespace :shopelia do
     task :cleanup => :environment do
       Event.where(action:Event::REQUEST).where("created_at < ?", 1.day.ago).delete_all
       Collection.where("name is null or length(name) = 0").where("created_at < ?", 1.month.ago).destroy_all
-      Collection.where("name is null or length(name) = 0").where("created_at < ?", 1.day.ago).each do |collection|
+      Collection.where("name is null or length(name) = 0").where("created_at < ?", 1.week.ago).each do |collection|
         collection.destroy if collection.collection_items.count == 0
       end
       Merchant.where("name=domain and viking_data is null").each do |merchant|

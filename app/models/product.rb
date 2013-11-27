@@ -87,6 +87,10 @@ class Product < ActiveRecord::Base
     version ? (version.price + version.price_shipping).to_f.round(2) : nil
   end
 
+  def monetized_url
+    UrlMonetizer.new.get(self.url)
+  end
+
   def assess_versions
     ok = false
     self.product_versions.each do |version|
@@ -209,14 +213,9 @@ class Product < ActiveRecord::Base
     self.update_column "versions_expires_at", nil
   end
 
-  def set_image_size retry_fetch=true
-    return if self.image_url.blank?
-    size = FastImage.size(self.image_url, :raise_on_failure=>true)
-    self.update_column "image_size", size.join("x") unless size.nil?
-  rescue 
-    return unless retry_fetch
-    `curl #{self.image_url} > /dev/null 2>&1`
-    set_image_size(false)
+  def set_image_size
+    size = ImageSizeProcessor.get_image_size(self.image_url)
+    self.update_column "image_size", size unless size.nil?
   end
 
   def notify_channel

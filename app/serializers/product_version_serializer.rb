@@ -6,6 +6,7 @@ class ProductVersionSerializer < ActiveModel::Serializer
   attributes :cashfront_value, :availability_info, :rating
   attributes :option1, :option2, :option3, :option4
   attributes :option1_md5, :option2_md5, :option3_md5, :option4_md5
+  attributes :images
   
   def available
     object.available? ? 1 : 0
@@ -35,7 +36,15 @@ class ProductVersionSerializer < ActiveModel::Serializer
     JSON.parse(object.option4) unless object.option4.nil?
   end
 
+  def images
+    object.product_images.map { |i| {url:i.url, size:i.size} }
+  end
+
   def include_description?
+    scope.nil? || !scope[:short]
+  end
+
+  def include_images?
     scope.nil? || !scope[:short]
   end
 end

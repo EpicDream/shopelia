@@ -14,7 +14,6 @@ class Api::Viking::ProductsControllerTest < ActionController::TestCase
     
     assert_response :success   
     assert_equal 3, json_response.count
-    assert_equal [nil, true].to_set, json_response.map { |e| e["batch"] }.to_set
 
     get :index
     assert_equal 0, json_response.count    

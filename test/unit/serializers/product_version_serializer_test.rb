@@ -9,7 +9,9 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
     @product.option2 = { "text" => "34" }
     @product.option3 = nil
     @product.option4 = nil
+    @product.images = ["http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg"]
     @product.save
+    @product.reload
     @developer = developers(:prixing)
   end
   
@@ -36,6 +38,9 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
     assert_equal @product.availability_info, hash[:product_version][:availability_info]
     assert_equal 0, hash[:product_version][:cashfront_value]
     assert_equal 1, hash[:product_version][:available]    
+    assert_equal 1, hash[:product_version][:images].count
+    assert_equal "http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg", hash[:product_version][:images][0][:url]
+    assert_equal "450x383", hash[:product_version][:images][0][:size]
   end
 
   test "it should serialize cashfront value" do
@@ -45,10 +50,11 @@ class ProductVersionSerializerTest < ActiveSupport::TestCase
     assert_equal 0.30, hash[:product_version][:cashfront_value]
   end
 
-  test "it should serialize without description" do
+  test "it should serialize without description and images in short mode" do
     product_serializer = ProductVersionSerializer.new(product_versions(:dvd), scope:{short:true})
     hash = product_serializer.as_json
       
     assert hash[:product_version][:description].nil?
+    assert hash[:product_version][:images].nil?
   end
 end

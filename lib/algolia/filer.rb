@@ -15,7 +15,7 @@ module AlgoliaFeed
 
   class Filer
  
-    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params
+    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params, :clean_xml
 
     def self.download(params={})
       self.new(params).download
@@ -33,6 +33,7 @@ module AlgoliaFeed
       self.http_auth      = params[:http_auth]      || {}
       self.rejected_files = params[:rejected_files] || []
       self.parser_class   = params[:parser_class]   || 'AlgoliaFeed::XmlParser'
+      self.clean_xml      = params[:clean_xml]      || true
       self
     end
 
@@ -137,8 +138,14 @@ module AlgoliaFeed
       else
         FileUtils.copy_file(raw_file, decoded_file)
       end
-#      `xmllint --format --output #{decoded_file} --nocdata #{decoded_file}`
+      xmllint(decoded_file) if self.clean_xml
       decoded_file
+    end
+
+    def xmllint(path)
+      xmllint = `/usr/bin/xmllint --format --output #{path} --encode UTF-8 --nocdata --nonet --recover #{path}`
+      puts "xmllint failed for #{path}: #{xmllint}" if xmllint =~ /\S/
+      path
     end
 
     def download_url(url)
@@ -161,15 +168,25 @@ module AlgoliaFeed
       end
     end
 
-    def process_xml_directory(dir=nil, children=6)
+    def count_children(pid)
+      begin
+        return Sys::ProcTable.ps.select{ |p| p.ppid == pid && p.state != 'Z'}.size
+      rescue => e
+        puts "ps failed: #{e}" if self.debug > 1
+        return nil
+      end
+    end
+
+    def process_xml_directory(dir=nil, max_children=6)
       algolia = AlgoliaFeed.new(self.params)
       algolia.connect(algolia.index_name)
       algolia.set_index_attributes
-      Tagger.clear_redis
       dir = self.tmpdir unless dir.present?
       Find.find(dir) do |path|
         next unless File.file?(path)
-        while Sys::ProcTable.ps.select{ |p| p.ppid == $$ && p.state != 'Z'}.size >= children
+        while true
+          children_count = count_children($$)
+          break if children_count.is_a?(Integer) && children_count < max_children
           sleep 1
         end
         fork do

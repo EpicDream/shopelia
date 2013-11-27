@@ -62,6 +62,7 @@ Shopelia::Application.routes.draw do
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
     resources :viking, :only => :index
+    resources :blogs
     resources :products do
       get :retry, :on => :member
       get :mute, :on => :member
@@ -164,6 +165,12 @@ Shopelia::Application.routes.draw do
     end
     namespace :vulcain do
       resources :merchants, :only => :update
+    end
+    namespace :customers do
+      namespace :merkav do
+        resources :merkav_transactions, :as => "transactions", :only => [:index, :create, :show]
+        resources :stats, :only => :index
+      end
     end
   end
 

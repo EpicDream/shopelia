@@ -9,7 +9,8 @@ rueducommerce:
   should_clean_args: false
   billing_solution: "mangopay"
   injection_solution: "vulcain"
-  cvd_solution: "virtualis" 
+  cvd_solution: "virtualis"
+  mapping_id: 1 
 
 amazon:
   name: "Amazon"

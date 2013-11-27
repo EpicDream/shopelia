@@ -12,3 +12,8 @@ cadeau_shaker:
   name: CadeauShaker
   api_key: "cafe"
   email: "cadeauskaher@gmail.com"
+
+merkav:
+  name: Merkav
+  api_key: "blabla"
+  email: "merkav@merkav.com"

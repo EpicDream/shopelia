@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class PaymentTransactionTest < ActiveSupport::TestCase
+class PaymentTransactionAmazonTest < ActiveSupport::TestCase
 
   setup do
     @meta = meta_orders(:elarch_billing)
@@ -53,4 +53,5 @@ class PaymentTransactionTest < ActiveSupport::TestCase
     result = payment.process
     assert_equal "created", result[:status], result[:message]
   end
+
 end
