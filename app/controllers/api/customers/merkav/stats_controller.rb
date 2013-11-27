@@ -6,7 +6,8 @@ class Api::Customers::Merkav::StatsController < Api::Customers::Merkav::BaseCont
     render json: {
       transactions_count: MerkavTransaction.count,
       successfull_transactions_count: MerkavTransaction.where(status:'success').count,
-      successfull_transactions_total_amount: MerkavTransaction.where(status:'success').sum(:amount)
+      successfull_transactions_total_amount: MerkavTransaction.where(status:'success').sum(:amount),
+      quota: ::Customers::Merkav.get_quota
     }
   end
 end

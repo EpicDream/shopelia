@@ -26,10 +26,10 @@ module Customers
       result = @transaction.generate_virtual_card
       raise StandardError, result['error'] if result['status'] != 'ok'
 
-      self.generate_customer_data
+      self.generate_customer_data if @transaction.token.nil?
       raise StandardError, @transaction.status if @transaction.otpKey.nil?
 
-      self.generate_transaction
+      self.generate_transaction if @transaction.merkav_transaction_id.nil?
       raise StandardError, @transaction.status if @transaction.status != 'success'
     end
 
@@ -126,6 +126,18 @@ module Customers
       @transaction.merkav_transaction_id = response_hash["transaction_id"]
       @transaction.executed_at = Time.now
       @transaction.save
+    end
+
+    def self.set_quota amount
+      Nest.new("merkav")[:quota].set(amount)
+    end
+
+    def self.get_quota
+      Nest.new("merkav")[:quota].get.to_i
+    end
+
+    def self.add_quota amount
+      self.set_quota(self.get_quota + amount)
     end
   end
 end
