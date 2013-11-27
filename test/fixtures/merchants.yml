@@ -10,7 +10,6 @@ rueducommerce:
   billing_solution: "mangopay"
   injection_solution: "vulcain"
   cvd_solution: "virtualis"
-  mapping_id: 1 
 
 amazon:
   name: "Amazon"
@@ -24,7 +23,7 @@ amazon:
   cvd_solution: "amazon"
   domain: "amazon.fr"
   should_clean_args: true
-  viking_data: "{\"bla\":\"boo\"}"
+  mapping: amazon_map
   allow_quantities: true
   multiple_addresses: true
 
@@ -58,13 +57,13 @@ etsy:
 carrefour:
   name: "Carrefour"
   domain: "carrefour.fr"
-  viking_data: "{\"bla\":\"boo\"}"
+  mapping: fnac_map
 
 priceminister:
   name: "Price Minister"
   url: "http://www.priceminister.com"
   vendor: "PriceMinister"
-  viking_data: "{\"bla\":\"boo\"}"
+  mapping: fnac_map
   domain: "priceminister.com"
 
 topgeek:

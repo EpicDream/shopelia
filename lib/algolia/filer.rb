@@ -143,8 +143,8 @@ module AlgoliaFeed
     end
 
     def xmllint(path)
-      xmllint = `/usr/bin/xmllint --format --output #{path} --encode UTF-8 --nocdata --recover #{path}`
-      puts xmllint if xmllint =~ /\S/
+      xmllint = `/usr/bin/xmllint --format --output #{path} --encode UTF-8 --nocdata --nonet --recover #{path}`
+      puts "xmllint failed for #{path}: #{xmllint}" if xmllint =~ /\S/
       path
     end
 
