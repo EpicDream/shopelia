@@ -295,13 +295,11 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.boolean  "allow_quantities",    :default => true
     t.boolean  "rejecting_events",    :default => false
     t.boolean  "multiple_addresses",  :default => false
-    t.integer  "viking_id"
     t.integer  "mapping_id"
     t.integer  "products_count"
   end
 
   add_index "merchants", ["mapping_id"], :name => "index_merchants_on_mapping_id"
-  add_index "merchants", ["viking_id"], :name => "index_merchants_on_viking_id"
 
   create_table "merkav_transactions", :force => true do |t|
     t.integer  "virtual_card_id"
