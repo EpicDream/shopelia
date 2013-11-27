@@ -38,7 +38,11 @@ div.blogs{
   display:block;
   margin-top:20px;
 }
-
+.blogs p.help{
+  font-style:italic;
+  font-size:12px; 
+  color:gray;
+}
 
 /*Blog posts*/
 

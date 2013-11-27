@@ -1,7 +1,7 @@
 class Admin::BlogsController < Admin::AdminController
   
   def index
-    @blogs = Blog.all
+    @blogs = Blog.order(:url)
   end
   
   def show
