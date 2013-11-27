@@ -4,6 +4,10 @@ class RueducommerceFr
   DEFAULT_SHIPPING_INFO = "Colissimo avec délai de 2 à 4 jours ouvrés."
   DEFAULT_PRICE_SHIPPING = "6.99 €"
 
+  AVAILABILITY_HASH = {
+    /\d+ (article|reference)/i => false, # Redirection vers recherche quand trouve pas.
+  }
+
   def initialize url
     @url = url
   end
