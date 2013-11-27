@@ -64,6 +64,12 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert posts.first.published_at >= Date.parse("2012-01-01")
   end
   
+  test "complete post link with base url if relative" do
+    @scraper.url = "http://www.lesdessousdemarine.com/"
+    post = @scraper.posts.first
+    assert_match /lesdessousdemarine\.com/, post.link
+  end
+  
 end
 
   

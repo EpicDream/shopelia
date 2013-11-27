@@ -8,7 +8,7 @@ module Scrapers
     
     class Scraper
       attr_accessor :url
-      DATE_PATTERN = /(\d{1,2}[\s\.\/]+[a-zA-Z\d]+[\s\.\/]+\d{2,4})/
+      DATE_PATTERN = /(\d{1,2}[\s\.\/]*[a-zA-Z\d]+[\s\.\/]*\d{2,4})/
       
       def initialize url=nil
         @url = url
@@ -32,14 +32,17 @@ module Scrapers
         block.text =~ DATE_PATTERN
         unless $1
           header = block.search(".//preceding::h2").last
-          header.text =~ DATE_PATTERN
+          header.text =~ DATE_PATTERN if header
         end
         (Date.parse_international($1) if $1) || Time.now
       end
       
       def link block
-        node = header(block).search('.//a').first
-        node && node.attribute("href").value
+        header = header(block)
+        node = header.search('.//a').first if header
+        href = node && node.attribute("href").value
+        href = @url + href unless href =~ Regexp.new(URI(@url).host)
+        href
       end
       
       def title block
@@ -64,7 +67,7 @@ module Scrapers
       
       def blocks
         page = @agent.get(@url)
-        page.search("article, div.post, div.blogselection div")
+        page.search("article, div.post, div.blogselection > div")
       end
       
       def url=url
@@ -75,7 +78,9 @@ module Scrapers
       private
       
       def header block
-        block.xpath(".//preceding::h2 | .//preceding::h1 | .//preceding::h3").last
+        header_in = block.xpath(".//h1 | .//h2").first
+        header_out = block.xpath(".//preceding::h2 | .//preceding::h1 | .//preceding::h3").last
+        header_in || header_out
       end
       
     end
