@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131126122913) do
+ActiveRecord::Schema.define(:version => 20131127163618) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -70,9 +70,9 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.integer  "mangopay_contribution_id"
     t.integer  "mangopay_contribution_amount"
     t.string   "mangopay_contribution_message"
-    t.integer  "mangopay_destination_wallet_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.integer  "mangopay_destination_wallet_id"
     t.integer  "mangopay_transfer_id"
   end
 
@@ -232,6 +232,17 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
   add_index "events", ["device_id"], :name => "index_events_on_device_id"
   add_index "events", ["product_id"], :name => "index_events_on_product_id"
 
+  create_table "flinkers", :force => true do |t|
+    t.string   "name"
+    t.string   "url"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.integer  "avatar_file_size"
+    t.datetime "avatar_updated_at"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
+
   create_table "images", :force => true do |t|
     t.string   "url"
     t.string   "type"
@@ -254,6 +265,17 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.integer  "resource_id"
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
+  end
+
+  create_table "looks", :force => true do |t|
+    t.string   "uuid"
+    t.string   "name"
+    t.string   "url"
+    t.integer  "flinker_id"
+    t.integer  "post_id"
+    t.datetime "published_at"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "mappings", :force => true do |t|
