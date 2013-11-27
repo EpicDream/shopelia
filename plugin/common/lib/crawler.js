@@ -115,7 +115,7 @@ Crawler.selectOption = function (elems, value) {
   var backup = elems;
 
   if (elems[0].tagName === "OPTION") {
-    elems = elems.filter(":contains("+value.text+")");
+    elems = elems.filter(':contains("'+value.text+'")');
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && elems[0].tagName === "OPTION") {
@@ -127,7 +127,7 @@ Crawler.selectOption = function (elems, value) {
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.text) {
-    elems = elems.filter(":contains("+value.text+")");
+    elems = elems.filter(':contains("'+value.text+'")');
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.src) {
