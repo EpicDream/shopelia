@@ -145,7 +145,7 @@ module AlgoliaFeed
           :id             => merchant.id,
           :name           => merchant.name,
           :data           => MerchantSerializer.new(merchant).as_json[:merchant],
-          :saturn         => merchant.viking_data.present? ? '1' : '0',
+          :saturn         => merchant.mapping_id.present? ? '1' : '0',
           :products_count => 0
         }
       end

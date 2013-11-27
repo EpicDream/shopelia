@@ -3,8 +3,6 @@ require 'test_helper'
 class Api::Viking::MappingsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
-  fixtures :mappings, :merchants
-
   setup do
     @merchant = merchants(:fnac)
     @mapping = mappings(:fnac_map)
@@ -40,7 +38,7 @@ class Api::Viking::MappingsControllerTest < ActionController::TestCase
   end
 
   test "it should handle mapping not found" do
-    get :index, merchant_id: merchants(:priceminister).id
+    get :index, merchant_id: merchants(:rueducommerce).id
     assert_response :success
     assert_equal({}, json_response)
   end

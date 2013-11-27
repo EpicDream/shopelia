@@ -32,7 +32,7 @@ class MerchantsDatatable
         number_to_currency(merchant.orders.completed.sum(:billed_price_total)),
         merchant.vendor,
         semaphore(merchant.vulcain_test_pass),
-        semaphore(merchant.viking_data.present?)
+        semaphore(merchant.mapping_id.present?)
       ]
     end
   end
@@ -44,7 +44,7 @@ class MerchantsDatatable
   def fetch_merchants
     merchants = Merchant.scoped.order(:id)
     merchants = merchants.where("vendor is #{@filters[:vulcain] == 'with' ? "not" : ""} null") if @filters[:vulcain].present?
-    merchants = merchants.where("viking_data is #{@filters[:saturn] == 'with' ? "not" : ""} null") if @filters[:saturn].present?
+    merchants = merchants.where("mapping_id is #{@filters[:saturn] == 'with' ? "not" : ""} null") if @filters[:saturn].present?
     merchants = merchants.where("name like :search or vendor like :search or url like :search", search: "%#{params[:sSearch]}%") if params[:sSearch].present?
     merchants.page(page).per_page(per_page)
   end
