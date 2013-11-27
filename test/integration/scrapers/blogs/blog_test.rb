@@ -28,12 +28,12 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     puts missing.inspect
   end
   
-  test "blog" do
-    skip
+  test "blog lesdessousdemarine" do
     @blog.url = "http://www.lesdessousdemarine.com/"
-    @blog.posts.each_with_index do |post, index|
-      puts post.link
-      puts post.published_at.inspect
+    @blog.posts.each do |post|
+      assert !post.link.blank?
+      assert post.images.count > 0
+      assert post.published_at
     end
   end
   
