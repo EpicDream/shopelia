@@ -35,8 +35,12 @@
       </ul>
     <h5>Produits</h5>
     <ul>
-      <% post.products.each do |link| %>
-      <li><%= link_to link, link, target: :blank %></li>
+      <% post.products.each do |product| %>
+      <li>
+        <% product = product.to_a.flatten  %>
+        <span class="product-name"><%= product[0] %></span>
+        <span><%= link_to product[1], product[1], target: :blank %></span>
+      </li>
       <% end %>
     </ul>
     <h5>Catégories</h5>

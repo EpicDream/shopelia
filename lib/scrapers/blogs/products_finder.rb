@@ -11,12 +11,18 @@ module Scrapers
         @url = url
         @uri = URI(url)
         @blocks = blocks()
+        @filters = YAML.load_relative_file("urls_filters.yml")
       end
       
       def products
-        @blocks.map do |block|
-          links(block)
-        end.flatten
+        @blocks.inject({}) do |products, block|
+          block.xpath(".//a").each { |a|
+            link = href[a]
+            next if products.values.include?(link) || remove?(link)
+            products.merge!({"#{a.text}" => link})
+          }
+          products
+        end
       end
       
       def blocks
@@ -26,17 +32,12 @@ module Scrapers
       
       private
       
-      def links block
-        links = block.xpath(".//a").map(&href).compact
-        links.delete_if { |link| 
-          URI(link).host == URI(@url).host rescue true
-        }  
-      end
-      
-      def may_include_products? block
-        !block.text.encode("UTF-8", :undef => :replace, :invalid => :replace).blank? && block.xpath(".//a").any?
-      rescue #theses girls puts some little hearts ... not utf-8
-        false
+      def remove? url
+        @filters.each do |filter|
+          return true if url =~ Regexp.new(filter, true)
+        end
+        URI(url).host == URI(@url).host 
+      rescue true 
       end
       
       def href
