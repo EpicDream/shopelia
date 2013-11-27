@@ -7,7 +7,9 @@ class MerkavTransactionTest < ActiveSupport::TestCase
   end
 
   test "it should create merkav transaction" do
-    assert MerkavTransaction.new(amount:100, vad_id:1).save
+    transaction = MerkavTransaction.new(amount:100, vad_id:1)
+    assert transaction.save
+    assert_equal "pending", transaction.status
   end
 
   test "it shouldn't create merkav transaction with invalid amount" do 
