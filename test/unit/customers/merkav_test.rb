@@ -5,7 +5,8 @@ class Customers::MerkavTest < ActiveSupport::TestCase
 
   setup do
     @developer = developers(:merkav)
-    @transaction = MerkavTransaction.create(amount:100,vad_id:53)
+    Customers::Merkav.set_quota(500)
+    @transaction = MerkavTransaction.create!(amount:100,vad_id:53)
   end
 
   test "it should run good card" do

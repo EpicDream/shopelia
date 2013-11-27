@@ -127,5 +127,17 @@ module Customers
       @transaction.executed_at = Time.now
       @transaction.save
     end
+
+    def self.set_quota amount
+      Nest.new("merkav")[:quota].set(amount)
+    end
+
+    def self.get_quota
+      Nest.new("merkav")[:quota].get.to_i
+    end
+
+    def self.add_quota amount
+      self.set_quota(self.get_quota + amount)
+    end
   end
 end

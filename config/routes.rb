@@ -62,6 +62,7 @@ Shopelia::Application.routes.draw do
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
     resources :viking, :only => :index
+    resources :blogs
     resources :products do
       get :retry, :on => :member
       get :mute, :on => :member
