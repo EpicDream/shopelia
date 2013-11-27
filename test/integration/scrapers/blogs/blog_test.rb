@@ -29,9 +29,11 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
   end
   
   test "blog" do
-    @blog.url = "http://www.leblogdebetty.com/"
+    skip
+    @blog.url = "http://www.lesdessousdemarine.com/"
     @blog.posts.each_with_index do |post, index|
-      puts post.products.inspect
+      puts post.link
+      puts post.published_at.inspect
     end
   end
   

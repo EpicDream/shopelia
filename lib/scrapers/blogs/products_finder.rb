@@ -11,6 +11,7 @@ module Scrapers
         @url = url
         @uri = URI(url)
         @blocks = blocks()
+        @filters = YAML.load_relative_file("urls_filters.yml")
       end
       
       def products
@@ -31,8 +32,12 @@ module Scrapers
       
       private
       
-      def remove? url #use a yaml file  for filters
-        URI(url).host == URI(@url).host rescue true 
+      def remove? url
+        @filters.each do |filter|
+          return true if url =~ Regexp.new(filter, true)
+        end
+        URI(url).host == URI(@url).host 
+      rescue true 
       end
       
       def href
