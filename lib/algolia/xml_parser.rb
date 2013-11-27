@@ -159,6 +159,8 @@ module AlgoliaFeed
       record['timestamp'] = Time.now.to_i
       record['price'].gsub!(/,/, '.') if record.has_key?('price')
       record['price_shipping'].gsub!(/,/, '.') if record.has_key?('price_shipping')
+      record['availability'] = 'En stock' if record['availability'] =~ /\A\d+\Z/
+      record['availability'] = 'En stock' if record['availability'] =~ /yes/i
       set_categories(product, record)
       record
     end

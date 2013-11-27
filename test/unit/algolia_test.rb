@@ -168,10 +168,19 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert(item['_tags'].include?('category:Baskets'))
     assert(item['_tags'].include?('category:Chaussures Bébé'))
   end
-  
 
-
-
-
+  def test_commission_juction
+    cj = AlgoliaFeed::CommissionJunction.new(index_name: 'testing', debug: 0, tmpdir: '/tmp')
+    cj.algolia.connect('testing')
+    cj.process_xml("#{Rails.root}/test/data/commission_junction.xml")
+    sleep 1
+    hits = cj.algolia.index.search('')['hits']
+    assert_equal(1, hits.size)
+    item = hits.first
+    assert_equal('montaignemarket.com', item['merchant_name'])
+    assert_equal('https://www.montaignemarket.com/EN_10798_Clothing_Knitwear_Exemplaire_Exemplaire-black-round-neckline-cashmere-pullover.html', item['product_url'])
+    assert(item['_tags'].include?('category:Men Clothing Knitwear'))
+    assert_equal(70000, item['price'])
+  end
 
 end
