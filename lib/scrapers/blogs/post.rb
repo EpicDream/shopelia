@@ -12,15 +12,17 @@ module Scrapers
       end
       
       def from item #rss item
+        content = Nokogiri::HTML.fragment item.content_encoded
+        description = Nokogiri::HTML.fragment item.description
         self.published_at = item.pubDate
         self.link = item.link
         self.title = item.title
         self.author = item.author
         self.categories = item.categories.map(&category_name)
-        self.description = Description.extract(item.description)
-        self.images = Images.extract(item.content_encoded)
-        self.content = Content.extract(item.content_encoded)
-        self.products = ProductsFinder.new(item.content_encoded, self.link).products
+        self.description = Description.extract(description)
+        self.images = Images.extract(content)
+        self.content = Content.extract(content)
+        self.products = ProductsFinder.new(content, self.link).products
         self
       end
       
