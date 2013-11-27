@@ -36,6 +36,14 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
       assert post.published_at
     end
   end
+
+  test "blog" do
+    skip
+    @blog.url = "http://www.lapenderiedechloe.com"
+    @blog.posts.each do |post|
+      puts post.title
+    end
+  end
   
 end
 
