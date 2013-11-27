@@ -13,5 +13,6 @@ class LookTest < ActiveSupport::TestCase
       published_at:Time.now,
       url:"http://www.leblogdebetty.com/article")
     assert look.save
+    assert_not_nil look.uuid
   end
 end

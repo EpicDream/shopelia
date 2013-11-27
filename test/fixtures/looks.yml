@@ -1,15 +1,5 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-
-one:
-  uuid: MyString
-  name: MyString
-  url: MyString
-  flinker_id: 1
-  post_id: 1
-
-two:
-  uuid: MyString
-  name: MyString
-  url: MyString
-  flinker_id: 1
-  post_id: 1
+agadir:
+  uuid: "uuid"
+  name: "Agadir"
+  url: "http://www.bla.com"
+  flinker: betty

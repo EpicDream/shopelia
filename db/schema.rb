@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131127163618) do
+ActiveRecord::Schema.define(:version => 20131127171330) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -254,6 +254,7 @@ ActiveRecord::Schema.define(:version => 20131127163618) do
     t.datetime "picture_updated_at"
     t.string   "picture_fingerprint"
     t.string   "picture_sizes"
+    t.integer  "resource_id"
   end
 
   create_table "incidents", :force => true do |t|

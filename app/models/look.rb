@@ -1,6 +1,7 @@
 class Look < ActiveRecord::Base
   belongs_to :flinker
   belongs_to :post
+  has_many :look_images, :foreign_key => "resource_id"
 
   validates :uuid, :presence => true, :uniqueness => true
   validates :flinker, :presence => true
