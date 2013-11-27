@@ -58,6 +58,10 @@ div.blogs{
 .blog-post a{
   font-size:12px;
 }
+.blog-post .product-name{
+  color:#e44eaf;
+  font-style:italic;
+}
 .fetch-post-link{
   float:right;
   margin:10px;

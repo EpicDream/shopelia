@@ -14,9 +14,13 @@ module Scrapers
       end
       
       def products
-        @blocks.map do |block|
-          links(block)
-        end.flatten
+        @blocks.inject({}) do |products, block|
+          block.xpath(".//a").each { |a| 
+            next if remove?(href[a])
+            products.merge!({"#{a.text}" => href[a]})
+          }
+          products
+        end
       end
       
       def blocks
@@ -26,17 +30,8 @@ module Scrapers
       
       private
       
-      def links block
-        links = block.xpath(".//a").map(&href).compact
-        links.delete_if { |link| 
-          URI(link).host == URI(@url).host rescue true
-        }  
-      end
-      
-      def may_include_products? block
-        !block.text.encode("UTF-8", :undef => :replace, :invalid => :replace).blank? && block.xpath(".//a").any?
-      rescue #theses girls puts some little hearts ... not utf-8
-        false
+      def remove? url #use a yaml file  for filters
+        URI(url).host == URI(@url).host rescue true 
       end
       
       def href
