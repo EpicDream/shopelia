@@ -47,14 +47,6 @@ module AlgoliaFeed
       self
     end
 
-    def set_categories(product,record)
-      super(product, record)
-      product.each_pair do |k,v|
-        record['_tags'] << "category:#{v}" if k =~ /\Acategories\/category/
-      end
-
-    end
-
     def canonize(url)
       if m = url.match(/url=(.+)\Z/)
         matched_url = URI.decode(m[1])
