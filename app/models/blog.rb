@@ -1,7 +1,7 @@
 require 'scrapers/blogs/blog'
 
 class Blog < ActiveRecord::Base
-  attr_accessible :url
+  attr_accessible :url, :name
   has_many :posts
   
   validates :url, uniqueness:true, presence:true, :on => :create

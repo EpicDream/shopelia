@@ -18,12 +18,13 @@ div.blogs{
 }
 .blogs label, .blog-post label{
   float:left;
-  margin: 4px 20px 5px 0;
+  margin: 4px 2px 5px 0;
   width:30%;
   font-weight:bold;
 }
 .blogs input[type=text]{
-  width:60%;
+  width:40%;
+  display:block;
   font-family: Georgia, sans-serif;
 }
 .blogs ::-webkit-input-placeholder {
@@ -33,6 +34,11 @@ div.blogs{
   font-size:14px;
   margin-top:60px;
 }
+.blogs input[type=file]{
+  display:block;
+  margin-top:20px;
+}
+
 
 /*Blog posts*/
 

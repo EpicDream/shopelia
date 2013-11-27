@@ -12,12 +12,25 @@ class Admin::BlogsController < Admin::AdminController
   end
   
   def create
-    @blog = Blog.new(params[:blog])
-    if @blog.save
-      redirect_to admin_blog_url(@blog)
-    else
-      redirect_to admin_blogs_url
+    blogs_from_params.each do |blog_params|
+      @blog = Blog.new(blog_params)
+      if @blog.save
+        BlogsWorker.perform_async(@blog.id)
+      end
     end
+    redirect_to admin_blogs_url
+  end
+  
+  private
+  
+  def blogs_from_params
+    return [] unless params[:blog]
+    return [params[:blog]] unless params[:blog][:csv]
+    blogs = []
+    CSV.parse(params[:blog][:csv].tempfile.open.read) do |row|
+      blogs << {name:row[1], url:row[0]}
+    end
+    blogs
   end
   
 end
