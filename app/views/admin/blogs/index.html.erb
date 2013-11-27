@@ -15,7 +15,8 @@
   
   <div>
     <h5>Intégrer un fichier CSV de flux</h5>
-    
+    <p class='help'>Le fichier doit comporter deux colonnes, la première colonne est
+      l'url du site, la deuxième le nom donné au blog.</p>
     <%= form_for([:admin, Blog.new]) do |f| %>
       <%= f.file_field :csv %>
       <%= f.submit("Intégrer ces flux", :class => 'btn') %>

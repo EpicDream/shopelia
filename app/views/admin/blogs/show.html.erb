@@ -26,7 +26,7 @@
       <span><%= link_to post.link, post.link, target: :blank %></span>
     <h5>Contenu</h5>
       <p><%= post.description %></p>
-      <p><%= post.content %></p>
+      <p><%= post.content.html_safe %></p>
     <h5>Images</h5>
       <ul>
         <% post.images.each do |link| %>
