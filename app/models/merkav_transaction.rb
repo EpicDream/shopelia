@@ -9,7 +9,7 @@ class MerkavTransaction < ActiveRecord::Base
   attr_accessible :amount, :vad_id
 
   def generate_virtual_card
-    return { status:"error", error:"Card already generated" } if self.virtual_card.present?
+    return { status:"ok" } if self.virtual_card.present?
     card = VirtualCard.new(amount:self.amount, provider:"virtualis")
     if card.save
       self.update_attribute :virtual_card_id, card.id

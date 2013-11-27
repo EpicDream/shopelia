@@ -29,7 +29,7 @@ class MerkavTransactionTest < ActiveSupport::TestCase
 
     assert_difference "VirtualCard.count", 0 do 
       result = transaction.generate_virtual_card
-      assert_equal "error", result[:status]
+      assert_equal "ok", result[:status]
     end
   end
 
