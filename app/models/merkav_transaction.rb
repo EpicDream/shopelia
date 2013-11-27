@@ -4,11 +4,13 @@ class MerkavTransaction < ActiveRecord::Base
   validates :amount, :inclusion => 100..10000
   validates :vad_id, :presence => true
 
+  before_validation :initialize_status
   before_create :check_quota
 
   attr_accessible :amount, :vad_id
 
   def generate_virtual_card
+    return { status:"ok" } if self.virtual_card.present?
     card = VirtualCard.new(amount:self.amount, provider:"virtualis")
     if card.save
       self.update_attribute :virtual_card_id, card.id
@@ -19,6 +21,10 @@ class MerkavTransaction < ActiveRecord::Base
   end
 
   private
+
+  def initialize_status
+    self.status = "pending" if self.status.blank?
+  end
 
   def check_quota
     quota = Customers::Merkav.get_quota

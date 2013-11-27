@@ -17,7 +17,7 @@ class Api::Viking::MerchantsController < Api::V1::BaseController
     if @merchant
       render json: Object::Viking::MerchantSerializer.new(@merchant).as_json[:merchant]
     else
-      h = {totalCount: Merchant.count, supportedBySaturn: Merchant.where("viking_data is not NULL").select("id").map(&:id).sort}
+      h = {totalCount: Merchant.count, supportedBySaturn: Merchant.where("mapping_id is not NULL").select("id").map(&:id).sort}
       render json: h.to_json
     end
   end 

@@ -55,6 +55,6 @@ class CollectionItem < ActiveRecord::Base
       :product_id => self.product_id,
       :action => Event::REQUEST,
       :tracker => "display-collection"
-    }) if self.product.merchant.viking_data.present?
+    }) if self.product.merchant.mapping_id.present?
   end
 end

@@ -5,11 +5,22 @@
   </div>
 
   <div>
+    <h5>Créer un nouveau blog</h5>
     <%= form_for([:admin, Blog.new]) do |f| %>
-      <%= f.label :url, "Créer un nouveau blog" %>
-    
+      <%= f.text_field :name, placeholder:"nom du blog"%>
       <%= f.text_field :url, placeholder:"url du blog"%>
       <%= f.submit("Intégrer", :class => 'btn') %>
     <% end %>
   </div>
+  
+  <div>
+    <h5>Intégrer un fichier CSV de flux</h5>
+    <p class='help'>Le fichier doit comporter deux colonnes, la première colonne est
+      l'url du site, la deuxième le nom donné au blog.</p>
+    <%= form_for([:admin, Blog.new]) do |f| %>
+      <%= f.file_field :csv %>
+      <%= f.submit("Intégrer ces flux", :class => 'btn') %>
+    <% end %>
+  </div>
+  
 </div>

@@ -7,7 +7,9 @@ class MerkavTransactionTest < ActiveSupport::TestCase
   end
 
   test "it should create merkav transaction" do
-    assert MerkavTransaction.new(amount:100, vad_id:1).save
+    transaction = MerkavTransaction.new(amount:100, vad_id:1)
+    assert transaction.save
+    assert_equal "pending", transaction.status
   end
 
   test "it shouldn't create merkav transaction with invalid amount" do 
@@ -26,6 +28,11 @@ class MerkavTransactionTest < ActiveSupport::TestCase
       assert_equal "ok", result[:status]
     end
     assert_not_nil transaction.virtual_card_id
+
+    assert_difference "VirtualCard.count", 0 do 
+      result = transaction.generate_virtual_card
+      assert_equal "ok", result[:status]
+    end
   end
 
   test "it should fail creation if quota is exceeded" do

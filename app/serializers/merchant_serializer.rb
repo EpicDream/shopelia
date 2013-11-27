@@ -10,6 +10,6 @@ class MerchantSerializer < ActiveModel::Serializer
   end
 
   def saturn
-    object.viking_data.present? ? 1 : 0
+    object.mapping_id.present? ? 1 : 0
   end
 end
