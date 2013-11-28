@@ -51,8 +51,7 @@ module Scrapers
         @filters.each do |filter|
           return true if url =~ Regexp.new(filter, true)
         end
-        URI(url).host == URI(@url).host 
-      rescue true 
+        url =~ Regexp.new(URI(@url).host, true)
       end
       
       def href
