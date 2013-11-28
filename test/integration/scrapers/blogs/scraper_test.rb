@@ -70,6 +70,15 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert_match /lesdessousdemarine\.com/, post.link
   end
   
+  test "scrape products links inside map tags" do
+    @scraper.url = "http://www.leblogdebetty.com/mcq/"
+    post = @scraper.posts.first
+    products = post.products
+    
+    assert_equal 5, products.count
+    assert_equal "http://bit.ly/1cal3V7", products["Produit(4)"]
+  end
+  
 end
 
   
