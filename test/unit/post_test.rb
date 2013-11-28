@@ -8,5 +8,7 @@ class PostTest < ActiveSupport::TestCase
     
     Linker.expects(:clean).with("http://bit.ly/17uPRlU")
     post.save!
+
+    assert_equal "pending", post.status
   end
 end
