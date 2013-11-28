@@ -13,7 +13,7 @@
         %input.successKnob{value:"#{number_to_knob(@performance)}"}
     - @merchant_stats.each do |s|
       .span2{style:"min-width: 210px;max-width: 210px;"}
-        %article.coolbox
+        %article.coolbox{class:"#{if s[:rate] == 100 then "" elsif s[:rate] > 90 then "warning" else "error" end}"}
           %h3 
             = s[:name]
           %h4

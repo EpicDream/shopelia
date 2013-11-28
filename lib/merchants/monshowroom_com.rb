@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class MonshowroomCom
   DEFAULT_PRICE_SHIPPING = "7 €"
   DEFAULT_SHIPPING_INFO = " Livraison So Colissimo en 2 à 5 jours. "
@@ -18,7 +19,7 @@ class MonshowroomCom
     end
     @url
   end
-  
+
   def monetize
     @url
   end
