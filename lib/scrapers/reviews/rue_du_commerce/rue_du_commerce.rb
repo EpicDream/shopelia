@@ -13,6 +13,7 @@ module Scrapers
         def reviews_of_page index
           page = @agent.get(@product.url)
           xpath = ".//div[@class='bottomAvis']/preceding-sibling::table[1]//tr[@itemtype='http://schema.org/Review']"
+          xpath += " | .//div[@class='productReview']"
           page.search(xpath).map { |html| RueDuCommerce::Review.new(html, @product.id)}
         end
       
