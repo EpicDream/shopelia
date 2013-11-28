@@ -49,6 +49,9 @@ class PriceministerComTest < ActiveSupport::TestCase
     assert_equal false, MerchantHelper.parse_availability("Aucun résultat ne correspond à votre recherche", @url)[:avail]
 
     assert_equal false, MerchantHelper.parse_availability("Top Ventes", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("Les articles les plus vus du moment", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("Votre historique récent", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("Les produits frequemment achetes ensemble", @url)[:avail]
     assert_equal true, MerchantHelper.parse_availability("Les produits les plus vus du moment dans 'Vêtements femme'", @url)[:avail]
     assert_equal true, MerchantHelper.parse_availability("Les PriceMembers ayant vu 'Moteur De Tournebroche À Pile Pour Barbecue' ont également vu", @url)[:avail]
   end

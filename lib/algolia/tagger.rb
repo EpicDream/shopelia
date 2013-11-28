@@ -24,7 +24,7 @@ module AlgoliaFeed
       AlgoliaTag.delete_all
       self.redis.hkeys(TAGS_HASH).each do |key|
         kind, name = key.split(/\:/)
-				next unless name =~ /\S/
+        next unless name =~ /\S/
         count = self.redis.hget(TAGS_HASH, key).to_i
         next if count < 10
         name = name.squeeze(" ")
