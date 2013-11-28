@@ -1057,6 +1057,8 @@ class OrderTest < ActiveSupport::TestCase
   end
 
   test "[amazon] it should complete order with cashfront in two times, in case vulcain fails" do
+    skip 
+    
     configuration_amazon_cashfront
     prepare_master_cashfront_account
 

@@ -7,19 +7,19 @@ class Viking::MerchantSerializerTest < ActiveSupport::TestCase
     @merchant = merchants(:amazon)
   end
   
-  test "it should correctly serialize merchant" do
+  test "it should correctly serialize viking merchant" do
     merchant_serializer = Viking::MerchantSerializer.new(@merchant)
     hash = merchant_serializer.as_json
       
     assert_equal @merchant.id, hash[:merchant][:id]
-    assert_equal JSON.parse(@merchant.viking_data), hash[:merchant][:data]
+    assert_equal @merchant.mapping_id, hash[:merchant][:mapping_id]
 
-    @merchant.update_attribute :viking_data, nil
+    @merchant.update_attribute :mapping_id, nil
     merchant_serializer = Viking::MerchantSerializer.new(@merchant)
     hash = merchant_serializer.as_json
       
     assert_equal @merchant.id, hash[:merchant][:id]
-    assert hash[:merchant][:data].nil?
+    assert hash[:merchant][:mapping_id].nil?
   end
 
 end

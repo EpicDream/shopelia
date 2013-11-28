@@ -2,6 +2,8 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
+gem 'savon'
+gem 'php-serialize'
 gem 'sys-proctable'
 gem 'ruby-filemagic'
 gem 'syslog-logger'

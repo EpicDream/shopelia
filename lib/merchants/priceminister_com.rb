@@ -6,7 +6,10 @@ class PriceministerCom
     "Aucun resultat" => false,
     "Top Ventes" => false, # rediriger sur l'accueil
     "Les produits les plus vus du moment dans" => true,
+    "Les articles les plus vus du moment" => true,
     "Les PriceMembers ayant vu" => true,
+    "Les produits frequemment achetes ensemble" => true,
+    "Votre historique recent" => true,
     /Les produits de '.*?' avec les meilleurs avis/i => true,
   }
 

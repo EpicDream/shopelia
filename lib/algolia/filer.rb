@@ -14,8 +14,8 @@ module AlgoliaFeed
   class InvalidFile < IOError; end
 
   class Filer
- 
-    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params
+
+    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params, :clean_xml
 
     def self.download(params={})
       self.new(params).download
@@ -33,6 +33,7 @@ module AlgoliaFeed
       self.http_auth      = params[:http_auth]      || {}
       self.rejected_files = params[:rejected_files] || []
       self.parser_class   = params[:parser_class]   || 'AlgoliaFeed::XmlParser'
+      self.clean_xml      = params[:clean_xml]      || true
       self
     end
 
@@ -95,12 +96,12 @@ module AlgoliaFeed
 
       raw_file
     end
- 
+
     def decompress_datafile(raw_file, dir=nil, decoded_file=nil)
       dir = "#{self.tmpdir}/#{self.parser_class}" unless dir.present?
       Dir.mkdir(dir) unless Dir.exists?(dir)
       if decoded_file.present?
-        decoded_file = "#{dir}/#{decoded_file}" 
+        decoded_file = "#{dir}/#{decoded_file}"
       else
         decoded_file = raw_file.gsub(/\.raw\Z/, '')
       end
@@ -137,9 +138,14 @@ module AlgoliaFeed
       else
         FileUtils.copy_file(raw_file, decoded_file)
       end
-      xmllint = `/usr/bin/xmllint --format --output #{decoded_file} --encode UTF-8 --nocdata --recover #{decoded_file}`
-      puts xmllint if xmllint =~ /\S/
+      xmllint(decoded_file) if self.clean_xml
       decoded_file
+    end
+
+    def xmllint(path)
+      xmllint = `/usr/bin/xmllint --format --output #{path} --encode UTF-8 --nocdata --nonet --recover #{path}`
+      puts "xmllint failed for #{path}: #{xmllint}" if xmllint =~ /\S/
+      path
     end
 
     def download_url(url)
@@ -199,7 +205,7 @@ module AlgoliaFeed
       end
       Process.waitall
     end
-  
+
   end
 end
 

@@ -22,6 +22,11 @@ class RueducommerceFrTest < ActiveSupport::TestCase
     assert RueducommerceFr.new("http://www.rueducommerce.fr/bla").canonize.nil?
   end
 
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("(2409 articles)", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("1180 références", @url)[:avail]
+  end
+
   test "it should process availability" do
     @version[:availability_text] = ""
     @version[:price_text] = ""
