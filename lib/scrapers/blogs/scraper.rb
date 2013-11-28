@@ -42,6 +42,7 @@ module Scrapers
         header = header(block)
         node = header.search('.//a').first if header
         href = node && node.attribute("href").value
+        return @url unless href
         href = @url + href unless href =~ Regexp.new(URI(@url).host)
         href
       end
@@ -79,7 +80,7 @@ module Scrapers
       private
       
       def header block
-        header_in = block.xpath(".//h1 | .//h2").first
+        header_in = block.xpath(".//h1 | .//h2 | .//h3").first
         header_out = block.xpath(".//preceding::h2 | .//preceding::h1 | .//preceding::h3").last
         header_in || header_out
       end
