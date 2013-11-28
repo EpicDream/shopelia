@@ -17,20 +17,29 @@ module Scrapers
         
         def date
           meta = @html.search('.//meta[@itemprop="datePublished"]').first
-          DateTime.parse_international(meta.attribute("content").value)
+          content = meta.attribute("content").value if meta
+          content = @html.search('.//div[@class="date"]/span').first.text unless content
+          DateTime.parse_international(content)
         end
         
         def rating
           meta = @html.search('.//meta[@itemprop="ratingValue"]').first
-          meta.attribute("content").value.to_i
+          return meta.attribute("content").value.to_i if meta
+          style = @html.search('.ficheProductRatingyellow').first.attribute("style").value
+          style =~ /(\d+)/ #does it not really suck !?
+          $1.to_i * 5/100
         end
         
         def author
-          @html.xpath('.//b[@itemprop="author"]').first.text
+          content = @html.xpath('.//b[@itemprop="author"]').first
+          return content.text if content
+          @html.search('.//div[@class="firstname"]/span').first.text
         end
         
         def content
-          @html.xpath('.//div[@itemprop="description"]').text.clean
+          content = @html.xpath('.//div[@itemprop="description"]').first
+          return content.text.clean if content
+          @html.search('.//div[@class="commentaire"]').first.text.clean
         end
         
       end
