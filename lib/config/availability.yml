@@ -57,6 +57,7 @@ out of stock: false
 \d+ d'occasion: false
 non disponible: false
 pas disponible: false
+plus disponible: false
 n.?est plus disponible: false
 a ete vendu: false
 est plus vendu: false
