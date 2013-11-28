@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131126122913) do
+ActiveRecord::Schema.define(:version => 20131128092536) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -70,9 +70,9 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.integer  "mangopay_contribution_id"
     t.integer  "mangopay_contribution_amount"
     t.string   "mangopay_contribution_message"
-    t.integer  "mangopay_destination_wallet_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.integer  "mangopay_destination_wallet_id"
     t.integer  "mangopay_transfer_id"
   end
 
@@ -81,6 +81,7 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.integer  "flinker_id"
   end
 
   create_table "cart_items", :force => true do |t|
@@ -232,6 +233,17 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
   add_index "events", ["device_id"], :name => "index_events_on_device_id"
   add_index "events", ["product_id"], :name => "index_events_on_product_id"
 
+  create_table "flinkers", :force => true do |t|
+    t.string   "name"
+    t.string   "url"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.integer  "avatar_file_size"
+    t.datetime "avatar_updated_at"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
+
   create_table "images", :force => true do |t|
     t.string   "url"
     t.string   "type"
@@ -243,6 +255,7 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.datetime "picture_updated_at"
     t.string   "picture_fingerprint"
     t.string   "picture_sizes"
+    t.integer  "resource_id"
   end
 
   create_table "incidents", :force => true do |t|
@@ -254,6 +267,24 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.integer  "resource_id"
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
+  end
+
+  create_table "look_products", :force => true do |t|
+    t.integer  "look_id"
+    t.integer  "product_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "looks", :force => true do |t|
+    t.string   "uuid"
+    t.string   "name"
+    t.string   "url"
+    t.integer  "flinker_id"
+    t.integer  "post_id"
+    t.datetime "published_at"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
   end
 
   create_table "mappings", :force => true do |t|
@@ -420,6 +451,9 @@ ActiveRecord::Schema.define(:version => 20131126122913) do
     t.text     "products"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.integer  "look_id"
+    t.string   "status"
+    t.datetime "processed_at"
   end
 
   create_table "product_images", :force => true do |t|
