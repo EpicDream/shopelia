@@ -12,9 +12,14 @@ class Linker
       begin
         uri = Utils.parse_uri_safely(url)
         res = self.get(uri)
-        url = self.ensure_url(res['location'], uri) if res.code =~ /^30/
+        code = res.code
+        if res['refresh'].present?
+          res['location'] = res['refresh'].gsub(/\A.*URL=/, "")
+          code = "302"
+        end
+        url = self.ensure_url(res['location'], uri) if code =~ /^30/
         count += 1
-      end while res.code =~ /^30/ && count < 10
+      end while code =~ /^30/ && count < 10
 
       canonical = self.clean_url url
       @canonizer.set(orig, canonical)
@@ -59,7 +64,11 @@ class Linker
       canonical = Utils.strip_tracking_params canonical
     end
 
-    MerchantHelper.canonize(canonical) || canonical
+    if canonical =~ /\.html/
+      canonical = canonical.gsub(/\.html.*\Z/, ".html")
+    end
+
+    URI.decode(MerchantHelper.canonize(canonical) || canonical)
   end
 
   def self.get uri
