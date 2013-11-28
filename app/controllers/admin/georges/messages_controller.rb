@@ -2,6 +2,7 @@ class Admin::Georges::MessagesController < Admin::AdminController
   before_filter :retrieve_device
 
   def index
+    @device.authorize_push_channel
     @messages = @device.messages.order(:created_at)
     respond_to do |format|
       format.js

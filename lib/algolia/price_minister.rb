@@ -74,7 +74,7 @@ module AlgoliaFeed
       record.delete('rank') if record['rank'] == 0
 
       record
-    end  
+    end
   end
 end
 

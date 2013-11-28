@@ -4,15 +4,16 @@ class ProductVersion < ActiveRecord::Base
   belongs_to :product, :touch => true
   has_many :order_items
   has_many :cart_items
+  has_many :product_images, :dependent => :destroy
   
   validates :product, :presence => true
   
-  attr_accessible :description, :price, :price_shipping
+  attr_accessible :description, :price, :price_shipping, :json_description
   attr_accessible :price_strikeout, :product_id, :shipping_info, :available, :rating
   attr_accessible :image_url, :brand, :name, :available, :reference
   attr_accessible :availability_text, :rating_text, :price_text, :price_shipping_text, :price_strikeout_text
-  attr_accessible :option1, :option2, :option3, :option4
-  attr_accessor :availability_text, :rating_text, :price_text, :price_shipping_text, :price_strikeout_text
+  attr_accessible :option1, :option2, :option3, :option4, :images
+  attr_accessor :availability_text, :rating_text, :price_text, :price_shipping_text, :price_strikeout_text, :images
 
   alias_attribute :size, :option1
   alias_attribute :color, :option2
@@ -29,6 +30,7 @@ class ProductVersion < ActiveRecord::Base
   before_validation :assess_version
   before_destroy :check_not_related_to_any_order
 
+  after_save :create_product_images, :if => Proc.new { |v| v.images.is_a?(Array) && v.images.count > 0 }
   after_update :notify_channel, :if => Proc.new { |v| v.available.present? }
 
   scope :available, where(available:true)
@@ -143,7 +145,9 @@ class ProductVersion < ActiveRecord::Base
   
   def parse_available
     self.availability_info = self.availability_text
-    self.available = MerchantHelper.parse_availability(self.availability_text, product.url)
+    res = MerchantHelper.parse_availability(self.availability_text, product.url)
+    self.available = res[:avail]
+    self.availability_info = MerchantHelper::AVAILABLE if res[:specific] && res[:avail]
     if self.available.nil?
       generate_incident "Cannot parse availability : #{self.availability_info}"
       self.available = true
@@ -169,6 +173,13 @@ class ProductVersion < ActiveRecord::Base
     self.description = html.strip
   end
    
+  def create_product_images
+    self.product_images.destroy_all
+    self.images.each do |url|
+      ProductImage.create!(product_version_id:self.id,url:url)
+    end
+  end
+
   def check_not_related_to_any_order
     self.order_items.empty?
   end

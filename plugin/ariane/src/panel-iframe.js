@@ -26,7 +26,7 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
         if (! hash.crawlings[cUrl])
           return logger.warn('Cannot find '+cUrl+' in\n'+Object.keys(hash.crawlings).join('\n'));
         cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
-        cMapping = hash.mappings[cUrl].data.viking[cHost];
+        cMapping = hash.mappings[cUrl].mapping[cHost];
         if ($.mobile.activePage.attr("id") === 'pathsPage') {
           panel.updateResult();
           panel.updatePathsList();
@@ -45,7 +45,7 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
   panel.onHostChange = function() {
     cHost = hostsSelect.val();
     chrome.storage.local.get(['mappings'], function(hash) {
-      cMapping = hash.mappings[cUrl].data.viking[cHost];
+      cMapping = hash.mappings[cUrl].mapping[cHost];
       fieldsList.html("");
       var fields = Object.keys(cMapping).sort();
       for (var i = 0; i < fields.length; i++)
@@ -77,7 +77,7 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
       return $.mobile.changePage('#fieldsPage');
 
     chrome.storage.local.get(['mappings'], function(hash) {
-      cMapping = hash.mappings[cUrl].data.viking[cHost];
+      cMapping = hash.mappings[cUrl].mapping[cHost];
       fieldName.innerText = cField;
       if (! cMapping[field]) {
         cMapping[field] = {paths: []};
@@ -184,7 +184,7 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
     fieldsList.listview('refresh');
 
     chrome.storage.local.get(['mappings'], function(hash) {
-      hash.mappings[cUrl].data.viking[cHost][newField] = {paths: []};
+      hash.mappings[cUrl].mapping[cHost][newField] = {paths: []};
       chrome.storage.local.set(hash);
     });
 
@@ -230,7 +230,7 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
     pathsList.listview('refresh');
 
     chrome.storage.local.get(['mappings'], function(hash) {
-      hash.mappings[cUrl].data.viking[cHost][cField].paths.push(newPath);
+      hash.mappings[cUrl].mapping[cHost][cField].paths.push(newPath);
       chrome.storage.local.set(hash);
       chrome.extension.sendMessage({action: 'recrawl', field: cField});
     });
@@ -254,7 +254,7 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
 
     panel.savePathsPage();
     chrome.storage.local.get(['mappings'], function(hash) {
-      hash.mappings[cUrl].data.viking[cHost] = cMapping;
+      hash.mappings[cUrl].mapping[cHost] = cMapping;
       chrome.storage.local.set(hash);
       chrome.extension.sendMessage({action: 'recrawl', field: cField});
       chrome.extension.sendMessage({action: 'setField', field: ''});
@@ -264,7 +264,7 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
   panel.resetPaths = function () {
     var field = cField;
     chrome.storage.local.get(['mappings'], function(hash) {
-      hash.mappings[cUrl].data.viking[cHost][field].paths = cPathsBackup;
+      hash.mappings[cUrl].mapping[cHost][field].paths = cPathsBackup;
       chrome.storage.local.set(hash);
     });
   };
@@ -292,7 +292,7 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
     chrome.storage.local.get(['mappings', 'crawlings'], function(hash) {
       if (! hash.mappings[cUrl]) return;
       cCrawling = hash.crawlings[cUrl].update || hash.crawlings[cUrl].initial || {};
-      var hosts = Object.keys(hash.mappings[cUrl].data.viking),
+      var hosts = Object.keys(hash.mappings[cUrl].mapping),
           i;
       for (i in hosts)
         $("<option>").val(hosts[i]).text(hosts[i]).appendTo(hostsSelect).trigger('create');

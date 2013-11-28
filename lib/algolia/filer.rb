@@ -14,8 +14,8 @@ module AlgoliaFeed
   class InvalidFile < IOError; end
 
   class Filer
- 
-    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params
+
+    attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params, :clean_xml
 
     def self.download(params={})
       self.new(params).download
@@ -33,6 +33,7 @@ module AlgoliaFeed
       self.http_auth      = params[:http_auth]      || {}
       self.rejected_files = params[:rejected_files] || []
       self.parser_class   = params[:parser_class]   || 'AlgoliaFeed::XmlParser'
+      self.clean_xml      = params[:clean_xml]      || true
       self
     end
 
@@ -95,12 +96,12 @@ module AlgoliaFeed
 
       raw_file
     end
- 
+
     def decompress_datafile(raw_file, dir=nil, decoded_file=nil)
       dir = "#{self.tmpdir}/#{self.parser_class}" unless dir.present?
       Dir.mkdir(dir) unless Dir.exists?(dir)
       if decoded_file.present?
-        decoded_file = "#{dir}/#{decoded_file}" 
+        decoded_file = "#{dir}/#{decoded_file}"
       else
         decoded_file = raw_file.gsub(/\.raw\Z/, '')
       end
@@ -137,7 +138,14 @@ module AlgoliaFeed
       else
         FileUtils.copy_file(raw_file, decoded_file)
       end
+      xmllint(decoded_file) if self.clean_xml
       decoded_file
+    end
+
+    def xmllint(path)
+      xmllint = `/usr/bin/xmllint --format --output #{path} --encode UTF-8 --nocdata --nonet --recover #{path}`
+      puts "xmllint failed for #{path}: #{xmllint}" if xmllint =~ /\S/
+      path
     end
 
     def download_url(url)
@@ -152,7 +160,7 @@ module AlgoliaFeed
       end
       decoded_file
     end
-    
+
     def download(urls=[])
       urls = self.urls if urls.size == 0
       urls.each do |url|
@@ -160,22 +168,29 @@ module AlgoliaFeed
       end
     end
 
-    def process_xml_directory(dir=nil, free_children=6)
+    def count_children(pid)
+      begin
+        return Sys::ProcTable.ps.select{ |p| p.ppid == pid && p.state != 'Z'}.size
+      rescue => e
+        puts "ps failed: #{e}" if self.debug > 1
+        return nil
+      end
+    end
+
+    def process_xml_directory(dir=nil, max_children=6)
       algolia = AlgoliaFeed.new(self.params)
       algolia.connect(algolia.index_name)
       algolia.set_index_attributes
-      Tagger.clear_redis
       dir = self.tmpdir unless dir.present?
-      trap('CLD') {
-        free_children += 1
-      }
       Find.find(dir) do |path|
         next unless File.file?(path)
-        while (free_children < 1)
+        while true
+          children_count = count_children($$)
+          break if children_count.is_a?(Integer) && children_count < max_children
           sleep 1
         end
-        free_children -= 1
         fork do
+          $0 = "Feed worker #{path}"
           ActiveRecord::Base.establish_connection
           class_name = path.split(/\//)[-2]
           worker = class_name.constantize.new(self.params)
@@ -190,7 +205,7 @@ module AlgoliaFeed
       end
       Process.waitall
     end
-  
+
   end
 end
 

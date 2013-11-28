@@ -13,7 +13,7 @@ class Api::V1::PaymentCardsControllerTest < ActionController::TestCase
     assert_difference('PaymentCard.count', 1) do
       post :create, payment_card: {
         :user_id => users(:elarch).id,
-        :number => "1234123412341234",
+        :number => "6011111111111117",
         :exp_month => "02",
         :exp_year => "2015",
         :cvv => "123" }, format: :json

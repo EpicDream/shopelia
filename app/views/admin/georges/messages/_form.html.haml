@@ -1,5 +1,5 @@
 = form_for([:admin,:georges,@device,Message.new], remote: true, :html => { :id => 'message_form' }) do |f|
-  = f.text_area :content , placeholder: "Type your message?", type: "text" , rows: 4, required:true
+  = f.text_area :content , placeholder: "Type your message?", type: "text" , rows: 4
   = f.hidden_field :collection_uuid
   .spacer20
   = f.submit "Send", :class => 'button-flat-empty'
@@ -10,12 +10,13 @@
     .button-flat-empty
       Add Collection
   = f.hidden_field :gift_card ,{value: 0}
-  #gift-card-button.button-flat-empty Add survey
+  #gift-card-button.button-flat-empty Survey
+  = f.hidden_field :rating_card ,{value: 0}
+  #rating-card-button.button-flat-empty Rating
   - if @device.pending_answer?
     = link_to end_admin_georges_device_path(@device), :remote => true do
       .button-flat-empty
         End
-  -#.button-flat-empty Noter l'app
 
 :javascript
   var giftCardButton = $('#gift-card-button')
@@ -31,6 +32,18 @@
     } else {
        giftCardButton.removeClass("button-flat-empty-inverse-success")
        giftCard.val(0);
+    }
+  })
+  var ratingCardButton = $('#rating-card-button')
+  ratingCardButton.click(function(){
+    var ratingCard = $("#message_rating_card")
+    var value = ratingCard.val()
+    if(value == "0") {
+       ratingCardButton.addClass("button-flat-empty-inverse-success")
+       ratingCard.val(1);
+    } else {
+       ratingCardButton.removeClass("button-flat-empty-inverse-success")
+       ratingCard.val(0);
     }
   })
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131113172131) do
+ActiveRecord::Schema.define(:version => 20131126122913) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -74,6 +74,13 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
     t.integer  "mangopay_transfer_id"
+  end
+
+  create_table "blogs", :force => true do |t|
+    t.string   "url"
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "cart_items", :force => true do |t|
@@ -197,6 +204,7 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.boolean  "pending_answer"
     t.boolean  "autoreplied",    :default => false
     t.boolean  "is_dev"
+    t.integer  "rating"
   end
 
   add_index "devices", ["uuid"], :name => "index_devices_on_uuid"
@@ -218,6 +226,23 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.datetime "updated_at",   :null => false
     t.boolean  "monetizable"
     t.integer  "device_id"
+  end
+
+  add_index "events", ["developer_id"], :name => "index_events_on_developer_id"
+  add_index "events", ["device_id"], :name => "index_events_on_device_id"
+  add_index "events", ["product_id"], :name => "index_events_on_product_id"
+
+  create_table "images", :force => true do |t|
+    t.string   "url"
+    t.string   "type"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+    t.string   "picture_file_name"
+    t.string   "picture_content_type"
+    t.integer  "picture_file_size"
+    t.datetime "picture_updated_at"
+    t.string   "picture_fingerprint"
+    t.string   "picture_sizes"
   end
 
   create_table "incidents", :force => true do |t|
@@ -271,9 +296,23 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.boolean  "rejecting_events",    :default => false
     t.boolean  "multiple_addresses",  :default => false
     t.integer  "mapping_id"
+    t.integer  "products_count"
   end
 
   add_index "merchants", ["mapping_id"], :name => "index_merchants_on_mapping_id"
+
+  create_table "merkav_transactions", :force => true do |t|
+    t.integer  "virtual_card_id"
+    t.string   "token"
+    t.string   "optkey"
+    t.integer  "amount"
+    t.datetime "executed_at"
+    t.string   "status"
+    t.integer  "merkav_transaction_id"
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
+    t.integer  "vad_id"
+  end
 
   create_table "messages", :force => true do |t|
     t.text     "content"
@@ -287,6 +326,7 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.string   "gift_gender"
     t.string   "gift_age"
     t.string   "gift_budget"
+    t.integer  "rating"
   end
 
   create_table "meta_orders", :force => true do |t|
@@ -313,9 +353,9 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.text     "message",                    :limit => 255
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "retry_count"
@@ -331,6 +371,7 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
+    t.string   "payment_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
     t.integer  "developer_id"
@@ -363,7 +404,33 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.datetime "updated_at",                   :null => false
     t.integer  "amount"
     t.integer  "mangopay_source_wallet_id"
+    t.integer  "virtual_card_id"
   end
+
+  create_table "posts", :force => true do |t|
+    t.integer  "blog_id"
+    t.datetime "published_at"
+    t.string   "link"
+    t.text     "content"
+    t.text     "description"
+    t.string   "title"
+    t.string   "author"
+    t.text     "categories"
+    t.text     "images"
+    t.text     "products"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  create_table "product_images", :force => true do |t|
+    t.text     "url"
+    t.integer  "product_version_id"
+    t.string   "size"
+    t.datetime "created_at",         :null => false
+    t.datetime "updated_at",         :null => false
+  end
+
+  add_index "product_images", ["product_version_id"], :name => "index_product_images_on_product_version_id"
 
   create_table "product_masters", :force => true do |t|
     t.datetime "created_at", :null => false
@@ -380,6 +447,8 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.datetime "updated_at",   :null => false
   end
 
+  add_index "product_reviews", ["product_id", "author"], :name => "index_product_reviews_on_product_id_and_author"
+
   create_table "product_versions", :force => true do |t|
     t.integer  "product_id"
     t.float    "price"
@@ -387,10 +456,10 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.float    "price_strikeout"
     t.string   "shipping_info"
     t.text     "description"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-    t.text     "option2"
-    t.text     "option1"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.text     "option2",           :limit => 255
+    t.text     "option1",           :limit => 255
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
@@ -405,15 +474,16 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.string   "option3_md5"
     t.string   "option4_md5"
     t.float    "rating"
+    t.text     "json_description"
   end
 
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url"
-    t.text     "image_url"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.text     "url",                 :limit => 255
+    t.text     "image_url",           :limit => 255
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
@@ -421,10 +491,11 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.boolean  "viking_failure"
     t.string   "reference"
     t.datetime "muted_until"
-    t.boolean  "options_completed",   :default => false
+    t.boolean  "options_completed",                  :default => false
     t.datetime "viking_sent_at"
     t.string   "image_size"
     t.float    "rating"
+    t.text     "json_description"
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true
@@ -468,6 +539,8 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "traces", ["device_id"], :name => "index_traces_on_device_id"
 
   create_table "user_sessions", :force => true do |t|
     t.integer  "user_id"
@@ -519,5 +592,17 @@ ActiveRecord::Schema.define(:version => 20131113172131) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "virtual_cards", :force => true do |t|
+    t.string   "provider"
+    t.string   "number"
+    t.string   "exp_month"
+    t.string   "exp_year"
+    t.string   "cvv"
+    t.float    "amount"
+    t.string   "cvd_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
 end

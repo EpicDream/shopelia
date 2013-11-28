@@ -115,7 +115,7 @@ Crawler.selectOption = function (elems, value) {
   var backup = elems;
 
   if (elems[0].tagName === "OPTION") {
-    elems = elems.filter(":contains("+value.text+")");
+    elems = elems.filter(':contains("'+value.text+'")');
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && elems[0].tagName === "OPTION") {
@@ -127,7 +127,7 @@ Crawler.selectOption = function (elems, value) {
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.text) {
-    elems = elems.filter(":contains("+value.text+")");
+    elems = elems.filter(':contains("'+value.text+'")');
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.src) {
@@ -166,6 +166,7 @@ Crawler.setOption = function(paths, value, doc) {
   } else {
     elems[0].dispatchEvent(new CustomEvent("mouseover", {"canBubble":true, "cancelable":true}));
     elems[0].dispatchEvent(new CustomEvent("click", {"canBubble":true, "cancelable":true}));
+    try { elems[0].click(); } catch(err) {}
   }
 
   return true;
@@ -222,7 +223,7 @@ Crawler.parseText = function (elems) {
 
 //
 Crawler.parseHtml = function (elems) {
-  return elems.toArray().map(function(elem) { return elem.innerHTML.replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n"); }).join("\n<br>\n") || undefined;
+  return elems.toArray().map(function(elem) { return elem.innerHTML.replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n"); }).join("\n<br>\n<!-- SHOPELIA-END-BLOCK -->") || undefined;
 };
 
 //

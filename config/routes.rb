@@ -62,6 +62,7 @@ Shopelia::Application.routes.draw do
     resources :orders, :only => [:index, :show, :update]
     resources :users, :only => [:index, :show, :destroy]
     resources :viking, :only => :index
+    resources :blogs
     resources :products do
       get :retry, :on => :member
       get :mute, :on => :member
@@ -69,6 +70,7 @@ Shopelia::Application.routes.draw do
     get "/georges/status", to: "georges#status"
     namespace :georges do
       get "/devices/lobby", to: "devices#lobby"
+      resources :traces, :only => :show
       resources :devices do
         match "/messages/check", to: "messages#check"
         get "/messages/collection_builder", to: "messages#collection_builder"
@@ -159,13 +161,16 @@ Shopelia::Application.routes.draw do
         get :alive
       end
       resources :merchants, :only => [:show, :update, :index]
-      namespace :merchants do
-        post :link
-      end
       resources :mappings, :only => [:index, :update, :show, :create]
     end
     namespace :vulcain do
       resources :merchants, :only => :update
+    end
+    namespace :customers do
+      namespace :merkav do
+        resources :merkav_transactions, :as => "transactions", :only => [:index, :create, :show]
+        resources :stats, :only => :index
+      end
     end
   end
 

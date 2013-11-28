@@ -58,9 +58,39 @@ game_of_throne:
   name: "Game of thrones"
   merchant: amazon
   url: http://www.amazon.fr/Game-Thrones-Le-Tr%C3%B4ne-Fer/dp/B00AAZ9F6K
-  image_url: http://s1.static69.com/composant/images//produits/big/LEXAR-LJDS73-16GBASBEU.jpg
   description: "Description"
   brand: "brand"
   reference: "reference"
   viking_failure: false
   options_completed: true
+
+le_donjon:
+  name: "Le Donjon"
+  merchant: amazon
+  url: http://www.amazon.fr/dp/2353250335
+  description: "Description"
+  brand: "brand"
+  reference: "reference"
+
+grand_theft_auto:
+  name: "Grand Theft Auto"
+  merchant: priceminister
+  url: http://www.priceminister.com/offer/buy/180624024
+  description: "Description"
+  brand: "brand"
+  reference: "reference"
+
+les_sims:
+  name: "Les Sims 4"
+  merchant: rueducommerce
+  url: http://www.rueducommerce.fr/Jeux-Consoles/Jeux-PC-et-accessoires/Jeux-PC/ELECTRONIC-ARTS/446710-Les-Sims-3-PC.htm
+
+enceintes_ihome:
+  name: "iHome iA17"
+  merchant: fnac
+  url: http://www.fnac.com/iHome-iA17/a3488733/w-4
+
+masque:
+  name: "Masque Latex ''Orc De Moria'' Le Seigneur Des Anneaux"
+  merchant: priceminister
+  url: http://www.priceminister.com/offer/buy/189396871/masque-latex-orc-de-moria-le-seigneur-des-anneaux.html

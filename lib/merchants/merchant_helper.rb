@@ -24,11 +24,12 @@ module MerchantHelper
     version = m.process_image_url(version) if m.respond_to?('process_image_url')
     version = m.process_images(version) if m.respond_to?('process_images')
     version = m.process_options(version) if m.respond_to?('process_options')
+    version = m.process_description(version) if m.respond_to?('process_description')
     version
   end
 
   def self.monetize url
-    UrlMonetizer.new.get(url) || self.from_url(url).monetize
+    self.from_url(url).try(:monetize) || UrlMonetizer.new.get(url)  
   end
 
   def self.canonize url
@@ -77,9 +78,12 @@ module MerchantHelper
 
   def self.parse_availability str, url=nil
     a = str.unaccent.downcase
-    dic = self.specific_availability(url).merge YAML.load(File.open(GLOBAL_AVAILABILITY))
+    dic = self.specific_availability(url)
     key = dic.keys.detect { |key| key if a =~ /#{key}/i }
-    dic[key]
+    return {avail: dic[key], key: key, specific: true} if ! key.nil?
+    dic = YAML.load(File.open(GLOBAL_AVAILABILITY))
+    key = dic.keys.detect { |key| key if a =~ /#{key}/i }
+    {avail: dic[key], key: key, specific: false}
   end
 
   private

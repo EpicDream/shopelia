@@ -6,6 +6,7 @@ class ProductSerializerTest < ActiveSupport::TestCase
   setup do
     @product = products(:usbkey)
     @product.update_attribute :versions_expires_at, 4.hours.from_now
+    UrlMonetizer.new.set(@product.url, "http://www.monetized.com")
   end
   
   test "it should correctly serialize product" do
@@ -17,6 +18,7 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal @product.brand, hash[:product][:brand]
     assert_equal @product.reference, hash[:product][:reference]
     assert_equal @product.url, hash[:product][:url]
+    assert_equal "http://www.monetized.com", hash[:product][:monetized_url]
     assert_equal @product.image_url, hash[:product][:image_url]
     assert_equal @product.description, hash[:product][:description]
     assert_equal @product.merchant.name, hash[:product][:merchant][:name]
@@ -27,6 +29,7 @@ class ProductSerializerTest < ActiveSupport::TestCase
     assert_equal 1, hash[:product][:ready]
     assert_equal 1, hash[:product][:options_completed]
     assert_equal 1, hash[:product][:versions].count
+    assert_equal 0, hash[:product][:saturn]
     
     product_versions(:usbkey).update_attribute :available, false
     @product.update_attribute :versions_expires_at, 1.hour.ago
@@ -58,5 +61,11 @@ class ProductSerializerTest < ActiveSupport::TestCase
 
     assert hash[:product][:description].nil?
     assert hash[:product][:versions].nil?
+  end
+
+  test "it should set saturn at 1 if merchant has a mapping" do
+    product_serializer = ProductSerializer.new(products(:dvd))
+    hash = product_serializer.as_json
+    assert_equal 1, hash[:product][:saturn]
   end
 end

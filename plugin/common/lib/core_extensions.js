@@ -38,6 +38,36 @@ if (! Array.prototype.groupBy)
     return result;
   };
 
+// if (! Object.prototype.keys)
+//   Object.prototype.keys = function () {
+//     var res = [];
+//     for (var k in this) {
+//       if (this.hasOwnProperty(k))
+//         res.push(k);
+//     }
+//     return res;
+//   };
+
+// if (! Object.prototype.values)
+//   Object.prototype.values = function () {
+//     var res = [];
+//     for (var k in this) {
+//       if (this.hasOwnProperty(k))
+//         res.push(this[k]);
+//     }
+//     return res;
+//   };
+
+// if (! Object.prototype.map)
+//   Object.prototype.map = function (fct) {
+//     var res = [];
+//     for (var k in this) {
+//       if (this.hasOwnProperty(k))
+//         res.push(fct(k, this[k]));
+//     }
+//     return res;
+//   };
+
 // $.extend from jQuery
 function $extend() {
   var options, name, src, copy, copyIsArray, clone,

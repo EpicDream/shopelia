@@ -11,7 +11,7 @@ namespace :shopelia do
           :product_id => id,
           :action => Event::REQUEST,
           :developer_id => developer.id)
-        sleep 1
+        sleep 2
       end
     end
 

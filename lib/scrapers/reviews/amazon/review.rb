@@ -28,10 +28,12 @@ module Scrapers
         def author
           href = @html.xpath('.//a[1]').first.attributes['href'].value
           href.match(/profile\/(.*?)\//).captures.first
+        rescue
+          nil
         end
         
         def content
-          @html.xpath('./text()[normalize-space()]').text.delete("\n").strip
+          @html.xpath('./text()[normalize-space()]').text.clean
         end
         
       end

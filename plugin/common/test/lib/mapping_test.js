@@ -12,41 +12,40 @@ define(['logger', 'mapping'], function (logger, Mapping) {
     beforeEach(function () {
       merchant = {
         id:2,
-        data:{
-          viking:{
-            "amazon.fr":{
-              "availability":{"paths":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']","b.h1:contains('recherchez une page')"]},
-              "brand":{"paths":[".buying > h1 + a"]},
-              "description":{"paths":["#productDescription div.content, #ps-content div.content","#feature-bullets-atf .content, .techD:first .content, #artistCentralTeaser > div","#technical-specs_feature_div .content, .content .tsTable","#technicalProductFeaturesATF","div.bucket h2:contains(\"Description\") + div.content"]},
-              "image_url":{"paths":["#main-image, #prodImage, #original-main-image"]},
-              "name":{"paths":["span#btAsinTitle"]},
-              "price":{"paths":["span#actualPriceValue b, span#buyingPriceValue b","#secondaryUsedAndNew a:not([href*=\"condition=used\"]) + .price"]},
-              "price_shipping":{"paths":["#actualPriceExtraMessaging, #pricePlusShippingQty .plusShippingText","table.qpDivTop div.cBox table td:first"]},
-              "price_strikeout":{"paths":["span#listPriceValue"]},
-              "shipping_info":{"paths":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']"]},
-              "option1":{"paths":[".variations div#selected_color_name + div .swatchSelect, .variations div#selected_color_name + div .swatchAvailable, .variations div#selected_color_name + div .swatchUnavailable","select#dropdown_selected_color_name"]},
-              "option2":{"paths":["#dropdown_selected_size_name option.dropdownAvailable, #dropdown_selected_size_name option.dropdownSelect, div.buying > select#asinRedirect",".variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchSelect, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchAvailable, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchUnavailable"]}
+        domain: "amazon.fr",
+        mapping:{
+          "amazon.fr":{
+            "availability":{"paths":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']","b.h1:contains('recherchez une page')"]},
+            "brand":{"paths":[".buying > h1 + a"]},
+            "description":{"paths":["#productDescription div.content, #ps-content div.content","#feature-bullets-atf .content, .techD:first .content, #artistCentralTeaser > div","#technical-specs_feature_div .content, .content .tsTable","#technicalProductFeaturesATF","div.bucket h2:contains(\"Description\") + div.content"]},
+            "image_url":{"paths":["#main-image, #prodImage, #original-main-image"]},
+            "name":{"paths":["span#btAsinTitle"]},
+            "price":{"paths":["span#actualPriceValue b, span#buyingPriceValue b","#secondaryUsedAndNew a:not([href*=\"condition=used\"]) + .price"]},
+            "price_shipping":{"paths":["#actualPriceExtraMessaging, #pricePlusShippingQty .plusShippingText","table.qpDivTop div.cBox table td:first"]},
+            "price_strikeout":{"paths":["span#listPriceValue"]},
+            "shipping_info":{"paths":["div.buying > *[class*=\"avail\"]","#secondaryUsedAndNew a.buyAction[href*='condition=used']"]},
+            "option1":{"paths":[".variations div#selected_color_name + div .swatchSelect, .variations div#selected_color_name + div .swatchAvailable, .variations div#selected_color_name + div .swatchUnavailable","select#dropdown_selected_color_name"]},
+            "option2":{"paths":["#dropdown_selected_size_name option.dropdownAvailable, #dropdown_selected_size_name option.dropdownSelect, div.buying > select#asinRedirect",".variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchSelect, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchAvailable, .variations div.variationSelected[id!=selected_color_name] + div.spacediv .swatchUnavailable"]}
+          }
+        },
+        pages: [
+          {
+            innerHTML: "<html><head><title>Ceci est un titre 1</title></head><body><h1>Titre principal</h1><div id='technicalProductFeaturesATF'>une description</div></body></html>",
+            title: "Ceci est un titre 2",
+            url: "http://www.amazon.fr/dp/B000000001",
+            results: {
+              description: "une description"
             }
           },
-          pages: {
-            "http://www.amazon.fr/dp/B000000001": {
-              innerHTML: "<html><head><title>Ceci est un titre 1</title></head><body><h1>Titre principal</h1><div id='technicalProductFeaturesATF'>une description</div></body></html>",
-              title: "Ceci est un titre 2",
-              url: "http://www.amazon.fr/dp/B000000001",
-              results: {
-                description: "une description"
-              }
-            },
-            "http://www.amazon.fr/dp/B000000002": {
-              innerHTML: "<html><head><title>Ceci est un titre 1</title></head><body><h1>Titre principal</h1><div>Ceci est <p id='technicalProductFeaturesATF'>une description</p></div></body></html>",
-              title: "Ceci est un titre 2",
-              url: "http://www.amazon.fr/dp/B000000002",
-              results: {
-                description: "une description"
-              }
+          {
+            innerHTML: "<html><head><title>Ceci est un titre 1</title></head><body><h1>Titre principal</h1><div>Ceci est <p id='technicalProductFeaturesATF'>une description</p></div></body></html>",
+            title: "Ceci est un titre 2",
+            url: "http://www.amazon.fr/dp/B000000002",
+            results: {
+              description: "une description"
             }
           }
-        }
+        ]
       };
       url = "http://www.amazon.fr/dp/B000000002";
     });
@@ -62,8 +61,7 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       expect(mapping.setHost).not.toHaveBeenCalled();
       expect(mapping.setUrl.calls.length).toBe(1);
       expect(mapping.id).toBe(2);
-      expect(mapping._data).toBe(merchant.data);
-      expect(mapping._host_mappings).toBe(merchant.data.viking);
+      expect(mapping.mapping).toEqual(merchant.mapping);
     });
 
     it('initialize without url', function () {
@@ -74,11 +72,10 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       var mapping = new Mapping(merchant);
 
       expect(mapping._initMerchantData).not.toHaveBeenCalled();
-      expect(mapping.setHost).not.toHaveBeenCalled();
+      expect(mapping.setHost.calls.length).toBe(1);
       expect(mapping.setUrl).not.toHaveBeenCalled();
       expect(mapping.id).toBe(2);
-      expect(mapping._data).toBe(merchant.data);
-      expect(mapping._host_mappings).toBe(merchant.data.viking);
+      expect(mapping.mapping).toEqual(merchant.mapping);
     });
 
     it('initialize without data', function () {
@@ -92,25 +89,23 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       expect(mapping.setHost.calls.length).toBe(1);
       expect(mapping.setUrl).not.toHaveBeenCalled();
       expect(mapping.id).toBe(42);
-      expect(typeof mapping._data).toBe('object');
-      expect(typeof mapping._host_mappings).toBe('object');
-      expect(Object.keys(mapping._host_mappings).length).toBe(1);
-      expect(mapping._host_mappings["default"]).not.toBe(undefined);
+      expect(typeof mapping.mapping).toBe('object');
+      expect(Object.keys(mapping.mapping).length).toBe(1);
+      expect(mapping.mapping["default"]).not.toBe(undefined);
     });
 
     it('toObject', function () {
       var h = (new Mapping(merchant, url)).toObject();
       expect(typeof h).toBe('object');
-      expect(Object.keys(h).length).toBe(2);
+      expect(Object.keys(h).length).toBe(4);
       expect(h.id).toBe(2);
-      expect(typeof h.data).toBe('object');
-      expect(Object.keys(h.data).length).toBe(2);
-      expect(typeof h.data.viking).toBe('object');
-      expect(Object.keys(h.data.viking).length).toBe(1);
-      expect(typeof h.data.viking['amazon.fr']).toBe('object');
-      expect(Object.keys(h.data.viking['amazon.fr']).length).toBeGreaterThan(10);
-      expect(typeof h.data.pages).toBe('object');
-      expect(Object.keys(h.data.pages).length).toBe(2);
+      expect(h.domain).toBe("amazon.fr");
+      expect(typeof h.mapping).toBe('object');
+      expect(Object.keys(h.mapping).length).toBe(1);
+      expect(typeof h.mapping['amazon.fr']).toBe('object');
+      expect(Object.keys(h.mapping['amazon.fr']).length).toBeGreaterThan(10);
+      // expect(typeof h.pages).toBe('object');
+      // expect(Object.keys(h.pages).length).toBe(2);
     });
 
     it('getHost', function () {
@@ -172,7 +167,8 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       runs(function () {
         expect(mapping instanceof Mapping).toBe(true);
         expect(mapping.id).toBe(2);
-        expect(mapping.host).toBe(undefined);
+        expect(mapping.domain).toBe('amazon.fr');
+        expect(mapping.host).toBe('amazon.fr');
       });
     });
 
@@ -213,12 +209,12 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       });
       runs(function () {
         expect(mapping instanceof Mapping).toBe(true);
-        expect(mapping.id).toBe(511);
-        expect(mapping.refs instanceof Array).toBe(true);
-        expect(mapping.refs[0]).toBe(188);
+        expect(mapping.id).toBe(31);
+        // expect(mapping.refs instanceof Array).toBe(true);
+        // expect(mapping.refs[0]).toBe(188);
         expect(mapping.host).toBe('default');
         expect(typeof mapping.currentMap).toBe('object');
-        expect(mapping._host_mappings["default"]).not.toBe(undefined);
+        expect(mapping.mapping["default"]).not.toBe(undefined);
         expect(Object.keys(mapping.currentMap).length).toBeGreaterThan(0);
       });
     });
@@ -236,7 +232,7 @@ define(['logger', 'mapping'], function (logger, Mapping) {
 
     it('page2doc', function () {
       var doc = Mapping.page2doc(
-        merchant.data.pages[url]
+        merchant.pages[1]
       );
 
       expect(doc instanceof HTMLDocument).toBe(true);
@@ -247,13 +243,13 @@ define(['logger', 'mapping'], function (logger, Mapping) {
 
     it('crawlPage', function() {
       var mapping = new Mapping(merchant, url),
-        page = merchant.data.pages[url],
+        page = merchant.pages[1],
         crawl = mapping.crawlPage(page),
         waitedResults = page.results,
         field;
       expect(typeof crawl).toBe('object');
       expect(Object.keys(crawl).length).toBe(11);
-      for (field in merchant.data.viking['amazon.fr']) {
+      for (field in merchant.mapping['amazon.fr']) {
         expect(crawl[field]).toBe(waitedResults[field]);
       }
     });
@@ -278,7 +274,7 @@ define(['logger', 'mapping'], function (logger, Mapping) {
       expect(results.description.length).toBe(1);
       expect(typeof results.description[0]).toBe('object');
       expect(results.description[0].url).toBe(url);
-      expect(results.description[0].old).toBe(merchant.data.pages[url].results.description);
+      expect(results.description[0].old).toBe(merchant.pages[1].results.description);
       expect(results.description[0].new).toBe('Ceci est <p id="technicalProductFeaturesATF">une description</p>');
       expect(typeof results.description[0].msg).toBe('string');
     });

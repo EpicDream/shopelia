@@ -2,7 +2,8 @@ require 'test_helper'
 
 class Api::Viking::MerchantsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-  
+  fixtures :merchants, :mappings
+
   setup do
     @merchant = merchants(:amazon)
   end
@@ -24,21 +25,14 @@ class Api::Viking::MerchantsControllerTest < ActionController::TestCase
     get :show, id:@merchant.id
     
     assert_response :success   
-    assert json_response["data"].present?
+    assert json_response["mapping_id"].present?
   end
   
-  test "it should update merchant data" do
-    put :update, id:@merchant.id, data:{"bla" => "bing"}
-    
-    assert_response :success
-    assert_equal ({"bla" => "bing"}.to_json), @merchant.reload.viking_data
-  end
-
-  test "it should link merchant data" do
+  test "it should update merchant mapping_id" do
     map = mappings(:fnac_map)
-    assert_nil @merchant.mapping_id
-    post :link, id: @merchant.id, data: map.id
-    assert_response :success
+    assert_equal mappings(:amazon_map).id, @merchant.mapping_id
+    put :update, id: @merchant.id, mapping_id: map.id
+    assert_response 204
     assert_equal map.id, @merchant.reload.mapping_id
   end
 end

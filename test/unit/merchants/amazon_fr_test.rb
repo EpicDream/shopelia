@@ -25,7 +25,7 @@ class AmazonFrTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal false, MerchantHelper.parse_availability("TVA incluse le cas échéant", @url)
+    assert_equal false, MerchantHelper.parse_availability("TVA incluse le cas échéant", @url)[:avail]
   end
 
   test "it should process availability" do
@@ -102,5 +102,11 @@ class AmazonFrTest < ActiveSupport::TestCase
     @version[:images] = ["http://ecx.images-amazon.com/images/I/41HlKgbXReL._SS45_.jpg"]
     @version = @helper.process_images(@version)
     assert_equal ["http://ecx.images-amazon.com/images/I/41HlKgbXReL.jpg"], @version[:images]
+  end
+  
+  test "it should be able to process description to build a formatted json description" do
+    @version[:description] = ""
+    @version = @helper.process_description(@version)
+    assert_equal({}.to_json, @version[:json_description])
   end
 end

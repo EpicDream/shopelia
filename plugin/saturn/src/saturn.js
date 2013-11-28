@@ -8,7 +8,7 @@ define(['logger', 'uri', './saturn_session', './helper', 'satconf', 'core_extens
 
 var Saturn = function() {
   this.crawl = false;
-  this.sessions = {};
+  this.sessions = {finished: {}, detached: {}, byTabId: {}};
   this.productsBeingProcessed = {};
   this.productQueue = [];
   this.batchQueue = [];
@@ -17,21 +17,6 @@ var Saturn = function() {
 
   this.results = {};
 };
-
-//
-function buildMapping(uri, hash) {
-  var host = uri.host();
-  // logger.debug("Going to build a mapping for host", host, "between", jQuery.map(hash,function(v, k){return k;}) );
-  var resMapping = hash["default"] || {};
-  while (host !== "") {
-    if (hash[host])
-      resMapping = $extend(true, {}, hash[host], resMapping);
-    host = host.replace(/^[^\.]+(\.|$)/, '');
-  }
-  resMapping.option1 = resMapping.option1 || resMapping.colors;
-  resMapping.option2 = resMapping.option2 || resMapping.sizes;
-  return resMapping;
-}
 
 //
 function preProcessData(data) {
@@ -147,16 +132,13 @@ Saturn.prototype.onProductsReceived = function(prods) {
 
 //
 Saturn.prototype.processMapping = function(mapping, prod, merchantId) {
-  if (! mapping) {
-    this.sendError({id: prod.id}, 'mapping is undefined for merchant_id='+merchantId);
+  if (! mapping.id) {
+    this.sendWarning({prod_id: prod.id}, 'merchant_id='+merchantId+' is not supported (url='+prod.url+')');
     return false;
-  } else if (! mapping.data || (! mapping.data.viking && ! mapping.data.ref)) {
-    this.sendWarning({id: prod.id}, 'merchant_id='+merchantId+' is not supported (url='+prod.url+')');
-    return false;
-  } else if (! mapping.data.ref) {
-    delete mapping.data.pages;
-    this.mappings[mapping.id] = mapping;
-    this.mappings[mapping.id].date = new Date();
+  } else {
+    delete mapping.pages;
+    this.mappings[merchantId] = mapping;
+    this.mappings[merchantId].date = new Date();
   }
   return true;
 };
@@ -168,24 +150,25 @@ Saturn.prototype.onProductReceived = function(prod) {
   var merchantId = prod.merchant_id || prod.url;
   prod.uri = new Uri(prod.url);
   prod.receivedTime = new Date();
+  // If mapping is already defined, add it
   if (prod.mapping !== undefined) {
     this.addProductToQueue(prod);
+  // Else if cache available and not outdated
   } else if (this.mappings[merchantId] && (prod.receivedTime - this.mappings[merchantId].date) < satconf.DELAY_BEFORE_REASK_MAPPING) {
     logger.debug("mapping from cache", merchantId, this.mappings[merchantId]);
-    prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
+    prod.mapping = this.mappings[merchantId].currentMap;
     this.addProductToQueue(prod);
+  // Else, load mapping.
   } else
-    this.loadMapping(merchantId, this.onMappingReceived(prod, merchantId), this.onMappingFail(prod, merchantId));
+    this.loadMapping(merchantId).done(this.onMappingReceived(prod, merchantId)).fail(this.onMappingFail(prod, merchantId));
 };
 
 Saturn.prototype.onMappingReceived = function(prod, merchantId) {
   return function(mapping) {
     if (! this.processMapping(mapping, prod, merchantId))
       return;
-    else if (mapping.data.ref)
-      this.loadMapping(mapping.data.ref, this.onMappingReceived(prod, mapping.data.ref), this.onMappingFail(prod, mapping.data.ref));
     else {
-      prod.mapping = buildMapping(prod.uri, mapping.data.viking);
+      prod.mapping = mapping.currentMap;
       this.addProductToQueue(prod);
     }
   }.bind(this);
@@ -195,10 +178,10 @@ Saturn.prototype.onMappingFail = function(prod, merchantId) {
   return function(err) {
     if (this.mappings[merchantId]) {
       logger.warn("Error when getting mapping to extract :", err, "for", prod, '. Get the last valid one.');
-      prod.mapping = buildMapping(prod.uri, this.mappings[merchantId].data.viking);
+      prod.mapping = this.mappings[merchantId].currentMap;
       this.addProductToQueue(prod);
     } else
-      this.sendError({id: prod.id}, "Error when getting mapping for merchant_id="+merchantId+" : "+err);
+      this.sendError({prod_id: prod.id}, "Error when getting mapping for merchant_id="+merchantId+" : "+err);
   }.bind(this);
 };
 
@@ -252,7 +235,7 @@ Saturn.prototype.crawlProduct = function() {
 
 Saturn.prototype.createSession = function(prod, tabId) {
   var session = new SaturnSession(this, prod);
-  this.sessions[tabId] = session;
+  this.sessions.byTabId[tabId] = session;
   session.tabId = tabId;
 
   this.cleanTab(tabId);
@@ -264,16 +247,25 @@ Saturn.prototype.createSession = function(prod, tabId) {
   this.openUrl(session, session.url);
 };
 
+Saturn.prototype.freeTab = function(tabId) {
+  var session = this.sessions.byTabId[tabId];
+  if (! session)
+    return;
+  session.oldTabId = session.tabId;
+  session.tabId = undefined;
+  if (! session.keepTabOpen)
+    this.tabs.pending.push(tabId);
+  this.sessions.detached[session.id] = session;
+  delete this.sessions.byTabId[tabId];
+};
+
 Saturn.prototype.endSession = function(session) {
   delete session.then;
-  delete this.productsBeingProcessed[session.id];
-  var tabId = session.tabId;
-  if (tabId) {
-    if (satconf.env !== 'dev')
-      delete this.sessions[tabId];
-    if (! session.keepTabOpen)
-      this.tabs.pending.push(tabId);
-  }
+  delete this.productsBeingProcessed[session.prod_id];
+  this.freeTab(session.tabId);
+  if (satconf.env === 'dev')
+    this.sessions.finished[session.id] = session;
+  delete this.sessions.detached[session.id];
   this.crawlProduct();
 };
 
@@ -299,7 +291,7 @@ Saturn.prototype.cleanTab = function(tabId) {
 // Virtual, must be reimplement and supercall
 Saturn.prototype.closeTab = function(tabId) {
   var idx = this.tabs.pending.indexOf(tabId),
-    session = this.sessions[tabId];
+    session = this.sessions.byTabId[tabId];
   if (idx !== -1)
     this.tabs.pending.splice(idx, 1);
   else if (session) {
@@ -330,19 +322,19 @@ Saturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) 
 // when fail to load mapping for example.
 Saturn.prototype.sendWarning = function(session, msg) {
   window.$e = session;
-  logger.warn((session.tabId ? '('+session.tabId+')' : '')+(session.id ? '{'+session.id+'}' : ''), msg, "\n$e =", window.$e);
+  logger.warn(session.logId ? session.logId() : '/'+session.prod_id, msg, "\n$e =", window.$e);
 };
 
 // session may be a simple Object with only id to set,
 // when fail to load mapping for example.
 Saturn.prototype.sendError = function(session, msg) {
   window.$e = session;
-  logger.err((session.tabId ? '('+session.tabId+')' : '')+(session.id ? '{'+session.id+'}' : ''), msg, "\n$e =", window.$e);
+  logger.err(session.logId ? session.logId() : '/'+session.prod_id, msg, "\n$e =", window.$e);
 };
 
 //
 Saturn.prototype.sendResult = function(session, result) {
-  var id = session.id || session.tabId;
+  var id = session.prod_id || session.tabId || session.oldTabId;
   this.results[id] = this.results[id] || [];
   this.results[id].push(result);
 };

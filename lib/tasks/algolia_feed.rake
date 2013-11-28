@@ -7,9 +7,15 @@ namespace :shopelia do
     task :run => [:clean, :download, :process, :make_prod] do
     end
 
-    desc "Clean Algolia tmp dir"
+    desc "Clean Algolia"
     task :clean => :environment do
       FileUtils.rm_rf(Dir.glob("#{AlgoliaFeed::Filer.new.tmpdir}/*"))
+      index_name = AlgoliaFeed::AlgoliaFeed.new.index_name
+      if Algolia.list_indexes['items'].collect { |h| h['name'] }.include?(index_name)
+        Algolia::Index.new(index_name).delete
+      end
+      Merchant.update_all('products_count = NULL')
+      AlgoliaFeed::Tagger.clear_redis
     end
 
     desc "Download Algolia feeds"
@@ -19,6 +25,8 @@ namespace :shopelia do
       fork { AlgoliaFeed::Zanox.new.filer.download }
       fork { AlgoliaFeed::Amazon.new.filer.download }
       fork { AlgoliaFeed::Webgains.new.filer.download }
+      fork { AlgoliaFeed::Publicidees.new.filer.download }
+      fork { AlgoliaFeed::CommissionJunction.new.filer.download }
       Process.waitall
     end
 

@@ -1,4 +1,6 @@
 # -*- encoding : utf-8 -*-
+require 'parsers/descriptions/formatter'
+
 class AmazonFr
   DEFAULT_PRICE_SHIPPING = "2.79 €"
   DEFAULT_SHIPPING_INFO_1 = "Prix et délais variables en fonction du vendeur."
@@ -67,6 +69,11 @@ class AmazonFr
     #TODO: faire la meme chose pour image_url, mais elle peut être vraiment grande...
     return version unless version[:images].kind_of?(Array)
     version[:images].map! { |url| url.sub(/\._.+?_\.(\w+)$/, '.\\1') }
+    version
+  end
+  
+  def process_description version
+    version[:json_description] = Descriptions::Formatter.format(version[:description], @url)
     version
   end
 end

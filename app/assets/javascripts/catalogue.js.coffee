@@ -1,17 +1,20 @@
 class @Catalogue
   constructor: (itemsPerPage, collectionId) ->
-    @feed = new ProductsFeed("products-feed-fr", @dataCallback)
+    window.feed = new ProductsFeed("products-feed-fr", @dataCallback)
     window.collectionId = collectionId
     window.catalogueItemsPerPage = itemsPerPage
     window.cataloguePage = 0
     window.catalogueShowCurrentPage = @showCurrentPage
     window.catalogueHasPreviousPage = @hasPreviousPage
     window.catalogueHasNextPage = @hasNextPage
+    window.catalogueToggleTag = @toggleTag
+    window.catalogueSendQuery = @sendQuery
+    window.catalogueFilterTags = []
     that = this
-    $("#catalogue-search").on "keyup", ->
-      query = $(this).val()
-      if query.length > 2
-        that.feed.sendQuery query
+    $(".catalogue-refresh").on "keyup", ->
+      window.catalogueQuery = $("#catalogue-search").val()
+      if window.catalogueQuery.length > 2
+        window.catalogueSendQuery()
       else
         that.clean()
     $("#catalogue-next-page").on "click", ->
@@ -24,6 +27,11 @@ class @Catalogue
       else
         that.addToCollectionByFeed $(@).data("feed-json")
 
+  sendQuery: ->
+    priceMin = $("#catalogue-price-min").val()
+    priceMax = $("#catalogue-price-max").val()
+    window.feed.sendQuery window.catalogueQuery, window.catalogueFilterTags, priceMin, priceMax
+
   dataCallback: (result) ->
     window.cataloguePage = 0
     window.catalogueProducts = result["products"]
@@ -31,6 +39,28 @@ class @Catalogue
     $("#search-info").html result["products"].length + " local results"
     $("#tags-merchant").html result["tagsMerchant"]
     $("#tags-category").html result["tagsCategory"]
+    filter = ""
+    for tag in window.catalogueFilterTags
+      if tag.match("^merchant_name")
+        filter += "<span id='" + tag + "' class='label label-warning label-tag'>" +
+          tag.replace("merchant_name:", "") +
+          "</span> "
+      else if tag.match("^category")
+        filter += "<span id='" + tag + "' class='label label-default label-tag'>" +
+          tag.replace("category:", "") +
+          "</span> "
+    $("#filter-tags").html filter
+    $(".label-tag").on "click", (e) ->
+      window.catalogueToggleTag(e.target.id)
+
+  toggleTag: (tag) ->
+    i = $.inArray(tag, window.catalogueFilterTags)
+    if i >= 0
+      window.catalogueFilterTags.splice(i, 1)
+    else
+      window.catalogueFilterTags.push(tag)
+    console.log window.catalogueFilterTags
+    window.catalogueSendQuery()
 
   pageUp: ->
     if @hasNextPage
@@ -76,9 +106,11 @@ class @Catalogue
       $("#catalogue-next-page").hide()
 
   clean: ->
+    window.catalogueFilterTags = []
     $("#tags-merchant").html ""
     $("#tags-category").html ""
     $("#search-info").html ""
+    $("#filter-tags").html ""
     i = 0
     while i < window.catalogueItemsPerPage
       $("#catalogue-box-" + i).removeClass "display-none"

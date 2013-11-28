@@ -2,6 +2,9 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
+gem 'savon'
+gem 'php-serialize'
+gem 'sys-proctable'
 gem 'ruby-filemagic'
 gem 'syslog-logger'
 gem 'redis'
@@ -33,13 +36,13 @@ gem 'devise-i18n-views'
 gem 'rails-i18n'
 gem 'backbone-on-rails', '1.0.0.0'
 gem 'http_accept_language', '~> 2.0.0.pre'
-gem 'sucker_punch'
 gem "audited-activerecord", "~> 3.0"
 gem 'sanitize'
 gem 'httpclient'
 gem 'sidekiq'
 gem 'sinatra', require: false
 gem 'slim'
+gem 'credit_card_validator'
 gem 'nexmo'
 gem 'pusher'
 gem 'rubyzip', '< 1.0.0'
@@ -85,8 +88,6 @@ group :development do
 end
 
 group :test do
-  #gem "turn", "~> 0.8.3"
-  gem "simplecov", :require => false
   gem "codeclimate-test-reporter"
   gem "capybara"
   gem "mocha", :require => false

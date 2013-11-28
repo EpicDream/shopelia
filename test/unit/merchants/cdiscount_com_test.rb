@@ -29,8 +29,8 @@ class CdiscountComTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal false, MerchantHelper.parse_availability("operation commerciale, ", @url)
-    assert_equal false, MerchantHelper.parse_availability("toute l’offre :", @url)
+    assert_equal false, MerchantHelper.parse_availability("operation commerciale, ", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("toute l’offre :", @url)[:avail]
   end
 
   test "it should canonize" do
@@ -52,6 +52,28 @@ class CdiscountComTest < ActiveSupport::TestCase
     @version[:image_url] = "http://i2.cdscdn.com/pdt2/0/8/k/3/300x300/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg"
     @version = @helper.process_image_url(@version)
     assert_equal "http://i2.cdscdn.com/pdt2/0/8/k/3/700x700/phil50pfl5008k/rw/philips-50pfl5008k-tv-led-3d-smart-tv-ambilight.jpg", @version[:image_url]
+  end
+
+  test "it should process_shipping_info" do
+    @version[:shipping_info] = "Livraison en 2 jours ouvrés"
+    @version[:price_shipping_text] = "3 € 50"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal "Livraison en 2 jours ouvrés", @version[:shipping_info]
+
+    @version[:shipping_info] = "Livraison en 2 jours ouvrés"
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_shipping_info(@version)
+    assert_equal "Livraison en 2 jours ouvrés", @version[:shipping_info]
+
+    @version[:shipping_info] = ""
+    @version[:price_shipping_text] = "3 € 50"
+    @version = @helper.process_shipping_info(@version)
+    assert_equal CdiscountCom::DEFAULT_SHIPPING_INFO, @version[:shipping_info]
+
+    @version[:shipping_info] = ""
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_shipping_info(@version)
+    assert_equal CdiscountCom::DEFAULT_SHIPPING_INFO_PLUS_PRICE, @version[:shipping_info]
   end
 
   test "it should process images" do

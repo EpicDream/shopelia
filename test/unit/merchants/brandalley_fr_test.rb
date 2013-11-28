@@ -30,12 +30,20 @@ class BrandalleyFrTest < ActiveSupport::TestCase
     @version[:availability_text] = "taille unique - plus que 4"
     @version = @helper.process_availability(@version)
     assert_equal "plus que 4", @version[:availability_text]
+
+    @version[:availability_text] = "TAILLE UNIQUE - DISPONIBLE"
+    @version = @helper.process_availability(@version)
+    assert_equal "DISPONIBLE", @version[:availability_text]
   end
 
   test "it should parse specific availability" do
-    assert_equal true, MerchantHelper.parse_availability("plus que 2", @url)
-    assert_equal false, MerchantHelper.parse_availability("1829 article(s)\nHomme prêt-à-porter t-shirts & polos t-shirts manches courtes", @url)
-    assert_equal false, MerchantHelper.parse_availability("ACCÉDER À LA BOUTIQUE", @url)
+    assert_equal true, MerchantHelper.parse_availability("plus que 2", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("1829 article(s)\nHomme prêt-à-porter t-shirts & polos t-shirts manches courtes", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("ACCÉDER À LA BOUTIQUE", @url)[:avail]
+
+    str = "Taille sélectionnée : M - Disponible"
+    str = @helper.process_availability({availability_text: str})[:availability_text]
+    assert_equal true, MerchantHelper.parse_availability(str, @url)[:avail]
   end
 
   test "it should process price_shipping if empty" do
@@ -52,5 +60,26 @@ class BrandalleyFrTest < ActiveSupport::TestCase
     @version[:price_text] = sprintf("%.2f €", BrandalleyFr::FREE_SHIPPING_LIMIT)
     @version = @helper.process_price_shipping(@version)
     assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
+  end
+
+  test "it should process option" do
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "Blanc", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "Blanc", @version[:option1]["text"]
+
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "", "src" => @url}
+    @version = @helper.process_options(@version)
+    assert_equal "", @version[:option1]["text"]
+
+    @version[:option1] = {"style" => "background: FFFFFF;", "text" => "", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "FFFFFF", @version[:option1]["text"]
+
+    @version[:option1] = {"style" => "background: #F60409;", "text" => "", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "#F60409", @version[:option1]["text"]
+    @version[:option1] = {"style" => "background-color:#c6865a;margin:2px;width:10px;height:12px;", "text" => "", "src" => ""}
+    @version = @helper.process_options(@version)
+    assert_equal "#c6865a", @version[:option1]["text"]
   end
 end

@@ -2,8 +2,9 @@
 require 'test__helper'
 require 'scrapers/reviews/amazon/amazon'
 
-class AmazonTest < ActiveSupport::TestCase
+class Scrapers::Reviews::AmazonTest < ActiveSupport::TestCase
   fixtures :products
+  fixtures :product_reviews
   
   URL = "http://www.amazon.fr/Game-Thrones-Le-Tr%C3%B4ne-Fer/dp/B00AAZ9F6K"
   
@@ -23,13 +24,12 @@ class AmazonTest < ActiveSupport::TestCase
   test "get first page of reviews of a given asin" do
     reviews = @scraper.reviews_of_page(1)
     review = reviews.first
-    expected_content = "Un vrai plaisir de pouvoir enfin regarder cette superbe série est blu-ray.Une de mes séries favorites, une image de très bonne qualité, la bande-son, en anglais comme en français, est impeccable.Et la série, que dire, regardez-la, on ne peut plus s'arrêter quand on a commencé ;)"
 
     assert_equal 10, reviews.count
-    assert_equal 'A1NKS428YJSR4K', review.author
-    assert_equal 5, review.rating
-    assert_equal Date.parse("5 novembre 2013"), review.date
-    assert_equal expected_content, review.content
+    assert review.author =~ /[A-Z\d]*/
+    assert review.rating > 0
+    assert Date.parse("5 novembre 2013") < review.date
+    assert review.content.length > 2
   end
   
   test "reviews of first page as hashes" do
@@ -49,7 +49,7 @@ class AmazonTest < ActiveSupport::TestCase
     
     Scrapers::Reviews::Amazon::Scraper.scrape(@product.id)
     
-    assert_equal 100, @product.product_reviews.count
+    assert_equal 10, @product.product_reviews.count
   end
   
   test "create incident" do
@@ -61,10 +61,33 @@ class AmazonTest < ActiveSupport::TestCase
     
     incidents = Incident.all
     incident = incidents.first
-    expected_description = "url : http://www.amazon.fr/product-reviews/B00AAZ9F6K/?pageNumber=1&showViewpoints=0&sortBy=bySubmissionDateDescending" 
+    expected_description = "url : http://www.amazon.fr/Game-Thrones-Le-Tr%C3%B4ne-Fer/dp/B00AAZ9F6K, index : 1"
   
+    assert_equal "Reviews Scraper : Scrapers::Reviews::Amazon::Scraper", incident.issue
     assert_equal 10, Incident.count
     assert_equal expected_description, incident.description
   end
   
+  test "if first review exists in database stop scraping" do
+    product = products(:le_donjon)
+    review = product_reviews(:le_donjon)
+    
+    scraper = Scrapers::Reviews::Amazon::Scraper.new(product)
+    scraper.stubs(:reviews_of_page).with(1).returns([review_stub(review.author, product)])
+    scraper.stubs(:reviews_of_page).with(2).returns([])
+    
+    Scrapers::Reviews::Synchronizer.expects(:synchronize).never
+    
+    scraper.run
+  end
+  
+  private
+  
+  def review_stub author, product
+    review = Scrapers::Reviews::Amazon::Review.new(nil)
+    hash_review = {rating:1, author:author, content:"", published_at:Time.now, product_id:product.id}
+    review.stubs(:to_hash).returns(hash_review)
+    review.stubs(:author).returns(author)
+    review
+  end
 end

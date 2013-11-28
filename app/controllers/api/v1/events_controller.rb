@@ -12,7 +12,6 @@ class Api::V1::EventsController < Api::V1::BaseController
   api :GET, "/api/events", "Create events"
   param :urls, String, "Urls of the products separated by ||", :required => true
   param :tracker, String, "Tracker", :required => false
-  param :visitor, String, "Visitor UUID", :required => false
   param :developer, String, "Developer key", :required => true
   def index
     head :no_content
@@ -21,7 +20,6 @@ class Api::V1::EventsController < Api::V1::BaseController
   api :POST, "/api/events", "Create events"
   param :urls, Array, "Urls of the products", :required => true
   param :tracker, String, "Tracker", :required => false
-  param :visitor, String, "Visitor UUID", :required => false
   def create
     head :no_content
   end
@@ -65,7 +63,7 @@ class Api::V1::EventsController < Api::V1::BaseController
     head :no_content and return if Event.is_bot?(ua)
     if params[:visitor]
       @device = Device.fetch(params[:visitor], ua)
-    else
+    elsif @device.nil?
       if cookies[:visitor]
         @device = Device.fetch(cookies[:visitor], ua)
       else

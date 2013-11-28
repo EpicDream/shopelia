@@ -138,11 +138,24 @@ define 'chrome_logger', ['logger'], (logger) ->
   #//          LOG TO LOCAL DB
   #////////////////////////////////////////
 
-  logger.db = openDatabase 'viking_logger', '1.0', 'Viking Logger',  30*1024*1024
+  dbSize = 32*1024*1024
+  while true
+    try
+      logger.db = openDatabase 'viking_logger', '1.0', 'Viking Logger',  dbSize
+      logger.info "Database open with size = " + (dbSize / 1024) + " ko."
+      break
+    catch err
+      if dbSize > 1024
+        dbSize /= 2
+      else
+        logger.warning "Did not succeed to open database."
+        break
+
   logger.db.transaction (tx) ->
     tx.executeSql "CREATE TABLE IF NOT EXISTS logs(time BIGINT, level INT, caller VARCHAR, content TEXT)"
 
   logger.writeToBD = (level, caller, args) ->
+    return if ! logger.db
     console.assert(typeof level is 'string', 'level must be a string');
     console.assert(typeof caller is 'string', 'caller must be a string');
     console.assert(typeof args is 'object' && args instanceof Array, 'args must be an Array');
@@ -151,6 +164,7 @@ define 'chrome_logger', ['logger'], (logger) ->
       tx.executeSql 'INSERT INTO logs (time, level, caller, content) VALUES (?, ?, ?, ?)', [Date.now(), logger[level] || level, caller, content]
 
   logger.readFromDB = (level_min, nb) ->
+    return if ! logger.db
     level_min ?= logger.ALL
     level_min = logger[level_min] unless typeof level_min is 'number'
     logger.db.transaction (tx) ->
@@ -161,13 +175,15 @@ define 'chrome_logger', ['logger'], (logger) ->
           console.log("%c"+row.content, logger.chromify(logger.code2str[row.level], '', [])[1])
 
   logger.cleanDB = (minutes) ->
+    return if ! logger.db
     limit = Date.now() - 1000*60*(minutes || 60*2) # 2 heures
     logger.db.transaction (tx) ->
       tx.executeSql "DELETE FROM logs WHERE time <= ?;", [limit]
 
   # Clean DB every hour
-  setInterval(logger.cleanDB, 1000*60*30); # 30 minutes
-  setTimeout(logger.cleanDB, 200);
+  if logger.db
+    setInterval(logger.cleanDB, 1000*60*30); # 30 minutes
+    setTimeout(logger.cleanDB, 200);
 
   #///////  END LOG TO DB ///////
 

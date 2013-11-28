@@ -25,7 +25,7 @@ chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   }
 
   if (hash.action == "setOption")
-    waitAjax();
+    setTimeout(waitAjax, 1000); // wait minimal to let page reload on url change
   if (callback)
     callback(result);
 });
@@ -36,7 +36,8 @@ function goNextStep() {
 
 function waitAjax() {
   if (location.host.search(/amazon.fr$/) !== -1) {
-    if (document.getElementById('prime_feature_div').style.opacity !== '')
+    var elem = document.getElementById('prime_feature_div');
+    if (elem && elem.style.opacity !== '')
       setTimeout(waitAjax, 100);
     else
       goNextStep();

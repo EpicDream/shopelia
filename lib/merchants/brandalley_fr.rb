@@ -22,7 +22,7 @@ class BrandalleyFr
   end
 
   def process_availability version
-    version[:availability_text] = $~[1] if version[:availability_text] =~ /^(?:taille|teinte) (?:selectionnee : .+?|unique) - (.*)$/
+    version[:availability_text] = $~[1] if version[:availability_text] =~ /^(?:taille|teinte) (?:s.lectionn.e : .+?|unique) - (.*)$/i
     version
   end
 
@@ -31,6 +31,15 @@ class BrandalleyFr
     if version[:price_text].present?
       current_price_shipping = MerchantHelper.parse_float version[:price_text]
       version[:price_shipping_text] = MerchantHelper::FREE_PRICE if ! current_price_shipping.nil? && current_price_shipping >= FREE_SHIPPING_LIMIT
+    end
+    version
+  end
+
+  def process_options version
+    if version[:option1].present? && version[:option1]["text"].blank? &&
+      version[:option1]["src"].blank? && version[:option1]["style"].present? &&
+      version[:option1]["style"] =~ /background(?:-color)?\s*:\s*(#?\w+)\s*;/i
+      version[:option1]["text"] = $~[1]
     end
     version
   end

@@ -5,6 +5,7 @@ require "openssl"
 
 class VSigner
   SECURITY_XSD_URL = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd"
+  SECURITY_UTILITY_URL = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
   SIGNATURE_NAMESPACE_URL = "http://www.w3.org/2000/09/xmldsig#"
   SIGNED_INFO_NAMESPACE_URL = 'http://www.w3.org/2000/09/xmldsig#'
   CANONICALIZATION_NAMESPACE_URL = 'http://www.w3.org/2001/10/xml-exc-c14n#'
@@ -28,11 +29,7 @@ class VSigner
   def canonicalize(node = document)
     node.canonicalize(Nokogiri::XML::XML_C14N_EXCLUSIVE_1_0)
   end
-  
-  def timestamp!
-    #TODO
-  end
-
+ 
   def signature_node
     unless node = document.xpath("//ds:Signature", "ds" => SIGNATURE_NAMESPACE_URL).first
       node = Nokogiri::XML::Node.new('Signature', document)
@@ -121,4 +118,20 @@ class VSigner
     signed_info_node.add_next_sibling(signature_value_node)
     self
   end
+ 
+  def timestamp!
+    node = Nokogiri::XML::Node.new('wsu:Timestamp', document)
+    node.add_namespace_definition('wsu', SECURITY_UTILITY_URL)
+    node['wsu:Id'] = "Timestamp-#{Random.rand(100_000_000)}"
+    created = Nokogiri::XML::Node.new('wsu:Created', document)
+    created['xmlns:wsu'] = SECURITY_UTILITY_URL
+    created.content = (Time.now - 10.seconds).gmtime.iso8601(3)
+    node.add_child(created)
+    expires = Nokogiri::XML::Node.new('wsu:Expires', document)
+    expires['xmlns:wsu'] = SECURITY_UTILITY_URL
+    expires.content = (Time.now + 5.minutes).gmtime.iso8601(3)
+    node.add_child(expires)
+    security_node.add_child(node)
+    node
+ end
 end

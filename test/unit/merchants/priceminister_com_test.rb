@@ -43,8 +43,17 @@ class PriceministerComTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
-    assert_equal false, MerchantHelper.parse_availability("15 résultats", @url)
-    assert_equal false, MerchantHelper.parse_availability("1 252  resultats", @url)
+    assert_equal false, MerchantHelper.parse_availability("1 résultat", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("15 résultats", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("1\u00a0252\u00a0 resultats", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("Aucun résultat ne correspond à votre recherche", @url)[:avail]
+
+    assert_equal false, MerchantHelper.parse_availability("Top Ventes", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("Les articles les plus vus du moment", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("Votre historique récent", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("Les produits frequemment achetes ensemble", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("Les produits les plus vus du moment dans 'Vêtements femme'", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("Les PriceMembers ayant vu 'Moteur De Tournebroche À Pile Pour Barbecue' ont également vu", @url)[:avail]
   end
 
   test "it should process image_url ajaxLoader" do

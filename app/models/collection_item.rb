@@ -29,8 +29,8 @@ class CollectionItem < ActiveRecord::Base
     else
       product = Product.fetch(feed[:product_url])
       version = {}
-      version[:price] = "#{feed[:price].to_f / 100} #{feed[:currency]}"
-      version[:price_shipping] = "#{feed[:price_shipping].to_f / 100} #{feed[:currency]}"
+      version[:price] = "#{sprintf("%.2f", feed[:price].to_f / 100)} #{feed[:currency]}"
+      version[:price_shipping] = "#{sprintf("%.2f", feed[:price_shipping].to_f / 100)} #{feed[:currency]}"
       version[:description] = feed[:description]
       version[:name] = feed[:name]
       version[:brand] = feed[:brand]
@@ -55,6 +55,6 @@ class CollectionItem < ActiveRecord::Base
       :product_id => self.product_id,
       :action => Event::REQUEST,
       :tracker => "display-collection"
-    }) if self.product.merchant.viking_data.present?
+    }) if self.product.merchant.mapping_id.present?
   end
 end

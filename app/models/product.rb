@@ -25,7 +25,7 @@ class Product < ActiveRecord::Base
   after_save :clear_failure_if_mute, :if => Proc.new { |product| product.mute? }
   after_update :set_image_size, :if => Proc.new { |product| product.image_url_changed? || (product.image_url.present? && product.image_size.blank?) }
   
-  attr_accessible :versions, :merchant_id, :url, :name, :description, :rating
+  attr_accessible :versions, :merchant_id, :url, :name, :description, :rating, :json_description
   attr_accessible :product_master_id, :image_url, :versions_expires_at
   attr_accessible :brand, :reference, :viking_failure, :muted_until
   attr_accessible :options_completed, :viking_sent_at, :batch
@@ -87,6 +87,10 @@ class Product < ActiveRecord::Base
     version ? (version.price + version.price_shipping).to_f.round(2) : nil
   end
 
+  def monetized_url
+    UrlMonetizer.new.get(self.url)
+  end
+
   def assess_versions
     ok = false
     self.product_versions.each do |version|
@@ -103,6 +107,10 @@ class Product < ActiveRecord::Base
   
   def authorize_push_channel
     Nest.new("product")[self.id][:created_at].set(Time.now.to_i)
+  end
+  
+  def has_review_for_author? author
+    !!product_reviews.where(author:author).first
   end
 
   private
@@ -205,14 +213,9 @@ class Product < ActiveRecord::Base
     self.update_column "versions_expires_at", nil
   end
 
-  def set_image_size retry_fetch=true
-    return if self.image_url.blank?
-    size = FastImage.size(self.image_url, :raise_on_failure=>true)
-    self.update_column "image_size", size.join("x") unless size.nil?
-  rescue 
-    return unless retry_fetch
-    `curl #{self.image_url} > /dev/null 2>&1`
-    set_image_size(false)
+  def set_image_size
+    size = ImageSizeProcessor.get_image_size(self.image_url)
+    self.update_column "image_size", size unless size.nil?
   end
 
   def notify_channel

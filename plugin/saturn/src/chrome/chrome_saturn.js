@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(["jquery", "chrome_logger", "src/saturn", 'satconf', 'core_extensions'], function($, logger, Saturn) {
+define(["jquery", "chrome_logger", "src/saturn", "mapping", 'satconf', 'core_extensions'], function($, logger, Saturn, Mapping) {
 
 "use strict";
 
@@ -66,19 +66,7 @@ ChromeSaturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCal
 // and return jqXHR object.
 ChromeSaturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
   logger.debug("Going to get mapping for merchantId '"+merchantId+"'");
-  if (typeof merchantId === 'string') {
-    var toInt = parseInt(merchantId, 10);
-    if (toInt)
-      merchantId = toInt;
-    else
-      merchantId = "?url="+merchantId;
-  }
-
-  return $.ajax({
-    type : "GET",
-    dataType: "json",
-    url: satconf.MAPPING_URL+merchantId
-  }).done(doneCallback).fail(failCallback);
+  return Mapping.load(merchantId);
 };
 
 // Get merchant_id from url.
@@ -100,10 +88,10 @@ ChromeSaturn.prototype.parseCurrentPage = function(tab) {
 ChromeSaturn.prototype.sendWarning = function(session, msg) {
   if (session.extensionId) {
     saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], warnMsg: msg});
-  } else if (session.id) // Stop pushed or Local Test
+  } else if (session.prod_id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
-      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
       contentType: 'application/json',
       data: JSON.stringify({versions: [], warnMsg: msg})
     });
@@ -114,10 +102,10 @@ ChromeSaturn.prototype.sendWarning = function(session, msg) {
 ChromeSaturn.prototype.sendError = function(session, msg) {
   if (session.extensionId) {
     saturn.externalPort.postMessage({url: session.url, kind: session.kind, tabId: session.tabId, versions: [], errorMsg: msg});
-  } else if (session.id) // Stop pushed or Local Test
+  } else if (session.prod_id) // Stop pushed or Local Test
     $.ajax({
       type : "PUT",
-      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
       contentType: 'application/json',
       data: JSON.stringify({versions: [], errorMsg: msg})
     }).fail(function(xhr, textStatus, errorThrown ) {
@@ -137,12 +125,12 @@ ChromeSaturn.prototype.sendResult = function(session, result) {
     result.kind = session.kind;
     result.strategy = session.initialStrategy;
     saturn.externalPort.postMessage(result);
-  } else if (session.id) {// Stop pushed or Local Test
+  } else if (session.prod_id) {// Stop pushed or Local Test
     $.ajax({
       tryCount: 0,
       retryLimit: 1,
       type : "PUT",
-      url: satconf.PRODUCT_EXTRACT_UPDATE+session.id,
+      url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
       contentType: 'application/json',
       data: JSON.stringify(result)
     }).fail(function(xhr, textStatus, errorThrown) {

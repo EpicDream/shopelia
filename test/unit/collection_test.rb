@@ -49,8 +49,10 @@ class CollectionsTest < ActiveSupport::TestCase
     end
     assert_equal "__Home", collection.tags.first.name
 
-    assert_difference "collection.tags.count", -1 do
-      collection.update_attribute :public, false
-    end
+    assert_difference "Tag.count", 0 do
+      assert_difference "collection.tags.count", -1 do
+        collection.update_attribute :public, false
+      end
+   end
   end
 end

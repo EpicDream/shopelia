@@ -1,12 +1,13 @@
 class Message < ActiveRecord::Base
   belongs_to :device
 
-  before_validation :ensure_content
   before_validation :ensure_device_pushable
+  before_validation :set_rating
   before_save :serialize_data
   after_create :set_pending_answer
   after_update :set_pending_answer_for_card
   after_update :notify_read_at
+  after_update :autorespond_on_rating
   after_create :notify
 
   serialize :data, Array
@@ -15,7 +16,8 @@ class Message < ActiveRecord::Base
 
   attr_accessible :content, :data, :device_id, :read_at, :products_urls, :from_admin
   attr_accessible :collection_uuid, :gift_gender, :gift_age, :gift_budget, :gift_card
-  attr_accessor :products_urls, :gift_card
+  attr_accessible :rating, :rating_card, :appstore_card
+  attr_accessor :products_urls, :gift_card, :rating_card, :appstore_card
 
   def build_push_data
     self.data.map do |url|
@@ -35,7 +37,9 @@ class Message < ActiveRecord::Base
     hash = {
       type:'Georges',
       message:self.content,
-      message_id:self.id
+      message_id:self.id,
+      georges:self.from_admin ? 1 : 0,
+      timestamp:self.created_at.to_i
     }    
     if self.data.present?
       hash = hash.merge({
@@ -44,6 +48,14 @@ class Message < ActiveRecord::Base
     elsif self.gift_card.to_i > 0
       hash = hash.merge({
         survey:'gift'
+      })
+    elsif self.rating_card.to_i > 0
+      hash = hash.merge({
+        survey:'rating'
+      })
+    elsif self.appstore_card.to_i > 0
+      hash = hash.merge({
+        survey:'appstore'
       })
     elsif self.collection_uuid.present?
       collection = Collection.find_by_uuid(self.collection_uuid)
@@ -89,6 +101,10 @@ class Message < ActiveRecord::Base
     end
   end
 
+  def set_rating
+    self.rating = 0 if self.rating_card.to_i > 0
+  end
+
   def notify_read_at
     Pusher.trigger("georges-room-#{self.device.id}", "read", {id:self.id}) if self.read_at_changed?
   end
@@ -109,12 +125,24 @@ class Message < ActiveRecord::Base
     end
   end
 
-  def ensure_content
-    self.errors.add(:base, I18n.t('messages.errors.empty')) unless content.present? || products_urls.present?
+  def ensure_device_pushable
+    self.errors.add(:base, I18n.t('messages.errors.device_not_pushable')) if self.device.push_token.nil? && self.from_admin?
   end
 
-  def ensure_device_pushable
-    self.errors.add(:base, I18n.t('messages.errors.device_not_pushable')) unless self.device.push_token.present?
+  def autorespond_on_rating
+    if self.rating_changed? && self.rating > 0
+      Pusher.trigger("georges-room-#{self.device.id}", "card_rating", {
+        id:self.id,
+        rating:self.rating
+      })
+      if self.rating >= 4
+        message = Message.new(device_id:self.device_id,from_admin:true,appstore_card:1)
+        Push.send_message message
+      else
+        message = Message.create(content:I18n.t('georges.autoreply.bad_rating'),device_id:self.device_id,from_admin:true)
+      end
+      self.device.update_attributes(rating:self.rating)
+    end
   end
 
   def notify

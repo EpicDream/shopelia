@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'algoliasearch'
- 
+
 module AlgoliaFeed
 
 # TODO: Admin page
@@ -16,7 +16,7 @@ module AlgoliaFeed
     end
 
     def initialize(params={})
-      self.batch_size      = params[:batch_size]      || 1000
+      self.batch_size      = params[:batch_size]      || 10000
       self.index_name      = params[:index_name]      || 'products-feed-fr-new'
       self.prod_index_name = params[:prod_index_name] || 'products-feed-fr'
       self.debug           = params[:debug]           || 0
@@ -31,7 +31,7 @@ module AlgoliaFeed
     end
 
     def set_index_attributes
-      self.index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference'], "customRanking" => ["asc(rank)"]})
+      self.index.set_settings({"attributesToIndex" => ['name', 'brand', 'reference', 'price'], "customRanking" => ["asc(rank)"]})
     end
 
     def send_batch(records)
@@ -51,4 +51,5 @@ require_relative 'zanox'
 require_relative 'amazon'
 require_relative 'webgains'
 require_relative 'publicidees'
+require_relative 'commission_junction'
 

@@ -7,6 +7,18 @@ class MerchantHelperTest < ActiveSupport::TestCase
     @version = {}
   end
 
+  test "it should use url monetizer" do 
+    url = "http://www.alinea.fr/product"
+    UrlMonetizer.new.set(url, "http://www.alinea.fr/product-m")
+    assert_equal "http://www.alinea.fr/product-m", MerchantHelper.monetize(url)
+  end
+
+  test "it should use merchant monetize before url monetizer" do
+    url = "http://www.priceminister.com/offer/buy/141950480"
+    UrlMonetizer.new.set(url, "http://www.priceminister.com/offer/buy/141950480?m")
+    assert_equal "http://track.effiliation.com/servlet/effi.redir?id_compteur=12712494&url=http%3A%2F%2Fwww.priceminister.com%2Foffer%2Fbuy%2F141950480", MerchantHelper.monetize(url)
+  end
+
   test "it should process image_url" do 
     @version[:image_url] = "//amazon.fr/image.jpg"
     @version = MerchantHelper.process_version("http://www.amazon.fr", @version)
@@ -73,21 +85,22 @@ class MerchantHelperTest < ActiveSupport::TestCase
   end
 
   test "it should parse_availability to true" do
-    assert_equal true, MerchantHelper.parse_availability(MerchantHelper::AVAILABLE)
+    assert_equal true, MerchantHelper.parse_availability(MerchantHelper::AVAILABLE)[:avail]
 
     array = [ "en stock", "8 offres", "en vente sur", "Précommandez maintenant pour réserver votre Kindle Paperwhite.",
               "Expédié habituellement sous 2 à 3 semaines", "Peu de stock", "Stock modéré",
               "disponible sous 4 semaines", "Seulement 1 en stock", "in stock but may require an extra 1-2 days to process.",
               "Conditions spéciales :- livraison : 10 semaines", "livraison des fichiers", "attention : dernières pièces disponibles",
               "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery.", "expected ship date",
-              "disponible", "Délai 3 à 5 jours", "1 article disponible" ]
+              "disponible", "Délai 3 à 5 jours", "1 article disponible", "Plus que 7 produits chez notre fournisseur",
+              "Plus que 9 produits disponibles" ]
     array.each do |str|
-      assert_equal true, MerchantHelper.parse_availability(str)
+      assert_equal true, MerchantHelper.parse_availability(str)[:avail]
     end
   end
 
   test "it should parse_availability to false" do
-    assert_equal false, MerchantHelper.parse_availability(MerchantHelper::UNAVAILABLE)
+    assert_equal false, MerchantHelper.parse_availability(MerchantHelper::UNAVAILABLE)[:avail]
 
     array = [ "Aucun vendeur ne propose ce produit", "out of stock", "en rupture de stock",
               "temporairement en rupture de stock.", "sur commande", "article indisponible",
@@ -99,16 +112,18 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "ce produit n'est plus en stock", "PAS DE CADEAUX INSOLITES ... CONTINUEZ VOTRE NAVIGATION",
               "For Personalized Service on this item please call 1-800-227-3528 and our Product Specialists will gladly answer all questions and provide additional information. Please note that special conditions and guarantee limitations apply to this product.",
               "404", "Vous recherchez une page ?", "Coming Soon", "Produit en rupture", "Ouille, cette page est introuvable !!!",
-              "Epuisé", "pas disponible", "Currently unavailable., Currently unavailable." ]
+              "Epuisé", "pas disponible", "Currently unavailable., Currently unavailable.", "Rupture de stock",
+              "Erreur: Désolé, mais le produit que vous avez demandé n'a pas été trouvé !",
+              "La page que vous recherchez est introuvable.", "Ce produit n'existe plus ! Mais..." ]
     array.each do |str|
-      assert_equal false, MerchantHelper.parse_availability(str)
+      assert_equal false, MerchantHelper.parse_availability(str)[:avail]
     end
   end
 
   test "it should parse_availability to nil" do
     array = [ "35 €", "Vert", "Peut être qu'il est dispo, peut être pas", "Erreur 500" ]
     array.each do |str|
-      assert_equal nil, MerchantHelper.parse_availability(str)
+      assert_equal nil, MerchantHelper.parse_availability(str)[:avail]
     end
   end
 end

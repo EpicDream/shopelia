@@ -39,7 +39,8 @@ livraison incluse: true
 dernier exemplaire: true
 ^disponible: true
 delai \d+ a \d+ jours: true
-"[1-9]\\d* articles? disponibles?": true
+"[1-9]\\d* (produit|article)s? disponibles?": true
+"[1-9]\\d* (produit|article)s? chez notre fournisseur": true
 
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
@@ -48,7 +49,9 @@ epuise: false
 bientot disponible: false
 sans stock pour vos criteres: false
 indisponible: false
+introuvable: false
 en rupture: false
+rupture de stock: false
 aucun vendeur ne propose ce produit: false
 out of stock: false
 \d+ d'occasion: false
@@ -72,5 +75,6 @@ no longer available: false
 for personalized service on this item please call: false
 cet article n’est malheureusement plus disponible: false
 page est introuvable: false
-n'existe pas: false
+n'existe (pas|plus): false
 en cours de r.approvisionnement: false
+n.a pas ete trouve: false

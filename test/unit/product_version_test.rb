@@ -154,6 +154,49 @@ class ProductVersionTest < ActiveSupport::TestCase
     end
   end
 
+  test "it should search availability into specific merchant helper" do
+    assert_difference "Incident.count", 0 do
+      str = "1\u00a0508\u00a0 résultats"
+      version = ProductVersion.create(
+        product_id:products(:masque).id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:str)
+      assert_equal false, version.available, "#{str.inspect} failed !"
+    end
+  end
+
+  test "it should replace availability_info if specific match" do
+    assert_difference "Incident.count", 0 do
+      str = "Plus que 1 exemplaire"
+      version = ProductVersion.create(
+        product_id:products(:masque).id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:str)
+      assert_equal str, version.availability_info
+    end
+
+    assert_difference "Incident.count", 0 do
+      str = "Les produits les plus vus du moment dans"
+      version = ProductVersion.create(
+        product_id:products(:masque).id,
+        price:"2.79",
+        price_shipping:"1",
+        shipping_info:"toto",
+        image_url:"toto",
+        name:"toto",
+        availability_text:str)
+      assert_equal MerchantHelper::AVAILABLE, version.availability_info
+    end
+  end
+
   test "it should parse rating" do
     assert_difference "Incident.count", 0 do
       version = ProductVersion.create(
@@ -232,6 +275,23 @@ class ProductVersionTest < ActiveSupport::TestCase
       price_shipping:"10")
 
     assert_equal 3, version.cashfront_value(100, developer:developers(:prixing))
+  end
+
+  test "it should create product images" do 
+    assert_difference "ProductImage.count", 2 do
+      @version = ProductVersion.create!(
+      product_id:products(:dvd).id,
+      price:"100",
+      images:[
+        "http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg", 
+        "http://ecx.images-amazon.com/images/I/81zxTIH-A3L._SX342_.jpg"
+      ])
+    end
+    @version.reload
+
+    assert_difference "ProductImage.count", -1 do
+      @version.update_attributes(images:["http://ecx.images-amazon.com/images/I/41EawbtzVUL._SX450_.jpg"])
+    end
   end
 
   test "it should sanitize description (1)" do

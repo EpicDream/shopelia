@@ -50,7 +50,10 @@ class String
     'AE'    => 'Æ',
     'ae'    => 'æ',
     'OE'    => 'Œ',
-    'oe'    => 'œ'
+    'oe'    => 'œ',
+    # Spaces
+    ' '      => "\u00a0",
+
   }
 
   def unaccent
@@ -59,6 +62,10 @@ class String
       _str.gsub!(/[#{v}]/, k)
     end
     _str
+  end
+  
+  def clean
+    gsub(/\n|\r|\t/, ' ').strip
   end
   
 end
@@ -87,5 +94,21 @@ class Date
       return string.sub(month_from, month_to.to_s) if month_to
     end
     return string
+  end
+end
+
+module YAML
+  def self.load_relative_file(path)
+    caller_path = caller.first.match(/(.*)\/.*?:/).captures.first
+    path = caller_path + "/" + path
+    YAML.load_file(path)
+  end
+end
+
+class ActiveRecord::Base
+  def self.json_attributes attributes
+    attributes.each do |attribute|
+      define_method(attribute) { JSON.parse(read_attribute(attribute))}
+    end
   end
 end
