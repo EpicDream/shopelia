@@ -7,7 +7,6 @@ pr.\-?commandez maintenant: true
 voir les offres de ces vendeurs: true
 expedie sous: true
 expedie habituellement sous: true
-^\(\d+\)$: true
 en stock: true
 peu de stock: true
 stock modere: true
