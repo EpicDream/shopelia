@@ -1,8 +1,8 @@
 # -*- encoding : utf-8 -*-
 class CdiscountCom
-  DEFAULT_PRICE_SHIPPING = "3.99 €"
+  DEFAULT_PRICE_SHIPPING = "2.99 €"
   DEFAULT_SHIPPING_INFO = "A partir de 1 jour ouvré pour les produits <= 30 kg en stock, à partir de 4 jours ouvrés pour les produits volumineux en stock."
-  DEFAULT_SHIPPING_INFO_PRICE = "3€99 pour les produits <= 30 kg, 39€99 pour les produits volumineux. "
+  DEFAULT_SHIPPING_INFO_PRICE = "2€99 pour les produits <= 30 kg, 19€99 pour les produits volumineux. "
   DEFAULT_SHIPPING_INFO_PLUS_PRICE = DEFAULT_SHIPPING_INFO_PRICE + DEFAULT_SHIPPING_INFO
 
   AVAILABILITY_HASH = {

@@ -20,4 +20,8 @@ class DartyComTest < ActiveSupport::TestCase
   test "it should canonize" do
     assert_equal "http://www.darty.com/nav/achat/gros_electromenager/refrigerateur_congelateur-refrigerateur-cong/refrigerateur_congelateur_bas/samsung_rl56gsbsw.html", @helper.canonize
   end
+
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("3 modèles", @url)[:avail]
+  end
 end
