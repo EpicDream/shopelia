@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails', '3.2.13'
 
+gem 'htmlentities'
 gem 'savon'
 gem 'php-serialize'
 gem 'sys-proctable'
