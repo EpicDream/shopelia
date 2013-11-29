@@ -4,6 +4,7 @@ class AsosFr
   DEFAULT_SHIPPING_INFO = "Sous 6 jours ouvrables"
 
   AVAILABILITY_HASH = {
+    /\d+-\d+ of \d+/i => false # search page
   }
 
   def initialize url
@@ -25,7 +26,7 @@ class AsosFr
   end
 
   def process_availability version
-    # version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
+    version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
     version
   end
 
