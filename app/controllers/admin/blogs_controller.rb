@@ -7,7 +7,8 @@ class Admin::BlogsController < Admin::AdminController
   def show
     @blog = Blog.where(id:params[:id]).includes(:posts).first
     if params[:fetch]
-      @blog.fetch
+      BlogsWorker.perform_async(@blog.id)
+      render json: {}.to_json, status:200
     end
   end
   
