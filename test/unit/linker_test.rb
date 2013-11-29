@@ -12,7 +12,7 @@ class LinkerTest < ActiveSupport::TestCase
       { :in  => "http://rstyle.me/n/c92f6m4xn",
         :out => "http://www.alexandermcqueen.com/fr/mcq/veste_cod49134687.html" },
       { :in  => "http://bit.ly/1aChLeB",
-        :out => "http://fr.topshop.com/fr/tsfr/produit/sacs-et-accessoires-1702233/chapeaux-415258/bonnet-en-grosse-maille-tricoté-à-la-main-2192228" },
+        :out => "http://fr.topshop.com/fr/tsfr/produit/bonnet-en-grosse-maille-tricoté-à-la-main-2192228" },
       { :in  => "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html",
         :out => "http://www.priceminister.com/offer/buy/103220572" },
       { :in  => "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html",

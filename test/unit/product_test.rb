@@ -31,12 +31,6 @@ class ProductTest < ActiveSupport::TestCase
     end
   end
 
-  test "it should unaccent url" do
-    product = Product.new(:url => "http://www.rueducommerce.fr/product-é")
-    assert product.save, product.errors.full_messages.join(",")
-    assert_equal "http://www.rueducommerce.fr/product-e", product.url
-  end
-
   test "it should clean url" do
     product = Product.new(:url => "http://www.amazon.fr/Brother-Telecopieur-photocopieuse-transfert-thermique/dp/B0006ZUFUO?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B0006ZUFUO")
     assert product.save, product.errors.full_messages.join(",")
