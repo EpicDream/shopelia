@@ -13,7 +13,16 @@ class LookImageTest < ActiveSupport::TestCase
 
   test "it should create look image" do
     assert_difference "LookImage.count" do
-      @look.look_images << LookImage.create(url:@url)
+      @look.look_images << LookImage.new(url:@url)
+    end
+    assert_equal 1, @look.reload.look_images.count
+  end
+  
+  test "a look image must belongs to a look" do
+    assert_difference("LookImage.count", 0) do
+      look_image = LookImage.create(url:@url)
+      assert !look_image.valid?
     end
   end
+  
 end
