@@ -6,7 +6,8 @@ class PostTest < ActiveSupport::TestCase
     post = Post.new(link: "http://www.toto.fr", blog_id: blogs(:betty).id)
     post.products = {"jupe" => "http://bit.ly/17uPRlU"}.to_json
     
-    Linker.expects(:clean).with(["http://www.toto.fr","http://bit.ly/17uPRlU"])
+    Linker.expects(:clean).with("http://bit.ly/17uPRlU")
+    Linker.expects(:clean).with("http://www.toto.fr")
     post.save!
 
     assert_equal "pending", post.status

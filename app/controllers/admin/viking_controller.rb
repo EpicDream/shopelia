@@ -20,7 +20,7 @@ class Admin::VikingController < Admin::AdminController
       stats << hash if hash[:total] > 10
     end
     
-    @merchant_stats = stats.sort_by { |k| k[:rate] }.reverse
+    @merchant_stats = stats.sort_by { |k| -k[:total] }
     
     respond_to do |format|
       format.html

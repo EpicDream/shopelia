@@ -1,10 +1,10 @@
 # -*- encoding : utf-8 -*-
-class AsosFr
-  DEFAULT_PRICE_SHIPPING = "Livraison gratuite"
-  DEFAULT_SHIPPING_INFO = "Sous 6 jours ouvrables"
+class UrbanoutfittersFr
+  DEFAULT_PRICE_SHIPPING = "4,90 €"
+  DEFAULT_SHIPPING_INFO = "Livrée en 3-5 jours ouvrables."
+  FREE_SHIPPING_LIMIT = 75.0
 
   AVAILABILITY_HASH = {
-    /\d+-\d+ of \d+/i => false # search page
   }
 
   def initialize url
@@ -12,13 +12,7 @@ class AsosFr
   end
 
   def canonize
-    if @url =~ %r{asos.fr/[^/]+/(\w+)/\?.*(iid=\d+)(?:&|$)}
-      "http://www.asos.fr/#{$~[1]}/?#{$~[2]}"
-    elsif @url =~ %r{https?://www.asos.fr/Prod/pgeproduct.aspx\?iid=\d+}
-      $~[0]
-    else
-      @url
-    end
+    @url
   end
 
   def monetize
@@ -32,6 +26,10 @@ class AsosFr
 
   def process_price_shipping version
     version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
+    if version[:price_text].present?
+      current_price_shipping = MerchantHelper.parse_float version[:price_text]
+      version[:price_shipping_text] = MerchantHelper::FREE_PRICE if ! current_price_shipping.nil? && current_price_shipping >= FREE_SHIPPING_LIMIT
+    end
     version
   end
 
@@ -41,13 +39,13 @@ class AsosFr
   end
 
   def process_image_url version
-    version[:image_url].sub!(/(?<=\d)[a-z]+(?=.je?pg$)/, 'xxl') if version[:image_url].present?
+    version[:image_url].sub!(/(?<=_)\w(?=\d+\.jpe?g)/, 'z') if version[:image_url].present?
     version
   end
 
   def process_images version
     return version unless version[:images].kind_of?(Array)
-    version[:images].map! { |url| url.sub(/(?<=\d)[a-z]+(?=.je?pg$)/, 'xxl') }
+    version[:images].map! { |url| url.sub(/(?<=_)\w(?=\d+\.jpe?g)/, 'z') }
     version
   end
 end

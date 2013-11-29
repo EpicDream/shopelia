@@ -11,5 +11,11 @@ class Blog < ActiveRecord::Base
   def fetch
     self.posts << Scrapers::Blogs::Blog.new(url).posts.map(&:modelize)
     self.reload
-  end  
+  end
+  
+  def self.batch_create_from_csv content
+    blogs = []
+    CSV.parse(content) { |row| blogs << Blog.create({name:row[1], url:row[0]}) }
+    blogs
+  end
 end

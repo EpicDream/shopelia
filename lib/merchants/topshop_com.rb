@@ -1,10 +1,9 @@
 # -*- encoding : utf-8 -*-
-class AsosFr
-  DEFAULT_PRICE_SHIPPING = "Livraison gratuite"
-  DEFAULT_SHIPPING_INFO = "Sous 6 jours ouvrables"
+class TopshopCom
+  DEFAULT_PRICE_SHIPPING = "6 €"
+  DEFAULT_SHIPPING_INFO = "Livrée en 5 jours ouvrables."
 
   AVAILABILITY_HASH = {
-    /\d+-\d+ of \d+/i => false # search page
   }
 
   def initialize url
@@ -12,10 +11,8 @@ class AsosFr
   end
 
   def canonize
-    if @url =~ %r{asos.fr/[^/]+/(\w+)/\?.*(iid=\d+)(?:&|$)}
-      "http://www.asos.fr/#{$~[1]}/?#{$~[2]}"
-    elsif @url =~ %r{https?://www.asos.fr/Prod/pgeproduct.aspx\?iid=\d+}
-      $~[0]
+    if @url =~ %r{topshop.com/fr/tsfr/produit/(?:(?:[\w-]|%[0-9A-F]{2})+-\d+/)*((?:[\w-]|%[0-9A-F]{2})+-\d+)(?:\?|$)}
+      "http://fr.topshop.com/fr/tsfr/produit/#{$~[1]}"
     else
       @url
     end
@@ -26,7 +23,7 @@ class AsosFr
   end
 
   def process_availability version
-    version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
+    # version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
     version
   end
 
@@ -41,13 +38,13 @@ class AsosFr
   end
 
   def process_image_url version
-    version[:image_url].sub!(/(?<=\d)[a-z]+(?=.je?pg$)/, 'xxl') if version[:image_url].present?
+    version[:image_url].sub!(/(?<=_)(small|normal)(?=\.jpe?g)/, 'large') if version[:image_url].present?
     version
   end
 
   def process_images version
     return version unless version[:images].kind_of?(Array)
-    version[:images].map! { |url| url.sub(/(?<=\d)[a-z]+(?=.je?pg$)/, 'xxl') }
+    version[:images].map! { |url| url.sub(/(?<=_)(small|normal)(?=\.jpe?g)/, 'large') }
     version
   end
 end
