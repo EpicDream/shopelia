@@ -46,22 +46,22 @@ class UrbanoutfittersFrTest < ActiveSupport::TestCase
   test "it should process price_shipping if empty" do
     @version[:price_shipping_text] = ""
     @version = @helper.process_price_shipping(@version)
-    assert_equal MangoCom::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
+    assert_equal UrbanoutfittersFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
   end
 
   test "it should process price_shipping if greater than limit" do
     @version[:price_shipping_text] = ""
-    @version[:price_text] = sprintf("%.2f €", MangoCom::FREE_SHIPPING_LIMIT-1)
+    @version[:price_text] = sprintf("%.2f €", UrbanoutfittersFr::FREE_SHIPPING_LIMIT-1)
     @version = @helper.process_price_shipping(@version)
-    assert_equal MangoCom::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
+    assert_equal UrbanoutfittersFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
 
     @version[:price_shipping_text] = "5.17 €"
-    @version[:price_text] = sprintf("%.2f €", MangoCom::FREE_SHIPPING_LIMIT-1)
+    @version[:price_text] = sprintf("%.2f €", UrbanoutfittersFr::FREE_SHIPPING_LIMIT-1)
     @version = @helper.process_price_shipping(@version)
     assert_equal "5.17 €", @version[:price_shipping_text]
 
     @version[:price_shipping_text] = ""
-    @version[:price_text] = sprintf("%.2f €", MangoCom::FREE_SHIPPING_LIMIT)
+    @version[:price_text] = sprintf("%.2f €", UrbanoutfittersFr::FREE_SHIPPING_LIMIT)
     @version = @helper.process_price_shipping(@version)
     assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
@@ -78,9 +78,9 @@ class UrbanoutfittersFrTest < ActiveSupport::TestCase
   end
 
   test "it should process image_url" do
-    @version[:image_url] = "http://www.urbanoutfitters.co.uk/content/ebiz/urbanoutfitters/invt/5120466610024/5120466610024_Navy_e1.jpg"
+    @version[:image_url] = "http://www.urbanoutfitters.co.uk/content/ebiz/urbanoutfitters/invt/5120466610024/5120466610024_Navy_l1.jpg"
     @version = @helper.process_image_url(@version)
-    assert_equal "http://www.urbanoutfitters.co.uk/content/ebiz/urbanoutfitters/invt/5120466610024/5120466610024_Navy_e1.jpg", @version[:image_url]
+    assert_equal "http://www.urbanoutfitters.co.uk/content/ebiz/urbanoutfitters/invt/5120466610024/5120466610024_Navy_z1.jpg", @version[:image_url]
   end
 
   test "it should process images" do
