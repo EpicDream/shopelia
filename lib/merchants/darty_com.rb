@@ -1,5 +1,9 @@
 class DartyCom
 
+  AVAILABILITY_HASH = {
+    /\d+ mod.le/i => false, # Redirection vers recherche quand trouve pas.
+  }
+
   def initialize url
     @url = url
   end
