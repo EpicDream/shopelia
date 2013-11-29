@@ -1,0 +1,7 @@
+.collection-item-box.collection-item-monitor{data:{pid:"#{look_product.product_id}"}}
+  - if look_product.product.versions_expired?
+    .collection-item-spinner
+      .spinner
+  .collection-item
+    %img.collection-item-img{src:"#{look_product.product.image_url}"}
+  .collection-item-price= number_to_currency(look_product.product.price || 0)

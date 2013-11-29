@@ -33,6 +33,15 @@ function monitorCollectionItems() {
       type: "delete"
     });
   });
+  $(".admin-look-product-span").off("click");
+  $(".admin-look-product-span").on("click", function() {
+    var id = $(this).data('lpid');
+    $.ajax({
+      url: "/admin/look_products/" + id,
+      dataType: "script",
+      type: "delete"
+    });
+  });
   $(".collection-item-monitor").each(function() {
     var pid = $(this).data('pid');
     if (window.channels["product-" + pid] === undefined) {

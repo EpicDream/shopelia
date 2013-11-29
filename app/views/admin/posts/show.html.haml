@@ -1,0 +1,150 @@
+%section.header
+  %header
+    %h1= @post.title
+    %h2= @post.blog.name
+
+.container-fluid
+  .row-fluid
+    .span3
+      %article.coolbox
+        %h3 Text
+        = link_to @post.title, @post.link, target: "blank"
+        %br
+        = @post.content.html_safe
+      %article.coolbox
+        %h3 Links
+        - @links.each do |link|
+          = link_to link[:text], link[:url], target: "blank"
+          %br
+      %article.coolbox
+        %h3 Actions
+        %button.btn.btn-success#look-add-urls
+          %i.icon-plus.icon-white
+          Add products from url
+        %p
+        %button.btn.btn-success#look-add-custom
+          %i.icon-plus.icon-white
+          Add custom product
+    .span9
+      %article.coolbox#grid
+        %h3 Images
+        - @post.images.each do |url|
+          .img-block.sort
+            = image_tag url, class:"thumb"
+            .img-delete
+              X
+      %article.coolbox
+        %h3 Links
+        .row-fluid
+          - @products.each do |product|
+            .span3
+              = render LookProduct.new(product_id:product.id)
+
+#look-add-urls-modal.modal.fade.hidden
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", type: "button"} x
+        %h4.modal-title Add products by url
+      .modal-body
+        = form_tag admin_look_products_path, id:"look-add-urls-form", remote:true do
+          %p Enter URLs of products to add (one URL per line)
+          = text_area_tag "urls", "", rows:"10", cols:"80", style:"width:95%", id:"look-add-urls-field"
+          = hidden_field_tag "look_id", @look.id
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+        %button.btn.btn-primary#look-add-urls-confirm{type: "button", "data-loading-text" => "Processing..."} Add products
+
+#look-add-custom-modal.modal.fade.hidden
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", type: "button"} x
+        %h4.modal-title Add custom product
+      .modal-body
+        .row-fluid
+          .span12
+            %p Product url
+            = text_field_tag "url", "", id:"custom-url", style:"width:97%"
+        .row-fluid
+          .span6
+            %p Product name
+            = text_field_tag "name", "", id:"custom-name", style:"width:95%"
+            %p Product brand
+            = text_field_tag "brand", "", id:"custom-brand", style:"width:95%"
+            %p Price (EUR in cents)
+            = text_field_tag "price", "", id:"custom-price", style:"width:95%"
+            %p Image url
+            = text_field_tag "image-url", "", id:"custom-image-url", style:"width:95%"
+          .span6
+            %p Product description
+            = text_area_tag "description", "", rows:"4", style:"width:95%", id:"custom-description"
+            %p Shipping price (EUR in cents)
+            = text_field_tag "shipping_price", "", id:"custom-price-shipping", style:"width:95%"
+            %p Shipping info
+            = text_field_tag "shipping_info", "", id:"custom-shipping-info", style:"width:95%"
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+        %button.btn.btn-primary#look-add-custom-confirm{type: "button", "data-loading-text" => "Processing..."} Add product
+
+:javascript
+  $(document).ready(function() {
+    function sortable(){
+      $('#grid').sortable({
+        placeholder: 'placeholder',
+        items: '.sort',
+        revert: 150,
+      });
+    };
+    sortable();
+    monitorCollectionItems();
+    $("#look-add-urls").on("click", function() {
+      showAddUrlsModal();
+    });
+    $("#look-add-custom").on("click", function() {
+      showAddCustomModal();
+    });
+    $(".img-delete").on("click", function() {
+      $(this).parent().hide();
+    })
+  });
+
+  function showAddUrlsModal() {
+    $("#look-add-urls-modal").removeClass('hidden');
+    $("#look-add-urls-modal").modal('show');
+    $('#look-add-urls-confirm').on('click', function() {
+      $('#look-add-urls-confirm').button('loading')
+      $('#look-add-urls-form').submit();
+    });
+  }
+  function showAddCustomModal() {
+    $("#look-add-custom-modal").removeClass('hidden');
+    $("#look-add-custom-modal").modal('show');
+    $('#look-add-custom-confirm').on('click', function() {
+      $('#look-add-custom-confirm').button('loading')
+        feed = {};
+        feed["product_url"] = $("#custom-url").val();
+        feed["image_url"] = $("#custom-image-url").val();
+        feed["name"] = $("#custom-name").val();
+        feed["brand"] = $("#custom-brand").val();
+        feed["description"] = $("#custom-description").val();
+        feed["price"] = $("#custom-price").val();
+        feed["price_shipping"] = $("#custom-price-shipping").val();
+        feed["shipping_info"] = $("#custom-shipping-info").val();
+        feed["saturn"] = "0"
+        $.ajax({
+          url: "#{admin_look_products_path}",
+          dataType: "script",
+          data: {feed:JSON.stringify([feed]), look_id:#{@look.id}},
+          type: "post",
+          error: function() {
+            $('#look-add-custom-confirm').button('reset');
+            $("#look-add-custom-modal").modal('hide');
+          },
+          success: function(data) {
+            $('#look-add-custom-confirm').button('reset');
+            $("#look-add-custom-modal").modal('hide');
+          }
+        });        
+    });
+  }

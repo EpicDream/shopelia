@@ -4,6 +4,11 @@ module AdminHelper
     count = Incident.where(processed:false).count
     count > 0 ? " <strong>(#{count})</strong>" : ""
   end
+
+  def posts_count
+    count = Post.where(status:"pending").count
+    count > 0 ? " <strong>(#{count})</strong>" : ""
+  end
   
   def incident_severity_to_html s
     if s == Incident::INFORMATIVE 

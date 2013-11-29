@@ -11,6 +11,8 @@
 //= require lib/pusher.min
 //= require lib/spin
 //= require lib/algoliasearch.min
+//= require lib/jquery.sortable.min
+//= require lib/mixitup.min
 //= require monitor
 //= require products-feed
 //= require catalogue
