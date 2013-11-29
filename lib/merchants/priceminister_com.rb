@@ -2,8 +2,12 @@
 class PriceministerCom
 
   AVAILABILITY_HASH = {
+    /\(0\)/i => false,
+    /\([1-9]\d*\)/i => true,
+
     /[\d\s]+ r.sultat/i => false, # Redirection vers recherche quand trouve pas.
     "Aucun resultat" => false,
+
     "Top Ventes" => false, # rediriger sur l'accueil
     "Les produits les plus vus du moment dans" => true,
     "Les articles les plus vus du moment" => true,

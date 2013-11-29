@@ -7,7 +7,6 @@ pr.\-?commandez maintenant: true
 voir les offres de ces vendeurs: true
 expedie sous: true
 expedie habituellement sous: true
-^\(\d+\)$: true
 en stock: true
 peu de stock: true
 stock modere: true
@@ -79,3 +78,4 @@ page est introuvable: false
 n'existe (pas|plus): false
 en cours de r.approvisionnement: false
 n.a pas ete trouve: false
+ne peut pas etre affiche: false
