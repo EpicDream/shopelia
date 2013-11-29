@@ -11,4 +11,10 @@ class Blog < ActiveRecord::Base
     self.reload
   end
   
+  def self.batch_create_from_csv content
+    blogs = []
+    CSV.parse(content) { |row| blogs << Blog.create({name:row[1], url:row[0]}) }
+    blogs
+  end
+  
 end
