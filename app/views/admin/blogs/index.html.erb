@@ -23,4 +23,17 @@
     <% end %>
   </div>
   
+  <div>
+    <%= label_tag :blogs_count, "Nombre de blogs" %>
+    <%= content_tag(:p, Blog.count, id: :blogs_count) %>
+    <br/>
+    <h5>Blogs sans articles</h5>
+    <ul id="blogs_without_posts">
+      <% Blog.without_posts.each do |blog| %>
+        <li><span><%= blog.name %></span><%= link_to blog.url, blog.url %></li>
+      <% end %>
+    </ul>
+    
+  </div>
+  
 </div>
