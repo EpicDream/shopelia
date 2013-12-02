@@ -96,7 +96,7 @@ module AlgoliaFeed
     def add_xml_node(path, child, product)
       puts "Add XML Node: path: #{path} child: #{child} class: #{child.class} attributes: #{child.attributes} product: #{product}" if self.debug > 2
       if [Nokogiri::XML::Text, Nokogiri::XML::CDATA].include?(child.class)
-        product[path] = child.text
+        product[path] = HTMLEntities.new.decode(child.text)
       else
         if path.present?
           path = "#{path}/#{child.name}"

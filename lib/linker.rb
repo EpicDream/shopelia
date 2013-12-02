@@ -1,11 +1,17 @@
 class Linker
 
   UA = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36"
-  
+
+  def self.decode url
+    url = URI.unescape(url) if url =~ /https?%3A%2F%2F/
+    url = HTMLEntities.new.decode(url) if url =~ /\&[a-z]{2,6}\;/
+    url
+  end
+
   def self.clean url
     @canonizer = UrlCanonizer.new
     count = 0
-    url = URI.unescape(url) if url =~ /^http%3A%2F%2F/
+    url = self.decode(url)
     canonical = MerchantHelper.canonize(url) || self.by_rule(url) || @canonizer.get(url)
     if canonical.nil?
       orig = url
@@ -21,8 +27,6 @@ class Linker
       @canonizer.set(canonical, canonical)
     end
     canonical
-  rescue Errno::ETIMEDOUT
-    orig || url
   rescue
     orig || url
   end
