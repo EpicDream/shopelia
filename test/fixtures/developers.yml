@@ -17,3 +17,8 @@ merkav:
   name: Merkav
   api_key: "blabla"
   email: "merkav@merkav.com"
+
+flink:
+  name: Flink
+  api_key: abcdf
+  email: "contact@flink.fr"

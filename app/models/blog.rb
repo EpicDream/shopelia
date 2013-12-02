@@ -1,7 +1,9 @@
 require 'scrapers/blogs/blog'
 
 class Blog < ActiveRecord::Base
-  attr_accessible :url, :name
+  belongs_to :flinker
+
+  attr_accessible :url, :name, :flinker_id
   has_many :posts, dependent: :destroy
   validates :url, uniqueness:true, presence:true, :on => :create
 
@@ -17,5 +19,4 @@ class Blog < ActiveRecord::Base
     CSV.parse(content) { |row| blogs << Blog.create({name:row[1], url:row[0]}) }
     blogs
   end
-  
 end

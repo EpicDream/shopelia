@@ -6,9 +6,12 @@ class LinkerTest < ActiveSupport::TestCase
   setup do
     Redis.new.del "url_canonizer_cache"
   end
-
   test "it should clean url" do
     array = [
+      { :in  => "http://rstyle.me/n/c92f6m4xn",
+        :out => "http://www.alexandermcqueen.com/fr/mcq/veste_cod49134687.html" },
+      { :in  => "http://bit.ly/1aChLeB",
+        :out => "http://fr.topshop.com/fr/tsfr/produit/bonnet-en-grosse-maille-tricoté-à-la-main-2192228" },
       { :in  => 'http://a.nonstoppartner.net/a/?i=click&amp;client=officedepot&amp;l=fr&amp;camp=deep&amp;nw=a0pf&amp;cat=P%E9riph%E9riques%20PC_Dictaphones%20%26%20enregistreurs_Dictaphones%20%26%20enregistreurs_Dictaphones%20%26%20Enregistreurs&amp;id=0345127',
         :out => 'http://www.officedepot.fr/catalog/catalogSku.do?Enregistreurs-_-0345127=&XREF1=IAFR804999TD001&enregistreurs_Dictaphones=&id=0345127' },
       { :in  => 'http://pdt.tradedoubler.com/click?a(2299963)p(20597)prod(1419744993)ttid(5)url(http%3A%2F%2Fa.nonstoppartner.net%2Fa%2F%3Fi%3Dclick%26client%3Dofficedepot%26l%3Dfr%26camp%3Ddeep%26nw%3Da0pf%26cat%3DP%25E9riph%25E9riques%2520PC_Dictaphones%2520%2526%2520enregistreurs_Dictaphones%2520%2526%2520enregistreurs_Dictaphones%2520%2526%2520Enregistreurs%26id%3D0345127)',
@@ -37,8 +40,6 @@ class LinkerTest < ActiveSupport::TestCase
         :out => "http://www.amazon.fr/dp/B0036BGQ6W" },
       { :in  => "http://action.metaffiliation.com/trk.php?mclic=P43EF9544D2D15S4519345193C111117180315TRENCH LUNGO",
         :out => "http://www.zinefashionstore.com/produit-homme-Trench_de_la_marque_Memento-4030.html" },
-      { :in  => "http://www.koordinal.com/74-bac-%C3%A0-gla%C3%A7on-igloo.html",
-        :out => "http://www.koordinal.com/74-bac-a-glacons-igloo.html" },
       { :in  => "http%3A%2F%2Fwww.amazon.fr%2FConverse-Chuck-Taylor-Baskets-adulte%2Fdp%2FB000EDMSTY%2Fref%3Dsr_1_1%3Fs%3Dshoes%26ie%3DUTF8%26qid%3D1380531062%26sr%3D1-1",
         :out => "http://www.amazon.fr/dp/B000EDMSTY" },
       { :in  => "http://ad.zanox.com/ppc/?19089773C1754659089&ULP=%5B%5Bhttp://www.imenager.com/aspirateur-main/fp-843138-black-et-decker?site=zanox&utm_source=Zanox&utm_medium=Affiliation&utm_campaign=ZanoxIM%5D%5D#imenager.com",

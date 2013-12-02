@@ -1,0 +1,94 @@
+%section.header
+  %header
+    %h1= @look.name
+    %h2= @look.flinker.name
+    .action-buttons
+      %a.btn.btn-large.btn-success.update-look{href: "#", type: "button", "data-id" => "#{@look.id}", "data-status" => "published", "data-loading-text" => "Publishing..."}
+        %i.icon-check.icon-white
+        Publish look
+      %a.btn.btn-large.btn-danger.update-look{href: "#", type: "button", "data-id" => "#{@look.id}", "data-status" => "rejected", "data-loading-text" => "Rejecting..."}
+        %i.icon-trash.icon-white
+        Reject look
+
+.container-fluid
+  .row-fluid
+    .span3
+      %article.coolbox
+        %h3 Text
+        = link_to @look.name, @look.url, target: "blank"
+        %br
+        = @look.post.content.html_safe
+      %article.coolbox
+        %h3 Links
+        - @look.post.links.each do |link|
+          = link_to link[:text], link[:url], target: "blank"
+          %br
+      %article.coolbox
+        %h3 Actions
+        %button.btn.btn-success#look-add-urls
+          %i.icon-plus.icon-white
+          Add products from url
+        %p
+        %button.btn.btn-success#look-add-custom
+          %i.icon-plus.icon-white
+          Add custom product
+    .span9
+      %article.coolbox#grid
+        %h3 Images
+        - @look.look_images.order(:display_order).each do |image|
+          .img-block.sort{"data-id" => "#{image.id}"}
+            = image_tag image.url, class:"thumb"
+            .img-delete
+              = link_to "X", admin_look_image_path(image), method:"delete", remote: true
+      %article.coolbox
+        %h3 Products
+        .row-fluid
+          = render @look.look_products
+      .spacer100
+
+#look-add-urls-modal.modal.fade.hidden
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", type: "button"} x
+        %h4.modal-title Add products by url
+      .modal-body
+        = form_tag admin_look_products_path, id:"look-add-urls-form", remote:true do
+          %p Enter URLs of products to add (one URL per line)
+          = text_area_tag "urls", "", rows:"10", cols:"80", style:"width:95%", id:"look-add-urls-field"
+          = hidden_field_tag "look_id", @look.id
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+        %button.btn.btn-primary#look-add-urls-confirm{type: "button", "data-loading-text" => "Processing..."} Add products
+
+#look-add-custom-modal.modal.fade.hidden
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", type: "button"} x
+        %h4.modal-title Add custom product
+      .modal-body
+        .row-fluid
+          .span12
+            %p Product url
+            = text_field_tag "url", "", id:"custom-url", style:"width:97%"
+        .row-fluid
+          .span6
+            %p Product name
+            = text_field_tag "name", "", id:"custom-name", style:"width:95%"
+            %p Product brand
+            = text_field_tag "brand", "", id:"custom-brand", style:"width:95%"
+            %p Price (EUR in cents)
+            = text_field_tag "price", "", id:"custom-price", style:"width:95%"
+            %p Image url
+            = text_field_tag "image-url", "", id:"custom-image-url", style:"width:95%"
+          .span6
+            %p Product description
+            = text_area_tag "description", "", rows:"4", style:"width:95%", id:"custom-description"
+            %p Shipping price (EUR in cents)
+            = text_field_tag "shipping_price", "", id:"custom-price-shipping", style:"width:95%"
+            %p Shipping info
+            = text_field_tag "shipping_info", "", id:"custom-shipping-info", style:"width:95%"
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+        %button.btn.btn-primary#look-add-custom-confirm{type: "button", "data-loading-text" => "Processing..."} Add product

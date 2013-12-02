@@ -1,7 +1,9 @@
 class Image < ActiveRecord::Base
+  include RankedModel
+
   SIZES = { w640:"640x", w320:"320x", w160:"160x"}
   
-  attr_accessible :url
+  attr_accessible :url, :display_order_position
   alias_attribute :sizes, :picture_sizes
   validates :url, presence:true
   validates :picture, presence:true, on: :create
@@ -11,7 +13,7 @@ class Image < ActiveRecord::Base
                     :url  => "/assets/images/:fmd5/:style/:md5.:extension",
                     :path => ":rails_root/public/assets/images/:fmd5/:style/:md5.:extension"
                                         
-  before_validation :create_files
+  before_create :create_files
   after_post_process { self.picture_sizes = formats.to_json }
 
   private
