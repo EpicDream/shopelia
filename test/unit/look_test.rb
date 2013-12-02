@@ -18,7 +18,7 @@ class LookTest < ActiveSupport::TestCase
   end
 
   test "it should set post processed_at when publishing look" do
-    post = Post.create(link: "http://www.toto.fr", title:"Name", published_at:Time.now, products:{}.to_json, blog_id: blogs(:betty).id)
+    post = Post.create(link: "http://www.toto.fr", title:"Name", published_at:Time.now, products:{}.to_json, images:[].to_json, blog_id: blogs(:betty).id)
     look = post.generate_look
 
     look.update_attribute :is_published, true
