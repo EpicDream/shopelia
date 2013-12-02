@@ -71,7 +71,7 @@ module Scrapers
       
       def blocks
         page = @agent.get(@url)
-        page.search("article, div.post, div.blogselection > div, div.entry, div.single")
+        page.search("article, div.post, div.blogselection > div, div.entry, div.single, div.post-wrap")
       end
       
       def url=url
