@@ -9,7 +9,7 @@ module Scrapers
       
       def self.extract document
         document.xpath('.//img').map(&src).compact.map do |href|
-          next unless dimensions = FastImage.size(href)
+          next unless dimensions = FastImage.size(href) rescue nil
           next if dimensions[0] < MIN_WIDTH
           href
         end.compact

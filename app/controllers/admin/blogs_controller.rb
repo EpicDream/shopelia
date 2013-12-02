@@ -17,7 +17,7 @@ class Admin::BlogsController < Admin::AdminController
       csv = params[:blog][:csv].tempfile.open.read
       Blog.batch_create_from_csv(csv)
     else
-      Blog.create!(params[:blog])
+      Blog.create(params[:blog])
     end
     scrape(blogs) #in background task
     redirect_to admin_blogs_url
@@ -26,7 +26,9 @@ class Admin::BlogsController < Admin::AdminController
   private
   
   def scrape blogs
-    [blogs].compact.flatten.each { |blog| BlogsWorker.perform_async(blog.id) }
+    [blogs].compact.flatten.each { |blog| 
+      BlogsWorker.perform_async(blog.id) rescue nil
+    }
   end
   
 end
