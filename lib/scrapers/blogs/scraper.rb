@@ -34,7 +34,9 @@ module Scrapers
           header = block.search(".//preceding::h2").last
           header.text =~ DATE_PATTERN if header
         end
-        date = Date.parse_international($1) if $1 rescue nil
+        date = $1
+        date =~ /\.(\d\d)$/ ? date[-2..-1] = "20#{$1}" : date 
+        date = Date.parse_international(date) if date rescue nil
         date || Time.now
       end
       

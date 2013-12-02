@@ -81,6 +81,12 @@ class Scrapers::Reviews::AmazonTest < ActiveSupport::TestCase
     scraper.run
   end
   
+  test "do not create incident if the cause of error is obsolete url(404 code)" do
+    product = products(:removed_product)
+    Incident.expects(:create).never
+    Scrapers::Reviews::Amazon::Scraper.scrape(product.id)
+  end
+  
   private
   
   def review_stub author, product

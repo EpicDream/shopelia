@@ -465,7 +465,7 @@ class ProductTest < ActiveSupport::TestCase
   end
 
   test "it should fail viking if shipping price is blank and no default shipping price is set for merchant" do
-    product = products(:tamaris)
+    product = products(:grand_theft_auto)
     product.update_attributes(versions:[
       { availability:"in stock",
         brand: "brand",
