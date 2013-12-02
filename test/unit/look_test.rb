@@ -12,7 +12,8 @@ class LookTest < ActiveSupport::TestCase
       flinker_id:@flinker.id,
       published_at:Time.now,
       url:"http://www.leblogdebetty.com/article")
-    assert look.save
+    assert look.save, look.errors.full_messages.join(",")
+    assert !look.is_published?
     assert_not_nil look.uuid
   end
 end

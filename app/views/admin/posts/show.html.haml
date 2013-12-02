@@ -3,10 +3,10 @@
     %h1= @post.title
     %h2= @post.blog.name
     .action-buttons
-      %a.btn.btn-large.btn-success{href: "#", type: "button"}
+      %a.btn.btn-large.btn-success.update-post{href: "#", type: "button", "data-status" => "published", "data-loading-text" => "Publishing..."}
         %i.icon-check.icon-white
         Publish look
-      %a.btn.btn-large.btn-danger{href: "#", type: "button"}
+      %a.btn.btn-large.btn-danger.update-post{href: "#", type: "button", "data-status" => "rejected", "data-loading-text" => "Rejecting..."}
         %i.icon-trash.icon-white
         Reject look
 
@@ -46,6 +46,8 @@
           - @products.each do |product|
             .span3
               = render LookProduct.new(product_id:product.id)
+
+.hidden#post{"data-id" => "#{@post.id}"}
 
 #look-add-urls-modal.modal.fade.hidden
   .modal-dialog
@@ -93,65 +95,3 @@
       .modal-footer
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
         %button.btn.btn-primary#look-add-custom-confirm{type: "button", "data-loading-text" => "Processing..."} Add product
-
-:javascript
-  $(document).ready(function() {
-    function sortable(){
-      $('#grid').sortable({
-        placeholder: 'placeholder',
-        items: '.sort',
-        revert: 150,
-      });
-    };
-    sortable();
-    monitorCollectionItems();
-    $("#look-add-urls").on("click", function() {
-      showAddUrlsModal();
-    });
-    $("#look-add-custom").on("click", function() {
-      showAddCustomModal();
-    });
-    $(".img-delete").on("click", function() {
-      $(this).parent().hide();
-    })
-  });
-
-  function showAddUrlsModal() {
-    $("#look-add-urls-modal").removeClass('hidden');
-    $("#look-add-urls-modal").modal('show');
-    $('#look-add-urls-confirm').on('click', function() {
-      $('#look-add-urls-confirm').button('loading')
-      $('#look-add-urls-form').submit();
-    });
-  }
-  function showAddCustomModal() {
-    $("#look-add-custom-modal").removeClass('hidden');
-    $("#look-add-custom-modal").modal('show');
-    $('#look-add-custom-confirm').on('click', function() {
-      $('#look-add-custom-confirm').button('loading')
-        feed = {};
-        feed["product_url"] = $("#custom-url").val();
-        feed["image_url"] = $("#custom-image-url").val();
-        feed["name"] = $("#custom-name").val();
-        feed["brand"] = $("#custom-brand").val();
-        feed["description"] = $("#custom-description").val();
-        feed["price"] = $("#custom-price").val();
-        feed["price_shipping"] = $("#custom-price-shipping").val();
-        feed["shipping_info"] = $("#custom-shipping-info").val();
-        feed["saturn"] = "0"
-        $.ajax({
-          url: "#{admin_look_products_path}",
-          dataType: "script",
-          data: {feed:JSON.stringify([feed]), look_id:#{@look.id}},
-          type: "post",
-          error: function() {
-            $('#look-add-custom-confirm').button('reset');
-            $("#look-add-custom-modal").modal('hide');
-          },
-          success: function(data) {
-            $('#look-add-custom-confirm').button('reset');
-            $("#look-add-custom-modal").modal('hide');
-          }
-        });        
-    });
-  }

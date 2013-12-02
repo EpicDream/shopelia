@@ -11,11 +11,11 @@ class Look < ActiveRecord::Base
 
   before_validation :generate_uuid
 
-  attr_accessible :flinker_id, :name, :url, :published_at
+  attr_accessible :flinker_id, :name, :url, :published_at, :is_published
 
   private
 
   def generate_uuid
-    self.uuid = SecureRandom.hex(4) if self.uuid.nil?
+    self.uuid = SecureRandom.hex(4) if self.uuid.blank?
   end
 end
