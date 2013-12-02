@@ -40,6 +40,13 @@ class AmazonFrTest < ActiveSupport::TestCase
     assert_equal MerchantHelper::UNAVAILABLE, @version[:availability_text]
   end
 
+
+  test "it should process price" do
+    @version[:price_text] = "(TVA incluse le cas échéant)"
+    @version = @helper.process_price(@version)
+    assert_equal MerchantHelper::UNAVAILABLE, @version[:price_text]
+  end
+
   test "it should process_price_shipping (1)" do
     @version[:price_shipping_text] = "livraison gratuite"
     @version = @helper.process_price_shipping(@version)

@@ -115,7 +115,8 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "Epuisé", "pas disponible", "Currently unavailable., Currently unavailable.", "Rupture de stock",
               "Erreur: Désolé, mais le produit que vous avez demandé n'a pas été trouvé !",
               "La page que vous recherchez est introuvable.", "Ce produit n'existe plus ! Mais...",
-              "CE PRODUIT N’EST MALHEUREUSEMENT PLUS DISPONIBLE.", "L'article ne peut pas être affiché." ]
+              "CE PRODUIT N’EST MALHEUREUSEMENT PLUS DISPONIBLE.", "L'article ne peut pas être affiché.",
+              "Currently unavailable." ]
     array.each do |str|
       assert_equal false, MerchantHelper.parse_availability(str)[:avail]
     end
