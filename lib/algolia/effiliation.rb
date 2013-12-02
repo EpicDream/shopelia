@@ -118,8 +118,6 @@ module AlgoliaFeed
     def initialize(params={})
       super
 
-      self.product_field = params[:product_field] || 'produit'
-
       self.conversions = params[:conversions] || {
         'name       '   => 'name',
         'url_product'   => 'product_url',
@@ -140,21 +138,12 @@ module AlgoliaFeed
       self
     end
 
-    def canonize(url)
-      if m = url.match(/(http:\/\/www\.priceminister\.com\/offer\/buy\/\d+)/)
-        return m[1]
-      else
-        return Linker.clean(url)
-      end
-    end
-
     def process_product(product)
       record = super
 
       record['price'] = to_cents(record['price'])
       record['price_shipping'] = to_cents(record['price_shipping'])
-
-      record.delete('rank') if record['rank'] == 0
+      record['currency'] = 'EUR' if record['currency'] == 'euros'
 
       record
     end
