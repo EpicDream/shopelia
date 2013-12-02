@@ -5,8 +5,9 @@ class GeorgesStatus
   SLEEPING = "sleeping"
   HOLIDAY = "holiday"
   OVERVORKED = "overworked"
+  OFFLINE = "offline"
 
-  STATUSES = [AVAILABLE, SLEEPING, HOLIDAY, OVERVORKED]
+  STATUSES = [AVAILABLE, SLEEPING, HOLIDAY, OVERVORKED, OFFLINE]
 
   def self.get
     Redis.new.hget("georges", "status") || AVAILABLE
