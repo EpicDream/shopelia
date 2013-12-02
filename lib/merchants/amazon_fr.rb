@@ -41,6 +41,11 @@ class AmazonFr
     version
   end
 
+  def process_price version
+    version[:price_text] = MerchantHelper::UNAVAILABLE if version[:price_text] =~ /TVA incluse le cas .ch.ant/i
+    version
+  end
+
   def process_price_shipping version
     if version[:price_shipping_text].blank?
       version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING

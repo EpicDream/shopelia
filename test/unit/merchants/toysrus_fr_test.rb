@@ -18,6 +18,6 @@ class ToysrusFrTest < ActiveSupport::TestCase
 
   test "it should process shipping price" do
     version = @helper.process_shipping_price({})
-    assert_equal "7.20", version[:price_shipping_text]
+    assert_equal ToysrusFr::DEFAULT_PRICE_SHIPPING, version[:price_shipping_text]
   end
 end

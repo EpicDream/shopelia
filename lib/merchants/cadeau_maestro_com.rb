@@ -1,6 +1,10 @@
 # -*- encoding : utf-8 -*-
 class CadeauMaestroCom
 
+  AVAILABILITY_HASH = {
+    /Decouvrez nos \d+ idees cadeaux/i => false, # Redirection vers recherche quand trouve pas.
+  }
+
   def initialize url
     @url = url
   end

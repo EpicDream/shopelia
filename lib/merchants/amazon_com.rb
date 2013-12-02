@@ -5,13 +5,9 @@ class AmazonCom
     @url = url
   end
 
-  def process_availability version
-    version[:availability_text] = "Non disponible" if version[:availability_text] =~ /\$\d+(\.\d+)? - \$\d+(\.\d+)?/
-    version
-  end
-
   def process_price version
-    version[:price_text] = "0,00 €" if version[:price_text] == "Currently unavailable."
+    # Bug, n'a pas sélectionné les options
+    version[:availability_text] = MerchantHelper::UNAVAILABLE if version[:price_text] =~ /\$\d+(\.\d+)? - \$\d+(\.\d+)?/
     version
   end
 end

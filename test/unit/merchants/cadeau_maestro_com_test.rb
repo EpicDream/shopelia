@@ -53,4 +53,8 @@ class CadeauMaestroComTest < ActiveSupport::TestCase
 
     assert_equal "4,50 € (à titre indicatif)", @version[:price_shipping_text]
   end
+
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("Découvrez nos 40 idées cadeaux accessoires téléphone", @url)[:avail]
+  end
 end

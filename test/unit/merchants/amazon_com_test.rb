@@ -13,15 +13,9 @@ class AmazonComTest < ActiveSupport::TestCase
     assert MerchantHelper.send(:from_url, @url).kind_of?(AmazonCom)
   end
 
-  test "it should process availability" do
-    @version[:availability_text] = "$19.61 - $38.99"
-    @version = @helper.process_availability(@version)
-    assert_equal "Non disponible", @version[:availability_text]
-  end
-
   test "it should process price" do
-    @version[:price_text] = "Currently unavailable."
+    @version[:price_text] = "$19.61 - $38.99"
     @version = @helper.process_price(@version)
-    assert_equal "0,00 €", @version[:price_text]
+    assert_equal MerchantHelper::UNAVAILABLE, @version[:availability_text]
   end
 end
