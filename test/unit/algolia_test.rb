@@ -184,7 +184,7 @@ class AlgoliaTest < ActiveSupport::TestCase
   end
 
   def test_effiliation
-    ef = AlgoliaFeed::Effiliation.new(index_name: 'testing', debug: 3, tmpdir: '/tmp')
+    ef = AlgoliaFeed::Effiliation.new(index_name: 'testing', debug: 0, tmpdir: '/tmp')
     ef.algolia.connect('testing')
     ef.process_xml("#{Rails.root}/test/data/effiliation.xml")
     sleep 1

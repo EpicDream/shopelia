@@ -5,7 +5,6 @@ class Linker
   def self.decode url
     url = URI.unescape(url) if url =~ /https?%3A%2F%2F/
     url = HTMLEntities.new.decode(url) if url =~ /\&[a-z]{2,6}\;/
-#      url = url.encode( url.encoding, "binary", :invalid => :replace, :undef => :replace, :replace=> '')
     url
   end
 
