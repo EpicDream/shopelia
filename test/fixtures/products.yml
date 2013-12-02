@@ -94,3 +94,9 @@ masque:
   name: "Masque Latex ''Orc De Moria'' Le Seigneur Des Anneaux"
   merchant: priceminister
   url: http://www.priceminister.com/offer/buy/189396871/masque-latex-orc-de-moria-le-seigneur-des-anneaux.html
+
+removed_product:
+  name: "i am a removed product"
+  merchant: amazon
+  url: http://www.amazon.fr/dp/B008NNADIA
+  

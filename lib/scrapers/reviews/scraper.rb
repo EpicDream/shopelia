@@ -26,7 +26,8 @@ module Scrapers
           break if stop_scraping?(reviews)
           synchronize(reviews)
         end
-      rescue
+      rescue => e
+        return if e.respond_to?(:response_code) && e.response_code.to_i == 404
         report_incident("Run exception")
       end
       
