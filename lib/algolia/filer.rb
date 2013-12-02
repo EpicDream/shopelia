@@ -8,7 +8,6 @@ require 'zip/zip'
 require 'net/http/digest_auth'
 require 'find'
 
-
 module AlgoliaFeed
 
   class InvalidFile < IOError; end

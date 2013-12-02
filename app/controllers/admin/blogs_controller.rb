@@ -26,7 +26,9 @@ class Admin::BlogsController < Admin::AdminController
   private
   
   def scrape blogs
-    [blogs].compact.flatten.each { |blog| BlogsWorker.perform_async(blog.id) }
+    [blogs].compact.flatten.each { |blog| 
+      BlogsWorker.perform_async(blog.id) rescue nil
+    }
   end
   
 end

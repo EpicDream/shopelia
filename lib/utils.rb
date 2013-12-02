@@ -11,7 +11,7 @@ class Utils
 
   def self.strip_tracking_params url
     uri = self.parse_uri_safely(url)
-    params = Rack::Utils.parse_nested_query(uri.query).delete_if{|e| e =~ /^utm_/ || e=~ /^cm_mmc/ }
+    params = Rack::Utils.parse_nested_query(uri.query).delete_if{|e| e =~ /^(utm_|cm_mmc|arefid|nsctrid)/ }
     uri.scheme + "://" + uri.host + uri.path + (params.empty? ? "" : "?" + params.to_query)
   end
 end

@@ -183,4 +183,18 @@ class AlgoliaTest < ActiveSupport::TestCase
     assert_equal(70000, item['price'])
   end
 
+  def test_effiliation
+    ef = AlgoliaFeed::Effiliation.new(index_name: 'testing', debug: 0, tmpdir: '/tmp')
+    ef.algolia.connect('testing')
+    ef.process_xml("#{Rails.root}/test/data/effiliation.xml")
+    sleep 1
+    hits = ef.algolia.index.search('')['hits']
+    assert_equal(1, hits.size)
+    item = hits.first
+    assert_equal('1001pharmacies.com', item['merchant_name'])
+    assert_equal('http://www.1001pharmacies.com/parapharmacie-produit/6392/herboristerie-luzienne-carotte-200-gelules', item['product_url'])
+    assert(item['_tags'].include?('category:Compléments alimentaires'))
+    assert_equal(1590, item['price'])
+  end
+
 end

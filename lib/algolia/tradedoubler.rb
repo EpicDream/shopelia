@@ -7,7 +7,7 @@ module AlgoliaFeed
     def initialize(params={})
       super
 
-      self.urls = params[:urls] || ['http://pf.tradedoubler.com/export/export?myFeed=13851269242299963&myFormat=13851269242299963']
+      self.urls = params[:urls] || ['http://pf.tradedoubler.com/export/export?myFeed=13856334562299963&myFormat=13856334562299963']
       self.parser_class = params[:parser_class] || 'AlgoliaFeed::Tradedoubler'
       self.rejected_files = params[:rejected_files] || []
     end
