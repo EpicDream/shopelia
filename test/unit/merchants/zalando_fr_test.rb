@@ -16,4 +16,18 @@ class ZalandoFrTest < ActiveSupport::TestCase
   test "it should parse specific availability" do
     assert_equal false, MerchantHelper.parse_availability("Vos modèles préférés", @url)[:avail]
   end
+
+  test "it should process price_shipping unless if present" do
+    @version[:price_shipping_text] = "3,50 €"
+    @version = @helper.process_price_shipping(@version)
+    assert_equal "3,50 €", @version[:price_shipping_text]
+  end
+
+  test "it should process price_shipping if empty" do
+    @version[:price_shipping_text] = ""
+    @version = @helper.process_price_shipping(@version)
+    assert_equal ZalandoFr::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
+    assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
+  end
+
 end

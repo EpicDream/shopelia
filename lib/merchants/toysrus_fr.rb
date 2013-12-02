@@ -1,4 +1,5 @@
 class ToysrusFr
+  DEFAULT_PRICE_SHIPPING = "7.20"
 
   def initialize url
     @url = url
@@ -17,7 +18,7 @@ class ToysrusFr
   end
 
   def process_shipping_price version
-    version[:price_shipping_text] = "7.20" if version[:price_shipping_text].blank?
+    version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
     version
   end  
 end
