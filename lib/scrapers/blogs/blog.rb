@@ -32,7 +32,6 @@ module Scrapers
           @scraper.url = @url
           @posts = @scraper.posts
         end
-        @posts = []
         raise if @posts.none?
         @posts
       rescue => e
