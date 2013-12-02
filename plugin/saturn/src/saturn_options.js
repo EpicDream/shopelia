@@ -8,7 +8,7 @@ define(["src/tree", 'satconf'], function(Tree) {
     this._optionTree = new Tree();
     this._currentNode = this._optionTree;
     this.mapping = mapping;
-    this.argOptions = argOptions;
+    this.argOptions = argOptions || {};
   };
   // Return root node.
   SaturnOptions.prototype.root = function() {
