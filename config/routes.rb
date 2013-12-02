@@ -64,6 +64,11 @@ Shopelia::Application.routes.draw do
     resources :viking, :only => :index
     resources :blogs
     resources :posts
+    resources :looks do
+      get :publish, :on => :member
+      get :reject, :on => :member
+    end
+    resources :look_images
     resources :look_products
     resources :products do
       get :retry, :on => :member

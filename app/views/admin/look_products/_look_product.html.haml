@@ -1,7 +1,14 @@
-.collection-item-box.collection-item-monitor{data:{pid:"#{look_product.product_id}"}}
+.span3.look-product-box.look-product-monitor{data:{pid:"#{look_product.product_id}",lpid:"#{look_product.id}"}}
   - if look_product.product.versions_expired?
-    .collection-item-spinner
+    .look-product-spinner
       .spinner
-  .collection-item
-    %img.collection-item-img{src:"#{look_product.product.image_url}"}
-  .collection-item-price= number_to_currency(look_product.product.price || 0)
+  .look-product
+    %img.look-product-img{src:"#{look_product.product.image_url}"}
+  .look-product-merchant= look_product.product.merchant.name
+  .look-product-info
+    .look-product-price= "#{(look_product.product.price || 0).round} €"
+    .look-product-title= look_product.product.name || look_product.product.url
+    %button.btn.btn-success.btn-lg.look-product-details{data:{lpid:"#{look_product.id}"}}
+      %span.icon-info-sign.icon-white
+    %button.btn.btn-danger.btn-lg.look-product-delete{data:{lpid:"#{look_product.id}"}}
+      %span.icon-trash.icon-white

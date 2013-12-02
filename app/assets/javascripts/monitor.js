@@ -33,15 +33,6 @@ function monitorCollectionItems() {
       type: "delete"
     });
   });
-  $(".admin-look-product-span").off("click");
-  $(".admin-look-product-span").on("click", function() {
-    var id = $(this).data('lpid');
-    $.ajax({
-      url: "/admin/look_products/" + id,
-      dataType: "script",
-      type: "delete"
-    });
-  });
   $(".collection-item-monitor").each(function() {
     var pid = $(this).data('pid');
     if (window.channels["product-" + pid] === undefined) {
@@ -52,6 +43,41 @@ function monitorCollectionItems() {
         el.find(".collection-item-img").attr("src", data.image_url);
         el.find(".collection-item-title").html(data.name);
         el.find(".collection-item-price").html(Math.round(data.price * 100) / 100 + " €");
+      });
+    }
+  });
+}
+
+function monitorLookProducts() {
+  if (window.pusher === undefined) {
+    window.pusher = new Pusher("654ffe989dceb4af5e03");
+    window.channels = [];
+  }
+  $(".look-product-delete").off("click");
+  $(".look-product-delete").on("click", function() {
+    var id = $(this).data('lpid');
+    $.ajax({
+      url: "/admin/look_products/" + id,
+      dataType: "script",
+      type: "delete"
+    });
+  });
+  $(".look-product-details").off("click");
+  $(".look-product-details").on("click", function() {
+    var id = $(this).data('lpid');
+    window.location = "/admin/look_products/" + id;
+  });
+  $(".look-product-monitor").each(function() {
+    var pid = $(this).data('pid');
+    if (window.channels["product-" + pid] === undefined) {
+      window.channels["product-" + pid] = window.pusher.subscribe("product-" + pid)
+      window.channels["product-" + pid].bind("update", function(data) {
+        el = $("[data-pid=" + pid + "]");
+        el.find(".look-product-spinner").addClass("hidden");
+        el.find(".look-product-img").attr("src", data.image_url);
+        el.find(".look-product-title").html(data.name);
+        el.find(".look-product-merchant").html(data.merchant.name);
+        el.find(".look-product-price").html(Math.round(data.price) + " €");
       });
     }
   });

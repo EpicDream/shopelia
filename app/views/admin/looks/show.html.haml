@@ -1,12 +1,12 @@
 %section.header
   %header
-    %h1= @post.title
-    %h2= @post.blog.name
+    %h1= @look.name
+    %h2= @look.flinker.name
     .action-buttons
-      %a.btn.btn-large.btn-success.update-post{href: "#", type: "button", "data-status" => "published", "data-loading-text" => "Publishing..."}
+      %a.btn.btn-large.btn-success.update-look{href: "#", type: "button", "data-id" => "#{@look.id}", "data-status" => "published", "data-loading-text" => "Publishing..."}
         %i.icon-check.icon-white
         Publish look
-      %a.btn.btn-large.btn-danger.update-post{href: "#", type: "button", "data-status" => "rejected", "data-loading-text" => "Rejecting..."}
+      %a.btn.btn-large.btn-danger.update-look{href: "#", type: "button", "data-id" => "#{@look.id}", "data-status" => "rejected", "data-loading-text" => "Rejecting..."}
         %i.icon-trash.icon-white
         Reject look
 
@@ -15,12 +15,12 @@
     .span3
       %article.coolbox
         %h3 Text
-        = link_to @post.title, @post.link, target: "blank"
+        = link_to @look.name, @look.url, target: "blank"
         %br
-        = @post.content.html_safe
+        = @look.post.content.html_safe
       %article.coolbox
         %h3 Links
-        - @links.each do |link|
+        - @look.post.links.each do |link|
           = link_to link[:text], link[:url], target: "blank"
           %br
       %article.coolbox
@@ -35,19 +35,16 @@
     .span9
       %article.coolbox#grid
         %h3 Images
-        - @post.images.each do |url|
-          .img-block.sort
-            = image_tag url, class:"thumb"
+        - @look.look_images.order(:display_order).each do |image|
+          .img-block.sort{"data-id" => "#{image.id}"}
+            = image_tag image.url, class:"thumb"
             .img-delete
-              X
+              = link_to "X", admin_look_image_path(image), method:"delete", remote: true
       %article.coolbox
-        %h3 Links
+        %h3 Products
         .row-fluid
-          - @products.each do |product|
-            .span3
-              = render LookProduct.new(product_id:product.id)
-
-.hidden#post{"data-id" => "#{@post.id}"}
+          = render @look.look_products
+      .spacer100
 
 #look-add-urls-modal.modal.fade.hidden
   .modal-dialog

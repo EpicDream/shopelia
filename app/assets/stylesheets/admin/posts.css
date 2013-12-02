@@ -53,25 +53,3 @@ body {
   top: -.5em;
   right: 0;
 }
-
-.thumb {
-  max-height: 200px;
-  max-width: 200px;
-}
-
-.img-block {
-  display: inline-block;
-  height: 200px;
-  width: 200px;
-}
-.img-block, .img-delete {
-  position: relative;
-}
-.img-delete {
-  position: absolute;
-  top: 0px;
-  left: 5px;
-  cursor: pointer;
-  color: #f00;
-  font-weight: 
-}

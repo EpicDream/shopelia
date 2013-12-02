@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131202140553) do
+ActiveRecord::Schema.define(:version => 20131202175135) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -256,6 +256,7 @@ ActiveRecord::Schema.define(:version => 20131202140553) do
     t.string   "picture_fingerprint"
     t.string   "picture_sizes"
     t.integer  "resource_id"
+    t.integer  "display_order"
   end
 
   create_table "incidents", :force => true do |t|
@@ -281,7 +282,6 @@ ActiveRecord::Schema.define(:version => 20131202140553) do
     t.string   "name"
     t.string   "url"
     t.integer  "flinker_id"
-    t.integer  "post_id"
     t.datetime "published_at"
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
@@ -453,7 +453,6 @@ ActiveRecord::Schema.define(:version => 20131202140553) do
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
     t.integer  "look_id"
-    t.string   "status"
     t.datetime "processed_at"
   end
 

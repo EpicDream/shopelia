@@ -13,7 +13,7 @@ class LookImageTest < ActiveSupport::TestCase
 
   test "it should create look image" do
     assert_difference "LookImage.count" do
-      @look.look_images << LookImage.new(url:@url)
+      @look.look_images << LookImage.create(url:@url)
     end
     assert_equal 1, @look.reload.look_images.count
   end
@@ -25,4 +25,9 @@ class LookImageTest < ActiveSupport::TestCase
     end
   end
   
+  test "it shouldn't allow duplicate url for a look" do
+    @look.look_images << LookImage.create(url:@url)
+    @look.look_images << LookImage.create(url:@url)
+    assert_equal 1, @look.reload.look_images.count
+  end
 end

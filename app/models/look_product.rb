@@ -3,7 +3,7 @@ class LookProduct < ActiveRecord::Base
   belongs_to :product
 
   validates :look_id, :presence => true
-  validates :product_id, :presence => true
+  validates :product_id, :presence => true, :uniqueness => { :scope => :look_id }
 
   attr_accessible :look_id, :product_id, :url, :feed
   attr_accessor :url, :feed
