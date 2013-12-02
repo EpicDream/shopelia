@@ -4,7 +4,7 @@ require 'test_helper'
 require 'scrapers/blogs/blog'
 
 class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
-  TEST_URL = "http://www.leblogdelilou.com/"
+  TEST_URL = "http://www.natachasteven.com"
   
   setup do
     @blog = Scrapers::Blogs::Blog.new
