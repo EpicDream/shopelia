@@ -2,6 +2,13 @@
   %header
     %h1= @post.title
     %h2= @post.blog.name
+    .action-buttons
+      %a.btn.btn-large.btn-success{href: "#", type: "button"}
+        %i.icon-check.icon-white
+        Publish look
+      %a.btn.btn-large.btn-danger{href: "#", type: "button"}
+        %i.icon-trash.icon-white
+        Reject look
 
 .container-fluid
   .row-fluid
