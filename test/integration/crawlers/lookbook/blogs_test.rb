@@ -10,8 +10,7 @@ class Crawlers::Lookbook::BlogsTest < ActiveSupport::TestCase
   end
   
   test "fetch" do
-    items = @crawler.run
-    assert_equal 13, items.count
+    assert_equal 13, @crawler.items.count
   end
 
 end
