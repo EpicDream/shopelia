@@ -7,6 +7,12 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
   
   setup do
   end
+
+  test "atom 2.0 feed" do
+    parser = Scrapers::Blogs::RSSFeed.new("http://kenzasmg.blogspot.fr")
+    
+    assert parser.items.count >= 1
+  end
   
   test "atom 1.0 feed" do
     parser = Scrapers::Blogs::RSSFeed.new("http://www.madeinfaro.com/")
