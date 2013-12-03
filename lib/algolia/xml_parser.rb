@@ -87,16 +87,19 @@ module AlgoliaFeed
     def product_hash(xml)
       product = {}
       xml_product = Nokogiri::XML(xml) { |config| config.nonet.noblanks }
+      decoder = HTMLEntities.new
       xml_product.children.first.children.each do |child|
-        add_xml_node('', child, product)
+        add_xml_node('', child, product, decoder)
       end
       product
     end
 
-    def add_xml_node(path, child, product)
+    def add_xml_node(path, child, product, decoder)
       puts "Add XML Node: path: #{path} child: #{child} class: #{child.class} attributes: #{child.attributes} product: #{product}" if self.debug > 2
       if [Nokogiri::XML::Text, Nokogiri::XML::CDATA].include?(child.class)
-        product[path] = HTMLEntities.new.decode(child.text)
+        text = child.text
+        text = decoder.decode(text) if text =~ /\&[a-z]{2,6};/
+        product[path] = text
       else
         if path.present?
           path = "#{path}/#{child.name}"
@@ -109,7 +112,7 @@ module AlgoliaFeed
         end
         path = "#{path}-#{attributes.join('-')}" if attributes.size > 0
         child.children.each do |c|
-          add_xml_node(path, c, product)
+          add_xml_node(path, c, product, decoder)
         end
       end
     end
