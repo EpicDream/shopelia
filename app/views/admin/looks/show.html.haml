@@ -42,9 +42,11 @@
               = link_to "X", admin_look_image_path(image), method:"delete", remote: true
       %article.coolbox
         %h3 Products
-        .row-fluid
+        .row-fluid#look-products
           = render @look.look_products
       .spacer100
+
+.hidden#look{"data-id" => "#{@look.id}"}
 
 #look-add-urls-modal.modal.fade.hidden
   .modal-dialog
