@@ -4,6 +4,7 @@ class TopshopCom
   DEFAULT_SHIPPING_INFO = "Livrée en 5 jours ouvrables."
 
   AVAILABILITY_HASH = {
+    "pas trouve de resultat correspondant a votre recherche" => false,
   }
 
   def initialize url
