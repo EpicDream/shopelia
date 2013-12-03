@@ -6,12 +6,12 @@ class Utils
   end
 
   def self.parse_uri_safely url
-    URI.parse(url.encode('UTF-8', 'UTF-8', :invalid => :replace).unaccent.scan(/([!\#$&-;=?-\[\]_a-z~]|%[0-9a-fA-F]{2})/).join)
+    URI.parse(url.encode('UTF-8', 'UTF-8', :invalid => :replace).scan(/([!\#$&-;=?-\[\]_a-z~]|%[0-9a-fA-F]{2})/).join)
   end
 
   def self.strip_tracking_params url
     uri = self.parse_uri_safely(url)
-    params = Rack::Utils.parse_nested_query(uri.query).delete_if{|e| e =~ /^utm_/ || e=~ /^cm_mmc/ }
+    params = Rack::Utils.parse_nested_query(uri.query).delete_if{|e| e =~ /^(utm_|cm_mmc|arefid|nsctrid)/ }
     uri.scheme + "://" + uri.host + uri.path + (params.empty? ? "" : "?" + params.to_query)
   end
 end

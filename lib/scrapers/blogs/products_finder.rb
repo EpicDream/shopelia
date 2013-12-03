@@ -11,32 +11,47 @@ module Scrapers
         @url = url
         @uri = URI(url)
         @blocks = blocks()
+        @filters = YAML.load_relative_file("urls_filters.yml")
       end
       
       def products
-        @blocks.map do |block|
-          links(block)
-        end.flatten
+        products = @blocks.inject({}) do |products, block|
+          products.merge!(products_in_a_tag(block))
+          products.merge!(products_in_map_tag(block))
+        end
+        Hash[*products.to_a.uniq {|k,v| v}.flatten]
       end
       
       def blocks
         content = @html.search(".entry-content").first || @html
-        content.search(".//div | .//p")
+        content.search(".//div | .//p | .//map")
       end
       
       private
       
-      def links block
-        links = block.xpath(".//a").map(&href).compact
-        links.delete_if { |link| 
-          URI(link).host == URI(@url).host rescue true
-        }  
+      def products_in_a_tag block
+        block.xpath(".//a").inject({}) { |products, a|
+          link = href[a]
+          next products if remove?(link)
+          products.merge!({"#{a.text}" => link})
+        }
       end
       
-      def may_include_products? block
-        !block.text.encode("UTF-8", :undef => :replace, :invalid => :replace).blank? && block.xpath(".//a").any?
-      rescue #theses girls puts some little hearts ... not utf-8
-        false
+      def products_in_map_tag block
+        index = 0
+        block.xpath(".//area").inject({}) { |products, area|
+          link = href[area]
+          next products if remove?(link)
+          index += 1
+          products.merge!({"Produit(#{index})" => link})
+        }
+      end
+      
+      def remove? url
+        @filters.each do |filter|
+          return true if url =~ Regexp.new(filter, true)
+        end
+        url =~ Regexp.new(URI(@url).host, true)
       end
       
       def href

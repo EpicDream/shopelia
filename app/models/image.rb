@@ -17,7 +17,7 @@ class Image < ActiveRecord::Base
   private
   
   def create_files
-    self.picture = URI.parse self.url rescue nil
+    self.picture = URI.parse self.url if self.picture_file_name.blank? rescue nil
   end
   
   def formats
@@ -26,6 +26,5 @@ class Image < ActiveRecord::Base
       geometry = Paperclip::Geometry.from_file file
       sizes.merge!({style => "#{geometry.width.to_i}x#{geometry.height.to_i}"})
     end
-  end
-  
+  end  
 end

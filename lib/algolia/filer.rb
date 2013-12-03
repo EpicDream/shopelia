@@ -8,13 +8,12 @@ require 'zip/zip'
 require 'net/http/digest_auth'
 require 'find'
 
-
 module AlgoliaFeed
 
   class InvalidFile < IOError; end
 
   class Filer
- 
+
     attr_accessor :urls, :tmpdir, :debug, :http_auth, :rejected_files, :parser_class, :params, :clean_xml
 
     def self.download(params={})
@@ -96,12 +95,12 @@ module AlgoliaFeed
 
       raw_file
     end
- 
+
     def decompress_datafile(raw_file, dir=nil, decoded_file=nil)
       dir = "#{self.tmpdir}/#{self.parser_class}" unless dir.present?
       Dir.mkdir(dir) unless Dir.exists?(dir)
       if decoded_file.present?
-        decoded_file = "#{dir}/#{decoded_file}" 
+        decoded_file = "#{dir}/#{decoded_file}"
       else
         decoded_file = raw_file.gsub(/\.raw\Z/, '')
       end
@@ -205,7 +204,7 @@ module AlgoliaFeed
       end
       Process.waitall
     end
-  
+
   end
 end
 

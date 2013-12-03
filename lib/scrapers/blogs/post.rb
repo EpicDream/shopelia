@@ -12,6 +12,7 @@ module Scrapers
       end
       
       def from item #rss item
+        return from_atom_1(item) if !item.respond_to?(:content_encoded)
         content = Nokogiri::HTML.fragment item.content_encoded
         description = Nokogiri::HTML.fragment item.description
         self.published_at = item.pubDate
@@ -19,6 +20,21 @@ module Scrapers
         self.title = item.title
         self.author = item.author
         self.categories = item.categories.map(&category_name)
+        self.description = Description.extract(description)
+        self.images = Images.extract(content)
+        self.content = Content.extract(content)
+        self.products = ProductsFinder.new(content, self.link).products
+        self
+      end
+      
+      def from_atom_1(item)
+        content = Nokogiri::HTML.fragment item.content.content.to_s
+        description = Nokogiri::HTML.fragment item.summary.to_s
+        self.published_at = item.updated.content.to_s
+        self.link = item.link.href
+        self.title = item.title.content.to_s
+        self.author = item.author.name.content.to_s
+        self.categories = item.categories.map(&:term)
         self.description = Description.extract(description)
         self.images = Images.extract(content)
         self.content = Content.extract(content)

@@ -2,7 +2,7 @@
 
 require 'rubygems'
 require 'algoliasearch'
- 
+
 module AlgoliaFeed
 
 # TODO: Admin page
@@ -51,4 +51,6 @@ require_relative 'zanox'
 require_relative 'amazon'
 require_relative 'webgains'
 require_relative 'publicidees'
+require_relative 'commission_junction'
+require_relative 'effiliation'
 

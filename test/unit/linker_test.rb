@@ -2,9 +2,20 @@
 require 'test_helper'
 
 class LinkerTest < ActiveSupport::TestCase
- 
+
+  setup do
+    Redis.new.del "url_canonizer_cache"
+  end
   test "it should clean url" do
     array = [
+      { :in  => "http://api.shopstyle.com/action/apiVisitRetailer?pid=puid14728235&url=http://www.barneys.com/on/demandware.store/Sites-BNY-Site/default/Product-Show?pid=502921664",
+        :out => "http://www.barneys.com/on/demandware.store/Sites-BNY-Site/default/Product-Show?pid=502921664" },
+      { :in  => "http://rstyle.me/n/c92f6m4xn",
+        :out => "http://www.alexandermcqueen.com/fr/mcq/veste_cod49134687.html" },
+      { :in  => "http://bit.ly/1aChLeB",
+        :out => "http://fr.topshop.com/fr/tsfr/produit/bonnet-en-grosse-maille-tricoté-à-la-main-2192228" },
+      { :in  => 'http://track.webgains.com/click.html?wgcampaignid=145659&amp;wgprogramid=3900&amp;product=1&amp;wglinkid=120411&amp;productname=MEDION%C2%AE+LIFE%C2%AE+P89626+Serveur+NAS+1%2C5+To+%28MD+86407%29&amp;wgtarget=http://a.nonstoppartner.net/a/?i=click&amp;client=medion&amp;l=fr&amp;camp=deep&amp;nw=wga1&amp;msn=50043049&amp;deepid=MEDION%25C2%25AE%2BLIFE%25C2%25AE%2BP89626%2BServeur%2BNAS%2B1%252C5%2BTo%2B%2528MD%2B86407%2529%2F50043049A1%3Fcategory%3Dnetwork_devices',
+        :out => 'http://www.medion.com/fr/prod/MEDIONLIFEP89626ServeurNAS1,5To(MD86407)/50043049A1?category=network_devices&pAction=8797534929027&wt_cc1=deep&wt_cc2=50043049&wt_cc3=&wt_mc=fr.extern.affiliate.webgains.nonstop' },
       { :in  => "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html",
         :out => "http://www.priceminister.com/offer/buy/103220572" },
       { :in  => "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html",
@@ -27,8 +38,6 @@ class LinkerTest < ActiveSupport::TestCase
         :out => "http://www.amazon.fr/dp/B0036BGQ6W" },
       { :in  => "http://action.metaffiliation.com/trk.php?mclic=P43EF9544D2D15S4519345193C111117180315TRENCH LUNGO",
         :out => "http://www.zinefashionstore.com/produit-homme-Trench_de_la_marque_Memento-4030.html" },
-      { :in  => "http://www.koordinal.com/74-bac-%C3%A0-gla%C3%A7on-igloo.html",
-        :out => "http://www.koordinal.com/74-bac-a-glacons-igloo.html" },
       { :in  => "http%3A%2F%2Fwww.amazon.fr%2FConverse-Chuck-Taylor-Baskets-adulte%2Fdp%2FB000EDMSTY%2Fref%3Dsr_1_1%3Fs%3Dshoes%26ie%3DUTF8%26qid%3D1380531062%26sr%3D1-1",
         :out => "http://www.amazon.fr/dp/B000EDMSTY" },
       { :in  => "http://ad.zanox.com/ppc/?19089773C1754659089&ULP=%5B%5Bhttp://www.imenager.com/aspirateur-main/fp-843138-black-et-decker?site=zanox&utm_source=Zanox&utm_medium=Affiliation&utm_campaign=ZanoxIM%5D%5D#imenager.com",

@@ -5,7 +5,7 @@ require 'nokogiri'
 
 module AlgoliaFeed
 
-  class RejectedRecord < ScriptError; 
+  class RejectedRecord < ScriptError;
     attr_accessor :reason
     def initialize(str, reason)
       super(str)
@@ -23,7 +23,7 @@ module AlgoliaFeed
       self.forbidden_cats  = params[:forbidden_cats]  || ['sextoys', 'erotique']
       self.forbidden_names = params[:forbidden_names] || ['godemich', '\bgode\b', 'cockring', 'rosebud', '\bplug anal\b', 'vibromasseur', 'sextoy', 'masturbat' ]
       self.debug           = params[:debug]           || 0
-      self.category_fields = params[:category_fields] || []   
+      self.category_fields = params[:category_fields] || []
       self.merchant_cache  = {}
       self.img_processor = ImageSizeProcessor.new
       self.url_monetizer = UrlMonetizer.new
@@ -81,22 +81,25 @@ module AlgoliaFeed
           merchant.update_attribute(:products_count, m[:products_count])
         end
         puts "[#{Time.now}] #{decoded_file} - Time: #{Time.now - file_start} - #{stats.inspect}" if self.debug > 0
-      end  
+      end
     end
 
     def product_hash(xml)
       product = {}
       xml_product = Nokogiri::XML(xml) { |config| config.nonet.noblanks }
+      decoder = HTMLEntities.new
       xml_product.children.first.children.each do |child|
-        add_xml_node('', child, product)
+        add_xml_node('', child, product, decoder)
       end
       product
     end
 
-    def add_xml_node(path, child, product)
+    def add_xml_node(path, child, product, decoder)
       puts "Add XML Node: path: #{path} child: #{child} class: #{child.class} attributes: #{child.attributes} product: #{product}" if self.debug > 2
       if [Nokogiri::XML::Text, Nokogiri::XML::CDATA].include?(child.class)
-        product[path] = child.text
+        text = child.text
+        text = decoder.decode(text) if text =~ /\&[a-z]{2,6};/
+        product[path] = text
       else
         if path.present?
           path = "#{path}/#{child.name}"
@@ -109,7 +112,7 @@ module AlgoliaFeed
         end
         path = "#{path}-#{attributes.join('-')}" if attributes.size > 0
         child.children.each do |c|
-          add_xml_node(path, c, product)
+          add_xml_node(path, c, product, decoder)
         end
       end
     end
@@ -124,7 +127,7 @@ module AlgoliaFeed
       if record.has_key?('ean')
         record['ean'].split(/\D+/).each do |ean|
           record['_tags'] << "ean:#{ean}" if ean.size > 7
-        end 
+        end
         record.delete('ean')
       end
       if record.has_key?('author')
@@ -159,6 +162,8 @@ module AlgoliaFeed
       record['timestamp'] = Time.now.to_i
       record['price'].gsub!(/,/, '.') if record.has_key?('price')
       record['price_shipping'].gsub!(/,/, '.') if record.has_key?('price_shipping')
+      record['availability'] = 'En stock' if record['availability'] =~ /\A\d+\Z/
+      record['availability'] = 'En stock' if record['availability'] =~ /yes/i
       set_categories(product, record)
       record
     end

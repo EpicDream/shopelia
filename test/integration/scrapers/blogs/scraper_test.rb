@@ -64,6 +64,21 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert posts.first.published_at >= Date.parse("2012-01-01")
   end
   
+  test "complete post link with base url if relative" do
+    @scraper.url = "http://www.lesdessousdemarine.com/"
+    post = @scraper.posts.first
+    assert_match /lesdessousdemarine\.com/, post.link
+  end
+  
+  test "scrape products links inside map tags" do
+    @scraper.url = "http://www.leblogdebetty.com/mcq/"
+    post = @scraper.posts.first
+    products = post.products
+    
+    assert_equal 5, products.count
+    assert_equal "http://bit.ly/1cal3V7", products["Produit(4)"]
+  end
+  
 end
 
   

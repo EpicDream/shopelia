@@ -1,8 +1,12 @@
-namespace :scrape do
+namespace :shopelia do
+  namespace :scrape do
   
-  desc "Scrape new blogs posts"
-  task :blogs => :environment do
-    Blog.all.find_each { |blog| blog.fetch }
+    desc "Scrape new blogs posts"
+    task :blogs => :environment do
+      Blog.find_each do |blog| 
+        blog.fetch
+      end
+    end
+    
   end
-  
 end

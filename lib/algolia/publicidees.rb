@@ -30,7 +30,7 @@ module AlgoliaFeed
       super
 
       self.meta_url = 'http://affilie.publicidees.com/xmlProgAff.php?partid=37027&key=487bba1ccb0e433d1c3a18d02936e817'
-      self.rejected_feeds = ['1981', '2970']
+      self.rejected_feeds = ['1981', '2970', '427']
       self.parser_class = params[:parser_class] || 'AlgoliaFeed::Publicidees'
     end
   end

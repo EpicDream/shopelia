@@ -30,7 +30,7 @@ class Scrapers::Reviews::PriceministerTest < ActiveSupport::TestCase
     
     assert_equal 10, reviews.count
     assert review.author =~ /[A-Za-z\d]*/
-    assert_equal 5, review.rating
+    assert review.rating > 0
     assert Date.parse("2013-11-12") <= review.date
     assert review.content.length > 2
   end

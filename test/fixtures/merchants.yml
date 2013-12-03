@@ -88,3 +88,7 @@ pprgroup:
   url: "http://www.conforama.fr"
   domain: "pprgroup.net"
 
+topshop:
+  name: "Topshop"
+  domain: "topshop.com"
+  should_clean_args: true

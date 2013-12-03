@@ -4,7 +4,7 @@ class ImageTest < ActiveSupport::TestCase
   
   setup do
     url = "http://farm8.staticflickr.com/7344/11033879755_6dcd82ed1e_o.jpg"
-    @image = Image.create(url:url)
+    @image = Image.create!(url:url)
   end
   
   teardown do
@@ -27,6 +27,5 @@ class ImageTest < ActiveSupport::TestCase
     
     assert_equal 1, image.errors.count
     assert !image.valid?
-  end
-  
+  end  
 end

@@ -80,10 +80,10 @@ grand_theft_auto:
   brand: "brand"
   reference: "reference"
 
-les_sims:
+patisserie:
   name: "Les Sims 4"
   merchant: rueducommerce
-  url: http://www.rueducommerce.fr/Jeux-Consoles/Jeux-PC-et-accessoires/Jeux-PC/ELECTRONIC-ARTS/446710-Les-Sims-3-PC.htm
+  url: 'http://www.rueducommerce.fr/m/ps/mpid:MP-BB9E6M4827947#!moid:MO-BB9E6M7393322'
 
 enceintes_ihome:
   name: "iHome iA17"
@@ -94,3 +94,9 @@ masque:
   name: "Masque Latex ''Orc De Moria'' Le Seigneur Des Anneaux"
   merchant: priceminister
   url: http://www.priceminister.com/offer/buy/189396871/masque-latex-orc-de-moria-le-seigneur-des-anneaux.html
+
+removed_product:
+  name: "i am a removed product"
+  merchant: amazon
+  url: http://www.amazon.fr/dp/B008NNADIA
+  

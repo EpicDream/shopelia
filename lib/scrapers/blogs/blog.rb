@@ -32,7 +32,7 @@ module Scrapers
           @scraper.url = @url
           @posts = @scraper.posts
         end
-        
+        raise if @posts.none?
         @posts
       rescue => e
         report_incident(e)
@@ -52,7 +52,7 @@ module Scrapers
       
       def scrape post
         @scraper.url = post.link
-        block = @scraper.blocks.first
+        return post unless block = @scraper.blocks.first
         post.images = @scraper.images(block)
         post.content = @scraper.content(block)
         post.products = @scraper.products(block)
@@ -62,10 +62,11 @@ module Scrapers
       def report_incident e
         Rails.logger.error("== Blogs scraper == #{e.inspect}\n")
         Rails.logger.error("#{e.backtrace.join("\n")}\n")
+        message = @posts && @posts.none? ? "No posts - #{@url}" : "Exception - #{@url}"
         Incident.create(
           :issue => "Scrapers::Blog#posts",
           :severity => Incident::IMPORTANT,
-          :description => "Exception raised for whole posts of blog #{@url}",
+          :description => message,
           :resource_type => 'Blog')
       end
       
