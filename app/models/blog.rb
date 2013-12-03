@@ -10,7 +10,11 @@ class Blog < ActiveRecord::Base
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
   
   def fetch
-    self.posts << Scrapers::Blogs::Blog.new(url).posts.map(&:modelize)
+    posts = Scrapers::Blogs::Blog.new(url).posts.map(&:modelize)
+    posts.each do |post|
+      post.blog_id = self.id
+      post.save
+    end
     self.reload
   end
   
