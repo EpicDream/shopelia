@@ -6,16 +6,20 @@ class Admin::LooksController < Admin::AdminController
   end
   
   def publish
-    @look.update_attributes(:is_published, true)
-    redirect_to admin_posts_path
+    set_published(true)
   end
 
   def reject
-    @look.update_attributes(:is_published, false)
-    redirect_to admin_posts_path
+    set_published(false)
   end
 
   private
+
+  def set_published is_published
+    @look.update_attributes(is_published: is_published)
+    @look.mark_post_as_processed
+    redirect_to admin_posts_path
+  end
 
   def retrieve_look
     @look = Look.find(params[:id])

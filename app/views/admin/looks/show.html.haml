@@ -3,10 +3,10 @@
     %h1= @look.name
     %h2= @look.flinker.name
     .action-buttons
-      %a.btn.btn-large.btn-success.update-look{href: "#", type: "button", "data-id" => "#{@look.id}", "data-status" => "published", "data-loading-text" => "Publishing..."}
+      %a.btn.btn-large.btn-success.update-look{href: "#{publish_admin_look_path(@look)}"}
         %i.icon-check.icon-white
         Publish look
-      %a.btn.btn-large.btn-danger.update-look{href: "#", type: "button", "data-id" => "#{@look.id}", "data-status" => "rejected", "data-loading-text" => "Rejecting..."}
+      %a.btn.btn-large.btn-danger.update-look{href: "#{reject_admin_look_path(@look)}"}
         %i.icon-trash.icon-white
         Reject look
 
