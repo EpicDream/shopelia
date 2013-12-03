@@ -89,7 +89,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     return deferred;
   };
 
-  map.save = function (mapping, id) {
+  map.save = function (mapping, id, url) {
     var deferred = new $.Deferred();
 
     if (typeof mapping === 'object') {
@@ -99,13 +99,15 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
       throw "Cannot save mapping #"+id+". Wait an Mapping or an object, got a "+(typeof mapping);
 
     $.ajax({
-      type : "PUT",
+      type : id !== undefined ? "PUT" : "POST",
       tryCount: 0,
       retryLimit: 5,
-      url: map.MAPPING_URL+'/'+id,
+      url: map.MAPPING_URL + (id !== undefined ? '/'+id : ''),
       contentType: 'application/json',
       data: mapping
-    }).done(function () {
+    }).done(function (res) {
+      if (id === undefined)
+        map.mapMappingToMerchant(url, res.id);
       deferred.resolve();
     }).fail(function (xhr, textStatus, errorThrown) {
       if (textStatus === 'timeout' || xhr.status === 502) {
@@ -129,6 +131,30 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     });
 
     return deferred;
+  };
+
+  map.mapMappingToMerchant = function (url, mapping_id) {
+    map.getMerchantFromUrl(url).done(function (hash) {
+      $.ajax({
+        type : "PUT",
+        url: map.MERCHANT_URL + '?url='+ url,
+        contentType: 'application/json',
+        data: JSON.stringify({mapping_id: mapping_id}),
+      }).fail(function (xhr, textStatus, errorThrown) {
+        logger.warn("Fail to update mapping_id of merchant "+(url)+" to "+mapping_id+".");
+      });
+    });
+  };
+
+
+  map.getMerchantFromUrl = function (url) {
+    return $.ajax({
+      type : "GET",
+      dataType: "json",
+      url: map.MERCHANT_URL + '?url=' + url,
+    }).fail(function (xhr, textStatus, errorThrown) {
+      logger.warn("Fail to retrieve merchant from url '"+url+"'.");
+    });
   };
 
   map.getMerchants = function () {
@@ -219,13 +245,14 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   };
 
   Mapping.prototype.save = function () {
-    return map.save(this);
+    return map.save(this, this.id, this.url);
   };
 
   //TODO: handle frameworks like prestashop, magento, shopify, etc
   Mapping.prototype._initMerchantData = function (url) {
     var i;
     this.host = 'default';
+    this.domain = map.getMinHost(url);
     this.mapping = {};
     this.mapping['default'] = {};
     for (i = map.FIELDS.length - 1 ; i >= 0 ; i--)

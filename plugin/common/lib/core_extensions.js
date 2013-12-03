@@ -7,37 +7,6 @@ if (! Function.prototype.bind)
     };
   };
 
-if (! Array.prototype.unique)
-  Array.prototype.unique = function(fct){
-    var r = [], values = [], i;
-    if (typeof fct === 'function') {
-      for(i = 0; i < this.length; i++){
-        var val = fct(this[i]);
-        if( values.indexOf(val) == -1 ) {
-          r.push( this[i] );
-          values.push(val);
-        }
-      }
-    } else {
-      for(i = 0; i < this.length; i++){
-        if( r.indexOf(this[i]) == -1 )
-          r.push( this[i] );
-      }
-    }
-    return r;
-  };
-
-if (! Array.prototype.groupBy)
-  Array.prototype.groupBy = function (fct) {
-    var i, v, result = {};
-    this.forEach(function (e) {
-      v = fct(e);
-      result[v] = result[v] || [];
-      result[v].push(e);
-    });
-    return result;
-  };
-
 // if (! Object.prototype.keys)
 //   Object.prototype.keys = function () {
 //     var res = [];
@@ -115,4 +84,24 @@ function $extend() {
 
   // Return the modified object
   return target;
+}
+
+// Return a new ary with uniq values, base on values return by fct for each item if defined.
+function $unique(ary, fct){
+  var r = [], values = [], i;
+  if (typeof fct === 'function') {
+    for(i = 0; i < ary.length; i++){
+      var val = fct(ary[i]);
+      if( values.indexOf(val) == -1 ) {
+        r.push( ary[i] );
+        values.push(val);
+      }
+    }
+  } else {
+    for(i = 0; i < ary.length; i++){
+      if( r.indexOf(ary[i]) == -1 )
+        r.push( ary[i] );
+    }
+  }
+  return r;
 }

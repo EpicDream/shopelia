@@ -24,7 +24,7 @@ module Scrapers
       
       def blocks
         content = @html.search(".entry-content").first || @html
-        content.search(".//div | .//p | .//map")
+        content.search(".//div | .//p | .//map | .//h3")
       end
       
       private
@@ -33,7 +33,9 @@ module Scrapers
         block.xpath(".//a").inject({}) { |products, a|
           link = href[a]
           next products if remove?(link)
-          products.merge!({"#{a.text}" => link})
+          key = a.text.clean
+          next products if key.blank?
+          products.merge!({key => link})
         }
       end
       
