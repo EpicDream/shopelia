@@ -39,7 +39,7 @@ class NetAPorterComTest < ActiveSupport::TestCase
     @version = @helper.process_price_shipping(@version)
     assert_equal text, @version[:price_shipping_text]
 
-    @version[:price_shipping_text] = ""
+    @version[:price_shipping_text] = nil
     @version = @helper.process_price_shipping(@version)
     assert_equal NetAPorterCom::DEFAULT_PRICE_SHIPPING, @version[:price_shipping_text]
   end
