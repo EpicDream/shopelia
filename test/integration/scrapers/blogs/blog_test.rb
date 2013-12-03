@@ -9,16 +9,10 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     @blog = Scrapers::Blogs::Blog.new
   end
 
-  test "blog" do
-    @blog.url = "http://www.natachasteven.com"
+  test "no exception when a post has no content" do
+    @blog.url = "http://kenzasmg.blogspot.fr"
     posts = @blog.posts
-    
     assert posts.count > 0
-    posts.each do |post|
-      assert !post.link.blank?
-      assert post.images.count > 0
-      assert post.published_at
-    end
   end
   
   test "blog with summary access to posts" do
