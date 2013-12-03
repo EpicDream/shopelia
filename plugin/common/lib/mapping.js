@@ -137,11 +137,11 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     map.getMerchantFromUrl(url).done(function (hash) {
       $.ajax({
         type : "PUT",
-        url: map.MERCHANT_URL + '/'+ hash.id,
+        url: map.MERCHANT_URL + '?url='+ url,
         contentType: 'application/json',
         data: JSON.stringify({mapping_id: mapping_id}),
       }).fail(function (xhr, textStatus, errorThrown) {
-        logger.warn("Fail to update mapping_id of merchant #"+(hash.id)+" to "+mapping_id+".");
+        logger.warn("Fail to update mapping_id of merchant "+(url)+" to "+mapping_id+".");
       });
     });
   };
