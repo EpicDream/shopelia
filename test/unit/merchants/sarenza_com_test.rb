@@ -42,6 +42,7 @@ class SarenzaComTest < ActiveSupport::TestCase
 
   test "it should parse specific availability" do
     assert_equal false, MerchantHelper.parse_availability("6643 MODÈLES", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("TOUTES LES MARQUES", @url)[:avail]
   end
 
   # test "it should process price_shipping unless if present" do

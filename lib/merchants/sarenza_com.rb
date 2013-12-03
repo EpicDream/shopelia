@@ -5,6 +5,7 @@ class SarenzaCom
 
   AVAILABILITY_HASH = {
     /\d+ modele/i => false,
+    "TOUTES LES MARQUES" => false,
   }
 
   def initialize url

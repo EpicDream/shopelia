@@ -6,6 +6,7 @@ class UrbanoutfittersFr
 
   AVAILABILITY_HASH = {
     /\d+ article\(s\) trouve\(s\)/i => false,
+    "En vedette cette semaine" => false,
   }
 
   def initialize url
