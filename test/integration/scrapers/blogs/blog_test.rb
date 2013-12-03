@@ -24,7 +24,14 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
       assert post.images.count > 0
       assert post.published_at
     end
-    
+  end
+  
+  test "remove CDATA" do
+    @blog.url = "http://www.modenmarie.com/"
+    posts = @blog.posts
+    posts.each do |post|
+      assert !(post.content =~ /CDATA/)
+    end
   end
   
 end
