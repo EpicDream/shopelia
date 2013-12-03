@@ -8,6 +8,8 @@ class LinkerTest < ActiveSupport::TestCase
   end
   test "it should clean url" do
     array = [
+      { :in  => "http://api.shopstyle.com/action/apiVisitRetailer?pid=puid14728235&url=http://www.barneys.com/on/demandware.store/Sites-BNY-Site/default/Product-Show?pid=502921664",
+        :out => "http://www.barneys.com/on/demandware.store/Sites-BNY-Site/default/Product-Show?pid=502921664" },
       { :in  => "http://rstyle.me/n/c92f6m4xn",
         :out => "http://www.alexandermcqueen.com/fr/mcq/veste_cod49134687.html" },
       { :in  => "http://bit.ly/1aChLeB",
