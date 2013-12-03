@@ -1,6 +1,6 @@
 class RefactoringPostsLooks < ActiveRecord::Migration
   def change
-    remove_column :looks, :post_id, :integer
-    remove_column :posts, :status, :string
+    remove_column :looks, :post_id
+    remove_column :posts, :status
   end
 end
