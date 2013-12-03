@@ -5,6 +5,7 @@ class UrbanoutfittersFr
   FREE_SHIPPING_LIMIT = 75.0
 
   AVAILABILITY_HASH = {
+    /\d+ article\(s\) trouve\(s\)/i => false,
   }
 
   def initialize url

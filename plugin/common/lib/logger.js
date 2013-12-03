@@ -2,13 +2,11 @@
 // Author : Vincent RENAUDINEAU
 // Created : 2013-09-24
 
-(function() {
-
-var sprintf = window.sprintf;
+define(["sprintf"], function(sprintf) {
 
 var logger = {
   level: 3,
-  server_level: 0,
+  // server_level: 0,
 
   NONE: 0,
   FATAL: 1,
@@ -16,16 +14,18 @@ var logger = {
   WARN: 2,
   WARNING: 2,
   INFO: 3,
-  DEBUG: 4,
-  ALL: 5,
+  VERBOSE: 4,
+  DEBUG: 5,
+  ALL: 6,
 
   code2str: {
     0: "NONE",
     1: "ERROR",
     2: "WARN",
     3: "INFO",
-    4: "DEBUG",
-    5: "ALL",
+    4: "VERBOSE",
+    5: "DEBUG",
+    6: "ALL",
   },
 };
 
@@ -35,8 +35,18 @@ logger.error = logger.err;
 logger.warn = function() { logger._log('WARN', (arguments.callee.caller || {}).name, arguments); };
 logger.good = function() { logger._log('GOOD', undefined, arguments); };
 logger.info = function() { logger._log('INFO', undefined, arguments); };
+logger.verbose = function() { logger._log('VERBOSE', undefined, arguments); };
 logger.debug = function() { logger._log('DEBUG', (arguments.callee.caller || {}).name, arguments); };
 logger.print = function() { if (logger.level !== logger.NONE) console.info.apply(console, arguments); };
+
+logger.isFatal = function() { return this.level >= this.FATAL; };
+logger.isError = function() { return this.level >= this.ERROR; };
+logger.isErr = logger.isError;
+logger.isWarn = function() { return this.level >= this.WARN; };
+logger.isGood = function() { return this.level >= this.GOOD; };
+logger.isInfo = function() { return this.level >= this.INFO; };
+logger.isVerbose = function() { return this.level >= this.VERBOSE; };
+logger.isDebug = function() { return this.level >= this.DEBUG; };
 
 logger.timestamp = function (date) {
   date = new Date(date || Date.now());
@@ -138,8 +148,9 @@ logger._log2 = function(level, caller, args) {
   if (logger[level] <= logger.level)
     logger.write(level, argsArray);
 
-  if (logger.server_level >= logger[level])
-    logger.writeToServer(argsArray);
+  // if (logger.server_level >= logger[level])
+  //   logger.writeToServer(argsArray);
+
   return argsArray;
 };
 
@@ -147,19 +158,12 @@ logger._log2 = function(level, caller, args) {
 //          LOG TO SERVER
 ////////////////////////////////////////
 
-logger.req = new XMLHttpRequest();
-logger.req.open('POST', 'https://www.shopelia.com/api/viking/logs', false);
-logger.writeToServer = function (args) {
-  // logger.req.send(args);
-};
+// logger.req = new XMLHttpRequest();
+// logger.req.open('POST', 'https://www.shopelia.com/api/viking/logs', false);
+// logger.writeToServer = function (args) {
+//   // logger.req.send(args);
+// };
 
-if ("object" == typeof module && module && "object" == typeof module.exports)
-  module.exports = logger;
-else if ("object" == typeof exports)
-  exports = logger;
-else if ("function" == typeof define && define.amd)
-  define("logger", ['sprintf'], function(sprtf){sprintf = sprtf; return logger;});
-else
-  window.logger = logger;
+return logger;
 
-})();
+});
