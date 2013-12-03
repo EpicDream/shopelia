@@ -18,7 +18,9 @@ class Admin::LooksController < Admin::AdminController
   def set_published is_published
     @look.update_attributes(is_published: is_published)
     @look.mark_post_as_processed
-    redirect_to admin_posts_path
+
+    look = Post.where("processed_at is null and look_id is not null").order("published_at desc").first.look
+    redirect_to look ? admin_look_path(look) : admin_posts_path
   end
 
   def retrieve_look
