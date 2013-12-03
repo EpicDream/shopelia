@@ -13,6 +13,8 @@ helper.help = function (session) {
     this.priceminister.help(session);
   } else if (session.url.search(/^https?:\/\/www\.rueducommerce\.fr/) !== -1) {
     this.rueducommerce.help(session);
+  } else if (session.url.search(/^https?:\/\/www\.luisaviaroma\.com/) !== -1) {
+    this.luisaviaroma.help(session);
   }
 };
 
@@ -55,6 +57,16 @@ helper.rueducommerce.help = function (session) {
 };
 
 helper.rueducommerce.before_crawling = function(callback) {
+  setTimeout(callback, 1000);
+};
+
+helper.luisaviaroma = {};
+
+helper.luisaviaroma.help = function (session) {
+  session.helper = this;
+};
+
+helper.luisaviaroma.before_crawling = function(callback) {
   setTimeout(callback, 1000);
 };
 
