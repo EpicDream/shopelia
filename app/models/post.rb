@@ -49,5 +49,6 @@ class Post < ActiveRecord::Base
       hash.merge!({name => Linker.clean(link)})
     end.to_json
     self.link = Linker.clean(link)
+    true
   end
 end
