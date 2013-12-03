@@ -7,18 +7,25 @@ module Scrapers
     class RSSFeed
       
       def initialize url
-        @url = "#{url.gsub(/\/$/, '')}/feed/"
+        @url = url
+        @feed_urls = feed_urls()
       end
       
       def items
-        open(@url) do |rss|
+        open(@feed_urls.shift) do |rss|
           feed = RSS::Parser.parse(rss)
           feed.items.map do |item|
             Post.new.from(item)
           end
         end
-      rescue
+      rescue => e
+        retry if @feed_urls.any?
         []
+      end
+      
+      def feed_urls
+        base = @url.gsub(/\/$/, '')
+        ["#{base}/feed/", "#{base}/feeds/posts/default"]
       end
       
       def exists?
