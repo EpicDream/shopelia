@@ -79,6 +79,14 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert_equal "http://bit.ly/1cal3V7", products["Produit(4)"]
   end
   
+  test "scrape products links in headers" do
+    @scraper.url = "http://www.leblogdelamechante.fr/"
+    post = @scraper.posts.first
+    products = post.products
+    
+    assert products.count > 3
+  end
+  
 end
 
   
