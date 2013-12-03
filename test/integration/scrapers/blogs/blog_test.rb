@@ -10,6 +10,7 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
   end
 
   test "no exception when a post has no content" do
+    Scrapers::Blogs::Scraper.any_instance.expects(:posts).never #from feed only
     @blog.url = "http://kenzasmg.blogspot.fr"
     posts = @blog.posts
     assert posts.count > 0
