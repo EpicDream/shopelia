@@ -6,7 +6,7 @@ module AdminHelper
   end
 
   def posts_count
-    count = Post.where("processed_at is null").count
+    count = Post.where("processed_at is null and look_id is not null").count
     count > 0 ? " <strong>(#{count})</strong>" : ""
   end
   
