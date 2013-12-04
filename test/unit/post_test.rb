@@ -51,5 +51,6 @@ class PostTest < ActiveSupport::TestCase
         @post.save
       }
     end
+    assert_equal "http://www.fake.com", Post.first.link
   end
 end
