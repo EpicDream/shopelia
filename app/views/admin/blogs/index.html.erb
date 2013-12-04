@@ -1,4 +1,19 @@
 <div class="coolbox blogs">
+  <div>
+    <%= label_tag :blogs_count, "Nombre de blogs" %>
+    <%= content_tag(:p, Blog.count, id: :blogs_count) %>
+    <%= label_tag :scraped_blogs_count, "Nombre de blogs scrapés" %>
+    <%= content_tag(:p, Blog.scraped.count, id: :scraped_blogs_count) %>
+    
+    <h5>Blogs sans articles</h5>
+    <ul id="blogs_without_posts">
+      <% Blog.scraped.without_posts.each do |blog| %>
+        <li><span><%= blog.name %></span><%= link_to blog.url, blog.url %></li>
+      <% end %>
+    </ul>
+    
+  </div>
+  
   <div >
     <%= label_tag 'select-blog-url', "Choisir un blog" %>
     <%= select_tag 'select-blog-url', options_from_collection_for_select(@blogs, :id, :url), :prompt => "" %>  
@@ -14,6 +29,31 @@
   </div>
   
   <div>
+    <h5>Intégrer des blogs provenant de LookBook</h5>
+    <table>
+      <thead>
+        <th>Avatar</th>
+        <th>Nom</th>
+        <th>Url</th>
+        <th>Pays</th>
+        <th></th>
+      </thead>
+      <tbody>
+        <% Blog.scraped(false).each do |blog| %>
+          <tr>
+            <td><img src="<%= blog.avatar_url %>" class="avatar"></img></td>
+            <td><%= blog.name %></td>
+            <td><%= link_to blog.url, blog.url %></td>
+            <td><%= blog.country %></td>
+            <td><%= button_tag "Intégrer", class:'btn' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  
+  </div>
+  
+  <div>
     <h5>Intégrer un fichier CSV de flux</h5>
     <p class='help'>Le fichier doit comporter deux colonnes, la première colonne est
       l'url du site, la deuxième le nom donné au blog.</p>
@@ -23,17 +63,5 @@
     <% end %>
   </div>
   
-  <div>
-    <%= label_tag :blogs_count, "Nombre de blogs" %>
-    <%= content_tag(:p, Blog.count, id: :blogs_count) %>
-    <br/>
-    <h5>Blogs sans articles</h5>
-    <ul id="blogs_without_posts">
-      <% Blog.without_posts.each do |blog| %>
-        <li><span><%= blog.name %></span><%= link_to blog.url, blog.url %></li>
-      <% end %>
-    </ul>
-    
-  </div>
   
 </div>

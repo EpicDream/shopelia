@@ -43,6 +43,9 @@ div.blogs{
   font-size:12px; 
   color:gray;
 }
+.blogs img.avatar{
+  width:30px;
+}
 
 /*Blog posts*/
 
