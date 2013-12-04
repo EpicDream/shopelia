@@ -3,7 +3,10 @@ module Crawlers
     URL = ->(country) { "http://lookbook.nu/hot/#{country}" }
     Blogger = Struct.new(:name, :avatar, :blog_url, :country)
     GIRLS_FILTER = "http://lookbook.nu/preference/look-list-gender/girls"
-    
+    THUMBS_VIEW = "http://lookbook.nu/preference/look-list-view/thumbs"
+    MAX_PAGE = 10
+    ITEM_XPATH = ".//ul[@id='looks']/li"
+
     class Blogs
       
       def initialize country="france"
@@ -18,7 +21,11 @@ module Crawlers
       def items
         @agent.get @url
         page = @agent.get GIRLS_FILTER
-        page.search(".//ul[@id='looks']/li")
+        page = @agent.get THUMBS_VIEW
+        items = page.search(".//ul[@id='looks']/li")
+        (1..MAX_PAGE).each do |index|
+          page = @agent.get(URL[country, index])
+        end
       end
       
       def page item
