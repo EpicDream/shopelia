@@ -9,6 +9,8 @@ class Post < ActiveRecord::Base
   before_create :link_urls
   after_create :convert
 
+  scope :pending_processing, where("processed_at is null and look_id is not null and published_at > ?", 1.month.ago).order("published_at desc")
+
   def convert
     if self.images.count > 1 && self.look.nil?
       look = Look.create!(name:self.title,published_at:self.published_at,url:self.link,flinker_id:self.blog.flinker_id)
