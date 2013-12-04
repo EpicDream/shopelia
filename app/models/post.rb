@@ -6,7 +6,7 @@ class Post < ActiveRecord::Base
   validates :link, presence:true, uniqueness:true
   json_attributes [:images, :products, :categories]
   
-  before_create :link_urls
+  before_validation :link_urls
   after_create :convert
 
   def convert
@@ -44,6 +44,5 @@ class Post < ActiveRecord::Base
       hash.merge!({name => Linker.clean(link)})
     end.to_json
     self.link = Linker.clean(link)
-    true
   end
 end
