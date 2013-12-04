@@ -32,7 +32,7 @@ class Post < ActiveRecord::Base
     links = []
     self.products.each do |product|
       text, url = product.to_a.flatten
-      links << { text:text, url:url } if Merchant.from_url(url, false).nil?
+      links << { text:(text || "Default"), url:url } if Merchant.from_url(url, false).nil?
     end
     links
   end

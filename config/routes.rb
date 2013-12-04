@@ -179,6 +179,9 @@ Shopelia::Application.routes.draw do
         resources :stats, :only => :index
       end
     end
+    namespace :flink do
+      resources :looks, :only => :index
+    end
   end
 
   match "about" => "home#about"
