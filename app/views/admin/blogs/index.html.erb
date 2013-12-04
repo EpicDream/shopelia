@@ -45,7 +45,12 @@
             <td><%= blog.name %></td>
             <td><%= link_to blog.url, blog.url %></td>
             <td><%= blog.country %></td>
-            <td><%= button_tag "Intégrer", class:'btn' %></td>
+            <td>
+              <%= button_tag "Intégrer", class:'btn btn-success' do %>
+              <i class="icon-check icon-white"></i>
+              <span>Intégrer</span>
+              <% end  %>
+            </td>
           </tr>
         <% end %>
       </tbody>
