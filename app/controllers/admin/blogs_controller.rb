@@ -1,7 +1,7 @@
 class Admin::BlogsController < Admin::AdminController
   
   def index
-    @blogs = Blog.order(:url)
+    @blogs = Blog.scraped.order(:url)
   end
   
   def show
