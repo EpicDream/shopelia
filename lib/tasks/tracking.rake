@@ -3,9 +3,13 @@ namespace :shopelia do
     
     desc "Generate request events for all products tracked or present in collections"
     task :request => :environment do
-      developer = Developer.find_by_name("Shopelia")
       tracked_ids = Product.joins(:developers).map(&:id)
-      collections_ids = CollectionItem.select("distinct product_id").map(&:product_id)
+
+      tags = ["__Home"].map{|n| Tag.find_or_create_by_name(n)}
+      collections = tags.map{|tag| tag.collections.public}.inject(:&) || []
+      collections_ids = CollectionItem.where(collection_id:collections.map(&:id)).select("distinct product_id").map(&:product_id)
+      
+      developer = Developer.find_by_name("Shopelia")
       (tracked_ids + collections_ids).uniq.each do |id|
         Event.create(
           :product_id => id,

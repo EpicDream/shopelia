@@ -27,7 +27,7 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert_equal @look.url, hash[:look][:url]
     assert_equal @look.published_at.to_i, hash[:look][:published_at]
     assert hash[:look][:flinker].present?
-    assert_equal 1, hash[:look][:products].count
+    assert_equal 0, hash[:look][:products].count
     assert_equal 2, hash[:look][:images].count
   end
 end
