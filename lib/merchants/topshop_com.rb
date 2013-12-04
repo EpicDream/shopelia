@@ -4,6 +4,7 @@ class TopshopCom
   DEFAULT_SHIPPING_INFO = "Livrée en 5 jours ouvrables."
 
   AVAILABILITY_HASH = {
+    "pas trouve de resultat correspondant a votre recherche" => false,
   }
 
   def initialize url
@@ -23,7 +24,7 @@ class TopshopCom
   end
 
   def process_availability version
-    # version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
+    version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
     version
   end
 

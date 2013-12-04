@@ -9,8 +9,8 @@ define(['logger', './saturn_options', 'core_extensions', 'satconf'], function(lo
 // il y a le même nombre d'option quelque soit l'option choisie.
 
 var SaturnSession = function(saturn, prod) {
-  this.saturn = saturn;
   $extend(this, prod);
+  this.saturn = saturn;
 
   this.id = ++SaturnSession.counter;
   this.prod_id = prod.id;
@@ -30,7 +30,7 @@ SaturnSession.prototype.start = function() {
   this.next();
 };
 
-SaturnSession.prototype.next = function() {
+SaturnSession.prototype.next = function() { try {
   var t;
   switch (this.strategy) {
     case "superFast":
@@ -73,7 +73,7 @@ SaturnSession.prototype.next = function() {
     case "full" :
       if (this._depthOnly === undefined)
         this._depthOnly = true;
-      t = this.options.next({depthOnly: this._depthOnly});
+      t = this.options.next({lookInMapping: true, depthOnly: this._depthOnly});
       // on est arrivé à l'option la plus profonde, on crawl et on remonte.
       if (t === null && this._depthOnly) {
         this._depthOnly = false;
@@ -85,7 +85,7 @@ SaturnSession.prototype.next = function() {
       } else if (t === null) {
         this.strategy = 'done';
         this.next();
-      // t !== null, on a une option à setter.
+      // t !== null, on a une option à getter/setter.
       } else {
         this._depthOnly = true;
         if (t[1] === undefined) {
@@ -103,7 +103,9 @@ SaturnSession.prototype.next = function() {
       logger.warn("SaturnSession.next called with strategy == 'ended'.");
       break;
   }
-};
+} catch (err) {
+  logger.error("in next :", err);
+}};
 
 SaturnSession.prototype.createSubTasks = function() {
   var firstOption = this.options.firstOption({nonAlone: true}),
@@ -137,16 +139,19 @@ SaturnSession.prototype.createSubTasks = function() {
 SaturnSession.prototype.getOptions = function(option) {
   this.currentAction = "getOptions";
   var cmd = {action: this.currentAction, mapping: this.mapping, option: option};
-  this.saturn.evalAndThen(this, cmd, function(values) {
+  this.saturn.evalAndThen(this, cmd, function(values) { try {
     logger.info(this.logId(), (! (values instanceof Array) && '?' || values.length)+" versions for option"+option);
-    logger.debug(values);
+    // logger.debug(values);
     if (! values) {
       this.saturn.sendError(this, "No options return for getOptions(option="+option+")");
       return this.endSession();
     }
     this.options.setValues(values);
     this.next();
-  }.bind(this));
+  } catch (err) {
+    logger.error("in getOptions callback :", err);
+    this.saturn.sendError(this, "Bug during getOptions callback :", err);
+  }}.bind(this));
 };
 
 SaturnSession.prototype.setOption = function(option, value) {
@@ -157,7 +162,7 @@ SaturnSession.prototype.setOption = function(option, value) {
 
 SaturnSession.prototype.crawl = function() {
   this.currentAction = "crawl";
-  this.saturn.evalAndThen(this, {action: this.currentAction, mapping: this.mapping}, function(version) {
+  this.saturn.evalAndThen(this, {action: this.currentAction, mapping: this.mapping}, function(version) { try {
     var d = this;
     if (typeof version !== 'object') {
       this.saturn.sendError("No result return for crawl");
@@ -173,7 +178,10 @@ SaturnSession.prototype.crawl = function() {
     }
 
     this.next();
-  }.bind(this));
+  } catch (err) {
+    logger.error("in crawl callback :", err);
+    this.saturn.sendError(this, "Bug during crawling callback :", err);
+  }}.bind(this));
 };
 
 //

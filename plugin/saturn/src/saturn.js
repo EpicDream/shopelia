@@ -116,7 +116,7 @@ Saturn.prototype.onArrayToExtractFailed = function(err) {
 
 Saturn.prototype.onProductsReceived = function(prods) {
   logger.debug(prods.length, "products received.");
-  prods = prods.unique(function(p) {return p.id;});
+  prods = $unique(prods);
   for (var i = prods.length - 1; i >= 0; i--) {
     var prod = prods[i];
     if (this.productsBeingProcessed[prod.id])
@@ -236,6 +236,7 @@ Saturn.prototype.crawlProduct = function() {
 Saturn.prototype.createSession = function(prod, tabId) {
   var session = new SaturnSession(this, prod);
   this.sessions.byTabId[tabId] = session;
+  this.sessions[session.id] = session;
   session.tabId = tabId;
 
   this.cleanTab(tabId);
@@ -266,6 +267,7 @@ Saturn.prototype.endSession = function(session) {
   if (satconf.env === 'dev')
     this.sessions.finished[session.id] = session;
   delete this.sessions.detached[session.id];
+  delete this.sessions[session.id];
   this.crawlProduct();
 };
 
@@ -304,18 +306,18 @@ Saturn.prototype.closeTab = function(tabId) {
 
 // Virtual, must be reimplement.
 Saturn.prototype.openUrl = function(session, url) {
-  throw "abstract function";
+  throw "Saturn.openUrl: abstract function";
 };
 
 //
 Saturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
-  throw "abstract function";
+  throw "Saturn.loadProductUrlsToExtract: abstract function";
 };
 
 // GET mapping for url's host,
 // and return jqXHR object.
 Saturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) {
-  throw "abstract function";
+  throw "Saturn.loadMapping: abstract function";
 };
 
 // session may be a simple Object with only id to set,
@@ -341,7 +343,7 @@ Saturn.prototype.sendResult = function(session, result) {
 
 // 
 Saturn.prototype.evalAndThen = function(session, cmd, callback) {
-  throw "abstract function";
+  throw "Saturn.evalAndThen: abstract function";
 };
 
 return Saturn;

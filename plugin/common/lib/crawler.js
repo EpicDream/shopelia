@@ -7,7 +7,7 @@ define(["logger", "jquery", "html_utils", "core_extensions"], function(logger, $
 
 var Crawler = {};
 
-var OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$/i;
+var OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible/i;
 
 //
 Crawler.searchImages = function (field, elems) {
@@ -203,9 +203,9 @@ Crawler.searchField = function (field, paths, doc) {
 
 //
 Crawler.parseImage = function (elems) {
-  return elems.toArray().map(function (img) {
+  return $unique( elems.toArray().map(function (img) {
     return img.src || img.getAttribute("src");
-  }).unique();
+  }) );
 };
 
 //

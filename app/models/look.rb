@@ -3,6 +3,7 @@ class Look < ActiveRecord::Base
   has_one :post
   has_many :look_images, :foreign_key => "resource_id", :dependent => :destroy
   has_many :look_products, :dependent => :destroy
+  has_many :products, :through => :look_products
 
   validates :uuid, :presence => true, :uniqueness => true, :on => :create
   validates :flinker, :presence => true

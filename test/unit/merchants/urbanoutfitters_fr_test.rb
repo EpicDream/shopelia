@@ -35,6 +35,8 @@ class UrbanoutfittersFrTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("15 article(s) trouvé(s)", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("En vedette cette semaine", @url)[:avail]
   end
 
   test "it should process price_shipping unless if present" do

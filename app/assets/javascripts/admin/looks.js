@@ -66,15 +66,7 @@ function showAddCustomModal() {
         url: "/admin/look_products",
         dataType: "script",
         data: {feed:JSON.stringify([feed]), look_id:lookId},
-        type: "post",
-        error: function() {
-          $('#look-add-custom-confirm').button('reset');
-          $("#look-add-custom-modal").modal('hide');
-        },
-        success: function(data) {
-          $('#look-add-custom-confirm').button('reset');
-          $("#look-add-custom-modal").modal('hide');
-        }
+        type: "post"
       });        
   });
 }

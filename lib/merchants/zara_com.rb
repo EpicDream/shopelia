@@ -34,7 +34,7 @@ class ZaraCom
   end
 
   def process_shipping_info version
-    version[:shipping_info] = MerchantHelper::DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
+    version[:shipping_info] = DEFAULT_SHIPPING_INFO if version[:shipping_info].blank?
     version
   end
 end

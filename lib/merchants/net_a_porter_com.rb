@@ -29,6 +29,7 @@ class NetAPorterCom
   end
 
   def process_shipping_info version
+    version[:shipping_info] = "" if version[:shipping_info].nil?
     version[:shipping_info] = version[:shipping_info].gsub(/(?<=.)\.?$/, ". ") + DEFAULT_SHIPPING_INFO
     version
   end

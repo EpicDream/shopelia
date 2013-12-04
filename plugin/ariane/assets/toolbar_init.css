@@ -25,6 +25,7 @@ body.ariane .ari-surround { outline: red dashed 1px;}
   text-transform: initial;
   float: initial;
   text-indent: initial;
+  letter-spacing: initial;
   -webkit-appearance: initial;
 }
 

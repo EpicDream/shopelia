@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131202175135) do
+ActiveRecord::Schema.define(:version => 20131204091121) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -259,6 +259,8 @@ ActiveRecord::Schema.define(:version => 20131202175135) do
     t.integer  "display_order"
   end
 
+  add_index "images", ["resource_id", "type"], :name => "index_images_on_resource_id_and_type"
+
   create_table "incidents", :force => true do |t|
     t.integer  "severity"
     t.string   "issue"
@@ -277,6 +279,8 @@ ActiveRecord::Schema.define(:version => 20131202175135) do
     t.datetime "updated_at", :null => false
   end
 
+  add_index "look_products", ["look_id"], :name => "index_look_products_on_look_id"
+
   create_table "looks", :force => true do |t|
     t.string   "uuid"
     t.string   "name"
@@ -287,6 +291,9 @@ ActiveRecord::Schema.define(:version => 20131202175135) do
     t.datetime "updated_at",                      :null => false
     t.boolean  "is_published", :default => false
   end
+
+  add_index "looks", ["is_published"], :name => "index_looks_on_is_published"
+  add_index "looks", ["uuid"], :name => "index_looks_on_uuid"
 
   create_table "mappings", :force => true do |t|
     t.text     "mapping"
@@ -385,9 +392,9 @@ ActiveRecord::Schema.define(:version => 20131202175135) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message",                    :limit => 255
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.text     "message"
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "retry_count"
@@ -489,10 +496,10 @@ ActiveRecord::Schema.define(:version => 20131202175135) do
     t.float    "price_strikeout"
     t.string   "shipping_info"
     t.text     "description"
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
-    t.text     "option2",           :limit => 255
-    t.text     "option1",           :limit => 255
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+    t.text     "option2"
+    t.text     "option1"
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
@@ -513,10 +520,10 @@ ActiveRecord::Schema.define(:version => 20131202175135) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url",                 :limit => 255
-    t.text     "image_url",           :limit => 255
-    t.datetime "created_at",                                            :null => false
-    t.datetime "updated_at",                                            :null => false
+    t.text     "url"
+    t.text     "image_url"
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
@@ -524,7 +531,7 @@ ActiveRecord::Schema.define(:version => 20131202175135) do
     t.boolean  "viking_failure"
     t.string   "reference"
     t.datetime "muted_until"
-    t.boolean  "options_completed",                  :default => false
+    t.boolean  "options_completed",   :default => false
     t.datetime "viking_sent_at"
     t.string   "image_size"
     t.float    "rating"
