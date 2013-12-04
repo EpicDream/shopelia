@@ -14,6 +14,6 @@ class LookSerializer < ActiveModel::Serializer
   end
 
   def images
-    ActiveModel::ArraySerializer.new(object.look_images).as_json
+    ActiveModel::ArraySerializer.new(object.look_images.order(:display_order)).as_json
   end
 end

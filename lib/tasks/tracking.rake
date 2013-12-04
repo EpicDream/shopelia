@@ -8,9 +8,11 @@ namespace :shopelia do
       tags = ["__Home"].map{|n| Tag.find_or_create_by_name(n)}
       collections = tags.map{|tag| tag.collections.public}.inject(:&) || []
       collections_ids = CollectionItem.where(collection_id:collections.map(&:id)).select("distinct product_id").map(&:product_id)
-      
+
+      looks_ids = LookProduct.where(look_id:Look.where(is_published:true).map(&:id)).select("distinct product_id").map(&:product_id)
+
       developer = Developer.find_by_name("Shopelia")
-      (tracked_ids + collections_ids).uniq.each do |id|
+      (tracked_ids + collections_ids + looks_ids).uniq.each do |id|
         Event.create(
           :product_id => id,
           :action => Event::REQUEST,
