@@ -25,3 +25,4 @@ plugin/priv_keys/
 *.sublime-workspace
 
 public/images/collections/
+.DS_Store

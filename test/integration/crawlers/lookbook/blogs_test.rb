@@ -17,12 +17,13 @@ class Crawlers::Lookbook::BlogsTest < ActiveSupport::TestCase
   end
   
   test "blogger from item" do
-    blogger = @crawler.blogger(@@items.first)
+    blog = @crawler.blog(@@items.first)
 
-    assert_equal "Louise Ebel", blogger.name
-    assert_equal "http://www.misspandora.fr", blogger.blog_url
-    assert_match /small\/2710_5139406926_02c3347e7a_b.jpg/, blogger.avatar_url
-    assert_equal "france", blogger.country
+    assert_equal "Leeloo P", blog.name
+    assert_equal "http://ledressingdeleeloo.blogspot.com/", blog.url
+    assert_match /small\/93491_17/, blog.avatar_url
+    assert_equal "FR", blog.country
+    assert !blog.scraped
   end
 
 end
