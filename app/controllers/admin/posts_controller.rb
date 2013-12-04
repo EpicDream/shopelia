@@ -2,7 +2,7 @@ class Admin::PostsController < Admin::AdminController
   before_filter :retrieve_post, :only => :show
   
   def index
-    @posts = Post.where("processed_at is null and look_id is not null").order("published_at desc")
+    @posts = Post.pending_processing
   end
   
   def show
