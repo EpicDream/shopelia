@@ -8,6 +8,8 @@ class LinkerTest < ActiveSupport::TestCase
   end
   test "it should clean url" do
     array = [
+      { :in  => "http://ad.zanox.com/ppc/?16606400C728069979&ulp=[[http://www.asos.fr/referrer/pgereferrer.aspx?path=www.asos.fr/House-Of-Holland-Nails-By-Elegant-Touch-Polka-Dot-It-Faux-ongles-%C3%A0-pois/11uh2e/?iid=3623437&SearchQuery=polka%20dots&sh=0&pge=0&pgesize=36&sort=-1&clr=Polkadot&mporgp=L0V5bHVyZS9Ib3VzZS1PZi1Ib2xsYW5kLU5haWxzLUJ5LUVsZWdhbnQtVG91Y2gtLS1Qb2xrYS1Eb3QtSXQvUHJvZC8.]]",
+        :out => "http://www.asos.fr/11uh2e/?iid=3623437" },
       { :in  => "http://api.shopstyle.com/action/apiVisitRetailer?pid=puid14728235&url=http://www.barneys.com/on/demandware.store/Sites-BNY-Site/default/Product-Show?pid=502921664",
         :out => "http://www.barneys.com/on/demandware.store/Sites-BNY-Site/default/Product-Show?pid=502921664" },
       { :in  => "http://rstyle.me/n/c92f6m4xn",
