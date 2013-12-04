@@ -10,6 +10,7 @@ class Blog < ActiveRecord::Base
   after_create :assign_flinker, if: -> { self.flinker_id.nil? }
   
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
+  scope :scraped, -> { where(scraped:true) }
   
   def fetch
     posts = Scrapers::Blogs::Blog.new(url).posts.map(&:modelize)
