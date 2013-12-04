@@ -12,6 +12,7 @@ class AsosFr
   end
 
   def canonize
+    @url = @url.gsub("http://www.asos.fr/www.asos.fr", "http://www.asos.fr")
     if @url =~ %r{asos.fr/[^/]+/(\w+)/\?.*(iid=\d+)(?:&|$)}
       "http://www.asos.fr/#{$~[1]}/?#{$~[2]}"
     elsif @url =~ %r{https?://www.asos.fr/Prod/pgeproduct.aspx\?iid=\d+}
