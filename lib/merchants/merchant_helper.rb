@@ -109,4 +109,9 @@ module MerchantHelper
     return helper::AVAILABILITY_HASH if helper.const_defined?(:AVAILABILITY_HASH)
     return {}
   end
+
+  def self.is_aggregator? url
+    url =~ /(lengow\.com|jvweb|nonstoppartner\.net|marinsm\.com)/
+  end
+
 end
