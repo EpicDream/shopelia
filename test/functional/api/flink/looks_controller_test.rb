@@ -22,7 +22,9 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     get :index, format: :json
     assert_response :success
     
-    assert json_response.kind_of?(Array), "Should get an array of looks"
-    assert_equal 1, json_response.count
+    assert json_response["looks"].kind_of?(Array), "Should get an array of looks"
+    assert_equal 1, json_response["page"]
+    assert_equal 10, json_response["per_page"]
+    assert_equal 1, json_response["total"]
   end
 end

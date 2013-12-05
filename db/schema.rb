@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131204134553) do
+ActiveRecord::Schema.define(:version => 20131205092034) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -70,9 +70,9 @@ ActiveRecord::Schema.define(:version => 20131204134553) do
     t.integer  "mangopay_contribution_id"
     t.integer  "mangopay_contribution_amount"
     t.string   "mangopay_contribution_message"
-    t.integer  "mangopay_destination_wallet_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.integer  "mangopay_destination_wallet_id"
     t.integer  "mangopay_transfer_id"
   end
 
@@ -413,6 +413,7 @@ ActiveRecord::Schema.define(:version => 20131204134553) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
+    t.string   "payment_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
     t.integer  "developer_id"
@@ -519,6 +520,8 @@ ActiveRecord::Schema.define(:version => 20131204134553) do
     t.float    "rating"
     t.text     "json_description"
   end
+
+  add_index "product_versions", ["product_id", "available"], :name => "index_product_versions_on_product_id_and_available"
 
   create_table "products", :force => true do |t|
     t.string   "name"

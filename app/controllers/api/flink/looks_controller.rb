@@ -5,13 +5,22 @@ class Api::Flink::LooksController < Api::ApiController
   
   api :GET, "/looks", "Get looks"
   def index
-    render json: ActiveModel::ArraySerializer.new(@looks, scope:@scope)
+    render json: {
+      page: @page,
+      per_page: @per_page,
+      total: @looks_total,
+      looks: ActiveModel::ArraySerializer.new(@looks, scope:@scope)
+    }
   end
 
   private
 
   def retrieve_looks
-    @looks = Look.where(is_published:true).order("created_at desc")
+    @page = params[:page] || 1
+    @per_page = params[:per_page] || 10
+    query = Look.where(is_published:true)
+    @looks = query.order("created_at desc").paginate(page:@page, per_page:@per_page)
+    @looks_total = query.count
   end
 
   def prepare_scope
