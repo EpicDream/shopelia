@@ -12,11 +12,8 @@ class TopshopCom
   end
 
   def canonize
-    if @url =~ %r{topshop.com/fr/tsfr/produit/(?:(?:[\w-]|%[0-9A-F]{2})+-\d+/)*((?:[\w-]|%[0-9A-F]{2})+-\d+)(?:\?|$)}
-      "http://fr.topshop.com/fr/tsfr/produit/#{$~[1]}"
-    else
-      @url
-    end
+    @url.gsub!(/\?.*\Z/,'')
+    @url.gsub!(/\/produit.+\//,'/produit/')
   end
 
   def monetize

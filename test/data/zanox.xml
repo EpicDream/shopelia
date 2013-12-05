@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <products xmlns="http://zanox.com/productdata/exportservice/v1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://zanox.com/productdata/exportservice/v1 http://productdata.zanox.com/exportservice/schema/export-1.1.xsd">
-  <product zupid="95ae909323463a6a83e553cbb7f4a65c">
-    <name>Cartouche encre N°342 - Couleur</name>
-    <program>2770</program>
-    <number>00000318</number>
-    <description>pour HP Deskjet 5440, pour HP PSC 1510</description>
-    <manufacturer>HP</manufacturer>
-    <ean>884962780541</ean>
-    <price>16.01</price>
-    <terms>http://online.carrefour.fr/conditions-generales-de-vente_sp4_frfr.html</terms>
-    <shippingHandlingCost>0.00</shippingHandlingCost>
-    <lastModified>2013-10-22T18:11:00</lastModified>
-    <smallImage>http://brain.pan.e-merchant.com/8/1/00000318/g_00000318.jpg</smallImage>
-    <mediumImage>http://brain.pan.e-merchant.com/8/1/00000318/g_00000318.jpg</mediumImage>
-    <largeImage>http://brain.pan.e-merchant.com/8/1/00000318/g_00000318.jpg</largeImage>
-    <deliveryTime>En Stock</deliveryTime>
+  <product zupid="f7559d115a0141eba70b79ac16d698fa">
+    <name>Couvercle du bol hachoir</name>
+    <program>2291</program>
+    <number>MP-00006M10335640</number>
+    <longDescription>Couvercle du bol hachoir Livraison 48/72h</longDescription>
+    <manufacturer>Seb</manufacturer>
+    <price>16.80</price>
+    <terms>MP</terms>
+    <shippingHandlingCost>6.80</shippingHandlingCost>
+    <lastModified>2013-11-14T11:27:00</lastModified>
+    <smallImage>http://s2.static69.com/m/image-offre/b/b/f/9/bbf9796c29b8d3dd948b6a7ada74ec80-50x50.jpg</smallImage>
+    <mediumImage>http://s1.static69.com/m/image-offre/b/b/f/9/bbf9796c29b8d3dd948b6a7ada74ec80-100x75.jpg</mediumImage>
+    <largeImage>http://s2.static69.com/m/image-offre/b/b/f/9/bbf9796c29b8d3dd948b6a7ada74ec80-150x150.jpg</largeImage>
+    <deliveryTime>En stock</deliveryTime>
     <currencyCode>EUR</currencyCode>
-    <extra1>Eco Taxe: 0</extra1>
-    <merchantCategory>Électroménager &amp; Multimédia - Informatique - Consommables - Cartouche dencre</merchantCategory>
-    <deepLink>http://ad.zanox.com/ppc/?22189354C1364358154&amp;ULP=[[00000318&amp;eseg-name=id_affilie&amp;eseg-item=ID_AFFILIE&amp;eurl=http%3A%2F%2Fonline.carrefour.fr%2Felectromenager-multimedia%2Fhp%2Fcartouche-encre-n-342-couleur_a00000318_frfr.html%23srcid%3D11068%3Fxtor%3DAL-3-%5BProgramme_Standard%5D-%5BID_AFFILIE%5D-%5BFlux_Produit%5D-%5B00000318%5D%26LGWCODE%3D00000318%3B23678%3B13]]</deepLink>
+    <extra2>0</extra2>
+    <extra3>0.00</extra3>
+    <merchantCategory>Electroménager / Préparation culinaire / Accessoire robot</merchantCategory>
+    <deepLink>http://ad.zanox.com/ppc/?19436175C242487251&amp;ULP=[[m/ps/mpid:MP-00006M10335640%2523xtor%253dAL-67-75%255blien_catalogue%255d-120001%255bzanox%255d-%255bZXADSPACEID%255d]]</deepLink>
   </product>
 </products>
