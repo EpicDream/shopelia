@@ -31,6 +31,7 @@ class NetAPorterComTest < ActiveSupport::TestCase
   end
 
   test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("88 Résultats", @url)[:avail]
   end
 
   test "it should process price_shipping" do

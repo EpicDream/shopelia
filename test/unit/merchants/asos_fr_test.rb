@@ -47,6 +47,7 @@ class AsosFrTest < ActiveSupport::TestCase
 
   test "it should parse specific availability" do
     assert_equal false, MerchantHelper.parse_availability("1-36 of 4225View 204 per page", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("23 style(s) trouvé(s)", @url)[:avail]
   end
 
   test "it should process price_shipping" do
