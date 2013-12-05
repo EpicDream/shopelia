@@ -2,10 +2,12 @@ elarch:
   name: Eric
   url: http://www.ericlarcheveque.com
   email: eric@flink.com
+  encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   username: ericusername
 
 betty:
   name: Betty
   url: http://www.leblogdebetty.com
+  encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   username: bettyusername
   email: betty@flink.com
