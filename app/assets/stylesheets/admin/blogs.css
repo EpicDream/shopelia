@@ -45,10 +45,28 @@ div.blogs{
 }
 .blogs img.avatar{
   width:60px;
+  box-shadow: 1px 1px 1px #aaa;
+  border-radius:2px;
 }
 .blogs img.heart-overlay{
   width:0px;
   position:absolute;
+}
+.lookbook-blogs tr td{
+  padding:10px;
+}
+.lookbook-blogs .name{
+  font-weight:bold;
+  font-family:Times;
+}
+.lookbook-blogs a{
+  font-size:12px;
+}
+.lookbook-blogs tr{
+  border-bottom:1px solid lightgray;
+}
+.lookbook-blogs tr:last-child{
+  border-bottom:none;
 }
 
 @-webkit-keyframes heartbeat {
@@ -93,11 +111,42 @@ div.blogs{
   -webkit-animation: heartbeat 2s;
 }
 
+.blogs_without_posts li span{
+  padding:2px;
+}
+.blogs_without_posts li span a{
+  font-style:italic;
+  font-size:12px;
+}
+.blogs_without_posts li span:first-child{
+  color:#e44eaf;
+}
+
+
 /*Blog posts*/
 
 .posts-outline{
   max-height:180px;
   overflow-y:auto;
+}
+.blog-posts-avatar{
+  max-width:100px;
+  box-shadow: 1px 1px 1px #aaa;
+  border-radius:2px;
+}
+.blogs-posts-header{
+  width: 200px;
+  margin:5%;
+}
+.blogs-posts-header p:first-child{
+  font-family:Georgia;
+  letter-spacing:1px;
+}
+.blogs-posts-header a{
+  font-size:11px;
+  font-style:italic;
+  display:block;
+  margin-top:5px;
 }
 .back-link{
   float:left;
