@@ -19,8 +19,9 @@ class LookImageSerializerTest < ActiveSupport::TestCase
     hash = image_serializer.as_json
       
     assert_equal @image.id, hash[:look_image][:id]
-    assert_equal Rails.configuration.host + @image.picture.url(:w160), hash[:look_image][:w160]
-    assert_equal Rails.configuration.host + @image.picture.url(:w320), hash[:look_image][:w320]
-    assert_equal Rails.configuration.host + @image.picture.url(:w640), hash[:look_image][:w640]
+    assert_equal Rails.configuration.host + @image.picture.url(:small), hash[:look_image][:small][:url]
+    assert_equal "133x200", hash[:look_image][:small][:size]
+    assert_equal Rails.configuration.host + @image.picture.url(:large), hash[:look_image][:large][:url]
+    assert_equal "650x975", hash[:look_image][:large][:size]
   end
 end

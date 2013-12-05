@@ -4,7 +4,8 @@ class AsosFr
   DEFAULT_SHIPPING_INFO = "Sous 6 jours ouvrables"
 
   AVAILABILITY_HASH = {
-    /\d+-\d+ of \d+/i => false # search page
+    /\d+-\d+ of \d+/i => false, # search page
+    /\d+ style\(s\) trouve\(s\)/i => false, # search page
   }
 
   def initialize url
@@ -12,10 +13,11 @@ class AsosFr
   end
 
   def canonize
-    if @url =~ %r{asos.fr/[^/]+/(\w+)/\?.*(iid=\d+)(?:&|$)}
+    @url = @url.gsub("http://www.asos.fr/www.asos.fr", "http://www.asos.fr")
+    if @url =~ %r{asos.fr/[^/]+/(\w+)/\?.*(iid=\d+)}
       "http://www.asos.fr/#{$~[1]}/?#{$~[2]}"
-    elsif @url =~ %r{https?://www.asos.fr/Prod/pgeproduct.aspx\?iid=\d+}
-      $~[0]
+    elsif @url =~ %r{pgeproduct.aspx.*iid=(\d+)}
+      "http://www.asos.fr/pgeproduct.aspx?iid=#{$~[1]}"
     else
       @url
     end

@@ -521,6 +521,8 @@ ActiveRecord::Schema.define(:version => 20131205150418) do
     t.text     "json_description"
   end
 
+  add_index "product_versions", ["product_id", "available"], :name => "index_product_versions_on_product_id_and_available"
+
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
