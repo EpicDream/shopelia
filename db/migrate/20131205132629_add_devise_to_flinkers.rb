@@ -38,7 +38,7 @@ class AddDeviseToFlinkers < ActiveRecord::Migration
       # t.timestamps
     end
 
-    add_index :flinkers, :email,                :unique => true
+    # add_index :flinkers, :email,                :unique => true
     add_index :flinkers, :reset_password_token, :unique => true
     # add_index :flinkers, :confirmation_token,   :unique => true
     # add_index :flinkers, :unlock_token,         :unique => true

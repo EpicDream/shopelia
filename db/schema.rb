@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131205170147) do
+ActiveRecord::Schema.define(:version => 20131205180125) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -70,9 +70,9 @@ ActiveRecord::Schema.define(:version => 20131205170147) do
     t.integer  "mangopay_contribution_id"
     t.integer  "mangopay_contribution_amount"
     t.string   "mangopay_contribution_message"
+    t.integer  "mangopay_destination_wallet_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
-    t.integer  "mangopay_destination_wallet_id"
     t.integer  "mangopay_transfer_id"
   end
 
@@ -246,7 +246,6 @@ ActiveRecord::Schema.define(:version => 20131205170147) do
     t.datetime "avatar_updated_at"
     t.datetime "created_at",                                :null => false
     t.datetime "updated_at",                                :null => false
-    t.boolean  "is_publisher",           :default => false
     t.string   "email",                  :default => "",    :null => false
     t.string   "encrypted_password",     :default => "",    :null => false
     t.string   "reset_password_token"
@@ -259,6 +258,7 @@ ActiveRecord::Schema.define(:version => 20131205170147) do
     t.string   "last_sign_in_ip"
     t.string   "authentication_token"
     t.string   "username"
+    t.boolean  "is_publisher",           :default => false
   end
 
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true
@@ -431,7 +431,6 @@ ActiveRecord::Schema.define(:version => 20131205170147) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
-    t.string   "payment_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
     t.integer  "developer_id"
