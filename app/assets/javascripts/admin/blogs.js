@@ -1,8 +1,34 @@
+function reloadWithScope(url) {
+  $("#blogs-list").load(url, function() {
+    ajaxPaginationEvent();
+    showPostsEvent();
+  });
+}
+
+function ajaxPaginationEvent() {
+  $("div.pagination").on("click", "a", function(event) {
+    event.preventDefault();
+    var url = $(this).attr('href');
+    reloadWithScope(url);
+  });
+}
+
+function showPostsEvent() {
+  $("button[id^=blog-posts]").on("click", function() {
+    var button = $(this);
+    var url = "/admin/blogs/" + button.data('id');
+    window.location = url;
+  });
+}
+
 $(document).ready(function() {
-      
-  $("#select-blog-url").on("change", function () {
-    var blogId = $(this).val();
-    window.location = "/admin/blogs/" + blogId;
+  ajaxPaginationEvent();
+  showPostsEvent();
+  
+  $("input[name='scope']").on("change", function() {
+    var scope = $(this).val();
+    var url = "/admin/blogs?partial=true&scope=" + scope;
+    reloadWithScope(url);
   });
   
   $(".fetch-post-link").on("click", function(event) {
@@ -12,7 +38,7 @@ $(document).ready(function() {
   });
   
   
-  $("button[id^=integrate-blog]").click(function() {
+  $("button[id^=integrate-blog]").on("click", function() {
     var button = $(this);
     var blogId = button.data('id');
     var offset = button.offset();
