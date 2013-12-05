@@ -1,7 +1,11 @@
 elarch:
   name: Eric
   url: http://www.ericlarcheveque.com
+  email: eric@flink.com
+  username: ericusername
 
 betty:
   name: Betty
   url: http://www.leblogdebetty.com
+  username: bettyusername
+  email: betty@flink.com
