@@ -90,7 +90,6 @@ div.blogs{
 }
 .blogs img.heart-overlay-show{
   z-index:100;
-  position:absolute;
   -webkit-animation: heartbeat 2s;
 }
 
