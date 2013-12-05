@@ -1,0 +1,28 @@
+%section.header
+  %header
+    %h1 Flinkers
+    %h2 Fashionistas
+
+.container-fluid
+  .row-fluid
+    .span2
+      %article.coolbox
+        %h3 Filters
+        %select.input-medium.filter-option#publisherFilter
+          %option{value:''} Publishing rights
+          %option{value:'yes'} Yes
+          %option{value:'no'} No
+    .span10
+      %article.coolbox
+        %h3 Flinkers list
+        %table.table.table-striped#flinkers{data:{source:"#{admin_flinkers_url(format: 'json')}"}}
+          %thead
+            %tr
+              %th ID
+              %th Name
+              %th Avatar
+              %th Looks
+              %th Posts
+              %th URL
+              %th Publisher
+          %tbody

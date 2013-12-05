@@ -1,0 +1,21 @@
+%section.header
+  %header
+    %h1 Flinker #{@flinker.name}
+    %h2 
+      = @flinker.url
+
+.container-fluid
+  .row-fluid
+    - @stats.each do |stat|
+      = render "widgets/number_box", stat:stat
+  .row-fluid
+    .span3
+      %article.coolbox
+        %h3 Details
+        = render "form"
+    .span9
+      %article.coolbox
+        %h3 Looks
+        - @flinker.looks.where(is_published:true).each do |look|
+          .img-block
+            = link_to image_tag(look.look_images.order(:display_order).first.picture.url(:small), class:"thumb"), admin_look_path(look)
