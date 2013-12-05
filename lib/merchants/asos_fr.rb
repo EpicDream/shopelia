@@ -4,7 +4,8 @@ class AsosFr
   DEFAULT_SHIPPING_INFO = "Sous 6 jours ouvrables"
 
   AVAILABILITY_HASH = {
-    /\d+-\d+ of \d+/i => false # search page
+    /\d+-\d+ of \d+/i => false, # search page
+    /\d+ style\(s\) trouve\(s\)/i => false, # search page
   }
 
   def initialize url
