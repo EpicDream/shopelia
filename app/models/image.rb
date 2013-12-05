@@ -1,5 +1,5 @@
 class Image < ActiveRecord::Base
-  SIZES = { w640:"640x", w320:"320x", w160:"160x"}
+  SIZES = { small:"200x200>", large:"1200x1200>"}
   
   attr_accessible :url
   alias_attribute :sizes, :picture_sizes
