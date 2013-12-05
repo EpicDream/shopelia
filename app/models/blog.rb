@@ -1,7 +1,7 @@
 require 'scrapers/blogs/blog'
 
 class Blog < ActiveRecord::Base
-  attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id
+  attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id, :skipped
   
   belongs_to :flinker
   has_many :posts, dependent: :destroy
