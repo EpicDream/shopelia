@@ -1,3 +1,50 @@
+@-webkit-keyframes heartbeat {
+  0% {
+    width:0px;
+    opacity:0.8;
+    -webkit-animation-timing-function: ease-in;
+  }
+  50% {
+    width:100px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  55% {
+    width:90px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  60% {
+    width:100px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  65% {
+    width:90px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  70% {
+    width:100px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  100%{
+    width:0px;
+    opacity:0.8;
+    -webkit-animation-timing-function: ease-out;
+  }
+}
+
+@-webkit-keyframes blogs-table {
+  0% {
+    opacity:0;
+  }
+  100%{
+    opacity:1;
+    -webkit-animation-timing-function: ease-out;
+  }
+}
 body{
   background:#edf0f2;
 }
@@ -52,65 +99,29 @@ div.blogs{
   width:0px;
   position:absolute;
 }
-.lookbook-blogs tr td{
+.blogs-table{
+  -webkit-animation: blogs-table 1.5s;
+}
+.blogs-table tr td{
   padding:10px;
 }
-.lookbook-blogs .name{
+.blogs-table .name{
   font-weight:bold;
   font-family:Times;
 }
-.lookbook-blogs a{
+.blogs-table a{
   font-size:12px;
 }
-.lookbook-blogs tr{
+.blogs-table tr{
   border-bottom:1px solid lightgray;
 }
-.lookbook-blogs tr:last-child{
+.blogs-table tr:last-child{
   border-bottom:none;
-}
-
-@-webkit-keyframes heartbeat {
-  0% {
-    width:0px;
-    opacity:0.8;
-    -webkit-animation-timing-function: ease-in;
-  }
-  50% {
-    width:100px;
-    opacity:1;
-    -webkit-animation-timing-function: ease-in;
-  }
-  55% {
-    width:90px;
-    opacity:1;
-    -webkit-animation-timing-function: ease-in;
-  }
-  60% {
-    width:100px;
-    opacity:1;
-    -webkit-animation-timing-function: ease-in;
-  }
-  65% {
-    width:90px;
-    opacity:1;
-    -webkit-animation-timing-function: ease-in;
-  }
-  70% {
-    width:100px;
-    opacity:1;
-    -webkit-animation-timing-function: ease-in;
-  }
-  100%{
-    width:0px;
-    opacity:0.8;
-    -webkit-animation-timing-function: ease-out;
-  }
 }
 .blogs img.heart-overlay-show{
   z-index:100;
   -webkit-animation: heartbeat 2s;
 }
-
 .blogs_without_posts li span{
   padding:2px;
 }

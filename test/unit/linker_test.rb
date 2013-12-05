@@ -8,6 +8,8 @@ class LinkerTest < ActiveSupport::TestCase
   end
   test "it should clean url" do
     array = [
+      { :in  => 'http://tracking.publicidees.com/clic.php?partid=37027&progid=737&adfactory_type=12&idfluxpi=191&url=http://tracker.marinsm.com/rd?cid=1535bsz11407&mkwid=s9eoQ2T70&kword=Redirect+Flux&lp=http://www.rugbycenter.fr/fr/rugby/f-ligue-nationale-de-rugby-mug-collector-top-14-2012-2013-851550.html',
+        :out => 'http://www.rugbycenter.fr/fr/rugby/f-ligue-nationale-de-rugby-mug-collector-top-14-2012-2013-851550.html' },
       { :in  => 'http://ad.zanox.com/ppc/?25341675C892987421&ulp=[[http://fr.topshop.com/fr/tsfr/produit/v%25C3%25AAtements-415222/jeans-415241/jeans-mom-1758875/jean-mom-ultra-doux-d%25C3%25A9lav%25C3%25A9-%25C3%25A0-taille-haute-exclusivit%25C3%25A9-internet-2281379?refinements=category~[1070115|345719]&bi=1&ps=20]]',
         :out => 'http://fr.topshop.com/fr/tsfr/produit/jean-mom-ultra-doux-délavé-à-taille-haute-exclusivité-internet-2281379'},
       { :in  => "http://ad.zanox.com/ppc/?16606400C728069979&ulp=[[http://www.asos.fr/referrer/pgereferrer.aspx?path=www.asos.fr/House-Of-Holland-Nails-By-Elegant-Touch-Polka-Dot-It-Faux-ongles-%C3%A0-pois/11uh2e/?iid=3623437&SearchQuery=polka%20dots&sh=0&pge=0&pgesize=36&sort=-1&clr=Polkadot&mporgp=L0V5bHVyZS9Ib3VzZS1PZi1Ib2xsYW5kLU5haWxzLUJ5LUVsZWdhbnQtVG91Y2gtLS1Qb2xrYS1Eb3QtSXQvUHJvZC8.]]",

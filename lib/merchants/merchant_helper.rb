@@ -90,6 +90,10 @@ class MerchantHelper
     m.parse_availability str
   end
 
+  def self.is_aggregator? url
+    url =~ /(lengow\.com|jvweb|nonstoppartner\.net|marinsm\.com)/
+  end
+
   private
 
     def self.get_helper url

@@ -1,7 +1,12 @@
 class Admin::BlogsController < Admin::AdminController
   
   def index
-    @blogs = Blog.scraped.order(:url)
+    scopes = params[:scope] ? params[:scope].split('.') : [:scraped]
+    pagination = Blog.paginate(:page => params[:page], :per_page => 10)
+    @blogs = scopes.inject(pagination){|acc, scope| acc.send(scope) }.order(:url)
+    if params[:partial]
+      render partial:'index'
+    end
   end
   
   def show

@@ -79,12 +79,13 @@ ActiveRecord::Schema.define(:version => 20131205170147) do
   create_table "blogs", :force => true do |t|
     t.string   "url"
     t.string   "name"
-    t.datetime "created_at",                   :null => false
-    t.datetime "updated_at",                   :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
     t.integer  "flinker_id"
     t.string   "avatar_url"
     t.string   "country"
     t.boolean  "scraped",    :default => true
+    t.boolean  "skipped",    :default => false
   end
 
   create_table "cart_items", :force => true do |t|

@@ -9,7 +9,7 @@ class WebgainsCom
       url = Linker.decode(matches[1])
       new_url = MerchantHelper.canonize(url)
       return new_url if new_url.present?
-      return url unless url =~ /lengow|jvweb|nonstoppartner/
+      return url unless MerchantHelper.is_aggregator?(url)
     end
     nil
   end

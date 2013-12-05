@@ -1,0 +1,38 @@
+<%= image_tag 'admin/love.png', class:'heart-overlay', id:'heart-overlay'%>
+<%= will_paginate @blogs %>
+<table class="blogs-table">
+  <tbody>
+    <% @blogs.each do |blog| %>
+      <tr>
+        <td><img src="<%= blog.avatar_url %>" class="avatar"></img></td>
+        <td class="name"><%= blog.name %></td>
+        <td><%= link_to blog.url, blog.url %></td>
+        <td><%= image_tag "flags/#{blog.country.downcase}.png"%></td>
+        <td>
+          <% unless blog.scraped? %>
+            <%= button_tag "Intégrer", class:'btn btn-success', id:"integrate-blog-#{blog.id}", 'data-id' => blog.id do %>
+            <i class="icon-check icon-white"></i>
+            <span>Intégrer</span>
+            <% end  %>
+          <% end %>  
+        </td>
+        <td>
+          <% unless blog.skipped? %>
+            <%= button_tag "Skip", class:'btn btn-warning', id:"skip-blog-#{blog.id}", 'data-id' => blog.id do %>
+            <i class="icon-check icon-white"></i>
+            <span>Ne pas intégrer</span>
+            <% end  %>
+          <% end %>
+        </td>
+        <td>
+          <% if blog.scraped? %>
+            <%= button_tag "Voir les articles", class:'btn', id:"blog-posts-#{blog.id}", 'data-id' => blog.id do %>
+            <span>Voir les articles</span>
+            <% end  %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= will_paginate @blogs %>

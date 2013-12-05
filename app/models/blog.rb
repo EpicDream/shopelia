@@ -1,7 +1,7 @@
 require 'scrapers/blogs/blog'
 
 class Blog < ActiveRecord::Base
-  attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id
+  attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id, :skipped
   
   belongs_to :flinker
   has_many :posts, dependent: :destroy
@@ -12,6 +12,8 @@ class Blog < ActiveRecord::Base
   
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
+  scope :not_scraped, -> { scraped(false) }
+  scope :skipped, -> { where(skipped:true) }
   
   def fetch
     self.update_attributes(scraped:true) unless self.scraped
