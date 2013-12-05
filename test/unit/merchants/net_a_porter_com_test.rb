@@ -25,9 +25,9 @@ class NetAPorterComTest < ActiveSupport::TestCase
     @version = @helper.process_availability(@version)
     assert_equal text, @version[:availability_text]
 
-    # @version[:availability_text] = ""
-    # @version = @helper.process_availability(@version)
-    # assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
+    @version[:availability_text] = ""
+    @version = @helper.process_availability(@version)
+    assert_equal MerchantHelper::AVAILABLE, @version[:availability_text]
   end
 
   test "it should parse specific availability" do
