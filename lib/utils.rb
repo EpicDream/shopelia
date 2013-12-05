@@ -5,7 +5,8 @@ class Utils
     host.gsub(/^(?:\w+:\/\/)?[^:?#\/\s]*?([^.\s]+\.(?:[a-z]{2,}|co\.uk|org\.uk|ac\.uk|org\.au|com\.au))(?:[:?#\/]|$)/, '\1')
   end
 
-  def self.parse_uri_safely url
+  def self.parse_uri_safely url    
+    url = url.gsub(/\#[^\#]+\Z/, "") if url.count('#') > 1 # remove double hash sign
     URI.parse(url.encode('UTF-8', 'UTF-8', :invalid => :replace).scan(/([!\#$&-;=?-\[\]_a-z~]|%[0-9a-fA-F]{2})/).join)
   end
 

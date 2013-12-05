@@ -6,9 +6,9 @@
     <%= content_tag(:p, Blog.scraped.count, id: :scraped_blogs_count) %>
     
     <h5>Blogs sans articles</h5>
-    <ul id="blogs_without_posts">
+    <ul class="blogs_without_posts">
       <% Blog.scraped.without_posts.each do |blog| %>
-        <li><span><%= blog.name %></span><%= link_to blog.url, blog.url %></li>
+        <li><span><%= blog.name %></span><span><%= link_to blog.url, blog.url %></span></li>
       <% end %>
     </ul>
     
@@ -30,23 +30,17 @@
   
   <div>
     <h5>Intégrer des blogs provenant de LookBook</h5>
-    <table>
-      <thead>
-        <th>Avatar</th>
-        <th>Nom</th>
-        <th>Url</th>
-        <th>Pays</th>
-        <th></th>
-      </thead>
+    <%= image_tag 'admin/love.png', class:'heart-overlay', id:'heart-overlay'%>
+    <table class="lookbook-blogs">
       <tbody>
         <% Blog.scraped(false).each do |blog| %>
           <tr>
             <td><img src="<%= blog.avatar_url %>" class="avatar"></img></td>
-            <td><%= blog.name %></td>
+            <td class="name"><%= blog.name %></td>
             <td><%= link_to blog.url, blog.url %></td>
-            <td><%= blog.country %></td>
+            <td><%= image_tag "flags/#{blog.country.downcase}.png"%></td>
             <td>
-              <%= button_tag "Intégrer", class:'btn btn-success' do %>
+              <%= button_tag "Intégrer", class:'btn btn-success', id:"integrate-blog-#{blog.id}", 'data-id' => blog.id do %>
               <i class="icon-check icon-white"></i>
               <span>Intégrer</span>
               <% end  %>
