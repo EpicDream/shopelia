@@ -6,6 +6,7 @@ class Blog < ActiveRecord::Base
   belongs_to :flinker
   has_many :posts, dependent: :destroy
   
+  before_validation :normalize_url
   validates :url, uniqueness:true, presence:true, :on => :create
   after_create :assign_flinker, if: -> { self.flinker_id.nil? }
   
@@ -32,6 +33,10 @@ class Blog < ActiveRecord::Base
   def assign_flinker
     flinker = Flinker.create(name:self.name, url:self.url)
     update_attribute :flinker_id, flinker.id
+  end
+  
+  def normalize_url
+    self.url.gsub!(/\/$/, '')
   end
   
 end
