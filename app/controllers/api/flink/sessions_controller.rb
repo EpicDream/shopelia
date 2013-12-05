@@ -1,5 +1,4 @@
-class Api::Flink::SessionsController < Api::ApiController
-  skip_before_filter :authenticate_user!
+class Api::Flink::SessionsController < Api::Flink::BaseController
   skip_before_filter :authenticate_flinker!, :only => :create
 
   api :POST, "/flinkers/sign_in", "Sign in a flinker"

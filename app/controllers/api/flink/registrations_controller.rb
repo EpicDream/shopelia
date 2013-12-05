@@ -1,9 +1,8 @@
-class Api::Flink::RegistrationsController < Api::ApiController
-  skip_before_filter :authenticate_user!
+class Api::Flink::RegistrationsController < Api::Flink::BaseController
+  skip_before_filter :authenticate_flinker!
   before_filter :prepare_flinker_hash
 
   api :POST, "/flinkers", "Register a new flinker"
-  #param_group :flinker, Api::V1::FlinkersController
   def create
     @flinker = Flinker.create(@flinker_hash)
     if @flinker.persisted?

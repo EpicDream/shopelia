@@ -15,6 +15,7 @@ Shopelia::Application.routes.draw do
   apipie
 
   devise_for :developers
+  devise_for :flinkers
   devise_for :users, controllers: { 
     confirmations: 'devise_override/confirmations',
     passwords: 'devise_override/passwords',
