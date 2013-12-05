@@ -12,6 +12,8 @@ class Blog < ActiveRecord::Base
   
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
+  scope :not_scraped, -> { scraped(false) }
+  scope :skipped, -> { where(skipped:true) }
   
   def fetch
     self.update_attributes(scraped:true) unless self.scraped

@@ -1,8 +1,8 @@
 $(document).ready(function() {
       
-  $("#select-blog-url").on("change", function () {
-    var blogId = $(this).val();
-    window.location = "/admin/blogs/" + blogId;
+  $("input[name='scope']").on("change", function () {
+    var scope = $(this).val();
+    $("#blogs-list").load("/admin/blogs?partial=true&scope=" + scope);
   });
   
   $(".fetch-post-link").on("click", function(event) {
@@ -11,8 +11,7 @@ $(document).ready(function() {
     alert("Une tâche a été lançée pour scraper le blog...");
   });
   
-  
-  $("button[id^=integrate-blog]").click(function() {
+  $("button[id^=integrate-blog]").on("click", function() {
     var button = $(this);
     var blogId = button.data('id');
     var offset = button.offset();
