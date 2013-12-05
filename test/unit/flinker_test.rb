@@ -11,5 +11,7 @@ class FlinkerTest < ActiveSupport::TestCase
       password:"password",
       password_confirmation:"password")
     assert flinker.save
+
+    assert_equal 0, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
   end
 end
