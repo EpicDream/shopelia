@@ -13,6 +13,10 @@ class EtsyComTest < ActiveSupport::TestCase
     assert MerchantHelper.send(:from_url, @url).kind_of?(EtsyCom)
   end
 
+  test "it should parse specific availability" do
+    assert_equal false, MerchantHelper.parse_availability("Informations sur la boutique", @url)[:avail]
+  end
+
   test "it should process shipping price (1)" do
     @version[:price_shipping_text] = "Europe hors UE  €4,56 EUR €3,04 EUR, Union européenne  €4.56 EUR €3,04 EUR, Autres pays €6,84 EUR €4,56 EUR"
     @version = @helper.process_shipping_price(@version)
