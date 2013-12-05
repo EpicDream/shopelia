@@ -20,7 +20,7 @@ class Crawlers::Lookbook::BlogsTest < ActiveSupport::TestCase
     blog = @crawler.blog(@@items.first)
 
     assert blog.name.length > 2
-    assert_match /"http:\/\//, blog.url
+    assert_match /http:\/\//, blog.url
     assert blog.avatar_url
     assert_equal "FR", blog.country
     assert !blog.scraped
