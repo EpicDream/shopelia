@@ -14,6 +14,7 @@ class Blog < ActiveRecord::Base
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
   
   def fetch
+    self.update_attributes(scraped:true) unless self.scraped
     posts = Scrapers::Blogs::Blog.new(url).posts.map(&:modelize)
     posts.each do |post|
       post.blog_id = self.id

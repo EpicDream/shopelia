@@ -26,3 +26,4 @@ plugin/priv_keys/
 
 public/images/collections/
 .DS_Store
+dump.rdb
