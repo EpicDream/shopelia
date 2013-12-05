@@ -108,7 +108,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     }).done(function (res) {
       if (id === undefined)
         map.mapMappingToMerchant(url, res.id);
-      deferred.resolve();
+      deferred.resolve(id || res.id);
     }).fail(function (xhr, textStatus, errorThrown) {
       if (textStatus === 'timeout' || xhr.status === 502) {
         setTimeout(function () {
@@ -137,12 +137,14 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     map.getMerchantFromUrl(url).done(function (hash) {
       $.ajax({
         type : "PUT",
-        url: map.MERCHANT_URL + '?url='+ url,
+        url: map.MERCHANT_URL + '/'+ hash.id,
         contentType: 'application/json',
         data: JSON.stringify({mapping_id: mapping_id}),
       }).fail(function (xhr, textStatus, errorThrown) {
-        logger.warn("Fail to update mapping_id of merchant "+(url)+" to "+mapping_id+".");
+        logger.warn("Fail to update mapping_id of merchant #"+(hash.id)+" to "+mapping_id+".");
       });
+    }).fail(function(err) {
+      logger.err("Fail to find merchant with url="+(url)+".");
     });
   };
 
