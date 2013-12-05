@@ -7,7 +7,7 @@ define(["logger", "jquery", "html_utils", "core_extensions"], function(logger, $
 
 var Crawler = {};
 
-var OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible/i;
+var OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible|non disponible|rupture de stock/i;
 
 //
 Crawler.searchImages = function (field, elems) {
