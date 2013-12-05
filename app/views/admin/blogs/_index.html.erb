@@ -1,4 +1,5 @@
 <%= image_tag 'admin/love.png', class:'heart-overlay', id:'heart-overlay'%>
+<%= will_paginate @blogs %>
 <table class="blogs-table">
   <tbody>
     <% @blogs.each do |blog| %>
@@ -34,3 +35,4 @@
     <% end %>
   </tbody>
 </table>
+<%= will_paginate @blogs %>
