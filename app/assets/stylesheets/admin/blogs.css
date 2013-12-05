@@ -46,6 +46,52 @@ div.blogs{
 .blogs img.avatar{
   width:60px;
 }
+.blogs img.heart-overlay{
+  width:0px;
+  position:absolute;
+}
+
+@-webkit-keyframes heartbeat {
+  0% {
+    width:0px;
+    opacity:0.8;
+    -webkit-animation-timing-function: ease-in;
+  }
+  50% {
+    width:100px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  55% {
+    width:90px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  60% {
+    width:100px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  65% {
+    width:90px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  70% {
+    width:100px;
+    opacity:1;
+    -webkit-animation-timing-function: ease-in;
+  }
+  100%{
+    width:0px;
+    opacity:0.8;
+    -webkit-animation-timing-function: ease-out;
+  }
+}
+.blogs img.heart-overlay-show{
+  z-index:100;
+  -webkit-animation: heartbeat 2s;
+}
 
 /*Blog posts*/
 
