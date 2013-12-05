@@ -1,0 +1,14 @@
+.avatar {
+  width: 30px;
+  box-shadow: 1px 1px 1px #aaa;
+  border-radius:2px;
+}
+.thumb {
+  max-height: 200px;
+  max-width: 200px;
+}
+.img-block {
+  display: inline-block;
+  height: 200px;
+  width: 200px;
+}

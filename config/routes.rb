@@ -64,6 +64,7 @@ Shopelia::Application.routes.draw do
     resources :viking, :only => :index
     resources :blogs
     resources :posts
+    resources :flinkers
     resources :looks do
       get :publish, :on => :member
       get :reject, :on => :member

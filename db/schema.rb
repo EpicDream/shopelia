@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131205092034) do
+ActiveRecord::Schema.define(:version => 20131205170147) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -70,9 +70,9 @@ ActiveRecord::Schema.define(:version => 20131205092034) do
     t.integer  "mangopay_contribution_id"
     t.integer  "mangopay_contribution_amount"
     t.string   "mangopay_contribution_message"
-    t.integer  "mangopay_destination_wallet_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.integer  "mangopay_destination_wallet_id"
     t.integer  "mangopay_transfer_id"
   end
 
@@ -243,8 +243,9 @@ ActiveRecord::Schema.define(:version => 20131205092034) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.boolean  "is_publisher",        :default => false
   end
 
   create_table "images", :force => true do |t|
@@ -395,9 +396,9 @@ ActiveRecord::Schema.define(:version => 20131205092034) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.text     "message",                    :limit => 255
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "retry_count"
@@ -413,6 +414,7 @@ ActiveRecord::Schema.define(:version => 20131205092034) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
+    t.string   "payment_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
     t.integer  "developer_id"
@@ -499,10 +501,10 @@ ActiveRecord::Schema.define(:version => 20131205092034) do
     t.float    "price_strikeout"
     t.string   "shipping_info"
     t.text     "description"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-    t.text     "option2"
-    t.text     "option1"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.text     "option2",           :limit => 255
+    t.text     "option1",           :limit => 255
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
@@ -525,10 +527,10 @@ ActiveRecord::Schema.define(:version => 20131205092034) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url"
-    t.text     "image_url"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.text     "url",                 :limit => 255
+    t.text     "image_url",           :limit => 255
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
@@ -536,7 +538,7 @@ ActiveRecord::Schema.define(:version => 20131205092034) do
     t.boolean  "viking_failure"
     t.string   "reference"
     t.datetime "muted_until"
-    t.boolean  "options_completed",   :default => false
+    t.boolean  "options_completed",                  :default => false
     t.datetime "viking_sent_at"
     t.string   "image_size"
     t.float    "rating"
