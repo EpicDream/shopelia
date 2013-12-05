@@ -30,6 +30,7 @@
   
   <div>
     <h5>Intégrer des blogs provenant de LookBook</h5>
+    <%= image_tag 'admin/love.png', class:'heart-overlay'%>
     <table>
       <thead>
         <th>Avatar</th>
@@ -46,7 +47,7 @@
             <td><%= link_to blog.url, blog.url %></td>
             <td><%= blog.country %></td>
             <td>
-              <%= button_tag "Intégrer", class:'btn btn-success' do %>
+              <%= button_tag "Intégrer", class:'btn btn-success', id:"integrate-blog-#{blog.id}" do %>
               <i class="icon-check icon-white"></i>
               <span>Intégrer</span>
               <% end  %>
