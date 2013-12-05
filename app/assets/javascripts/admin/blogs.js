@@ -1,6 +1,7 @@
 function reloadWithScope(url) {
   $("#blogs-list").load(url, function() {
     ajaxPaginationEvent();
+    showPostsEvent();
   });
 }
 
@@ -12,8 +13,17 @@ function ajaxPaginationEvent() {
   });
 }
 
+function showPostsEvent() {
+  $("button[id^=blog-posts]").on("click", function() {
+    var button = $(this);
+    var url = "/admin/blogs/" + button.data('id');
+    window.location = url;
+  });
+}
+
 $(document).ready(function() {
   ajaxPaginationEvent();
+  showPostsEvent();
   
   $("input[name='scope']").on("change", function() {
     var scope = $(this).val();
@@ -27,11 +37,6 @@ $(document).ready(function() {
     alert("Une tâche a été lançée pour scraper le blog...");
   });
   
-  $("button[id^=blog-posts]").on("click", function() {
-    var button = $(this);
-    var url = "/admin/blogs/" + button.data('id');
-    window.location = url;
-  });
   
   $("button[id^=integrate-blog]").on("click", function() {
     var button = $(this);
