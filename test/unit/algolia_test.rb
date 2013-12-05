@@ -97,8 +97,9 @@ class AlgoliaTest < ActiveSupport::TestCase
     hits = zn.algolia.index.search('')['hits']
     assert_equal(1, hits.size)
     item = hits.first
-    assert_equal('1', item['saturn'])
-    assert_equal('http://online.carrefour.fr/electromenager-multimedia/hp/cartouche-encre-n-342-couleur_a00000318_frfr.html', item['product_url'])
+    assert_equal('Seb', item['brand'])
+    assert_equal('Rue du Commerce', item['merchant_name'])
+    assert_equal('http://www.rueducommerce.fr/m/ps/mpid:MP-00006M10335640', item['product_url'])
   end
 
   def test_broken_zanox
