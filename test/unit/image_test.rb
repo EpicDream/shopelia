@@ -18,10 +18,10 @@ class ImageTest < ActiveSupport::TestCase
   
   test "build images sizes as json field" do
     image = @image.reload
-    sizes = { w640:"640x960", w320:"320x480", w160:"160x240"}
+    sizes = { small:"133x200", large:"650x975"}
     assert_equal sizes.to_json, @image.picture_sizes
   end
-  
+
   test "add model error if picture can't be created from url" do
     image = Image.create(url:"http://")
     
