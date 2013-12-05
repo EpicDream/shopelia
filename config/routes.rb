@@ -2,6 +2,7 @@ require 'api_constraints'
 
 Shopelia::Application.routes.draw do
 
+
   match "/cgu" => "home#general_terms_of_use"  
   match "/legal" => "home#legal"
   match "/confidentiality" => "home#confidentiality"
@@ -14,6 +15,7 @@ Shopelia::Application.routes.draw do
   apipie
 
   devise_for :developers
+  devise_for :flinkers
   devise_for :users, controllers: { 
     confirmations: 'devise_override/confirmations',
     passwords: 'devise_override/passwords',
@@ -181,6 +183,7 @@ Shopelia::Application.routes.draw do
       end
     end
     namespace :flink do
+      devise_for :flinkers
       resources :looks, :only => :index
     end
   end
