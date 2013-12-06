@@ -117,7 +117,7 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "Erreur: Désolé, mais le produit que vous avez demandé n'a pas été trouvé !",
               "La page que vous recherchez est introuvable.", "Ce produit n'existe plus ! Mais...",
               "CE PRODUIT N’EST MALHEUREUSEMENT PLUS DISPONIBLE.", "L'article ne peut pas être affiché.",
-              "Currently unavailable.", "SOLD OUT" ]
+              "Currently unavailable.", "SOLD OUT", "0 available", "Disponible uniquement en magasin" ]
     array.each do |str|
       assert_equal false, MerchantHelper.parse_availability(str)[:avail]
     end
