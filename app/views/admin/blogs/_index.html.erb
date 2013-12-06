@@ -4,7 +4,7 @@
   <tbody>
     <% @blogs.each do |blog| %>
       <tr>
-        <td><img src="<%= blog.avatar_url %>" class="avatar"></img></td>
+        <td><img src="<%= blog.avatar_url || "/assets/admin/girl_head.jpg" %>" class="avatar"></img></td>
         <td class="name"><%= blog.name %></td>
         <td><%= link_to blog.url, blog.url %></td>
         <td><%= image_tag "flags/#{blog.country.downcase}.png"%></td>
