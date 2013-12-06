@@ -221,7 +221,7 @@ class MerchantHelper
 
   #
   def process_image_url version
-    version[:image_url] = version[:image_url].sub(*@image_sub) if @image_sub && version[:image_url] && ! @config[:subImagesOnly]
+    version[:image_url] = version[:image_url].gsub(*@image_sub) if @image_sub && version[:image_url] && ! @config[:subImagesOnly]
     version
   end
 
@@ -229,7 +229,7 @@ class MerchantHelper
   def process_images version
     return version unless version[:images].present? && @image_sub && ! @config[:subImageUrlOnly]
     version[:images] = version[:images].map do |url|
-      url.sub(*@image_sub)
+      url.gsub(*@image_sub)
     end
     version
   end
