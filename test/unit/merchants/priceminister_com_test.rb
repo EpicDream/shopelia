@@ -46,6 +46,8 @@ class PriceministerComTest < ActiveSupport::TestCase
     assert_equal false, MerchantHelper.parse_availability("(0)", @url)[:avail]
     assert_equal true, MerchantHelper.parse_availability("(1)", @url)[:avail]
     assert_equal true, MerchantHelper.parse_availability("(15)", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("3 occasions", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("8 neufs, 2 occasions", @url)[:avail]
 
     assert_equal false, MerchantHelper.parse_availability("1 résultat", @url)[:avail]
     assert_equal false, MerchantHelper.parse_availability("15 résultats", @url)[:avail]
