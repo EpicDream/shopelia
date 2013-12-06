@@ -14,6 +14,14 @@ $(document).ready(function() {
       button.parents("tr").toggle();
     });
   });
+  
+  $(document).on("click", "#name-filter", function() {
+    var pattern = $("#name-filer-pattern").val();
+    var scope = $("input[name='scope']:checked").val();
+    
+    var url = "/admin/blogs?partial=true&page=1&scope=" + scope + "&pattern=" + pattern;
+    $("#blogs-list").load(url);
+  });
 
   $(document).on("click", "div.pagination a", function(event) {
     event.preventDefault();

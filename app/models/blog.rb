@@ -14,6 +14,9 @@ class Blog < ActiveRecord::Base
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
   scope :not_scraped, -> { scraped(false) }
   scope :skipped, -> { where(skipped:true) }
+  scope :with_name_like, ->(pattern) { 
+    where('url like :pattern or name like :pattern', pattern:"%#{pattern}%") unless pattern.blank?
+  }
   
   def fetch
     self.update_attributes(scraped:true) unless self.scraped

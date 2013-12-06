@@ -81,10 +81,6 @@ div.blogs{
   font-size:14px;
   margin-top:60px;
 }
-.blogs input[type=file]{
-  display:block;
-  margin-top:20px;
-}
 .blogs p.help{
   font-style:italic;
   font-size:12px; 

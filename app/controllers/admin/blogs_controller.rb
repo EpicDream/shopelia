@@ -4,6 +4,7 @@ class Admin::BlogsController < Admin::AdminController
   def index
     pagination = Blog.paginate(:page => params[:page], :per_page => 10)
     @blogs = @scopes.inject(pagination){ |acc, scope| acc.send(scope) }.order(:url)
+    @blogs = @blogs.with_name_like(params[:pattern])
     render partial:'index' if params[:partial]
   end
   
