@@ -1,13 +1,12 @@
 # -*- encoding : utf-8 -*-
-class NikeCom < MerchantHelper
+class JennyferCom < MerchantHelper
   def initialize(*)
     super
-    @default_price_shipping = "5 €"
-    @default_shipping_info = "3 jours ouvrés."
+    @default_price_shipping = "5,90€"
+    @default_shipping_info = "La livraison se fait entre 3 et 5 jours ouvrés."
     @availabilities = {
-      /\d+ ARTICLES/i => false,
     }
-    @image_sub = [/(?<=wid=|hei=)\d+(?=&)/, '1860']
+    @image_sub = [%r{/(image|thumbnail)/\d+x\d+/}, '/thumbnail/']
 
     @config[:setAvailableIfEmpty] = true
     @config[:setDefaultPriceShippingAlways] = true
