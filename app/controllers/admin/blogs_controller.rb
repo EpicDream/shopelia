@@ -10,7 +10,7 @@ class Admin::BlogsController < Admin::AdminController
   def show
     @blog = Blog.where(id:params[:id]).includes(:posts).first
     if params[:fetch]
-      BlogsWorker.perform_async(@blog.id)
+      BlogsWorker.perform_async(@blog.id) rescue nil
       render json: {}.to_json, status:200
     end
   end
@@ -18,6 +18,7 @@ class Admin::BlogsController < Admin::AdminController
   def update
     @blog = Blog.find(params[:id])
     if @blog.update_attributes(params[:blog])
+      BlogsWorker.perform_async(@blog.id) if params[:fetch] rescue nil
       render json: {}.to_json, status:200
     else
       render json: {}.to_json, status:500

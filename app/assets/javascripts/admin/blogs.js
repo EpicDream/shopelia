@@ -11,7 +11,7 @@ $(document).ready(function() {
     var blogId = button.data('id');
     $.post("/admin/blogs/" + blogId, {_method:'put', blog:{skipped:true}})
     .success(function() {
-      alert("YES!")
+      button.parents("tr").toggle();
     });
   });
 
@@ -40,7 +40,11 @@ $(document).ready(function() {
     var offset = button.offset();
     var heart = $("#heart-overlay");
     
-    $.get("/admin/blogs/" + blogId, {fetch:true});
+    $.post("/admin/blogs/" + blogId, {_method:'put', blog:{scraped:true}, fetch:true})
+    .success(function() {
+      button.parents("tr").toggle();
+    });
+    
     heart.addClass("heart-overlay-show");
     heart.offset({ top: offset.top, left: offset.left + 100 });
     heart.one('webkitAnimationEnd animationend', function() { 
