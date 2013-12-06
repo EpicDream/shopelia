@@ -49,10 +49,11 @@ $(document).ready(function() {
     var blogId = button.data('id');
     var offset = button.offset();
     var heart = $("#heart-overlay");
+    var success = false;
     
     $.post("/admin/blogs/" + blogId, {_method:'put', blog:{scraped:true}, fetch:true})
     .success(function() {
-      button.parents("tr").toggle();
+      success = true;
     });
     
     heart.addClass("heart-overlay-show");
@@ -60,6 +61,8 @@ $(document).ready(function() {
     heart.one('webkitAnimationEnd animationend', function() { 
       heart.removeClass("heart-overlay-show");
       button.toggle();
+      if (success) { button.parents("tr").toggle(); }
+      
     }); 
     
   });
