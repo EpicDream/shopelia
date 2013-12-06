@@ -1,13 +1,13 @@
 <div class="coolbox blogs">
-  <!-- A Mettre en Overlay -->
-  <!-- <div>
-    <h5>Créer un nouveau blog</h5>
+  
+  <a href="#" id="create-blog-link">Créer un blog</a>
+  <div id="create-blog-block" class="create-blog-block-hidden">
     <%= form_for([:admin, Blog.new]) do |f| %>
       <%= f.text_field :name, placeholder:"nom du blog"%>
       <%= f.text_field :url, placeholder:"url du blog"%>
       <%= f.submit("Intégrer", :class => 'btn') %>
     <% end %>
-  </div> -->
+  </div>
 
   <div class="radio-filters">
     <input type='radio' name='scope' value='scraped' checked=checked>
@@ -30,6 +30,7 @@
     <%= button_tag "Filtre", class:'btn', id:"name-filter" do %>
       <span>Rechercher</span>
     <% end  %>
+    
   </div>
   
   <div id="blogs-list">

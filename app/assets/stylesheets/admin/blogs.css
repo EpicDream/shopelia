@@ -69,18 +69,6 @@ div.blogs{
   width:30%;
   font-weight:bold;
 }
-.blogs input[type=text]{
-  width:40%;
-  display:block;
-  font-family: Georgia, sans-serif;
-}
-.blogs ::-webkit-input-placeholder {
-  font-style:italic;
-}
-.blogs input[type=submit]{
-  font-size:14px;
-  margin-top:60px;
-}
 .blogs p.help{
   font-style:italic;
   font-size:12px; 
@@ -128,7 +116,30 @@ div.blogs{
 .blogs_without_posts li span:first-child{
   color:#e44eaf;
 }
-
+.blogs input[type=text]{
+  width:300px;
+  display:block;
+  font-family: Georgia, sans-serif;
+}
+.blogs ::-webkit-input-placeholder {
+  font-style:italic;
+}
+.blogs .create-blog-block-hidden{
+  display: block;
+  transition: height 1s ease-out, opacity 1s ease-out;
+  opacity: 0; 
+  height: 0;
+  overflow: hidden;
+}
+.blogs .create-blog-block-shown{
+  height:200px;
+  display:block;
+  opacity:1;
+}
+.blogs #create-blog-link{
+  float:right;
+  font-size:10px;
+}
 
 /*Blog posts*/
 

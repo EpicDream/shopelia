@@ -38,6 +38,10 @@ class Blog < ActiveRecord::Base
     write_attribute(:scraped, scrap)
   end
   
+  def country
+    read_attribute(:country) || 'FR'
+  end
+  
   private
   
   def assign_flinker

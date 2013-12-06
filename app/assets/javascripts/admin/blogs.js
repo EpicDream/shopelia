@@ -15,11 +15,13 @@ $(document).ready(function() {
     });
   });
   
+  $(document).on("click", "#create-blog-link", function() {
+    $("#create-blog-block").toggleClass("create-blog-block-shown");
+  })
+  
   $(document).on("click", "#name-filter", function() {
     var pattern = $("#name-filer-pattern").val();
-    var scope = $("input[name='scope']:checked").val();
-    
-    var url = "/admin/blogs?partial=true&page=1&scope=" + scope + "&pattern=" + pattern;
+    var url = "/admin/blogs?partial=true&page=1" + "&pattern=" + pattern;
     $("#blogs-list").load(url);
   });
 
