@@ -10,24 +10,22 @@
         <td><%= image_tag "flags/#{blog.country.downcase}.png"%></td>
         <td>
           <% unless blog.scraped? %>
-            <%= button_tag "Intégrer", class:'btn btn-success', id:"integrate-blog-#{blog.id}", 'data-id' => blog.id do %>
-            <i class="icon-check icon-white"></i>
-            <span>Intégrer</span>
+            <%= button_tag "Intégrer", :title => "Intégrer ce blog", class:'btn btn-success rounded-btn', id:"integrate-blog-#{blog.id}", 'data-id' => blog.id do %>
+            <i class="icon-ok-circle icon-white"></i>
             <% end  %>
           <% end %>  
         </td>
         <td>
           <% unless blog.skipped? %>
-            <%= button_tag "Skip", class:'btn btn-warning', id:"skip-blog-#{blog.id}", 'data-id' => blog.id do %>
-            <i class="icon-check icon-white"></i>
-            <span>Ne pas intégrer</span>
+            <%= button_tag "Skip", :title => "Ne pas intégrer ce blog", class:'btn btn-warning rounded-btn', id:"skip-blog-#{blog.id}", 'data-id' => blog.id do %>
+            <i class="icon-ban-circle icon-white"></i>
             <% end  %>
           <% end %>
         </td>
         <td>
           <% if blog.scraped? %>
-            <%= button_tag "Voir les articles", class:'btn', id:"blog-posts-#{blog.id}", 'data-id' => blog.id do %>
-            <span>Voir les articles</span>
+            <%= button_tag "Voir les articles", :title => "Voir les articles", class:'btn rounded-btn', id:"blog-posts-#{blog.id}", 'data-id' => blog.id do %>
+            <i class="icon-eye-open icon-black"></i>
             <% end  %>
           <% end %>
         </td>
