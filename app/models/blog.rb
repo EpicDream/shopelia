@@ -30,6 +30,11 @@ class Blog < ActiveRecord::Base
     write_attribute(:skipped, skip)
   end
   
+  def scraped=scrap
+    self.skipped = false if scrap
+    write_attribute(:scraped, scrap)
+  end
+  
   private
   
   def assign_flinker
