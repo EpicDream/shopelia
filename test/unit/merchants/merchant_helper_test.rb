@@ -94,7 +94,7 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery.", "expected ship date",
               "disponible", "Délai 3 à 5 jours", "1 article disponible", "Plus que 7 produits chez notre fournisseur",
               "Plus que 9 produits disponibles", "Dernière paire !", "Plus que 3 paires !", "EN COURS DE RÉAPPRO",
-              "More than 10 available", "1 available", "Last one", "Dernier article !", "STOCKS LIMITÉS" ]
+              "More than 10 available", "1 available", "Last one", "Dernier article !", "STOCKS LIMITÉS", "stock limité" ]
     array.each do |str|
       assert_equal true, MerchantHelper.parse_availability(str)[:avail]
     end

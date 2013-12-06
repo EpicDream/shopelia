@@ -45,7 +45,7 @@ delai \d+ a \d+ jours: true
 derniere paire: true
 plus que \d+ paires: true
 EN COURS DE REAPPRO: true
-STOCKS LIMITES: true
+STOCKS? LIMITES?: true
 
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
