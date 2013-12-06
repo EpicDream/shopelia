@@ -1,12 +1,10 @@
 class Admin::BlogsController < Admin::AdminController
+  before_filter :validates_scope, only: :index
   
   def index
-    scopes = params[:scope] ? params[:scope].split('.') : [:scraped]
     pagination = Blog.paginate(:page => params[:page], :per_page => 10)
-    @blogs = scopes.inject(pagination){|acc, scope| acc.send(scope) }.order(:url)
-    if params[:partial]
-      render partial:'index'
-    end
+    @blogs = @scopes.inject(pagination){ |acc, scope| acc.send(scope) }.order(:url)
+    render partial:'index' if params[:partial]
   end
   
   def show
@@ -18,22 +16,17 @@ class Admin::BlogsController < Admin::AdminController
   end
   
   def create
-    blogs = if params[:blog][:csv]
-      csv = params[:blog][:csv].tempfile.open.read
-      Blog.batch_create_from_csv(csv)
-    else
-      Blog.create(params[:blog])
-    end
-    scrape(blogs) #in background task
+    blog = Blog.create(params[:blog])
+    BlogsWorker.perform_async(blog.id) rescue nil
     redirect_to admin_blogs_url
   end
   
   private
   
-  def scrape blogs
-    [blogs].compact.flatten.each { |blog| 
-      BlogsWorker.perform_async(blog.id) rescue nil
-    }
+  def validates_scope
+    @scopes = params[:scope] ? params[:scope].split('.') : [:scraped]
+    valid = ['scraped', 'scraped.without_posts', 'not_scraped', 'skipped', nil].include?(params[:scope])
+    redirect_to :root unless valid
   end
   
 end

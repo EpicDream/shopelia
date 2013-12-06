@@ -2,15 +2,6 @@ require 'test__helper'
 
 class BlogTest < ActiveSupport::TestCase
   
-  test "create batch of blogs from csv file and return created blogs" do
-    csv = "http://miss.com/,Betty\nhttp://www.adenorah.com/,Adenorah"
-    blogs = []
-    assert_difference("Blog.count", 2) do
-      blogs = Blog.batch_create_from_csv(csv)
-    end
-    assert_equal 2, blogs.count
-  end
-  
   test "create flinker and assign to blog if none" do
     blog = Blog.create(url:"http://fashion.fr")
     
