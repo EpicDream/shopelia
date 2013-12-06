@@ -16,6 +16,6 @@
     .span9
       %article.coolbox
         %h3 Looks
-        - @flinker.looks.where(is_published:true).each do |look|
+        - @flinker.looks.where(is_published:true).order("created_at desc").each do |look|
           .img-block
-            = link_to image_tag(look.look_images.order(:display_order).first.picture.url(:small), class:"thumb"), admin_look_path(look)
+            = link_to image_tag(look.look_images.order(:display_order).first.picture.url(:large), class:"thumb"), admin_look_path(look)
