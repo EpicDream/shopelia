@@ -1,6 +1,10 @@
 # -*- encoding : utf-8 -*-
 class EtsyCom
 
+  AVAILABILITY_HASH = {
+    "Informations sur la boutique" => false,
+  }
+
   def initialize url
     @url = url
   end
