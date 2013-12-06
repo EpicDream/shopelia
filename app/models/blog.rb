@@ -24,6 +24,11 @@ class Blog < ActiveRecord::Base
     end
     self.reload
   end
+
+  def skipped=skip
+    self.scraped = false if skip
+    write_attribute(:skipped, skip)
+  end
   
   private
   

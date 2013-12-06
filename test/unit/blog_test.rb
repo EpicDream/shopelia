@@ -24,4 +24,15 @@ class BlogTest < ActiveSupport::TestCase
       Blog.create(url:"http://miss.com/")
     end
   end
+  
+  test "when a blog is skipped, it should not be scraped" do
+    blog = Blog.create(url:"http://fashion.fr")
+    assert blog.scraped?
+    assert !blog.skipped?
+    
+    blog.update_attributes(skipped:true)
+    
+    assert !blog.scraped?
+    assert blog.skipped?
+  end
 end

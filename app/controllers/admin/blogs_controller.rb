@@ -15,6 +15,15 @@ class Admin::BlogsController < Admin::AdminController
     end
   end
   
+  def update
+    @blog = Blog.find(params[:id])
+    if @blog.update_attributes(params[:blog])
+      render json: {}.to_json, status:200
+    else
+      render json: {}.to_json, status:500
+    end
+  end
+  
   def create
     blog = Blog.create(params[:blog])
     BlogsWorker.perform_async(blog.id) rescue nil

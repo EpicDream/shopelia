@@ -5,6 +5,15 @@ $(document).ready(function() {
     var url = "/admin/blogs/" + button.data('id');
     window.location = url;
   });
+  
+  $(document).on("click", "button[id^=skip-blog]", function() {
+    var button = $(this);
+    var blogId = button.data('id');
+    $.post("/admin/blogs/" + blogId, {_method:'put', blog:{skipped:true}})
+    .success(function() {
+      alert("YES!")
+    });
+  });
 
   $(document).on("click", "div.pagination a", function(event) {
     event.preventDefault();
