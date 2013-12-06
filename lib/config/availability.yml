@@ -1,5 +1,6 @@
 dans( plus de)? \d+ magasins: false
 est plus en stock: false
+disponible uniquement en magasin: false
 
 cet article paraitra le: true
 en pr.\-?commande: true
@@ -45,7 +46,7 @@ delai \d+ a \d+ jours: true
 derniere paire: true
 plus que \d+ paires: true
 EN COURS DE REAPPRO: true
-STOCKS LIMITES: true
+STOCKS? LIMITES?: true
 
 sur commande: false
 inscrivez\-vous pour etre prevenu lorsque cet article sera disponible: false
@@ -78,6 +79,7 @@ il y a une erreur dans l.?url: false
 est pas accessible: false
 etre averti quand le produit sera de nouveau disponible: false
 no longer available: false
+0 available: false
 for personalized service on this item please call: false
 cet article n’est malheureusement plus disponible: false
 page est introuvable: false
