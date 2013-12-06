@@ -13,7 +13,8 @@ class Blog < ActiveRecord::Base
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
   scope :not_scraped, -> { scraped(false) }
-  scope :skipped, -> { where(skipped:true) }
+  scope :skipped, ->(skipped=true) { where(skipped:skipped) }
+  scope :not_skipped, -> { skipped(false) }
   scope :with_name_like, ->(pattern) { 
     where('url like :pattern or name like :pattern', pattern:"%#{pattern}%") unless pattern.blank?
   }

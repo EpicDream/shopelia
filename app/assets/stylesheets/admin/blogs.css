@@ -140,6 +140,59 @@ div.blogs{
   float:right;
   font-size:10px;
 }
+.blogs .rounded-btn{
+  border-radius:40px;
+  padding:4px;
+  width:30px;
+}
+.blogs #name-filer-pattern{
+  margin-top:60px;
+}
+.blogs button#name-filter{
+  margin:48px 0 0 10px;
+}
+.blogs div.radio-filters{
+  border-bottom:none;
+}
+.blogs .radio-filters span{
+  font-size:12px;
+  padding:1px;
+  font-family:Georgia;
+}
+.blogs .radio-filters input[type=radio]{
+  margin:-2px 5px 0 5px;
+}
+
+/*Pagination links*/
+
+.pagination {
+  text-align: center;
+  padding: 1em;
+  cursor: default; 
+}
+.pagination a, .pagination span {
+  padding: 0.2em 0.3em; 
+}
+.pagination .disabled {
+  color: #aaaaaa; 
+}
+.pagination .current {
+  font-style: normal;
+  background-color: #e44eaf;
+  display: inline-block;
+  width: 1.4em;
+  height: 1.4em;
+  line-height: 1.5;
+  -webkit-border-radius: 1em;
+  border-radius: 1em;
+}
+.pagination a {
+  text-decoration: none;
+  color: black; 
+}
+.pagination a:hover, .pagination a:focus {
+  text-decoration: underline; 
+}
 
 /*Blog posts*/
 
