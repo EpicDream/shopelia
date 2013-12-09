@@ -5,6 +5,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
 
   setup do
     @flinker = flinkers(:elarch)
+    @token = "CAAKcj4ETCX4BAN4RSgpT73WjZBU3HZAj8Ub3BVNlQosUUybYV4iDvbeHTXkkwQCxwqvidsNyFVUHazIZCLQytY8quxVwznZBKKHjHEC9fbfZAhqtHP0fvtJWdlmXKY3EsvU0KibTh4K5tYAb9Eokuzeb5PLJxP0BxJygrIJZC46pEdPK68sLreB5HddVuP1a0ZD"
   end
 
   test "it should login flinker with email and password" do
@@ -13,6 +14,45 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
 
     assert json_response["auth_token"], "Auth token must be sent back"
     assert_equal @flinker.reload.authentication_token, json_response["auth_token"]
+  end
+
+  test "it should send an error when facebook token is invalid" do
+    assert_difference(['Flinker.count'],0) do
+      post :create, provider: "facebook", token: "tototo", format: :json
+    end
+    assert_response :unauthorized
+    assert_equal "facebook token is invalid", json_response["error"]
+  end
+
+  test "it should create a flinker with facebook token" do
+    assert_difference(['Flinker.count']) do
+      post :create, provider: "facebook", token: @token, format: :json
+    end
+    assert_response :success
+    assert json_response["auth_token"].present?
+    assert json_response["flinker"].present?
+  end
+
+  test "it should merge flinker account with facebook token when email already exists" do
+    flinker = Flinker.create!(email: "bellakra@eleves.enpc.fr",password: "tototo",password_confirmation:"tototo")
+    assert_difference(['Flinker.count'],0) do
+      post :create, provider: "facebook", token: @token, format: :json
+    end
+    assert_response :success
+    assert json_response["auth_token"], "Auth token must be sent back"
+    assert_equal flinker.reload.authentication_token, json_response["auth_token"]
+    flinker_auth = FlinkerAuthentication.where(flinker_id: flinker.id).first
+    assert_equal flinker_auth.uid, "693006605"
+  end
+
+  test "it should sign in flinker without creating a new one if he already exists" do
+    post :create, provider: "facebook", token: @token, format: :json
+    assert_difference(['Flinker.count'],0) do
+      post :create, provider: "facebook", token: @token, format: :json
+    end
+    assert_response :success
+    assert json_response["auth_token"].present?
+    assert json_response["flinker"].present?
   end
 
   test "it shouldn't login a flinker with blank password" do
