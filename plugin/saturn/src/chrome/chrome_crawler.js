@@ -2,6 +2,7 @@
 require(['chrome_logger', 'crawler', 'src/helper', "satconf"], function(logger, Crawler, helper) {
   "use strict";
 
+window.Crawler = Crawler;
 logger.level = logger[satconf.log_level];
 var h = helper.get(location.href),
   crawlHelper = h && h.crawler;

@@ -1,5 +1,5 @@
 ---
-"version": "2.5.8"
+"version": "2.6.0"
 "default":
   #### Global options
   ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
@@ -22,6 +22,8 @@
   "DELAY_BETWEEN_OPTIONS": 1500
   ## wait response from contentscript 60s max, fail after that (required when a lot of sizes for shoes for example).
   "DELAY_RESCUE": 30000
+  "ADBLOCK_RESTART_DELAY": 0 # Never
+  "CHROME_RESTART_DELAY": 0 # Never
 
   #### URLs options
   "SHOPELIA_DOMAIN": "https://www.shopelia.com"
@@ -55,8 +57,12 @@
   "PRODUCT_EXTRACT_UPDATE": "https://staging.shopelia.com/api/viking/products/"
   "consum": true
   "DELAY_BETWEEN_PRODUCTS": 5000 # 5 s
+  "ADBLOCK_RESTART_DELAY": 43200000 # 12h
+  "CHROME_RESTART_DELAY": 172800000 # 48h
 "prod":
   "run_mode" : "auto"
   "log_level" : "WARN"
   "consum": true
+  "ADBLOCK_RESTART_DELAY": 43200000 # 12h
+  "CHROME_RESTART_DELAY": 172800000 # 48h
   "DELAY_BETWEEN_PRODUCTS": 500 # 500 ms
