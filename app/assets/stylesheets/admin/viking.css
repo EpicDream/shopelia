@@ -1,7 +1,11 @@
 article.warning {
-  background-color: orange;
+  background-color: #FFFF88;
 }
 
 article.error {
-  background-color: red;
+  background-color: #FFAA88;
+}
+
+article.missing {
+  background-color: #E0E0E0
 }

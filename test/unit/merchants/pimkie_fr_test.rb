@@ -13,6 +13,15 @@ class PimkieFrTest < ActiveSupport::TestCase
     @availabilities = {
       "ACCUEIL > PARTY LOOK > PARTY LOOK (39)" => false,
     }
+    @price_shipping_text = [{
+      input: "",
+      price_text: "14,90",
+      out: @helper.default_price_shipping,
+    }, {
+      input: "",
+      price_text: "100,90",
+      out: MerchantHelper::FREE_PRICE,
+    }]
     @images = {
       input: ["http://www.pimkie.fr/img/FichesFichier/130596_1_vignette_323009_912A09_TH_1.JPG"],
       out: ["http://www.pimkie.fr/img/FichesFichier/130596_1_zoom_323009_912A09_HD_1.JPG"]

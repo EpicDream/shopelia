@@ -49,13 +49,20 @@ module MerchantHelperTests
   end
 
   def test_it_should_parse_specific_availability
-    return unless @availabilities
+    return unless @helper.availabilities.size > 0
+    assert_not_nil @availabilities, "There are availabilities. You must define tests !"
+    assert_operator @helper.availabilities.size, :>=, @availabilities.size, "Missing tests !"
+
     @availabilities.each do |txt, result|
       assert_equal result, @helper.parse_availability(txt)[:avail], "with #{txt}"
     end
   end
 
   def test_it_should_process_availability
+    if @helperClass.public_instance_methods(false).include?(:process_availability)
+      assert_not_nil @availability_text, "You have redefined process_availability. You must define tests !"
+    end
+
     toArray(@availability_text).each do |avail|
       @version[:availability_text] = avail[:input]
       @version = @helper.process_availability(@version)
@@ -78,6 +85,10 @@ module MerchantHelperTests
   end
 
   def test_it_should_process_price
+    if @helperClass.public_instance_methods(false).include?(:process_price)
+      assert_not_nil @price_text, "You have redefined process_price. You must define tests !"
+    end
+
     toArray(@price_text).each do |price|
       @version[:price_text] = price[:input]
       @version = @helper.process_price(@version)
@@ -86,7 +97,16 @@ module MerchantHelperTests
   end
 
   def test_it_should_process_price_shipping
+    if @helperClass.public_instance_methods(false).include?(:process_price_shipping)
+      assert_not_nil @price_shipping_text, "You have redefined process_price_shipping. You must define tests !"
+    elsif @helper.free_shipping_limit
+      assert_not_nil @price_shipping_text, "You have defined free_shipping_limit. You must define tests !"
+    end
+
+    assert_not_nil @helper.default_price_shipping if @helper.config[:setDefaultPriceShippingAlways] || @helper.config[:setDefaultPriceShippingIfEmpty]
+
     toArray(@price_shipping_text).each do |price|
+      @version[:price_text] = price[:price_text] if price[:price_text]
       @version[:price_shipping_text] = price[:input]
       @version = @helper.process_price_shipping(@version)
       assert_equal price[:out], @version[:price_shipping_text], "with #{price[:input]}"
@@ -131,6 +151,12 @@ module MerchantHelperTests
   end
 
   def test_it_should_process_shipping_info
+    if @helperClass.public_instance_methods(false).include?(:process_shipping_info)
+      assert_not_nil @shipping_info, "You have redefined process_shipping_info. You must define tests !"
+    end
+
+    assert_not_nil @helper.default_shipping_info if @helper.config[:setDefaultShippingInfoAlways] || @helper.config[:setDefaultShippingInfoIfEmpty]
+
     toArray(@shipping_info).each do |info|
       @version[:shipping_info] = info[:input]
       @version = @helper.process_shipping_info(@version)
@@ -190,6 +216,12 @@ module MerchantHelperTests
   end
 
   def test_it_should_process_image_url
+    if @helperClass.public_instance_methods(false).include?(:process_image_url)
+      assert_not_nil @image_url, "You have redefined process_image_url. You must define tests !"
+    elsif @helper.image_sub && ! @helper.config[:subImagesOnly]
+      assert_not_nil @image_url, "You have defined image_sub. You must define tests !"
+    end
+
     toArray(@image_url).each do |url|
       @version[:image_url] = url[:input]
       @version = @helper.process_image_url(@version)
@@ -198,6 +230,12 @@ module MerchantHelperTests
   end
 
   def test_it_should_process_images
+    if @helperClass.public_instance_methods(false).include?(:process_images)
+      assert_not_nil @images, "You have redefined process_images. You must define tests !"
+    elsif @helper.image_sub && ! @helper.config[:subImageUrlOnly]
+      assert_not_nil @images, "You have defined image_sub. You must define tests !"
+    end
+
     return unless @images
     @version[:images] = @images[:input]
       @version = @helper.process_images(@version)
@@ -205,7 +243,13 @@ module MerchantHelperTests
   end
 
 
-  def test_it_should_process_option
+  def test_it_should_process_options
+    if @helperClass.public_instance_methods(false).include?(:process_options)
+      assert_not_nil @options, "You have redefined process_option. You must define tests !"
+    elsif @helper.config[:searchBackgroundImageOrColorForOptions]
+      assert_not_nil @options, "You have defined config[:searchBackgroundImageOrColorForOptions]. You must define tests !"
+    end
+
     toArray(@options).each do |opt|
       option = "option#{opt[:level]}"
       @version[option] = opt[:input]
