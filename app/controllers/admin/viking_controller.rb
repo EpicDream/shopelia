@@ -6,7 +6,7 @@ class Admin::VikingController < Admin::AdminController
     @performance = @total > 0 ? result[false].to_f * 100 / (result[false].to_f + result[true].to_f) : 0
     
     merchants = {}
-    Product.where("products.updated_at > ?", 1.day.ago).joins(:merchant).group("merchants.name,products.viking_failure").select("count(*) as count,merchants.name,merchants.mapping_id,products.viking_failure").each do |s|
+    Product.where("products.updated_at > ?", 1.day.ago).joins(:merchant).group("merchants.name,products.viking_failure,merchants.mapping_id").select("count(*) as count,merchants.name,merchants.mapping_id,products.viking_failure").each do |s|
       merchants[s.name] ||= {}
       merchants[s.name][s.viking_failure] = s.count.to_f
       merchants[s.name][:viking_support] = s.mapping_id.present?
@@ -22,7 +22,7 @@ class Admin::VikingController < Admin::AdminController
       stats << hash if hash[:total] >= 5
     end
     
-    @merchant_stats = stats.sort_by { |k| -k[:total] }
+    @merchant_stats = stats.sort_by { |k| [k[:viking_support] ? -1 : 0, -k[:total]] }
     
     respond_to do |format|
       format.html
