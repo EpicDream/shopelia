@@ -17,7 +17,8 @@ class AsosComTest < ActiveSupport::TestCase
     @availability_text = [
     ]
     @availabilities = {
-      "951 styles found" => false
+      "951 styles found" => false,
+      "1-36 of 3707View 204 per page" => false,
     }
     @image_url = {
       input: "http://images.asos-media.com/inv/media/3/7/0/8/3158073/green/image1xl.jpg",

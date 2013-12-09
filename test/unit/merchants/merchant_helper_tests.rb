@@ -251,7 +251,7 @@ module MerchantHelperTests
     end
 
     toArray(@options).each do |opt|
-      option = "option#{opt[:level]}"
+      option = "option#{opt[:level]}".to_sym
       @version[option] = opt[:input]
       @version = @helper.process_options(@version)
       assert_equal opt[:out], @version[option], "with #{opt[:input]} for level ##{opt[:level]}"
