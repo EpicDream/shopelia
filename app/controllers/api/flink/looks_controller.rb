@@ -28,6 +28,6 @@ class Api::Flink::LooksController < Api::Flink::BaseController
   end
 
   def prepare_scope
-    @scope = { developer:@developer, device:@device, short:true }
+    @scope = { developer:@developer, device:@device, flinker:current_flinker, short:true }
   end
 end
