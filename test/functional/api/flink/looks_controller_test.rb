@@ -39,6 +39,21 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     assert_equal 5, json_response["looks"].count
   end
 
+  test "it should reply with 401 when getting liked looks and not logged in" do
+    get :index, format: :json, liked:1
+    assert_response 401
+  end
+
+  test "it should get liked looks" do
+    sign_in @flinker
+
+    FlinkerLike.create!(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:Look.last.id)
+
+    get :index, format: :json, liked:1
+    assert_response :success
+    assert_equal 1, json_response["looks"].count
+  end 
+
   private
 
   def build_looks

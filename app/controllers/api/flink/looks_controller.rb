@@ -16,15 +16,20 @@ class Api::Flink::LooksController < Api::Flink::BaseController
   private
 
   def retrieve_looks
-    @before = Time.at(params[:published_before].to_i) unless params[:published_before].blank?
-    @after = Time.at(params[:published_after].to_i) unless params[:published_after].blank?
-    @per_page = params[:per_page] || 10
+    if params[:liked]
+      render json: {}, status: :unauthorized and return if current_flinker.nil?
+      ids = current_flinker.flinker_likes.where(resource_type:FlinkerLike::LOOK).map(&:resource_id)
+      @looks = Look.where(id:ids, is_published:true).order("published_at desc")
+    else
+      @before = Time.at(params[:published_before].to_i) unless params[:published_before].blank?
+      @after = Time.at(params[:published_after].to_i) unless params[:published_after].blank?
+      @per_page = params[:per_page] || 10
 
-    query = Look.where(is_published:true)
-    query = query.where("published_at < ?", @before) if @before.present?
-    query = query.where("published_at > ?", @after) if @after.present?
-
-    @looks = query.order("published_at desc").limit(@per_page)
+      query = Look.where(is_published:true)
+      query = query.where("published_at < ?", @before) if @before.present?
+      query = query.where("published_at > ?", @after) if @after.present?
+      @looks = query.order("published_at desc").limit(@per_page)
+    end
   end
 
   def prepare_scope
