@@ -42,7 +42,6 @@ module Poster
           next unless page
           @page = page
         end
-        
         if publisher.respond_to?(:login)
           @agent = publisher.login(@agent) 
         end

@@ -2,14 +2,13 @@ module Poster
   module Blogspot
     GOOGLE_LOGIN_URL = "https://accounts.google.com/ServiceLogin"
     COMMENT_ACTION = /comment-iframe/
-    GOOGLE_EMAIL = "anne.fashion.paris@gmail.com"
-    GOOGLE_PASSWORD = "bidiboussi"
+    GOOGLE_ACCOUNT = Shopelia::Application.config.flinker_google_account
     
     def self.login agent
       page = agent.get(GOOGLE_LOGIN_URL)
       form = page.form_with(action: /ServiceLoginAuth/)
-      form['Email'] = GOOGLE_EMAIL
-      form['Passwd'] = GOOGLE_PASSWORD
+      form['Email'] = GOOGLE_ACCOUNT[:email]
+      form['Passwd'] = GOOGLE_ACCOUNT[:password]
       form.submit
       agent
     end
