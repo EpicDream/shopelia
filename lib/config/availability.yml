@@ -37,7 +37,7 @@ dispo sous \d: true
 reapprovisionne le: true
 plus que \d+ exemplaire: true
 livraison incluse: true
-\d+ articles disponibles: true
+\d+( articles)? disponible: true
 dernier (exemplaire|article): true
 ^disponible: true
 delai \d+ a \d+ jours: true
@@ -88,3 +88,4 @@ en cours de r.approvisionnement: false
 n.a pas ete trouve: false
 ne peut pas etre affiche: false
 SOLD OUT: false
+n'est plus commercialise: false

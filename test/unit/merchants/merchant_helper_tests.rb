@@ -95,15 +95,15 @@ module MerchantHelperTests
 
   def test_it_should_process_price_shipping_with_free_limit
     return unless @helper.free_shipping_limit
-    @version[:price_text] = "%.2f €" % @helper.free_shipping_limit-1
-    @version[:price_shipping_text] = "3 € 50"
+    @version[:price_text] = "%.2f €" % (@helper.free_shipping_limit-1)
+    @version[:price_shipping_text] = @helper.default_price_shipping || "3 € 50"
     @version = @helper.process_price_shipping(@version)
-    assert_equal "3 € 50", @version[:price_shipping_text]
+    assert_equal @helper.default_price_shipping || "3 € 50", @version[:price_shipping_text]
 
-    @version[:price_text] = "%.2f €" % @helper.free_shipping_limit+1
-    @version[:price_shipping_text] = "3 € 50"
+    @version[:price_text] = "%.2f €" % (@helper.free_shipping_limit+1)
+    @version[:price_shipping_text] = @helper.default_price_shipping || "3 € 50"
     @version = @helper.process_price_shipping(@version)
-    assert_equal MerchantHeper::FREE_PRICE, @version[:price_shipping_text]
+    assert_equal MerchantHelper::FREE_PRICE, @version[:price_shipping_text]
   end
 
   def test_it_should_process_price_shipping_when_setDefaultPriceShippingIfEmpty_is_true
