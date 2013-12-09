@@ -46,12 +46,13 @@ class Blog < ActiveRecord::Base
   private
   
   def assign_flinker
-    flinker = Flinker.create(name:self.name, url:self.url)
+    email = "#{SecureRandom.hex(4)}@flinker.io"
+    password = SecureRandom.hex(4)
+    flinker = Flinker.create(name:self.name, url:self.url, email:email, password:password, password_confirmation:password, is_publisher:true)
     update_attribute :flinker_id, flinker.id
   end
   
   def normalize_url
     self.url.gsub!(/\/$/, '')
-  end
-  
+  end 
 end

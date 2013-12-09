@@ -1,44 +1,25 @@
 # -*- encoding : utf-8 -*-
-class SarenzaCom
-  DEFAULT_PRICE_SHIPPING = MerchantHelper::FREE_PRICE
-  DEFAULT_SHIPPING_INFO = "Livraison en Colissimo."
+class SarenzaCom < MerchantHelper
 
-  AVAILABILITY_HASH = {
-    /\d+ modele/i => false,
-    "TOUTES LES MARQUES" => false,
-  }
+  def initialize(*)
+    super
+    @default_price_shipping = MerchantHelper::FREE_PRICE
+    @default_shipping_info = "Livraison en Colissimo."
+    @availabilities = {
+      /\d+ modele/i => false,
+      "TOUTES LES MARQUES" => false,
+    }
+    @image_sub = [/(?<=\/)PI(?=_)/, 'HD']
 
-  def initialize url
-    @url = url
-  end
-
-  def monetize
-    @url
-  end
-
-  def canonize
-    @url
+    # @config[:setAvailableIfEmpty] = true,
+    @config[:setDefaultPriceShippingAlways] = true
+    @config[:setDefaultShippingInfoAlways] = true
+    @config[:subImagesOnly] = true
   end
 
   def process_availability version
+    # version = super version
     version[:availability_text] = $~[1] if version[:availability_text] =~ /[^-]*- (.*)$/i
-    # version[:availability_text] = MerchantHelper::AVAILABLE if version[:availability_text].blank?
-    version
-  end
-
-  def process_price_shipping version
-    version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING
-    version
-  end
-
-  def process_shipping_info version
-    version[:shipping_info] = DEFAULT_SHIPPING_INFO
-    version
-  end
-
-  def process_images version
-    return version unless version[:images].kind_of?(Array)
-    version[:images].map! { |url| url.sub(/(?<=\/)PI(?=_)/, 'HD') }
     version
   end
 end

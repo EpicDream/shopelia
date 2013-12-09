@@ -215,7 +215,7 @@ module.exports = function(grunt) {
   grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev']);
   grunt.registerTask('dev-prod', ['test', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
   grunt.registerTask('prod-dev', ['test', 'config:prod-dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
-  grunt.registerTask('staging', ['test', 'config:staging', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod']);
-  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'uglify', 'manifest:min', 'clean:prod']);
+  grunt.registerTask('staging', ['test', 'config:staging', 'requirejs', 'concat', 'manifest:min', 'clean:prod']);
+  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'manifest:min', 'clean:prod']);
   grunt.registerTask('test-mappings', ['test', 'jasmine:mappings']);
 };

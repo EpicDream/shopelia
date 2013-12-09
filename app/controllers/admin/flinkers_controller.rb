@@ -1,0 +1,39 @@
+class Admin::FlinkersController < Admin::AdminController
+  before_filter :prepare_filters, :only => :index
+  before_filter :retrieve_flinker, :only => [:show, :edit, :update]
+
+  def index
+    respond_to do |format|
+      format.html
+      format.json { render json: FlinkersDatatable.new(view_context, @filters) }
+    end
+  end
+
+  def show
+    blog = Blog.find_by_flinker_id(@flinker.id)
+    @stats = [
+      { name:"looks", value:@flinker.looks.where(is_published:true).count, type: :number }
+    ]
+    @stats << { name:"posts", value:blog.posts.count, type: :number } unless blog.nil?
+  end
+
+  def update
+    if @flinker.update_attributes(params[:flinker])
+      redirect_to admin_flinker_path(@flinker)
+    else
+      render :action => 'edit'
+    end
+  end
+
+  private
+
+  def retrieve_flinker
+    @flinker = Flinker.find(params[:id])
+  end
+
+  def prepare_filters
+    @filters = {
+      :publisher => params[:publisher]
+    }
+  end  
+end

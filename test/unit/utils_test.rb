@@ -64,6 +64,6 @@ class UtilsTest < ActiveSupport::TestCase
   end
 
   test "it should strip tracking params" do
-    assert_equal "http://www.site.com/product?id=1234", Utils.strip_tracking_params("http://www.site.com/product?id=1234&utm_track=456&cm_mmc=457")
+    assert_equal "http://www.site.com/product?id=1234", Utils.strip_tracking_params("http://www.site.com/product?id=1234&utm_track=456&cm_mmc=457&xtor=AL-41")
   end
 end

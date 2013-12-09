@@ -6,10 +6,11 @@ class BlogTest < ActiveSupport::TestCase
     blog = Blog.create(url:"http://fashion.fr")
     
     assert blog.flinker
+    assert blog.flinker.is_publisher?
   end
   
   test "do not assign new flinker if blog created with flinker reference" do
-    flinker = Flinker.create(name:"fashion", url:"http://fashion.fr")
+    flinker = Flinker.create(name:"fashion", url:"http://fashion.fr", email:"toto@flinker.io", password:"password", password_confirmation:"password")
     
     Flinker.expects(:create).never
     blog = Blog.create(url:"http://fashion.fr", flinker_id:flinker.id)
