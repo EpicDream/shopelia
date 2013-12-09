@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131206103207) do
+ActiveRecord::Schema.define(:version => 20131209141556) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -70,9 +70,9 @@ ActiveRecord::Schema.define(:version => 20131206103207) do
     t.integer  "mangopay_contribution_id"
     t.integer  "mangopay_contribution_amount"
     t.string   "mangopay_contribution_message"
-    t.integer  "mangopay_destination_wallet_id"
     t.datetime "created_at",                     :null => false
     t.datetime "updated_at",                     :null => false
+    t.integer  "mangopay_destination_wallet_id"
     t.integer  "mangopay_transfer_id"
   end
 
@@ -246,6 +246,17 @@ ActiveRecord::Schema.define(:version => 20131206103207) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "flinker_likes", :force => true do |t|
+    t.integer  "flinker_id"
+    t.string   "resource_type"
+    t.integer  "resource_id"
+    t.datetime "created_at",    :null => false
+    t.datetime "updated_at",    :null => false
+  end
+
+  add_index "flinker_likes", ["flinker_id"], :name => "index_flinker_likes_on_flinker_id"
+  add_index "flinker_likes", ["resource_type", "resource_id"], :name => "index_flinker_likes_on_resource_type_and_resource_id"
+
   create_table "flinkers", :force => true do |t|
     t.string   "name"
     t.string   "url"
@@ -255,6 +266,7 @@ ActiveRecord::Schema.define(:version => 20131206103207) do
     t.datetime "avatar_updated_at"
     t.datetime "created_at",                                :null => false
     t.datetime "updated_at",                                :null => false
+    t.boolean  "is_publisher",           :default => false
     t.string   "email",                  :default => "",    :null => false
     t.string   "encrypted_password",     :default => "",    :null => false
     t.string   "reset_password_token"
@@ -267,7 +279,6 @@ ActiveRecord::Schema.define(:version => 20131206103207) do
     t.string   "last_sign_in_ip"
     t.string   "authentication_token"
     t.string   "username"
-    t.boolean  "is_publisher",           :default => false
   end
 
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true
@@ -422,9 +433,9 @@ ActiveRecord::Schema.define(:version => 20131206103207) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.text     "message",                    :limit => 255
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "retry_count"
@@ -440,6 +451,7 @@ ActiveRecord::Schema.define(:version => 20131206103207) do
     t.float    "billed_price_product"
     t.float    "billed_price_shipping"
     t.datetime "notification_email_sent_at"
+    t.string   "payment_solution"
     t.string   "injection_solution"
     t.string   "cvd_solution"
     t.integer  "developer_id"
@@ -526,10 +538,10 @@ ActiveRecord::Schema.define(:version => 20131206103207) do
     t.float    "price_strikeout"
     t.string   "shipping_info"
     t.text     "description"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-    t.text     "option2"
-    t.text     "option1"
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
+    t.text     "option2",           :limit => 255
+    t.text     "option1",           :limit => 255
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
@@ -552,10 +564,10 @@ ActiveRecord::Schema.define(:version => 20131206103207) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url"
-    t.text     "image_url"
-    t.datetime "created_at",                             :null => false
-    t.datetime "updated_at",                             :null => false
+    t.text     "url",                 :limit => 255
+    t.text     "image_url",           :limit => 255
+    t.datetime "created_at",                                            :null => false
+    t.datetime "updated_at",                                            :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
@@ -563,7 +575,7 @@ ActiveRecord::Schema.define(:version => 20131206103207) do
     t.boolean  "viking_failure"
     t.string   "reference"
     t.datetime "muted_until"
-    t.boolean  "options_completed",   :default => false
+    t.boolean  "options_completed",                  :default => false
     t.datetime "viking_sent_at"
     t.string   "image_size"
     t.float    "rating"
