@@ -1,5 +1,5 @@
 class Image < ActiveRecord::Base
-  SIZES = { w640:"640x", w320:"320x", w160:"160x"}
+  SIZES = { small:["200x200>", :jpg], large:["1200x1200>", :jpg]}
   
   attr_accessible :url
   alias_attribute :sizes, :picture_sizes
@@ -7,9 +7,10 @@ class Image < ActiveRecord::Base
   validates :picture, presence:true, on: :create
   
   has_attached_file :picture, 
-                    :styles => SIZES, 
-                    :url  => "/assets/images/:fmd5/:style/:md5.:extension",
-                    :path => ":rails_root/public/assets/images/:fmd5/:style/:md5.:extension"
+                    :styles => SIZES,
+                    :convert_options => { :small => "-quality 20", :large => "-quality 80" },
+                    :url  => "/images/:fmd5/:style/:md5.:extension",
+                    :path => ":rails_root/public/images/:fmd5/:style/:md5.jpg"
                                         
   before_validation :create_files
   after_post_process { self.picture_sizes = formats.to_json }

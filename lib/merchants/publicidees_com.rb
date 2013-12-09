@@ -6,10 +6,10 @@ class PublicideesCom
 
   def canonize
     if matches = /url=(.+)\Z/.match(@url)
-      url =  URI.unescape(matches[1])
+      url =  Utils.strip_tracking_params(URI.unescape(matches[1]))
       new_url = MerchantHelper.canonize(url)
       return new_url if new_url.present?
-      return url unless url =~ /lengow/ || url =~ /jvweb/
+      return url unless MerchantHelper.is_aggregator?(url)
     end
     nil
   end

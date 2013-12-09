@@ -5,7 +5,7 @@ class ZanoxCom
   end
 
   def canonize
-    if m = /ULP\=\[\[(.+?)\]\]/.match(@url)
+    if m = /[ULP|ulp]\=\[\[(.+?)\]\]/.match(@url)
       url = m[1]
       url = "http://#{URI.unescape(url)}" if url =~ /fnac\.com/
       url = "http://www.rueducommerce.fr/m/ps/mpid:#{m[1]}" if m = /mpid\:([A-Za-z0-9\-]+)/.match(@url)

@@ -1,7 +1,7 @@
 %section.header
   %header
     %h1= @look.name
-    %h2= @look.flinker.name
+    %h2= @look.flinker.name || @look.flinker.url
     .action-buttons
       %a.btn.btn-large.btn-success.update-look{href: "#{publish_admin_look_path(@look)}"}
         %i.icon-check.icon-white
@@ -15,9 +15,12 @@
     .span3
       %article.coolbox
         %h3 Text
-        = link_to @look.name, @look.url, target: "blank"
+        = @look.published_at.to_s
         %br
-        = @look.post.content.html_safe
+        = link_to @look.name, @look.url, target: "blank"
+        - if @look.post.present?
+          %br
+          = @look.post.content.html_safe
       %article.coolbox
         %h3 Links
         - @look.post.links.each do |link|

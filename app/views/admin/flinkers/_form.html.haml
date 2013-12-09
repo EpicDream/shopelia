@@ -1,0 +1,6 @@
+= simple_form_for [:admin, @flinker] do |f|
+  = f.input :name
+  = f.input :url
+  = f.input :email
+  = f.input :is_publisher, collection:[true, false]
+  = f.button :submit, "Validate", :class => 'btn-success'

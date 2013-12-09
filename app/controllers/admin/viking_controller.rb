@@ -19,7 +19,7 @@ class Admin::VikingController < Admin::AdminController
       hash[:name] = name
       hash[:total] = m[false].to_f + m[true].to_f
       hash[:rate] = hash[:total] > 0 ? m[false].to_f*100 / hash[:total] : 0
-      stats << hash if hash[:total] > 10
+      stats << hash if hash[:total] >= 5
     end
     
     @merchant_stats = stats.sort_by { |k| -k[:total] }

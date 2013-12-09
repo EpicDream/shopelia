@@ -41,5 +41,16 @@ class PostTest < ActiveSupport::TestCase
     @post.images = ["http://farm4.staticflickr.com/3681/10980880355_0a0151fbd1_o.jpg"].to_json
     @post.save
     assert @post.look.nil?
-  end    
+  end
+  
+  test "post link must be unique" do
+    Linker.stubs(:clean).returns("http://www.fake.com")
+    assert_difference('Post.count', 1) do
+      1.upto(3) { 
+        @post = Post.new(link: "http://www.toto.fr", blog_id: blogs(:betty).id, products:{}.to_json, images:[].to_json)
+        @post.save
+      }
+    end
+    assert_equal "http://www.fake.com", Post.first.link
+  end
 end

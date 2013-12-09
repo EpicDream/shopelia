@@ -27,7 +27,13 @@ class AsosFrTest < ActiveSupport::TestCase
       { in: "http://www.asos.fr/Homme-Costumes-et-blazers/y1bah/?cid=5678",
         out: "http://www.asos.fr/Homme-Costumes-et-blazers/y1bah/?cid=5678" },
       { in: "http://www.asos.fr/Prod/pgeproduct.aspx?iid=2306336&r=2",
-        out: "http://www.asos.fr/Prod/pgeproduct.aspx?iid=2306336" },
+        out: "http://www.asos.fr/pgeproduct.aspx?iid=2306336" },
+      { in: "http://www.asos.fr/American-Apparel-Sweat-molletonn--manches-raglan/10oltu/?Rf-200=16&Rf998=4087&WT.tsrc=Affiliate&affId=2439&clr=Grey&iid=3112995%3Fcid%3D11321&mporgp=L0FtZXJpY2FuLUFwcGFyZWwvQW1lcmljYW4tQXBwYXJlbC1GbGVlY2UtUmFnbGFuLVN3ZWF0LVRvcC9Qcm9kLw..&pge=1&pgesize=36&r=2&sh=0&sort=-1&stop_mobi=yes",
+        out: "http://www.asos.fr/10oltu/?iid=3112995" },
+      { in: "http://www.asos.fr/pgeproduct.aspx?WT.tsrc=Affiliate&iid=2924060%3FaffId%3D2439&r=2&stop_mobi=yes",
+        out: "http://www.asos.fr/pgeproduct.aspx?iid=2924060" },
+      { in: "http://www.asos.fr/referrer/pgereferrer.aspx?path=www.asos.fr/CC-Cashmere-by-John-Laing/CC-Cashmere-by-John-Laing-Crew-Neck-Jumper-with-Polka-Dots-in-100-Cashmere/Prod/pgeproduct.aspx?iid=3229422&SearchQuery=polka%20dots&Rf900=4030&sh=0&pge=0&pgesize=36&sort=-1&clr=Navypalegrey",
+        out: "http://www.asos.fr/pgeproduct.aspx?iid=3229422" }
     ]
     urls.each do |url|
       assert_equal(url[:out], AsosFr.new(url[:in]).canonize)

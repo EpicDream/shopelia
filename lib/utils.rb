@@ -5,13 +5,14 @@ class Utils
     host.gsub(/^(?:\w+:\/\/)?[^:?#\/\s]*?([^.\s]+\.(?:[a-z]{2,}|co\.uk|org\.uk|ac\.uk|org\.au|com\.au))(?:[:?#\/]|$)/, '\1')
   end
 
-  def self.parse_uri_safely url
+  def self.parse_uri_safely url    
+    url = url.gsub(/\#[^\#]+\Z/, "") if url.count('#') > 1 # remove double hash sign
     URI.parse(url.encode('UTF-8', 'UTF-8', :invalid => :replace).scan(/([!\#$&-;=?-\[\]_a-z~]|%[0-9a-fA-F]{2})/).join)
   end
 
   def self.strip_tracking_params url
     uri = self.parse_uri_safely(url)
-    params = Rack::Utils.parse_nested_query(uri.query).delete_if{|e| e =~ /^(utm_|cm_mmc|arefid|nsctrid)/ }
+    params = Rack::Utils.parse_nested_query(uri.query).delete_if{|e| e =~ /^(utm_|cm_mmc|arefid|nsctrid|xtor)/ }
     uri.scheme + "://" + uri.host + uri.path + (params.empty? ? "" : "?" + params.to_query)
   end
 end

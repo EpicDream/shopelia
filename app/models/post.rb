@@ -6,8 +6,10 @@ class Post < ActiveRecord::Base
   validates :link, presence:true, uniqueness:true
   json_attributes [:images, :products, :categories]
   
-  before_create :link_urls
+  before_validation :link_urls
   after_create :convert
+
+  scope :pending_processing, where("processed_at is null and look_id is not null and published_at > ?", 1.month.ago).order("published_at desc")
 
   def convert
     if self.images.count > 1 && self.look.nil?
@@ -32,7 +34,7 @@ class Post < ActiveRecord::Base
     links = []
     self.products.each do |product|
       text, url = product.to_a.flatten
-      links << { text:text, url:url } if Merchant.from_url(url, false).nil?
+      links << { text:(text || "Default"), url:url } if Merchant.from_url(url, false).nil?
     end
     links
   end
@@ -44,6 +46,5 @@ class Post < ActiveRecord::Base
       hash.merge!({name => Linker.clean(link)})
     end.to_json
     self.link = Linker.clean(link)
-    true
   end
 end

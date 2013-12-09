@@ -60,9 +60,10 @@ class UtilsTest < ActiveSupport::TestCase
     assert_not_nil Utils.parse_uri_safely "http://www.clarins.fr/pi?url=http://www.clarins.fr/Instant-Definition-Mascara/0421841,fr_FR,pd.html?cm_mmc=Affiliate-_-Nextidea2012-_-Maquillage+>+Yeux+>+Mascaras-_-0421841"
     assert_not_nil Utils.parse_uri_safely "http://www.amazon.fr/SEN-120-Spot-d\\\\exterieur-enterre-12x1W/dp/B003X8O92G?SubscriptionId=AKIAJMEFP2BFMHZ6VEUA&tag=prixing-web-21&linkCode=xm2&camp=2025&creative=165953&creativeASIN=B003X8O92G"
     assert_not_nil Utils.parse_uri_safely "https://www.thinkgeek.com/product/eea5/"
+    assert_not_nil Utils.parse_uri_safely "http://ad.zanox.com/ppc/?22189354C1364358154&ULP=[[B0096547&eseg-name=id_affilie&eseg-item=ID_AFFILIE&eurl=http://online.carrefour.fr/electromenager-multimedia/nikon/objectif-af-s-nikkor-14-24-mm-f-2-8g-ed-filtre-uv-77mm_aB0096547_frfr.html#srcid=11068?xtor=AL-3-[Programme_Standard]-[ID_AFFILIE]-[Flux_Produit]-[B0096547]&LGWCODE=B0096547;23678;13]]#carrefour.fr"
   end
 
   test "it should strip tracking params" do
-    assert_equal "http://www.site.com/product?id=1234", Utils.strip_tracking_params("http://www.site.com/product?id=1234&utm_track=456&cm_mmc=457")
+    assert_equal "http://www.site.com/product?id=1234", Utils.strip_tracking_params("http://www.site.com/product?id=1234&utm_track=456&cm_mmc=457&xtor=AL-41")
   end
 end

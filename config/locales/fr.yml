@@ -1,4 +1,7 @@
 fr:
+  will_paginate:
+    previous_label: "<"
+    next_label: ">"
   date:
     formats:
       default: "%d/%m/%Y"

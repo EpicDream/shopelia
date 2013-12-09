@@ -15,7 +15,7 @@ module Scrapers
         open(@feed_urls.shift) do |rss|
           feed = RSS::Parser.parse(rss)
           feed.items.map do |item|
-            Post.new.from(item)
+            post_from(item)
           end
         end
       rescue => e
@@ -23,15 +23,57 @@ module Scrapers
         []
       end
       
+      def exists?
+        !!open(@url)
+      rescue
+        false
+      end
+      
+      private
+      
       def feed_urls
         base = @url.gsub(/\/$/, '')
         ["#{base}/feed/", "#{base}/feeds/posts/default"]
       end
       
-      def exists?
-        !!open(@url)
-      rescue
-        false
+      def post_from(item) #rss item
+        atom_version = item.respond_to?(:content_encoded) ? 2 : 1
+        post = send("post_from_atom_#{atom_version}", item)
+        content = post.content
+        description = post.description
+        post.description = Description.extract(description)
+        post.images = Images.extract(content)
+        post.content = Content.extract(content)
+        post.products = ProductsFinder.new(content, post.link).products
+        post
+      end
+      
+      def post_from_atom_2(item)
+        post = Post.new
+        post.content = Nokogiri::HTML.fragment(item.content_encoded)
+        post.description = Nokogiri::HTML.fragment(item.description)
+        post.published_at = item.pubDate
+        post.link = item.link
+        post.title = item.title
+        post.author = item.author
+        post.categories = item.categories.map(&category_name)
+        post
+      end
+      
+      def post_from_atom_1(item)
+        post = Post.new
+        post.content = Nokogiri::HTML.fragment(item.content.content.to_s)
+        post.description = Nokogiri::HTML.fragment(item.summary.to_s)
+        post.published_at = item.updated.content.to_s
+        post.link = item.link.href
+        post.title = item.title.content.to_s
+        post.author = item.author.name.content.to_s
+        post.categories = item.categories.map(&:term)
+        post
+      end
+      
+      def category_name
+        Proc.new {|category| category.to_s =~ /<category>(.*?)<\/category>/; $1}
       end
       
     end

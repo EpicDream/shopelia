@@ -2,9 +2,14 @@ class Linker
 
   UA = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/29.0.1547.76 Safari/537.36"
 
-  def self.decode url
-    url = URI.unescape(url) if url =~ /https?%3A%2F%2F/
-    url = HTMLEntities.new.decode(url) if url =~ /\&[a-z]{2,6}\;/
+  def self.decode(url, iterations=5)
+    begin
+      url = URI.unescape(url) if url =~ /%[A-F0-9]{2}/
+      url = HTMLEntities.new.decode(url) if url =~ /\&[a-z]{2,6}\;/
+    rescue
+      return url
+    end
+    url = decode(url, iterations-1) if url =~ /%[A-F0-9]{2}|\&[a-z]{2,6}\;/ && iterations > 1
     url
   end
 
@@ -43,6 +48,7 @@ class Linker
     raise if url_m.blank?
     url_m 
   rescue
+    return url
     merchant = Merchant.find_or_create_by_domain(Utils.extract_domain(url))
     if Incident.where(issue:"Linker",resource_type:"Merchant",resource_id:merchant.id,processed:false).where("description like 'Url not monetized%'").count == 0
       Incident.create(
@@ -52,7 +58,6 @@ class Linker
         :description => "Url not monetized : #{url}",
         :severity => Incident::IMPORTANT)      
     end
-    url
   end
   
   private
