@@ -1,35 +1,33 @@
 <div class="coolbox blogs">
-  <!-- A Mettre en Overlay -->
-  <!-- <div>
-    <h5>Créer un nouveau blog</h5>
+  <h3><%= Blog.count %><span>&nbsp;Blogs</span></h3>
+  <a href="#" id="create-blog-link">Créer un blog</a>
+  <div id="create-blog-block" class="create-blog-block-hidden">
     <%= form_for([:admin, Blog.new]) do |f| %>
       <%= f.text_field :name, placeholder:"nom du blog"%>
       <%= f.text_field :url, placeholder:"url du blog"%>
-      <%= f.submit("Intégrer", :class => 'btn') %>
+      <%= f.submit("Intégrer", :class => 'btn btn-success ') %>
     <% end %>
-  </div> -->
+  </div>
 
   <div class="radio-filters">
     <input type='radio' name='scope' value='scraped' checked=checked>
       <span>Scrapés</span>
       <span>(<%= Blog.scraped.count %>)</span>
-    </input>
-    <input type='radio' name='scope' value='scraped.without_posts'>
+      <input type='radio' name='scope' value='scraped.without_posts'>
       <span>Sans articles</span>
       <span>(<%= Blog.scraped.without_posts.count %>)</span>
-    </input>
-    <input type='radio' name='scope' value='not_scraped'>
+      <input type='radio' name='scope' value='not_scraped.not_skipped'>
       <span>A intégrer</span>
       <span>(<%= Blog.not_scraped.count %>)</span>
-    </input>
-    <input type='radio' name='scope' value='skipped'>
+      <input type='radio' name='scope' value='skipped'>
       <span>Non intégrés</span>
       <span>(<%= Blog.skipped.count %>)</span>
-    </input>
-    <input id="name-filer"></input>
-    <%= button_tag "Filtre", class:'btn', id:"filter" do %>
-      <span>Rechercher</span>
+      <br/>
+    <input id="name-filer-pattern" type="search">
+    <%= button_tag "Filtre", class:'btn rounded-btn', id:"name-filter" do %>
+      <i class="icon-search icon-red"></i>
     <% end  %>
+    
   </div>
   
   <div id="blogs-list">

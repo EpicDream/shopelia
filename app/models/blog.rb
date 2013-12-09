@@ -13,7 +13,11 @@ class Blog < ActiveRecord::Base
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
   scope :not_scraped, -> { scraped(false) }
-  scope :skipped, -> { where(skipped:true) }
+  scope :skipped, ->(skipped=true) { where(skipped:skipped) }
+  scope :not_skipped, -> { skipped(false) }
+  scope :with_name_like, ->(pattern) { 
+    where('url like :pattern or name like :pattern', pattern:"%#{pattern}%") unless pattern.blank?
+  }
   
   def fetch
     self.update_attributes(scraped:true) unless self.scraped
@@ -24,11 +28,19 @@ class Blog < ActiveRecord::Base
     end
     self.reload
   end
+
+  def skipped=skip
+    self.scraped = false if skip
+    write_attribute(:skipped, skip)
+  end
   
-  def self.batch_create_from_csv content
-    blogs = []
-    CSV.parse(content) { |row| blogs << Blog.create({name:row[1], url:row[0]}) }
-    blogs
+  def scraped=scrap
+    self.skipped = false if scrap
+    write_attribute(:scraped, scrap)
+  end
+  
+  def country
+    read_attribute(:country) || 'FR'
   end
   
   private

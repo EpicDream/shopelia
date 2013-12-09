@@ -94,9 +94,10 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "In stock", "Available for Immediate Shipment.", "Please allow 4-6 weeks for delivery.", "expected ship date",
               "disponible", "Délai 3 à 5 jours", "1 article disponible", "Plus que 7 produits chez notre fournisseur",
               "Plus que 9 produits disponibles", "Dernière paire !", "Plus que 3 paires !", "EN COURS DE RÉAPPRO",
-              "More than 10 available", "1 available", "Last one", "Dernier article !", "STOCKS LIMITÉS" ]
+              "More than 10 available", "1 available", "Last one", "Dernier article !", "STOCKS LIMITÉS", "stock limité",
+              "4 disponible(s)", "Plus de 10 disponibles" ]
     array.each do |str|
-      assert_equal true, MerchantHelper.parse_availability(str)[:avail]
+      assert_equal true, MerchantHelper.parse_availability(str)[:avail], "with #{str}"
     end
   end
 
@@ -117,9 +118,10 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "Erreur: Désolé, mais le produit que vous avez demandé n'a pas été trouvé !",
               "La page que vous recherchez est introuvable.", "Ce produit n'existe plus ! Mais...",
               "CE PRODUIT N’EST MALHEUREUSEMENT PLUS DISPONIBLE.", "L'article ne peut pas être affiché.",
-              "Currently unavailable.", "SOLD OUT" ]
+              "Currently unavailable.", "SOLD OUT", "0 available", "Disponible uniquement en magasin",
+              "Ce produit n'est plus commercialisé par Maisons du Monde" ]
     array.each do |str|
-      assert_equal false, MerchantHelper.parse_availability(str)[:avail]
+      assert_equal false, MerchantHelper.parse_availability(str)[:avail], "with #{str}"
     end
   end
 

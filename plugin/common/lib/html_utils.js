@@ -66,6 +66,7 @@ function getClasses(jelem) {
 // If complete is false, stop when an id is found, or when discriminant classes are found and add only these.
 function fromParentSelector(jelement, complete) {
   var tag = jelement[0].tagName;
+  if (tag.search(/\W/) !== -1) return '*';
   // TAGNAME
   var res = tag.toLowerCase();
   // ID

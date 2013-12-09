@@ -9,8 +9,8 @@ class Image < ActiveRecord::Base
   has_attached_file :picture, 
                     :styles => SIZES,
                     :convert_options => { :small => "-quality 20", :large => "-quality 80" },
-                    :url  => "/assets/images/:fmd5/:style/:md5.:extension",
-                    :path => ":rails_root/public/assets/images/:fmd5/:style/:md5.jpg"
+                    :url  => "/images/:fmd5/:style/:md5.:extension",
+                    :path => ":rails_root/public/images/:fmd5/:style/:md5.jpg"
                                         
   before_validation :create_files
   after_post_process { self.picture_sizes = formats.to_json }
