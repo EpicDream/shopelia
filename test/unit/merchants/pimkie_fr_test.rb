@@ -11,6 +11,7 @@ class PimkieFrTest < ActiveSupport::TestCase
     @helper = PimkieFr.new(@url)
 
     @availabilities = {
+      "ACCUEIL > PARTY LOOK > PARTY LOOK (39)" => false,
     }
     @images = {
       input: ["http://www.pimkie.fr/img/FichesFichier/130596_1_vignette_323009_912A09_TH_1.JPG"],
