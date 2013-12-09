@@ -48,6 +48,7 @@ class Linker
     raise if url_m.blank?
     url_m 
   rescue
+    return url
     merchant = Merchant.find_or_create_by_domain(Utils.extract_domain(url))
     if Incident.where(issue:"Linker",resource_type:"Merchant",resource_id:merchant.id,processed:false).where("description like 'Url not monetized%'").count == 0
       Incident.create(
@@ -57,7 +58,6 @@ class Linker
         :description => "Url not monetized : #{url}",
         :severity => Incident::IMPORTANT)      
     end
-    url
   end
   
   private

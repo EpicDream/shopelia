@@ -1,14 +1,14 @@
-class Api::Flink::LooksController < Api::ApiController
-  skip_before_filter :authenticate_user!
+class Api::Flink::LooksController < Api::Flink::BaseController
+  skip_before_filter :authenticate_flinker!
   before_filter :retrieve_looks, :only => :index
   before_filter :prepare_scope
   
   api :GET, "/looks", "Get looks"
   def index
     render json: {
-      page: @page,
+      published_before: @before,
+      published_after: @after,
       per_page: @per_page,
-      total: @looks_total,
       looks: ActiveModel::ArraySerializer.new(@looks, scope:@scope)
     }
   end
@@ -16,11 +16,15 @@ class Api::Flink::LooksController < Api::ApiController
   private
 
   def retrieve_looks
-    @page = params[:page] || 1
+    @before = Time.at(params[:published_before].to_i) unless params[:published_before].blank?
+    @after = Time.at(params[:published_after].to_i) unless params[:published_after].blank?
     @per_page = params[:per_page] || 10
+
     query = Look.where(is_published:true)
-    @looks = query.order("published_at desc").paginate(page:@page, per_page:@per_page)
-    @looks_total = query.count
+    query = query.where("published_at < ?", @before) if @before.present?
+    query = query.where("published_at > ?", @after) if @after.present?
+
+    @looks = query.order("published_at desc").limit(@per_page)
   end
 
   def prepare_scope
