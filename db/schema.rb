@@ -254,7 +254,7 @@ ActiveRecord::Schema.define(:version => 20131209141556) do
     t.datetime "updated_at",    :null => false
   end
 
-  add_index "flinker_likes", ["flinker_id"], :name => "index_flinker_likes_on_flinker_id"
+  add_index "flinker_likes", ["flinker_id", "resource_type", "resource_id"], :name => "index_flinker_likes_on_all_fields"
   add_index "flinker_likes", ["resource_type", "resource_id"], :name => "index_flinker_likes_on_resource_type_and_resource_id"
 
   create_table "flinkers", :force => true do |t|

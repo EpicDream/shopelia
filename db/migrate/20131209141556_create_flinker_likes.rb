@@ -8,7 +8,7 @@ class CreateFlinkerLikes < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :flinker_likes, :flinker_id
+    add_index :flinker_likes, [:flinker_id, :resource_type, :resource_id], :name => "index_flinker_likes_on_all_fields"
     add_index :flinker_likes, [:resource_type, :resource_id]
   end
 end
