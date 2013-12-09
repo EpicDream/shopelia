@@ -14,6 +14,7 @@ class Admin::VikingController < Admin::AdminController
     stats = []
     merchants.each do |m|
       hash = {}
+      hash[:viking_support] = m.mapping_id.present?
       hash[:name] = m[0]
       hash[:total] = m[1][false].to_f + m[1][true].to_f
       hash[:rate] = hash[:total] > 0 ? m[1][false].to_f*100 / hash[:total] : 0
