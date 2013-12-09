@@ -18,7 +18,7 @@ var SaturnSession = function(saturn, prod) {
   this.initialStrategy = this.strategy;
   this.options = new SaturnOptions(this.mapping, this.argOptions);
 
-  this.rescueTimeout = setTimeout(this.onTimeout, satconf.SESSION_RESCUE);
+  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.SESSION_RESCUE);
 };
 
 SaturnSession.counter = 0;
@@ -227,7 +227,7 @@ SaturnSession.prototype.sendFinalVersions = function() {
 SaturnSession.prototype.preEndSession = function() {
   this.strategy = 'ended'; // prevent
   clearTimeout(this.rescueTimeout);
-  this.rescueTimeout = setTimeout(this.onTimeout, satconf.SESSION_RESCUE * 10);
+  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.SESSION_RESCUE * 10);
   this.saturn.freeTab(this.tabId);
 };
 

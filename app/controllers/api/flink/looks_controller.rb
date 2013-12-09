@@ -19,7 +19,7 @@ class Api::Flink::LooksController < Api::ApiController
     @page = params[:page] || 1
     @per_page = params[:per_page] || 10
     query = Look.where(is_published:true)
-    @looks = query.order("created_at desc").paginate(page:@page, per_page:@per_page)
+    @looks = query.order("published_at desc").paginate(page:@page, per_page:@per_page)
     @looks_total = query.count
   end
 

@@ -22,6 +22,104 @@ The matched element is highlight. If the matching is good he can pass to the nex
 
 When finished, it can click on the 'Finished' button.
 
+Petit Guide de la Création de Mapping (PGCM)
+--------------------------------------------
+
+Globalement, quand une même information se trouve à différents endroits en fonction de la page,
+il est conseillé de faire plusieurs paths, du plus spécific/précis au plus général.
+
+### Titre (name)
+
+### Description (description)
+Bien penser à concaténer toutes les descriptions.
+
+### Marque (brand)
+Si elle est dans le titre ce n'est pas grave.
+
+### Prix (price)
+Il y a souvent deux cas, donc deux paths :
+
+1. d'abord le prix barré;
+2. ensuite le prix normal.
+
+### Prix barré (price_strikeout)
+Voir Prix ci-dessus.
+
+### Prix de livraison (price_shipping)
+Souvent le prix de livraison est commun à tous les produits,
+ou alors il y a un prix par défault qui n'est pas affiché en général.
+Récupérez-le, celui-ci va aller dans le MerchantHelper.
+  
+Essayez de trouver des objets très différents en poids / volume,
+et qui on peut être un prix de livraison différent indiqué sur la page produit.
+  
+Il y a aussi régulièrement un prix de commande au delà duquel la livraison est offerte.
+Récupérez-le, il ira aussi dans le MerchantHelper.
+
+### Disponibilité (availability)
+Souvent absent, il va falloir ruser.
+On considère dans ce cas, que si la dispo est absente, c'est que le produit est en stock.
+On précise ce paramètre dans le MerchantHelper. Mais nous n'allons pas le faire tout de suite,
+car d'abord, il faut trouver tous les autres cas !
+  
+Il faut dans un premier temps chercher des produits avec des couleurs/tailles/options en général non disponible,
+en rupture de stock, en cours de réapproviennement, etc.
+  
+Ensuite, on va laisser aller voir dans l'admin/Viking tous les produits déjà demandés.
+Il y a des grandes chances qu'on trouve des liens mal formés, vers des catégories, des produits plus proposés, etc.
+Quand un produit n'est plus proposé, on arrive souvent sur la page de recherche/catégorie avec des produits similaires.
+Un moyen de s'en apercevoir est de chercher le nombre de résultats ("154 articles pour cette recherche").
+On va ensuite préciser dans le MerchantHelper (dans @availabilities) que si l'availability match /\d+ articles/i,
+c'est que le produit n'est pas disponible.
+  
+FAIRE TRES ATTENTION A L'ORDRE DES PATHS !
+
+### Image principale (image_url)
+Pour un produit, la plupart du temps, on a des miniatures ou thumb (~50x50 px),
+une grande image ~ (500x500 px) et un zoom (~ 1000x1000 px) quand on clic ou qu'on passe sur la grande image.
+On veut bien évidemment récupérer le zoom pour chaque image.
+  
+ATTENTION ! Souvent on ne peut pas récupérer directement le zoom de l'image principale,
+celui-ci n'est disponible dans le DOM que quand on est sur la grande image.
+  
+On récupère donc la src de la grande image dans image_url,
+et les src des miniatures dans images.
+  
+Souvent la base de ces url est communes, avec en plus l'id du produit (5489),
+du numéro de l'image pour ce produit (1, 2, 3, etc),
+et de la taille de l'image désirée (thumb/zoom, s/m/l/xl, 50x50/640x640, etc).
+On va donc chercher ce qui caractérise la taille, et ce qu'il faut changer pour passer de la miniature directement au zoom !
+  
+Cela ce traduira par une regex dans le MerchantHelper (dans @image_sub).
+Par exemple, pour NikeCom, on a
+
+    @image_sub = [/(?<=wid=|hei=)\d+(?=&)/, '1860']
+
+qui dit qu'il faut chercher dans l'url les endroits on on trouve "wid=" ou "hei=" suivit de chiffres, avec un "=" après,
+et qu'il faut remplacer ces chiffres par "1860".
+
+### Autres images (images)
+Voir ci-dessus.
+
+### Rating (rating)
+Pour les sites qui proposent de noter les articles, on récupère le score, noté sur 5.
+  
+ATTENTION ! Si le score n'est pas noté sur 5, il faudra le converture en note sur 5 dans le MerchantHelper.
+
+### Option 1 (option1)
+De préférence la couleur.
+  
+ATTENTION ! Même si des couleurs sont indisponibles, c'est à dire grisées par exemple,
+il faut les récupérer quand même, car souvent, cela veut juste dire que la couleur n'est pas disponible pour la taille sélectionnée,
+mais qu'elle est disponible pour d'autres tailles.
+
+### Option 2 (option2)
+De préférence la taille.
+  
+ATTENTION ! Il ne faut récupérer que les tailles disponibles, c'est à dire non grisées par exemple.
+
+### Option N (optionN)
+
 Developpers
 -----------
 

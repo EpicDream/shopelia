@@ -44,7 +44,7 @@ define(['chrome_logger', 'mapping'], function(logger, Mapping) {
     chrome.storage.local.get(['openTabs', "mappings"], function(hash) {
       var url = hash.openTabs[tabId];
       var mapping = hash.mappings[url];
-      Mapping.save(mapping).done(function() {
+      Mapping.save(mapping, undefined, url).done(function() {
         logger.debug("("+tabId+") New mapping #"+mapping.id+" sended.");
         ariane.clean(tabId, true);
       }).fail(function(err) {

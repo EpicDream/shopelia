@@ -1,5 +1,5 @@
 ---
-"version": "2.5.4"
+"version": "2.5.6"
 "default":
   #### Global options
   ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
@@ -15,7 +15,7 @@
   "DELAY_BEFORE_REASK_MAPPING": 300000 # 5 min
   "SESSION_RESCUE": 300000 # 5 min
   "MIN_NB_TABS": 0
-  "MAX_NB_TABS": 15
+  "MAX_NB_TABS": 5
   "consum": false
 
   #### Chrome options
