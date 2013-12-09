@@ -22,7 +22,7 @@ class Admin::VikingController < Admin::AdminController
       stats << hash if hash[:total] >= 5
     end
     
-    @merchant_stats = stats.sort_by { |k| -k[:total] }
+    @merchant_stats = stats.sort_by { |k| [k[:viking_support] ? -1 : 0, -k[:total]] }
     
     respond_to do |format|
       format.html

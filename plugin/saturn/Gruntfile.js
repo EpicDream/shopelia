@@ -96,7 +96,7 @@ module.exports = function(grunt) {
           mainConfigFile: "require_config.js",
           optimize: "none",
           name: 'crawler',
-          include: ['satconf'],
+          include: ['satconf', 'src/helper'],
           out: 'build/crawler.js',
         }
       },

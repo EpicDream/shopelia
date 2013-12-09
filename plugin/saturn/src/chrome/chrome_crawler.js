@@ -1,8 +1,11 @@
 
-require(['chrome_logger', 'crawler', "satconf"], function(logger, Crawler) {
+require(['chrome_logger', 'crawler', 'src/helper', "satconf"], function(logger, Crawler, helper) {
   "use strict";
 
+window.Crawler = Crawler;
 logger.level = logger[satconf.log_level];
+var h = helper.get(location.href),
+  crawlHelper = h && h.crawler;
 
 chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   if (sender.id != chrome.runtime.id) return;
@@ -103,7 +106,10 @@ document.head.appendChild(script);
 
 // To handle redirection, that throws false 'complete' state.
 $(document).ready(function() {
-  setTimeout(goNextStep, 100);
+  if (crawlHelper && crawlHelper.at_load)
+    crawlHelper.at_load(goNextStep);
+  else
+    setTimeout(goNextStep, 100);
 });
 
 });
