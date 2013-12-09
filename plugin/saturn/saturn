@@ -1,3 +1,3 @@
 #!/bin/bash
 
-google-chrome --load-extension=.; google-chrome --uninstall-extension=.
+google-chrome --disable-extensions-http-throttling --load-extension=.; google-chrome --uninstall-extension=.
