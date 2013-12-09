@@ -24,6 +24,6 @@ plugin/priv_keys/
 *.sublime-project
 *.sublime-workspace
 
-public/images/collections/
+public/images
 .DS_Store
 dump.rdb

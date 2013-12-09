@@ -246,11 +246,14 @@ require(['chrome_logger', 'jquery', 'jquery-ui', 'jquery-mobile'], function(logg
   };
 
   panel.onPathOkBtnClicked = function(event) {
-    if (newPathInput.val() !== "")
-      if (! confirm("Il y a un nouveau path prêt à être ajouté : êtes vous sur de vouloir continuer ?")) {
+    if (newPathInput.val() !== "" ) {
+      if (pathsList.children().length === 0) {
+        panel.onNewPathAdd();
+      } else if (! confirm("Il y a un nouveau path prêt à être ajouté : êtes vous sur de vouloir continuer ?")) {
         event.preventDefault();
         return false;
       }
+    }
 
     panel.savePathsPage();
     chrome.storage.local.get(['mappings'], function(hash) {
