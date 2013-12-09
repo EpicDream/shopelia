@@ -9,12 +9,20 @@ define(['logger', 'core_extensions'], function(logger) {
 var helper = {};
 
 helper.help = function (session) {
-  if (session.url.search(/^https?:\/\/www\.priceminister\.com/) !== -1) {
-    this.priceminister.help(session);
-  } else if (session.url.search(/^https?:\/\/www\.rueducommerce\.fr/) !== -1) {
-    this.rueducommerce.help(session);
-  } else if (session.url.search(/^https?:\/\/www\.luisaviaroma\.com/) !== -1) {
-    this.luisaviaroma.help(session);
+  var h = this.get(session.url);
+  if (h)
+    h.help(session);
+};
+
+helper.get = function (url) {
+  if (url.search(/^https?:\/\/www\.priceminister\.com/) !== -1) {
+    return this.priceminister;
+  } else if (url.search(/^https?:\/\/www\.rueducommerce\.fr/) !== -1) {
+    return this.rueducommerce;
+  } else if (url.search(/^https?:\/\/www\.luisaviaroma\.com/) !== -1) {
+    return this.luisaviaroma;
+  } else if (url.search(/^https?:\/\/www\.brandalley\.fr/) !== -1) {
+    return this.brandalley;
   }
 };
 
@@ -68,6 +76,20 @@ helper.luisaviaroma.help = function (session) {
 
 helper.luisaviaroma.before_crawling = function(callback) {
   setTimeout(callback, 1000);
+};
+
+helper.brandalley = {
+  help: function () {},
+  crawler: {
+    at_load: function(callback) {
+      setTimeout(function () {
+        var popup = document.querySelector("#closePopUp");
+        if (popup)
+          popup.click(); // close
+        callback();
+      }, 1000);
+    },
+  },
 };
 
 return helper;
