@@ -10,5 +10,9 @@ module Poster
       form
     end
     
+    def submit form
+      form.submit
+    end
+    
   end
 end

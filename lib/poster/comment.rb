@@ -1,9 +1,8 @@
-require_relative 'publishers/wordpress'
+require 'pathname'
 
 module Poster
-  PUBLISHERS = [Wordpress]
-  
   class Comment
+    
     attr_accessor :comment, :url, :email, :author, :form, :website_url
     
     def initialize comment, author, email, website_url=nil, post_url=nil
@@ -20,9 +19,8 @@ module Poster
     def deliver comment=nil
       return unless @publisher
       @comment = comment if comment
-      fill @form
-      @form.submit
-      true
+      @form = fill @form
+      submit @form
     rescue => e
       report_incident("Submit form failure")
       false
@@ -34,11 +32,22 @@ module Poster
     end
     
     def publisher
+      return @publisher if @publisher
       return unless @url
       @page = @agent.get(@url)
-      forms = @page.forms
+      
       PUBLISHERS.each { |publisher|
-        if @form = forms.detect { |form| form.action =~ publisher::COMMENT_ACTION }
+        if publisher.respond_to?(:page)
+          page = publisher.page(@agent, @url)
+          next unless page
+          @page = page
+        end
+        
+        if publisher.respond_to?(:login)
+          @agent = publisher.login(@agent) 
+        end
+        @page = @agent.get(@page.uri) #reload after login
+        if @form = @page.form_with(action: publisher::COMMENT_ACTION )
           extend publisher
           return publisher
         end
@@ -58,5 +67,14 @@ module Poster
     
   end
   
+  def self.publishers
+    Dir.glob(File.join(File.dirname(__FILE__), 'publishers/*.rb')).map { |path|
+      require path  
+      path = Pathname.new(path)
+      klass_name = "Poster::#{path.basename.to_s[0..-4].camelize}"
+      klass_name.constantize
+    }
+  end
   
+  PUBLISHERS = Poster.publishers
 end
