@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131205180125) do
+ActiveRecord::Schema.define(:version => 20131210131519) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -79,13 +79,14 @@ ActiveRecord::Schema.define(:version => 20131205180125) do
   create_table "blogs", :force => true do |t|
     t.string   "url"
     t.string   "name"
-    t.datetime "created_at",                    :null => false
-    t.datetime "updated_at",                    :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
     t.integer  "flinker_id"
     t.string   "avatar_url"
     t.string   "country"
-    t.boolean  "scraped",    :default => true
-    t.boolean  "skipped",    :default => false
+    t.boolean  "scraped",     :default => true
+    t.boolean  "skipped",     :default => false
+    t.boolean  "can_comment", :default => false
   end
 
   create_table "cart_items", :force => true do |t|

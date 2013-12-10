@@ -39,7 +39,6 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "fill blogspot comment form" do
-    @poster = Poster::Comment.new(comment:COMMENT)
     @poster.url = "http://1991-today.blogspot.fr/2013/12/come-back-to-me.html"
     @poster.website_url = WEBSITE_URL
     assert_equal Poster::Blogspot, @poster.publisher
