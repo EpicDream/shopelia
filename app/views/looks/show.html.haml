@@ -1,0 +1,33 @@
+#background
+#pane
+  #cover
+  #content
+    #top
+      = @look.flinker.name
+      = @look.name
+      = link_to @look.name, @look.url
+    #center
+    #bottom
+      Brought to you by #{link_to "Flink"}
+      = image_tag('flink/appstore.png')
+
+
+
+
+:javascript
+  $(document).ready(function(){
+    var background = $('#background');
+     background.css({
+     "background": "url(#{@look.look_images.first.picture.url(:small)}) center center fixed",
+     "background-size": "100% auto",
+     "-webkit-filter":  "blur(40px)",
+     "filter": "url(#blur)",
+     });
+
+     $("#pane #cover").css({
+        "background": "url(#{@look.look_images.first.picture.url(:large)}) no-repeat center center",
+        "background-size": "auto 600px"
+
+     })
+
+  });
