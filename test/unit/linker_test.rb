@@ -18,8 +18,6 @@ class LinkerTest < ActiveSupport::TestCase
         :out => "http://www.barneys.com/on/demandware.store/Sites-BNY-Site/default/Product-Show?pid=502921664" },
       { :in  => "http://rstyle.me/n/c92f6m4xn",
         :out => "http://www.alexandermcqueen.com/fr/mcq/veste_cod49134687.html" },
-      { :in  => 'http://track.webgains.com/click.html?wgcampaignid=145659&amp;wgprogramid=3900&amp;product=1&amp;wglinkid=120411&amp;productname=MEDION%C2%AE+LIFE%C2%AE+P89626+Serveur+NAS+1%2C5+To+%28MD+86407%29&amp;wgtarget=http://a.nonstoppartner.net/a/?i=click&amp;client=medion&amp;l=fr&amp;camp=deep&amp;nw=wga1&amp;msn=50043049&amp;deepid=MEDION%25C2%25AE%2BLIFE%25C2%25AE%2BP89626%2BServeur%2BNAS%2B1%252C5%2BTo%2B%2528MD%2B86407%2529%2F50043049A1%3Fcategory%3Dnetwork_devices',
-        :out => 'http://www.medion.com/fr/prod/MEDION+LIFE+P89626+Serveur+NAS+1,5+To+(MD+86407)/50043049A1?category=network_devices&pAction=8797534929027&wt_cc1=deep&wt_cc2=50043049&wt_cc3=&wt_mc=fr.extern.affiliate.webgains.nonstop' },
       { :in  => "http://track.effiliation.com/servlet/effi.redir?id_compteur=11283848&url=http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html",
         :out => "http://www.priceminister.com/offer/buy/103220572" },
       { :in  => "http://www.priceminister.com/offer/buy/103220572/hub-4-ports-usb-avec-rechauffeur-de-tasse-spyker-accessoire.html",
