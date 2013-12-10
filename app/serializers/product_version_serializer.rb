@@ -37,7 +37,7 @@ class ProductVersionSerializer < ActiveModel::Serializer
   end
 
   def images
-    object.product_images.map { |i| {url:i.url, size:i.size} }
+    object.product_images.sort_by { |i| i.id }.map { |i| {url:i.url, size:i.size} }
   end
 
   def include_description?
