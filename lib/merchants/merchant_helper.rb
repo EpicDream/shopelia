@@ -238,14 +238,13 @@ class MerchantHelper
   def process_options version
     return version unless @config[:searchBackgroundImageOrColorForOptions]
     options = @config[:searchBackgroundImageOrColorForOptions]
-    options = [options] if ! options.kind_of?(Array)
-    options.each do |nb|
+    Array(options).each do |nb|
       option = "option#{nb}".to_sym
       if version[option].present? && version[option]["text"].blank? &&
           version[option]["src"].blank? && version[option]["style"].present?
-        version[option]["style"] =~ /background(?:-color)? *: *(#?\w+) *;/i
+        version[option]["style"] =~ /background(?:-color)? *: *(#[A-F\d]{3}{1,2}|\w+) *;/i
         version[option]["text"] = $~[1] if $~
-        version[option]["style"] =~ /background(?:-image)? *: *url\(([^\)]+)\) ?/i
+        version[option]["style"] =~ /background(?:-image)? *: *url\(([^\)]+)\)/i
         version[option]["src"] = $~[1] if $~
       end
     end

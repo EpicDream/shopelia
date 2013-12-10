@@ -12,7 +12,7 @@ class ImageTest < ActiveSupport::TestCase
   end
   
   test "create image from its www url" do
-    path_match = Regexp.new("/assets/images/e5c/small/e5ce9070e3df4bd078a26bf29f1bbde4.jpg")
+    path_match = Regexp.new("/images/e5c/small/e5ce9070e3df4bd078a26bf29f1bbde4.jpg")
     assert_match path_match, @image.picture.url(:small)
   end
   

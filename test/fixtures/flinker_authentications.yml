@@ -1,0 +1,4 @@
+amine:
+  provider: "facebook"
+  uid: "693006605"
+  token: "toto"

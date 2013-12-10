@@ -59,6 +59,10 @@ Saturn.prototype.stop = function() {
     this.tabs.opened[tabId].toClose = true;
 };
 
+Saturn.prototype.canRestart = function () {
+  return this.productQueue.length === 0 && this.batchQueue.length === 0 && Object.keys(this.productsBeingProcessed).length === 0;
+};
+
 // Increase or decrease nb tabs depending product demand.
 Saturn.prototype.updateNbTabs = function() {
   if (this.tabs.nbUpdating > 0)

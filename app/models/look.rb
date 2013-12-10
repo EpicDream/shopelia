@@ -19,6 +19,10 @@ class Look < ActiveRecord::Base
     self.post.update_attributes(processed_at:Time.now)
   end
 
+  def liked_by? flinker
+    !FlinkerLike.where("flinker_id=? and resource_type=? and resource_id=?", flinker.id, FlinkerLike::LOOK, self.id).empty?
+  end
+
   private
 
   def generate_uuid

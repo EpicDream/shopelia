@@ -100,4 +100,15 @@ module AdminHelper
       end)      
   end
 
+  def viking_merchant_background_class s
+    if s[:rate] == 100
+      "ok"
+    elsif s[:rate] > 90
+      "warning"
+    elsif ! s[:viking_support]
+      "missing"
+    else
+      "error"
+    end
+  end
 end

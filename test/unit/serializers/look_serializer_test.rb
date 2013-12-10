@@ -29,5 +29,17 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert hash[:look][:flinker].present?
     assert_equal 0, hash[:look][:products].count
     assert_equal 2, hash[:look][:images].count
+    assert hash[:look][:liked].nil?
+  end
+
+  test "it should set liked by" do
+    flinker = flinkers(:elarch)
+      
+    look_serializer = LookSerializer.new(@look, scope:{flinker:flinker})
+    assert_equal 0, look_serializer.as_json[:look][:liked]
+
+    FlinkerLike.create!(flinker_id:flinker.id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
+    look_serializer = LookSerializer.new(@look, scope:{flinker:flinker})
+    assert_equal 1, look_serializer.as_json[:look][:liked]
   end
 end
