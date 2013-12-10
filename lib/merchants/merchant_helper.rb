@@ -44,10 +44,11 @@ class MerchantHelper
   def self.parse_float str
     str = str.downcase
     # special cases
-    str = str.gsub(/\A.*un total de/, "")
+    str = str.gsub(/\A.*soit( un total de)?/, "")
     str = str.gsub(/\(.*\)/, "") unless str =~ /\(.*(\beur\b|[$€]).*\)/i
     str = str.gsub(/\(.*?\.(?!.*?\))/, "")
     str = str.gsub(/\A.*à partir de/, "")
+    str = str.gsub(/\d+ x [\d,\.]+/, "") # 4 x 39,80 €
     if str =~ /gratuit/ || str =~ /free/ || str =~ /offer[ts]/
       0.0
     else

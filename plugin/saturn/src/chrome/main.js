@@ -43,7 +43,7 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 // Inter-extension messaging. Usefull for Ariane.
 chrome.extension.onConnectExternal.addListener(function(port) {
   if (port.sender.id !== "aomdggmelcianmnecnijkolfnafpdbhm")
-    return logger.warning('Extension', port.sender.id, "try to connect to us");
+    return logger.warn('Extension', port.sender.id, "try to connect to us");
   saturn.externalPort = port;
   port.onMessage.addListener(function(prod) {
     if (prod.tabId === undefined || prod.url === undefined)
