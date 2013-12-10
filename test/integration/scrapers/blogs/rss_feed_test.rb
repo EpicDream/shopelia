@@ -27,13 +27,6 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
     assert_equal "http://www.lapenderiedechloe.com/2013/10/gemo.html", item.link
   end
   
-  test "get html link from post feed link(to update all posts with post feed link)" do
-    parser = Scrapers::Blogs::RSSFeed.new("http://www.lapenderiedechloe.com/")
-    rss_post_link = "http://www.lapenderiedechloe.com/feeds/138721318642763777/comments/default"
-    link = parser.html_link(rss_post_link)
-    
-    assert_equal "http://www.lapenderiedechloe.com/2013/11/soldes-lingerie-body-co.html", link
-  end
 end
 
   
