@@ -39,6 +39,7 @@ class Blog < ActiveRecord::Base
     self.skipped = false if scrap
     write_attribute(:scraped, scrap)
     can_comment?(checkout:true) if scrap
+    scrap
   end
   
   def country

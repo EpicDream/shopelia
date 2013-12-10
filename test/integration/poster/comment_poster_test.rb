@@ -38,6 +38,13 @@ class Poster::CommentTest < ActiveSupport::TestCase
     assert_equal COMMENT, form['comment']
   end
   
+  test "add wordpress token to comment if exists" do
+    @poster.url = "http://www.larevuedekenza.fr/2013/12/essentiel-antwerp-2.html"
+    form = @poster.fill @poster.form
+    token = "381f36947bedfbda52041e209e9713db_1687"
+    assert_equal "#{token} #{COMMENT}", form['comment']
+  end
+  
   test "fill blogspot comment form" do
     @poster.url = "http://1991-today.blogspot.fr/2013/12/come-back-to-me.html"
     @poster.website_url = WEBSITE_URL
@@ -60,6 +67,15 @@ class Poster::CommentTest < ActiveSupport::TestCase
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
     @poster.url = "http://1991-today.blogspot.fr/2013/12/nobody-ever-stops-me.html"
+    assert @poster.deliver
+  end
+  
+  test "deliver comment to wordpress site with no-javascript token" do
+    skip
+    comment = "381f36947bedfbda52041e209e9713db_1687 Super ! Des tenues originales. J'adore le pull"
+    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
+    Incident.expects(:create).never
+    @poster.url = "http://www.larevuedekenza.fr/2013/12/essentiel-antwerp-2.html"
     assert @poster.deliver
   end
 
