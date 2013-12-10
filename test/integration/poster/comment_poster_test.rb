@@ -55,11 +55,12 @@ class Poster::CommentTest < ActiveSupport::TestCase
   
   test "deliver comment to blogspot site" do
     skip
+    comment = "+1 Cette robe est vraiment top. Je crois que je vais casser ma tirelire.."
+    @poster = Poster::Comment.new(comment, NAME, EMAIL)
     Incident.expects(:create).never
-    @poster.url = "http://1991-today.blogspot.fr/2013/12/come-back-to-me.html"
+    @poster.url = "http://1991-today.blogspot.fr/2013/12/nobody-ever-stops-me.html"
     assert @poster.deliver
   end
-  
 
 end
 

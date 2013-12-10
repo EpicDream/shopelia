@@ -21,8 +21,9 @@ module Poster
       @comment = comment if comment
       @form = fill @form
       submit @form
+      true
     rescue => e
-      report_incident("Submit form failure")
+      report_incident("Submit form failure", e)
       false
     end
     
@@ -44,8 +45,9 @@ module Poster
         end
         if publisher.respond_to?(:login)
           @agent = publisher.login(@agent) 
+          @page = @agent.get(@page.uri) #reload after login
         end
-        @page = @agent.get(@page.uri) #reload after login
+        
         if @form = @page.form_with(action: publisher::COMMENT_ACTION )
           extend publisher
           return publisher
@@ -57,7 +59,8 @@ module Poster
     
     private
     
-    def report_incident description=nil
+    def report_incident description=nil, e=nil
+      Rails.logger.error("Poster::Comment\n#{e}\n#{e.backtrace.join("\n")}") if e
       Incident.create(
       :issue => "Poster::Comment", 
       :severity => Incident::IMPORTANT, 
