@@ -24,6 +24,12 @@ class Poster::CommentTest < ActiveSupport::TestCase
     assert_equal Poster::Blogspot, @poster.publisher
   end
   
+  test "include appropriate publisher module blogspot when comment via popup link" do
+    @poster.url = "http://www.maella-b.com/2013/12/barboteuse.html"
+    assert @poster.respond_to?(:form)
+    assert_equal Poster::Blogspot, @poster.publisher
+  end
+  
   test "create incident if publisher not found" do
     Incident.expects(:create)
     @poster.url = "http://www.prixing.fr"
@@ -54,6 +60,15 @@ class Poster::CommentTest < ActiveSupport::TestCase
     assert_equal "#{COMMENT} - #{WEBSITE_URL}", form['commentBody']
   end
   
+  test "fill blogspot comment - popup mode" do
+    @poster.url = "http://www.maella-b.com/2013/12/barboteuse.html"
+
+    @poster.website_url = WEBSITE_URL
+    form = @poster.fill @poster.form
+    
+    assert_equal "#{COMMENT} - #{WEBSITE_URL}", form['postBody']
+  end
+  
   test "deliver comment to wordpress site" do
     skip
     Incident.expects(:create).never
@@ -76,6 +91,15 @@ class Poster::CommentTest < ActiveSupport::TestCase
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
     @poster.url = "http://www.larevuedekenza.fr/2013/12/essentiel-antwerp-2.html"
+    assert @poster.deliver
+  end
+
+  test "deliver comment to blogspot site with comment popup mode" do
+    skip
+    comment = "Cette robe est vraiment top. Elle te va à ravir ! ... J'adore les robes courtes ...;)"
+    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
+    Incident.expects(:create).never
+    @poster.url = "http://www.maella-b.com/2013/12/barboteuse.html"
     assert @poster.deliver
   end
 
