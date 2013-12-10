@@ -29,11 +29,21 @@ module Scrapers
         false
       end
       
+      def html_link post_rss_url
+        url = "#{post_rss_url}?alt=rss"
+        open(url) do |rss|
+          feed = RSS::Parser.parse(rss)
+          feed.items.first.link.to_s.gsub(/\?.*$/, '')
+        end
+      rescue
+        post_rss_url
+      end
+      
       private
       
       def feed_urls
         base = @url.gsub(/\/$/, '')
-        ["#{base}/feed/", "#{base}/feeds/posts/default"]
+        ["#{base}/feed/", "#{base}/feeds/posts/default?alt=rss"]
       end
       
       def post_from(item) #rss item
@@ -62,6 +72,8 @@ module Scrapers
       
       def post_from_atom_1(item)
         post = Post.new
+        puts item.inspect
+        puts item.methods.inspect
         post.content = Nokogiri::HTML.fragment(item.content.content.to_s)
         post.description = Nokogiri::HTML.fragment(item.summary.to_s)
         post.published_at = item.updated.content.to_s
