@@ -56,6 +56,7 @@ class MerchantHelperTest < ActiveSupport::TestCase
     # Special cases
     assert_equal 136.48, MerchantHelper.parse_float("+ Eco Part : 1,50€ soit un total de 136,48€")
     assert_equal 11.99, MerchantHelper.parse_float("so colissimo (2 à 4 jours). 11.99 €")
+    assert_equal 159.20, MerchantHelper.parse_float("159,00 € + Éco-part: 0,20 € soit 159,20 € 4 x 39,80 €")
   end
 
   test "it should parse free shipping" do
