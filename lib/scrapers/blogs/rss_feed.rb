@@ -29,16 +29,6 @@ module Scrapers
         false
       end
       
-      def html_link post_rss_url
-        url = "#{post_rss_url}?alt=rss"
-        open(url) do |rss|
-          feed = RSS::Parser.parse(rss)
-          feed.items.first.link.to_s.gsub(/\?.*$/, '')
-        end
-      rescue
-        post_rss_url
-      end
-      
       private
       
       def feed_urls

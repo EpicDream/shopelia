@@ -26,7 +26,6 @@ module Poster
     
     def submit form
       page = form.submit
-      # form  page.forms_with
     end
     
   end
