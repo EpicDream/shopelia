@@ -148,7 +148,7 @@ define 'chrome_logger', ['logger'], (logger) ->
       if dbSize > 1024
         dbSize /= 2
       else
-        logger.warning "Did not succeed to open database."
+        logger.warn "Did not succeed to open database."
         break
 
   logger.db.transaction (tx) ->

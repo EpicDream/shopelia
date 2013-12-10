@@ -33,6 +33,7 @@ logger.fatal = function() { logger._log('FATAL', (arguments.callee.caller || {})
 logger.err = function() { logger._log('ERROR', (arguments.callee.caller || {}).name, arguments); };
 logger.error = logger.err;
 logger.warn = function() { logger._log('WARN', (arguments.callee.caller || {}).name, arguments); };
+logger.warning = logger.warn;
 logger.good = function() { logger._log('GOOD', undefined, arguments); };
 logger.info = function() { logger._log('INFO', undefined, arguments); };
 logger.verbose = function() { logger._log('VERBOSE', undefined, arguments); };
@@ -43,6 +44,7 @@ logger.isFatal = function() { return this.level >= this.FATAL; };
 logger.isError = function() { return this.level >= this.ERROR; };
 logger.isErr = logger.isError;
 logger.isWarn = function() { return this.level >= this.WARN; };
+logger.isWarning = logger.isWarn;
 logger.isGood = function() { return this.level >= this.GOOD; };
 logger.isInfo = function() { return this.level >= this.INFO; };
 logger.isVerbose = function() { return this.level >= this.VERBOSE; };
