@@ -1,3 +1,19 @@
+var Heart = {
+  box:function(){
+    return $("#heart-overlay");
+  },
+  
+  animate:function(offset, callback){
+    var box = this.box();
+    box.addClass("heart-overlay-show");
+    box.offset(offset);
+    box.one('webkitAnimationEnd animationend', function() { 
+      box.removeClass("heart-overlay-show");
+      callback();
+    });
+  }
+};
+
 $(document).ready(function() {
 
   $(document).on("click", "button[id^=blog-posts]", function() {
@@ -48,23 +64,16 @@ $(document).ready(function() {
     var button = $(this);
     var blogId = button.data('id');
     var offset = button.offset();
-    var heart = $("#heart-overlay");
     var success = false;
     
     $.post("/admin/blogs/" + blogId, {_method:'put', blog:{scraped:true}, fetch:true})
     .success(function() {
       success = true;
     });
-    
-    heart.addClass("heart-overlay-show");
-    heart.offset({ top: offset.top, left: offset.left + 100 });
-    heart.one('webkitAnimationEnd animationend', function() { 
-      heart.removeClass("heart-overlay-show");
-      button.toggle();
+
+    Heart.animate({ top: offset.top, left: offset.left + 100 }, function() {
       if (success) { button.parents("tr").toggle(); }
-      
-    }); 
-    
+    });
   });
   
 });
