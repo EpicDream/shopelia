@@ -7,6 +7,16 @@ namespace :shopelia do
         blog.fetch
       end
     end
-    
+
+    desc "Convert rss link to html link"
+    task :clean_posts_links => :environment do
+      require 'scrapers/blogs/blog'
+      parser = Scrapers::Blogs::RSSFeed.new("")
+      
+      Post.where('link ~* ?', 'feeds.*?commen').each do |post|
+        html_link = parser.html_link(post.link)
+        post.update_attributes(link:html_link) 
+      end
+    end
   end
 end
