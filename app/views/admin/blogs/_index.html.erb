@@ -29,6 +29,13 @@
             <% end  %>
           <% end %>
         </td>
+        <td>
+          <% if blog.can_comment? %>
+          <span class="can-comment" title="Des commentaires peuvent être postés sur ce blog">
+            <i class="icon-comment icon-white"></i>
+          </span>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </tbody>
