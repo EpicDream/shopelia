@@ -70,7 +70,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "deliver comment to wordpress site" do
-    skip
+    skip #OK COMMENT POSTED
     Incident.expects(:create).never
     @poster.url = "http://lepetitmondedejulie.net/2013/12/03/paris-1"
     assert @poster.deliver
@@ -86,7 +86,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "deliver comment to wordpress site with no-javascript token" do
-    skip
+    skip #OK COMMENT POSTED
     comment = "381f36947bedfbda52041e209e9713db_1687 Super ! Des tenues originales. J'adore le pull"
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
