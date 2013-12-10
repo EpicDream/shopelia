@@ -5,13 +5,14 @@ module Poster
     
     attr_accessor :comment, :url, :email, :author, :form, :website_url
     
-    def initialize comment, author, email, website_url=nil, post_url=nil
-      @comment = comment
-      @url = post_url
-      @email = email
+    def initialize args={}
+      @comment = args[:comment]
+      @url = args[:post_url]
+      @email = args[:email]
+      @author = args[:author]
+      @website_url = args[:website_url]
+      
       @agent = Mechanize.new
-      @author = author
-      @website_url = website_url
       @agent.user_agent_alias = 'Mac Safari'
       @publisher = publisher()
     end

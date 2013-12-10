@@ -9,7 +9,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   WEBSITE_URL = "http://flinker.fr"
   
   setup do
-    @poster = Poster::Comment.new(COMMENT, NAME, EMAIL)
+    @poster = Poster::Comment.new(comment:COMMENT, author:NAME, email:EMAIL)
   end
   
   test "include appropriate publisher module wordpress" do
