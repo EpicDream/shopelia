@@ -51,11 +51,14 @@ module Poster
         
         if @form = @page.form_with(action: publisher::COMMENT_ACTION )
           extend publisher
-          return publisher
+          @publisher = publisher
+          break
         end
       }
+      report_incident("Publisher missing") unless @publisher
+      @publisher
+    rescue
       report_incident("Publisher missing")
-      nil
     end
     
     private

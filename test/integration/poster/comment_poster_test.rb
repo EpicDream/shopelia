@@ -39,8 +39,10 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "fill blogspot comment form" do
+    @poster = Poster::Comment.new(comment:COMMENT)
     @poster.url = "http://1991-today.blogspot.fr/2013/12/come-back-to-me.html"
     @poster.website_url = WEBSITE_URL
+    assert_equal Poster::Blogspot, @poster.publisher
     form = @poster.fill @poster.form
     
     assert_equal "#{COMMENT} - #{WEBSITE_URL}", form['commentBody']
@@ -56,7 +58,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   test "deliver comment to blogspot site" do
     skip
     comment = "+1 Cette robe est vraiment top. Je crois que je vais casser ma tirelire.."
-    @poster = Poster::Comment.new(comment, NAME, EMAIL)
+    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
     @poster.url = "http://1991-today.blogspot.fr/2013/12/nobody-ever-stops-me.html"
     assert @poster.deliver
