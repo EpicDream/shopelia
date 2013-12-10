@@ -17,7 +17,7 @@ class Blog < ActiveRecord::Base
   scope :skipped, ->(skipped=true) { where(skipped:skipped) }
   scope :not_skipped, -> { skipped(false) }
   scope :with_name_like, ->(pattern) { 
-    where('url like :pattern or name like :pattern', pattern:"%#{pattern}%") unless pattern.blank?
+    where('url ~* :pattern or name ~* :pattern', pattern:pattern) unless pattern.blank?
   }
   
   def fetch
