@@ -62,8 +62,6 @@ module Scrapers
       
       def post_from_atom_1(item)
         post = Post.new
-        puts item.inspect
-        puts item.methods.inspect
         post.content = Nokogiri::HTML.fragment(item.content.content.to_s)
         post.description = Nokogiri::HTML.fragment(item.summary.to_s)
         post.published_at = item.updated.content.to_s
