@@ -142,6 +142,10 @@ Crawler.selectOption = function (elems, value) {
     elems = elems.filter("[title='"+value.title+"']");
     if (elems.length === 0) elems.end(); // undo last filter.
   }
+  if (elems.length > 1 && value.style && value.style.search(/background/i) !== -1) {
+    elems = elems.filter("[style='"+value.style+"']");
+    if (elems.length === 0) elems.end(); // undo last filter.
+  }
 
   return elems;
 };
