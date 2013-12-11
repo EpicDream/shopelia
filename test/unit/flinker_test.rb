@@ -14,4 +14,22 @@ class FlinkerTest < ActiveSupport::TestCase
 
     assert_equal 0, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
   end
+
+  test "it should create infinitely flinker with email test@flink.io" do
+    Flinker.new(
+      name:"Name",
+      url:"http://www.url.to",
+      is_publisher:true,
+      email:"test@flinker.io",
+      password:"password",
+      password_confirmation:"password")
+    user = Flinker.new(
+      name:"Name",
+      url:"http://www.url.to",
+      is_publisher:true,
+      email:"test@flinker.io",
+      password:"password",
+      password_confirmation:"password")
+    assert user.save
+  end  
 end

@@ -1,7 +1,8 @@
 require 'scrapers/blogs/blog'
+require 'poster/comment'
 
 class Blog < ActiveRecord::Base
-  attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id, :skipped
+  attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id, :skipped, :can_comment
   
   belongs_to :flinker
   has_many :posts, dependent: :destroy
@@ -16,7 +17,7 @@ class Blog < ActiveRecord::Base
   scope :skipped, ->(skipped=true) { where(skipped:skipped) }
   scope :not_skipped, -> { skipped(false) }
   scope :with_name_like, ->(pattern) { 
-    where('url like :pattern or name like :pattern', pattern:"%#{pattern}%") unless pattern.blank?
+    where('url ~* :pattern or name ~* :pattern', pattern:pattern) unless pattern.blank?
   }
   
   def fetch
@@ -37,10 +38,22 @@ class Blog < ActiveRecord::Base
   def scraped=scrap
     self.skipped = false if scrap
     write_attribute(:scraped, scrap)
+    can_comment?(checkout:true) if scrap
+    scrap
   end
   
   def country
     read_attribute(:country) || 'FR'
+  end
+  
+  def can_comment? opt={}
+    return read_attribute(:can_comment) unless opt[:checkout]
+    return if posts.none?
+    poster = Poster::Comment.new
+    poster.url = posts.last.link
+    self.can_comment = !!poster.publisher
+    self.save
+    can_comment?
   end
   
   private

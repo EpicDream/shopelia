@@ -1,12 +1,18 @@
+// ChromeLogger
+// Author : Vincent RENAUDINEAU
+// Created : 2013-11-06
 
-require(['chrome_logger', 'crawler', "satconf"], function(logger, Crawler) {
+require(['chrome_logger', 'crawler', 'src/helper', "satconf"], function(logger, Crawler, helper) {
   "use strict";
 
+window.Crawler = Crawler;
 logger.level = logger[satconf.log_level];
+var h = helper.get(location.href),
+  crawlHelper = h && h.crawler;
 
 chrome.extension.onMessage.addListener(function(hash, sender, callback) {
   if (sender.id != chrome.runtime.id) return;
-  logger.debug("ProductCrawl task received", hash);
+  logger.debug("ProductCrawl", hash.action, "task received", hash);
   var key = "option"+(hash.option),
     result;
   switch(hash.action) {
@@ -30,8 +36,16 @@ chrome.extension.onMessage.addListener(function(hash, sender, callback) {
     callback(result);
 });
 
+Crawler.onbeforeunloadBack = window.onbeforeunload;
+window.onbeforeunload = function() {
+  Crawler.pageWillBeUnloaded = true;
+  if (typeof Crawler.onbeforeunloadBack === 'function')
+    return Crawler.onbeforeunloadBack();
+};
+
 function goNextStep() {
-  chrome.extension.sendMessage("nextStep");
+  if (! Crawler.pageWillBeUnloaded)
+    chrome.extension.sendMessage("nextStep");
 }
 
 function waitAjax() {
@@ -41,69 +55,17 @@ function waitAjax() {
       setTimeout(waitAjax, 100);
     else
       goNextStep();
-  } else {
-    // console.log('Neither jQuery nor Prototype, wait some time...');
+  } else if (! Crawler.pageWillBeUnloaded) {
     setTimeout(goNextStep, satconf.DELAY_BETWEEN_OPTIONS);
-    // logger.debug("in contentscript, going to send 'waitAjax' msg.");
-    // window.postMessage('waitAjax', '*');
   }
 }
 
-window.addEventListener("message", function(event) {
-  if (event.source !== window || event.data !== "ajaxFinished")
-    return;
-  // logger.debug("in contentscript, 'ajaxFinished' msg received.");
-  goNextStep();
-}, false);
-
-// Add a script to header to set in page context window.alert = null.
-// Also add a waitAjax method to survey jQuery and Prototype Ajax pool.
-var script = document.createElement("script");
-script.type = "text/javascript";
-script.innerHTML = "(function () {"+
-  "window.alert = function() {};\n" +
-  "function ajaxDone() {\n"+
-    "waitAjaxTimer = undefined;" +
-    "window.postMessage('ajaxFinished', '*');"+
-  "}\n" +
-  "var DELAY_BETWEEN_OPTIONS = " + satconf.DELAY_BETWEEN_OPTIONS + "," +
-    "waitAjaxTimer;\n"+
-  "function waitAjax() {\n"+
-    // "var d = new Date(), time = d.toLocaleTimeString() + '.' + d.getMilliseconds();"+
-    "if (waitAjaxTimer === undefined)"+
-      "setTimeout(function () {if (waitAjaxTimer === undefined) return; clearTimeout(waitAjaxTimer); ajaxDone();}, 10000); /* wait max 10s */" +
-    "if (typeof jQuery !== 'undefined') {\n"+
-      "if (jQuery.active !== 0) {"+
-        // "console.log(time, 'jQuery.active != 0, wait a little time...');"+
-        "waitAjaxTimer = setTimeout(waitAjax, 100);"+
-      "} else {"+
-        // "console.log(time, 'jQuery.active == 0 !');"+
-        "setTimeout(ajaxDone, 100);"+
-      "}\n"+
-    "} else if (typeof Ajax !== 'undefined') {\n"+
-      "if (Ajax.activeRequestCount !== 0) {"+
-        // "console.log(time, 'Ajax.activeRequestCount != 0, wait a little time...');"+
-        "waitAjaxTimer = setTimeout(waitAjax, 100);"+
-      "} else {"+
-        // "console.log(time, 'Ajax.activeRequestCount == 0 !');"+
-        "setTimeout(ajaxDone, 100);"+
-      "}"+
-    "} else {"+
-      // "console.log(time, 'Neither jQuery nor Prototype, wait some time...');"+
-      "setTimeout(ajaxDone, DELAY_BETWEEN_OPTIONS);"+
-    "}\n"+
-  "}\n"+
-  "window.addEventListener('message', function(event) {"+
-    "if (event.source !== window || event.data !== 'waitAjax')"+
-      "return;"+
-    "waitAjax();"+
-  "}, false);\n"+
-"})()";
-document.head.appendChild(script);
-
 // To handle redirection, that throws false 'complete' state.
 $(document).ready(function() {
-  setTimeout(goNextStep, 100);
+  if (crawlHelper && crawlHelper.at_load)
+    crawlHelper.at_load(goNextStep);
+  else
+    setTimeout(goNextStep, 100);
 });
 
 });

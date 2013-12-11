@@ -100,5 +100,6 @@ module Shopelia
 
     # Static image server
     config.image_host = "https://www.shopelia.com"
+    config.flinker_google_account = {email:"anne.fashion.paris@gmail.com", paswword:"bidiboussi"}
   end
 end

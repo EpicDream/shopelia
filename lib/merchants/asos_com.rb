@@ -6,6 +6,7 @@ class AsosCom < MerchantHelper
     @default_shipping_info = "7 jours ouvrés."
     @availabilities = {
       /\d+ styles? found/ => false, # search page
+      /\d+-\d+ of \d+/i => false, # search page
     }
     @image_sub = [/(?<=\d)[a-z]+(?=.je?pg$)/, 'xxl']
 

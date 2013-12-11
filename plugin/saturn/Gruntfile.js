@@ -96,7 +96,7 @@ module.exports = function(grunt) {
           mainConfigFile: "require_config.js",
           optimize: "none",
           name: 'crawler',
-          include: ['satconf'],
+          include: ['satconf', 'src/helper'],
           out: 'build/crawler.js',
         }
       },
@@ -122,7 +122,7 @@ module.exports = function(grunt) {
           'build/chrome_saturn.js',
           'src/chrome/main.js'
         ],
-        dest: 'build/background.js'
+        dest: 'dist/background.js'
       },
       contentscript: {
         src: [
@@ -132,7 +132,7 @@ module.exports = function(grunt) {
           "build/crawler.js",
           "src/chrome/chrome_crawler.js",
         ],
-        dest: 'build/contentscript.js'
+        dest: 'dist/contentscript.js'
       }
     },
     // Uglify them in prod.
@@ -202,8 +202,8 @@ module.exports = function(grunt) {
         manifest.content_scripts[0].js[0] = 'dist/contentscript.min.js';
         break;
       default :
-        manifest.background.scripts[0] = 'build/background.js';
-        manifest.content_scripts[0].js[0] = 'build/contentscript.js';
+        manifest.background.scripts[0] = 'dist/background.js';
+        manifest.content_scripts[0].js[0] = 'dist/contentscript.js';
     }
     grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
   });
@@ -215,7 +215,7 @@ module.exports = function(grunt) {
   grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev']);
   grunt.registerTask('dev-prod', ['test', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
   grunt.registerTask('prod-dev', ['test', 'config:prod-dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
-  grunt.registerTask('staging', ['test', 'config:staging', 'requirejs', 'concat', 'manifest:min', 'clean:prod']);
-  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'manifest:min', 'clean:prod']);
+  grunt.registerTask('staging', ['test', 'config:staging', 'requirejs', 'concat', 'manifest', 'clean:prod']);
+  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'manifest', 'clean:prod']);
   grunt.registerTask('test-mappings', ['test', 'jasmine:mappings']);
 };

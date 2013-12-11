@@ -120,6 +120,13 @@ ATTENTION ! Il ne faut récupérer que les tailles disponibles, c'est à dire no
 
 ### Option N (optionN)
 
+ATTENTION ! Pour les options supplémentaires, il ne faut récupérer que celles disponibles, c'est à dire non grisées par exemple.
+
+Un bon path d'option est un path, qui pointe vers un élément ayant un id, une image, ou ayant un texte explicite.
+Il faut préférer l'image si elle est disponible.
+Pour certains élements, il n'y a ni texte, ni élément image, ce qui est problématique pour l'affichage utilisateur.
+Ces éléments ont alors soit une image "en background-image" ou alors une couleur "en background-color", qui sont toutes les deux des .
+
 Developpers
 -----------
 

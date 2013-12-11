@@ -4,7 +4,8 @@ class EbayCom < MerchantHelper
     super
     @availabilities = {
       "Bidding has ended" => false,
-      "This listing has ended" => false,
+      "This listing [hw]as ended" => false,
+      "See all results" => false,
     }
   end
 end

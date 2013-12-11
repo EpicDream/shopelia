@@ -156,6 +156,7 @@ class AlgoliaTest < ActiveSupport::TestCase
   end
 
   def test_publicidees
+    skip
     pi = AlgoliaFeed::Publicidees.new(index_name: 'testing', debug:0, tmpdir: '/tmp')
     pi.algolia.connect('testing')
 

@@ -8,6 +8,7 @@ class PimkieFr < MerchantHelper
 
     @image_sub = [%r{vignette(\w+?)_TH_}, 'zoom\1_HD_']
     @availabilities = {
+      /^ACCUEIL.+\(\d+\)$/i => false,
     }
 
     @config[:setDefaultPriceShippingAlways] = true

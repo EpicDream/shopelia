@@ -43,7 +43,7 @@ chrome.tabs.onRemoved.addListener(function(tabId) {
 // Inter-extension messaging. Usefull for Ariane.
 chrome.extension.onConnectExternal.addListener(function(port) {
   if (port.sender.id !== "aomdggmelcianmnecnijkolfnafpdbhm")
-    return logger.warning('Extension', port.sender.id, "try to connect to us");
+    return logger.warn('Extension', port.sender.id, "try to connect to us");
   saturn.externalPort = port;
   port.onMessage.addListener(function(prod) {
     if (prod.tabId === undefined || prod.url === undefined)
@@ -54,6 +54,79 @@ chrome.extension.onConnectExternal.addListener(function(port) {
     saturn.onProductReceived(prod);
   });
 });
+
+// Methods to restart adBlock periodically.
+var adBlock = saturn.adBlock = {
+  id: "cfhdojbkjhnklbpkdaibdccddilifddb",
+  lastRestart: Date.now(),
+  restart: function (callback) {
+    logger.debug("AdBlock : restart !");
+    this.onRestartCb = callback;
+    if (this.canRestart()) {
+      saturn.pause();
+      this.disable();
+    } else
+      setInterval(function () {
+        adBlock.restart();
+      }, 1000*60*5);
+  },
+  disable: function () {logger.debug("Disable AdBlock"); chrome.management.setEnabled(this.id, false);},
+  enable: function () {logger.debug("Enable AdBlock"); chrome.management.setEnabled(this.id, true, this.onRestart);},
+  onRestart: function () {
+    logger.debug("AdBlock restarted !");
+    saturn.resume();
+    adBlock.lastRestart = Date.now();
+    if (adBlock.restartEveryDelay) {
+      adBlock.restartIn(adBlock.restartEveryDelay);
+    } else if (adBlock.nextRestartDate) {
+      adBlock.nextRestartDate += 1000*3600*24;
+      adBlock.restartIn(adBlock.nextRestartDate - Date.now());
+    }
+    if (adBlock.onRestartCb)
+      adBlock.onRestartCb();
+  },
+  canRestart: function () { return saturn.canRestart(); },
+  restartIn: function (ms) {
+    setTimeout(function() {
+      adBlock.restart();
+    }, ms);
+  },
+  restartAt: function (hour, min) {
+    var now = new Date();
+    this.nextRestartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, min || 0, 0, 0);
+    if (this.nextRestartDate < now)
+      this.nextRestartDate += 1000*3600*24;
+    this.restartIn(this.nextRestartDate - now);
+  },
+  restartEvery: function (ms) {
+    if (! ms) return;
+    this.restartEveryDelay = ms;
+    this.restartIn(this.restartEveryDelay);
+  },
+};
+chrome.management.onDisabled.addListener(function (extension) {
+  if (extension.id === adBlock.id)
+    adBlock.enable();
+});
+// Restart every 12h
+adBlock.restartEvery(satconf.ADBLOCK_RESTART_DELAY);
+
+// Methods to restart Chrome periodically
+saturn.restartChrome = function () {
+  if (saturn.canRestart()) {
+    logger.debug("Chrome : restart !");
+    chrome.tabs.create({url: "chrome://restart/"});
+  } else {
+    setTimeout(function() {
+      saturn.restartChrome();
+    }, 1000*60*5); // Retry every 5 min
+  }
+};
+saturn.lastChromeRestart = Date.now();
+if (satconf.CHROME_RESTART_DELAY)
+  setTimeout(function() {
+    saturn.restartChrome();
+  }, satconf.CHROME_RESTART_DELAY);
 
 if (satconf.run_mode === 'auto')
   saturn.start();
