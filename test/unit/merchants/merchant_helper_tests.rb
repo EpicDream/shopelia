@@ -51,7 +51,7 @@ module MerchantHelperTests
   def test_it_should_parse_specific_availability
     return unless @helper.availabilities.size > 0
     assert_not_nil @availabilities, "There are availabilities. You must define tests !"
-    assert_operator @helper.availabilities.size, :>=, @availabilities.size, "Missing tests !"
+    assert_operator @availabilities.size, :>=, @helper.availabilities.size, "Missing tests !"
 
     @availabilities.each do |txt, result|
       assert_equal result, @helper.parse_availability(txt)[:avail], "with #{txt}"

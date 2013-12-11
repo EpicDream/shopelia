@@ -12,7 +12,9 @@ class EbayComTest < ActiveSupport::TestCase
 
     @availabilities = {
       "Bidding has ended on this item. The seller has relisted this item or one like this." => false,
+      "This listing was ended by the seller because there was an error in the listing." => false,
       "This listing has ended." => false,
+      "See all results" => false,
     }
   end
 
