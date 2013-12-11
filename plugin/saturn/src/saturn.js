@@ -24,8 +24,6 @@ function preProcessData(data) {
   return data;
 }
 
-Saturn.prototype = {};
-
 //
 Saturn.prototype.start = function() {
   if (this.crawl)

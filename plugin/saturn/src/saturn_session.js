@@ -23,8 +23,6 @@ var SaturnSession = function(saturn, prod) {
 
 SaturnSession.counter = 0;
 
-SaturnSession.prototype = {};
-
 SaturnSession.prototype.start = function() {
   logger.info(this.logId(), "Start crawling !", logger.level >= logger.DEBUG ? this : "(url="+this.url+")");
   this.next();
