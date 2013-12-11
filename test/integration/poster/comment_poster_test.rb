@@ -85,6 +85,15 @@ class Poster::CommentTest < ActiveSupport::TestCase
     assert @poster.deliver
   end
   
+  test "deliver comment to blogspot site 2" do
+    skip
+    comment = "Superbes ces chaussures Claudie Pierlot. Je connaissais pas cette marque. L'ensemble te va à ravir."
+    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
+    Incident.expects(:create).never
+    @poster.url = "http://1991-today.blogspot.fr/2013/12/pale-grey-light-pink.html"
+    assert @poster.deliver
+  end
+  
   test "deliver comment to wordpress site with no-javascript token" do
     skip #OK COMMENT POSTED
     comment = "381f36947bedfbda52041e209e9713db_1687 Super ! Des tenues originales. J'adore le pull"

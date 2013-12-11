@@ -29,11 +29,12 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
   
   test "Atom 1.0 : dont get rss link url for a post, get html link" do
     skip
-    urls = ["http://www.adenorah.com", "http://www.youmakefashion.fr", "http://wonder-is-forever-young.blogspot.com", "http://www.thelittleworldoffashion.fr", "http://www.alamode2sasou.com"]
+    @blog = Scrapers::Blogs::Blog.new
+    urls = ["http://www.adenorah.com", "http://www.youmakefashion.fr", "http://wonder-is-forever-young.blogspot.com", "http://www.thelittleworldoffashion.fr", "http://www.alamode2sasou.com", "http://www.maella-b.com/"]
     urls.each do |url|
       @blog.url = url
       posts = @blog.posts
-      assert(posts.none?{ |post| puts post.link;post.link =~ /feeds/ }, "Failure with #{url}")
+      assert(posts.none?{ |post| post.link =~ /feeds|blogger\.com/ }, "Failure with #{url}")
     end
   end
   
