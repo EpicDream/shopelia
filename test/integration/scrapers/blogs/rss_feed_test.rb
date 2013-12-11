@@ -27,6 +27,24 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
     assert_equal "http://www.lapenderiedechloe.com/2013/10/gemo.html", item.link
   end
   
+  test "Atom 1.0 : dont get rss link url for a post, get html link" do
+    skip
+    urls = ["http://www.adenorah.com", "http://www.youmakefashion.fr", "http://wonder-is-forever-young.blogspot.com", "http://www.thelittleworldoffashion.fr", "http://www.alamode2sasou.com"]
+    urls.each do |url|
+      @blog.url = url
+      posts = @blog.posts
+      assert(posts.none?{ |post| puts post.link;post.link =~ /feeds/ }, "Failure with #{url}")
+    end
+  end
+  
+  test "generate incident if a post link is rss link" do
+    parser = Scrapers::Blogs::RSSFeed.new("")
+    Incident.expects(:create)
+    post = Post.new(link:"http://www.adenorah.com/2013/11/feeds/toto/titi")
+    parser.stubs(:post_from_atom_1).returns(post)
+    parser.send(:post_from, stub)
+  end
+  
 end
 
   
