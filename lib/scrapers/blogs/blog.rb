@@ -60,8 +60,7 @@ module Scrapers
       end
       
       def report_incident e
-        Rails.logger.error("== Blogs scraper == #{e.inspect}\n")
-        Rails.logger.error("#{e.backtrace.join("\n")}\n")
+        Rails.logger.error("== Blogs scraper == #{e.inspect}\n#{e.backtrace.join("\n")}\n")
         message = @posts && @posts.none? ? "No posts - #{@url}" : "Exception - #{@url}"
         Incident.create(
           :issue => "Scrapers::Blog#posts",
