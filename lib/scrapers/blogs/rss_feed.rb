@@ -62,10 +62,11 @@ module Scrapers
       
       def post_from_atom_1(item)
         post = Post.new
+        link = item.links.detect { |link| link.type == "text/html" }
         post.content = Nokogiri::HTML.fragment(item.content.content.to_s)
         post.description = Nokogiri::HTML.fragment(item.summary.to_s)
         post.published_at = item.updated.content.to_s
-        post.link = item.link.href
+        post.link = link.href.gsub(/#.*$/, '')
         post.title = item.title.content.to_s
         post.author = item.author.name.content.to_s
         post.categories = item.categories.map(&:term)

@@ -34,6 +34,16 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
       assert !(post.content =~ /CDATA/)
     end
   end
+
+  test "Atom 1.0 : dont get rss link url for a post, get html link" do
+    skip
+    urls = ["http://www.adenorah.com", "http://www.youmakefashion.fr", "http://wonder-is-forever-young.blogspot.com", "http://www.thelittleworldoffashion.fr", "http://www.alamode2sasou.com"]
+    urls.each do |url|
+      @blog.url = url
+      posts = @blog.posts
+      assert(posts.none?{ |post| puts post.link;post.link =~ /feeds/ }, "Failure with #{url}")
+    end
+  end
   
 end
 
