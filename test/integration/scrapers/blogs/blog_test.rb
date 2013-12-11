@@ -22,7 +22,6 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     assert posts.count > 0
     posts.each do |post|
       assert !post.link.blank?
-      assert post.images.count > 0
       assert post.published_at
     end
   end

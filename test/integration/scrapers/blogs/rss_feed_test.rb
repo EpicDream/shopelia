@@ -24,7 +24,7 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
     parser = Scrapers::Blogs::RSSFeed.new("http://www.lapenderiedechloe.com/")
     item = parser.items.last
     
-    assert_equal "http://www.lapenderiedechloe.com/2013/10/gemo.html", item.link
+    assert_match /lapenderiedechloe.com\/201\d\/\d\d\//, item.link
   end
   
   test "Atom 1.0 : dont get rss link url for a post, get html link" do
