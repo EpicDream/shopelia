@@ -96,7 +96,9 @@ Crawler.parseOption = function (elems) {
     h.xpath = hu.getElementXPath(elem);
     h.cssPath = hu.getElementCSSSelectors($(elem));
     h.saturnPath = elems.saturnPath;
-    h.hash = [h.tagName,h.id,h.text,h.location,h.value,h.src].join(';');
+    matchBack = h.style && h.style.match(/background(\-color|\-image)? *: *(url\(([^\)]+)\)|#[A-F\d]{3,6}|\w+) *;/i);
+    matchBack = matchBack && matchBack[0];
+    h.hash = [h.id,h.text,h.value,h.src,h.href,matchBack].join(';');
     return h;
   });
 };
