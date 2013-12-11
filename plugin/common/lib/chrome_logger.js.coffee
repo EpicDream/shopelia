@@ -151,8 +151,9 @@ define 'chrome_logger', ['logger'], (logger) ->
         logger.warn "Did not succeed to open database."
         break
 
-  logger.db.transaction (tx) ->
-    tx.executeSql "CREATE TABLE IF NOT EXISTS logs(time BIGINT, level INT, caller VARCHAR, content TEXT)"
+  if logger.db?
+    logger.db.transaction (tx) ->
+      tx.executeSql "CREATE TABLE IF NOT EXISTS logs(time BIGINT, level INT, caller VARCHAR, content TEXT)"
 
   logger.writeToBD = (level, caller, args) ->
     return if ! logger.db
