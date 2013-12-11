@@ -39,7 +39,7 @@ module Scrapers
       def post_from(item) #rss item
         atom_version = item.respond_to?(:content_encoded) ? 2 : 1
         post = send("post_from_atom_#{atom_version}", item)
-        if post.link =~ /feeds/
+        if post.link =~ /feeds|blogger\.com/
           report_incident("Post link is rss link #{post.link}")
           return
         end
@@ -66,7 +66,8 @@ module Scrapers
       
       def post_from_atom_1(item)
         post = Post.new
-        link = item.links.detect { |link| link.type == "text/html" }
+        links = item.links.delete_if { |link| link.href =~ /feeds|blogger\.com/ }
+        link = links.detect { |link| link.type == "text/html" }
         post.content = Nokogiri::HTML.fragment(item.content.content.to_s)
         post.description = Nokogiri::HTML.fragment(item.summary.to_s)
         post.published_at = item.updated.content.to_s
