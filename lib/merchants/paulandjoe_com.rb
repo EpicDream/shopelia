@@ -11,5 +11,6 @@ class PaulandjoeCom < MerchantHelper
 
     @config[:setDefaultPriceShippingAlways] = true
     @config[:setDefaultShippingInfoAlways] = true
+    @config[:searchBackgroundImageOrColorForOptions] = 1
   end
 end

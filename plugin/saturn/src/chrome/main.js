@@ -60,7 +60,7 @@ var adBlock = saturn.adBlock = {
   id: "cfhdojbkjhnklbpkdaibdccddilifddb",
   lastRestart: Date.now(),
   restart: function (callback) {
-    console.log("AdBlock : restart !");
+    logger.debug("AdBlock : restart !");
     this.onRestartCb = callback;
     if (this.canRestart()) {
       saturn.pause();
@@ -70,9 +70,10 @@ var adBlock = saturn.adBlock = {
         adBlock.restart();
       }, 1000*60*5);
   },
-  disable: function () {chrome.management.setEnabled(this.id, false);},
-  enable: function () {chrome.management.setEnabled(this.id, true, this.onRestart);},
+  disable: function () {logger.debug("Disable AdBlock"); chrome.management.setEnabled(this.id, false);},
+  enable: function () {logger.debug("Enable AdBlock"); chrome.management.setEnabled(this.id, true, this.onRestart);},
   onRestart: function () {
+    logger.debug("AdBlock restarted !");
     saturn.resume();
     adBlock.lastRestart = Date.now();
     if (adBlock.restartEveryDelay) {
@@ -113,6 +114,7 @@ adBlock.restartEvery(satconf.ADBLOCK_RESTART_DELAY);
 // Methods to restart Chrome periodically
 saturn.restartChrome = function () {
   if (saturn.canRestart()) {
+    logger.debug("Chrome : restart !");
     chrome.tabs.create({url: "chrome://restart/"});
   } else {
     setTimeout(function() {

@@ -16,11 +16,19 @@
   },
   "content_scripts": [
     {
+      "matches": [
+        "*://*/*"
+      ],
+      "js": [
+      ]
+    },
+    {
       "run_at": "document_start",
       "matches": [
         "*://*/*"
       ],
       "js": [
+        "src/alert_inhibiter.js"
       ]
     }
   ],
