@@ -1,18 +1,39 @@
+- content_for :head do
+  %meta{content: "???????????", name: "description"}/
+  %meta{content: "???????????", property: "fb:app_id"}/
+  %meta{content: "???????????", property: "og:title"}/
+  %meta{content: "???????????", property: "og:description"}/
+  %meta{content: "http://flink.io/looks/" + @look.uuid, property: "og:url"}/
+  %meta{content: @look.look_images.first.picture.url(:small), property: "og:image"}/
+  %meta{content: "photo", name: "twitter:card"}/
+  %meta{content: "@flinkapp", name: "twitter:site"}/
+  %meta{content: "flink.io", name: "twitter:domain"}/
+  %meta{content: @look.flinker.name, name: "twitter:creator"}/
+  %meta{content: @look.name, name: "twitter:title"}/
+  %meta{content: @look.look_images.first.picture.url(:small) , name: "twitter:image:src"}/
+  %meta{content: "??????", name: "twitter:app:id:iphone"}/
+  %meta{content: "Flink", name: "twitter:app:name:iphone"}/
+  %meta{content: "flink://looks/" + @look.uuid , name: "twitter:app:url:iphone"}/
+
 #background
 #pane
   #cover
   #content
-    #top
-      = @look.flinker.name
-      = @look.name
-      = link_to @look.name, @look.url
+    #header
+      %h1= @look.flinker.name
+      %h3= @look.name
+
     #center
-    #bottom
-      Brought to you by #{link_to "Flink"}
+      = link_to  @look.url, target: "_blank" do
+        .button-flat-empty
+          More pictures of this look
+      #share-buttons
+        .fb-like{"data-action" => "like", "data-href" => "https://developers.facebook.com/docs/plugins/", "data-layout" => "button_count", "data-share" => "false", "data-show-faces" => "true"}
+        %iframe.twttr-like{allowtransparency: "true", frameborder: "0", scrolling: "no", src: "https://platform.twitter.com/widgets/tweet_button.html", style: "width:80px; height:20px;"}
+    #footer
+      %h4
+        Brought to you by #{link_to "Flink"}
       = image_tag('flink/appstore.png')
-
-
-
 
 :javascript
   $(document).ready(function(){
@@ -31,3 +52,4 @@
      })
 
   });
+
