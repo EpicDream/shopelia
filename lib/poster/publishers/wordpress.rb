@@ -12,6 +12,7 @@ module Poster
     
     def submit form
       form.submit
+      true
     end
     
     def token

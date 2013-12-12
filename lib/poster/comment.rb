@@ -14,6 +14,10 @@ module Poster
       
       @agent = Mechanize.new
       @agent.user_agent_alias = 'Mac Safari'
+      @agent.keep_alive = true
+      @agent.redirect_ok = :all
+      @agent.follow_meta_refresh = :anywhere
+      
       @publisher = publisher()
     end
     
@@ -22,7 +26,6 @@ module Poster
       @comment = comment if comment
       @form = fill @form
       submit @form
-      true
     rescue => e
       report_incident("Submit form failure", e)
       false
@@ -39,16 +42,16 @@ module Poster
       @page = @agent.get(@url)
       
       PUBLISHERS.each { |publisher|
-        if publisher.respond_to?(:page)
-          page = publisher.page(@agent, @url)
-          next unless page
-          @page = page
-        end
         if publisher.respond_to?(:login)
           @agent = publisher.login(@agent) 
           @page = @agent.get(@page.uri) #reload after login
         end
         
+        if publisher.respond_to?(:page)
+          page = publisher.page(@agent, @url)
+          next unless page
+          @page = page
+        end
         if @form = @page.form_with(action: publisher::COMMENT_ACTION )
           extend publisher
           @publisher = publisher

@@ -4,7 +4,7 @@ require 'poster/comment'
 
 class Poster::CommentTest < ActiveSupport::TestCase
   COMMENT = "J'adore, vraiment tendance! Ca me donne des envies d'achat tout ça !"
-  EMAIL = "anne.paris@free.fr"
+  EMAIL = "anne.fashion.paris@gmail.com"
   NAME = "Anne de Paris"
   WEBSITE_URL = "http://flinker.fr"
   
@@ -76,30 +76,39 @@ class Poster::CommentTest < ActiveSupport::TestCase
     assert @poster.deliver
   end
   
-  test "deliver comment to blogspot site" do
-    skip
-    comment = "+1 Cette robe est vraiment top. Je crois que je vais casser ma tirelire.."
-    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
-    Incident.expects(:create).never
-    @poster.url = "http://1991-today.blogspot.fr/2013/12/nobody-ever-stops-me.html"
-    assert @poster.deliver
-  end
-  
-  test "deliver comment to blogspot site 2" do
-    skip
-    comment = "Superbes ces chaussures Claudie Pierlot. Je connaissais pas cette marque. L'ensemble te va à ravir."
-    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
-    Incident.expects(:create).never
-    @poster.url = "http://1991-today.blogspot.fr/2013/12/pale-grey-light-pink.html"
-    assert @poster.deliver
-  end
-  
   test "deliver comment to wordpress site with no-javascript token" do
     skip #OK COMMENT POSTED
     comment = "381f36947bedfbda52041e209e9713db_1687 Super ! Des tenues originales. J'adore le pull"
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
     @poster.url = "http://www.larevuedekenza.fr/2013/12/essentiel-antwerp-2.html"
+    assert @poster.deliver
+  end
+  
+  test "deliver comment to blogspot site" do
+    skip
+    comment = "Tu portes vraiment bien le black&white. Les produits Jenyffer sont pas si mal en fait."
+    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
+    Incident.expects(:create).never
+    @poster.url = "http://haveafashionbreak.blogspot.fr/2013/12/black-white.html"
+    assert @poster.deliver
+  end
+  
+  test "deliver comment to blogspot site 2" do
+    skip
+    comment = "Super photos! J'adore. Je vais craquer pour un des ces bracelets"
+    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
+    Incident.expects(:create).never
+    @poster.url = "http://ledressingdeleeloo.blogspot.fr/2013/12/le-dressing-de-leeloo-x-latelier-des.html"
+    assert @poster.deliver
+  end
+
+  test "deliver comment to blogspot site 3" do
+    # skip
+    comment = "Super Pull! J'adore. Je vais craquer pour ce collier"
+    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
+    Incident.expects(:create).never
+    @poster.url = "http://haveafashionbreak.blogspot.fr/2013/12/the-tunnel.html"
     assert @poster.deliver
   end
 
