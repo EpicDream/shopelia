@@ -11,7 +11,7 @@ module Poster
       form['Passwd'] = GOOGLE_ACCOUNT[:password]
       form.submit
       agent
-    end
+    end 
     
     def self.page agent, url
       page = agent.get(url)
@@ -24,11 +24,15 @@ module Poster
       comment = "#{@comment} - #{@website_url}"
       form['commentBody'] = comment if form.has_field?('commentBody')
       form['postBody'] = comment if form.has_field?('postBody')
+      form['identityMenu'] = "GOOGLE"
       form
     end
     
     def submit form
       page = form.submit
+      puts page.uri.to_s
+      true
+      # page.uri.to_s !~ /comment-iframe/
     end
     
   end
