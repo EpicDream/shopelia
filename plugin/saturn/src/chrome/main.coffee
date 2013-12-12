@@ -1,9 +1,9 @@
-# Tests for Saturn.
+# Main for Saturn.
 # Author : Vincent Renaudineau
 # Created at : 2013-10-07
 
-require ['chrome_logger', 'src/saturn', 'src/chrome/saturn', 'satconf'],
-(logger, Saturn, ChromeSaturn) ->
+require ['chrome_logger', 'src/chrome/saturn', 'src/chrome/adblock', 'satconf'],
+(logger, ChromeSaturn, AdBlock) ->
   # Default to debug until Chrome propose tabs for each levels.
   logger.level = logger[satconf.log_level]
 
@@ -12,9 +12,9 @@ require ['chrome_logger', 'src/saturn', 'src/chrome/saturn', 'satconf'],
 
   # On contentscript ask next step (next color/size tuple).
   chrome.extension.onMessage.addListener (msg, sender, response) ->
-    return if sender.id != chrome.runtime.id || ! sender.tab || ! saturn.sessions.byTabId[sender.tab.id]
-    if msg is "nextStep" && saturn.sessions.byTabId[sender.tab.id]
-      saturn.sessions.byTabId[sender.tab.id].next()
+    return if sender.id != chrome.runtime.id || ! sender.tab || ! saturn.sessionsByTabId[sender.tab.id]
+    if msg is "nextStep" && saturn.sessionsByTabId[sender.tab.id]
+      saturn.sessionsByTabId[sender.tab.id].next()
 
   # On extension button clicked.
   chrome.browserAction.onClicked.addListener (tab) ->
@@ -30,7 +30,7 @@ require ['chrome_logger', 'src/saturn', 'src/chrome/saturn', 'satconf'],
       saturn.parseCurrentPage(tab)
 
   chrome.tabs.onRemoved.addListener (tabId) ->
-    Saturn.prototype.closeTab.call(saturn, tabId)
+    saturn.closeTab(tabId)
 
   # Inter-extension messaging. Usefull for Ariane.
   chrome.extension.onConnectExternal.addListener (port) ->
@@ -45,58 +45,11 @@ require ['chrome_logger', 'src/saturn', 'src/chrome/saturn', 'satconf'],
       prod.keepTabOpen = true
       saturn.onProductReceived(prod)
 
-  # Methods to restart adBlock periodically.
-  adBlock = saturn.adBlock = {
-    id: "cfhdojbkjhnklbpkdaibdccddilifddb"
-    lastRestart: Date.now()
-    restart: (callback) ->
-      logger.debug("AdBlock : restart !")
-      this.onRestartCb = callback
-      if this.canRestart()
-        saturn.pause()
-        this.disable()
-      else
-        setInterval( () ->
-          adBlock.restart()
-        , 1000*60*5)
-    disable: () ->
-      logger.debug("Disable AdBlock")
-      chrome.management.setEnabled(this.id, false)
-    enable: () ->
-      logger.debug("Enable AdBlock")
-      chrome.management.setEnabled(this.id, true, this.onRestart)
-    onRestart: () ->
-      logger.debug("AdBlock restarted !")
-      saturn.resume()
-      adBlock.lastRestart = Date.now()
-      if adBlock.restartEveryDelay
-        adBlock.restartIn(adBlock.restartEveryDelay)
-      else if adBlock.nextRestartDate
-        adBlock.nextRestartDate += 1000*3600*24
-        adBlock.restartIn(adBlock.nextRestartDate - Date.now())
-      adBlock.onRestartCb() if adBlock.onRestartCb
-    canRestart: () ->
-      return saturn.canRestart()
-    restartIn: (ms) ->
-      setTimeout( () ->
-        adBlock.restart()
-      , ms)
-    restartAt: (hour, min) ->
-      now = new Date()
-      this.nextRestartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, min || 0, 0, 0)
-      if this.nextRestartDate < now
-        this.nextRestartDate += 1000*3600*24
-      this.restartIn(this.nextRestartDate - now)
-    restartEvery: (ms) ->
-      return if (! ms)
-      this.restartEveryDelay = ms
-      this.restartIn(this.restartEveryDelay)
-  }
   chrome.management.onDisabled.addListener (extension) ->
-    if extension.id is adBlock.id
-      adBlock.enable()
+    if extension.id is AdBlock.id
+      AdBlock.enable()
   # Restart every 12h
-  adBlock.restartEvery(satconf.ADBLOCK_RESTART_DELAY)
+  AdBlock.restartEvery(satconf.ADBLOCK_RESTART_DELAY)
 
   # Methods to restart Chrome periodically
   saturn.restartChrome = () ->

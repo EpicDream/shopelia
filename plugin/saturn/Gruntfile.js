@@ -153,6 +153,7 @@ module.exports = function(grunt) {
           'vendor/require.js',
           'require_config.js',
           'build/chrome_saturn.js',
+          'build/src/chrome/adblock.js',
           'build/src/chrome/main.js'
         ],
         dest: 'dist/background.js'

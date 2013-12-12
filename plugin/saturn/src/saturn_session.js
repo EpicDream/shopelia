@@ -11,23 +11,26 @@ define(['logger', './saturn_options', './helper', 'core_extensions', 'satconf'],
 var SaturnSession = function(saturn, prod) {
   $extend(this, prod);
   this.saturn = saturn;
+  this.canSubTask = false;
 
   this.id = ++SaturnSession.counter;
   this.prod_id = prod.id;
   this.strategy = this.strategy || 'normal';
+  this.argOptions = this.argOptions || {};
   this.initialStrategy = this.strategy;
   this.options = new SaturnOptions(this.mapping, this.argOptions);
 
   this.helper = Helper.get(prod.url);
 
   this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.SESSION_RESCUE);
+
+  this.results = []; // store each version's result.
 };
 
 SaturnSession.counter = 0;
 
 SaturnSession.prototype.start = function() {
   logger.info(this.logId(), "Start crawling !", logger.isDebug() ? this : "(url="+this.url+")");
-  this.cleanTab();
   this.openUrl();
 };
 
@@ -58,15 +61,17 @@ SaturnSession.prototype.next = function() { try {
           this.strategy = 'full';
         } else
           this.strategy = 'done';
-        if (this.helper && this.helper.before_crawling)
+        if (this.helper && this.helper.before_crawling) {
           this.helper.before_crawling(function() { this.crawl(); }.bind(this));
-        else
+        } else {
           this.crawl();
+        }
       }
       break;
 
     case "options" :
-      this.createSubTasks();
+      if (this.canSubTask)
+        this.createSubTasks();
       this.strategy = 'full';
       this.next();
       break;
@@ -188,6 +193,7 @@ SaturnSession.prototype.crawl = function() {
 //
 SaturnSession.prototype.subTaskEnded = function(subSession) {
   delete this._subTasks[subSession._subTaskId];
+  this.results = this.results.concat(subSession.results);
   if (Object.keys(this._subTasks).length === 0) {
     delete this._subTasks;
     if (this.strategy === 'done' || this.strategy === 'ended')
@@ -229,7 +235,6 @@ SaturnSession.prototype.preEndSession = function() {
   this.strategy = 'ended'; // prevent
   clearTimeout(this.rescueTimeout);
   this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.SESSION_RESCUE * 10);
-  this.saturn.freeTab(this.tabId);
 };
 
 //
@@ -249,7 +254,6 @@ SaturnSession.prototype.onTimeout = function() {
 SaturnSession.prototype.logId = function () {
   var s = this.id ? '#'+this.id : '';
   s += this.prod_id ? '/'+this.prod_id : '';
-  s += this.tabId ? '@'+this.tabId : '';
   return s;
 };
 
@@ -257,45 +261,29 @@ SaturnSession.prototype.logId = function () {
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.openUrl = function(url) {
-  return this.saturn.openUrl(this, url || this.url);
+  throw "SaturnSession.openUrl: abstract function";
 };
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.evalAndThen = function(cmd, callback) {
-  return this.saturn.evalAndThen(this, cmd, callback);
+  throw "SaturnSession.evalAndThen: abstract function";
 };
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.sendWarning = function(msg) {
-  return this.saturn.sendWarning(this, msg);
+  window.$e = this;
+  logger.warn(this.logId(), msg, "\n$e =", window.$e);
 };
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.sendError = function( msg) {
-  return this.saturn.sendError(this, msg);
+  window.$e = this;
+  logger.err(this.logId(), msg, "\n$e =", window.$e);
 };
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.sendResult = function(result) {
-  return this.saturn.sendResult(this, result);
-};
-
-////////////////////////////////////////////////////
-
-// Virtual, must be reimplement to handle tabId is undefined and supercall with tabId.
-// You must call "this.tabs.nbUpdating++;" before anything else.
-SaturnSession.prototype.openNewTab = function() {
-  return this.saturn.openNewTab();
-};
-
-// Virtual, may be reimplement and supercall
-SaturnSession.prototype.cleanTab = function() {
-  return this.saturn.cleanTab(this.tabId);
-};
-
-// Virtual, must be reimplement and supercall
-SaturnSession.prototype.closeTab = function() {
-  return this.saturn.closeTab(this.tabId);
+  this.results.push(result);
 };
 
 return SaturnSession;
