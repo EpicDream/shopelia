@@ -8,14 +8,11 @@ define(['logger', 'uri', './saturn_session', 'satconf', 'core_extensions'], func
 
 var Saturn = function() {
   this.Session = SaturnSession; // Might be modified by subclasses.
-  this.crawl = false;
   this.sessions = {};
   this.finished = {};
   this.productQueue = [];
   this.batchQueue = [];
   this.mappings = {};
-
-  this.results = {};
 };
 
 //
@@ -24,58 +21,8 @@ function preProcessData(data) {
   return data;
 }
 
-//
-Saturn.prototype.start = function() {
-  this.resume();
-};
-
-//
-Saturn.prototype.pause = function() {
-  this.crawl = false;
-  clearTimeout(this.mainCallTimeout);
-};
-
-//
-Saturn.prototype.resume = function() {
-  if (this.crawl)
-    return;
-  this.crawl = true;
-  this.main();
-};
-
-//
-Saturn.prototype.stop = function() {
-  this.pause();
-};
-
 Saturn.prototype.canRestart = function () {
   return this.productQueue.length === 0 && this.batchQueue.length === 0 && Object.keys(this.sessions).length === 0;
-};
-
-Saturn.prototype.main = function() {
-  if (! this.crawl) return;
-  this.loadProductUrlsToExtract(
-    this.onArrayToExtractReceived.bind(this),
-    this.onArrayToExtractFailed.bind(this)
-  );
-};
-
-Saturn.prototype.onArrayToExtractReceived = function(array) {
-  if (! array || ! (array instanceof Array)) {
-    logger.err("Error when getting new products to extract : received data is undefined or is not an Array");
-    this.mainCallTimeout = setTimeout(this.main.bind(this), satconf.DELAY_BETWEEN_PRODUCTS);
-  } else if (array.length > 0) {
-    if (logger.level <= logger.WARNING)
-      logger.print("%c[%s] %d product received.", "color: blue", (new Date()).toLocaleTimeString(), array.length);
-    this.onProductsReceived(array);
-  } else
-    logger.print("%cNo product.", "color: blue");
-  this.mainCallTimeout = setTimeout(this.main.bind(this), satconf.DELAY_BETWEEN_PRODUCTS);
-};
-
-Saturn.prototype.onArrayToExtractFailed = function(err) {
-  logger.error("Error when getting new products to extract :", err);
-  this.mainCallTimeout = setTimeout(this.main.bind(this), satconf.DELAY_BETWEEN_PRODUCTS);
 };
 
 Saturn.prototype.onProductsReceived = function(prods) {
@@ -173,11 +120,6 @@ Saturn.prototype.endSession = function(session) {
 /////////////////////////////////////////////////////////////////
 //                      ABSTRACT FUNCTIONS
 /////////////////////////////////////////////////////////////////
-
-//
-Saturn.prototype.loadProductUrlsToExtract = function(doneCallback, failCallback) {
-  throw "Saturn.loadProductUrlsToExtract: abstract function";
-};
 
 // GET mapping for url's host,
 // and return jqXHR object.

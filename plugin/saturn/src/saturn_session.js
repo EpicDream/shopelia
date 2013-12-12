@@ -148,15 +148,12 @@ SaturnSession.prototype.getOptions = function(option) {
   this.evalAndThen(cmd, function(values) { try {
     logger.info(this.logId(), (! (values instanceof Array) && '?' || values.length)+" versions for option"+option);
     // logger.debug(values);
-    if (! values) {
-      this.sendError("No options return for getOptions(option="+option+")");
-      return this.endSession();
-    }
+    if (! values)
+      return this.fail("No options return for getOptions(option="+option+")");
     this.options.setValues(values);
     this.next();
   } catch (err) {
-    logger.error("in getOptions callback :", err);
-    this.sendError("Bug during getOptions callback :", err);
+    this.fail("Bug during getOptions callback :", err);
   }}.bind(this));
 };
 
@@ -170,10 +167,8 @@ SaturnSession.prototype.crawl = function() {
   this.currentAction = "crawl";
   this.evalAndThen({action: this.currentAction, mapping: this.mapping}, function(version) { try {
     var d = this;
-    if (typeof version !== 'object') {
-      this.sendError("No result return for crawl");
-      return this.endSession();
-    }
+    if (typeof version !== 'object')
+      return this.fail("No result return for crawl");
     logger.info(this.logId(), "Parse results : ", '{name="'+version.name+
       '", avail="'+version.availability+'", price="'+version.price+'"}');
     logger.debug(this.logId(), "Parse results : ", version);
@@ -185,8 +180,7 @@ SaturnSession.prototype.crawl = function() {
 
     this.next();
   } catch (err) {
-    logger.error("in crawl callback :", err);
-    this.sendError("Bug during crawling callback :", err);
+    this.fail("Bug during crawling callback :", err);
   }}.bind(this));
 };
 
@@ -246,8 +240,7 @@ SaturnSession.prototype.endSession = function() {
 
 //
 SaturnSession.prototype.onTimeout = function() {
-  this.sendError("Timeout !");
-  this.endSession();
+  this.fail("Session Timeout !");
 };
 
 //
@@ -267,6 +260,11 @@ SaturnSession.prototype.openUrl = function(url) {
 // Virtual, must be reimplement.
 SaturnSession.prototype.evalAndThen = function(cmd, callback) {
   throw "SaturnSession.evalAndThen: abstract function";
+};
+
+SaturnSession.prototype.fail = function(msg) {
+  this.sendError(msg);
+  this.endSession();
 };
 
 // Virtual, must be reimplement.

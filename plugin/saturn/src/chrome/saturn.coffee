@@ -12,14 +12,54 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn", 'src/chrome/session'
       super
       @Session = ChromeSaturnSession
       @sessionsByTabId = ChromeSaturnSession.tabs
+      @crawling = false
 
-    loadProductUrlsToExtract: (doneCallback, failCallback) ->
-      # logger.debug("Going to get product_urls to extract...")
-      return $.ajax({
+    start: ->
+      this.resume()
+
+    resume: ->
+      return if @crawling
+      @crawling = true
+      this.main()
+
+    pause: ->
+      @crawling = false
+      clearTimeout(@mainCallTimeout)
+
+    stop: ->
+      this.pause()
+      for tabId, session in @sessionsByTabId
+        session.fail("Saturn stopped.")
+
+    main: ->
+      return if ! @crawling
+      # Send ajax request to get new product to crawl.
+      $.ajax({
         type : "GET",
         dataType: "json",
         url: satconf.PRODUCT_EXTRACT_URL+(if satconf.consum then '' else "?consum=false")
-      }).done(doneCallback).fail(failCallback)
+      # Send ajax request to get new product to crawl.
+      }).done( (array) =>
+        if ! array || ! (array instanceof Array)
+          logger.err("Error when getting new products to extract : received data is undefined or is not an Array")
+          @mainCallTimeout = setTimeout( =>
+            this.main()
+          , satconf.DELAY_BETWEEN_PRODUCTS)
+        else if array.length > 0
+          logger.print("%c[%s] %d product received.", "color: blue", (new Date()).toLocaleTimeString(), array.length) unless logger.isInfo() || ! logger.isErr()
+          this.onProductsReceived(array)
+        else
+          logger.print("%cNo product.", "color: blue") unless ! logger.isErr()
+        @mainCallTimeout = setTimeout( =>
+          this.main()
+        , satconf.DELAY_BETWEEN_PRODUCTS)
+
+      ).fail( (err) =>
+        logger.error("Error when getting new products to extract :", err)
+        @mainCallTimeout = setTimeout( =>
+          this.main()
+        , satconf.DELAY_BETWEEN_PRODUCTS)
+      )
 
     # GET mapping for url's host,
     # and return jqXHR object.

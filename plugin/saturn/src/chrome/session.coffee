@@ -147,8 +147,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
       return () =>
         # logger.debug("in evalAndThen, timeout for", command);
         command.callback = undefined
-        this.sendError("something went wrong", command)
-        this.endSession()
+        this.fail("something went wrong", command)
 
     onResultReceived: (command) ->
       return (result) =>

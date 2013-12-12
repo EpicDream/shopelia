@@ -13,81 +13,81 @@ describe("Saturn", function() {
     window.saturn = saturn = new FakeSaturn();
   });
 
-  describe("start/pause/resume/stop", function() {
+  // describe("start/pause/resume/stop", function() {
 
-    it('start/pause/resume/stop call good functions.', function() {
-      spyOn(saturn, 'main');
+  //   it('start/pause/resume/stop call good functions.', function() {
+  //     spyOn(saturn, 'main');
 
-      expect(saturn.crawl).toBe(false);
-      expect(saturn.main.calls.length).toBe(0);
-      saturn.start();
+  //     expect(saturn.crawl).toBe(false);
+  //     expect(saturn.main.calls.length).toBe(0);
+  //     saturn.start();
 
-      expect(saturn.crawl).toBe(true);
-      expect(saturn.main.calls.length).toBe(1);
+  //     expect(saturn.crawl).toBe(true);
+  //     expect(saturn.main.calls.length).toBe(1);
 
-      saturn.pause();
-      expect(saturn.crawl).toBe(false);
+  //     saturn.pause();
+  //     expect(saturn.crawl).toBe(false);
 
-      saturn.resume();
-      expect(saturn.crawl).toBe(true);
-      expect(saturn.main.calls.length).toBe(2);
+  //     saturn.resume();
+  //     expect(saturn.crawl).toBe(true);
+  //     expect(saturn.main.calls.length).toBe(2);
 
-      saturn.stop();
-      expect(saturn.crawl).toBe(false);
-    });
+  //     saturn.stop();
+  //     expect(saturn.crawl).toBe(false);
+  //   });
 
-    it('start only once', function() {
-      spyOn(saturn, 'main');
-      saturn.crawl = true;
-      saturn.start();
+  //   it('start only once', function() {
+  //     spyOn(saturn, 'main');
+  //     saturn.crawl = true;
+  //     saturn.start();
 
-      expect(saturn.crawl).toBe(true);
-      expect(saturn.main).not.toHaveBeenCalled();
-    });
+  //     expect(saturn.crawl).toBe(true);
+  //     expect(saturn.main).not.toHaveBeenCalled();
+  //   });
 
-    it('timers works when start/pause/resume/stop', function() {
-      spyOn(saturn, 'main').andCallThrough();
-      spyOn(saturn, 'onProductsReceived');
-      satconf.DELAY_BETWEEN_PRODUCTS = 100;
-      var flag, nbCalls;
+  //   it('timers works when start/pause/resume/stop', function() {
+  //     spyOn(saturn, 'main').andCallThrough();
+  //     spyOn(saturn, 'onProductsReceived');
+  //     satconf.DELAY_BETWEEN_PRODUCTS = 100;
+  //     var flag, nbCalls;
 
-      runs(function() {
-        saturn.start();
-        flag = false;
-        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 3);
-      });
-      waitsFor(function() {
-        return flag;
-      });
-      runs(function() {
-        expect(saturn.main.calls.length).toBeGreaterThan(1);
-        saturn.pause();
-        nbCalls = saturn.main.calls.length;
-        flag = false;
-        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 2);
-      });
-      waitsFor(function() {return flag;});
-      runs(function() {
-        expect(saturn.main.calls.length).toBe(nbCalls);
-        saturn.resume();
+  //     runs(function() {
+  //       saturn.start();
+  //       flag = false;
+  //       setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 3);
+  //     });
+  //     waitsFor(function() {
+  //       return flag;
+  //     });
+  //     runs(function() {
+  //       expect(saturn.main.calls.length).toBeGreaterThan(1);
+  //       saturn.pause();
+  //       nbCalls = saturn.main.calls.length;
+  //       flag = false;
+  //       setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 2);
+  //     });
+  //     waitsFor(function() {return flag;});
+  //     runs(function() {
+  //       expect(saturn.main.calls.length).toBe(nbCalls);
+  //       saturn.resume();
 
-        flag = false;
-        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 3);
-      });
-      waitsFor(function() {return flag;});
-      runs(function() {
-        expect(saturn.main.calls.length).toBeGreaterThan(nbCalls + 1);
-        saturn.stop();
-        nbCalls = saturn.main.calls.length;
-        flag = false;
-        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 2);
-      });
-      waitsFor(function() {return flag;});
-      runs(function() {
-        expect(saturn.main.calls.length).toBe(nbCalls);
-      });
-    });
-  });
+  //       flag = false;
+  //       setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 3);
+  //     });
+  //     waitsFor(function() {return flag;});
+  //     runs(function() {
+  //       expect(saturn.main.calls.length).toBeGreaterThan(nbCalls + 1);
+  //       saturn.stop();
+  //       nbCalls = saturn.main.calls.length;
+  //       flag = false;
+  //       setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 2);
+  //     });
+  //     waitsFor(function() {return flag;});
+  //     runs(function() {
+  //       expect(saturn.main.calls.length).toBe(nbCalls);
+  //     });
+  //   });
+  // });
 
   describe('from received products to createSession',function() {
     xit('createSession, openUrl, and call next and ended', function() {
@@ -183,8 +183,6 @@ describe("Saturn", function() {
     });
 
     it('complete run', function() {
-      satconf.DELAY_BETWEEN_PRODUCTS = 100;
-      spyOn(saturn, 'main').andCallThrough();
       spyOn(saturn, 'onProductsReceived').andCallThrough();
 
       var prod = {id: 42, merchant_id: 2, url: "http://www.amazon.fr/product"},
@@ -194,37 +192,21 @@ describe("Saturn", function() {
             option2 : { text : 'size1' },
           };
 
-      runs(function() {
-        saturn.start();
-        flag = false;
-        setTimeout(function() {flag = true;}, satconf.DELAY_BETWEEN_PRODUCTS * 3);
-      });
-      waitsFor(function() {return flag;});
+      saturn.onProductsReceived([prod]);
 
-      runs(function() {
-        expect(saturn.main.calls.length).toBeGreaterThan(1);
-        expect(saturn.onProductsReceived.calls.length).toBe(0);
-        saturn._productToExtract.push(prod);
-      });
-      waitsFor(function() {return Object.keys(saturn.sessions).length > 0 || Object.keys(saturn.results).length > 0;}, "Session creation is to long.", saturn.DELAY_BETWEEN_PRODUCTS * 10);
-      waitsFor(function() {return Object.keys(saturn.results).length > 0;}, "Crawling is to long to start.", 1000);
-      waitsFor(function() {return Object.keys(saturn.sessions).length === 0;}, "Crawling is to long to end.", 2000);
-
-      runs(function() {
-        expect(saturn.results[42]).not.toBe(undefined);
-        expect(saturn.results[42].length).toBe(4);
-        var options = [], nbComplete = 0;
-        for (var i = 0; i < saturn.results[42].length; i++) {
-          var r = saturn.results[42][i];
-          expect(r.versions instanceof Array);
-          expect(r.options_completed).not.toBe(undefined);
-          nbComplete += r.options_completed ? 1 : 0;
-          expect(r.versions.length).toBe(1);
-          var v = r.versions[0];
-          expect(v.title && typeof v.option1 === 'string' && v.option1.match(/color/) && typeof v.option2 === 'string' && v.option2.match(/size/));
-        }
-        expect(nbComplete).toBe(1);
-      });
+      expect(saturn.results[42]).not.toBe(undefined);
+      expect(saturn.results[42].length).toBe(4);
+      var options = [], nbComplete = 0;
+      for (var i = 0; i < saturn.results[42].length; i++) {
+        var r = saturn.results[42][i];
+        expect(r.versions instanceof Array);
+        expect(r.options_completed).not.toBe(undefined);
+        nbComplete += r.options_completed ? 1 : 0;
+        expect(r.versions.length).toBe(1);
+        var v = r.versions[0];
+        expect(v.title && typeof v.option1 === 'string' && v.option1.match(/color/) && typeof v.option2 === 'string' && v.option2.match(/size/));
+      }
+      expect(nbComplete).toBe(1);
     });
   });
 });
