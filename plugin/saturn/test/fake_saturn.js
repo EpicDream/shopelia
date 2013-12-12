@@ -76,7 +76,7 @@ FakeSaturn.prototype.loadMapping = function(merchantId) {
 
 // 
 FakeSaturn.prototype.openUrl = function(session, url) {
-  session.then();
+  session.next();
 };
 
 // 
@@ -109,7 +109,7 @@ FakeSaturn.prototype.evalAndThen = function(session, cmd, callback) {
   if (callback)
     callback(result);
   else
-    session.then();
+    session.next();
 };
 
 return FakeSaturn;

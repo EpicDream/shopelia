@@ -2,8 +2,8 @@
 # Author : Vincent Renaudineau
 # Created at : 2013-10-07
 
-require ['chrome_logger', 'src/saturn', 'src/chrome/saturn', 'satconf'], (logger, Saturn, ChromeSaturn) ->
-
+require ['chrome_logger', 'src/saturn', 'src/chrome/saturn', 'satconf'],
+(logger, Saturn, ChromeSaturn) ->
   # Default to debug until Chrome propose tabs for each levels.
   logger.level = logger[satconf.log_level]
 
@@ -13,8 +13,8 @@ require ['chrome_logger', 'src/saturn', 'src/chrome/saturn', 'satconf'], (logger
   # On contentscript ask next step (next color/size tuple).
   chrome.extension.onMessage.addListener (msg, sender, response) ->
     return if sender.id != chrome.runtime.id || ! sender.tab || ! saturn.sessions.byTabId[sender.tab.id]
-    if msg is "nextStep" && saturn.sessions.byTabId[sender.tab.id].then
-      saturn.sessions.byTabId[sender.tab.id].then()
+    if msg is "nextStep" && saturn.sessions.byTabId[sender.tab.id]
+      saturn.sessions.byTabId[sender.tab.id].next()
 
   # On extension button clicked.
   chrome.browserAction.onClicked.addListener (tab) ->
@@ -39,7 +39,7 @@ require ['chrome_logger', 'src/saturn', 'src/chrome/saturn', 'satconf'], (logger
     saturn.externalPort = port
     port.onMessage.addListener (prod) ->
       if prod.tabId is undefined || prod.url is undefined
-        return saturn.sendError(prod, 'some fields are missing.')
+        return saturn.sendError(prod.id, 'some fields are missing.')
       prod.extensionId = port.sender.id
       prod.strategy ||= 'fast'
       prod.keepTabOpen = true

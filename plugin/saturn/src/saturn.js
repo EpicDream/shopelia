@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', 'uri', './saturn_session', './helper', 'satconf', 'core_extensions'], function(logger, Uri, SaturnSession, Helper) {
+define(['logger', 'uri', './saturn_session', 'satconf', 'core_extensions'], function(logger, Uri, SaturnSession) {
 
 "use strict";
 
@@ -241,13 +241,7 @@ Saturn.prototype.createSession = function(prod, tabId) {
   this.sessions[session.id] = session;
   session.tabId = tabId;
 
-  this.cleanTab(tabId);
-  session.then = function() {
-    session.then = function() {session.next();};
-    session.start();
-  };
-  Helper.help(session);
-  this.openUrl(session, session.url);
+  session.start();
 };
 
 Saturn.prototype.freeTab = function(tabId) {
@@ -263,7 +257,6 @@ Saturn.prototype.freeTab = function(tabId) {
 };
 
 Saturn.prototype.endSession = function(session) {
-  delete session.then;
   delete this.productsBeingProcessed[session.prod_id];
   this.freeTab(session.tabId);
   if (satconf.env === 'dev')

@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', './saturn_options', 'core_extensions', 'satconf'], function(logger, SaturnOptions) {
+define(['logger', './saturn_options', './helper', 'core_extensions', 'satconf'], function(logger, SaturnOptions, Helper) {
 "use strict";
 
 // Je fais la supposition simpliste mais réaliste que pour un produit,
@@ -18,14 +18,17 @@ var SaturnSession = function(saturn, prod) {
   this.initialStrategy = this.strategy;
   this.options = new SaturnOptions(this.mapping, this.argOptions);
 
+  this.helper = Helper.get(prod.url);
+
   this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.SESSION_RESCUE);
 };
 
 SaturnSession.counter = 0;
 
 SaturnSession.prototype.start = function() {
-  logger.info(this.logId(), "Start crawling !", logger.level >= logger.DEBUG ? this : "(url="+this.url+")");
-  this.next();
+  logger.info(this.logId(), "Start crawling !", logger.isDebug() ? this : "(url="+this.url+")");
+  this.cleanTab();
+  this.openUrl();
 };
 
 SaturnSession.prototype.next = function() { try {
@@ -137,33 +140,33 @@ SaturnSession.prototype.createSubTasks = function() {
 SaturnSession.prototype.getOptions = function(option) {
   this.currentAction = "getOptions";
   var cmd = {action: this.currentAction, mapping: this.mapping, option: option};
-  this.saturn.evalAndThen(this, cmd, function(values) { try {
+  this.evalAndThen(cmd, function(values) { try {
     logger.info(this.logId(), (! (values instanceof Array) && '?' || values.length)+" versions for option"+option);
     // logger.debug(values);
     if (! values) {
-      this.saturn.sendError(this, "No options return for getOptions(option="+option+")");
+      this.sendError("No options return for getOptions(option="+option+")");
       return this.endSession();
     }
     this.options.setValues(values);
     this.next();
   } catch (err) {
     logger.error("in getOptions callback :", err);
-    this.saturn.sendError(this, "Bug during getOptions callback :", err);
+    this.sendError("Bug during getOptions callback :", err);
   }}.bind(this));
 };
 
 SaturnSession.prototype.setOption = function(option, value) {
   this.currentAction = "setOption";
   var cmd = {action: this.currentAction, mapping: this.mapping, option: option, value: value};
-  this.saturn.evalAndThen(this, cmd);
+  this.evalAndThen(cmd);
 };
 
 SaturnSession.prototype.crawl = function() {
   this.currentAction = "crawl";
-  this.saturn.evalAndThen(this, {action: this.currentAction, mapping: this.mapping}, function(version) { try {
+  this.evalAndThen({action: this.currentAction, mapping: this.mapping}, function(version) { try {
     var d = this;
     if (typeof version !== 'object') {
-      this.saturn.sendError("No result return for crawl");
+      this.sendError("No result return for crawl");
       return this.endSession();
     }
     logger.info(this.logId(), "Parse results : ", '{name="'+version.name+
@@ -178,7 +181,7 @@ SaturnSession.prototype.crawl = function() {
     this.next();
   } catch (err) {
     logger.error("in crawl callback :", err);
-    this.saturn.sendError(this, "Bug during crawling callback :", err);
+    this.sendError("Bug during crawling callback :", err);
   }}.bind(this));
 };
 
@@ -200,7 +203,7 @@ SaturnSession.prototype.sendPartialVersion = function() {
   var currentV = this.options.currentVersion();
   // Only if this is not the first version
   if (this._subTaskId || this._firstVersion)
-    this.saturn.sendResult(this, {versions: [currentV], options_completed: false});
+    this.sendResult({versions: [currentV], options_completed: false});
   else
     this._firstVersion = currentV;
 };
@@ -215,7 +218,7 @@ SaturnSession.prototype.sendFinalVersions = function() {
     this._onSubTaskFinished(this);
     this.endSession();
   } else {
-    this.saturn.sendResult(this, {versions: [this._firstVersion], options_completed: true}); //
+    this.sendResult({versions: [this._firstVersion], options_completed: true}); //
     logger.info(this.logId(), "Finish crawling !");
     this.endSession();
   }
@@ -238,7 +241,7 @@ SaturnSession.prototype.endSession = function() {
 
 //
 SaturnSession.prototype.onTimeout = function() {
-  this.saturn.sendError(this, "Timeout !");
+  this.sendError("Timeout !");
   this.endSession();
 };
 
@@ -248,6 +251,51 @@ SaturnSession.prototype.logId = function () {
   s += this.prod_id ? '/'+this.prod_id : '';
   s += this.tabId ? '@'+this.tabId : '';
   return s;
+};
+
+////////////////////////////////////////////////////
+
+// Virtual, must be reimplement.
+SaturnSession.prototype.openUrl = function(url) {
+  return this.saturn.openUrl(this, url || this.url);
+};
+
+// Virtual, must be reimplement.
+SaturnSession.prototype.evalAndThen = function(cmd, callback) {
+  return this.saturn.evalAndThen(this, cmd, callback);
+};
+
+// Virtual, must be reimplement.
+SaturnSession.prototype.sendWarning = function(msg) {
+  return this.saturn.sendWarning(this, msg);
+};
+
+// Virtual, must be reimplement.
+SaturnSession.prototype.sendError = function( msg) {
+  return this.saturn.sendError(this, msg);
+};
+
+// Virtual, must be reimplement.
+SaturnSession.prototype.sendResult = function(result) {
+  return this.saturn.sendResult(this, result);
+};
+
+////////////////////////////////////////////////////
+
+// Virtual, must be reimplement to handle tabId is undefined and supercall with tabId.
+// You must call "this.tabs.nbUpdating++;" before anything else.
+SaturnSession.prototype.openNewTab = function() {
+  return this.saturn.openNewTab();
+};
+
+// Virtual, may be reimplement and supercall
+SaturnSession.prototype.cleanTab = function() {
+  return this.saturn.cleanTab(this.tabId);
+};
+
+// Virtual, must be reimplement and supercall
+SaturnSession.prototype.closeTab = function() {
+  return this.saturn.closeTab(this.tabId);
 };
 
 return SaturnSession;

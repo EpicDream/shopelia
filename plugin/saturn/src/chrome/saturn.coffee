@@ -2,8 +2,8 @@
 # Author : Vincent Renaudineau
 # Created at : 2013-09-05
 
-define ["jquery", "chrome_logger", "src/saturn", "mapping", 'satconf', 'core_extensions'], ($, logger, Saturn, Mapping) ->
-
+define ["jquery", "chrome_logger", "src/saturn", "mapping", 'satconf', 'core_extensions'],
+($, logger, Saturn, Mapping) ->
   class ChromeSaturn extends Saturn
     constructor: () ->
       super()

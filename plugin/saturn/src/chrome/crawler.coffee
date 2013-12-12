@@ -2,16 +2,17 @@
 # Author : Vincent RENAUDINEAU
 # Created : 2013-11-06
 
-require ['chrome_logger', 'crawler', 'src/helper', "satconf"], (logger, Crawler, helper) ->
+require ['chrome_logger', 'crawler', 'src/helper', "satconf"],
+(logger, Crawler, helper) ->
 
-  window.Crawler = Crawler
   logger.level = logger[satconf.log_level]
+  window.Crawler = Crawler
   crawlHelper = helper.get(location.href)?.crawler
 
   chrome.extension.onMessage.addListener (hash, sender, callback) ->
     return if sender.id isnt chrome.runtime.id
     logger.debug("ProductCrawl", hash.action, "task received", hash)
-    key = "option"+(hash.option)
+    key = "option#{hash.option}"
     switch hash.action
       when "getOptions"
         result = if hash.mapping[key] then Crawler.getOptions(hash.mapping[key].paths) else []
@@ -22,7 +23,6 @@ require ['chrome_logger', 'crawler', 'src/helper', "satconf"], (logger, Crawler,
       else
         logger.error("Unknow command", action)
         result = false
-
     # wait minimal to let page reload on url change
     setTimeout(waitAjax, 1000) if hash.action is "setOption"
     callback(result) if callback?

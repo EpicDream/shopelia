@@ -138,7 +138,7 @@ describe("Saturn", function() {
 
       // Les MIN_NB_TABS sont occupées et il en manque une.
       saturn.pending = [];
-      saturn.productQueue = [{id: 42}];
+      saturn.productQueue = [{id: 42, url: ''}];
       saturn.updateNbTabs();
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1);
       expect(saturn.closeTab).not.toHaveBeenCalled();
@@ -150,7 +150,7 @@ describe("Saturn", function() {
       expect(saturn.closeTab.calls.length).toBe(1);
 
       // Il manque 3 tabs
-      saturn.productQueue = [{id: 13}, {id: 14}, {id: 15}];
+      saturn.productQueue = [{id: 13, url: ''}, {id: 14, url: ''}, {id: 15, url: ''}];
       saturn.updateNbTabs();
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
       expect(saturn.closeTab.calls.length).toBe(1);
@@ -158,7 +158,7 @@ describe("Saturn", function() {
       // Il manque des tabs, mais trop.
       expect(Object.keys(saturn.tabs.opened).length).toBe(satconf.MIN_NB_TABS + 3);
       saturn.MAX_NB_TABS = saturn.MIN_NB_TABS + 3;
-      saturn.productQueue = [{id: 16}];
+      saturn.productQueue = [{id: 16, url: ''}];
       saturn.updateNbTabs();
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
       expect(saturn.closeTab.calls.length).toBe(1);
@@ -184,7 +184,7 @@ describe("Saturn", function() {
 
       // Les MIN_NB_TABS sont occupées et il en manque une.
       saturn.pending = [];
-      saturn.productQueue = [{id: 42}];
+      saturn.productQueue = [{id: 42, url: ''}];
       saturn.updateNbTabs();
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1);
       expect(saturn.closeTab).not.toHaveBeenCalled();
@@ -196,7 +196,7 @@ describe("Saturn", function() {
       expect(saturn.closeTab.calls.length).toBe(1);
 
       // Il manque 3 tabs
-      saturn.productQueue = [{id: 13}, {id: 14}, {id: 15}];
+      saturn.productQueue = [{id: 13, url: ''}, {id: 14, url: ''}, {id: 15, url: ''}];
       saturn.updateNbTabs();
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
       expect(saturn.closeTab.calls.length).toBe(1);
@@ -204,7 +204,7 @@ describe("Saturn", function() {
       // Il manque des tabs, mais trop.
       expect(Object.keys(saturn.tabs.opened).length).toBe(satconf.MIN_NB_TABS + 3);
       saturn.MAX_NB_TABS = saturn.MIN_NB_TABS + 3;
-      saturn.productQueue = [{id: 16}];
+      saturn.productQueue = [{id: 16, url: ''}];
       saturn.updateNbTabs();
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
       expect(saturn.closeTab.calls.length).toBe(1);
@@ -230,7 +230,7 @@ describe("Saturn", function() {
 
       // Les MIN_NB_TABS sont occupées et il en manque une.
       saturn.pending = [];
-      saturn.batchQueue = [{id: 42}];
+      saturn.batchQueue = [{id: 42, url: ''}];
       saturn.updateNbTabs();
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1);
       expect(saturn.closeTab).not.toHaveBeenCalled();
@@ -242,7 +242,7 @@ describe("Saturn", function() {
       expect(saturn.closeTab.calls.length).toBe(1);
 
       // Il manque 3 tabs
-      saturn.batchQueue = [{id: 13}, {id: 14}, {id: 15}];
+      saturn.batchQueue = [{id: 13, url: ''}, {id: 14, url: ''}, {id: 15, url: ''}];
       saturn.updateNbTabs();
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
       expect(saturn.closeTab.calls.length).toBe(1);
@@ -250,7 +250,7 @@ describe("Saturn", function() {
       // Il manque des tabs, mais trop.
       expect(Object.keys(saturn.tabs.opened).length).toBe(satconf.MIN_NB_TABS + 3);
       saturn.MAX_NB_TABS = saturn.MIN_NB_TABS + 3;
-      saturn.batchQueue = [{id: 16}];
+      saturn.batchQueue = [{id: 16, url: ''}];
       saturn.updateNbTabs();
       expect(saturn.openNewTab.calls.length).toBe(satconf.MIN_NB_TABS + 1 + 3);
       expect(saturn.closeTab.calls.length).toBe(1);
@@ -259,9 +259,9 @@ describe("Saturn", function() {
 
   describe('from received products to createSession',function() {
     it('createSession, openUrl, and call next and ended', function() {
-      spyOn(SaturnSession.prototype, 'start');
-      spyOn(saturn, 'cleanTab').andCallThrough();
-      spyOn(saturn, 'openUrl').andCallThrough();
+      spyOn(SaturnSession.prototype, 'start').andCallThrough();
+      spyOn(SaturnSession.prototype, 'cleanTab').andCallThrough();
+      spyOn(SaturnSession.prototype, 'openUrl').andCallThrough();
       spyOn(saturn, 'crawlProduct');
       expect(Object.keys(saturn.sessions.byTabId).length).toBe(0);
       
@@ -270,11 +270,10 @@ describe("Saturn", function() {
       
       expect(Object.keys(saturn.sessions.byTabId).length).toBe(1);
       expect(saturn.sessions.byTabId[1] instanceof SaturnSession).toBe(true);
-      expect(saturn.cleanTab).toHaveBeenCalled();
       var session = saturn.sessions.byTabId[1];
-      expect(typeof session.then).toBe('function');
-      expect(saturn.openUrl).toHaveBeenCalled();
       expect(session.start).toHaveBeenCalled(); // via session.next()
+      expect(session.openUrl).toHaveBeenCalled();
+      expect(session.cleanTab).toHaveBeenCalled();
 
       saturn.endSession(session);
       
@@ -290,7 +289,7 @@ describe("Saturn", function() {
       expect(saturn.productQueue.length).toBe(0);
       expect(saturn.batchQueue.length).toBe(0);
 
-      saturn.addProductToQueue({id: 42});
+      saturn.addProductToQueue({id: 42, url: ''});
 
       expect(saturn.productsBeingProcessed[42]).toBe(true);
       expect(saturn.productQueue.length).toBe(1);
@@ -298,7 +297,7 @@ describe("Saturn", function() {
       expect(saturn.crawlProduct).toHaveBeenCalled();
 
 
-      saturn.addProductToQueue({id: 51, batch_mode: true});
+      saturn.addProductToQueue({id: 51, url: '', batch_mode: true});
 
       expect(saturn.productsBeingProcessed[51]).toBe(true);
       expect(saturn.productQueue.length).toBe(1);
@@ -327,8 +326,8 @@ describe("Saturn", function() {
 
       // pending is empty but not batchQueue and productQueue.
       saturn.tabs.pending = [];
-      saturn.batchQueue.push({id: 51});
-      saturn.productQueue.push({id: 42});
+      saturn.batchQueue.push({id: 51, url: ''});
+      saturn.productQueue.push({id: 42, url: ''});
       saturn.crawlProduct();
       expect(saturn.updateNbTabs.calls.length).toBe(1);
       expect(saturn.createSession).not.toHaveBeenCalled();
@@ -377,7 +376,7 @@ describe("Saturn", function() {
 
       // productQueue and pending are empty but not batchQueue.
       saturn.tabs.pending = [];
-      saturn.batchQueue.push({id: 51});
+      saturn.batchQueue.push({id: 51, url: ''});
       saturn.crawlProduct();
       expect(saturn.updateNbTabs.calls.length).toBe(1);
       expect(saturn.createSession).not.toHaveBeenCalled();
@@ -399,11 +398,11 @@ describe("Saturn", function() {
       spyOn(saturn, 'updateNbTabs');
 
       saturn.productsBeingProcessed[42] = true;
-      saturn.onProductsReceived([{id: 42}, {id: 51}]);
+      saturn.onProductsReceived([{id: 42, url: ''}, {id: 51, url: ''}]);
       expect(saturn.onProductReceived.calls.length).toBe(1);
       expect(saturn.updateNbTabs.calls.length).toBe(0);
 
-      saturn.onProductsReceived([{id: 42}]);
+      saturn.onProductsReceived([{id: 42, url: ''}]);
       expect(saturn.onProductReceived.calls.length).toBe(1);
       expect(saturn.updateNbTabs.calls.length).toBe(1);
     });
@@ -413,12 +412,12 @@ describe("Saturn", function() {
       spyOn(saturn, 'loadMapping').andCallThrough();
 
       // Unknow merchant_id
-      saturn.onProductReceived({id: 42, merchant_id: 47});
+      saturn.onProductReceived({id: 42, url: '', merchant_id: 47});
       expect(saturn.loadMapping.calls.length).toBe(1);
       expect(saturn.addProductToQueue).not.toHaveBeenCalled();
 
       // Know merchant_id
-      saturn.onProductReceived({id: 42, merchant_id: 2});
+      saturn.onProductReceived({id: 42, url: '', merchant_id: 2});
       expect(saturn.loadMapping.calls.length).toBe(2);
       expect(saturn.addProductToQueue).toHaveBeenCalled();
       expect(saturn.mappings[2]).not.toBe(undefined);
