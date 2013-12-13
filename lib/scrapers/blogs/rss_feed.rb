@@ -16,7 +16,7 @@ module Scrapers
           feed = RSS::Parser.parse(rss)
           feed.items.map do |item|
             post_from(item)
-          end
+          end.compact
         end
       rescue => e
         retry if @feed_urls.any?
@@ -39,6 +39,10 @@ module Scrapers
       def post_from(item) #rss item
         atom_version = item.respond_to?(:content_encoded) ? 2 : 1
         post = send("post_from_atom_#{atom_version}", item)
+        if post.link =~ /feeds|blogger\.com/
+          report_incident("Post link is rss link #{post.link}")
+          return
+        end
         content = post.content
         description = post.description
         post.description = Description.extract(description)
@@ -62,12 +66,12 @@ module Scrapers
       
       def post_from_atom_1(item)
         post = Post.new
-        puts item.inspect
-        puts item.methods.inspect
+        links = item.links.delete_if { |link| link.href =~ /feeds|blogger\.com/ }
+        link = links.detect { |link| link.type == "text/html" }
         post.content = Nokogiri::HTML.fragment(item.content.content.to_s)
         post.description = Nokogiri::HTML.fragment(item.summary.to_s)
         post.published_at = item.updated.content.to_s
-        post.link = item.link.href
+        post.link = link.href.gsub(/#.*$/, '')
         post.title = item.title.content.to_s
         post.author = item.author.name.content.to_s
         post.categories = item.categories.map(&:term)
@@ -76,6 +80,13 @@ module Scrapers
       
       def category_name
         Proc.new {|category| category.to_s =~ /<category>(.*?)<\/category>/; $1}
+      end
+      
+      def report_incident description=nil
+        Incident.create(
+          :issue => "Scrapers::Blog::RSSFeed",
+          :severity => Incident::INFORMATIVE,
+          :description => description)
       end
       
     end
