@@ -13,11 +13,6 @@ module Poster
     end
     
     def fill form
-      # comment = "#{@comment} - #{@website_url}"
-      # form['commentBody'] = comment if form.has_field?('commentBody')
-      # form['postBody'] = comment if form.has_field?('postBody')
-      # form['identityMenu'] = "GOOGLE"
-      # form
     end
     
     def submit form
