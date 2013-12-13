@@ -46,7 +46,7 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn", 'src/chrome/session'
             this.main()
           , satconf.DELAY_BETWEEN_PRODUCTS)
         else if array.length > 0
-          logger.print("%c[%s] %d product received.", "color: blue", (new Date()).toLocaleTimeString(), array.length) unless logger.isInfo() || ! logger.isErr()
+          logger.print("%c[%s] %d products received.", "color: blue", (new Date()).toLocaleTimeString(), array.length) unless logger.isInfo() || ! logger.isErr()
           this.onProductsReceived(array)
         else
           logger.print("%cNo product.", "color: blue") unless ! logger.isErr()

@@ -16,7 +16,7 @@ var Saturn = function() {
 };
 
 //
-function preProcessData(data) {
+Saturn.prototype.preProcessData = function (data) {
   data.argOptions = data.options || data.argOptions || {};
   return data;
 }
@@ -26,7 +26,6 @@ Saturn.prototype.canRestart = function () {
 };
 
 Saturn.prototype.onProductsReceived = function(prods) {
-  logger.debug(prods.length, "products received.");
   prods = $unique(prods);
   for (var i = prods.length - 1; i >= 0; i--)
     this.onProductReceived(prods[i]);
@@ -49,7 +48,7 @@ Saturn.prototype.processMapping = function(mapping, prod, merchantId) {
 
 //
 Saturn.prototype.onProductReceived = function(prod) {
-  prod = preProcessData(prod);
+  prod = this.preProcessData(prod);
   logger.debug("Going to process product", prod);
   var merchantId = prod.merchant_id || prod.url;
   prod.uri = new Uri(prod.url);

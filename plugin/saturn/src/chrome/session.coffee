@@ -48,10 +48,10 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
 
     preEndSession: () ->
       super
-      this.closeTab() unless @keepTabOpen
+      this.closeTab()
 
     endSession: () ->
-      this.closeTab() unless @keepTabOpen
+      this.closeTab()
       super
       $$.startNext()
 
