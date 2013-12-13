@@ -14,27 +14,14 @@ define(["casper_logger", "src/saturn", "src/casper/session", 'satconf'], (logger
       @caspId = "[Casper@#{@port}]"
 
       @service = Server.listen "#{@host}:#{@port}", (request, response) =>
-        # Casper stop to wait.
-        @initRequest = true
-
-        logger.debug "#{@caspId} Incoming request."
         try
+          # Casper stop to wait.
+          @initRequest = true
+          logger.debug "#{@caspId} Incoming request."
           prod = JSON.parse(request.post)
+          this.onProductReceived(prod)
         catch err
           logger.error "#{@caspId} Fail to parse '#{request.post}'"
-          return casper.exit()
-
-        title = ""
-        logger.debug "#{@caspId} Product received : going to open '#{prod.url}'"
-        casper.thenOpen(prod.url).then () =>
-          title = casper.getTitle()
-          logger.info "#{@caspId} Title is #{title}"
-          response.statusCode = 200
-          response.write(title)
-          response.close()
-
-        casper.run () =>
-          logger.debug "#{@caspId} Going to quit casper."
           return casper.exit()
 
       logger.debug "#{@caspId} Server launch. Listen on #{@host}:#{@port}"
@@ -47,6 +34,38 @@ define(["casper_logger", "src/saturn", "src/casper/session", 'satconf'], (logger
         logger.debug "#{@caspId} Ajax request sent."
       casper.waitFor () =>
         @initRequest
+
+    endSession: (session) ->
+      super
+      return casper.exit()
+
+    sendWarning: (prod, msg) ->
+      return if ! prod.prod_id
+      casper.evaluate (data) ->
+        $.ajax({
+          type : "PUT",
+          url: satconf.PRODUCT_EXTRACT_UPDATE+prod.prod_id,
+          contentType: 'application/json',
+          data: JSON.stringify(data)
+        }).fail (xhr, textStatus, errorThrown ) ->
+          if textStatus is 'timeout' || xhr.status is 502
+            $.ajax(this)
+      , {versions: [], warnMsg: msg}
+      super(prod, msg)
+
+    sendError: (prod, msg) ->
+      return if ! prod.prod_id
+      casper.evaluate (url, data) ->
+        $.ajax({
+          type : "PUT",
+          url: url,
+          contentType: 'application/json',
+          data: JSON.stringify(data)
+        }).fail (xhr, textStatus, errorThrown ) ->
+          if textStatus is 'timeout' || xhr.status is 502
+            $.ajax(this)
+      , satconf.PRODUCT_EXTRACT_UPDATE+prod.prod_id, {versions: [], errorMsg: msg}
+      super(prod, msg)
 
   return CasperSaturn
 )

@@ -129,15 +129,15 @@ Saturn.prototype.loadMapping = function(merchantId, doneCallback, failCallback) 
 // session may be a simple Object with only id to set,
 // when fail to load mapping for example.
 Saturn.prototype.sendWarning = function(prod, msg) {
-  window.$e = prod;
-  logger.warn('/'+prod.prod_id, msg, "\n$e =", window.$e);
+  this.$e = prod;
+  logger.warn('/'+prod.prod_id, msg, "\n$e =", this.$e);
 };
 
 // session may be a simple Object with only id to set,
 // when fail to load mapping for example.
 Saturn.prototype.sendError = function(prod, msg) {
-  window.$e = prod;
-  logger.err('/'+prod.prod_id, msg, "\n$e =", window.$e);
+  this.$e = prod;
+  logger.err('/'+prod.prod_id, msg, "\n$e =", this.$e);
 };
 
 return Saturn;
