@@ -43,9 +43,9 @@ define ["logger", "src/saturn_session"], (logger, SaturnSession) ->
           "Content-Length":Buffer.byteLength(prodJSON),
         },
       }, (response) =>
-        response.setEncoding('utf8')
-        response.on 'data', (chunk) =>
-          logger.debug("For url='"+@prod.url+"', title='"+chunk+"'.")
+        # response.setEncoding('utf8')
+        # response.on 'data', (chunk) =>
+        #   logger.debug("For url='"+@prod.url+"', title='"+chunk+"'.")
       request.end(prodJSON)
 
   return NodeSaturnSession

@@ -20,8 +20,13 @@ define(["casper_logger", "src/saturn", "src/casper/session", 'satconf'], (logger
           logger.debug "#{@caspId} Incoming request."
           prod = JSON.parse(request.post)
           this.onProductReceived(prod)
+          # response.statusCode = 200
+          # response.close()
         catch err
           logger.error "#{@caspId} Fail to parse '#{request.post}'"
+          response.statusCode = 500
+          response.write(err0)
+          response.close()
           return casper.exit()
 
       logger.debug "#{@caspId} Server launch. Listen on #{@host}:#{@port}"
@@ -34,6 +39,14 @@ define(["casper_logger", "src/saturn", "src/casper/session", 'satconf'], (logger
         logger.debug "#{@caspId} Ajax request sent."
       casper.waitFor () =>
         @initRequest
+
+    onEvalDone: (data) ->
+      @sessions[data.session_id]?.onEvalDone(data.result)
+
+    onGoNextStep: (data) ->
+      # casper.captureSelector("img_back/#{Date.now()}_amazon.jpg", "#handleBuy", {quality: 10})
+      logger.debug "On 'saturn.goNextStep', session_id #{data.session_id} received !"
+      @sessions[data.session_id || 1]?.onGoNextStep()
 
     endSession: (session) ->
       super

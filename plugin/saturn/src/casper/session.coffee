@@ -2,11 +2,16 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
   
   class CasperSaturnSession extends SaturnSession
 
+    constructor: ->
+      super
+      @casper = {}
+      @evalReturns = false
+
     openUrl: () ->
       logger.debug("#{@saturn.caspId} Going to open #{@url}")
       casper.open(@url).then () =>
-        title = casper.getTitle()
-        logger.info "#{@saturn.caspId} Title is #{title}"
+        @title = casper.getTitle()
+        logger.info "#{@saturn.caspId} Title is #{@title}"
         this.endSession()
 
       # casper.open(@url).waitFor () =>
@@ -61,42 +66,30 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
       , satconf.PRODUCT_EXTRACT_UPDATE+prod_id, result).then =>
         super result
 
-    # onTimeout: (command) ->
-    #   return =>
-    #     # logger.debug("in evalAndThen, timeout for", command);
-    #     command.callback = undefined
-    #     this.sendError(command.session, "something went wrong", command)
-    #     command.session.endSession()
-
     #
     evalAndThen: (cmd, callback) ->
       logger.debug("in evalAndThen with ", cmd.action, cmd.option, cmd.value) #cmd.mapping,
-      @casper ?= {}
-      @casper.callback = callback
-      callback(if cmd.action is 'getOptions' then [] else {}) if callback?
-    #   casper.evaluate (session_id, action, mapping, option, value) ->
-    #     requirejs ['casper_logger', 'src/casper/casper_crawler'], (logger, Crawler) ->
-    #       Crawler.doNext(session_id, action, mapping, option, value)
-    #   , session.id, cmd.action, cmd.mapping, cmd.option, cmd.value
-    #   casper.waitFor =>
-    #     @evalReturns is true
-    #   , =>
-    #     @evalReturns = false
+      if callback?
+        @casper.callback = () =>
+          @evalReturns = true
+          callback()
+      casper.evaluate (session_id, action, mapping, option, value) ->
+        requirejs ['casper_logger', 'src/casper/crawler'], (logger, Crawler) ->
+          Crawler.doNext(session_id, action, mapping, option, value)
+      , session.id, cmd.action, cmd.mapping, cmd.option, cmd.value
+      casper.waitFor =>
+        @evalReturns is true
+      , =>
+        @evalReturns = false
 
-    # onEvalDone: (data) ->
-    #   @evalReturns = true
-    #   casper.then(=>
-    #     session = @sessions[data.session_id]
-    #     session?.casper.callback?(data.result)
-    #   )
+    onEvalDone: (result) ->
+      @evalReturns = true
+      casper.then () =>
+        @casper.callback?(result)
 
-    # onGoNextStep: (data) ->
-    #   @evalReturns = true
-    #   # casper.captureSelector("img_back/#{Date.now()}_amazon.jpg", "#handleBuy", {quality: 10})
-    #   logger.debug "On 'saturn.goNextStep', session_id #{data.session_id} received !"
-    #   casper.then(=>
-    #     @sessions[data.session_id || 1]?.next()
-    #   )
-
+    onGoNextStep: () ->
+      @evalReturns = true
+      casper.then () =>
+        this.next()
 
   return CasperSaturnSession
