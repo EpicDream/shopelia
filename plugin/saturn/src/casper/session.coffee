@@ -9,16 +9,11 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
 
     openUrl: () ->
       logger.debug("#{@saturn.caspId} Going to open #{@url}")
-      casper.open(@url).then () =>
-        @title = casper.getTitle()
-        logger.info "#{@saturn.caspId} Title is #{@title}"
-        this.endSession()
-
-      # casper.open(@url).waitFor () =>
-      #   @evalReturns is true
-      # , () =>
-      #   @evalReturns = false
-      #   this.next()
+      casper.open(@url).waitFor () =>
+        @evalReturns is true
+      , () =>
+        @evalReturns = false
+        this.next()
       # .then () =>
       #   if tab.url !== @url
       #       # Priceminister fix when reload the same page with an #anchor set.
@@ -37,7 +32,7 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
         $.ajax({type : "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data)
         }).fail (xhr, textStatus, errorThrown) ->
           $.ajax(this) if textStatus == 'timeout' || xhr.status == 502
-      , satconf.PRODUCT_EXTRACT_UPDATE+prod_id, {versions: [], warnMsg: msg}).then =>
+      , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], warnMsg: msg}).then () =>
         super msg
 
     #
@@ -47,7 +42,7 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
         $.ajax({type : "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data)
         }).fail (xhr, textStatus, errorThrown) ->
           $.ajax(this) if textStatus == 'timeout' || xhr.status == 502
-      , satconf.PRODUCT_EXTRACT_UPDATE+prod_id, {versions: [], errorMsg: msg}).then =>
+      , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], errorMsg: msg}).then () =>
         super msg
 
     #
@@ -63,20 +58,18 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
             $.ajax(this)
           else
             logger.error(xhr.status, ":", textStatus)
-      , satconf.PRODUCT_EXTRACT_UPDATE+prod_id, result).then =>
+      , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, result)
+      casper.then () =>
         super result
 
     #
     evalAndThen: (cmd, callback) ->
       logger.debug("in evalAndThen with ", cmd.action, cmd.option, cmd.value) #cmd.mapping,
-      if callback?
-        @casper.callback = () =>
-          @evalReturns = true
-          callback()
+      @casper.callback = callback if callback?
       casper.evaluate (session_id, action, mapping, option, value) ->
         requirejs ['casper_logger', 'src/casper/crawler'], (logger, Crawler) ->
           Crawler.doNext(session_id, action, mapping, option, value)
-      , session.id, cmd.action, cmd.mapping, cmd.option, cmd.value
+      , @id, cmd.action, cmd.mapping, cmd.option, cmd.value
       casper.waitFor =>
         @evalReturns is true
       , =>
@@ -85,11 +78,16 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
     onEvalDone: (result) ->
       @evalReturns = true
       casper.then () =>
+        @evalReturns = false
         @casper.callback?(result)
 
     onGoNextStep: () ->
       @evalReturns = true
       casper.then () =>
+        @evalReturns = false
+        # @title = casper.getTitle()
+        # logger.info "#{@saturn.caspId} Title is #{@title}"
+        # this.endSession()
         this.next()
 
   return CasperSaturnSession

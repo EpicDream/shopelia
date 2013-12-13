@@ -48,7 +48,7 @@ requirejs ['casper_logger', 'src/casper/saturn', 'satconf'], (logger, CasperSatu
         return if Crawler.launched
         Crawler.launched = true
         logger.level = logger.INFO
-  #       Crawler.goNextStep(1)
+        Crawler.goNextStep(1)
     return true
 
   casper.start()
