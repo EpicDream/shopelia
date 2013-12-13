@@ -41,6 +41,7 @@ Shopelia::Application.routes.draw do
   end
   resources :catalogue, :only => :index
   resources :collections
+  resources :looks, :only => [:show]
   resources :collection_items, :only => [:show, :create]
   resources :orders, :only => [:show, :update] do
     get :confirm, :on => :member
