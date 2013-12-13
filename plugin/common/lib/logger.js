@@ -29,15 +29,16 @@ var logger = {
   },
 };
 
-logger.fatal = function() { logger._log('FATAL', (arguments.callee.caller || {}).name, arguments); };
-logger.err = function() { logger._log('ERROR', (arguments.callee.caller || {}).name, arguments); };
+//(arguments.callee.caller || {}).name
+logger.fatal = function() { logger._log('FATAL', arguments); };
+logger.err = function() { logger._log('ERROR', arguments); };
 logger.error = logger.err;
-logger.warn = function() { logger._log('WARN', (arguments.callee.caller || {}).name, arguments); };
+logger.warn = function() { logger._log('WARN', arguments); };
 logger.warning = logger.warn;
-logger.good = function() { logger._log('GOOD', undefined, arguments); };
-logger.info = function() { logger._log('INFO', undefined, arguments); };
-logger.verbose = function() { logger._log('VERBOSE', undefined, arguments); };
-logger.debug = function() { logger._log('DEBUG', (arguments.callee.caller || {}).name, arguments); };
+logger.good = function() { logger._log('GOOD', arguments); };
+logger.info = function() { logger._log('INFO', arguments); };
+logger.verbose = function() { logger._log('VERBOSE', arguments); };
+logger.debug = function() { logger._log('DEBUG', arguments); };
 logger.print = function() { if (logger.level !== logger.NONE) console.info.apply(console, arguments); };
 
 logger.isFatal = function() { return this.level >= this.FATAL; };
@@ -124,10 +125,10 @@ logger.write = function (level, args) {
   }
 };
 
-logger._log = function(level, caller, args) {
+logger._log = function(level, args) {
   var tmp, i, argsArray;
 
-  caller = caller || '';
+  caller = ''; // legacy
   if (typeof args !== 'object' || args.length === undefined) {
     args = [args];
   } else if (! (args instanceof Array)) { // arguments is not an Array.

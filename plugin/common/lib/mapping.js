@@ -203,7 +203,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
 
   // Mapping must be adapt to be used for search in a page.
   map.adaptMapping= function (mapping) {
-    var res = $extend(true, mapping),
+    var res = $.extend(true, {}, mapping),
       field, i, paths;
     for (field in mapping) {
       paths = res[field].paths || [];
@@ -214,7 +214,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   };
 
   var Mapping = function (map, url) {
-    $extend(this, map);
+    $.extend(this, map);
     this._pages = {};
     if (this.pages)
       for (var i = 0; i < this.pages.length; i++) {
@@ -233,7 +233,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
       this.setHost(this.domain);
     
     this._$ = $;
-    this._origin = document;
+    this._origin = typeof document === 'object' ? document : undefined;
   };
 
   Mapping.prototype = {};
@@ -243,7 +243,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
   };
 
   Mapping.prototype.toObject = function() {
-    return {id: this.id, domain: this.domain, url: this.url, mapping: $extend(true, this.mapping)}; // , pages: this._pages.values()
+    return {id: this.id, domain: this.domain, url: this.url, mapping: $.extend(true, {}, this.mapping)}; // , pages: this._pages.values()
   };
 
   Mapping.prototype.save = function () {
@@ -448,7 +448,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     return results;
   };
 
-  $extend(Mapping, map);
+  $.extend(Mapping, map);
 
   return Mapping;
 });
