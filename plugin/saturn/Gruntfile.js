@@ -61,6 +61,7 @@ module.exports = function(grunt) {
         files: {
           'vendor/chrome_logger.js': '../common/lib/chrome_logger.js.coffee',
           'vendor/casper_logger.js': '../common/lib/casper_logger.js.coffee',
+          'vendor/node_logger.js': '../common/lib/node_logger.js.coffee',
         }
       },
     },
@@ -115,15 +116,15 @@ module.exports = function(grunt) {
           out: 'build/chrome_saturn.js',
         }
       },
-      // node_saturn: {
-      //   options: {
-      //     baseUrl: '',
-      //     mainConfigFile: "require_config.js",
-      //     optimize: "none",
-      //     name: 'src/saturn',
-      //     out: 'build/saturn.js',
-      //   }
-      // },
+      node_saturn: {
+        options: {
+          baseUrl: '',
+          mainConfigFile: "require_config.js",
+          optimize: "none",
+          name: 'src/node/saturn',
+          out: 'build/node_saturn.js',
+        }
+      },
       // casper_saturn: {
       //   options: {
       //     baseUrl: '',
@@ -133,15 +134,15 @@ module.exports = function(grunt) {
       //     out: 'build/casper_saturn.js',
       //   }
       // },
-      // casper_crawler: {
-      //   options: {
-      //     baseUrl: '',
-      //     mainConfigFile: "require_config.js",
-      //     optimize: "none",
-      //     name: 'src/casper/crawler',
-      //     out: 'build/casper_crawler.js',
-      //   }
-      // },
+      casper_crawler: {
+        options: {
+          baseUrl: '',
+          mainConfigFile: "require_config.js",
+          optimize: "none",
+          name: 'src/casper/crawler',
+          out: 'build/casper_crawler.js',
+        }
+      },
     },
     // Add requirejs and "main files" that require others modules.
     concat: {
@@ -168,13 +169,14 @@ module.exports = function(grunt) {
         ],
         dest: 'dist/contentscript.js'
       },
-      // node_main: {
-      //   src: [
-      //     "build/saturn.js",
-      //     'src/casper/node_saturn.js',
-      //   ],
-      //   dest: 'dist/node_main.js'
-      // },
+      node_main: {
+        src: [
+          'vendor/core_extensions.js',
+          'build/config.js',
+          "build/src/node/main.js",
+        ],
+        dest: 'dist/node_main.js'
+      },
       // casper_main: {
       //   src: [
       //     'vendor/require.js',
@@ -184,14 +186,14 @@ module.exports = function(grunt) {
       //   ],
       //   dest: 'dist/casper.js'
       // },
-      // casper_injected: {
-      //   src: [
-      //     'vendor/require.js',
-      //     'require_config.js',
-      //     "build/casper_crawler.js",
-      //   ],
-      //   dest: 'build/casper_injected.js'
-      // },
+      casper_injected: {
+        src: [
+          'vendor/require.js',
+          'require_config.js',
+          "build/casper_crawler.js",
+        ],
+        dest: 'build/casper_injected.js'
+      },
     },
     // Uglify them in prod.
     uglify: {
@@ -209,6 +211,7 @@ module.exports = function(grunt) {
     clean: {
       dev: ['vendor', 'src/casper/*.js'],
       prod: ['build', 'vendor'],
+      node: ['vendor/jquery.js'],
       all: ['build', 'vendor', 'dist', 'node_modules']
     },
     exec: {
@@ -277,5 +280,5 @@ module.exports = function(grunt) {
   grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'manifest', 'clean:prod']);
   grunt.registerTask('test-mappings', ['test', 'jasmine:mappings']);
 
-  grunt.registerTask('casper', ['version', 'copy', 'coffee', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
+  grunt.registerTask('casper', ['version', 'copy', 'coffee', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:node']);
 };
