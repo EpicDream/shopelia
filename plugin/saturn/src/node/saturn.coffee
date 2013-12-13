@@ -1,6 +1,6 @@
 
 define ["logger", "mapping", "src/saturn", "src/node/session"], (logger, Mapping, Saturn, NodeSaturnSession) ->
-  
+
   http = require('http')
   parseUrl = require('url').parse
 
@@ -13,7 +13,7 @@ define ["logger", "mapping", "src/saturn", "src/node/session"], (logger, Mapping
 
       @server = http.createServer( (req, res) =>
         uri = parseUrl(req.url, true)
-        logger.info("[NodeJS] Incoming connection from #{req.headers.host}#{uri.href}")
+        logger.info("[NodeJS] Incoming connection from #{req.connection.remoteAddress}")
 
         if uri.pathname is "/casper-ready" && uri.query.session
           @sessionsByPort[uri.query.session].onSessionReady()

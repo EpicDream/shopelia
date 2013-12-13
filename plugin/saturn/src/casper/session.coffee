@@ -1,54 +1,111 @@
-define ['http', 'child_process', "logger", "../saturn_session"], (http, child_process, logger, SaturnSession) ->
+define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
   
-  spawn = child_process.spawn
+  class CasperSaturnSession extends SaturnSession
+    constructor: ->
+      super
 
-  class NodeSaturnSession extends SaturnSession
-    constructor: (@serverPort, @sessionPort, args...) ->
-      super(args...)
+    # openUrl: (session, url) ->
+    #   casper.open(url).waitFor =>
+    #     @evalReturns is true
+    #   , =>
+    #     @evalReturns = false
+    #   # .then ->
+    #   #   session.start()
+    #   #   if tab.url !== url
+    #   #       # Priceminister fix when reload the same page with an #anchor set.
+    #   #       if url.match(/#\w+(=\w+)?/)
+    #   #         chrome.tabs.update(session.tabId, {url: url})
+    #   #   # Priceminister fix when reload the same page with an #anchor set.
+    #   #   else if url.match(/#\w+(=\w+)?/)
+    #   #     chrome.tabs.update(session.tabId, {url: url})
+    #   #   else
+    #   #     session.next()
 
-    start: ->
-      logger.debug("[NodeJS] Launch casper on port : "+@sessionPort)
-      casper = spawn('casperjs', ["--web-security=false", "src/casper/test.coffee", "--port="+@sessionPort, "--node_port="+@serverPort])
+    # #
+    # sendWarning: (session, msg) ->
+    #   return if ! session.prod_id # Stop pushed or Local Test
+    #   casper.evaluate( (prod_id, msg) ->
+    #     $.ajax({
+    #       type : "PUT",
+    #       url: satconf.PRODUCT_EXTRACT_UPDATE+prod_id,
+    #       contentType: 'application/json',
+    #       data: JSON.stringify({versions: [], warnMsg: msg})
+    #     })
+    #   , session.prod_id, msg).then =>
+    #     super session, msg
 
-      casper.stdout.on 'data', (chunk) =>
-        logger.debug("[CasperJS#"+@sessionPort+"] "+chunk.toString().trim())
-      casper.stderr.on 'data', (chunk) =>
-        logger.error("[CasperJS#"+@sessionPort+"] error="+chunk.toString().trim())
-      casper.on 'close', (code) =>
-        logger.debug("[CasperJS#"+@sessionPort+"] casper process #"+@prod_id+" exited with code " + code)
+    # #
+    # sendError: (session, msg) ->
+    #   return if ! session.prod_id # Stop pushed or Local Test
+    #   casper.evaluate( (prod_id, msg) ->
+    #     $.ajax({
+    #       type : "PUT",
+    #       url: satconf.PRODUCT_EXTRACT_UPDATE+prod_id,
+    #       contentType: 'application/json',
+    #       data: JSON.stringify({versions: [], errorMsg: msg})
+    #     }).fail (xhr, textStatus, errorThrown) ->
+    #       $.ajax(this) if textStatus == 'timeout' || xhr.status == 502
+    #   , session.prod_id, msg).then =>
+    #     super session, msg
 
-    onSessionReady: () ->
-      prod = @products[port]
-      prodJSON = JSON.stringify(prod)
-      logger.debug("[NodeJS] On port "+@sessionPort+", going to start session.")
+    # #
+    # sendResult: (session, result) ->
+    #   return if ! session.prod_id # Stop pushed or Local Test
+    #   casper.evaluate( (prod_id, result) ->
+    #     $.ajax({
+    #       tryCount: 0,
+    #       retryLimit: 1,
+    #       type : "PUT",
+    #       url: satconf.PRODUCT_EXTRACT_UPDATE+session.prod_id,
+    #       contentType: 'application/json',
+    #       data: JSON.stringify(result)
+    #     }).fail((xhr, textStatus, errorThrown) ->
+    #       if textStatus == 'timeout' || xhr.status == 502
+    #         $.ajax(this)
+    #       else if xhr.status == 500 && @tryCount < @retryLimit
+    #         @tryCount++
+    #         $.ajax(this)
+    #       else
+    #         logger.error(xhr.status, ":", textStatus)
+    #     )
+    #   , session.prod_id, result).then =>
+    #     super session, result
 
-      request = http.request {
-        host: "127.0.0.1",
-        port: @sessionPort,
-        method: 'POST',
-        headers: {
-          "Content-Type":"application/json",
-          "Content-Length":Buffer.byteLength(prodJSON),
-        },
-      }, (response) =>
-        logger.debug('STATUS: ' + response.statusCode)
-        response.setEncoding('utf8')
-        response.on 'data', (chunk) ->
-          logger.debug("For url='"+prod.url+"', title='"+chunk+"'.")
-      request.end(prodJSON)
+    # onTimeout: (command) ->
+    #   return =>
+    #     # logger.debug("in evalAndThen, timeout for", command);
+    #     command.callback = undefined
+    #     this.sendError(command.session, "something went wrong", command)
+    #     command.session.endSession()
 
-    openNewTab: (prod) ->
-      port = @portCounter++
-      @products[port] = prod
+    # #
+    # evalAndThen: (session, cmd, callback) ->
+    #   logger.debug("in evalAndThen with ", cmd.action, cmd.option, cmd.value) #cmd.mapping, 
+    #   session.casper ?= {}
+    #   session.casper.callback = callback
+    #   casper.evaluate (session_id, action, mapping, option, value) ->
+    #     requirejs ['casper_logger', 'src/casper/casper_crawler'], (logger, Crawler) ->
+    #       Crawler.doNext(session_id, action, mapping, option, value)
+    #   , session.id, cmd.action, cmd.mapping, cmd.option, cmd.value
+    #   casper.waitFor =>
+    #     @evalReturns is true
+    #   , =>
+    #     @evalReturns = false
 
-      logger.debug("[NodeJS] Launch casper on port : "+port)
-      casper = spawn('casperjs', ["--web-security=false", "src/casper/test.coffee", "--port="+port, "--node_port="+@serverPort])
+    # onEvalDone: (data) ->
+    #   @evalReturns = true
+    #   casper.then(=>
+    #     session = @sessions[data.session_id]
+    #     session?.casper.callback?(data.result)
+    #   )
 
-      casper.stdout.on 'data', (chunk) ->
-        logger.debug("[CasperJS#"+port+"] "+chunk.toString().trim())
-      casper.stderr.on 'data', (chunk) ->
-        logger.error("[CasperJS#"+port+"] error="+chunk.toString().trim())
-      casper.on 'close', (code) ->
-        logger.debug("[CasperJS#"+port+"] casper process #"+prod.id+" exited with code " + code)
+    # onGoNextStep: (data) ->
+    #   @evalReturns = true
+    #   # casper.captureSelector("img_back/#{Date.now()}_amazon.jpg", "#handleBuy", {quality: 10})
+    #   logger.debug "On 'saturn.goNextStep', session_id #{data.session_id} received !"
+    #   casper.then(=>
+    #     @sessions[data.session_id || 1]?.next()
+    #   )
 
-  return NodeSaturn
+
+  return CasperSaturnSession

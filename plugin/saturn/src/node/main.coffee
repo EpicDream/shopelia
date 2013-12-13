@@ -34,6 +34,6 @@ vm.runInThisContext(fs.readFileSync("./vendor/core_extensions.js"))
 requirejs ['optimist', 'node_logger', 'src/node/saturn', 'satconf'], (optimist, logger, NodeSaturn) ->
   argv = optimist.argv
   serverPort = argv.port || 53746
-  logger.level = logger.INFO;
+  logger.level = logger.ALL;
   global.saturn = new NodeSaturn(serverPort)
   logger.info("[NodeJS] Server listen on port " + serverPort)

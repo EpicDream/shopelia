@@ -53,6 +53,9 @@ module.exports = function(grunt) {
       src: {
         expand: true,
         flatten: false,
+        options: {
+          bare: true
+        },
         src: ['src/**/*.coffee'],
         dest: 'build/',
         ext: '.js',
@@ -125,15 +128,15 @@ module.exports = function(grunt) {
           out: 'build/node_saturn.js',
         }
       },
-      // casper_saturn: {
-      //   options: {
-      //     baseUrl: '',
-      //     mainConfigFile: "require_config.js",
-      //     optimize: "none",
-      //     name: 'src/casper/casper_saturn',
-      //     out: 'build/casper_saturn.js',
-      //   }
-      // },
+      casper_saturn: {
+        options: {
+          baseUrl: '',
+          mainConfigFile: "require_config.js",
+          optimize: "none",
+          name: 'src/casper/saturn',
+          out: 'build/casper_saturn.js',
+        }
+      },
       casper_crawler: {
         options: {
           baseUrl: '',
@@ -177,15 +180,15 @@ module.exports = function(grunt) {
         ],
         dest: 'dist/node_main.js'
       },
-      // casper_main: {
-      //   src: [
-      //     'vendor/require.js',
-      //     'require_config.js',
-      //     'build/casper_saturn.js',
-      //     "src/casper/main.js",
-      //   ],
-      //   dest: 'dist/casper.js'
-      // },
+      casper_main: {
+        src: [
+          'vendor/require.js',
+          'require_config.js',
+          'build/casper_saturn.js',
+          "build/src/casper/main.js",
+        ],
+        dest: 'dist/casper.js'
+      },
       casper_injected: {
         src: [
           'vendor/require.js',

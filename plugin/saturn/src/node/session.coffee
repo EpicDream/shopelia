@@ -15,12 +15,12 @@ define ["logger", "src/saturn_session"], (logger, SaturnSession) ->
 
     start: ->
       logger.debug("[NodeJS] Launch casper on port : "+@sessionPort)
-      casper = spawn('casperjs', ["--web-security=false", "src/casper/saturn.coffee", "--port="+@sessionPort, "--node_port="+@serverPort])
+      casper = spawn('casperjs', ["--web-security=false", "dist/casper.js", "--port="+@sessionPort, "--node_port="+@serverPort])
 
       casper.stdout.on 'data', (chunk) =>
-        logger.debug("[CasperJS#"+@sessionPort+"] "+chunk.toString().trim())
+        logger.print(chunk.toString().trim())
       casper.stderr.on 'data', (chunk) =>
-        logger.error("[CasperJS#"+@sessionPort+"] error="+chunk.toString().trim())
+        logger.print(chunk.toString().trim())
       casper.on 'close', (code) =>
         logger.debug("[CasperJS#"+@sessionPort+"] casper process #"+@prod.url+" exited with code " + code)
 

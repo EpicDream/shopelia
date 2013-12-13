@@ -99,7 +99,7 @@ logger.format = function(level, caller, args) {
 
 logger.stringify = function(args) {
   console.assert(typeof args === 'object' && args instanceof Array, 'args must be an Array');
-  return sprintf.apply({}, args);
+  return sprintf.apply(null, args);
 };
 
 logger.write = function (level, args) {
