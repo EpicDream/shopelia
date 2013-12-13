@@ -86,29 +86,20 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "deliver comment to blogspot site" do
-    skip
-    comment = "Tu portes vraiment bien le black&white. Les produits Jenyffer sont pas si mal en fait."
+    skip #OK COMMENT POSTED
+    comment = "Toujours ravissante. J'adore ce pantalon, je crois que je vais le commander au père noël:)"
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
-    @poster.url = "http://haveafashionbreak.blogspot.fr/2013/12/black-white.html"
+    @poster.url = "http://haveafashionbreak.blogspot.fr/2013/12/keep-walking.html"
     assert @poster.deliver
   end
   
   test "deliver comment to blogspot site 2" do
-    skip
-    comment = "Super photos! J'adore. Je vais craquer pour un des ces bracelets"
+    #skip #OK COMMENT POSTED
+    comment = "Tu es magnifique, Super sexy ..."
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
-    @poster.url = "http://ledressingdeleeloo.blogspot.fr/2013/12/le-dressing-de-leeloo-x-latelier-des.html"
-    assert @poster.deliver
-  end
-
-  test "deliver comment to blogspot site 3" do
-    skip
-    comment = "Super Pull! J'adore. Je vais craquer pour ce collier"
-    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
-    Incident.expects(:create).never
-    @poster.url = "http://haveafashionbreak.blogspot.fr/2013/12/the-tunnel.html"
+    @poster.url = "http://ledressingdeleeloo.blogspot.fr/2013/12/hipanema.html"
     assert @poster.deliver
   end
 
