@@ -111,6 +111,15 @@ class Poster::CommentTest < ActiveSupport::TestCase
     @poster.url = "http://www.maella-b.com/2013/12/barboteuse.html"
     assert @poster.deliver
   end
+  
+  test "deliver comment to blogspot site with comment popup mode 2" do
+    skip
+    comment = "J'adore le manteau, il a l'air très chaud en plus. Soigne toi bien !"
+    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
+    Incident.expects(:create).never
+    @poster.url = "http://www.maella-b.com/2013/12/jouer-froid-blog-bretagne.html"
+    assert @poster.deliver
+  end
 
 end
 
