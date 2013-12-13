@@ -42,26 +42,17 @@ module Poster
       @page = @agent.get(@url)
       
       PUBLISHERS.each { |publisher|
-        if publisher.respond_to?(:login)
-          @agent = publisher.login(@agent) 
-          @page = @agent.get(@page.uri) #reload after login
-        end
-        
-        if publisher.respond_to?(:page)
-          page = publisher.page(@agent, @url)
-          next unless page
-          @page = page
-        end
-        if @form = @page.form_with(action: publisher::COMMENT_ACTION )
+        if publisher.can_publish?(@page)
           extend publisher
+          @form = form()
           @publisher = publisher
           break
         end
       }
       report_incident("Publisher missing") unless @publisher
       @publisher
-    rescue
-      report_incident("Publisher missing")
+    rescue => e
+      report_incident("Publisher missing", e)
     end
     
     private

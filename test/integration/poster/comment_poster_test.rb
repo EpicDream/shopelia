@@ -104,7 +104,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
 
   test "deliver comment to blogspot site 3" do
-    # skip
+    skip
     comment = "Super Pull! J'adore. Je vais craquer pour ce collier"
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
