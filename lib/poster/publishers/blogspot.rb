@@ -6,10 +6,10 @@ module Poster
     CASPER_SCRIPT_PATH = File.join(File.dirname(__FILE__), 'post_comment.js')
     
     def self.can_publish? page
-      !!page.search("iframe#comment-editor")
+      !!page.search("iframe#comment-editor").first
     end
     
-    def form
+    def self.form page=nil
     end
     
     def fill form

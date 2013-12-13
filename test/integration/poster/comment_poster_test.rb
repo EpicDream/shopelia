@@ -24,12 +24,6 @@ class Poster::CommentTest < ActiveSupport::TestCase
     assert_equal Poster::Blogspot, @poster.publisher
   end
   
-  test "include appropriate publisher module blogspot when comment via popup link" do
-    @poster.url = "http://www.maella-b.com/2013/12/barboteuse.html"
-    assert @poster.respond_to?(:form)
-    assert_equal Poster::Blogspot, @poster.publisher
-  end
-  
   test "create incident if publisher not found" do
     Incident.expects(:create)
     @poster.url = "http://www.prixing.fr"
@@ -49,24 +43,6 @@ class Poster::CommentTest < ActiveSupport::TestCase
     form = @poster.fill @poster.form
     token = "381f36947bedfbda52041e209e9713db_1687"
     assert_equal "#{token} #{COMMENT}", form['comment']
-  end
-  
-  test "fill blogspot comment form" do
-    @poster.url = "http://1991-today.blogspot.fr/2013/12/come-back-to-me.html"
-    @poster.website_url = WEBSITE_URL
-    assert_equal Poster::Blogspot, @poster.publisher
-    form = @poster.fill @poster.form
-    
-    assert_equal "#{COMMENT} - #{WEBSITE_URL}", form['commentBody']
-  end
-  
-  test "fill blogspot comment - popup mode" do
-    @poster.url = "http://www.maella-b.com/2013/12/barboteuse.html"
-
-    @poster.website_url = WEBSITE_URL
-    form = @poster.fill @poster.form
-    
-    assert_equal "#{COMMENT} - #{WEBSITE_URL}", form['postBody']
   end
   
   test "deliver comment to wordpress site" do
@@ -95,7 +71,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "deliver comment to blogspot site 2" do
-    #skip #OK COMMENT POSTED
+    skip #OK COMMENT POSTED
     comment = "Tu es magnifique, Super sexy ..."
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never

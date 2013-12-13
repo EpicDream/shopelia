@@ -3,11 +3,12 @@ module Poster
     COMMENT_ACTION = /wp-comments-post/
     
     def self.can_publish?(page)
-      !!form(page)
+      !!self.form(page)
     end
     
-    def form
-      @page.form_with(action: publisher::COMMENT_ACTION)
+    def self.form page=nil
+      page ||= @page
+      page.form_with(action:COMMENT_ACTION)
     end
     
     def fill form

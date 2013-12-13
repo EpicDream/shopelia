@@ -44,7 +44,7 @@ module Poster
       PUBLISHERS.each { |publisher|
         if publisher.can_publish?(@page)
           extend publisher
-          @form = form()
+          @form = publisher.form(@page)
           @publisher = publisher
           break
         end
