@@ -25,7 +25,7 @@ define(["casper_logger", "src/saturn", "src/casper/session", 'satconf'], (logger
         catch err
           logger.error "#{@caspId} Fail to parse '#{request.post}'"
           response.statusCode = 500
-          response.write(err0)
+          response.write("Fail to parse post data")
           response.close()
           return casper.exit()
 
@@ -55,28 +55,30 @@ define(["casper_logger", "src/saturn", "src/casper/session", 'satconf'], (logger
     sendWarning: (prod, msg) ->
       return if ! prod.prod_id
       casper.evaluate (data) ->
-        $.ajax({
-          type : "PUT",
-          url: satconf.PRODUCT_EXTRACT_UPDATE+prod.prod_id,
-          contentType: 'application/json',
-          data: JSON.stringify(data)
-        }).fail (xhr, textStatus, errorThrown ) ->
-          if textStatus is 'timeout' || xhr.status is 502
-            $.ajax(this)
+        requirejs ['jquery'], ($) ->
+          $.ajax({
+            type : "PUT",
+            url: satconf.PRODUCT_EXTRACT_UPDATE+prod.prod_id,
+            contentType: 'application/json',
+            data: JSON.stringify(data)
+          }).fail (xhr, textStatus, errorThrown ) ->
+            if textStatus is 'timeout' || xhr.status is 502
+              $.ajax(this)
       , {versions: [], warnMsg: msg}
       super(prod, msg)
 
     sendError: (prod, msg) ->
       return if ! prod.prod_id
       casper.evaluate (url, data) ->
-        $.ajax({
-          type : "PUT",
-          url: url,
-          contentType: 'application/json',
-          data: JSON.stringify(data)
-        }).fail (xhr, textStatus, errorThrown ) ->
-          if textStatus is 'timeout' || xhr.status is 502
-            $.ajax(this)
+        requirejs ['jquery'], ($) ->
+          $.ajax({
+            type : "PUT",
+            url: url,
+            contentType: 'application/json',
+            data: JSON.stringify(data)
+          }).fail (xhr, textStatus, errorThrown ) ->
+            if textStatus is 'timeout' || xhr.status is 502
+              $.ajax(this)
       , satconf.PRODUCT_EXTRACT_UPDATE+prod.prod_id, {versions: [], errorMsg: msg}
       super(prod, msg)
 

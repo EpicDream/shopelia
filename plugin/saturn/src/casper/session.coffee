@@ -28,20 +28,22 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
     #
     sendWarning: (msg) ->
       return if ! @prod_id # Stop pushed or Local Test
-      casper.evaluate( (data) ->
-        $.ajax({type : "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data)
-        }).fail (xhr, textStatus, errorThrown) ->
-          $.ajax(this) if textStatus == 'timeout' || xhr.status == 502
+      casper.evaluate( (url, data) ->
+        requirejs ['jquery'], ($) ->
+          $.ajax({type : "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data)
+          }).fail (xhr, textStatus, errorThrown) ->
+            $.ajax(this) if textStatus == 'timeout' || xhr.status == 502
       , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], warnMsg: msg}).then () =>
         super msg
 
     #
     sendError: (msg) ->
       return if ! @prod_id # Stop pushed or Local Test
-      casper.evaluate( (data) ->
-        $.ajax({type : "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data)
-        }).fail (xhr, textStatus, errorThrown) ->
-          $.ajax(this) if textStatus == 'timeout' || xhr.status == 502
+      casper.evaluate( (url, data) ->
+        requirejs ['jquery'], ($) ->
+          $.ajax({type : "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data)
+          }).fail (xhr, textStatus, errorThrown) ->
+            $.ajax(this) if textStatus == 'timeout' || xhr.status == 502
       , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], errorMsg: msg}).then () =>
         super msg
 
@@ -49,15 +51,16 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
     sendResult: (result) ->
       return if ! @prod_id # Stop pushed or Local Test
       casper.evaluate( (url, data) ->
-        $.ajax({type: "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data), tryCount: 0, retryLimit: 1}
-        ).fail (xhr, textStatus, errorThrown) ->
-          if textStatus == 'timeout' || xhr.status == 502
-            $.ajax(this)
-          else if xhr.status == 500 && @tryCount < @retryLimit
-            @tryCount++
-            $.ajax(this)
-          else
-            logger.error(xhr.status, ":", textStatus)
+        requirejs ['jquery'], ($) ->
+          $.ajax({type: "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data), tryCount: 0, retryLimit: 1}
+          ).fail (xhr, textStatus, errorThrown) ->
+            if textStatus == 'timeout' || xhr.status == 502
+              $.ajax(this)
+            else if xhr.status == 500 && @tryCount < @retryLimit
+              @tryCount++
+              $.ajax(this)
+            else
+              logger.error(xhr.status, ":", textStatus)
       , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, result)
       casper.then () =>
         super result
