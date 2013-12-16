@@ -80,7 +80,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
 
   test "deliver comment to blogspot site with comment popup mode" do
-    skip
+    skip #OK COMMENT POSTED
     comment = "Cette robe est vraiment top. Elle te va à ravir ! ... J'adore les robes courtes ...;)"
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
@@ -89,7 +89,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "deliver comment to blogspot site with comment popup mode 2" do
-    skip
+    skip #OK COMMENT POSTED
     comment = "J'adore le manteau, il a l'air très chaud en plus. Soigne toi bien !"
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL)
     Incident.expects(:create).never
