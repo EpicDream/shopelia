@@ -57,20 +57,17 @@ logger.timestamp = function (date) {
   return sprintf("%s.%03d", date.toLocaleTimeString(), date.getMilliseconds());
 };
 
-logger.header = function (level, caller, date) {
-  var d = new Date(date || Date.now()),
-    header = sprintf('[%s][%5s]%s',logger.timestamp(d), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : '');
+logger.header = function (level, date) {
   console.assert(typeof level === 'string', 'level must be a string');
-  console.assert(typeof caller === 'string', 'caller must be a string');
-  console.assert(typeof d === 'object' && d instanceof Date, 'date must be a Date');
-  return header;
+  var d = (date && new Date(date)) || new Date();
+  return ['[%s][%5s]',logger.timestamp(d), level];
 };
 
 logger.format = function(level, caller, args) {
   console.assert(typeof level === 'string', 'level must be a string');
   console.assert(typeof caller === 'string', 'caller must be a string');
   console.assert(typeof args === 'object' && args instanceof Array, 'args must be an Array');
-  var res = [logger.header(level, caller)];
+  var res = logger.header(level);
 
   for ( i = 0 ; i < args.length ; i++ ) {
     arg = args[i];
@@ -81,14 +78,17 @@ logger.format = function(level, caller, args) {
     } else if (typeof arg === 'object' && arg instanceof Date) {
       res[0] += " %s";
     } else if (typeof arg === 'object' && arg instanceof HTMLElement) {
-      res[0] += " HTMLElement." + arg.tagName;
+      res[0] += " %s";
+      res.push( " HTMLElement." + arg.tagName );
       continue;
     } else {
       try {
-        res[0] += " " + JSON.stringify(arg).replace(/\%/g, '%%');
+        res[0] += " %s";
+        res.push( JSON.stringify(arg).replace(/\%/g, '%%') );
         continue;
       } catch(err) {
-        res[0] += " ";
+        arg = "<<!! Logger.format: " + err + " !!>>";
+        res[0] += " %s";
       }
     }
     res.push(arg);
