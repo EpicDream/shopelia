@@ -2,8 +2,8 @@
 # Author : Vincent RENAUDINEAU
 # Created : 2013-11-06
 
-require ['chrome_logger', 'crawler', 'src/helper', "satconf"],
-(logger, Crawler, helper) ->
+require ['jquery', 'chrome_logger', 'crawler', 'src/helper', "satconf"],
+($, logger, Crawler, helper) ->
 
   logger.level = logger[satconf.log_level]
   window.Crawler = Crawler
@@ -21,7 +21,7 @@ require ['chrome_logger', 'crawler', 'src/helper', "satconf"],
       when "crawl"
         result = Crawler.crawl(hash.mapping)
       else
-        logger.error("Unknow command", action)
+        logger.error("Unknow command", hash.action)
         result = false
     # wait minimal to let page reload on url change
     setTimeout(waitAjax, 1000) if hash.action is "setOption"

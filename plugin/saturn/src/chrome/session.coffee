@@ -69,7 +69,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
 
     sendError: (msg) ->
       if @extensionId
-        saturn.externalPort.postMessage {url: @url, kind: @kind, tabId: @tabId, versions: [], errorMsg: msg}
+        @saturn.externalPort.postMessage {url: @url, kind: @kind, tabId: @tabId, versions: [], errorMsg: msg}
       else if @prod_id # Stop pushed or Local Test
         $.ajax({
           type : "PUT",
@@ -87,7 +87,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
         result.tabId = @tabId
         result.kind = @kind
         result.strategy = @initialStrategy
-        saturn.externalPort.postMessage result
+        @saturn.externalPort.postMessage result
       else if @prod_id # Stop pushed or Local Test
         $.ajax({
           tryCount: 0,

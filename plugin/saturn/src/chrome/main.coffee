@@ -9,6 +9,8 @@ require ['chrome_logger', 'src/chrome/saturn', 'src/chrome/adblock', 'satconf'],
 
   saturn = new ChromeSaturn()
   window.saturn = saturn
+  saturn.AdBlock = AdBlock
+  AdBlock.saturn = saturn
 
   # On contentscript ask next step (next color/size tuple).
   chrome.extension.onMessage.addListener (msg, sender, response) ->

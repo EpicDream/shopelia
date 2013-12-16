@@ -73,7 +73,7 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn", 'src/chrome/session'
 
     sendWarning: (prod, msg) ->
       if prod.extensionId
-        saturn.externalPort.postMessage({url: prod.url, kind: prod.kind, tabId: prod.tabId, versions: [], warnMsg: msg})
+        @externalPort.postMessage({url: prod.url, kind: prod.kind, tabId: prod.tabId, versions: [], warnMsg: msg})
       else if prod.prod_id # Stop pushed or Local Test
         $.ajax({
           type : "PUT",
@@ -85,7 +85,7 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn", 'src/chrome/session'
 
     sendError: (prod, msg) ->
       if prod.extensionId
-        saturn.externalPort.postMessage({url: prod.url, kind: prod.kind, tabId: prod.tabId, versions: [], errorMsg: msg})
+        @externalPort.postMessage({url: prod.url, kind: prod.kind, tabId: prod.tabId, versions: [], errorMsg: msg})
       else if prod.prod_id # Stop pushed or Local Test
         $.ajax({
           type : "PUT",
