@@ -1,5 +1,5 @@
 ---
-"version": "3.2.0"
+"version": "3.2.1"
 "default":
   #### Global options
   ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
@@ -13,15 +13,13 @@
   "run_mode" : "manual"
   "DELAY_BETWEEN_PRODUCTS": 1000 # 1 s
   "DELAY_BEFORE_REASK_MAPPING": 300000 # 5 min
-  "SESSION_RESCUE": 300000 # 5 min
+  "DELAY_RESCUE": 60000 # 1 min
   "MIN_NB_TABS": 0
   "MAX_NB_TABS": 5
   "consum": false
 
   #### Chrome options
   "DELAY_BETWEEN_OPTIONS": 1500
-  ## wait response from contentscript 60s max, fail after that (required when a lot of sizes for shoes for example).
-  "DELAY_RESCUE": 30000
   "ADBLOCK_RESTART_DELAY": 0 # Never
   "CHROME_RESTART_DELAY": 0 # Never
 
@@ -57,12 +55,12 @@
   "PRODUCT_EXTRACT_UPDATE": "https://staging.shopelia.com/api/viking/products/"
   "consum": true
   "DELAY_BETWEEN_PRODUCTS": 5000 # 5 s
-  "ADBLOCK_RESTART_DELAY": 43200000 # 12h
-  "CHROME_RESTART_DELAY": 172800000 # 48h
+  "ADBLOCK_RESTART_DELAY": 10800000 # 3h
+  "CHROME_RESTART_DELAY": 86400000 # 24h
 "prod":
   "run_mode" : "auto"
   "log_level" : "WARN"
   "consum": true
-  "ADBLOCK_RESTART_DELAY": 43200000 # 12h
-  "CHROME_RESTART_DELAY": 172800000 # 48h
+  "ADBLOCK_RESTART_DELAY": 10800000 # 3h
+  "CHROME_RESTART_DELAY": 86400000 # 24h
   "DELAY_BETWEEN_PRODUCTS": 500 # 500 ms

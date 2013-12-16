@@ -13,7 +13,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
 
     # Class methods
     $$.canOpenNewTab = () ->
-      (Object.keys($$.tabs).length+$$.tabsBeenOpened) <= satconf.MAX_NB_TABS
+      (Object.keys($$.tabs).length+$$.tabsBeenOpened) < satconf.MAX_NB_TABS
 
     $$.addToPending = (session) ->
       $$.pendings.push(session)
@@ -25,26 +25,26 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
 
     constructor: ->
       super
-      this.canSubTask = true
+      @canSubTask = true
+      @alreadyRetried = false
 
     start: () ->
       if @tabId?
         $$.tabs[@tabId] = this
+        @rescueTimeout = setTimeout( =>
+          this.onTimeout()
+        , satconf.DELAY_RESCUE)
         this.openUrl()
       else if $$.canOpenNewTab()
+        @rescueTimeout = setTimeout(=>
+          this.onTimeout()
+        , satconf.DELAY_RESCUE)
         this.openNewTab() 
       else
         $$.addToPending(this)
 
     evalAndThen: (cmd, callback) ->
-      command = {
-        cmd: cmd,
-        callback: callback,
-      }
-      if typeof callback is 'function'
-        command.rescueTimer = window.setTimeout(this.onTimeout(command), satconf.DELAY_RESCUE)
-        command.then = this.onResultReceived(command)
-      chrome.tabs.sendMessage(@tabId, cmd, command.then)
+      chrome.tabs.sendMessage(@tabId, cmd, callback)
 
     preEndSession: () ->
       super
@@ -111,7 +111,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
 
     openNewTab: () ->
       $$.tabsBeenOpened++
-      chrome.tabs.create {}, (tab) =>
+      chrome.tabs.create {active: false}, (tab) =>
         @tabId = tab.id
         $$.tabs[@tabId] = this
         $$.tabsBeenOpened--
@@ -137,24 +137,23 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
           this.next()
 
     closeTab: () ->
+      @alreadyRetried = true
       delete $$.tabs[@tabId]
       return if @keepTabOpen || ! @tabId
       chrome.tabs.remove(@tabId)
       @oldTabId = @tabId;
       @tabId = undefined
 
-    onTimeout: (command) ->
-      return () =>
-        # logger.debug("in evalAndThen, timeout for", command);
-        command.callback = undefined
-        this.fail("something went wrong", command)
-
-    onResultReceived: (command) ->
-      return (result) =>
-        # logger.debug("in evalAndThen, result received, for", command);
-        # Contentscript just respond to us, clear rescue.
-        window.clearTimeout(command.rescueTimer)
-        if command.callback
-          command.callback(result)
+    onTimeout: () ->
+      # try to reload before to fail.
+      if ! @alreadyRetried && @strategy isnt 'ended'
+        @rescueTimeout = setTimeout(=>
+          this.onTimeout()
+        , satconf.DELAY_RESCUE)
+        chrome.tabs.reload @tabId, =>
+          this.retryLastCmd()
+        @alreadyRetried = true
+      else
+        super
 
   return ChromeSaturnSession

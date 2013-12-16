@@ -22,7 +22,7 @@ var SaturnSession = function(saturn, prod) {
 
   this.helper = Helper.get(prod.url);
 
-  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.SESSION_RESCUE);
+  this.rescueTimeout = undefined;
 
   this.results = []; // store each version's result.
 };
@@ -31,11 +31,14 @@ SaturnSession.counter = 0;
 
 SaturnSession.prototype.start = function() {
   logger.info(this.logId(), "Start crawling !", logger.isDebug() ? this : "(url="+this.url+")");
+  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE);
   this.openUrl();
 };
 
 SaturnSession.prototype.next = function() { try {
   var t;
+  clearTimeout(this.rescueTimeout);
+  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE);
   switch (this.strategy) {
     case "superFast":
       this.strategy = 'done';
@@ -106,12 +109,30 @@ SaturnSession.prototype.next = function() { try {
       break;
 
     case "ended" :
-      logger.warn("SaturnSession.next called with strategy == 'ended'.");
+      logger.warn(this.logId(), "SaturnSession.next called with strategy == 'ended'.");
       break;
   }
 } catch (err) {
-  logger.error("in next :", err);
+  logger.error(this.logId(), "in next :", err);
 }};
+
+SaturnSession.prototype.retryLastCmd = function () {
+  clearTimeout(this.rescueTimeout);
+  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE);
+  switch (this.lastCmd.action) {
+    case "getOptions":
+      this.getOptions(this.lastCmd.option);
+      break;
+    case "setOption":
+      this.setOption(this.lastCmd.option, this.lastCmd.value);
+      break;
+    case "crawl":
+      this.crawl();
+      break;
+    default:
+
+  }
+};
 
 SaturnSession.prototype.createSubTasks = function() {
   var firstOption = this.options.firstOption({nonAlone: true}),
@@ -143,9 +164,8 @@ SaturnSession.prototype.createSubTasks = function() {
 };
 
 SaturnSession.prototype.getOptions = function(option) {
-  this.currentAction = "getOptions";
-  var cmd = {action: this.currentAction, mapping: this.mapping, option: option};
-  this.evalAndThen(cmd, function(values) { try {
+  this.lastCmd = {action: "getOptions", mapping: this.mapping, option: option};
+  this.evalAndThen(this.lastCmd, function(values) { try {
     logger.info(this.logId(), (! (values instanceof Array) && '?' || values.length)+" versions for option"+option);
     // logger.debug(values);
     if (! values)
@@ -158,14 +178,13 @@ SaturnSession.prototype.getOptions = function(option) {
 };
 
 SaturnSession.prototype.setOption = function(option, value) {
-  this.currentAction = "setOption";
-  var cmd = {action: this.currentAction, mapping: this.mapping, option: option, value: value};
-  this.evalAndThen(cmd);
+  this.lastCmd = {action: "setOption", mapping: this.mapping, option: option, value: value};
+  this.evalAndThen(this.lastCmd);
 };
 
 SaturnSession.prototype.crawl = function() {
-  this.currentAction = "crawl";
-  this.evalAndThen({action: this.currentAction, mapping: this.mapping}, function(version) { try {
+  this.lastCmd = {action: "crawl", mapping: this.mapping};
+  this.evalAndThen(this.lastCmd, function(version) { try {
     var d = this;
     if (typeof version !== 'object')
       return this.fail("No result return for crawl");
@@ -186,6 +205,8 @@ SaturnSession.prototype.crawl = function() {
 
 //
 SaturnSession.prototype.subTaskEnded = function(subSession) {
+  clearTimeout(this.rescueTimeout);
+  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE * 5);
   delete this._subTasks[subSession._subTaskId];
   this.results = this.results.concat(subSession.results);
   if (Object.keys(this._subTasks).length === 0) {
@@ -227,8 +248,6 @@ SaturnSession.prototype.sendFinalVersions = function() {
 //
 SaturnSession.prototype.preEndSession = function() {
   this.strategy = 'ended'; // prevent
-  clearTimeout(this.rescueTimeout);
-  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.SESSION_RESCUE * 10);
 };
 
 //
