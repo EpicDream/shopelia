@@ -6,78 +6,117 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: pkg,
     // Check syntax and other stuff
-    coffee_jshint: {
-      options: {
-        loopfunc: true,
-        browser: true,
-        devel: true,
-        globals: ['window', 'document', 'console', 'module', 'define', 'require', 'chrome', '__utils__'],
+    jshint: {
+      main: {
+        src: [
+          'Gruntfile.js',
+          'src/*.js',
+          'lib/*.js',
+          'test/*.js',
+        ],
+        options: {
+          loopfunc: true,
+          multistr: true,
+          browser: true,
+          devel: true,
+        }
       },
-      source: {
-        src: ['../common/lib/*.js.coffee', 'src/**.coffee'],
-      },
+      libs: {
+        src: [
+          '../common/lib/*.js',
+          '../common/test/**',
+        ],
+        options: {
+          loopfunc: true,
+          multistr: true,
+          browser: true,
+          devel: true,
+        }
+      }
     },
     // Check syntax and other stuff
-    jshint: {
-      files: [
-        'Gruntfile.js',
-        'src/**/*.js',
-        'lib/*.js',
-        'test/*.js',
-        '../common/lib/*.js',
-        '../common/test/**',
-      ],
-      options: {
-        loopfunc: true,
-        multistr: true,
-        browser: true,
-        devel: true,
-        globals: { // options here to override JSHint defaults
-          jQuery: true,
-          module: true,
-        }
+    coffee_jshint: {
+      chrome: {
+        options: {
+          jshintOptions: ["browser", "devel"],
+          globals: ['FileError', 'define', 'require', 'chrome', 'satconf'],
+        },
+        src: ['src/chrome/*.coffee', '../common/lib/chrome_logger.js.coffee']
+      },
+      casper: {
+        options: {
+          jshintOptions: ["node", "browser", "devel"],
+          globals: ['define', 'require', '__utils__', 'requirejs', 'casper', 'satconf'],
+        },
+        src: ['src/node/*.coffee', 'src/casper/*.coffee', '../common/lib/casper_logger.js.coffee', '../common/lib/node_logger.js.coffee']
       }
     },
     // Copy all needed libs to "vendor/" repository
     copy: {
-      main: {
+      libs: {
         expand: true,
         cwd: '../common/',
         src: ['./lib/*.js', './vendor/*.js'],
         flatten: true,
         dest: 'vendor/',
+      },
+      chrome: {
+        files: [
+          {src: ['img/*'], dest: 'extension/', expand: true, flatten: true},
+          {src: ['src/alert_inhibiter.js'], dest: 'extension/', expand: true, flatten: true}
+        ]
       }
     },
     // Compile *.coffee files to *.js files
     coffee: {
-      src: {
-        expand: true,
-        flatten: false,
-        options: {
-          bare: true
-        },
-        src: ['src/**/*.coffee'],
-        dest: 'build/',
-        ext: '.js',
-      },
-      compile: {
+      libs: {
         files: {
           'vendor/chrome_logger.js': '../common/lib/chrome_logger.js.coffee',
           'vendor/casper_logger.js': '../common/lib/casper_logger.js.coffee',
           'vendor/node_logger.js': '../common/lib/node_logger.js.coffee',
         }
       },
+      chrome: {
+        expand: true,
+        flatten: false,
+        options: {
+          bare: true
+        },
+        src: ['src/chrome/*.coffee'],
+        dest: 'build/',
+        ext: '.js',
+      },
+      casper: {
+        expand: true,
+        flatten: false,
+        options: {
+          bare: true
+        },
+        src: ['src/node/*.coffee', 'src/casper/*.coffee'],
+        dest: 'build/',
+        ext: '.js',
+      },
     },
     // Launch all tests
     jasmine: {
       main: {
-        // src: ['src/*.js'],
         options: {
           '--web-security' : false,
           '--local-to-remote-url-access' : true,
           '--ignore-ssl-errors' : true,
-          specs: ['test/*.js', '../common/test/lib/*.js'],
-          // specs: ['test/saturn_test.js', 'test/saturn_session_test.js', '../common/test/lib/*.js'], //'test/*.js', 
+          specs: ['test/*.js'],
+          template: require('grunt-template-jasmine-requirejs'),
+          templateOptions: {
+            requireConfigFile: 'require_config.js'
+          },
+        }
+      },
+      libs: {
+        options: {
+          '--web-security' : false,
+          '--local-to-remote-url-access' : true,
+          '--ignore-ssl-errors' : true,
+          specs: ['../common/test/lib/*.js'],
           template: require('grunt-template-jasmine-requirejs'),
           templateOptions: {
             requireConfigFile: 'require_config.js'
@@ -160,7 +199,7 @@ module.exports = function(grunt) {
           'build/src/chrome/adblock.js',
           'build/src/chrome/main.js'
         ],
-        dest: 'dist/background.js'
+        dest: 'extension/background.js'
       },
       contentscript: {
         src: [
@@ -170,7 +209,7 @@ module.exports = function(grunt) {
           "build/crawler.js",
           "build/src/chrome/crawler.js",
         ],
-        dest: 'dist/contentscript.js'
+        dest: 'extension/contentscript.js'
       },
       node_main: {
         src: [
@@ -202,25 +241,25 @@ module.exports = function(grunt) {
     uglify: {
       chrome_back: {
         files: {
-          'dist/background.min.js': ['<%= concat.background.dest %>']
+          'extension/background.min.js': ['<%= concat.background.dest %>']
         }
       },
       chrome_crawler: {
         files: {
-          'dist/contentscript.min.js': ['<%= concat.contentscript.dest %>']
+          'extension/contentscript.min.js': ['<%= concat.contentscript.dest %>']
         }
       }
     },
     clean: {
-      dev: ['vendor', 'src/casper/*.js'],
-      prod: ['build', 'vendor'],
+      vendor: ['vendor'],
+      build: ['build'],
+      chrome: ['vendor', 'build', 'extension', 'vendor/jquery.js'],
       node: ['vendor/jquery.js'],
       all: ['build', 'vendor', 'dist', 'node_modules']
     },
     exec: {
       "package": {
-        cwd: "../",
-        cmd: "google-chrome --pack-extension=saturn --pack-extension-key=priv_keys/saturn.pem && mv -f saturn.crx extensions/",
+        cmd: "google-chrome --pack-extension=saturn --pack-extension-key=priv_keys/saturn.pem",
       }
     },
   });
@@ -245,7 +284,7 @@ module.exports = function(grunt) {
     grunt.file.write("package.json", JSON.stringify(pkg, null, 2));
     // Update manifest.json
     manifest.version = satconf.version;
-    grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
+    grunt.file.write("extension/manifest.json", JSON.stringify(manifest, null, 2));
   });
 
   grunt.registerTask('config', function(profile) {
@@ -262,26 +301,41 @@ module.exports = function(grunt) {
   grunt.registerTask('manifest', function(arg) {
     switch (arg) {
       case 'min' :
-        manifest.background.scripts[0] = 'dist/background.min.js';
-        manifest.content_scripts[0].js[0] = 'dist/contentscript.min.js';
+        manifest.background.scripts[0] = 'background.min.js';
+        manifest.content_scripts[0].js[0] = 'contentscript.min.js';
         break;
       default :
-        manifest.background.scripts[0] = 'dist/background.js';
-        manifest.content_scripts[0].js[0] = 'dist/contentscript.js';
+        manifest.background.scripts[0] = 'background.js';
+        manifest.content_scripts[0].js[0] = 'contentscript.js';
     }
-    grunt.file.write("manifest.json", JSON.stringify(manifest, null, 2));
+    grunt.file.write("extension/manifest.json", JSON.stringify(manifest, null, 2));
   });
 
   // Alias
-  grunt.registerTask('default', ['dev-prod']);
-  grunt.registerTask('cof', ['coffee_jshint', 'default']);
-  grunt.registerTask('test', ['version', 'jshint', 'config:test', 'copy', 'coffee', 'jasmine:main']); 
-  grunt.registerTask('dev', ['test', 'config:dev', 'requirejs', 'concat', 'manifest:dev']);
-  grunt.registerTask('dev-prod', ['test', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
-  grunt.registerTask('prod-dev', ['test', 'config:prod-dev', 'requirejs', 'concat', 'manifest:dev', 'clean:dev']);
-  grunt.registerTask('staging', ['test', 'config:staging', 'requirejs', 'concat', 'manifest', 'clean:prod']);
-  grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'manifest', 'clean:prod']);
-  grunt.registerTask('test-mappings', ['test', 'jasmine:mappings']);
+  grunt.registerTask('default', []);
 
-  grunt.registerTask('casper', ['version', 'copy', 'coffee', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:node']);
+  // Chrome
+  grunt.registerTask('chrome-lint', ['jshint:main', 'jshint:libs', 'coffee_jshint:chrome']);
+  grunt.registerTask('chrome-compile', ['coffee:libs', 'coffee:chrome']);
+  grunt.registerTask('chrome-jasmine', ['jasmine:main', 'jasmine:libs']);
+  grunt.registerTask('chrome-test', ['chrome-lint', 'chrome-compile', 'version', 'config:test', 'copy:libs', 'chrome-jasmine', 'copy:chrome']);
+  grunt.registerTask('chrome-requirejs', ['requirejs:crawler', 'requirejs:chrome_saturn']);
+  grunt.registerTask('chrome-concat', ['concat:background', 'concat:contentscript']);
+
+  grunt.registerTask('chrome', ['chrome-dev-prod']);
+  grunt.registerTask('chrome-dev', ['chrome-test', 'config:dev', 'chrome-requirejs', 'chrome-concat', 'manifest:dev']);
+  grunt.registerTask('chrome-dev-prod', ['chrome-test', 'config:dev-prod', 'chrome-requirejs', 'chrome-concat', 'manifest:dev', 'clean:vendor']);
+  grunt.registerTask('chrome-prod-dev', ['chrome-test', 'config:prod-dev', 'chrome-requirejs', 'chrome-concat', 'manifest:dev', 'clean:vendor']);
+  grunt.registerTask('chrome-staging', ['chrome-test', 'config:staging', 'chrome-requirejs', 'chrome-concat', 'manifest', 'clean:vendor', 'clean:build']);
+  grunt.registerTask('chrome-prod', ['chrome-test', 'config:prod', 'chrome-requirejs', 'chrome-concat', 'manifest', 'clean:vendor', 'clean:build']);
+
+  // Casper
+  grunt.registerTask('casper-lint', ['jshint:main', 'jshint:libs', 'coffee_jshint:casper']);
+  grunt.registerTask('casper-compile', ['coffee:libs', 'coffee:casper']);
+  grunt.registerTask('casper-jasmine', ['jasmine:main', 'jasmine:libs']);
+  grunt.registerTask('casper-test', ['casper-lint', 'casper-compile', 'version', 'config:test', 'copy:libs', 'casper-jasmine']);
+  grunt.registerTask('casper-requirejs', ['requirejs:node_saturn', 'requirejs:casper_saturn', 'requirejs:casper_crawler']);
+  grunt.registerTask('casper-concat', ['concat:node_main', 'concat:casper_main', 'concat:casper_injected']);
+
+  grunt.registerTask('casper', ['casper-test', 'config:dev-prod', 'casper-requirejs', 'casper-concat', 'manifest:dev', 'clean:node']);
 };
