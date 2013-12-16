@@ -15,7 +15,9 @@ helper.help = function (session) {
 };
 
 helper.get = function (url) {
-  if (url.search(/^https?:\/\/www\.priceminister\.com/) !== -1) {
+  if (! url) {
+    return null;
+  } else if (url.search(/^https?:\/\/www\.priceminister\.com/) !== -1) {
     return this.priceminister;
   } else if (url.search(/^https?:\/\/www\.rueducommerce\.fr/) !== -1) {
     return this.rueducommerce;

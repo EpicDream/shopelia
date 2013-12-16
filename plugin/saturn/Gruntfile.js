@@ -11,10 +11,10 @@ module.exports = function(grunt) {
         loopfunc: true,
         browser: true,
         devel: true,
-        globals: ['window', 'document', 'console', 'module', 'define', 'require', 'chrome'],
+        globals: ['window', 'document', 'console', 'module', 'define', 'require', 'chrome', '__utils__'],
       },
       source: {
-        src: ['../common/lib/*.js.coffee'],
+        src: ['../common/lib/*.js.coffee', 'src/**.coffee'],
       },
     },
     // Check syntax and other stuff
@@ -50,24 +50,34 @@ module.exports = function(grunt) {
     },
     // Compile *.coffee files to *.js files
     coffee: {
-      compile: {
+      src: {
+        expand: true,
+        flatten: false,
         options: {
           bare: true
         },
+        src: ['src/**/*.coffee'],
+        dest: 'build/',
+        ext: '.js',
+      },
+      compile: {
         files: {
           'vendor/chrome_logger.js': '../common/lib/chrome_logger.js.coffee',
+          'vendor/casper_logger.js': '../common/lib/casper_logger.js.coffee',
+          'vendor/node_logger.js': '../common/lib/node_logger.js.coffee',
         }
       },
     },
     // Launch all tests
     jasmine: {
       main: {
-        src: ['src/*.js'],
+        // src: ['src/*.js'],
         options: {
           '--web-security' : false,
           '--local-to-remote-url-access' : true,
           '--ignore-ssl-errors' : true,
           specs: ['test/*.js', '../common/test/lib/*.js'],
+          // specs: ['test/saturn_test.js', 'test/saturn_session_test.js', '../common/test/lib/*.js'], //'test/*.js', 
           template: require('grunt-template-jasmine-requirejs'),
           templateOptions: {
             requireConfigFile: 'require_config.js'
@@ -105,8 +115,35 @@ module.exports = function(grunt) {
           baseUrl: '',
           mainConfigFile: "require_config.js",
           optimize: "none",
-          name: 'src/chrome/chrome_saturn',
+          name: 'src/chrome/saturn',
           out: 'build/chrome_saturn.js',
+        }
+      },
+      node_saturn: {
+        options: {
+          baseUrl: '',
+          mainConfigFile: "require_config.js",
+          optimize: "none",
+          name: 'src/node/saturn',
+          out: 'build/node_saturn.js',
+        }
+      },
+      casper_saturn: {
+        options: {
+          baseUrl: '',
+          mainConfigFile: "require_config.js",
+          optimize: "none",
+          name: 'src/casper/saturn',
+          out: 'build/casper_saturn.js',
+        }
+      },
+      casper_crawler: {
+        options: {
+          baseUrl: '',
+          mainConfigFile: "require_config.js",
+          optimize: "none",
+          name: 'src/casper/crawler',
+          out: 'build/casper_crawler.js',
         }
       },
     },
@@ -120,7 +157,8 @@ module.exports = function(grunt) {
           'vendor/require.js',
           'require_config.js',
           'build/chrome_saturn.js',
-          'src/chrome/main.js'
+          'build/src/chrome/adblock.js',
+          'build/src/chrome/main.js'
         ],
         dest: 'dist/background.js'
       },
@@ -130,10 +168,35 @@ module.exports = function(grunt) {
           'require_config.js',
           'vendor/chrome_logger.js',
           "build/crawler.js",
-          "src/chrome/chrome_crawler.js",
+          "build/src/chrome/crawler.js",
         ],
         dest: 'dist/contentscript.js'
-      }
+      },
+      node_main: {
+        src: [
+          'vendor/core_extensions.js',
+          'build/config.js',
+          "build/src/node/main.js",
+        ],
+        dest: 'dist/node_main.js'
+      },
+      casper_main: {
+        src: [
+          'vendor/require.js',
+          'require_config.js',
+          'build/casper_saturn.js',
+          "build/src/casper/main.js",
+        ],
+        dest: 'dist/casper.js'
+      },
+      casper_injected: {
+        src: [
+          'vendor/require.js',
+          'require_config.js',
+          "build/casper_crawler.js",
+        ],
+        dest: 'build/casper_injected.js'
+      },
     },
     // Uglify them in prod.
     uglify: {
@@ -149,8 +212,9 @@ module.exports = function(grunt) {
       }
     },
     clean: {
-      dev: ['vendor'],
+      dev: ['vendor', 'src/casper/*.js'],
       prod: ['build', 'vendor'],
+      node: ['vendor/jquery.js'],
       all: ['build', 'vendor', 'dist', 'node_modules']
     },
     exec: {
@@ -218,4 +282,6 @@ module.exports = function(grunt) {
   grunt.registerTask('staging', ['test', 'config:staging', 'requirejs', 'concat', 'manifest', 'clean:prod']);
   grunt.registerTask('prod', ['test', 'config:prod', 'requirejs', 'concat', 'manifest', 'clean:prod']);
   grunt.registerTask('test-mappings', ['test', 'jasmine:mappings']);
+
+  grunt.registerTask('casper', ['version', 'copy', 'coffee', 'config:dev-prod', 'requirejs', 'concat', 'manifest:dev', 'clean:node']);
 };

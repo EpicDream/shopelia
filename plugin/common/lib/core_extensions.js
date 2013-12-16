@@ -105,3 +105,9 @@ function $unique(ary, fct){
   }
   return r;
 }
+
+// NodeJS support
+if (typeof global !== 'undefined') {
+  global.$extend = $extend;
+  global.$unique = $unique;
+}
