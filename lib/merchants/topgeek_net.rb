@@ -5,6 +5,7 @@ class TopgeekNet
 
   AVAILABILITY_HASH = {
     "prete a decorer votre interieur" => true,
+    "Prets a assaisonner vos plats" => true,
   }
 
   def initialize url

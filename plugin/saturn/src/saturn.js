@@ -19,7 +19,7 @@ var Saturn = function() {
 Saturn.prototype.preProcessData = function (data) {
   data.argOptions = data.options || data.argOptions || {};
   return data;
-}
+};
 
 Saturn.prototype.canRestart = function () {
   return this.productQueue.length === 0 && this.batchQueue.length === 0 && Object.keys(this.sessions).length === 0;

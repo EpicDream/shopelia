@@ -2,49 +2,60 @@
 # Author : Vincent Renaudineau
 # Created at : 2013-09-05
 
-define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'core_extensions'], ($, logger, SaturnSession, Mapping) ->
+define ["jquery", "chrome_logger", "mapping", "src/saturn_session", './helper', 'satconf', 'core_extensions'], ($, logger, Mapping, SaturnSession, Helper) ->
 
   class ChromeSaturnSession extends SaturnSession
     # Class variables
     $$ = this
     $$.tabs = {}
     $$.tabsBeenOpened = 0
-    $$.pendings = []
+    $$.pendings = {normal: [], batch: [], normalVersion: [], batchVersion: []}
 
     # Class methods
     $$.canOpenNewTab = () ->
-      (Object.keys($$.tabs).length+$$.tabsBeenOpened) <= satconf.MAX_NB_TABS
+      (Object.keys($$.tabs).length+$$.tabsBeenOpened) < satconf.MAX_NB_TABS
 
     $$.addToPending = (session) ->
-      $$.pendings.push(session)
+      if ! session.batch_mode && ! session._onSubTaskFinished
+        $$.pendings.normal.push(session)
+      else if ! session.batch_mode && session._onSubTaskFinished
+        $$.pendings.normalVersion.push(session)
+      else if session.batch_mode && ! session._onSubTaskFinished
+        $$.pendings.batch.push(session)
+      else
+        $$.pendings.batchVersion.push(session)
 
     $$.startNext = () ->
-      $$.pendings.shift().start() if $$.pendings.length > 0
+      if $$.pendings.normal.length > 0
+        $$.pendings.normal.shift().start()
+      else if $$.pendings.normalVersion.length > 0
+        $$.pendings.normalVersion.shift().start()
+      else if $$.pendings.batch.length > 0
+        $$.pendings.batch.shift().start()
+      else if $$.pendings.batchVersion.length > 0
+        $$.pendings.batchVersion.shift().start()
 
     ####################################################
 
     constructor: ->
       super
-      this.canSubTask = true
+      @canSubTask = true
+      @alreadyRetried = false
+      @helper = Helper.get(@url, 'session')?.init?(this) unless @helper
 
     start: () ->
       if @tabId?
         $$.tabs[@tabId] = this
+        @rescueTimeout = setTimeout (=> this.onTimeout()), satconf.DELAY_RESCUE
         this.openUrl()
       else if $$.canOpenNewTab()
+        @rescueTimeout = setTimeout (=> this.onTimeout()), satconf.DELAY_RESCUE
         this.openNewTab() 
       else
         $$.addToPending(this)
 
     evalAndThen: (cmd, callback) ->
-      command = {
-        cmd: cmd,
-        callback: callback,
-      }
-      if typeof callback is 'function'
-        command.rescueTimer = window.setTimeout(this.onTimeout(command), satconf.DELAY_RESCUE)
-        command.then = this.onResultReceived(command)
-      chrome.tabs.sendMessage(@tabId, cmd, command.then)
+      chrome.tabs.sendMessage(@tabId, cmd, callback)
 
     preEndSession: () ->
       super
@@ -69,7 +80,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
 
     sendError: (msg) ->
       if @extensionId
-        saturn.externalPort.postMessage {url: @url, kind: @kind, tabId: @tabId, versions: [], errorMsg: msg}
+        @saturn.externalPort.postMessage {url: @url, kind: @kind, tabId: @tabId, versions: [], errorMsg: msg}
       else if @prod_id # Stop pushed or Local Test
         $.ajax({
           type : "PUT",
@@ -77,8 +88,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
           contentType: 'application/json',
           data: JSON.stringify({versions: [], errorMsg: msg})
         }).fail (xhr, textStatus, errorThrown ) ->
-          if textStatus is 'timeout' || xhr.status is 502
-            $.ajax(this)
+          $.ajax(this) if textStatus is 'timeout' || xhr.status is 502
       super msg
 
     sendResult: (result) ->
@@ -87,7 +97,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
         result.tabId = @tabId
         result.kind = @kind
         result.strategy = @initialStrategy
-        saturn.externalPort.postMessage result
+        @saturn.externalPort.postMessage result
       else if @prod_id # Stop pushed or Local Test
         $.ajax({
           tryCount: 0,
@@ -111,7 +121,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
 
     openNewTab: () ->
       $$.tabsBeenOpened++
-      chrome.tabs.create {}, (tab) =>
+      chrome.tabs.create {active: false}, (tab) =>
         @tabId = tab.id
         $$.tabs[@tabId] = this
         $$.tabsBeenOpened--
@@ -126,35 +136,25 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
     openUrl: () ->
       chrome.tabs.get @tabId, (tab) =>
         if tab.url != @url
-          chrome.tabs.update @tabId, {url: @url}, (tab) =>
-            # Priceminister fix when reload the same page with an #anchor set.
-            if @url.match(/#\w+(=\w+)?/)
-              chrome.tabs.update(@tabId, {url: @url})
-        # Priceminister fix when reload the same page with an #anchor set.
-        else if @url.match(/#\w+(=\w+)?/)
           chrome.tabs.update(@tabId, {url: @url})
         else
           this.next()
 
     closeTab: () ->
+      @alreadyRetried = true
       delete $$.tabs[@tabId]
       return if @keepTabOpen || ! @tabId
       chrome.tabs.remove(@tabId)
       @oldTabId = @tabId;
       @tabId = undefined
 
-    onTimeout: (command) ->
-      return () =>
-        # logger.debug("in evalAndThen, timeout for", command);
-        command.callback = undefined
-        this.fail("something went wrong", command)
-
-    onResultReceived: (command) ->
-      return (result) =>
-        # logger.debug("in evalAndThen, result received, for", command);
-        # Contentscript just respond to us, clear rescue.
-        window.clearTimeout(command.rescueTimer)
-        if command.callback
-          command.callback(result)
+    onTimeout: () ->
+      # try to reload before to fail.
+      if ! @alreadyRetried && @strategy isnt 'ended'
+        @rescueTimeout = setTimeout (=> this.onTimeout()), satconf.DELAY_RESCUE
+        chrome.tabs.reload @tabId, => this.retryLastCmd()
+        @alreadyRetried = true
+      else
+        super
 
   return ChromeSaturnSession

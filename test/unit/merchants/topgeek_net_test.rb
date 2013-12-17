@@ -35,6 +35,7 @@ class TopgeekNetTest < ActiveSupport::TestCase
 
   test "it should parse specific availability" do
     assert_equal true, MerchantHelper.parse_availability("Prête à décorer votre intérieur !", @url)[:avail]
+    assert_equal true, MerchantHelper.parse_availability("Prêts à assaisonner vos plats !", @url)[:avail]
   end
 
   test "it should process price shipping" do

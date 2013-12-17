@@ -5,6 +5,7 @@ class PriceministerCom
     /\(0\)/i => false,
     /\([1-9]\d*\)/i => true,
     /^\d+ occasions?$/i => false,
+    /^\d+ collections?$/i => false,
     /^\d+ neuf/i => true,
 
     /[\d\s]+ r.sultat/i => false, # Redirection vers recherche quand trouve pas.

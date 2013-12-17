@@ -11,7 +11,7 @@ define 'src/chrome/adblock', ['chrome_logger', 'satconf'],
       logger.debug("AdBlock : restart !")
       this.onRestartCb = callback
       if this.canRestart()
-        saturn.pause()
+        this.saturn.pause()
         this.disable()
       else
         setInterval( () =>
@@ -27,7 +27,7 @@ define 'src/chrome/adblock', ['chrome_logger', 'satconf'],
       )
     onRestart: () ->
       logger.debug("AdBlock restarted !")
-      saturn.resume()
+      this.saturn.resume()
       this.lastRestart = Date.now()
       if this.restartEveryDelay
         this.restartIn(this.restartEveryDelay)
@@ -36,7 +36,7 @@ define 'src/chrome/adblock', ['chrome_logger', 'satconf'],
         this.restartIn(this.nextRestartDate - Date.now())
       this.onRestartCb() if this.onRestartCb
     canRestart: () ->
-      return saturn.canRestart()
+      return this.saturn.canRestart()
     restartIn: (ms) ->
       setTimeout( () =>
         this.restart()
