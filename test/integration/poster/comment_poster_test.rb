@@ -97,7 +97,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
     assert @poster.deliver
   end
   
-  test "deliver commment wordpress site http://www.adenorah.com/2013/11/chanel.html" do
+  test "deliver commment blogspot site http://www.adenorah.com/2013/11/chanel.html" do
     skip
     comment = "Trop beau, je le commande pour noël!"
     url = "http://www.adenorah.com/2013/11/chanel.html"
@@ -105,6 +105,16 @@ class Poster::CommentTest < ActiveSupport::TestCase
     Incident.expects(:create).never
     assert @poster.deliver
   end
+  
+  test "deliver commment wordpress site http://www.garancedore.fr/2013/12/16/rashida/" do
+    skip
+    comment = "Tenue chic pour fille chic ! J'adore ta coupe de cheveux aussi ;)"
+    url = "http://www.garancedore.fr/2013/12/16/rashida/"
+    @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL, post_url:url)
+    Incident.expects(:create).never
+    assert @poster.deliver
+  end
+  
 
 end
 
