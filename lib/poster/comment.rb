@@ -3,11 +3,11 @@ require 'pathname'
 module Poster
   class Comment
     
-    attr_accessor :comment, :url, :email, :author, :form, :website_url
+    attr_accessor :comment, :post_url, :email, :author, :form, :website_url
     
     def initialize args={}
       @comment = args[:comment]
-      @url = args[:post_url]
+      @post_url = args[:post_url]
       @email = args[:email]
       @author = args[:author]
       @website_url = args[:website_url]
@@ -31,16 +31,15 @@ module Poster
       false
     end
     
-    def url=url
-      @url = url
+    def post_url=url
+      @post_url = url
       @publisher = publisher()
     end
     
     def publisher
       return @publisher if @publisher
-      return unless @url
-      @page = @agent.get(@url)
-      
+      return unless @post_url
+      @page = @agent.get(@post_url)
       PUBLISHERS.each { |publisher|
         if publisher.can_publish?(@page)
           extend publisher
@@ -62,7 +61,7 @@ module Poster
       Incident.create(
       :issue => "Poster::Comment", 
       :severity => Incident::IMPORTANT, 
-      :description => "#{description} - #{@url}")
+      :description => "#{description} - #{@post_url}")
     end
     
   end
