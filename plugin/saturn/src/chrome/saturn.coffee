@@ -42,23 +42,17 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn", 'src/chrome/session'
       }).done( (array) =>
         if ! array || ! (array instanceof Array)
           logger.err("Error when getting new products to extract : received data is undefined or is not an Array")
-          @mainCallTimeout = setTimeout( =>
-            this.main()
-          , satconf.DELAY_BETWEEN_PRODUCTS)
+          @mainCallTimeout = setTimeout (=> this.main()), satconf.DELAY_BETWEEN_PRODUCTS
         else if array.length > 0
           logger.print("%c[%s] %d products received.", "color: blue", (new Date()).toLocaleTimeString(), array.length) unless logger.isInfo() || ! logger.isErr()
           this.onProductsReceived(array)
         else
           logger.print("%cNo product.", "color: blue") unless ! logger.isErr()
-        @mainCallTimeout = setTimeout( =>
-          this.main()
-        , satconf.DELAY_BETWEEN_PRODUCTS)
+        @mainCallTimeout = setTimeout (=> this.main()), satconf.DELAY_BETWEEN_PRODUCTS
 
       ).fail( (err) =>
         logger.error("Error when getting new products to extract :", err)
-        @mainCallTimeout = setTimeout( =>
-          this.main()
-        , satconf.DELAY_BETWEEN_PRODUCTS)
+        @mainCallTimeout = setTimeout (=> this.main()), satconf.DELAY_BETWEEN_PRODUCTS
       )
 
     # GET mapping for url's host,
@@ -93,8 +87,7 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn", 'src/chrome/session'
           contentType: 'application/json',
           data: JSON.stringify({versions: [], errorMsg: msg})
         }).fail (xhr, textStatus, errorThrown ) ->
-          if textStatus is 'timeout' || xhr.status is 502
-            $.ajax(this)
+          $.ajax(this) if textStatus is 'timeout' || xhr.status is 502
       super(prod, msg)
 
     closeTab: (tabId) ->

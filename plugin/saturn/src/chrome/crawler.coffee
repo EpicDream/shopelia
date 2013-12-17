@@ -2,12 +2,12 @@
 # Author : Vincent RENAUDINEAU
 # Created : 2013-11-06
 
-require ['jquery', 'chrome_logger', 'crawler', 'src/helper', "satconf"],
+requirejs ['jquery', 'chrome_logger', 'crawler', 'src/helper', "satconf"],
 ($, logger, Crawler, helper) ->
 
   logger.level = logger[satconf.log_level]
   window.Crawler = Crawler
-  crawlHelper = helper.get(location.href)?.crawler
+  crawlHelper = helper.get(location.href, 'crawler')
 
   chrome.extension.onMessage.addListener (hash, sender, callback) ->
     return if sender.id isnt chrome.runtime.id
@@ -49,7 +49,7 @@ require ['jquery', 'chrome_logger', 'crawler', 'src/helper', "satconf"],
 
   # To handle redirection, that throws false 'complete' state.
   $(document).ready () ->
-    if crawlHelper && crawlHelper.at_load
-      crawlHelper.at_load(goNextStep)
+    if crawlHelper && crawlHelper.atLoad
+      crawlHelper.atLoad(goNextStep)
     else
       setTimeout(goNextStep, 100)

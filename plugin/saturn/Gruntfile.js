@@ -39,14 +39,14 @@ module.exports = function(grunt) {
       chrome: {
         options: {
           jshintOptions: ["browser", "devel"],
-          globals: ['FileError', 'define', 'require', 'chrome', 'satconf'],
+          globals: ['FileError', 'define', 'requirejs', 'chrome', 'satconf'],
         },
         src: ['src/chrome/*.coffee', '../common/lib/chrome_logger.js.coffee']
       },
       casper: {
         options: {
           jshintOptions: ["node", "browser", "devel"],
-          globals: ['define', 'require', '__utils__', 'requirejs', 'casper', 'satconf'],
+          globals: ['define', 'requirejs', '__utils__', 'casper', 'satconf'],
         },
         src: ['src/node/*.coffee', 'src/casper/*.coffee', '../common/lib/casper_logger.js.coffee', '../common/lib/node_logger.js.coffee']
       }
@@ -139,23 +139,22 @@ module.exports = function(grunt) {
     },
     // Concat modules' files in a way that requirejs always work.
     requirejs: {
-      crawler: {
+      chrome_crawler: {
         options: {
           baseUrl: '',
           mainConfigFile: "require_config.js",
           optimize: "none",
-          name: 'crawler',
-          include: ['satconf', 'src/helper'],
-          out: 'build/crawler.js',
+          name: 'src/chrome/crawler',
+          out: 'build/chrome_crawler.js',
         }
       },
-      chrome_saturn: {
+      chrome_main: {
         options: {
           baseUrl: '',
           mainConfigFile: "require_config.js",
           optimize: "none",
-          name: 'src/chrome/saturn',
-          out: 'build/chrome_saturn.js',
+          name: 'src/chrome/main',
+          out: 'build/chrome_main.js',
         }
       },
       node_saturn: {
@@ -195,9 +194,7 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
-          'build/chrome_saturn.js',
-          'build/src/chrome/adblock.js',
-          'build/src/chrome/main.js'
+          'build/chrome_main.js',
         ],
         dest: 'extension/background.js'
       },
@@ -205,9 +202,7 @@ module.exports = function(grunt) {
         src: [
           'vendor/require.js',
           'require_config.js',
-          'vendor/chrome_logger.js',
-          "build/crawler.js",
-          "build/src/chrome/crawler.js",
+          "build/chrome_crawler.js",
         ],
         dest: 'extension/contentscript.js'
       },
@@ -319,7 +314,7 @@ module.exports = function(grunt) {
   grunt.registerTask('chrome-compile', ['coffee:libs', 'coffee:chrome']);
   grunt.registerTask('chrome-jasmine', ['jasmine:main', 'jasmine:libs']);
   grunt.registerTask('chrome-test', ['chrome-lint', 'chrome-compile', 'version', 'config:test', 'copy:libs', 'chrome-jasmine', 'copy:chrome']);
-  grunt.registerTask('chrome-requirejs', ['requirejs:crawler', 'requirejs:chrome_saturn']);
+  grunt.registerTask('chrome-requirejs', ['requirejs:chrome_crawler', 'requirejs:chrome_main']);
   grunt.registerTask('chrome-concat', ['concat:background', 'concat:contentscript']);
 
   grunt.registerTask('chrome', ['chrome-dev-prod']);

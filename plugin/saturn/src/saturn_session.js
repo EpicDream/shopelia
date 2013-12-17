@@ -20,11 +20,12 @@ var SaturnSession = function(saturn, prod) {
   this.initialStrategy = this.strategy;
   this.options = new SaturnOptions(this.mapping, this.argOptions);
 
-  this.helper = Helper.get(prod.url);
-
   this.rescueTimeout = undefined;
-
   this.results = []; // store each version's result.
+
+  this.helper = Helper.get(prod.url, 'session');
+  if (this.helper && this.helper.init)
+    this.helper.init(this);
 };
 
 SaturnSession.counter = 0;
@@ -64,11 +65,7 @@ SaturnSession.prototype.next = function() { try {
           this.strategy = 'full';
         } else
           this.strategy = 'done';
-        if (this.helper && this.helper.before_crawling) {
-          this.helper.before_crawling(function() { this.crawl(); }.bind(this));
-        } else {
-          this.crawl();
-        }
+        this.crawl();
       }
       break;
 

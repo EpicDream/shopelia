@@ -2,7 +2,7 @@
 # Author : Vincent Renaudineau
 # Created at : 2013-10-07
 
-require ['chrome_logger', 'src/chrome/saturn', 'src/chrome/adblock', 'satconf'],
+requirejs ['chrome_logger', 'src/chrome/saturn', 'src/chrome/adblock', 'satconf'],
 (logger, ChromeSaturn, AdBlock) ->
   # Default to debug until Chrome propose tabs for each levels.
   logger.level = logger[satconf.log_level]
@@ -64,8 +64,6 @@ require ['chrome_logger', 'src/chrome/saturn', 'src/chrome/adblock', 'satconf'],
       , 1000*60*5); # Retry every 5 min
   saturn.lastChromeRestart = Date.now()
   if satconf.CHROME_RESTART_DELAY
-    setTimeout( () ->
-      saturn.restartChrome()
-    , satconf.CHROME_RESTART_DELAY)
+    setTimeout (() -> saturn.restartChrome()), satconf.CHROME_RESTART_DELAY
 
   saturn.start() if satconf.run_mode is 'auto'

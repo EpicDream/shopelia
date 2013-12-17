@@ -2,7 +2,7 @@
 # Author : Vincent Renaudineau
 # Created at : 2013-09-05
 
-define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'core_extensions'], ($, logger, SaturnSession, Mapping) ->
+define ["jquery", "chrome_logger", "mapping", "src/saturn_session", './helper', 'satconf', 'core_extensions'], ($, logger, Mapping, SaturnSession, Helper) ->
 
   class ChromeSaturnSession extends SaturnSession
     # Class variables
@@ -27,18 +27,15 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
       super
       @canSubTask = true
       @alreadyRetried = false
+      @helper = Helper.get(@url, 'session')?.init?(this) unless @helper
 
     start: () ->
       if @tabId?
         $$.tabs[@tabId] = this
-        @rescueTimeout = setTimeout( =>
-          this.onTimeout()
-        , satconf.DELAY_RESCUE)
+        @rescueTimeout = setTimeout (=> this.onTimeout()), satconf.DELAY_RESCUE
         this.openUrl()
       else if $$.canOpenNewTab()
-        @rescueTimeout = setTimeout(=>
-          this.onTimeout()
-        , satconf.DELAY_RESCUE)
+        @rescueTimeout = setTimeout (=> this.onTimeout()), satconf.DELAY_RESCUE
         this.openNewTab() 
       else
         $$.addToPending(this)
@@ -77,8 +74,7 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
           contentType: 'application/json',
           data: JSON.stringify({versions: [], errorMsg: msg})
         }).fail (xhr, textStatus, errorThrown ) ->
-          if textStatus is 'timeout' || xhr.status is 502
-            $.ajax(this)
+          $.ajax(this) if textStatus is 'timeout' || xhr.status is 502
       super msg
 
     sendResult: (result) ->
@@ -126,12 +122,6 @@ define ["jquery", "chrome_logger", "../saturn_session", "mapping", 'satconf', 'c
     openUrl: () ->
       chrome.tabs.get @tabId, (tab) =>
         if tab.url != @url
-          chrome.tabs.update @tabId, {url: @url}, (tab) =>
-            # Priceminister fix when reload the same page with an #anchor set.
-            if @url.match(/#\w+(=\w+)?/)
-              chrome.tabs.update(@tabId, {url: @url})
-        # Priceminister fix when reload the same page with an #anchor set.
-        else if @url.match(/#\w+(=\w+)?/)
           chrome.tabs.update(@tabId, {url: @url})
         else
           this.next()
