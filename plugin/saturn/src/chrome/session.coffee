@@ -59,6 +59,8 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn_session", './helper', 
 
     preEndSession: () ->
       super
+      clearTimeout(@rescueTimeout)
+      @rescueTimeout = undefined
       this.closeTab()
 
     endSession: () ->

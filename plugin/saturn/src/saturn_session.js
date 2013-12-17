@@ -61,7 +61,7 @@ SaturnSession.prototype.next = function() { try {
           this.strategy = 'done';
         } else if (nbOption > 0 && ! this._subTaskId && ! this.batch_mode) {
           this.strategy = 'options';
-        } else if (nbOption == 1) {
+        } else if (nbOption > 0) {
           this.strategy = 'full';
         } else
           this.strategy = 'done';
@@ -202,8 +202,10 @@ SaturnSession.prototype.crawl = function() {
 
 //
 SaturnSession.prototype.subTaskEnded = function(subSession) {
-  clearTimeout(this.rescueTimeout);
-  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE * 5);
+  if (this.rescueTimeout) {
+    clearTimeout(this.rescueTimeout);
+    this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE * 5);
+  }
   delete this._subTasks[subSession._subTaskId];
   this.results = this.results.concat(subSession.results);
   if (Object.keys(this._subTasks).length === 0) {
