@@ -202,8 +202,6 @@ SaturnSession.prototype.crawl = function() {
 
 //
 SaturnSession.prototype.subTaskEnded = function(subSession) {
-  clearTimeout(this.rescueTimeout);
-  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE * 5);
   delete this._subTasks[subSession._subTaskId];
   this.results = this.results.concat(subSession.results);
   if (Object.keys(this._subTasks).length === 0) {
@@ -244,6 +242,8 @@ SaturnSession.prototype.sendFinalVersions = function() {
 
 //
 SaturnSession.prototype.preEndSession = function() {
+  clearTimeout(@rescueTimeout)
+  @rescueTimeout = undefined
   this.strategy = 'ended'; // prevent
 };
 
@@ -280,6 +280,8 @@ SaturnSession.prototype.evalAndThen = function(cmd, callback) {
 
 SaturnSession.prototype.fail = function(msg) {
   this.sendError(msg);
+  if (typeof this._onSubTaskFinished === 'function')
+    this._onSubTaskFinished(this);
   this.endSession();
 };
 

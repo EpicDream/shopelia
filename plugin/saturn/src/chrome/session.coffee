@@ -9,17 +9,31 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn_session", './helper', 
     $$ = this
     $$.tabs = {}
     $$.tabsBeenOpened = 0
-    $$.pendings = []
+    $$.pendings = {normal: [], batch: [], normalVersion: [], batchVersion: []}
 
     # Class methods
     $$.canOpenNewTab = () ->
       (Object.keys($$.tabs).length+$$.tabsBeenOpened) < satconf.MAX_NB_TABS
 
     $$.addToPending = (session) ->
-      $$.pendings.push(session)
+      if ! session.batch_mode && ! session._onSubTaskFinished
+        $$.pendings.normal.push(session)
+      else if ! session.batch_mode && session._onSubTaskFinished
+        $$.pendings.normalVersion.push(session)
+      else if session.batch_mode && ! session._onSubTaskFinished
+        $$.pendings.batch.push(session)
+      else
+        $$.pendings.batchVersion.push(session)
 
     $$.startNext = () ->
-      $$.pendings.shift().start() if $$.pendings.length > 0
+      if $$.pendings.normal.length > 0
+        $$.pendings.normal.shift().start()
+      else if $$.pendings.normalVersion.length > 0
+        $$.pendings.normalVersion.shift().start()
+      else if $$.pendings.batch.length > 0
+        $$.pendings.batch.shift().start()
+      else if $$.pendings.batchVersion.length > 0
+        $$.pendings.batchVersion.shift().start()
 
     ####################################################
 
@@ -137,11 +151,8 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn_session", './helper', 
     onTimeout: () ->
       # try to reload before to fail.
       if ! @alreadyRetried && @strategy isnt 'ended'
-        @rescueTimeout = setTimeout(=>
-          this.onTimeout()
-        , satconf.DELAY_RESCUE)
-        chrome.tabs.reload @tabId, =>
-          this.retryLastCmd()
+        @rescueTimeout = setTimeout (=> this.onTimeout()), satconf.DELAY_RESCUE
+        chrome.tabs.reload @tabId, => this.retryLastCmd()
         @alreadyRetried = true
       else
         super
