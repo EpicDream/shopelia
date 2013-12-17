@@ -59,7 +59,7 @@ SaturnSession.prototype.next = function() { try {
         var nbOption = this.options.currentNbOption() - Object.keys(this.argOptions).length;
         if (this.strategy === 'fast') {
           this.strategy = 'done';
-        } else if (nbOption > 0 && ! this._subTaskId) {
+        } else if (nbOption > 0 && ! this._subTaskId && ! this.batch_mode) {
           this.strategy = 'options';
         } else if (nbOption == 1) {
           this.strategy = 'full';
@@ -202,6 +202,8 @@ SaturnSession.prototype.crawl = function() {
 
 //
 SaturnSession.prototype.subTaskEnded = function(subSession) {
+  clearTimeout(this.rescueTimeout);
+  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE * 5);
   delete this._subTasks[subSession._subTaskId];
   this.results = this.results.concat(subSession.results);
   if (Object.keys(this._subTasks).length === 0) {
@@ -242,8 +244,8 @@ SaturnSession.prototype.sendFinalVersions = function() {
 
 //
 SaturnSession.prototype.preEndSession = function() {
-  clearTimeout(@rescueTimeout)
-  @rescueTimeout = undefined
+  clearTimeout(this.rescueTimeout);
+  this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE * 5);
   this.strategy = 'ended'; // prevent
 };
 
