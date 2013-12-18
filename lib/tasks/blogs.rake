@@ -14,6 +14,17 @@ namespace :shopelia do
         blog.can_comment?(checkout:true)
       end
     end
+    
+    desc "integrate blogs from lookbook"
+    task :lookbook => :environment do
+      require 'crawlers/lookbook/blogs'
+      
+      countries = ["united-kingdom", "italy", "united-states", "germany"]
+      countries.each do |country|
+        Crawlers::Lookbook::Blogs.new(country).fetch
+      end
+    end
+    
 
   end
 end

@@ -2,6 +2,7 @@
 
 module Crawlers
   module Lookbook
+    BLOGS_FILTERS = YAML.load_relative_file('blogs_filters.yml')
     BASE_URL = "http://lookbook.nu/hot"
     URL = ->(country, page=nil) { "#{BASE_URL}/#{country}/#{page}" }
     GIRLS_FILTER = "http://lookbook.nu/preference/look-list-gender/girls"
@@ -13,7 +14,7 @@ module Crawlers
       
       def initialize country="france"
         @country = country
-        @iso_country = Country.find_by_name(country.capitalize).iso
+        @iso_country = Country.find_by_name(country.split("-").map(&:capitalize).join(" ")).iso
         @agent = Mechanize.new
         @agent.user_agent_alias = 'Mac Safari'
         @agent.get BASE_URL
@@ -42,7 +43,7 @@ module Crawlers
       
       def blog item
         @page, href = page(item)
-        Blog.new(name:name(), url:blog_url(), country:@iso_country, avatar_url:avatar_url(), scraped:false)
+        Blog.new(name:name(), url:blog_url(), country:@iso_country, avatar_url:avatar_url(), scraped:true)
       end
       
       def page item
@@ -53,7 +54,9 @@ module Crawlers
       
       def blog_url
         link = @page.search('//div[@itemprop="author"]//a[@itemprop="url" and @rel="nofollow"]')
-        link.attribute("href").value
+        href = link.attribute("href").value
+        return if BLOGS_FILTERS.any? { |regexp| href =~ Regexp.new(regexp, true) }
+        href
       rescue
         nil #no link found, some have no blog url
       end
