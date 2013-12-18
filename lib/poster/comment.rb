@@ -3,17 +3,21 @@ require 'pathname'
 module Poster
   class Comment
     
-    attr_accessor :comment, :url, :email, :author, :form, :website_url
+    attr_accessor :comment, :post_url, :email, :author, :form, :website_url
     
     def initialize args={}
       @comment = args[:comment]
-      @url = args[:post_url]
+      @post_url = args[:post_url]
       @email = args[:email]
       @author = args[:author]
       @website_url = args[:website_url]
       
       @agent = Mechanize.new
       @agent.user_agent_alias = 'Mac Safari'
+      @agent.keep_alive = true
+      @agent.redirect_ok = :all
+      @agent.follow_meta_refresh = :anywhere
+      
       @publisher = publisher()
     end
     
@@ -22,43 +26,32 @@ module Poster
       @comment = comment if comment
       @form = fill @form
       submit @form
-      true
     rescue => e
       report_incident("Submit form failure", e)
       false
     end
     
-    def url=url
-      @url = url
+    def post_url=url
+      @post_url = url
       @publisher = publisher()
     end
     
     def publisher
       return @publisher if @publisher
-      return unless @url
-      @page = @agent.get(@url)
-      
+      return unless @post_url
+      @page = @agent.get(@post_url)
       PUBLISHERS.each { |publisher|
-        if publisher.respond_to?(:page)
-          page = publisher.page(@agent, @url)
-          next unless page
-          @page = page
-        end
-        if publisher.respond_to?(:login)
-          @agent = publisher.login(@agent) 
-          @page = @agent.get(@page.uri) #reload after login
-        end
-        
-        if @form = @page.form_with(action: publisher::COMMENT_ACTION )
+        if publisher.can_publish?(@page)
           extend publisher
+          @form = publisher.form(@page)
           @publisher = publisher
           break
         end
       }
       report_incident("Publisher missing") unless @publisher
       @publisher
-    rescue
-      report_incident("Publisher missing")
+    rescue => e
+      report_incident("Publisher missing", e)
     end
     
     private
@@ -68,7 +61,7 @@ module Poster
       Incident.create(
       :issue => "Poster::Comment", 
       :severity => Incident::IMPORTANT, 
-      :description => "#{description} - #{@url}")
+      :description => "#{description} - #{@post_url}")
     end
     
   end

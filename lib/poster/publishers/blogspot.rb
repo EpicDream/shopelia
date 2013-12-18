@@ -1,34 +1,26 @@
 module Poster
   module Blogspot
+    require 'shellwords'
     GOOGLE_LOGIN_URL = "https://accounts.google.com/ServiceLogin"
-    COMMENT_ACTION = /comment-iframe|comment\.do/
     GOOGLE_ACCOUNT = Shopelia::Application.config.flinker_google_account
+    CASPER_SCRIPT_PATH = File.join(File.dirname(__FILE__), 'post_comment.js')
     
-    def self.login agent
-      page = agent.get(GOOGLE_LOGIN_URL)
-      form = page.form_with(action: /ServiceLoginAuth/)
-      form['Email'] = GOOGLE_ACCOUNT[:email]
-      form['Passwd'] = GOOGLE_ACCOUNT[:password]
-      form.submit
-      agent
+    def self.can_publish? page
+      !!page.search("iframe#comment-editor").first
     end
     
-    def self.page agent, url
-      page = agent.get(url)
-      link = page.search(".//a[@id='comment-editor-src']").first
-      link ||= page.search(".//div[@id='comments']//a[contains(@href, 'blogger.com/comment')]").first
-      link and agent.get(link.attribute('href'))
+    def self.form page=nil
     end
     
     def fill form
-      comment = "#{@comment} - #{@website_url}"
-      form['commentBody'] = comment if form.has_field?('commentBody')
-      form['postBody'] = comment if form.has_field?('postBody')
-      form
     end
     
     def submit form
-      page = form.submit
+      comment = Shellwords.shellescape("#{@comment} #{@website_url}")
+      url = Shellwords.shellescape(@post_url)
+      command = "casperjs #{CASPER_SCRIPT_PATH} #{url} #{comment} #{GOOGLE_ACCOUNT[:email]} #{GOOGLE_ACCOUNT[:password]}"
+      ret = %x{#{command}}
+      !!(ret =~ /COMMENT HAS BEEN POSTED/)
     end
     
   end

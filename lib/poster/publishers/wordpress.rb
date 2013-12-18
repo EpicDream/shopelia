@@ -2,6 +2,15 @@ module Poster
   module Wordpress
     COMMENT_ACTION = /wp-comments-post/
     
+    def self.can_publish?(page)
+      !!self.form(page)
+    end
+    
+    def self.form page=nil
+      page ||= @page
+      page.form_with(action:COMMENT_ACTION)
+    end
+    
     def fill form
       form['author'] = @author
       form['email'] = @email
@@ -12,6 +21,7 @@ module Poster
     
     def submit form
       form.submit
+      true
     end
     
     def token
