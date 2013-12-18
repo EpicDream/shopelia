@@ -66,6 +66,6 @@ class Blog < ActiveRecord::Base
   end
   
   def normalize_url
-    self.url.gsub!(/\/$/, '')
+    self.url.gsub!(/\/$/, '') if self.url
   end 
 end
