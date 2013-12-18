@@ -25,6 +25,7 @@ class RueducommerceFrTest < ActiveSupport::TestCase
   test "it should parse specific availability" do
     assert_equal false, MerchantHelper.parse_availability("(2409 articles)", @url)[:avail]
     assert_equal false, MerchantHelper.parse_availability("1180 références", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("20 produits", @url)[:avail]
   end
 
   test "it should process availability" do

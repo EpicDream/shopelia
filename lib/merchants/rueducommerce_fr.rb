@@ -5,7 +5,7 @@ class RueducommerceFr
   DEFAULT_PRICE_SHIPPING = "6.99 €"
 
   AVAILABILITY_HASH = {
-    /\d+ (article|reference)/i => false, # Redirection vers recherche quand trouve pas.
+    /\d+ (article|reference|produit)/i => false, # Redirection vers recherche quand trouve pas.
   }
 
   def initialize url
