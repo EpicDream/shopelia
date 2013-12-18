@@ -93,6 +93,11 @@ requirejs ['casper_logger', "src/casper/session", 'satconf'], (logger, CasperSes
         logger.debug "#{caspId} Ajax request sent."
       casper.waitFor () =>
         @initRequest
+      , null, () =>
+        logger.error("#{caspId} no product received !")
+        casper.exit(1)
+      , 5*60*1000 # 5 min
+
 
     createSession: (prod) ->
       @session = new CasperSession(this, prod)

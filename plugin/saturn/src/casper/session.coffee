@@ -1,6 +1,6 @@
-define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
+define ["casper_logger", "src/saturn_session"], (logger, Session) ->
   
-  class CasperSaturnSession extends SaturnSession
+  class CasperSession extends Session
 
     constructor: ->
       super
@@ -15,6 +15,8 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
       , () =>
         @evalReturns = false
         this.next()
+      , () =>
+        this.fail("Page takes too long to open.")
 
     createSubTasks: () ->
       firstOption = @options.firstOption({nonAlone: true})
@@ -106,18 +108,14 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
       @evalReturns = true
       casper.then () =>
         @evalReturns = false
-        # @title = casper.getTitle()
-        # logger.info "#{@saturn.caspId} Title is #{@title}"
-        # this.endSession()
         this.next()
 
     preEndSession: () ->
       super
       casper.waitFor () =>
         @_subTasks is undefined
+      , null, () =>
+        this.onTimeout("Subtasks take too long to finish.")
+      , satconf.DELAY_RESCUE * Object.keys(@_subTasks).length
 
-    endSession: (session) ->
-      super
-      return casper.exit()
-
-  return CasperSaturnSession
+  return CasperSession
