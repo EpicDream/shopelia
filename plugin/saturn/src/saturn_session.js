@@ -163,7 +163,7 @@ SaturnSession.prototype.createSubTasks = function() {
 SaturnSession.prototype.getOptions = function(option) {
   this.lastCmd = {action: "getOptions", mapping: this.mapping, option: option};
   this.evalAndThen(this.lastCmd, function(values) { try {
-    logger.info(this.logId(), (! (values instanceof Array) && '?' || values.length)+" versions for option"+option);
+    logger.verbose(this.logId(), (! (values instanceof Array) && '?' || values.length)+" versions for option"+option);
     // logger.debug(values);
     if (! values)
       return this.fail("No options return for getOptions(option="+option+")");
@@ -233,7 +233,7 @@ SaturnSession.prototype.sendFinalVersions = function() {
   if (this._subTasks) {
     logger.info(this.logId(), "Main subTask finished, wait for others...");
     this.preEndSession();
-  } else if (typeof this._onSubTaskFinished === 'function') {
+  } else if (this._subTaskId !== undefined) {
     logger.info(this.logId(), "SubTask finished !");
     this._onSubTaskFinished(this);
     this.endSession();
