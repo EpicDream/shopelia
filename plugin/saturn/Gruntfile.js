@@ -157,15 +157,6 @@ module.exports = function(grunt) {
           out: 'build/chrome_main.js',
         }
       },
-      node_saturn: {
-        options: {
-          baseUrl: '',
-          mainConfigFile: "require_config.js",
-          optimize: "none",
-          name: 'src/node/saturn',
-          out: 'build/node_saturn.js',
-        }
-      },
       casper_saturn: {
         options: {
           baseUrl: '',
@@ -205,14 +196,6 @@ module.exports = function(grunt) {
           "build/chrome_crawler.js",
         ],
         dest: 'extension/contentscript.js'
-      },
-      node_main: {
-        src: [
-          'vendor/core_extensions.js',
-          'build/config.js',
-          "build/src/node/main.js",
-        ],
-        dest: 'dist/node_main.js'
       },
       casper_main: {
         src: [
@@ -329,8 +312,8 @@ module.exports = function(grunt) {
   grunt.registerTask('casper-compile', ['coffee:libs', 'coffee:casper']);
   grunt.registerTask('casper-jasmine', ['jasmine:main', 'jasmine:libs']);
   grunt.registerTask('casper-test', ['casper-lint', 'casper-compile', 'version', 'config:test', 'copy:libs', 'casper-jasmine']);
-  grunt.registerTask('casper-requirejs', ['requirejs:node_saturn', 'requirejs:casper_saturn', 'requirejs:casper_crawler']);
-  grunt.registerTask('casper-concat', ['concat:node_main', 'concat:casper_main', 'concat:casper_injected']);
+  grunt.registerTask('casper-requirejs', ['requirejs:casper_saturn', 'requirejs:casper_crawler']);
+  grunt.registerTask('casper-concat', ['concat:casper_main', 'concat:casper_injected']);
 
-  grunt.registerTask('casper', ['casper-test', 'config:dev-prod', 'casper-requirejs', 'casper-concat', 'manifest:dev', 'clean:node']);
+  grunt.registerTask('casper', ['casper-test', 'config:dev-prod', 'casper-requirejs', 'casper-concat', 'clean:node']);
 };
