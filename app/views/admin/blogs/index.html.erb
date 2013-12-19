@@ -18,7 +18,7 @@
       <span>(<%= Blog.scraped.without_posts.count %>)</span>
       <input type='radio' name='scope' value='not_scraped.not_skipped'>
       <span>A intégrer</span>
-      <span>(<%= Blog.not_scraped.count %>)</span>
+      <span>(<%= Blog.not_scraped.not_skipped.count %>)</span>
       <input type='radio' name='scope' value='skipped'>
       <span>Non intégrés</span>
       <span>(<%= Blog.skipped.count %>)</span>
