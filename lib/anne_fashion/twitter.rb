@@ -4,6 +4,7 @@ module AnneFashion
   class Twitter
     CREDENTIALS = YAML.load_relative_file("accounts.yml")['twitter']
     MESSAGES = YAML.load_relative_file("messages.yml")
+    HASHTAGS = ["#cute", "#cutie", "#fashion", "#fashionista", "#style", "#stylish", "#beauty", "#lindo", "#followback", "#pretty", "#girl", "#chic", "#look", "#lookbook", "#trend", "#trendy", "#outfit", "#lovethis", "#instafashion", "#luxury"]
     
     attr_reader :client
     
@@ -11,10 +12,10 @@ module AnneFashion
     end
     
     def publish
-      look = Look.random
+      look = Look.random(Look.published)
       image_path = "#{Rails.root}/public#{look.look_images.first.picture(:large)}"
       File.open(image_path, 'rb') { |f| File.open("/tmp/anne-fashion.jpg", 'wb') {|out| out.write(f.read) }}
-      message = %Q{#{MESSAGES.sample} #{look.post.link}}
+      message = %Q{#{MESSAGES.sample} #{look.post.link} #{HASHTAGS.sample(4).join(" ")}}
       client.update_with_media(message, File.new("/tmp/anne-fashion.jpg"))
     end
     
