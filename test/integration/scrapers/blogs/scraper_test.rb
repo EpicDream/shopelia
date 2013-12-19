@@ -79,6 +79,12 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert_equal "http://bit.ly/1cal3V7", products["Produit(4)"]
   end
   
+  test "scrape over-blog blog" do
+    @scraper.url = "http://garance.desiree.over-blog.com"
+    posts = @scraper.posts
+    assert posts.count > 0
+  end
+  
 end
 
   
