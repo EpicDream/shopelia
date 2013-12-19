@@ -2,6 +2,7 @@ fr:
   will_paginate:
     previous_label: "<"
     next_label: ">"
+    page_gap: "..."
   date:
     formats:
       default: "%d/%m/%Y"
