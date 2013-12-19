@@ -24,6 +24,12 @@ class Poster::CommentTest < ActiveSupport::TestCase
     assert_equal Poster::Blogspot, @poster.publisher
   end
   
+  test "include appropriate publisher module blogspot with popup" do
+    @poster.post_url = "http://1finedai.blogspot.fr/2013/12/winter-pink.html"
+    assert @poster.respond_to?(:form)
+    assert_equal Poster::Blogspot, @poster.publisher
+  end
+  
   test "create incident if publisher not found" do
     Incident.expects(:create)
     @poster.post_url = "http://www.prixing.fr"
