@@ -31,8 +31,9 @@ module AnneFashion
       tweets = []
       begin
         tweets += results.select { |tweet| tweet.user_mentions.any? }
+        break unless results.next_page?
         results = search(query, {max_id:results.next_page[:max_id]})
-      end while tweets.count < max && results.next_page?
+      end while tweets.count < max
       tweets
     end
     
