@@ -85,6 +85,13 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert posts.count > 0
   end
   
+  test "scrape images for modelli type" do
+    @scraper.url = "http://www.blogmodelili.com"
+    posts = @scraper.posts
+    
+    assert posts.first.images.count > 0
+  end
+  
 end
 
   

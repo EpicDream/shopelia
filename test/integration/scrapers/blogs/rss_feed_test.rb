@@ -46,6 +46,13 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
     parser.send(:post_from, stub)
   end
   
+  test "another feeds source" do
+    parser = Scrapers::Blogs::RSSFeed.new("http://www.blogmodelili.com")
+    items = parser.items
+    
+    assert items.count > 0
+  end
+  
 end
 
   
