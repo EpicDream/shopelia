@@ -18,6 +18,7 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   end
   
   test "search by hashtag" do
+    skip
     results = @client.search("#lookbook")
     results.each do |tweet|
       next if tweet.user_mentions.none?
@@ -38,11 +39,17 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
     assert @client.retweet([413354572846202880])
   end
   
-  test "favorite tweet" do
-    assert @client.favorite([413354572846202880])
+  test "follow from search results" do
+    @client.follow_from_tweets("#lookbook")
   end
   
-  test "follow from search results" do
-    @client.follow_from_tweet("#lookbook")
+  test "tweets with user" do
+    tweets = @client.tweets("#lookbook")
+    assert tweets.count > 10
+  end
+  
+  test "publish a fashion tweet" do
+    skip
+    @client.publish
   end
 end

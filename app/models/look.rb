@@ -15,6 +15,10 @@ class Look < ActiveRecord::Base
 
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published
 
+  def self.random
+    offset(rand(Look.count)).limit(1).first
+  end
+
   def mark_post_as_processed
     self.post.update_attributes(processed_at:Time.now)
   end
