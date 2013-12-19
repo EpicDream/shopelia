@@ -13,24 +13,24 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "include appropriate publisher module wordpress" do
-    @poster.url = "http://www.leblogdebetty.com/new-stuff-17"
+    @poster.post_url = "http://www.leblogdebetty.com/new-stuff-17"
     assert @poster.respond_to?(:form)
     assert_equal Poster::Wordpress, @poster.publisher
   end
   
   test "include appropriate publisher module blogspot" do
-    @poster.url = "http://1991-today.blogspot.fr/2013/12/come-back-to-me.html"
+    @poster.post_url = "http://1991-today.blogspot.fr/2013/12/come-back-to-me.html"
     assert @poster.respond_to?(:form)
     assert_equal Poster::Blogspot, @poster.publisher
   end
   
   test "create incident if publisher not found" do
     Incident.expects(:create)
-    @poster.url = "http://www.prixing.fr"
+    @poster.post_url = "http://www.prixing.fr"
   end
   
   test "fill wordpress comment form" do
-    @poster.url = "http://www.leblogdebetty.com/new-stuff-17"
+    @poster.post_url = "http://www.leblogdebetty.com/new-stuff-17"
     form = @poster.fill @poster.form
     
     assert_equal NAME, form['author']
@@ -39,7 +39,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "add wordpress token to comment if exists" do
-    @poster.url = "http://www.larevuedekenza.fr/2013/12/essentiel-antwerp-2.html"
+    @poster.post_url = "http://www.larevuedekenza.fr/2013/12/essentiel-antwerp-2.html"
     form = @poster.fill @poster.form
     token = "381f36947bedfbda52041e209e9713db_1687"
     assert_equal "#{token} #{COMMENT}", form['comment']

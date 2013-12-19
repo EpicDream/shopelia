@@ -28,6 +28,8 @@ class Blog < ActiveRecord::Base
       post.save
     end
     self.reload
+  rescue => e
+    report_incident(e, :fetch)
   end
 
   def skipped=skip
@@ -50,13 +52,21 @@ class Blog < ActiveRecord::Base
     return read_attribute(:can_comment) unless opt[:checkout]
     return if posts.none?
     poster = Poster::Comment.new
-    poster.url = posts.last.link
+    poster.post_url = posts.last.link
     self.can_comment = !!poster.publisher
     self.save
     can_comment?
   end
   
   private
+  
+  def report_incident e, method
+    Rails.logger.error("== Blog Model #{method}== #{e.inspect}\n#{e.backtrace.join("\n")}\n")
+    Incident.create(
+      :issue => "Blog##{method}",
+      :severity => Incident::IMPORTANT,
+      :description => "Voir logs")
+  end
   
   def assign_flinker
     email = "#{SecureRandom.hex(4)}@flinker.io"
