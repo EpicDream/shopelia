@@ -56,6 +56,7 @@ gem "paperclip", "~> 3.0"
 gem 'fastimage'
 gem 'ranked-model'
 gem 'fb_graph'
+gem 'twitter', require:false
 
 # Gems used only for assets and not required
 # in production environments by default.
