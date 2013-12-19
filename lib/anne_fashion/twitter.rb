@@ -13,11 +13,9 @@ module AnneFashion
     def publish
       look = Look.random
       image_path = "#{Rails.root}/public#{look.look_images.first.picture(:large)}"
-      file = File.open(image_path, 'rb') do |f|
-        File.open("/tmp/anne-fashion.jpg", 'wb') {|out| out.write(f.read) }
-      end
+      File.open(image_path, 'rb') { |f| File.open("/tmp/anne-fashion.jpg", 'wb') {|out| out.write(f.read) }}
       message = %Q{#{MESSAGES.sample} #{look.post.link}}
-      client.update_with_media(message, file)
+      client.update_with_media(message, File.new("/tmp/anne-fashion.jpg"))
     end
     
     def twit message
