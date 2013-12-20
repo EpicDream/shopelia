@@ -47,9 +47,6 @@ requirejs ['chrome_logger', 'src/chrome/saturn', 'src/chrome/adblock', 'satconf'
       prod.keepTabOpen = true
       saturn.onProductReceived(prod)
 
-  chrome.management.onDisabled.addListener (extension) ->
-    if extension.id is AdBlock.id
-      AdBlock.enable()
   # Restart every 12h
   AdBlock.restartEvery(satconf.ADBLOCK_RESTART_DELAY)
 
