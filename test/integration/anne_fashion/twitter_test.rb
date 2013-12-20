@@ -40,6 +40,7 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   end
   
   test "follow from search results" do
+    skip
     @client.follow_from_tweets("#lookbook")
   end
   
