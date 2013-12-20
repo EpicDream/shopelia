@@ -9,6 +9,7 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   end
   
   test "get twitter client" do
+    skip
     assert @client.client
   end
   
@@ -18,10 +19,12 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   end
   
   test "follow user" do
+    skip
     assert @client.follow([17221180, 755905303])
   end
   
   test "retweet tweet" do
+    skip
     assert @client.retweet([413354572846202880])
   end
   
@@ -39,5 +42,14 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   test "publish a fashion tweet" do
     skip
     @client.publish
+  end
+  
+  test "followings" do
+    skip
+    assert @client.followings.count > 1
+  end
+  
+  test "unfollow schedule" do
+    @client.schedule_follow_ratio
   end
 end

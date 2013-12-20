@@ -7,6 +7,7 @@ module AnneFashion
     HASHTAGS = ["#cute", "#cutie", "#fashion", "#fashionista", "#style", "#stylish", "#beauty", "#lindo", "#followback", "#pretty", "#girl", "#chic", "#look", "#lookbook", "#trend", "#trendy", "#outfit", "#lovethis", "#instafashion", "#luxury"]
     TMP_IMG_PATH = "/tmp/anne-fashion.jpg"
     PUBLIC_IMG_PATH = ->(look) { "#{Rails.root}/public#{look.look_images.first.picture(:large)}" }
+    FOLLOWERS_RATIO = 0.6
     
     attr_reader :client
     
@@ -31,7 +32,7 @@ module AnneFashion
       look = Look.random(Look.published)
       message = @messages.sample and @messages.delete(message)
       File.open(PUBLIC_IMG_PATH[look], 'rb') { |f| File.open(TMP_IMG_PATH, 'wb') {|out| out.write(f.read) }}
-      message = %Q{#{message} #{@bitly.shorten(look.post.link).short_url} #{HASHTAGS.sample(3).join(" ")}}
+      message = %Q{#{message} #{@bitly.shorten(look.post.link).short_url} #{hashtags()}}
       [message, File.new(TMP_IMG_PATH)]
     end
     
@@ -66,7 +67,8 @@ module AnneFashion
       tweets = tweets(query)
       users_ids = tweets.map(&:user_mentions).flatten.map(&:id).uniq
       tweets_ids = tweets.map(&:id)
-      follow(users_ids)
+      x = follow(users_ids.sample(max))
+      puts x.inspect
       retweet(tweets_ids) if retweet
       favorite(tweets_ids) if favorite
     end
@@ -75,12 +77,44 @@ module AnneFashion
       client.follow(users)
     end
     
+    def schedule_follow_ratio
+      followings = followings().to_a
+      followers = followers().to_a
+      unfollows = followings - followers
+      
+      ratio = followers.count / followings.count
+      if ratio > 0.9
+        follow_from_tweets("#{hashtags()}", 20, false, true)
+      else
+        unfollow(unfollows.sample(20))
+        follow_from_tweets("#{hashtags()}", 10, true, true)
+      end
+    end
+    
+    def followings
+      client.following
+    end
+    
+    def followers
+      client.followers
+    end
+    
+    def unfollow users
+      client.unfollow(users)
+    end
+    
     def client
       @client ||= ::Twitter::REST::Client.new do |config|
         [:consumer_key, :consumer_secret, :access_token, :access_token_secret].each { |key|  
           config.send("#{key}=", CREDENTIALS[key.to_s])
         }
       end
+    end
+    
+    private
+    
+    def hashtags n=3
+      HASHTAGS.sample(n).join(" ")
     end
     
   end
