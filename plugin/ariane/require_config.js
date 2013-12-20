@@ -1,4 +1,4 @@
-require.config({
+requirejs.config({
   paths: {
     core_extensions: "vendor/core_extensions",
     uri: "vendor/uri",

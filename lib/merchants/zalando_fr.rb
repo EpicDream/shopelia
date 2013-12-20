@@ -4,6 +4,8 @@ class ZalandoFr
 
   AVAILABILITY_HASH = {
     "vos modeles preferes" => false,
+    "Plus de 1 500 marques" => false,
+    /tous les produits d[eu] /i => false,
   }
 
   def initialize url

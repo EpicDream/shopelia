@@ -29,15 +29,16 @@ var logger = {
   },
 };
 
-logger.fatal = function() { logger._log('FATAL', (arguments.callee.caller || {}).name, arguments); };
-logger.err = function() { logger._log('ERROR', (arguments.callee.caller || {}).name, arguments); };
+//(arguments.callee.caller || {}).name
+logger.fatal = function() { logger._log('FATAL', arguments); };
+logger.err = function() { logger._log('ERROR', arguments); };
 logger.error = logger.err;
-logger.warn = function() { logger._log('WARN', (arguments.callee.caller || {}).name, arguments); };
+logger.warn = function() { logger._log('WARN', arguments); };
 logger.warning = logger.warn;
-logger.good = function() { logger._log('GOOD', undefined, arguments); };
-logger.info = function() { logger._log('INFO', undefined, arguments); };
-logger.verbose = function() { logger._log('VERBOSE', undefined, arguments); };
-logger.debug = function() { logger._log('DEBUG', (arguments.callee.caller || {}).name, arguments); };
+logger.good = function() { logger._log('GOOD', arguments); };
+logger.info = function() { logger._log('INFO', arguments); };
+logger.verbose = function() { logger._log('VERBOSE', arguments); };
+logger.debug = function() { logger._log('DEBUG', arguments); };
 logger.print = function() { if (logger.level !== logger.NONE) console.info.apply(console, arguments); };
 
 logger.isFatal = function() { return this.level >= this.FATAL; };
@@ -56,20 +57,17 @@ logger.timestamp = function (date) {
   return sprintf("%s.%03d", date.toLocaleTimeString(), date.getMilliseconds());
 };
 
-logger.header = function (level, caller, date) {
-  var d = new Date(date || Date.now()),
-    header = sprintf('[%s][%5s]%s',logger.timestamp(d), level, typeof caller === 'string' && caller !== "" ? " `"+caller+"' :" : '');
+logger.header = function (level, date) {
   console.assert(typeof level === 'string', 'level must be a string');
-  console.assert(typeof caller === 'string', 'caller must be a string');
-  console.assert(typeof d === 'object' && d instanceof Date, 'date must be a Date');
-  return header;
+  var d = (date && new Date(date)) || new Date();
+  return ['[%s][%5s]',logger.timestamp(d), level];
 };
 
 logger.format = function(level, caller, args) {
   console.assert(typeof level === 'string', 'level must be a string');
   console.assert(typeof caller === 'string', 'caller must be a string');
   console.assert(typeof args === 'object' && args instanceof Array, 'args must be an Array');
-  var res = [logger.header(level, caller)];
+  var res = logger.header(level);
 
   for ( i = 0 ; i < args.length ; i++ ) {
     arg = args[i];
@@ -80,14 +78,17 @@ logger.format = function(level, caller, args) {
     } else if (typeof arg === 'object' && arg instanceof Date) {
       res[0] += " %s";
     } else if (typeof arg === 'object' && arg instanceof HTMLElement) {
-      res[0] += " HTMLElement." + arg.tagName;
+      res[0] += " %s";
+      res.push( " HTMLElement." + arg.tagName );
       continue;
     } else {
       try {
-        res[0] += " " + JSON.stringify(arg).replace(/\%/g, '%%');
+        res[0] += " %s";
+        res.push( JSON.stringify(arg).replace(/\%/g, '%%') );
         continue;
       } catch(err) {
-        res[0] += " ";
+        arg = "<<!! Logger.format: " + err + " !!>>";
+        res[0] += " %s";
       }
     }
     res.push(arg);
@@ -98,7 +99,7 @@ logger.format = function(level, caller, args) {
 
 logger.stringify = function(args) {
   console.assert(typeof args === 'object' && args instanceof Array, 'args must be an Array');
-  return sprintf.apply({}, args);
+  return sprintf.apply(null, args);
 };
 
 logger.write = function (level, args) {
@@ -124,10 +125,10 @@ logger.write = function (level, args) {
   }
 };
 
-logger._log = function(level, caller, args) {
+logger._log = function(level, args) {
   var tmp, i, argsArray;
 
-  caller = caller || '';
+  caller = ''; // legacy
   if (typeof args !== 'object' || args.length === undefined) {
     args = [args];
   } else if (! (args instanceof Array)) { // arguments is not an Array.

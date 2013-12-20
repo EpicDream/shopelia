@@ -4,6 +4,7 @@ class TopshopCom
   DEFAULT_SHIPPING_INFO = "Livrée en 5 jours ouvrables."
 
   AVAILABILITY_HASH = {
+    /Articles a l'ecran \d+ - \d+ de \d+/i => false,
   }
 
   def initialize url

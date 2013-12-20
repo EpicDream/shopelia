@@ -17,8 +17,10 @@ define 'chrome_logger', ['logger'], (logger) ->
     format[0] = format[0].replace(/^%c/, '')
     format
 
-  logger.header = (level, caller, date) ->
-    "%c" + logger._oldHeader(level, caller, date)
+  logger.header = (level, date) ->
+    header = logger._oldHeader(level, date)
+    header[0] = "%c" + header[0]
+    header
 
   logger._log2 = (level, caller, args) ->
     levelBck = logger.level
@@ -26,14 +28,14 @@ define 'chrome_logger', ['logger'], (logger) ->
     argsArray = logger._oldLog2(level, caller, args)
     logger.level = levelBck
 
-    logger.write(level, logger.chromify(level, caller, args)) if logger[level] <= logger.level
+    logger.write(level, logger.chromify(level, args)) if logger[level] <= logger.level
     logger.writeToFile(argsArray) if logger.file_level >= logger[level]
     logger.writeToBD(level, caller, argsArray) if logger.db_level >= logger[level]
     argsArray
 
-  logger.chromify = (level, caller, _arguments) ->
-    args = [logger.header(level, caller)]
-    args.push switch level
+  logger.chromify = (level, _arguments) ->
+    args = logger.header(level)
+    args.splice 1, 0, switch level
       when 'FATAL', 'ERROR' then 'color: #f00'
       when 'WARN', 'WARNING' then 'color: #f60'
       when 'INFO' then 'color: #00f'
@@ -85,13 +87,16 @@ define 'chrome_logger', ['logger'], (logger) ->
         else if e1.name > e2.name then 1
         else 0
       min = entries.length - 10
-      d = new Date(Date.now() - 1000*60*60*24) # Yesteday
+      yesteday = new Date(Date.now() - 1000*60*60*24) # Yesteday
       for i in [0...entries.length]
         entry = entries[i]
         m = entry.name.match(/log-\d+.txt/)
-        if i < min || m && parseInt(m, 10) < d
-          entry.remove () ->
-            console.log(entry.name, "deleted.")
+        if i < min || m && parseInt(m, 10) < yesteday
+          entry.remove logger.onRemoveEntry(entry.name)
+
+  logger.onRemoveEntry = (name) ->
+    return ->
+      console.log(name, "deleted.")
 
   logger.writeToFile = (args) ->
     return if ! logger.fileEntry
@@ -119,12 +124,15 @@ define 'chrome_logger', ['logger'], (logger) ->
         else 0
       # Print them all
       for entry in entries
-        entry.file( (file) ->
-          reader = new FileReader()
-          reader.onloadend = (e) ->
-            console.log this.result
-          reader.readAsText file
-        , errorHandler)
+        logger.printEntry(entry)
+    , errorHandler)
+
+  logger.printEntry = (entry) ->
+    entry.file( (file) ->
+      reader = new FileReader()
+      reader.onloadend = (e) ->
+        console.log this.result
+      reader.readAsText file
     , errorHandler)
 
   window.webkitRequestFileSystem(window.TEMPORARY, 1*1024*1024, (fs) ->
@@ -151,8 +159,9 @@ define 'chrome_logger', ['logger'], (logger) ->
         logger.warn "Did not succeed to open database."
         break
 
-  logger.db.transaction (tx) ->
-    tx.executeSql "CREATE TABLE IF NOT EXISTS logs(time BIGINT, level INT, caller VARCHAR, content TEXT)"
+  if logger.db?
+    logger.db.transaction (tx) ->
+      tx.executeSql "CREATE TABLE IF NOT EXISTS logs(time BIGINT, level INT, caller VARCHAR, content TEXT)"
 
   logger.writeToBD = (level, caller, args) ->
     return if ! logger.db
@@ -171,8 +180,8 @@ define 'chrome_logger', ['logger'], (logger) ->
       tx.executeSql 'SELECT * FROM logs WHERE level <= ? LIMIT ?;', [level_min, nb || 1000], (tx, results) ->
         for i in [0...results.rows.length]
           row = results.rows.item(i)
-          header = logger.header(logger.code2str[row.level], row.caller, new Date(row.time))
-          console.log("%c"+row.content, logger.chromify(logger.code2str[row.level], '', [])[1])
+          color = logger.chromify(logger.code2str[row.level], [])[1]
+          console.log("%c"+row.content, color)
 
   logger.cleanDB = (minutes) ->
     return if ! logger.db

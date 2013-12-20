@@ -3,12 +3,12 @@
   "manifest_version": 2,
   "description": "Extrateur de donnée produit.",
   "icons": {
-    "48": "img/saturn48.png",
-    "128": "img/saturn128.png"
+    "48": "saturn48.png",
+    "128": "saturn128.png"
   },
   "browser_action": {
     "default_title": "Active Saturn",
-    "default_icon": "img/saturn48.png"
+    "default_icon": "saturn48.png"
   },
   "background": {
     "scripts": [
@@ -16,11 +16,19 @@
   },
   "content_scripts": [
     {
+      "matches": [
+        "*://*/*"
+      ],
+      "js": [
+      ]
+    },
+    {
       "run_at": "document_start",
       "matches": [
         "*://*/*"
       ],
       "js": [
+        "alert_inhibiter.js"
       ]
     }
   ],

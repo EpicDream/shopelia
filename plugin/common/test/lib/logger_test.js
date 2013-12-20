@@ -3,26 +3,30 @@
 // Created at : 2013-11-05
 
 define(['logger'], function (logger) {
-  describe("Mapping", function () {
+  describe("logger", function () {
+
+    var date_regexp;
+
+    beforeEach(function () {
+      date_regexp = "\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d";
+    });
+
     it('timestamp', function () {
-      var regexp = "\\d\\d:\\d\\d:\\d\\d.\\d\\d\\d";
-      expect(logger.timestamp()).toMatch(regexp);
-      expect(logger.timestamp(Date.now())).toMatch(regexp);
+      expect(logger.timestamp()).toMatch(date_regexp);
+      expect(logger.timestamp(Date.now())).toMatch(date_regexp);
     });
 
     it('header', function () {
       var d = new Date(),
-        date_regexp = /^\[\d\d:\d\d:\d\d.\d\d\d\]/,
         date = logger.timestamp(d),
         header;
-      expect(logger.header('DEBUG', 'maMethod', d)).toBe("["+date+"][DEBUG] `maMethod' :");
-      expect(logger.header('DEBUG', '', d)).toBe("["+date+"][DEBUG]");
-
-      expect(logger.header('DEBUG', 'maMethod')).toMatch(date_regexp);
-      expect(logger.header('DEBUG', 'maMethod')).toMatch(/\[DEBUG\] `maMethod' :/);
-      expect(logger.header('DEBUG', '')).toMatch(/\[DEBUG\]/);
-
-      expect(logger.header('INFO', 'maMethod', d)).toMatch("[ INFO]");
+      header = logger.header('DEBUG', d);
+      expect(typeof header).toBe('object');
+      expect(header instanceof Array).toBe(true);
+      expect(header.length).toBe(3);
+      expect(header[0]).toBe("[%s][%5s]");
+      expect(header[1]).toMatch(date_regexp);
+      expect(header[2]).toBe("DEBUG");
     });
 
     it('format', function () {
@@ -33,12 +37,12 @@ define(['logger'], function (logger) {
       res = logger.format('INFO', '', args);
 
       expect(args.length).toBe(l);
-      expect(res.length).toBe(l-1);
-      expect(res[1]).toBe(args[0]);
-      expect(res[2]).toBe(args[1]);
+      expect(res.length).toBe(l+3);
+      expect(res[3]).toBe(args[0]);
+      expect(res[4]).toBe(args[1]);
       expect(res[0]).toMatch("%s %s");
-      expect(res[0]).toMatch('{"un":"object"}');
-      expect(res[0]).toMatch('[1,"array"]');
+      expect(res[5]).toMatch('{"un":"object"}');
+      expect(res[6]).toMatch('[1,"array"]');
     });
 
     it('stringify', function () {
