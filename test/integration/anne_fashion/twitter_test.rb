@@ -50,6 +50,7 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   end
   
   test "unfollow schedule" do
+    skip
     @client.schedule_follow_ratio
   end
 end

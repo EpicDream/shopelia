@@ -8,6 +8,7 @@ module AnneFashion
     TMP_IMG_PATH = "/tmp/anne-fashion.jpg"
     PUBLIC_IMG_PATH = ->(look) { "#{Rails.root}/public#{look.look_images.first.picture(:large)}" }
     FOLLOWERS_RATIO = 0.6
+    FOLLOW_TAGS = ["#lookbook", "#fashion", "#stylish"]
     
     attr_reader :client
     
@@ -67,8 +68,7 @@ module AnneFashion
       tweets = tweets(query)
       users_ids = tweets.map(&:user_mentions).flatten.map(&:id).uniq
       tweets_ids = tweets.map(&:id)
-      x = follow(users_ids.sample(max))
-      puts x.inspect
+      follow(users_ids.sample(max))
       retweet(tweets_ids) if retweet
       favorite(tweets_ids) if favorite
     end
@@ -84,10 +84,10 @@ module AnneFashion
       
       ratio = followers.count / followings.count
       if ratio > 0.9
-        follow_from_tweets("#{hashtags()}", 20, false, true)
+        follow_from_tweets(FOLLOW_TAGS.sample, 20, false, true)
       else
         unfollow(unfollows.sample(20))
-        follow_from_tweets("#{hashtags()}", 10, true, true)
+        follow_from_tweets(FOLLOW_TAGS.sample, 10, true, true)
       end
     end
     
