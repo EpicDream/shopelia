@@ -4,7 +4,7 @@ namespace :shopelia do
     desc "Scrape new blogs posts if blog is to be scraped"
     task :blogs => :environment do
       Blog.scraped.find_each do |blog| 
-        blog.fetch
+        BlogsWorker.perform_async(blog.id)
       end
     end
     
