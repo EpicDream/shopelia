@@ -12,3 +12,10 @@ betty:
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   username: bettyusername
   email: betty@flink.com
+
+boop:
+  name: Boop
+  url: http://www.leblogdebetty.com
+  encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
+  username: bettyusername
+  email: boop@flink.com
