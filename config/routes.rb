@@ -189,6 +189,7 @@ Shopelia::Application.routes.draw do
         resources :likes, :only => :create, :controller => "looks/likes"
         delete "likes" => "looks/likes#destroy"
       end
+      resources :follows, :only => [:index, :create, :destroy]
     end
   end
 
