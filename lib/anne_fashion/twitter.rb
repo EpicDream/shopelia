@@ -84,10 +84,10 @@ module AnneFashion
       
       ratio = followers.count / followings.count
       if ratio > 0.9
-        follow_from_tweets(FOLLOW_TAGS.sample, 20, false, true)
+        follow_from_tweets(FOLLOW_TAGS.sample, 20, maybe(), maybe())
       else
         unfollow(unfollows.sample(20))
-        follow_from_tweets(FOLLOW_TAGS.sample, 10, true, true)
+        follow_from_tweets(FOLLOW_TAGS.sample, 10, maybe(), maybe())
       end
     end
     
@@ -112,6 +112,11 @@ module AnneFashion
     end
     
     private
+    
+    def maybe
+      # [true, false].sample
+      false
+    end
     
     def hashtags n=3
       HASHTAGS.sample(n).join(" ")
