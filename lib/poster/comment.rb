@@ -48,16 +48,14 @@ module Poster
           break
         end
       }
-      report_incident("Publisher missing") unless @publisher
       @publisher
     rescue => e
-      report_incident("Publisher missing", e)
+      report_incident("Exception while searching publisher", e)
     end
     
     private
     
     def report_incident description=nil, e=nil
-      Rails.logger.error("Poster::Comment\n#{e}\n#{e.backtrace.join("\n")}") if e
       Incident.create(
       :issue => "Poster::Comment", 
       :severity => Incident::IMPORTANT, 

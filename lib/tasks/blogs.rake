@@ -11,7 +11,7 @@ namespace :shopelia do
     desc "set if we can post comments on blog posts"
     task :can_comment => :environment do
       Blog.find_each do |blog|
-        blog.can_comment?(checkout:true)
+        blog.can_comment?(checkout:true) unless blog.can_comment?
       end
     end
     
