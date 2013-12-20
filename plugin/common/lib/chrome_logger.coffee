@@ -12,8 +12,8 @@ define 'chrome_logger', ['logger'], (logger) ->
   logger.file_level = 0
   logger.db_level = 3
 
-  logger.format = (level, caller, args) ->
-    format = logger._oldFormat(level, caller, args)
+  logger.format = (level, args) ->
+    format = logger._oldFormat(level, args)
     format[0] = format[0].replace(/^%c/, '')
     format
 
@@ -22,15 +22,15 @@ define 'chrome_logger', ['logger'], (logger) ->
     header[0] = "%c" + header[0]
     header
 
-  logger._log2 = (level, caller, args) ->
+  logger._log2 = (level, args) ->
     levelBck = logger.level
     logger.level = logger.NONE
-    argsArray = logger._oldLog2(level, caller, args)
+    argsArray = logger._oldLog2(level, args)
     logger.level = levelBck
 
     logger.write(level, logger.chromify(level, args)) if logger[level] <= logger.level
     logger.writeToFile(argsArray) if logger.file_level >= logger[level]
-    logger.writeToBD(level, caller, argsArray) if logger.db_level >= logger[level]
+    logger.writeToBD(level, argsArray) if logger.db_level >= logger[level]
     argsArray
 
   logger.chromify = (level, _arguments) ->
@@ -163,14 +163,13 @@ define 'chrome_logger', ['logger'], (logger) ->
     logger.db.transaction (tx) ->
       tx.executeSql "CREATE TABLE IF NOT EXISTS logs(time BIGINT, level INT, caller VARCHAR, content TEXT)"
 
-  logger.writeToBD = (level, caller, args) ->
+  logger.writeToBD = (level, args) ->
     return if ! logger.db
     console.assert(typeof level is 'string', 'level must be a string');
-    console.assert(typeof caller is 'string', 'caller must be a string');
     console.assert(typeof args is 'object' && args instanceof Array, 'args must be an Array');
     content = logger.stringify(args)
     logger.db.transaction (tx) ->
-      tx.executeSql 'INSERT INTO logs (time, level, caller, content) VALUES (?, ?, ?, ?)', [Date.now(), logger[level] || level, caller, content]
+      tx.executeSql 'INSERT INTO logs (time, level, caller, content) VALUES (?, ?, ?, ?)', [Date.now(), logger[level] || level, '', content]
 
   logger.readFromDB = (level_min, nb) ->
     return if ! logger.db

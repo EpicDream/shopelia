@@ -5,11 +5,12 @@
 define 'node_logger', ['logger'], (logger) ->  
   logger.oldWrite = logger.write
   logger.write = (level, args) ->
+    str = logger.stringify(args)
     switch level
       when 'DEBUG'
         if logger.level >= logger.DEBUG
-          console.log.apply(console, args)
+          console.log(str)
       else
-        logger.oldWrite(level, args)
+        logger.oldWrite(level, [str])
 
   return logger

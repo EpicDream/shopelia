@@ -17,38 +17,36 @@ if (! HTMLElement.prototype.click)
 if (! XMLHttpRequest.prototype.overrideMimeType)
   XMLHttpRequest.prototype.overrideMimeType = ->
 
-define(['jquery', 'casper_logger', 'crawler', 'satconf'], ($, logger, Crawler) ->
-  logger.level = logger.ALL
+define(['jquery', 'casper_logger', 'crawler', 'src/helper', 'satconf'], ($, logger, Crawler, Helper) ->
+
+  helper = Helper.get(location.href, 'crawler')
 
   CasperCrawler = {
-    goNextStep: (session_id) ->
+    goNextStep: () ->
       logger.debug("in Crawler.goNextStep")
-      __utils__.sat_emit('saturn.goNextStep', {session_id: session_id || 1})
+      __utils__.sat_emit('saturn.goNextStep')
 
-    waitAjax: (session_id) ->
+    waitAjax: () ->
       try
-        # casper.capture("#{Date.now()}_amazon_#{data.session_id}.png")
-        if location.host.search(/amazon.fr$/) != -1
-          # __utils__.echo("in amazon")
-          elem = $('#price_feature_div, #availability_feature_div, #ftMessage, #prime_feature_div').last()[0]
-          if ! elem
-            __utils__.echo("no elem found to test opacity !")
-          if elem && elem.style.opacity != ''
-            # __utils__.echo("opacity not empty", elem && elem.style.opacity)
-            setTimeout(=>
-              this.waitAjax(session_id)
-            , 100)
-          else
-            # __utils__.echo("go next")
-            this.goNextStep(session_id)
+        # if location.host.search(/amazon.fr$/) != -1
+        #   elem = $('#price_feature_div, #availability_feature_div, #ftMessage, #prime_feature_div').last()[0]
+        #   if ! elem
+        #     __utils__.echo("no elem found to test opacity !")
+        #   if elem && elem.style.opacity != ''
+        #     setTimeout(=>
+        #       this.waitAjax()
+        #     , 100)
+        #   else
+        #     this.goNextStep()
+        if helper && helper.waitAjax
+          helper.waitAjax(this.goNextStep)
         else
-          setTimeout(=>
-            this.goNextStep(session_id)
-          , satconf.DELAY_BETWEEN_OPTIONS)
+          setTimeout(this.goNextStep, satconf.DELAY_BETWEEN_OPTIONS)
       catch err
         logger.error("in waitAjax :", err.message)
+        this.goNextStep()
 
-    doNext: (session_id, action, mapping, option, value) ->
+    doNext: (action, mapping, option, value) ->
       try
         logger.info("Task received : '#{action}', '#{mapping}', '#{option}', '#{value && (value.text || value.value || value.id)}'")
         key = "option"+option
@@ -67,13 +65,13 @@ define(['jquery', 'casper_logger', 'crawler', 'satconf'], ($, logger, Crawler) -
 
         if action == "setOption"
           setTimeout(=>
-            this.waitAjax(session_id)
+            this.waitAjax()
           , 1000)
         else
-          __utils__.sat_emit 'saturn.evalDone', {session_id: session_id, result: result}
+          __utils__.sat_emit 'saturn.evalDone', result
       catch err
         logger.error("in evalAndThen :", err.message)
-        __utils__.sat_emit 'saturn.evalDone', {session_id: session_id, result: false}
+        __utils__.sat_emit 'saturn.evalDone', false
   }
 
   CasperCrawler
