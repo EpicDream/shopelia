@@ -18,7 +18,7 @@ namespace :shopelia do
         next if blog.nil?
         flinker.avatar_url = blog.avatar_url
         flinker.country_id = Country.find_by_iso(blog.country).id
-        flinker.save
+        flinker.save rescue nil
       end
     end
   end

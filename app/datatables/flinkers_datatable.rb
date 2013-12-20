@@ -22,7 +22,7 @@ class FlinkersDatatable
       blog = Blog.find_by_flinker_id(flinker.id)
       [
         flinker.id,
-        link_to(flinker.name || flinker.url, admin_flinker_path(flinker)),
+        link_to(flinker.name || flinker.username || flinker.url, admin_flinker_path(flinker)),
         image_tag(flinker.avatar.blank? ? "empty.png" : flinker.avatar.url(:thumb), class:"avatar"),
         number_with_delimiter(flinker.looks.where(is_published:true).count),
         number_with_delimiter(blog ? blog.posts.count : 0),
