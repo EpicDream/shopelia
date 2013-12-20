@@ -5,6 +5,7 @@ class TopshopCom
 
   AVAILABILITY_HASH = {
     /Articles a l'ecran \d+ - \d+ de \d+/i => false,
+    /Showing items \d+ - \d+ of \d+/i => false,
   }
 
   def initialize url

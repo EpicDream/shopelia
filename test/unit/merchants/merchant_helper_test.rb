@@ -122,7 +122,8 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "Currently unavailable.", "SOLD OUT", "0 available", "Disponible uniquement en magasin",
               "Ce produit n'est plus commercialisé par Maisons du Monde", "Nous n'avons pas trouvé la page que vous recherchiez.",
               "Item not available. Select a colour and a size and add it to your Wishlist. We will notify you by e-mail if it becomes available again.",
-              "Nous n'avons pas trouvé de résultat correspondant à votre recherche." ]
+              "Es tut uns leid. Der gesuchte Artikel ist leider nicht mehr verfügbar. Im Folgenden zeigen wir Ihnen Produkte, die Ihrer Suche ähnlich sind: strickmütze",
+              "Nous n'avons pas trouvé de résultat correspondant à votre recherche.", "Agotado" ]
     array.each do |str|
       assert_equal false, MerchantHelper.parse_availability(str)[:avail], "with #{str}"
     end

@@ -39,6 +39,7 @@ class TopshopComTest < ActiveSupport::TestCase
 
   test "it should parse specific availability" do
     assert_equal false, MerchantHelper.parse_availability("Articles à l'écran 1 - 5 de 5", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("Showing items 1 - 20 of 626", @url)[:avail]
   end
 
   test "it should process price_shipping" do

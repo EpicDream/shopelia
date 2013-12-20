@@ -1,8 +1,12 @@
 # -*- encoding : utf-8 -*-
-class AmazonCom
+class AmazonCom < MerchantHelper
+  def initialize(*)
+    super
 
-  def initialize url
-    @url = url
+    @availabilities = {
+      "Showing Top Results for" => false,
+      /Showing \d+ - \d+ of \d+ Results/i => false,
+    }
   end
 
   def process_price version
