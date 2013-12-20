@@ -18,7 +18,6 @@ namespace :shopelia do
         next if blog.nil?
         flinker.avatar = URI.parse blog.avatar_url
         flinker.save
-      rescue
       end
     end
   end
