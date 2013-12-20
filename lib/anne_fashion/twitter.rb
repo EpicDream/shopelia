@@ -1,4 +1,5 @@
 require 'twitter'
+require 'bitly'
 
 module AnneFashion
   class Twitter
@@ -12,10 +13,11 @@ module AnneFashion
     end
     
     def publish
+      bitly = Bitly.client
       look = Look.random(Look.published)
       image_path = "#{Rails.root}/public#{look.look_images.first.picture(:large)}"
       File.open(image_path, 'rb') { |f| File.open("/tmp/anne-fashion.jpg", 'wb') {|out| out.write(f.read) }}
-      message = %Q{#{MESSAGES.sample} #{look.post.link} #{HASHTAGS.sample(4).join(" ")}}
+      message = %Q{#{MESSAGES.sample} #{bitly.shorten(look.post.link)} #{HASHTAGS.sample(4).join(" ")}}
       client.update_with_media(message, File.new("/tmp/anne-fashion.jpg"))
     end
     
