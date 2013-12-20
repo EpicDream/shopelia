@@ -10,5 +10,16 @@ namespace :shopelia do
         blog.update_attribute :flinker_id, flinker.id
       end
     end
+
+    desc "Import avatars from blog objects"
+    task :avatars => :environment do
+      Flinker.where("avatar_file_name is null").each do |flinker|
+        blog = Blog.find_by_flinker_id(flinker.id)
+        next if blog.nil?
+        flinker.avatar = URI.parse blog.avatar_url
+        flinker.save
+      rescue
+      end
+    end
   end
 end
