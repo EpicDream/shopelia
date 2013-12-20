@@ -17,20 +17,6 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
     assert @client.twit("La mode Oui!!!!!")
   end
   
-  test "search by hashtag" do
-    skip
-    results = @client.search("#lookbook")
-    results.each do |tweet|
-      next if tweet.user_mentions.none?
-      puts tweet.class
-      puts tweet.id
-      puts tweet.user_mentions.first.id
-      puts tweet.full_text.inspect
-      puts tweet.user_mentions.inspect
-      puts "------------\n"
-    end
-  end
-  
   test "follow user" do
     assert @client.follow([17221180, 755905303])
   end
@@ -45,6 +31,7 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   end
   
   test "tweets with user" do
+    skip
     tweets = @client.tweets("#lookbook")
     assert tweets.count > 10
   end
