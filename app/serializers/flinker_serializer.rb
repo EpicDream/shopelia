@@ -6,6 +6,6 @@ class FlinkerSerializer < ActiveModel::Serializer
   end
 
   def avatar
-    object.avatar.url(:thumb)
+    Rails.configuration.host + object.avatar.url(:thumb)
   end
 end
