@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131220105335) do
+ActiveRecord::Schema.define(:version => 20131220120237) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -343,6 +343,7 @@ ActiveRecord::Schema.define(:version => 20131220105335) do
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
     t.boolean  "is_published", :default => false
+    t.string   "description"
   end
 
   add_index "looks", ["is_published"], :name => "index_looks_on_is_published"
