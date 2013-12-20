@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131219112156) do
+ActiveRecord::Schema.define(:version => 20131220105335) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -290,6 +290,7 @@ ActiveRecord::Schema.define(:version => 20131219112156) do
     t.string   "last_sign_in_ip"
     t.string   "authentication_token"
     t.string   "username"
+    t.integer  "country_id"
   end
 
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true

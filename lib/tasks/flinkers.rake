@@ -11,12 +11,13 @@ namespace :shopelia do
       end
     end
 
-    desc "Import avatars from blog objects"
-    task :avatars => :environment do
-      Flinker.where("avatar_file_name is null").each do |flinker|
+    desc "Import data from blog objects"
+    task :populate => :environment do
+      Flinker.where(is_publisher:true).each do |flinker|
         blog = Blog.find_by_flinker_id(flinker.id)
         next if blog.nil?
-        flinker.avatar = URI.parse blog.avatar_url
+        flinker.avatar_url = blog.avatar_url
+        flinker.country_id = Country.find_by_iso(blog.country).id
         flinker.save
       end
     end
