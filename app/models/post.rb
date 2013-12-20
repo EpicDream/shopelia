@@ -1,3 +1,5 @@
+include ActionView::Helpers::TextHelper
+
 class Post < ActiveRecord::Base
   belongs_to :blog
   belongs_to :look
@@ -13,7 +15,12 @@ class Post < ActiveRecord::Base
 
   def convert
     if self.images.count > 1 && self.look.nil?
-      look = Look.create!(name:self.title,published_at:self.published_at,url:self.link,flinker_id:self.blog.flinker_id)
+      look = Look.create!(
+        name:self.title,
+        published_at:self.published_at,
+        url:self.link,
+        flinker_id:self.blog.flinker_id,
+        description:truncate(self.content, length: 200, separator: ' '))
       self.update_attribute :look_id, look.id
       developer = Developer.find_by_name!("Flink")
       self.products.each do |product|
