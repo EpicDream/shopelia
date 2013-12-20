@@ -2,6 +2,7 @@ class Flinker < ActiveRecord::Base
   has_many :looks
   has_many :flinker_authentications
   has_many :flinker_likes
+  has_many :flinker_follows
 
   devise :database_authenticatable, :registerable, :recoverable
   devise :rememberable, :trackable, :validatable, :token_authenticatable
