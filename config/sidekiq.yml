@@ -1,0 +1,4 @@
+:concurrency: 25
+:queues:
+  - [default, 5]
+  - [blogs_scraper, 4]
