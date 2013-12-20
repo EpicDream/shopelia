@@ -34,7 +34,7 @@ define(['logger'], function (logger) {
         l = args.length,
         res;
 
-      res = logger.format('INFO', '', args);
+      res = logger.format('INFO', args);
 
       expect(args.length).toBe(l);
       expect(res.length).toBe(l+3);

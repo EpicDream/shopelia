@@ -121,6 +121,7 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "CE PRODUIT N’EST MALHEUREUSEMENT PLUS DISPONIBLE.", "L'article ne peut pas être affiché.",
               "Currently unavailable.", "SOLD OUT", "0 available", "Disponible uniquement en magasin",
               "Ce produit n'est plus commercialisé par Maisons du Monde", "Nous n'avons pas trouvé la page que vous recherchiez.",
+              "Item not available. Select a colour and a size and add it to your Wishlist. We will notify you by e-mail if it becomes available again.",
               "Nous n'avons pas trouvé de résultat correspondant à votre recherche." ]
     array.each do |str|
       assert_equal false, MerchantHelper.parse_availability(str)[:avail], "with #{str}"

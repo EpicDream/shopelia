@@ -63,15 +63,16 @@ logger.header = function (level, date) {
   return ['[%s][%5s]',logger.timestamp(d), level];
 };
 
-logger.format = function(level, caller, args) {
+logger.format = function(level, args) {
   console.assert(typeof level === 'string', 'level must be a string');
-  console.assert(typeof caller === 'string', 'caller must be a string');
   console.assert(typeof args === 'object' && args instanceof Array, 'args must be an Array');
   var res = logger.header(level);
 
   for ( i = 0 ; i < args.length ; i++ ) {
     arg = args[i];
-    if (typeof arg === 'string' || typeof arg === 'number' || typeof arg === 'boolean') {
+    if (arg === undefined || arg === null) {
+      res[0] += " %s";
+    } else if (typeof arg === 'string' || typeof arg === 'number' || typeof arg === 'boolean') {
       res[0] += " %s";
     } else if (typeof arg === 'object' && arg instanceof RegExp) {
       res[0] += " %s";
@@ -128,7 +129,6 @@ logger.write = function (level, args) {
 logger._log = function(level, args) {
   var tmp, i, argsArray;
 
-  caller = ''; // legacy
   if (typeof args !== 'object' || args.length === undefined) {
     args = [args];
   } else if (! (args instanceof Array)) { // arguments is not an Array.
@@ -138,16 +138,15 @@ logger._log = function(level, args) {
     args = tmp;
   }
   console.assert(typeof level === 'string', 'level must be a string');
-  console.assert(typeof caller === 'string', 'caller must be a string');
   console.assert(typeof args === 'object' && args instanceof Array, 'args must be an Array');
 
-  try { return logger._log2(level, caller, args); }
+  try { return logger._log2(level, args); }
   catch(err) { return []; }
 };
 
 // No argument check
-logger._log2 = function(level, caller, args) {
-  argsArray = logger.format(level, caller, args);
+logger._log2 = function(level, args) {
+  argsArray = logger.format(level, args);
   if (logger[level] <= logger.level)
     logger.write(level, argsArray);
 
