@@ -19,6 +19,9 @@ module AnneFashion
       File.open(image_path, 'rb') { |f| File.open("/tmp/anne-fashion.jpg", 'wb') {|out| out.write(f.read) }}
       message = %Q{#{MESSAGES.sample} #{bitly.shorten(look.post.link).short_url} #{HASHTAGS.sample(3).join(" ")}}
       client.update_with_media(message, File.new("/tmp/anne-fashion.jpg"))
+    rescue #140+
+      attempts ||= 0
+      retry if (attempts += 1) < 10
     end
     
     def twit message
