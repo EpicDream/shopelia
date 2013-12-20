@@ -7,5 +7,11 @@ namespace :anne_fashion do
       AnneFashion::Twitter.new.publish(3)
     end
     
+    desc "schedule followings/followers ratio"
+    task :schedule => :environment do
+      require 'anne_fashion/twitter'
+      AnneFashion::Twitter.new.schedule_follow_ratio
+    end
+    
   end
 end

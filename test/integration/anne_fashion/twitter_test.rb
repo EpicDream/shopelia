@@ -9,6 +9,7 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   end
   
   test "get twitter client" do
+    skip
     assert @client.client
   end
   
@@ -17,25 +18,13 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
     assert @client.twit("La mode Oui!!!!!")
   end
   
-  test "search by hashtag" do
-    skip
-    results = @client.search("#lookbook")
-    results.each do |tweet|
-      next if tweet.user_mentions.none?
-      puts tweet.class
-      puts tweet.id
-      puts tweet.user_mentions.first.id
-      puts tweet.full_text.inspect
-      puts tweet.user_mentions.inspect
-      puts "------------\n"
-    end
-  end
-  
   test "follow user" do
+    skip
     assert @client.follow([17221180, 755905303])
   end
   
   test "retweet tweet" do
+    skip
     assert @client.retweet([413354572846202880])
   end
   
@@ -45,6 +34,7 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   end
   
   test "tweets with user" do
+    skip
     tweets = @client.tweets("#lookbook")
     assert tweets.count > 10
   end
@@ -52,5 +42,15 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
   test "publish a fashion tweet" do
     skip
     @client.publish
+  end
+  
+  test "followings" do
+    skip
+    assert @client.followings.count > 1
+  end
+  
+  test "unfollow schedule" do
+    skip
+    @client.schedule_follow_ratio
   end
 end
