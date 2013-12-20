@@ -4,24 +4,35 @@ require 'bitly'
 module AnneFashion
   class Twitter
     CREDENTIALS = YAML.load_relative_file("accounts.yml")['twitter']
-    MESSAGES = YAML.load_relative_file("messages.yml")
     HASHTAGS = ["#cute", "#cutie", "#fashion", "#fashionista", "#style", "#stylish", "#beauty", "#lindo", "#followback", "#pretty", "#girl", "#chic", "#look", "#lookbook", "#trend", "#trendy", "#outfit", "#lovethis", "#instafashion", "#luxury"]
+    TMP_IMG_PATH = "/tmp/anne-fashion.jpg"
+    PUBLIC_IMG_PATH = ->(look) { "#{Rails.root}/public#{look.look_images.first.picture(:large)}" }
     
     attr_reader :client
     
     def initialize
+      @messages = YAML.load_relative_file("messages.yml")
+      @bitly = Bitly.client
     end
     
-    def publish
-      bitly = Bitly.client
+    def publish n=3
+      n.times do 
+        begin
+          message, media = fashion_post()
+          client.update_with_media(message, media)
+        rescue #140+
+          attempts ||= 0
+          retry if (attempts += 1) < 10
+        end
+      end
+    end
+    
+    def fashion_post
       look = Look.random(Look.published)
-      image_path = "#{Rails.root}/public#{look.look_images.first.picture(:large)}"
-      File.open(image_path, 'rb') { |f| File.open("/tmp/anne-fashion.jpg", 'wb') {|out| out.write(f.read) }}
-      message = %Q{#{MESSAGES.sample} #{bitly.shorten(look.post.link).short_url} #{HASHTAGS.sample(3).join(" ")}}
-      client.update_with_media(message, File.new("/tmp/anne-fashion.jpg"))
-    rescue #140+
-      attempts ||= 0
-      retry if (attempts += 1) < 10
+      message = @messages.sample and @messages.delete(message)
+      File.open(PUBLIC_IMG_PATH[look], 'rb') { |f| File.open(TMP_IMG_PATH, 'wb') {|out| out.write(f.read) }}
+      message = %Q{#{message} #{@bitly.shorten(look.post.link).short_url} #{HASHTAGS.sample(3).join(" ")}}
+      [message, File.new(TMP_IMG_PATH)]
     end
     
     def twit message
