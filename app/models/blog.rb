@@ -70,7 +70,16 @@ class Blog < ActiveRecord::Base
   def assign_flinker
     email = "#{SecureRandom.hex(4)}@flinker.io"
     password = SecureRandom.hex(4)
-    flinker = Flinker.create(name:self.name, url:self.url, email:email, password:password, password_confirmation:password, is_publisher:true)
+    country = Country.find_by_iso(self.country)
+    flinker = Flinker.create(
+      name:self.name, 
+      url:self.url, 
+      email:email, 
+      password:password, 
+      password_confirmation:password, 
+      is_publisher:true, 
+      country_id:country.id, 
+      avatar_url:self.avatar_url)
     update_attribute :flinker_id, flinker.id
   end
   

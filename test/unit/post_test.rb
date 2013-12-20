@@ -8,6 +8,7 @@ class PostTest < ActiveSupport::TestCase
       title:"test", 
       published_at:Time.now, 
       blog_id: blogs(:betty).id,
+      content: "bla bla bla",
       products:{}.to_json,
       images:[].to_json)
   end
@@ -34,6 +35,7 @@ class PostTest < ActiveSupport::TestCase
     assert_equal "test", look.name
     assert_equal "http://www.toto.fr", look.url
     assert_equal 2, look.look_images.count
+    assert_equal "bla bla bla", look.description
     assert_not_nil look.published_at 
   end
 

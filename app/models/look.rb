@@ -1,5 +1,5 @@
 class Look < ActiveRecord::Base
-  attr_accessible :flinker_id, :name, :url, :published_at, :is_published
+  attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description
   
   belongs_to :flinker
   has_one :post
