@@ -116,6 +116,8 @@ SaturnSession.prototype.next = function() { try {
 SaturnSession.prototype.retryLastCmd = function () {
   clearTimeout(this.rescueTimeout);
   this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE);
+  if (! this.lastCmd)
+    return;
   switch (this.lastCmd.action) {
     case "getOptions":
       this.getOptions(this.lastCmd.option);
@@ -127,7 +129,7 @@ SaturnSession.prototype.retryLastCmd = function () {
       this.crawl();
       break;
     default:
-
+      break;
   }
 };
 
