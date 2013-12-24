@@ -58,6 +58,7 @@ gem 'ranked-model'
 gem 'fb_graph'
 gem 'twitter', require:false
 gem 'bitly', require:false
+gem "vinerb", :path => "../vinerb"
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -89,6 +90,7 @@ group :development do
   gem "binding_of_caller"
   gem 'quiet_assets'
   gem "letter_opener"
+  gem "debugger"
 end
 
 group :test do
