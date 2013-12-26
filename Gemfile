@@ -58,7 +58,7 @@ gem 'ranked-model'
 gem 'fb_graph'
 gem 'twitter', require:false
 gem 'bitly', require:false
-gem "vinerb", :path => "../vinerb"
+gem "vinerb", :git => "git@github.com:EpicDream/vinerb.git" #:path => "../vinerb"
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do

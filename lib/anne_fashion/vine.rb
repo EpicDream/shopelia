@@ -11,21 +11,40 @@ module AnneFashion
     include Vinerb::Model
 
     FOLLOW_TAGS = ["#lookbook", "#fashion", "#stylish"]
+    CREDENTIALS = YAML.load_relative_file("accounts.yml")['vine']
 
     attr_reader :retrieve_following , :retrieve_followers, :retrieve_likes
-    def initialize(email, password)
+
+    def initialize(account = "test")
       @messages = YAML.load_relative_file("vine_messages.yml")
-      @user = Model::User.login(email, password)
+      @user = Model::User.login(CREDENTIALS[account]['email'], CREDENTIALS[account]['password'])
       @api = @user.api
       retrieve_following
       retrieve_followers
       retrieve_likes
     end
 
+    def vampirize_user(user_id)
+      i = -1
+      next_page = 0
+      while i < next_page do
+        p "Processing page n?" + next_page.to_s
+        user_followers = @api.get_followers(user_id, {:size => "100", :page => next_page.to_s})
+        unfollowed_people = user_followers.json['records'].map{|p| p unless is_following?(p['userId'])}.compact
+        #p unfollowed_people
+        unfollowed_people.each do |target|
+          comment_follow_like_strategy(target["userId"],target["user"]["private"].to_i)
+        end
+        p "Finished page n?" + next_page.to_s
+        i = next_page
+        next_page = user_followers.json['nextPage']
+      end
+    end
+
     def follow_from_tag(tag_name)
       result = search(tag_name,{"size" => "33"})
       result.json['records'].each do |post|
-        comment_follow_like_strategy(post["userId"],nb_posts = 3)
+          comment_follow_like_strategy(post["userId"],post['private'])
       end
     end
 
@@ -34,22 +53,19 @@ module AnneFashion
       posts.json['records'].each do |post|
         comments = @api.get_comments(post["postId"])
         comments.json['records'].each do |comment|
-          comment_follow_like_strategy(comment['userId'],nb_posts = 3)
+          comment_follow_like_strategy(comment['userId'],comment['user']['private'])
         end
       end
     end
 
-    def comment_follow_like_strategy(user_id,nb_posts = 3)
-      @some_posts = nil
-      follow(user_id)
-      retrieve_posts_from(user_id, nb_posts)
-      like_posts
-      comment_on_posts
-    end
-
-
-    def retrieve_posts_from(user_id, nb_posts = 3)
-       @some_posts = @api.get_user_timeline(user_id, {"size" => nb_posts.to_s}).json['records']
+    def comment_follow_like_strategy(user_id,private)
+      @some_posts = []
+      unless is_following?(user_id) or  user_id == @api.user_id
+        follow(user_id)
+        if get_safely_user_timeline(user_id,private)
+          like_posts
+        end
+      end
     end
 
     def like_posts
@@ -57,15 +73,6 @@ module AnneFashion
          like(post["postId"])
        end
     end
-
-    def comment_on_posts
-      message = @messages.sample
-      #message = @messages.sample and @messages.delete(message)
-      @some_posts.each do |post|
-        comment(post["postId"],message)
-      end
-    end
-
 
     def search(tag_name,options = {})
       @api.get_tag_timeline(tag_name,options)
@@ -119,6 +126,14 @@ module AnneFashion
 
     def get_popular_posts
       @api.get_popular_timeline
+    end
+
+    def get_safely_user_timeline(user_id,private, nb_posts = 2)
+      res =  (private == 1)
+      unless res
+        @some_posts = @api.get_user_timeline(user_id, {"size" => nb_posts.to_s}).json['records']
+      end
+      !res
     end
 
 

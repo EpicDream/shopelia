@@ -7,5 +7,11 @@ twitter:
   access_token: "2251789926-BmJbWrQ2IyGVNx1tQtyZUDu82Gnt8ejwpyFDyug"
   access_token_secret: "Pq2YhNy5RyynjxHm9SGvhNUrq4gqooarl793w4rr9w185"
 
-    
-  
+
+vine:
+  flinkHQ:
+    email: 'hello@flink.io'
+    password: '12cowsinarow'
+  test:
+    email: 'AnnefashionParis.2@gmail.com'
+    password: 'bidiboussiRocks1'
