@@ -1,10 +1,12 @@
 $("#look-add-urls-modal").modal('hide');
 $('#look-add-urls-confirm').button('reset');
+$("#look-add-codes-modal").modal('hide');
+$('#look-add-codes-confirm').button('reset');
 $('#look-add-custom-confirm').button('reset');
 $("#look-add-custom-modal").modal('hide');
 
 <% @items.each do |item| %>
-  <% item.product.authorize_push_channel %>
+  <% item.product.authorize_push_channel unless item.product.nil? %>
   $("#look-products").prepend("<%= escape_javascript(render item) %>")
 <% end %>
 showSpinners();
