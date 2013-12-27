@@ -28,6 +28,10 @@
           %br
       %article.coolbox
         %h3 Actions
+        %button.btn.btn-success#look-add-codes
+          %i.icon-plus.icon-white
+          Add products from codes
+        %p
         %button.btn.btn-success#look-add-urls
           %i.icon-plus.icon-white
           Add products from url
@@ -65,6 +69,39 @@
       .modal-footer
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
         %button.btn.btn-primary#look-add-urls-confirm{type: "button", "data-loading-text" => "Processing..."} Add products
+
+#look-add-codes-modal.modal.fade.hidden
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", type: "button"} x
+        %h4.modal-title Add products by codes
+      .modal-body
+        = form_tag admin_look_products_path, id:"look-add-codes-form", remote:true do
+          - 10.times do |i|
+            .row-fluid
+              .span6
+                = select_tag "code-#{i}", options_for_select(LookProduct.codes), id:"code-#{i}"
+              .span4
+                = text_field_tag "brand-#{i}", "", id:"brand-#{i}"
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+        %button.btn.btn-primary#look-add-codes-confirm{type: "button", "data-loading-text" => "Processing..."} Add products
+
+#look-update-code-modal.modal.fade.hidden
+  .modal-dialog
+    .modal-content
+      .modal-header
+        %button.close{"data-dismiss" => "modal", type: "button"} x
+        %h4.modal-title Update product's code
+      .modal-body
+        = form_tag admin_look_products_path, id:"look-update-code-form", remote:true do
+          %p Select product's code
+          = select_tag "code", options_for_select(LookProduct.codes)
+          = hidden_field_tag "_method", "put"
+      .modal-footer
+        %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
+        %button.btn.btn-primary#look-update-code-confirm{type: "button", "data-loading-text" => "Processing..."} Confirm
 
 #look-add-custom-modal.modal.fade.hidden
   .modal-dialog

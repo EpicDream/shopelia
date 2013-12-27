@@ -70,7 +70,7 @@
   bottom:0px;
   margin-bottom:-70px;
 }
-.look-product-info, .look-product-title, .look-product-price, .look-product-details, .look-product-delete {
+.look-product-info, .look-product-title, .look-product-price, .look-product-code, .look-product-details, .look-product-delete, .look-product-update {
   position:absolute;
   z-index:2;
 }
@@ -96,6 +96,18 @@
   height: 40px;
   overflow: hidden;
 }
+.look-product-code {
+  position:absolute;
+  color:#222;
+  font-size:1em;
+  font-weight:800;
+  top:40px;
+  left:15px;
+  width:80%;
+  height: 40px;
+  overflow: hidden;
+  z-index:3;
+}
 .look-product-price {
   color:#e74c3c;
   font-size:1em;
@@ -116,6 +128,13 @@
   height:44px;
   bottom:15px;
   right: 0px;
+}
+.look-product-update {
+  margin:0 auto;
+  width:25%;
+  height:44px;
+  bottom:15px;
+  right: 120px;
 }
 .look-product-box:hover .look-product-info {
   margin-bottom:0;

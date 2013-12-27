@@ -10,7 +10,15 @@ class LookSerializer < ActiveModel::Serializer
   end
 
   def products
-    object.products.map{ |p| ProductSerializer.new(p, scope:scope).as_json[:product] if p.available? }.compact
+    object.look_products.map do |lp|
+      if lp.product.present? && lp.product.available?
+        { code: lp.code,
+          product: ProductSerializer.new(lp.product, scope:scope).as_json[:product] }
+      elsif lp.brand.present?
+        { code: lp.code,
+          brand: lp.brand }
+      end
+    end.compact
   end
 
   def images

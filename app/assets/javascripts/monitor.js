@@ -67,6 +67,12 @@ function monitorLookProducts() {
     var id = $(this).data('lpid');
     window.location = "/admin/look_products/" + id;
   });
+  $(".look-product-update").off("click");
+  $(".look-product-update").on("click", function() {
+    var id = $(this).data('lpid');
+    $("#look-update-code-form").attr('action', '/admin/look_products/' + id);
+    showUpdateCodeModal();
+  });
   $(".look-product-monitor").each(function() {
     var pid = $(this).data('pid');
     if (window.channels["product-" + pid] === undefined) {
@@ -81,6 +87,14 @@ function monitorLookProducts() {
       });
     }
   });
+  function showUpdateCodeModal() {
+    $("#look-update-code-modal").removeClass('hidden');
+    $("#look-update-code-modal").modal('show');
+    $('#look-update-code-confirm').on('click', function() {
+      $('#look-update-code-confirm').button('loading')
+      $('#look-update-code-form').submit();
+    });
+  }
 }
 
 function showSpinners() {
