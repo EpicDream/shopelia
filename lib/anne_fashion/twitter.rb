@@ -8,6 +8,9 @@ module AnneFashion
     TMP_IMG_PATH = "/tmp/anne-fashion.jpg"
     PUBLIC_IMG_PATH = ->(look) { "#{Rails.root}/public#{look.look_images.first.picture(:large)}" }
     FOLLOWERS_RATIO = 0.9
+    MAX_RETWEET = 2
+    MAX_FAVORITE = 3
+    MAX_FOLLOW_FROM_TWEETS = 20
     FOLLOW_TAGS = ["#lookbook", "#fashion", "#stylish"]
     
     attr_reader :client
@@ -64,13 +67,13 @@ module AnneFashion
       client.favorite(ids) rescue nil
     end
     
-    def follow_from_tweets query, max=20, retweet=false, favorite=false
+    def follow_from_tweets query, max=MAX_FOLLOW_FROM_TWEETS, retweet=false, favorite=false
       tweets = tweets(query)
       users_ids = tweets.map(&:user_mentions).flatten.map(&:id).uniq
       tweets_ids = tweets.map(&:id)
       follow(users_ids.sample(max))
-      retweet(tweets_ids) if retweet
-      favorite(tweets_ids) if favorite
+      retweet(tweets_ids.sample(MAX_RETWEET)) if retweet
+      favorite(tweets_ids.sample(MAX_FAVORITE)) if favorite
     end
     
     def friends
