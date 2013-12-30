@@ -71,6 +71,7 @@ module Scrapers
       
       def blocks
         page = @agent.get(@url)
+        page = from_blogspot_frame(page) || page
         page.search("article, div.post, div.blogselection > div, div.entry, div.single, div.post-wrap, div.post-body, div.article, div.blog_item")
       rescue
         []
@@ -82,6 +83,12 @@ module Scrapers
       end
       
       private
+      
+      def from_blogspot_frame page
+       return unless frame = page.search(".//frame[contains(@src, 'blogspot')]").first
+       src = frame.attribute('src')
+       @agent.get(src)
+      end
       
       def header block
         header_in = block.xpath(".//h1 | .//h2 | .//h3").first
