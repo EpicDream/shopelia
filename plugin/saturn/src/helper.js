@@ -2,9 +2,24 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', 'core_extensions'], function(logger) {
+define(['jquery', 'logger', 'core_extensions'], function($, logger) {
 
 "use strict";
+
+var AmazonFrHelper = {
+  crawler: {
+    waitAjax: function(callback) {
+      var elem = $('#prime_feature_div').last()[0]; //#price_feature_div, #availability_feature_div, #ftMessage,
+      if (! elem) {
+        logger.warn("no elem found to test opacity !");
+        setTimeout(callback, satconf.DELAY_BETWEEN_OPTIONS);
+      } else if (elem.style.opacity !== '') {
+        setTimeout(function () {this.waitAjax(callback);}.bind(this), 100);
+      } else
+        callback();
+    },
+  },
+};
 
 var RueducommerceHelper = {
   crawler: {
@@ -46,6 +61,8 @@ var Helper = {
   get: function (url, context) {
     if (! url) {
       return null;
+    } else if (url.search(/^https?:\/\/www\.amazon\.fr/) !== -1) {
+      return AmazonFrHelper[context];
     } else if (url.search(/^https?:\/\/www\.rueducommerce\.fr/) !== -1) {
       return RueducommerceHelper[context];
     } else if (url.search(/^https?:\/\/www\.luisaviaroma\.com/) !== -1) {
@@ -59,10 +76,3 @@ var Helper = {
 return Helper;
 
 });
-
-/*
-On remplace le then,
-Dans le then on vérifie qu'il y a bien filter=10, sinon, on rajoute, et on recharge.
-Comment vérifier qu'il y a bien le filter=10 ?
-chrome.query ?
-*/

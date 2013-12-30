@@ -11,6 +11,16 @@ class LookProductTest < ActiveSupport::TestCase
     assert item.save
   end
 
+  test "it should create look product from brand" do
+    item = LookProduct.new(look_id:@look.id, brand:"test", code:"code")
+    assert item.save
+  end
+
+  test "it shouldn't create empty look product" do
+    item = LookProduct.new(look_id:@look.id)
+    assert !item.save
+  end    
+
   test "it should create look product item from url" do
     assert_difference ["Product.count", "Product.count"] do
       item = LookProduct.new(

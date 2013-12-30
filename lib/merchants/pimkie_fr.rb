@@ -9,8 +9,10 @@ class PimkieFr < MerchantHelper
     @image_sub = [%r{vignette(\w+?)_TH_}, 'zoom\1_HD_']
     @availabilities = {
       /^ACCUEIL.+\(\d+\)$/i => false,
+      /^\d+ ARTICLE\(S\).$/i => false,
     }
 
+    @config[:setUnavailableIfEmpty] = true
     @config[:setDefaultPriceShippingAlways] = true
     @config[:setDefaultShippingInfoAlways] = true
     @config[:subImagesOnly] = true

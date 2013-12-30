@@ -60,8 +60,10 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
       toInt = parseInt(merchant, 10);
       if (toInt)
         query = '?merchant_id='+toInt;
-      else
-        query = "?url="+(url = merchant);
+      else {
+        url = merchant;
+        query = "?url="+encodeURIComponent(url);
+      }
     } else if (typeof merchant === 'number') {
       query = '?merchant_id='+merchant;
     } else if (typeof merchant === 'object' && merchant.id) {
@@ -69,8 +71,8 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     } else if (typeof merchant === 'object' && merchant.merchant_id) {
       query = '?merchant_id='+merchant.merchant_id;
     } else if (typeof merchant === 'object' && merchant.url) {
-      query = '?url='+merchant.url;
       url = merchant.url;
+      query = '?url='+encodeURIComponent(url);
     } else {
       logger.error("`Mapping.load' ArgumentError : Wait a string or a number, got a "+(typeof merchant));
       return deferred.reject("ArgumentError");
@@ -153,7 +155,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
     return $.ajax({
       type : "GET",
       dataType: "json",
-      url: map.MERCHANT_URL + '?url=' + url,
+      url: map.MERCHANT_URL + '?url=' + encodeURIComponent(url),
     }).fail(function (xhr, textStatus, errorThrown) {
       logger.warn("Fail to retrieve merchant from url '"+url+"'.");
     });

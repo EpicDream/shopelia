@@ -4,51 +4,55 @@
 
 define 'src/chrome/adblock', ['chrome_logger', 'satconf'],
 (logger) ->
-  return {
+  AdBlock = {
     id: "cfhdojbkjhnklbpkdaibdccddilifddb"
     lastRestart: Date.now()
     restart: (callback) ->
       logger.debug("AdBlock : restart !")
-      this.onRestartCb = callback
+      @onRestartCb = callback
       if this.canRestart()
-        this.saturn.pause()
+        @saturn.pause()
         this.disable()
       else
-        setInterval( () =>
-          this.restart()
-        , 1000*60*5)
+        setInterval (=> this.restart(callback)), 1000*60*5 # 5 min
     disable: () ->
       logger.debug("Disable AdBlock")
-      chrome.management.setEnabled(this.id, false)
+      @restarting = true
+      chrome.management.setEnabled @id, false
     enable: () ->
       logger.debug("Enable AdBlock")
-      chrome.management.setEnabled(this.id, true, =>
-        this.onRestart()
-      )
+      chrome.management.setEnabled @id, true, (=> this.onRestart())
     onRestart: () ->
       logger.debug("AdBlock restarted !")
-      this.saturn.resume()
-      this.lastRestart = Date.now()
-      if this.restartEveryDelay
-        this.restartIn(this.restartEveryDelay)
-      else if this.nextRestartDate
-        this.nextRestartDate += 1000*3600*24
-        this.restartIn(this.nextRestartDate - Date.now())
-      this.onRestartCb() if this.onRestartCb
+      @restarting = false
+      @saturn.resume()
+      @lastRestart = Date.now()
+      if @restartEveryDelay
+        this.restartIn(@restartEveryDelay)
+      else if @nextRestartDate
+        @nextRestartDate += 1000*3600*24
+        this.restartIn(@nextRestartDate - Date.now())
+      @onRestartCb() if @onRestartCb
     canRestart: () ->
-      return this.saturn.canRestart()
+      return @saturn.canRestart()
     restartIn: (ms) ->
       setTimeout( () =>
         this.restart()
       , ms)
     restartAt: (hour, min) ->
       now = new Date()
-      this.nextRestartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, min || 0, 0, 0)
-      if this.nextRestartDate < now
-        this.nextRestartDate += 1000*3600*24
-      this.restartIn(this.nextRestartDate - now)
+      @nextRestartDate = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, min || 0, 0, 0)
+      if @nextRestartDate < now
+        @nextRestartDate += 1000*3600*24
+      this.restartIn(@nextRestartDate - now)
     restartEvery: (ms) ->
       return if (! ms)
-      this.restartEveryDelay = ms
-      this.restartIn(this.restartEveryDelay)
+      @restartEveryDelay = ms
+      this.restartIn(@restartEveryDelay)
   }
+
+  chrome.management.onDisabled.addListener (extension) ->
+    if extension.id is AdBlock.id && AdBlock.restarting
+      AdBlock.enable()
+
+  return AdBlock

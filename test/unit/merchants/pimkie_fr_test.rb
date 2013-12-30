@@ -12,6 +12,7 @@ class PimkieFrTest < ActiveSupport::TestCase
 
     @availabilities = {
       "ACCUEIL > PARTY LOOK > PARTY LOOK (39)" => false,
+      "14 ARTICLE(S)." => false,
     }
     @price_shipping_text = [{
       input: "",

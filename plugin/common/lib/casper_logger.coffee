@@ -8,11 +8,11 @@ define 'casper_logger', ['logger'], (logger) ->
   
   logger.oldWrite = logger.write
   logger.write = (level, args) ->
-    level = switch level
+    caspLvl = switch level
       when 'FATAL', 'ERROR' then "error"
       when 'WARN', 'WARNING' then "warning"
       when 'DEBUG' then "debug"
       else "info"
-    casp.echo(logger.stringify(args), level)
+    casp.echo(logger.stringify(args), caspLvl)
 
   return logger

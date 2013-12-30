@@ -1,9 +1,10 @@
-define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
+define ["casper_logger", "src/saturn_session"], (logger, Session) ->
   
-  class CasperSaturnSession extends SaturnSession
+  class CasperSession extends Session
 
     constructor: ->
       super
+      @canSubTask = true
       @casper = {}
       @evalReturns = false
 
@@ -14,18 +15,38 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
       , () =>
         @evalReturns = false
         this.next()
-      # .then () =>
-      #   if tab.url !== @url
-      #       # Priceminister fix when reload the same page with an #anchor set.
-      #       if @url.match(/#\w+(=\w+)?/)
-      #         chrome.tabs.update(session.tabId, {url: url})
-      #   # Priceminister fix when reload the same page with an #anchor set.
-      #   else if url.match(/#\w+(=\w+)?/)
-      #     chrome.tabs.update(session.tabId, {url: url})
-      #   else
-      #     session.next()
+      , () =>
+        this.fail("Page takes too long to open.")
 
-    #
+    createSubTasks: () ->
+      firstOption = @options.firstOption({nonAlone: true})
+      return if ! firstOption # Possible if there is only a single choice
+      option = firstOption.depth()+1
+      hashes = Object.keys(firstOption._childrenH)
+      @_subTasks = {}
+      for hashCode in hashes[1..]
+        prod = {
+          id: @prod_id
+          batch_mode: @batch_mode
+          url: @url
+          mapping: @mapping
+          merchant_id: @merchant_id
+          strategy: 'normal'
+          argOptions: @options.argOptions
+          _subTaskId: hashCode
+          _mainTaskId: @id
+        }
+        prod.argOptions[option] = hashCode
+        @_subTasks[hashCode] = prod
+        firstOption.removeChild(firstOption.childAt(hashCode))
+        @saturn.addProductToQueue(prod)
+      @options.argOptions[option] = hashes[0]
+
+    _onSubTaskFinished: ->
+      casper.evaluate (url, data) ->
+        __utils__.sendAJAX(url, "POST", data, false)
+      , "http://localhost:#{@_mainTaskPort}/subTaskFinished", {_subTaskId: @_subTaskId, result: @results, _mainTaskId: @_mainTaskId}
+
     sendWarning: (msg) ->
       return if ! @prod_id # Stop pushed or Local Test
       casper.evaluate( (url, data) ->
@@ -36,7 +57,6 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
       , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], warnMsg: msg}).then () =>
         super msg
 
-    #
     sendError: (msg) ->
       return if ! @prod_id # Stop pushed or Local Test
       casper.evaluate( (url, data) ->
@@ -47,7 +67,6 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
       , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], errorMsg: msg}).then () =>
         super msg
 
-    #
     sendResult: (result) ->
       return if ! @prod_id # Stop pushed or Local Test
       casper.evaluate( (url, data) ->
@@ -65,14 +84,15 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
       casper.then () =>
         super result
 
-    #
+    logId: () ->
+      "[Casper@#{@sessionPort}]"
+
     evalAndThen: (cmd, callback) ->
-      logger.debug("in evalAndThen with ", cmd.action, cmd.option, cmd.value) #cmd.mapping,
       @casper.callback = callback if callback?
-      casper.evaluate (session_id, action, mapping, option, value) ->
+      casper.evaluate (action, mapping, option, value) ->
         requirejs ['casper_logger', 'src/casper/crawler'], (logger, Crawler) ->
-          Crawler.doNext(session_id, action, mapping, option, value)
-      , @id, cmd.action, cmd.mapping, cmd.option, cmd.value
+          Crawler.doNext(action, mapping, option, value)
+      , cmd.action, cmd.mapping, cmd.option, cmd.value
       casper.waitFor =>
         @evalReturns is true
       , =>
@@ -88,9 +108,14 @@ define ["casper_logger", "src/saturn_session"], (logger, SaturnSession) ->
       @evalReturns = true
       casper.then () =>
         @evalReturns = false
-        # @title = casper.getTitle()
-        # logger.info "#{@saturn.caspId} Title is #{@title}"
-        # this.endSession()
         this.next()
 
-  return CasperSaturnSession
+    preEndSession: () ->
+      super
+      casper.waitFor () =>
+        @_subTasks is undefined
+      , null, () =>
+        this.onTimeout("Subtasks take too long to finish.")
+      , satconf.DELAY_RESCUE * Object.keys(@_subTasks).length
+
+  return CasperSession

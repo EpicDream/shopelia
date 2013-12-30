@@ -1,0 +1,4 @@
+$("#look-update-code-modal").modal('hide');
+$('#look-update-code-confirm').button('reset');
+$('#look-products').html("<%= escape_javascript(render @look.look_products) %>");
+monitorLookProducts();

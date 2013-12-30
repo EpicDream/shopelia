@@ -1,31 +1,25 @@
 
-define ["logger", "mapping", "src/saturn", "src/node/session"], (logger, Mapping, Saturn, NodeSaturnSession) ->
-
-  http = require('http')
-  parseUrl = require('url').parse
+define ['http', 'url', 'child_process', "logger", "mapping", "src/saturn"], (Http, Url, ChildProcess, logger, Mapping, Saturn) ->
 
   class NodeSaturn extends Saturn
     constructor: (@serverPort, args...) ->
       super(args...)
-      @Session = NodeSaturnSession
-      @sessionsByPort = NodeSaturnSession.instances
       @portCounter = @serverPort
-
-      @server = http.createServer( (req, res) =>
-        uri = parseUrl(req.url, true)
-        logger.info("[NodeJS] Incoming connection from #{req.connection.remoteAddress}")
+      @server = Http.createServer( (req, res) =>
+        uri = Url.parse(req.url, true)
+        logger.debug("[NodeJS] Incoming connection from #{req.connection.remoteAddress}")
 
         if uri.pathname is "/casper-ready" && uri.query.session
-          @sessionsByPort[uri.query.session].onSessionReady()
+          this.onSessionReady(uri.query.session)
           res.writeHead(204)
           return res.end()
-        else if req.method is "POST" && req.url is '/'
+        else if req.method is "POST" && req.url is '/product'
           req.setEncoding('utf8')
           return req.on 'data', (chunk) =>
             logger.debug("[NodeJS] Data received : " + chunk);
             try
               prod = JSON.parse(chunk)
-              logger.info("[NodeJS] New product received : #{prod.url}")
+              logger.verbose("[NodeJS] New product received : #{prod.url}") unless prod._mainTaskId
               this.onProductReceived(prod)
               res.writeHead(204)
               res.end()
@@ -38,14 +32,35 @@ define ["logger", "mapping", "src/saturn", "src/node/session"], (logger, Mapping
           res.writeHead(400, {'Content-Type': 'text/plain'})
           return res.end("Unrecognise data.")
       ).listen(@serverPort)
-
-    preProcessData: (prod) ->
-      prod = super(prod)
-      prod.sessionPort = ++@portCounter
-      return prod
     
     loadMapping: (merchantId, doneCallback, failCallback) ->
-      logger.debug("Going to get mapping for merchantId '"+merchantId+"'")
-      return Mapping.load(merchantId)
+      Mapping.load(merchantId)
+
+    createSession: (prod) ->
+      port = prod.sessionPort = ++@portCounter
+      @sessions[prod.sessionPort] = prod
+
+      logger.debug("[NodeJS@#{port}] Going to launch casper for product #{if prod.id? then "##{prod.id}" else prod.url}")
+      session = ChildProcess.spawn('casperjs', ["--web-security=false", "dist/casper.js", "--port="+port, "--node_port="+@serverPort])
+      session.stdout.on 'data', (chunk) =>
+        logger.print(chunk.toString().trim())
+      session.stderr.on 'data', (chunk) =>
+        logger.print(chunk.toString().trim())
+      session.on 'close', (code) =>
+        delete @sessions[port]
+        logger.debug("[NodeJS#"+port+"] casper process exited with code " + code)
+
+    onSessionReady: (port) ->
+      prod = @sessions[port]
+      prodJSON = JSON.stringify(prod)
+      logger.debug("[NodeJS@"+port+"] going to start session.")
+      Http.request(
+        host: "127.0.0.1"
+        port: port
+        method: 'POST'
+        headers:
+          "Content-Type": "application/json"
+          "Content-Length": Buffer.byteLength(prodJSON)
+      ).end(prodJSON)
 
   return NodeSaturn

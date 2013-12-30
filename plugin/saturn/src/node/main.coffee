@@ -1,5 +1,7 @@
 
 requirejs = require('requirejs');
+vm = require("vm")
+fs = require("fs")
 
 requirejs.config({
   baseUrl: "./",
@@ -26,14 +28,12 @@ requirejs.config({
 });
 
 # require satconf and core_extensions in the global context. 
-vm = require("vm")
-fs = require("fs")
 vm.runInThisContext(fs.readFileSync("./build/config.js"))
 vm.runInThisContext(fs.readFileSync("./vendor/core_extensions.js"))
 
 requirejs ['optimist', 'node_logger', 'src/node/saturn', 'satconf'], (optimist, logger, NodeSaturn) ->
   argv = optimist.argv
   serverPort = argv.port || 53746
-  logger.level = logger.ALL
+  logger.level = logger.INFO
   saturn = new NodeSaturn(serverPort)
   logger.info("[NodeJS] Server listen on port " + serverPort)

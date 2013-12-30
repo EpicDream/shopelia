@@ -1,9 +1,9 @@
 
 requirejs.config({
   paths: {
-    'src/chrome': 'build/src/chrome',
-    'src/node': 'build/src/node',
-    'src/casper': 'build/src/casper',
+    "src/chrome": "build/src/chrome",
+    "src/node": "build/src/node",
+    "src/casper": "build/src/casper",
 
     core_extensions: "vendor/core_extensions",
     uri: "vendor/uri",

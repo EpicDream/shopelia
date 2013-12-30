@@ -3,11 +3,11 @@
 # Created : 2013-11-06
 
 requirejs ['jquery', 'chrome_logger', 'crawler', 'src/helper', "satconf"],
-($, logger, Crawler, helper) ->
+($, logger, Crawler, Helper) ->
 
   logger.level = logger[satconf.log_level]
   window.Crawler = Crawler
-  crawlHelper = helper.get(location.href, 'crawler')
+  helper = Helper.get(location.href, 'crawler')
 
   chrome.extension.onMessage.addListener (hash, sender, callback) ->
     return if sender.id isnt chrome.runtime.id
@@ -38,18 +38,14 @@ requirejs ['jquery', 'chrome_logger', 'crawler', 'src/helper', "satconf"],
       chrome.extension.sendMessage("nextStep")
 
   waitAjax = () ->
-    if location.host.search(/amazon.fr$/) isnt -1
-      elem = document.getElementById('prime_feature_div')
-      if elem && elem.style.opacity isnt ''
-        setTimeout(waitAjax, 100)
-      else
-        goNextStep()
+    if helper && helper.waitAjax
+      helper.waitAjax(goNextStep)
     else if ! Crawler.pageWillBeUnloaded
       setTimeout(goNextStep, satconf.DELAY_BETWEEN_OPTIONS)
 
   # To handle redirection, that throws false 'complete' state.
   $(document).ready () ->
-    if crawlHelper && crawlHelper.atLoad
-      crawlHelper.atLoad(goNextStep)
+    if helper && helper.atLoad
+      helper.atLoad(goNextStep)
     else
       setTimeout(goNextStep, 100)

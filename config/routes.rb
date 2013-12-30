@@ -185,10 +185,12 @@ Shopelia::Application.routes.draw do
     end
     namespace :flink do
       devise_for :flinkers
+      resources :flinkers, :only => :index
       resources :looks, :only => :index do
         resources :likes, :only => :create, :controller => "looks/likes"
         delete "likes" => "looks/likes#destroy"
       end
+      resources :follows, :only => [:index, :create, :destroy]
     end
   end
 

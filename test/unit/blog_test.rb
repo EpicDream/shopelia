@@ -1,12 +1,14 @@
-require 'test__helper'
+require 'test_helper'
 
 class BlogTest < ActiveSupport::TestCase
   
   test "create flinker and assign to blog if none" do
-    blog = Blog.create(url:"http://fashion.fr")
+    blog = Blog.create(url:"http://fashion.fr",country:"FR",avatar_url:"http://cdn10.lbstatic.nu/files/users/small/2701077_IMG_83752.jpg")
     
     assert blog.flinker
     assert blog.flinker.is_publisher?
+    assert_equal countries(:france).id, blog.flinker.country_id
+    assert blog.flinker.avatar_file_name.present?
   end
   
   test "do not assign new flinker if blog created with flinker reference" do
