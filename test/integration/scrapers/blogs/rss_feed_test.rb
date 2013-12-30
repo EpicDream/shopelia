@@ -67,7 +67,6 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
     assert items.count > 0
   end
   
-  
 end
 
   
