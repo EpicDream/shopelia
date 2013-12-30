@@ -114,8 +114,7 @@ module AnneFashion
     private
     
     def maybe
-      # [true, false].sample
-      false
+      [true, false].sample
     end
     
     def hashtags n=3
