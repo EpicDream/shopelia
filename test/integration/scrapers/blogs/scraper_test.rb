@@ -80,10 +80,11 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
   end
   
   test "load page from iframe source (blogspot)" do
-    @scraper.url = "http://chicfashionworld.com"
+    @scraper.url = "http://chicfashionworld.com/"
     posts = @scraper.posts
     
     assert posts.count > 0
+    assert_not_match /(http.*){2,}/, posts.first.link 
   end
   
 end
