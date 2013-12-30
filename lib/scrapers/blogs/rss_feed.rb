@@ -33,7 +33,7 @@ module Scrapers
       
       def feed_urls
         base = @url.gsub(/\/$/, '')
-        ["#{base}/feed/", "#{base}/feeds/posts/default?alt=rss", "#{base}/blog/do/rss.xml"]
+        ["#{base}/feed/", "#{base}/feeds/posts/default?alt=rss", "#{base}/blog/do/rss.xml", "#{base}/index.rss"]
       end
       
       def post_from(item) #rss item
