@@ -45,7 +45,7 @@ module Scrapers
         node = header.search('.//a').first if header
         href = node && node.attribute("href").value
         return @url unless href
-        href = @url + href unless href =~ Regexp.new(URI(@url).host)
+        href = @url + href unless href =~ /http/
         href
       end
       
@@ -86,8 +86,9 @@ module Scrapers
       
       def from_blogspot_frame page
        return unless frame = page.search(".//frame[contains(@src, 'blogspot')]").first
-       src = frame.attribute('src')
-       @agent.get(src)
+       src = frame.attribute('src').value
+       @url = src
+       @agent.get(@url)
       end
       
       def header block
