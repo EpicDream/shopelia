@@ -79,6 +79,13 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert_equal "http://bit.ly/1cal3V7", products["Produit(4)"]
   end
   
+  test "load page from iframe source (blogspot)" do
+    @scraper.url = "http://chicfashionworld.com"
+    posts = @scraper.posts
+    
+    assert posts.count > 0
+  end
+  
 end
 
   
