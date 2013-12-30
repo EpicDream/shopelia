@@ -9,8 +9,9 @@ class Post < ActiveRecord::Base
   json_attributes [:images, :products, :categories]
   
   before_validation :link_urls
+  before_validation :set_a_title, if: -> { self.title.blank? }
   after_create :convert
-
+  
   scope :pending_processing, where("processed_at is null and look_id is not null and published_at > ?", 1.month.ago).order("published_at desc")
 
   def convert
@@ -53,5 +54,9 @@ class Post < ActiveRecord::Base
       hash.merge!({name => Linker.clean(link)})
     end.to_json
     self.link = Linker.clean(link)
+  end
+  
+  def set_a_title
+    self.title = self.content[0...30]
   end
 end
