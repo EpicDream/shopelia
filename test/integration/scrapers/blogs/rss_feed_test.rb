@@ -46,8 +46,22 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
     parser.send(:post_from, stub)
   end
   
-  test "another feeds source" do
+  test "another feeds source : /blog/do/rss.xml" do
     parser = Scrapers::Blogs::RSSFeed.new("http://www.blogmodelili.com")
+    items = parser.items
+    
+    assert items.count > 0
+  end
+  
+  test "another feeds source : /index.rss" do
+    parser = Scrapers::Blogs::RSSFeed.new("http://melinazsalehi.blogg.se")
+    items = parser.items
+    
+    assert items.count > 0
+  end
+  
+  test "another feeds source : /rss" do
+    parser = Scrapers::Blogs::RSSFeed.new("http://miku-chan.eklablog.fr")
     items = parser.items
     
     assert items.count > 0

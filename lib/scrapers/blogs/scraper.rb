@@ -72,7 +72,7 @@ module Scrapers
       def blocks
         page = @agent.get(@url)
         page = from_blogspot_frame(page) || page
-        page.search("article, div.post, div.blogselection > div, div.entry, div.single, div.post-wrap, div.post-body, div.article, div.blog_item")
+        page.search("article, div.post, div.blogselection > div, div.entry, div.single, div.post-wrap, div.post-body, div.article, div.blog_item, div.entrybody")
       rescue
         []
       end
