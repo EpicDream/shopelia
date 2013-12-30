@@ -60,6 +60,14 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
     assert items.count > 0
   end
   
+  test "another feeds source : /rss" do
+    parser = Scrapers::Blogs::RSSFeed.new("http://miku-chan.eklablog.fr")
+    items = parser.items
+    
+    assert items.count > 0
+  end
+  
+  
 end
 
   
