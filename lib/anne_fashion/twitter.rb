@@ -7,7 +7,7 @@ module AnneFashion
     HASHTAGS = ["#cute", "#cutie", "#fashion", "#fashionista", "#style", "#stylish", "#beauty", "#lindo", "#followback", "#pretty", "#girl", "#chic", "#look", "#lookbook", "#trend", "#trendy", "#outfit", "#lovethis", "#instafashion", "#luxury"]
     TMP_IMG_PATH = "/tmp/anne-fashion.jpg"
     PUBLIC_IMG_PATH = ->(look) { "#{Rails.root}/public#{look.look_images.first.picture(:large)}" }
-    FOLLOWERS_RATIO = 0.6
+    FOLLOWERS_RATIO = 0.9
     FOLLOW_TAGS = ["#lookbook", "#fashion", "#stylish"]
     
     attr_reader :client
@@ -73,6 +73,20 @@ module AnneFashion
       favorite(tweets_ids) if favorite
     end
     
+    def friends
+      followings = followings().to_a
+      followers = followers().to_a
+      followings & followers
+    end
+    
+    def friends_of_friends
+      followers(friends)
+    end
+    
+    def follow_friends_of_friends n=10
+      follow friends_of_friends.to_a.sample(n)
+    end
+    
     def follow users
       client.follow(users)
     end
@@ -83,10 +97,10 @@ module AnneFashion
       unfollows = followings - followers
       
       ratio = followers.count / followings.count
-      if ratio > 0.9
+      if ratio > FOLLOWERS_RATIO
         follow_from_tweets(FOLLOW_TAGS.sample, 20, maybe(), maybe())
       else
-        unfollow(unfollows.sample(20))
+        unfollow(unfollows.sample(10))
         follow_from_tweets(FOLLOW_TAGS.sample, 10, maybe(), maybe())
       end
     end
@@ -95,8 +109,8 @@ module AnneFashion
       client.following
     end
     
-    def followers
-      client.followers
+    def followers users=nil
+      client.followers users
     end
     
     def unfollow users

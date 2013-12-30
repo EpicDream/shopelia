@@ -53,4 +53,9 @@ class AnneFashion::TwitterTest < ActiveSupport::TestCase
     skip
     @client.schedule_follow_ratio
   end
+  
+  test "follow friends of friends" do
+    skip
+    @client.follow_friends_of_friends
+  end
 end
