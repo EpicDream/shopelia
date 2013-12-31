@@ -6,6 +6,14 @@ twitter:
   consumer_secret: "7TyPScLISnwBhugYSNpogBu5OBFL6IH5wuMnzDYE9Pk"
   access_token: "2251789926-BmJbWrQ2IyGVNx1tQtyZUDu82Gnt8ejwpyFDyug"
   access_token_secret: "Pq2YhNy5RyynjxHm9SGvhNUrq4gqooarl793w4rr9w185"
+#gmail : huitres.bzh@gmail.com/breizhbrest
+instagram:
+  login: 'huitrebzh'
+  password: 'huitrebzh'
+  client_id: '845aac06f9bc40b69a521cef5611d7de'
+  client_secret: '038b38cfebed4e329fa3b63d11c41b7d'
+  access_token: '894534294.845aac0.99578283ab68435aab90ff1ded76837f'
+  
 
     
   
