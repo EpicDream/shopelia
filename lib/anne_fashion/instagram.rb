@@ -55,7 +55,7 @@ module AnneFashion
     end
     
     def session_wait
-      sleep rand(60..3600)
+      sleep rand(60..1800)
     end
     
     def authenticate
