@@ -20,4 +20,19 @@ class AnneFashion::InstagramTest < ActiveSupport::TestCase
     @client.follow_and_like_by_tag('fashion')
   end
   
+  test "followings" do
+    skip
+    assert_equal 76, @client.followings.count
+  end
+  
+  test "followers" do
+    skip
+    assert_equal 10, @client.followers.count
+  end
+  
+  test "schedule following" do
+    skip
+    @client.schedule_follow_ratio
+  end
+  
 end

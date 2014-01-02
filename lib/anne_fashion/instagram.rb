@@ -4,7 +4,8 @@ module AnneFashion
   class Instagram
     CREDENTIALS = YAML.load_relative_file("accounts.yml")['instagram']
     MAX_FOLLOW_PER_SESSION = 20
-     
+    MAX_UNFOLLOW_PER_SESSION = 10
+    
     attr_reader :client
     
     def initialize
@@ -28,6 +29,26 @@ module AnneFashion
       end
     end
     
+    def schedule_follow_ratio
+      session_wait()
+      unfollow_sample.each do |user_id|
+        unfollow(user_id)
+        wait(min=10)
+      end
+    end
+    
+    def unfollow_sample
+      (followings.map(&:id) - followers.map(&:id)).sample(MAX_UNFOLLOW_PER_SESSION)
+    end
+    
+    def followers
+      @client.user_followed_by me.id
+    end
+    
+    def followings
+      @client.user_follows me.id, count:1000
+    end
+    
     def me
       @client.user
     end
@@ -42,6 +63,10 @@ module AnneFashion
     
     def like media_id
       @client.like_media(media_id)
+    end
+    
+    def unfollow user_id
+      @client.unfollow_user user_id
     end
 
     private
