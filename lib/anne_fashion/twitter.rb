@@ -86,7 +86,7 @@ module AnneFashion
       followers(friends)
     end
     
-    def follow_friends_of_friends n=10
+    def follow_friends_of_friends n=20
       follow friends_of_friends.to_a.sample(n)
     end
     
