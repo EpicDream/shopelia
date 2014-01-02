@@ -28,8 +28,8 @@ class Blog < ActiveRecord::Base
       post.save
     end
     self.reload
-  rescue
-    report_incident(:fetch)
+  rescue => e
+    report_incident(:fetch, e.message)
   end
 
   def skipped=skip
@@ -60,11 +60,11 @@ class Blog < ActiveRecord::Base
   
   private
   
-  def report_incident method
+  def report_incident method, description=nil
     Incident.create(
       :issue => "Blog##{method}",
       :severity => Incident::IMPORTANT,
-      :description => "url : #{self.url}")
+      :description => "url : #{self.url} - #{description}")
   end
   
   def assign_flinker
