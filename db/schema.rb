@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131227111637) do
+ActiveRecord::Schema.define(:version => 20140102112332) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -298,10 +298,10 @@ ActiveRecord::Schema.define(:version => 20131227111637) do
   add_index "flinkers", ["reset_password_token"], :name => "index_flinkers_on_reset_password_token", :unique => true
 
   create_table "images", :force => true do |t|
-    t.string   "url"
+    t.string   "url",                  :limit => 1024
     t.string   "type"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
     t.string   "picture_file_name"
     t.string   "picture_content_type"
     t.integer  "picture_file_size"
