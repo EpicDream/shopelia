@@ -29,7 +29,7 @@ module AnneFashion
       end
     end
     
-    def schedule_following
+    def schedule_follow_ratio
       unfollow_sample.each do |user_id|
         unfollow(user_id)
         wait(min=10)

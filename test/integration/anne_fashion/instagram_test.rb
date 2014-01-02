@@ -32,7 +32,7 @@ class AnneFashion::InstagramTest < ActiveSupport::TestCase
   
   test "schedule following" do
     skip
-    @client.schedule_following
+    @client.schedule_follow_ratio
   end
   
 end
