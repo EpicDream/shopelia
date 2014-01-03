@@ -42,11 +42,11 @@ module AnneFashion
     end
     
     def followers
-      @client.user_followed_by me.id
+      all_pages(:user_followed_by)
     end
     
     def followings
-      @client.user_follows me.id, count:1000
+      all_pages(:user_follows)
     end
     
     def me
@@ -71,6 +71,17 @@ module AnneFashion
 
     private
     
+    def all_pages action
+      next_cursor = nil
+      users = []
+      begin
+        response = ::Instagram.send(action, me.id, {count:100, cursor:next_cursor})
+        next_cursor = response.pagination.next_cursor
+        users += response
+      end while next_cursor
+      users
+    end
+    
     def follow_count
       rand(12..MAX_FOLLOW_PER_SESSION)
     end
@@ -82,7 +93,7 @@ module AnneFashion
     def session_wait
       sleep rand(60..1800)
     end
-    
+
     def authenticate
       ::Instagram.configure do |config|
         config.client_id = CREDENTIALS['client_id']

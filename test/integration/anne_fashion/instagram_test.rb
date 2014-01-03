@@ -12,7 +12,7 @@ class AnneFashion::InstagramTest < ActiveSupport::TestCase
   
   test "authentication" do
     skip
-    assert @client.me.username == 'huitrebzh'
+    assert_equal 'flinkhq', @client.me.id
   end
   
   test "follow and like by tag" do
@@ -22,12 +22,12 @@ class AnneFashion::InstagramTest < ActiveSupport::TestCase
   
   test "followings" do
     skip
-    assert_equal 76, @client.followings.count
+    assert_equal 137, @client.followings.count
   end
   
   test "followers" do
     skip
-    assert_equal 10, @client.followers.count
+    assert_equal 75, @client.followers.count
   end
   
   test "schedule following" do
