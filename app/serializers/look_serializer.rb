@@ -2,7 +2,7 @@ class LookSerializer < ActiveModel::Serializer
   attributes :uuid, :name, :url, :published_at, :flinker, :products, :images, :liked, :description
   
   def name
-    object.name.strip
+    object.name.try(:strip)
   end
 
   def published_at
