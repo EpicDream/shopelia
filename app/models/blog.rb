@@ -5,8 +5,8 @@ class Blog < ActiveRecord::Base
   attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id, :skipped, :can_comment
   
   belongs_to :flinker
-  has_many :posts, dependent: :destroy
-  
+  has_many :posts, dependent: :destroy, order: 'published_at desc'
+
   before_validation :normalize_url
   validates :url, uniqueness:true, presence:true, :on => :create
   after_create :assign_flinker, if: -> { self.flinker_id.nil? }
