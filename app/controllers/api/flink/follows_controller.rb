@@ -1,7 +1,8 @@
 class Api::Flink::FollowsController < Api::Flink::BaseController
 
   def index
-    render json: current_flinker.flinker_follows.map(&:follow_id)
+    flinkers = Flinker.where(id:current_flinker.flinker_follows.map(&:follow_id))
+    render json: ActiveModel::ArraySerializer.new(flinkers)
   end
 
   def create
