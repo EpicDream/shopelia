@@ -27,7 +27,7 @@ class Blog < ActiveRecord::Base
       post.blog_id = self.id
       post.save
     end
-    self.reload
+    self
   rescue => e
     report_incident(:fetch, e.message)
   end
