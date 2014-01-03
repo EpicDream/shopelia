@@ -52,7 +52,8 @@ class Post < ActiveRecord::Base
   
   def link_urls
     self.products = self.products.inject({}) do |hash, (name, link)|
-      hash.merge!({name => Linker.clean(link).clean })
+      next hash unless link = Linker.clean(link)
+      hash.merge!({name => link.clean })
     end.to_json
     self.link = Linker.clean(link)
   end
