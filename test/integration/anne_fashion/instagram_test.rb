@@ -35,4 +35,9 @@ class AnneFashion::InstagramTest < ActiveSupport::TestCase
     @client.schedule_follow_ratio
   end
   
+  test "follow friends of followers" do
+    skip
+    @client.follow_friends_of_followers
+  end
+  
 end
