@@ -27,6 +27,7 @@ class Blog < ActiveRecord::Base
       post.blog_id = self.id
       post.save
     end
+    breakdown?
     self
   rescue => e
     report_incident(:fetch, e.message)
@@ -56,6 +57,12 @@ class Blog < ActiveRecord::Base
     self.can_comment = !!poster.publisher
     self.save
     can_comment?
+  end
+
+  def breakdown?
+    breakdown = !self.posts.first || self.posts.first.published_at < Time.now - 10.days
+    report_incident(:check_breakdown, "No post since 10 days ago...") if breakdown
+    breakdown
   end
   
   private
