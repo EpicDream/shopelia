@@ -27,6 +27,11 @@ namespace :anne_fashion do
       AnneFashion::Instagram.new.follow_and_like_by_tag('fashion')
     end
     
+    desc "follow some friends of some followers"
+    task :follow_friends_of_followers => :environment do
+      AnneFashion::Instagram.new.follow_friends_of_followers
+    end
+    
     desc "schedule followings/followers ratio"
     task :schedule => :environment do
       AnneFashion::Instagram.new.schedule_follow_ratio
