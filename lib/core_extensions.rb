@@ -65,7 +65,8 @@ class String
   end
   
   def clean
-    gsub(/\n|\r|\t/, ' ').strip
+    encoded = encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+    encoded.gsub(/\n|\r|\t/, ' ').strip
   end
   
 end

@@ -58,8 +58,8 @@ module Scrapers
       
       def href
         Proc.new { |a| 
-          href = a.attribute('href') 
-          href.value if href
+          href = a.attribute('href')
+          href.value.clean if href
         }
       end
       

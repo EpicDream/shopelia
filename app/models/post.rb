@@ -9,8 +9,10 @@ class Post < ActiveRecord::Base
   json_attributes [:images, :products, :categories]
   
   before_validation :link_urls
+  before_validation :set_a_title, if: -> { self.title.blank? }
+  before_validation :set_published_at, if: -> { self.published_at.nil? }
   after_create :convert
-
+  
   scope :pending_processing, where("processed_at is null and look_id is not null and published_at > ?", 1.month.ago).order("published_at desc")
 
   def convert
@@ -50,8 +52,17 @@ class Post < ActiveRecord::Base
   
   def link_urls
     self.products = self.products.inject({}) do |hash, (name, link)|
-      hash.merge!({name => Linker.clean(link)})
+      next hash unless link = Linker.clean(link)
+      hash.merge!({name => link.clean })
     end.to_json
     self.link = Linker.clean(link)
+  end
+  
+  def set_a_title
+    self.title = self.content[0...30]
+  end
+  
+  def set_published_at
+    self.published_at = Time.now
   end
 end

@@ -5,8 +5,8 @@ class Blog < ActiveRecord::Base
   attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id, :skipped, :can_comment
   
   belongs_to :flinker
-  has_many :posts, dependent: :destroy
-  
+  has_many :posts, dependent: :destroy, order: 'published_at desc'
+
   before_validation :normalize_url
   validates :url, uniqueness:true, presence:true, :on => :create
   after_create :assign_flinker, if: -> { self.flinker_id.nil? }
@@ -27,9 +27,10 @@ class Blog < ActiveRecord::Base
       post.blog_id = self.id
       post.save
     end
-    self.reload
-  rescue
-    report_incident(:fetch)
+    breakdown?
+    self
+  rescue => e
+    report_incident(:fetch, e.message)
   end
 
   def skipped=skip
@@ -57,14 +58,20 @@ class Blog < ActiveRecord::Base
     self.save
     can_comment?
   end
+
+  def breakdown?
+    breakdown = !self.posts.first || self.posts.first.published_at < Time.now - 10.days
+    report_incident(:check_breakdown, "No post since 10 days ago...") if breakdown
+    breakdown
+  end
   
   private
   
-  def report_incident method
+  def report_incident method, description=nil
     Incident.create(
       :issue => "Blog##{method}",
       :severity => Incident::IMPORTANT,
-      :description => "url : #{self.url}")
+      :description => "url : #{self.url} - #{description}")
   end
   
   def assign_flinker

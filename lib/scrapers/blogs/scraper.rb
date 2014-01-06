@@ -45,7 +45,7 @@ module Scrapers
         node = header.search('.//a').first if header
         href = node && node.attribute("href").value
         return @url unless href
-        href = @url + href unless href =~ Regexp.new(URI(@url).host)
+        href = @url + href unless href =~ /http/
         href
       end
       
@@ -71,7 +71,8 @@ module Scrapers
       
       def blocks
         page = @agent.get(@url)
-        page.search("article, div.post, div.blogselection > div, div.entry, div.single, div.post-wrap, div.post-body, div.article, div.blog_item")
+        page = from_blogspot_frame(page) || page
+        page.search("article, div.post, div.blogselection > div, div.entry, div.single, div.post-wrap, div.post-body, div.article, div.blog_item, div.entrybody")
       rescue
         []
       end
@@ -82,6 +83,13 @@ module Scrapers
       end
       
       private
+      
+      def from_blogspot_frame page
+       return unless frame = page.search(".//frame[contains(@src, 'blogspot')]").first
+       src = frame.attribute('src').value
+       @url = src
+       @agent.get(@url)
+      end
       
       def header block
         header_in = block.xpath(".//h1 | .//h2 | .//h3").first

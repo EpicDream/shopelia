@@ -11,7 +11,7 @@ module Scrapers
         content.xpath(".//script").map(&:remove) 
         content.xpath(".//*[@class='comments']").map(&:remove)
         texts = content.xpath(".//div/text()[normalize-space()] | .//p/text()[normalize-space()] | .//text()[normalize-space()]").map(&:text)
-        texts = texts.delete_if { |text| text =~ /CDATA/}
+        texts = texts.map(&:clean).delete_if { |text| text =~ /CDATA/}
         texts.join("\n")
       end
       
