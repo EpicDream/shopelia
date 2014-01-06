@@ -59,7 +59,7 @@ class Post < ActiveRecord::Base
   end
   
   def set_a_title
-    self.title = self.content[0...30]
+    self.title = self.content[0...30] unless self.content.nil?
   end
   
   def set_published_at
