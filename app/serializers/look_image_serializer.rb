@@ -2,8 +2,8 @@ class LookImageSerializer < ActiveModel::Serializer
   attributes :id, :small, :large
 
   def small
-    { url: Rails.configuration.host + object.picture.url(:small),
-      size: JSON.parse(object.picture_sizes)["small"] }
+    { url: Rails.configuration.host + object.picture.url(:pico),
+      size: JSON.parse(object.picture_sizes)["pico"] }
   end
 
   def large
