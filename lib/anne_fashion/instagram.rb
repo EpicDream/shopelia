@@ -1,17 +1,10 @@
 require 'instagram'
 
 module AnneFashion
-  class Instagram
-    CREDENTIALS = YAML.load_relative_file("accounts.yml")['instagram']
+  module InstagramRobotTasks
     MAX_FOLLOW_PER_SESSION = 20
-    MAX_UNFOLLOW_PER_SESSION = 10
-    
-    attr_reader :client
-    
-    def initialize
-      authenticate
-      @client = ::Instagram::Client.new
-    end
+    UNFOLLOW_COUNT_PER_SESSION = 20
+    FRIENDS_FOLLOWERS_TO_FOLLOW_COUNT_PER_SESSION = 2
     
     def follow_and_like_by_tag tag='fashion'
       session_wait()
@@ -29,6 +22,14 @@ module AnneFashion
       end
     end
     
+    def follow_friends_of_followers
+      session_wait()
+      followers.sample(follow_count()).each do |follower|
+        friends = followers(follower.id).sample(FRIENDS_FOLLOWERS_TO_FOLLOW_COUNT_PER_SESSION) rescue [] #request unauthorized
+        friends.each { |friend| follow friend.id; wait(min=10) }
+      end
+    end
+    
     def schedule_follow_ratio
       session_wait()
       unfollow_sample.each do |user_id|
@@ -38,11 +39,36 @@ module AnneFashion
     end
     
     def unfollow_sample
-      (followings.map(&:id) - followers.map(&:id)).sample(MAX_UNFOLLOW_PER_SESSION)
+      (followings.map(&:id) - followers.map(&:id)).sample(UNFOLLOW_COUNT_PER_SESSION)
     end
     
-    def followers
-      all_pages(:user_followed_by)
+    def follow_count
+      rand(12..MAX_FOLLOW_PER_SESSION)
+    end
+    
+    def wait min=4
+      sleep rand(min..20)
+    end
+    
+    def session_wait
+      sleep rand(60..1800)
+    end
+    
+  end
+  
+  class Instagram
+    CREDENTIALS = YAML.load_relative_file("accounts.yml")['instagram']
+    include InstagramRobotTasks
+    
+    attr_reader :client
+    
+    def initialize
+      authenticate
+      @client = ::Instagram::Client.new
+    end
+    
+    def followers user_id=me.id
+      all_pages(:user_followed_by, user_id)
     end
     
     def followings
@@ -71,27 +97,15 @@ module AnneFashion
 
     private
     
-    def all_pages action
+    def all_pages action, user_id=me.id
       next_cursor = nil
       users = []
       begin
-        response = ::Instagram.send(action, me.id, {count:100, cursor:next_cursor})
+        response = ::Instagram.send(action, user_id, {count:100, cursor:next_cursor})
         next_cursor = response.pagination.next_cursor
         users += response
       end while next_cursor
       users
-    end
-    
-    def follow_count
-      rand(12..MAX_FOLLOW_PER_SESSION)
-    end
-    
-    def wait min=4
-      sleep rand(min..20)
-    end
-    
-    def session_wait
-      sleep rand(60..1800)
     end
 
     def authenticate
