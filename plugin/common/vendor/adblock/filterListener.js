@@ -15,39 +15,38 @@
  * along with Adblock Plus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define(["./chrome/compat", "./timeline", "./filterStorage", "./filterNotifier", "./filterClasses", "./matcher", "./chrome/prefs"],
+function (Compat, Timeline, FilterStorage, FilterNotifier, FilterClasses, Matcher, Prefs) {
+
 /**
  * @fileOverview Component synchronizing filter storage with Matcher instances and ElemHide.
  */
+var XPCOMUtils = Compat.XPCOMUtils;
+var Services = Compat.Services;
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://gre/modules/Services.jsm");
-
-let {TimeLine} = require("timeline");
-let {FilterStorage} = require("filterStorage");
-let {FilterNotifier} = require("filterNotifier");
-let {ElemHide} = require("elemHide");
-let {defaultMatcher} = require("matcher");
-let {ActiveFilter, RegExpFilter, ElemHideBase} = require("filterClasses");
-let {Prefs} = require("prefs");
+FilterStorage = FilterStorage.FilterStorage;
+var defaultMatcher = Matcher.defaultMatcher;
+var ActiveFilter = FilterClasses.ActiveFilter,
+  RegExpFilter = FilterClasses.RegExpFilter,
+  ElemHideBase = FilterClasses.ElemHideBase;
 
 /**
  * Value of the FilterListener.batchMode property.
  * @type Boolean
  */
-let batchMode = false;
+var batchMode = false;
 
 /**
  * Increases on filter changes, filters will be saved if it exceeds 1.
  * @type Integer
  */
-let isDirty = 0;
+var isDirty = 0;
 
 /**
  * This object can be used to change properties of the filter change listeners.
  * @class
  */
-let FilterListener = exports.FilterListener =
-{
+var FilterListener = {
   /**
    * Set to true when executing many changes, changes will only be fully applied after this variable is set to false again.
    * @type Boolean
@@ -70,7 +69,7 @@ let FilterListener = exports.FilterListener =
    */
   setDirty: function(/**Integer*/ factor)
   {
-    if (factor == 0 && isDirty > 0)
+    if (factor === 0 && isDirty > 0)
       isDirty = 1;
     else
       isDirty += factor;
@@ -83,7 +82,7 @@ let FilterListener = exports.FilterListener =
  * Observer listening to history purge actions.
  * @class
  */
-let HistoryPurgeObserver =
+var HistoryPurgeObserver =
 {
   observe: function(subject, topic, data)
   {
@@ -107,7 +106,7 @@ function init()
 
   FilterNotifier.addListener(function(action, item, newValue, oldValue)
   {
-    let match = /^(\w+)\.(.*)/.exec(action);
+    var match = /^(\w+)\.(.*)/.exec(action);
     if (match && match[1] == "filter")
       onFilterChange(match[2], item, newValue, oldValue);
     else if (match && match[1] == "subscription")
@@ -154,8 +153,8 @@ function addFilter(filter)
   if (!(filter instanceof ActiveFilter) || filter.disabled)
     return;
 
-  let hasEnabled = false;
-  for (let i = 0; i < filter.subscriptions.length; i++)
+  var hasEnabled = false;
+  for (var i = 0; i < filter.subscriptions.length; i++)
     if (!filter.subscriptions[i].disabled)
       hasEnabled = true;
   if (!hasEnabled)
@@ -179,8 +178,8 @@ function removeFilter(filter)
 
   if (!filter.disabled)
   {
-    let hasEnabled = false;
-    for (let i = 0; i < filter.subscriptions.length; i++)
+    var hasEnabled = false;
+    for (var i = 0; i < filter.subscriptions.length; i++)
       if (!filter.subscriptions[i].disabled)
         hasEnabled = true;
     if (hasEnabled)
@@ -217,7 +216,7 @@ function onSubscriptionChange(action, subscription, newValue, oldValue)
 
   if (action == "added" || action == "removed" || action == "disabled")
   {
-    let method = (action == "added" || (action == "disabled" && newValue == false) ? addFilter : removeFilter);
+    var method = (action == "added" || (action == "disabled" && newValue === false) ? addFilter : removeFilter);
     if (subscription.filters)
       subscription.filters.forEach(method);
   }
@@ -249,7 +248,7 @@ function onFilterChange(action, filter, newValue, oldValue)
     return;
   }
 
-  if (action == "added" || (action == "disabled" && newValue == false))
+  if (action == "added" || (action == "disabled" && newValue === false))
     addFilter(filter);
   else
     removeFilter(filter);
@@ -267,11 +266,17 @@ function onGenericChange(action)
 
     defaultMatcher.clear();
     ElemHide.clear();
-    for each (let subscription in FilterStorage.subscriptions)
+    for (var i = 0; i < FilterStorage.subscriptions.length; i++) {
+      var subscription = FilterStorage.subscriptions[i];
       if (!subscription.disabled)
         subscription.filters.forEach(addFilter);
+    }
     flushElemHide();
   }
   else if (action == "save")
     isDirty = 0;
 }
+
+return FilterListener;
+
+});

@@ -15,21 +15,23 @@
  * along with Adblock Plus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define([], function() {
+
 /**
  * @fileOverview Debugging module used for load time measurements.
  */
 
-let nestingCounter = 0;
-let firstTimeStamp = null;
-let lastTimeStamp = null;
+var nestingCounter = 0;
+var firstTimeStamp = null;
+var lastTimeStamp = null;
 
-let asyncActions = {__proto__: null};
+var asyncActions = {__proto__: null};
 
 /**
  * Time logging module, used to measure startup time of Adblock Plus (development builds only).
  * @class
  */
-let TimeLine = exports.TimeLine = {
+var TimeLine = {
   /**
    * Logs an event to console together with the time it took to get there.
    */
@@ -38,17 +40,18 @@ let TimeLine = exports.TimeLine = {
     if (!_forceDisplay && nestingCounter <= 0)
       return;
 
-    let now = Date.now();
-    let diff = lastTimeStamp ? Math.round(now - lastTimeStamp) : "first event";
+    var now = Date.now(),
+      i;
+    var diff = lastTimeStamp ? Math.round(now - lastTimeStamp) : "first event";
     lastTimeStamp = now;
 
     // Indent message depending on current nesting level
-    for (let i = 0; i < nestingCounter; i++)
+    for (i = 0; i < nestingCounter; i++)
       message = "* " + message;
 
     // Pad message with spaces
-    let padding = [];
-    for (let i = message.toString().length; i < 80; i++)
+    var padding = [];
+    for (i = message.toString().length; i < 80; i++)
       padding.push(" ");
     dump("[" + now + "] ABP timeline: " + message + padding.join("") + "\t (" + diff + ")\n");
   },
@@ -101,7 +104,7 @@ let TimeLine = exports.TimeLine = {
   {
     if (asyncAction in asyncActions)
     {
-      let action = asyncActions[asyncAction];
+      var action = asyncActions[asyncAction];
       if ("currentStart" in action)
         dump("ABP timeline: Warning: Processing reentered for async action " + asyncAction + "\n");
       action.currentStart = Date.now();
@@ -117,7 +120,7 @@ let TimeLine = exports.TimeLine = {
   {
     if (asyncAction in asyncActions)
     {
-      let action = asyncActions[asyncAction];
+      var action = asyncActions[asyncAction];
       if ("currentStart" in action)
       {
         action.total += Date.now() - action.currentStart;
@@ -137,15 +140,15 @@ let TimeLine = exports.TimeLine = {
   {
     if (asyncAction in asyncActions)
     {
-      let action = asyncActions[asyncAction];
-      let now = Date.now();
-      let diff = now - action.start;
+      var action = asyncActions[asyncAction];
+      var now = Date.now();
+      var diff = now - action.start;
       if ("currentStart" in action)
         dump("ABP timeline: Warning: Still processing for async action " + asyncAction + "\n");
 
-      let message = "Async action " + asyncAction + " done";
-      let padding = [];
-      for (let i = message.toString().length; i < 80; i++)
+      var message = "Async action " + asyncAction + " done";
+      var padding = [];
+      for (var i = message.toString().length; i < 80; i++)
         padding.push(" ");
       dump("[" + now + "] ABP timeline: " + message + padding.join("") + "\t (" + action.total + "/" + diff + ")\n");
     }
@@ -153,3 +156,7 @@ let TimeLine = exports.TimeLine = {
       dump("ABP timeline: Warning: Async action " + asyncAction + " is unknown\n");
   }
 };
+
+return TimeLine;
+
+});

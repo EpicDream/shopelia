@@ -70,5 +70,7 @@ var FilterNotifier = {
       listener(action, item, param1, param2, param3);
   }
 };
+
 return FilterNotifier;
+
 });

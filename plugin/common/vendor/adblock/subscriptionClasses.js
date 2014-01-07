@@ -18,7 +18,7 @@
 /**
  * @fileOverview Definition of Subscription class and its subclasses.
  */
-define(["./chrome/compat", "./filterNotifier", "./filterClasses"], function(Compat, FilterNotifier, FilterClasses) {
+define(["./chrome/compat", "./filterNotifier", "./filterClasses", "./chrome/utils"], function(Compat, FilterNotifier, FilterClasses, Utils) {
 
 // Cu.import("resource://gre/modules/Services.jsm");
 
@@ -28,6 +28,7 @@ var Service = Compat.Service,
   WhitelistFilter = FilterClasses.WhitelistFilter,
   ElemHideBase = FilterClasses.ElemHideBase;
 
+var exports = {};
 /**
  * Abstract base class for filter subscriptions
  *
@@ -42,10 +43,7 @@ function Subscription(url, title)
   if (title)
     this._title = title;
   else
-  {
-    var {Utils} = require("utils");
     this._title = Utils.getString("newGroup_title");
-  }
   Subscription.knownSubscriptions[url] = this;
 }
 exports.Subscription = Subscription;
@@ -72,8 +70,8 @@ Subscription.prototype =
    * Title of the filter subscription
    * @type String
    */
-  get title() this._title,
-  set title(value)
+  getTitle: function () {return this._title;},
+  setTitle: function (value)
   {
     if (value != this._title)
     {
@@ -88,8 +86,8 @@ Subscription.prototype =
    * Determines whether the title should be editable
    * @type Boolean
    */
-  get fixedTitle() this._fixedTitle,
-  set fixedTitle(value)
+  getFixedTitle: function () {return this._fixedTitle;},
+  setFixedTitle: function(value)
   {
     if (value != this._fixedTitle)
     {
@@ -104,8 +102,8 @@ Subscription.prototype =
    * Defines whether the filters in the subscription should be disabled
    * @type Boolean
    */
-  get disabled() this._disabled,
-  set disabled(value)
+  getDisabled: function () {return this._disabled;},
+  setDisabled: function (value)
   {
     if (value != this._disabled)
     {
@@ -133,8 +131,8 @@ Subscription.prototype =
 
   serializeFilters: function(buffer)
   {
-    for each (var filter in this.filters)
-      buffer.push(filter.text.replace(/\[/g, "\\["));
+    for (var i = 0; i < this.filters.length; i++)
+      buffer.push(this.filters[i].text.replace(/\[/g, "\\["));
   },
 
   toString: function()
@@ -171,7 +169,7 @@ Subscription.fromURL = function(url)
   {
     return new SpecialSubscription(url);
   }
-}
+};
 
 /**
  * Deserializes a subscription
@@ -204,7 +202,7 @@ Subscription.fromObject = function(obj)
       result.version = parseInt(obj.version) || 0;
     if ("requiredVersion" in obj)
     {
-      var {addonVersion} = require("info");
+      var addonVersion = require("info").addonVersion;
       result.requiredVersion = obj.requiredVersion;
       if (Services.vc.compare(result.requiredVersion, addonVersion) > 0)
         result.upgradeRequired = true;
@@ -228,10 +226,7 @@ Subscription.fromObject = function(obj)
       else if (obj.url == "~eh~")
         obj.defaults = "elemhide";
       if ("defaults" in obj)
-      {
-        var {Utils} = require("utils");
         obj.title = Utils.getString(obj.defaults + "Group_title");
-      }
     }
     result = new SpecialSubscription(obj.url, obj.title);
     if ("defaults" in obj)
@@ -243,7 +238,7 @@ Subscription.fromObject = function(obj)
     result._disabled = (obj.disabled == "true");
 
   return result;
-}
+};
 
 /**
  * Class for special filter subscriptions (user's filters)
@@ -278,8 +273,8 @@ SpecialSubscription.prototype =
   {
     if (this.defaults && this.defaults.length)
     {
-      for each (var type in this.defaults)
-      {
+      for (var i = 0; i < this.defaults.length; i++) {
+        var type = this.defaults[i];
         if (filter instanceof SpecialSubscription.defaultsMap[type])
           return true;
         if (!(filter instanceof ActiveFilter) && type == "blacklist")
@@ -297,7 +292,7 @@ SpecialSubscription.prototype =
   {
     Subscription.prototype.serialize.call(this, buffer);
     if (this.defaults && this.defaults.length)
-      buffer.push("defaults=" + this.defaults.filter(function(type) type in SpecialSubscription.defaultsMap).join(" "));
+      buffer.push("defaults=" + this.defaults.filter(function(type) {return type in SpecialSubscription.defaultsMap;}).join(" "));
     if (this._lastDownload)
       buffer.push("lastDownload=" + this._lastDownload);
   }
@@ -322,7 +317,7 @@ SpecialSubscription.create = function(title)
   {
     url = "~user~" + Math.round(Math.random()*1000000);
   } while (url in Subscription.knownSubscriptions);
-  return new SpecialSubscription(url, title)
+  return new SpecialSubscription(url, title);
 };
 
 /**
@@ -341,7 +336,6 @@ SpecialSubscription.createForFilter = function(/**Filter*/ filter) /**SpecialSub
   if (!subscription.defaults)
     subscription.defaults = ["blocking"];
 
-  var {Utils} = require("utils");
   subscription.title = Utils.getString(subscription.defaults[0] + "Group_title");
   return subscription;
 };
@@ -370,8 +364,8 @@ RegularSubscription.prototype =
    * Filter subscription homepage if known
    * @type String
    */
-  get homepage() this._homepage,
-  set homepage(value)
+  getHomepage: function () {return this._homepage;},
+  setHomepage: function (value)
   {
     if (value != this._homepage)
     {
@@ -386,8 +380,8 @@ RegularSubscription.prototype =
    * Time of the last subscription download (in seconds since the beginning of the epoch)
    * @type Number
    */
-  get lastDownload() this._lastDownload,
-  set lastDownload(value)
+  getLastDownload: function () {return this._lastDownload;},
+  setLastDownload: function (value)
   {
     if (value != this._lastDownload)
     {
@@ -462,8 +456,8 @@ DownloadableSubscription.prototype =
    * Status of the last download (ID of a string)
    * @type String
    */
-  get downloadStatus() this._downloadStatus,
-  set downloadStatus(value)
+  getDownloadStatus: function () {return this._downloadStatus;},
+  setDownloadStatus: function(value)
   {
     var oldValue = this._downloadStatus;
     this._downloadStatus = value;
@@ -483,8 +477,8 @@ DownloadableSubscription.prototype =
    * if the user doesn't use Adblock Plus for some time.
    * @type Number
    */
-  get lastCheck() this._lastCheck,
-  set lastCheck(value)
+  getLastCheck: function () {return this._lastCheck;},
+  setLastCheck: function (value)
   {
     if (value != this._lastCheck)
     {
@@ -511,8 +505,8 @@ DownloadableSubscription.prototype =
    * Number of download failures since last success
    * @type Number
    */
-  get errors() this._errors,
-  set errors(value)
+  getErrors: function () {return this._errors;},
+  setErrors: function (value)
   {
     if (value != this._errors)
     {
@@ -565,3 +559,7 @@ DownloadableSubscription.prototype =
       buffer.push("requiredVersion=" + this.requiredVersion);
   }
 };
+
+return exports;
+
+});
