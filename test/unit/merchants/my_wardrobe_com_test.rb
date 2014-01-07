@@ -14,6 +14,8 @@ class MyWardrobeComTest < ActiveSupport::TestCase
       "SORT BY" => false,
     }
 
+    @availability_text = [] # tests are following
+
     @image_url = {
       input: "http://cdn21.my-wardrobe.com/images/products/3/0/304358/p1_304358.jpg",
       out: "http://cdn21.my-wardrobe.com/images/products/3/0/304358/m1_304358.jpg",
@@ -25,4 +27,11 @@ class MyWardrobeComTest < ActiveSupport::TestCase
   end
 
   include MerchantHelperTests
+
+  test "it should process availability in option1" do
+    @version[:option1] = {"text" => "IT 40 (only 1 left)"}
+    @version = @helper.process_availability(@version)
+    assert_equal "only 1 left", @version[:availability_text]
+    assert_equal "IT 40", @version[:option1]["text"]
+  end
 end
