@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131210131519) do
+ActiveRecord::Schema.define(:version => 20140102112332) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -247,6 +247,16 @@ ActiveRecord::Schema.define(:version => 20131210131519) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "flinker_follows", :force => true do |t|
+    t.integer  "flinker_id"
+    t.integer  "follow_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "flinker_follows", ["flinker_id"], :name => "index_flinker_follows_on_flinker_id"
+  add_index "flinker_follows", ["follow_id"], :name => "index_flinker_follows_on_follow_id"
+
   create_table "flinker_likes", :force => true do |t|
     t.integer  "flinker_id"
     t.string   "resource_type"
@@ -280,6 +290,7 @@ ActiveRecord::Schema.define(:version => 20131210131519) do
     t.string   "authentication_token"
     t.string   "username"
     t.boolean  "is_publisher",           :default => false
+    t.integer  "country_id"
   end
 
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true
@@ -287,10 +298,10 @@ ActiveRecord::Schema.define(:version => 20131210131519) do
   add_index "flinkers", ["reset_password_token"], :name => "index_flinkers_on_reset_password_token", :unique => true
 
   create_table "images", :force => true do |t|
-    t.string   "url"
+    t.string   "url",                  :limit => 1024
     t.string   "type"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
+    t.datetime "created_at",                           :null => false
+    t.datetime "updated_at",                           :null => false
     t.string   "picture_file_name"
     t.string   "picture_content_type"
     t.integer  "picture_file_size"
@@ -319,6 +330,8 @@ ActiveRecord::Schema.define(:version => 20131210131519) do
     t.integer  "product_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "code"
+    t.string   "brand"
   end
 
   add_index "look_products", ["look_id"], :name => "index_look_products_on_look_id"
@@ -332,6 +345,7 @@ ActiveRecord::Schema.define(:version => 20131210131519) do
     t.datetime "created_at",                      :null => false
     t.datetime "updated_at",                      :null => false
     t.boolean  "is_published", :default => false
+    t.string   "description"
   end
 
   add_index "looks", ["is_published"], :name => "index_looks_on_is_published"

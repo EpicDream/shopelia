@@ -42,6 +42,8 @@ class VirtualisTest < ActiveSupport::TestCase
   end
 
   def test_virtualis_card_lifecycle
+    skip
+    
     result = Virtualis::Card.create({montant:'2000', duree:'2'})
     unless result['error_str'] =~ /Invalid reply received from server/
       assert_equal('ok', result['status'], result['error_str'])

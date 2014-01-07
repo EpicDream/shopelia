@@ -1,9 +1,14 @@
 class Admin::LookProductsController < Admin::AdminController
-  before_filter :retrieve_item, :only => [:show, :destroy]
+  before_filter :retrieve_item, :only => [:show, :destroy, :update]
 
   def show
     redirect_to @item.product.url
   end
+
+  def update
+    @item.update_attribute :code, params[:code]
+    @look = @item.look
+  end    
 
   def create
     @items = []
@@ -18,6 +23,12 @@ class Admin::LookProductsController < Admin::AdminController
       JSON.parse(params[:feed]).each do |feed|
         next if feed.nil? || feed["product_url"].blank?
         item = LookProduct.new(feed:feed.symbolize_keys, look_id:look.id) 
+        @items << item if item.save
+      end
+    elsif params[:codes].present?
+      JSON.parse(params[:codes]).each do |code|
+        next if code.nil? || code["brand"].blank? || code["code"].blank?
+        item = LookProduct.new(code:code["code"], brand:code["brand"], look_id:look.id) 
         @items << item if item.save
       end
     end

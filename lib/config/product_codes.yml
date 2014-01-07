@@ -1,0 +1,65 @@
+codes:
+  - pull
+  - dress
+  - skirt
+  - headband
+  - watch
+  - jean
+  - bag
+  - cuff
+  - stiletto
+  - glasses
+  - shoes
+  - boots
+  - high-heels
+  - hat
+  - leggings
+translations:
+  pull:
+    FR: Pull
+    UK: Pull
+  dress:
+    FR: Robe
+    UK: Dress
+  skirt:
+    FR: Jupe
+    UK: Skirt
+  headband:
+    FR: Bandeau
+    UK: Headband
+  watch:
+    FR: Montre
+    UK: Watch
+  jean:
+    FR: Jean
+    UK: Jean
+  bag:
+    FR: Sac
+    UK: Bag
+  cuff:
+    FR: Manchette
+    UK: Cuff
+  stiletto:
+    FR: Escarpins
+    UK: Stiletto
+  glasses:
+    FR: Lunettes
+    UK: Glasses
+  shoes:
+    FR: Chaussures
+    UK: Shoes
+  boots:
+    FR: Bottes
+    UK: Boots
+  high-heels:
+    FR: Talons aiguilles
+    UK: High heels
+  hat:
+    FR: Chapeau
+    UK: Hat
+  leggings:
+    FR: Leggings
+    UK: Leggings
+
+
+

@@ -5,8 +5,8 @@ class Blog < ActiveRecord::Base
   attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id, :skipped, :can_comment
   
   belongs_to :flinker
-  has_many :posts, dependent: :destroy
-  
+  has_many :posts, dependent: :destroy, order: 'published_at desc'
+
   before_validation :normalize_url
   validates :url, uniqueness:true, presence:true, :on => :create
   after_create :assign_flinker, if: -> { self.flinker_id.nil? }
@@ -27,7 +27,10 @@ class Blog < ActiveRecord::Base
       post.blog_id = self.id
       post.save
     end
-    self.reload
+    breakdown?
+    self
+  rescue => e
+    report_incident(:fetch, e.message)
   end
 
   def skipped=skip
@@ -50,22 +53,44 @@ class Blog < ActiveRecord::Base
     return read_attribute(:can_comment) unless opt[:checkout]
     return if posts.none?
     poster = Poster::Comment.new
-    poster.url = posts.last.link
+    poster.post_url = posts.last.link
     self.can_comment = !!poster.publisher
     self.save
     can_comment?
   end
+
+  def breakdown?
+    breakdown = !self.posts.first || self.posts.first.published_at < Time.now - 1.month
+    report_incident(:check_breakdown, "No post since 1 month...") if breakdown
+    breakdown
+  end
   
   private
+  
+  def report_incident method, description=nil
+    Incident.create(
+      :issue => "Blog##{method}",
+      :severity => Incident::IMPORTANT,
+      :description => "url : #{self.url} - #{description}")
+  end
   
   def assign_flinker
     email = "#{SecureRandom.hex(4)}@flinker.io"
     password = SecureRandom.hex(4)
-    flinker = Flinker.create(name:self.name, url:self.url, email:email, password:password, password_confirmation:password, is_publisher:true)
+    country = Country.find_by_iso(self.country)
+    flinker = Flinker.create(
+      name:self.name, 
+      url:self.url, 
+      email:email, 
+      password:password, 
+      password_confirmation:password, 
+      is_publisher:true, 
+      country_id:country.id, 
+      avatar_url:self.avatar_url)
     update_attribute :flinker_id, flinker.id
   end
   
   def normalize_url
-    self.url.gsub!(/\/$/, '')
+    self.url.gsub!(/\/$/, '') if self.url
   end 
 end

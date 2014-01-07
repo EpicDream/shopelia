@@ -41,6 +41,7 @@ Shopelia::Application.routes.draw do
   end
   resources :catalogue, :only => :index
   resources :collections
+  resources :looks, :only => [:show]
   resources :collection_items, :only => [:show, :create]
   resources :orders, :only => [:show, :update] do
     get :confirm, :on => :member
@@ -184,10 +185,12 @@ Shopelia::Application.routes.draw do
     end
     namespace :flink do
       devise_for :flinkers
+      resources :flinkers, :only => :index
       resources :looks, :only => :index do
         resources :likes, :only => :create, :controller => "looks/likes"
         delete "likes" => "looks/likes#destroy"
       end
+      resources :follows, :only => [:index, :create, :destroy]
     end
   end
 

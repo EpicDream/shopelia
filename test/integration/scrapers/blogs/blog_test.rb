@@ -1,11 +1,12 @@
 # encoding: UTF-8
 
-require 'test_helper'
+require 'test__helper'
 require 'scrapers/blogs/blog'
 
 class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
   
   setup do
+    Linker.stubs(:clean)
     @blog = Scrapers::Blogs::Blog.new
   end
 

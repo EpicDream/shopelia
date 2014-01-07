@@ -877,6 +877,8 @@ class OrderTest < ActiveSupport::TestCase
   end
   
   test "[virtualis] it should complete order" do
+    skip
+
     configuration_virtualis
     start_order
     assess_order

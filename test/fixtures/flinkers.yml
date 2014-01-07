@@ -5,6 +5,8 @@ elarch:
   email: eric@flink.com
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   username: ericusername
+  country: france
+  is_publisher: false
 
 betty:
   name: Betty
@@ -12,3 +14,14 @@ betty:
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   username: bettyusername
   email: betty@flink.com
+  country: france
+  is_publisher: true
+
+boop:
+  name: Boop
+  url: http://www.leblogdebetty.com
+  encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
+  username: bettyusername
+  email: boop@flink.com
+  country: france
+  is_publisher: true

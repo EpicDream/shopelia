@@ -6,6 +6,9 @@ var Show = {
     $("#look-add-urls").on("click", function() {
       showAddUrlsModal();
     });
+    $("#look-add-codes").on("click", function() {
+      showAddCodesModal();
+    });
     $("#look-add-custom").on("click", function() {
       showAddCustomModal();
     });
@@ -44,6 +47,27 @@ function showAddUrlsModal() {
   $('#look-add-urls-confirm').on('click', function() {
     $('#look-add-urls-confirm').button('loading')
     $('#look-add-urls-form').submit();
+  });
+}
+function showAddCodesModal() {
+  $("#look-add-codes-modal").removeClass('hidden');
+  $("#look-add-codes-modal").modal('show');
+  $('#look-add-codes-confirm').on('click', function() {
+    $('#look-add-codes-confirm').button('loading')
+    lookId = $("#look").data("id");
+    codes = []
+    for (i = 0; i < 10; i++) {
+      item = {}
+      item["code"] = $("#code-" + i).val();
+      item["brand"] = $("#brand-" + i).val();
+      codes.push(item);
+    }
+    $.ajax({
+      url: "/admin/look_products",
+      dataType: "script",
+      data: {codes:JSON.stringify(codes), look_id:lookId},
+      type: "post"
+    });     
   });
 }
 function showAddCustomModal() {

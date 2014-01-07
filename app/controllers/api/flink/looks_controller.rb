@@ -25,7 +25,10 @@ class Api::Flink::LooksController < Api::Flink::BaseController
       @after = Time.at(params[:published_after].to_i) unless params[:published_after].blank?
       @per_page = params[:per_page] || 10
 
+      flinker_ids = params[:flinker_ids] || current_flinker.flinker_follows.map(&:follow_id) if current_flinker.present?
+
       query = Look.where(is_published:true)
+      query = query.where(flinker_id:flinker_ids) if (flinker_ids || []).any?
       query = query.where("published_at < ?", @before) if @before.present?
       query = query.where("published_at > ?", @after) if @after.present?
       @looks = query.order("published_at desc").limit(@per_page)
