@@ -1,6 +1,6 @@
 class Admin::FlinkersController < Admin::AdminController
   before_filter :prepare_filters, :only => :index
-  before_filter :retrieve_flinker, :only => [:show, :edit, :update]
+  before_filter :retrieve_flinker, :only => [:show, :edit, :update, :destroy]
 
   def index
     respond_to do |format|
@@ -22,6 +22,14 @@ class Admin::FlinkersController < Admin::AdminController
       redirect_to admin_flinker_path(@flinker)
     else
       render :action => 'edit'
+    end
+  end
+
+  def destroy
+    @flinker.destroy
+
+    respond_to do |format|
+      format.json { render json: {} }
     end
   end
 
