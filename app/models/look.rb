@@ -14,6 +14,7 @@ class Look < ActiveRecord::Base
   validates :published_at, :presence => true
 
   before_validation :generate_uuid
+  after_save :update_flinker_looks_count
 
   scope :published, -> { where(is_published:true) }
 
@@ -33,5 +34,9 @@ class Look < ActiveRecord::Base
 
   def generate_uuid
     self.uuid = SecureRandom.hex(4) if self.uuid.blank?
+  end
+
+  def update_flinker_looks_count
+    self.flinker.update_attribute :looks_count, self.flinker.looks.where(is_published:true).count
   end
 end
