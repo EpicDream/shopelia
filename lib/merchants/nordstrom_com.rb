@@ -11,7 +11,7 @@ class NordstromCom < MerchantHelper
       "No results were found" => false,
     }
     
-    # @config[:setAvailableIfEmpty] = true
+    @config[:setAvailableIfEmpty] = true
     @config[:setDefaultPriceShippingAlways] = true
     @config[:setDefaultShippingInfoAlways] = true
   end
