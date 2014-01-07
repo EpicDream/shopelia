@@ -16,7 +16,7 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
         @evalReturns = false
         this.next()
       , () =>
-        this.fail("Page takes too long to open.")
+        this.fail("#{@saturn.caspId} Page takes too long to open.")
 
     createSubTasks: () ->
       firstOption = @options.firstOption({nonAlone: true})
@@ -54,7 +54,8 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
           $.ajax({type : "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data)
           }).fail (xhr, textStatus, errorThrown) ->
             $.ajax(this) if textStatus == 'timeout' || xhr.status == 502
-      , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], warnMsg: msg}).then () =>
+      , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], warnMsg: msg})
+      casper.then () =>
         super msg
 
     sendError: (msg) ->
@@ -64,7 +65,8 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
           $.ajax({type : "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data)
           }).fail (xhr, textStatus, errorThrown) ->
             $.ajax(this) if textStatus == 'timeout' || xhr.status == 502
-      , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], errorMsg: msg}).then () =>
+      , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, {versions: [], errorMsg: msg})
+      casper.then () =>
         super msg
 
     sendResult: (result) ->
@@ -95,8 +97,11 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
       , cmd.action, cmd.mapping, cmd.option, cmd.value
       casper.waitFor =>
         @evalReturns is true
-      , =>
+      , () =>
         @evalReturns = false
+      , () =>
+        this.fail("#{@saturn.caspId} Eval take too long to finish.")
+
 
     onEvalDone: (result) ->
       @evalReturns = true
@@ -114,8 +119,9 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
       super
       casper.waitFor () =>
         @_subTasks is undefined
-      , null, () =>
-        this.onTimeout("Subtasks take too long to finish.")
+      , null
+      , () =>
+        this.fail("#{@saturn.caspId} Subtasks take too long to finish.")
       , satconf.DELAY_RESCUE * Object.keys(@_subTasks).length
 
   return CasperSession

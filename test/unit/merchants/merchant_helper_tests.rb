@@ -106,10 +106,9 @@ module MerchantHelperTests
     assert_not_nil @helper.default_price_shipping if @helper.config[:setDefaultPriceShippingAlways] || @helper.config[:setDefaultPriceShippingIfEmpty]
 
     toArray(@price_shipping_text).each do |price|
-      @version[:price_text] = price[:price_text] if price[:price_text]
-      @version[:price_shipping_text] = price[:input]
+      @version = init_version(price, :price_shiping_text)
       @version = @helper.process_price_shipping(@version)
-      assert_equal price[:out], @version[:price_shipping_text], "with #{price[:input]}"
+      assert_equal price[:out], @version[:price_shipping_text], "with #{price.inspect}"
     end
   end
 
@@ -238,7 +237,7 @@ module MerchantHelperTests
 
     return unless @images
     @version[:images] = @images[:input]
-      @version = @helper.process_images(@version)
+    @version = @helper.process_images(@version)
     assert_equal @images[:out], @version[:images], "with #{@images[:input]}"
   end
 
@@ -252,7 +251,7 @@ module MerchantHelperTests
 
     toArray(@options).each do |opt|
       option = "option#{opt[:level]}".to_sym
-      @version[option] = opt[:input]
+      @version = init_version(opt) #[option] = opt[:input]
       @version = @helper.process_options(@version)
       assert_equal opt[:out], @version[option], "with #{opt[:input]} for level ##{opt[:level]}"
     end
@@ -287,5 +286,20 @@ module MerchantHelperTests
     def toArray obj
       return [obj] if obj.kind_of?(Hash)
       Array(obj)
+    end
+
+    def init_version obj, attribute=nil
+      version = {}
+      for key, val in obj
+        version[key] = val if key != "input" && key != "out" && key != "level"
+      end
+      if obj[:level] && obj[:input]
+        version["option#{obj[:level]}".to_sym] = obj[:input]
+      elsif obj[:input] && attribute
+        version[attribute] = obj[:input]
+      elsif obj[:input]
+        raise "input is defined, but can not find neither level nor default attribute."
+      end
+      version
     end
 end

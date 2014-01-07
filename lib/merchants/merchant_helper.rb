@@ -74,6 +74,8 @@ class MerchantHelper
       $~[1].to_f
     elsif str =~ /^(\d[,\.]\d) .toiles sur 5/ # Amazon
       $~[1].to_f
+    elsif str =~ /^(\d[,\.]\d) out of 5/ # Nordstrom
+      $~[1].to_f
     else
       nil
     end
