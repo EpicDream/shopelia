@@ -296,13 +296,13 @@ SaturnSession.prototype.fail = function(msg) {
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.sendWarning = function(msg) {
-  this.$e = this;
+  this.$e = msg;
   logger.warn(this.logId(), msg, "\n$e =", this.$e);
 };
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.sendError = function( msg) {
-  this.$e = this;
+  this.$e = msg;
   logger.err(this.logId(), msg, "\n$e =", this.$e);
 };
 

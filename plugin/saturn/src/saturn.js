@@ -17,8 +17,13 @@ var Saturn = function() {
 
 //
 Saturn.prototype.preProcessData = function (data) {
-  data.argOptions = data.options || data.argOptions || {};
-  return data;
+  var prod = {};
+  // Reject all others data
+  prod.argOptions = data.options || data.argOptions || {};
+  prod.url = data.url;
+  prod.id = data.id;
+  prod.merchant_id = data.merchant_id;
+  return prod;
 };
 
 Saturn.prototype.canRestart = function () {
