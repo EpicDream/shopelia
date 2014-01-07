@@ -23,6 +23,7 @@ Saturn.prototype.preProcessData = function (data) {
   prod.url = data.url;
   prod.id = data.id;
   prod.merchant_id = data.merchant_id;
+  prod.batch_mode = data.batch_mode;
   return prod;
 };
 
