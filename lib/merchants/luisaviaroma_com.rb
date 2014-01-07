@@ -7,6 +7,10 @@ class LuisaviaromaCom < MerchantHelper
     @default_shipping_info = "LUISAVIAROMA.COM expédie dans le monde entier avec les services UPS et DHL."
     @image_sub = [/(?<=\.com\/)([A-Za-z]+)(?=\d+)/, "Zoom"]
 
+    @availabilities = {
+      "NOUVEAUTES" => false,
+    }
+
     @config[:setDefaultPriceShippingAlways] = true
     @config[:setDefaultShippingInfoAlways] = true
   end
