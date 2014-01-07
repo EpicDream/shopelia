@@ -1,5 +1,5 @@
 class FlinkerSerializer < ActiveModel::Serializer
-  attributes :id, :name, :url, :email, :username, :avatar, :country
+  attributes :id, :name, :url, :email, :username, :avatar, :country, :follows_count, :looks_count, :likes_count
 
   def name
     object.name.try(:strip)

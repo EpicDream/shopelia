@@ -412,7 +412,7 @@ define(['logger', 'jquery', 'uri', 'crawler', 'core_extensions'], function(logge
       host = map.getHost(page.url || page.href),
       mapping = this._buildMapping(host);
     logger.debug("Going to crawl in a "+Object.keys(mapping).length+" fields mapping with host="+host+".");
-    return Crawler.fastCrawl(map.adaptMapping(mapping), pageDoc);
+    return new Crawler(undefined, pageDoc).fastCrawl(map.adaptMapping(mapping));
   };
 
   Mapping.prototype.checkConsistency = function (field) {

@@ -15,6 +15,7 @@ requirejs.config({
     underscore: "vendor/underscore",
     html_utils: "vendor/html_utils",
     crawler: "vendor/crawler",
+    helper: "vendor/helper",
     mapping: "vendor/mapping",
     satconf: "build/config",
   }

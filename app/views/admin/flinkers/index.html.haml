@@ -20,9 +20,28 @@
             %tr
               %th ID
               %th Name
+              %th Email
               %th Avatar
               %th Looks
-              %th Posts
+              %th Followers
+              %th Likes
               %th URL
               %th Publisher
+              %th Staff pick
+              %th
           %tbody
+
+
+#confirmModal.modal.hide.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", role: "dialog", tabindex: "-1"}
+  .modal-header
+    %button.close{"aria-hidden" => "true", "data-dismiss" => "modal", type: "button"} ×
+    %h3 Warning !
+  .modal-body
+    %p
+      Do you really want to destroy the flinker
+      %strong
+        %span#confirmModelUsername
+      ?
+  .modal-footer
+    %a.btn{"data-dismiss" => "modal", href: "#"} Close
+    %a#confirmDestruction.btn.btn-danger{href: "#"} Confirm destruction          

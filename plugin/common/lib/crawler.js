@@ -2,15 +2,20 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-20
 
-define(["logger", "jquery", "html_utils", "core_extensions"], function(logger, $, hu) {
+define(["logger", "jquery", "html_utils", "helper", "core_extensions"], function(logger, $, hu, Helper) {
   "use strict";
 
-var Crawler = {};
+var Crawler = function (url, doc) {
+  this.doc = doc || window.document;
+  this.url = url || location.href;
+  if (url)
+    this.helper = Helper.get(url, 'crawler');
+};
 
-var OPTION_FILTER = /^$|choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible|non disponible|rupture de stock/i;
+Crawler.OPTION_FILTER = /^$|choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible|non disponible|rupture de stock/i;
 
 //
-Crawler.searchImages = function (field, elems) {
+Crawler.prototype.searchImages = function (field, elems) {
   var res;
 
   if (field === 'images' && location.host.match("fnac.com")) {
@@ -51,18 +56,17 @@ function searchImagesOptions(elems) {
 }
 
 //
-Crawler.searchOption = function (paths, doc) {
+Crawler.prototype.searchOption = function (paths) {
   var elems, i, l, path, tmp_elems, nbOptions;
 
   if (! paths)
     return $();
   if (! (paths instanceof Array))
     throw "ArgumentError : was waiting an Array of String, and got a " + (typeof paths);
-  doc = doc || window.document;
 
   for (i = 0, l = paths.length; i < l ; i++) {
     path = paths[i];
-    elems = $(path, doc);
+    elems = $(path, this.doc);
     if (elems.length === 0) {
       continue;
     // SELECT, le cas facile
@@ -88,9 +92,9 @@ Crawler.searchOption = function (paths, doc) {
 };
 
 //
-Crawler.parseOption = function (elems) {
+Crawler.prototype.parseOption = function (elems) {
   return elems.toArray().filter(function(elem) {
-    return elem.innerText.match(OPTION_FILTER) === null || elem.src;
+    return elem.innerText.match(Crawler.OPTION_FILTER) === null || elem.src;
   }).map(function(elem) {
     var h = hu.getElementAttrs(elem);
     h.xpath = hu.getElementXPath(elem);
@@ -104,13 +108,13 @@ Crawler.parseOption = function (elems) {
 };
 
 // Return an array of option's value.
-Crawler.getOptions = function (paths, doc) {
-  var elems = Crawler.searchOption(paths, doc);
-  return Crawler.parseOption(elems);
+Crawler.prototype.getOptions = function (paths) {
+  var elems = this.searchOption(paths);
+  return this.parseOption(elems);
 };
 
 // Return a jQuery instance.
-Crawler.selectOption = function (elems, value) {
+Crawler.prototype.selectOption = function (elems, value) {
   if (elems.length === 0)
     return $();
 
@@ -153,9 +157,9 @@ Crawler.selectOption = function (elems, value) {
 };
 
 //
-Crawler.setOption = function(paths, value, doc) {
-  var elems = Crawler.searchOption(paths, doc);
-  elems = Crawler.selectOption(elems, value);
+Crawler.prototype.setOption = function(paths, value) {
+  var elems = this.searchOption(paths);
+  elems = this.selectOption(elems, value);
 
   //
   if (elems.length > 1) {
@@ -179,25 +183,23 @@ Crawler.setOption = function(paths, value, doc) {
 };
 
 //
-Crawler.searchField = function (field, paths, doc) {
+Crawler.prototype.searchField = function (field, paths) {
   var elems, i, l, path;
 
   if (field.search(/^option/) !== -1)
-    return Crawler.searchOption(paths, doc);
+    return this.searchOption(paths);
   if (! paths)
     return $();
   if (! (paths instanceof Array))
     throw ("ArgumentError : was waiting an Array of String, and got a " + (typeof paths));
 
-  doc = doc || window.document;
-
   for (i = 0, l=paths.length ; i < l ; i++) {
     path = paths[i];
-    elems = $(path, doc);
+    elems = $(path, this.doc);
     if (elems.length === 0)
       continue;
     if (field === 'image_url' || field === 'images') {
-      elems = Crawler.searchImages(field, elems);
+      elems = this.searchImages(field, elems);
       if (field === 'image_url')
         elems = elems.eq(0);
     }
@@ -208,14 +210,14 @@ Crawler.searchField = function (field, paths, doc) {
 };
 
 //
-Crawler.parseImage = function (elems) {
+Crawler.prototype.parseImage = function (elems) {
   return $unique( elems.toArray().map(function (img) {
     return img.src || img.getAttribute("src");
   }) );
 };
 
 //
-Crawler.parseText = function (elems) {
+Crawler.prototype.parseText = function (elems) {
   return elems.toArray().map(function(elem) {
     var res;
     if (elem.tagName === 'IMG')
@@ -228,50 +230,57 @@ Crawler.parseText = function (elems) {
 };
 
 //
-Crawler.parseHtml = function (elems) {
+Crawler.prototype.parseHtml = function (elems) {
   return elems.toArray().map(function(elem) { return elem.innerHTML.replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n"); }).join("\n<br>\n<!-- SHOPELIA-END-BLOCK -->") || undefined;
 };
 
 //
-Crawler.parseField = function (field, elems) {
+Crawler.prototype.parseField = function (field, elems) {
+  if (this.helper && this.helper.parseField) {
+    if (typeof this.helper.parseField === 'function')
+      return this.helper.parseField(field, elems);
+    else if (typeof this.helper.parseField === 'object' && typeof this.helper.parseField[field] === 'function')
+      return this.helper.parseField[field](field, elems);
+  }
+
   var images;
   switch (field) {
   case 'image_url' :
-    return Crawler.parseImage(elems)[0];
+    return this.parseImage(elems)[0];
   case 'images' :
-    images = Crawler.parseImage(elems);
+    images = this.parseImage(elems);
     return images.length > 0 ? images : undefined;
   case 'description' :
-    return Crawler.parseHtml(elems);
+    return this.parseHtml(elems);
   default :
-    return Crawler.parseText(elems);
+    return this.parseText(elems);
   }
 };
 
 //
-Crawler.crawlField = function (fieldMap, field, doc) {
+Crawler.prototype.crawlField = function (fieldMap, field) {
   var elems;
   if (! fieldMap.paths)
     return '';
-  elems = Crawler.searchField(field, fieldMap.paths, doc);
-  return Crawler.parseField(field, elems);
+  elems = this.searchField(field, fieldMap.paths);
+  return this.parseField(field, elems);
 };
 
-Crawler.crawl = function (mapping, doc) {
+Crawler.prototype.crawl = function (mapping) {
   var field, result = {};
   for (field in mapping)
     if (field.search(/^option/) === -1) {
 
-      result[field] = Crawler.crawlField(mapping[field], field, doc);
+      result[field] = this.crawlField(mapping[field], field);
     }
   return result;
 };
 
 //
-Crawler.fastCrawl = function (mapping, doc) {
+Crawler.prototype.fastCrawl = function (mapping) {
   var field, result = {};
   for (field in mapping)
-    result[field] = Crawler.crawlField(mapping[field], field, doc);
+    result[field] = this.crawlField(mapping[field], field);
   return result;
 };
 
