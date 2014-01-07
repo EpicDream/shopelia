@@ -2,7 +2,7 @@ require 'instagram'
 
 module AnneFashion
   module InstagramRobotTasks
-    MAX_FOLLOW_PER_SESSION = 20
+    MAX_FOLLOW_PER_SESSION = 40
     UNFOLLOW_COUNT_PER_SESSION = 20
     FRIENDS_FOLLOWERS_TO_FOLLOW_COUNT_PER_SESSION = 2
     
