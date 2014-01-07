@@ -34,7 +34,7 @@ function searchImagesOptions(elems) {
   var size = elems.length,
     res;
 
-  if (location.host.match("amazon")) {
+  if (location.host.match("amazon.fr")) {
     res = elems.find(".swatchInnerImage[style]").filter(function(i, e) {
       return $(this).css("background-image").search(/url\(.*\)/) !== -1;
     }).each(function() {
@@ -90,7 +90,7 @@ Crawler.searchOption = function (paths, doc) {
 //
 Crawler.parseOption = function (elems) {
   return elems.toArray().filter(function(elem) {
-    return elem.innerText.match(OPTION_FILTER) === null;
+    return elem.innerText.match(OPTION_FILTER) === null || elem.src;
   }).map(function(elem) {
     var h = hu.getElementAttrs(elem);
     h.xpath = hu.getElementXPath(elem);

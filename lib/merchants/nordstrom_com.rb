@@ -8,6 +8,7 @@ class NordstromCom < MerchantHelper
 
     @availabilities = {
       /[\d,]+item/i => false,
+      "No results were found" => false,
     }
     
     # @config[:setAvailableIfEmpty] = true
