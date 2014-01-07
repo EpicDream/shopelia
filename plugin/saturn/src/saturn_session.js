@@ -119,6 +119,9 @@ SaturnSession.prototype.retryLastCmd = function () {
   if (! this.lastCmd)
     return;
   switch (this.lastCmd.action) {
+    case "openUrl":
+      this.openUrl(this.lastCmd.url);
+      break;
     case "getOptions":
       this.getOptions(this.lastCmd.option);
       break;
@@ -276,7 +279,7 @@ SaturnSession.prototype.logId = function () {
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.openUrl = function(url) {
-  throw "SaturnSession.openUrl: abstract function";
+  this.lastCmd = {action: "openUrl", url: url};
 };
 
 // Virtual, must be reimplement.

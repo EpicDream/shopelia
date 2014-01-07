@@ -135,10 +135,11 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn_session", './helper', 
           chrome.cookies.remove({name: cookie.name, url: "http://"+cookie.domain+cookie.path, storeId: cookie.storeId})
       this.openUrl()
 
-    openUrl: () ->
+    openUrl: (url=@url) ->
+      super(url)
       chrome.tabs.get @tabId, (tab) =>
-        if tab.url != @url
-          chrome.tabs.update(@tabId, {url: @url})
+        if tab.url != url
+          chrome.tabs.update(@tabId, {url: url})
         else
           this.next()
 
