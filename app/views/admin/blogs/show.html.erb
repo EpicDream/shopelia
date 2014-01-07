@@ -6,7 +6,7 @@
   <p><%= @blog.name %></p>
   <img src="<%= @blog.avatar_url || "/assets/admin/girl_head.jpg"%>" class="blog-posts-avatar"></img>
   <%= link_to @blog.url, @blog.url %>
-  <div id="update-blog-block" class="update-blog-block-shown">
+  <div id="update-blog-block" class="update-blog-block-hidden">
     <%= form_for [:admin, @blog] do |f| %>
       <%= f.label :avatar_url, "Url de l'avatar" %>
       <%= f.text_field :avatar_url %>
