@@ -21,7 +21,7 @@ available for immediate shipment: true
 "[1-9]\\d* available": true
 last one: true
 ^in stock(\.?$| on| but may require): true
-only \d+ left in stock: true
+only \d+ left: true
 usually ships within: true
 "livraison : \\d+ semaines": true
 livraison des fichiers: true
@@ -94,3 +94,6 @@ pas trouve la page: false
 pas trouve de resultat: false
 Agotado: false
 nicht mehr verfugbar: false
+cannot be found: false
+we couldn't find a match: false
+keine resultate gefunden: false

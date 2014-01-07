@@ -16,6 +16,7 @@ class NordstromComTest < ActiveSupport::TestCase
     }
     @availabilities = {
       "2,003ITEMS" => false,
+      "No results were found for “dolcevitaboots”" => false,
     }
 
     @image_url = {
