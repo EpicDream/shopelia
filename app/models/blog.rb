@@ -60,8 +60,8 @@ class Blog < ActiveRecord::Base
   end
 
   def breakdown?
-    breakdown = !self.posts.first || self.posts.first.published_at < Time.now - 10.days
-    report_incident(:check_breakdown, "No post since 10 days ago...") if breakdown
+    breakdown = !self.posts.first || self.posts.first.published_at < Time.now - 1.month
+    report_incident(:check_breakdown, "No post since 1 month...") if breakdown
     breakdown
   end
   
