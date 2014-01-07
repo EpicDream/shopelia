@@ -57,6 +57,38 @@ var BrandalleyHelper = {
   },
 };
 
+var PlacedestendancesHelper = {
+  crawler: {
+    atLoad: function(callback) {
+      // setTimeout(function () {
+        var select = document.querySelector("#taille_id");
+        if (! select)
+          return callback();
+        select.click(); // open and load available sizes
+        setTimeout(function () {
+          callback();
+        }, 1000);
+      // }, 1000);
+    },
+  },
+};
+
+var SpartooHelper = {
+  crawler: {
+    parseField: {
+      rating: function (elems) {
+        return elems.toArray().map(function(e) {
+          var src = e.src,
+            m;
+          if (src && (m = src.match(/stars_(\d)/)))
+            src = m[1];
+          return src;
+        });
+      }
+    }
+  },
+};
+
 var Helper = {
   get: function (url, context) {
     if (! url) {
@@ -69,6 +101,10 @@ var Helper = {
       return LuisaviaromaHelper[context];
     } else if (url.search(/^https?:\/\/www\.brandalley\.fr/) !== -1) {
       return BrandalleyHelper[context];
+    } else if (url.search(/^https?:\/\/[\w-]+\.placedestendances\.com/) !== -1) {
+      return PlacedestendancesHelper[context];
+    } else if (url.search(/^https?:\/\/[\w-]+\.spartoo\.com/) !== -1) {
+      return SpartooHelper[context];
     }
   }
 };

@@ -7,7 +7,7 @@ define(["logger", "jquery", "html_utils", "core_extensions"], function(logger, $
 
 var Crawler = {};
 
-var OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible|non disponible|rupture de stock/i;
+var OPTION_FILTER = /^$|choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible|non disponible|rupture de stock/i;
 
 //
 Crawler.searchImages = function (field, elems) {
@@ -125,7 +125,7 @@ Crawler.selectOption = function (elems, value) {
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.id) {
-    elems = elems.filter("#"+value.id);
+    elems = elems.filter(function () {return this.id === value.id;});
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.text) {
