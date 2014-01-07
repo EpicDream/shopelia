@@ -10,7 +10,8 @@ class Blog < ActiveRecord::Base
   before_validation :normalize_url
   validates :url, uniqueness:true, presence:true, :on => :create
   after_create :assign_flinker, if: -> { self.flinker_id.nil? }
-  
+  after_update :update_flinker_avatar, if: -> { self.avatar_url_changed? }
+
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
   scope :not_scraped, -> { scraped(false) }
@@ -88,6 +89,11 @@ class Blog < ActiveRecord::Base
       country_id:country.id, 
       avatar_url:self.avatar_url)
     update_attribute :flinker_id, flinker.id
+  end
+  
+  def update_flinker_avatar
+    self.flinker.avatar_url = self.avatar_url
+    self.flinker.save!
   end
   
   def normalize_url
