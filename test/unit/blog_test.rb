@@ -50,4 +50,12 @@ class BlogTest < ActiveSupport::TestCase
     assert !blog.skipped?
   end
   
+  test "if avatar url is updated, flinker avatar image must be updated" do
+    blog = Blog.create(url:"http://fashion.fr", scraped:false, skipped:true)
+    
+    blog.flinker.expects(:set_avatar)
+    blog.update_attributes(avatar_url:'http://www.superimage.com/image.png')
+    assert_equal "http://www.superimage.com/image.png", blog.flinker.avatar_url
+  end
+  
 end
