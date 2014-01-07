@@ -2,9 +2,17 @@
 <%= link_to "Récupérer les nouveaux articles", admin_blog_url(@blog, :fetch => true), class:"btn fetch-post-link" %>
 
 <div class="coolbox blogs-posts-header">
+  <a href="#" id="update-blog-link">Mettre à jour</a>
   <p><%= @blog.name %></p>
   <img src="<%= @blog.avatar_url || "/assets/admin/girl_head.jpg"%>" class="blog-posts-avatar"></img>
   <%= link_to @blog.url, @blog.url %>
+  <div id="update-blog-block" class="update-blog-block-shown">
+    <%= form_for [:admin, @blog] do |f| %>
+      <%= f.label :avatar_url, "Url de l'avatar" %>
+      <%= f.text_field :avatar_url %>
+      <%= f.submit("Mettre à jour", :class => 'btn btn-success ') %>
+    <% end  %>
+  </div>
 </div>
 
 <div class="coolbox blog-post posts-outline">

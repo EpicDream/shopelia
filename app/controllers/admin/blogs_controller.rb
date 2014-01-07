@@ -18,11 +18,11 @@ class Admin::BlogsController < Admin::AdminController
   
   def update
     @blog = Blog.find(params[:id])
-    if @blog.update_attributes(params[:blog])
-      BlogsWorker.perform_async(@blog.id) if params[:fetch] rescue nil
-      render json: {}.to_json, status:200
-    else
-      render json: {}.to_json, status:500
+    updated =  @blog.update_attributes(params[:blog])
+    BlogsWorker.perform_async(@blog.id) if params[:fetch] rescue nil
+    respond_to do |format|
+      format.html { render :show }
+      format.json { render json: {}.to_json, status: updated ? 200 : 500 }
     end
   end
   

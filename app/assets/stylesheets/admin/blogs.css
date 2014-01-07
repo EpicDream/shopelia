@@ -212,7 +212,7 @@ div.blogs{
   border-radius:2px;
 }
 .blogs-posts-header{
-  width: 200px;
+  width: 33%;
   margin:5%;
 }
 .blogs-posts-header p:first-child{
@@ -250,4 +250,35 @@ div.blogs{
 .fetch-post-link{
   float:right;
   margin:10px;
+}
+.blogs-posts-header .update-blog-block-hidden{
+  display: block;
+  transition: height 1s ease-out, opacity 1s ease-out;
+  opacity: 0; 
+  height: 0;
+  overflow: hidden;
+}
+.blogs-posts-header .update-blog-block-shown{
+  height:200px;
+  display:block;
+  opacity:1;
+}
+.blogs-posts-header form{
+  margin-top:20px;
+  padding:5px;
+  background-color:#E0E6FF;
+  border-radius:5px;
+}
+.blogs-posts-header form input[type="submit"]{
+  display:block;
+  margin-top:60px;
+}
+.blogs-posts-header form input[type="text"]{
+  width:90%;
+  font-size:10px;
+}
+.blogs-posts-header form label{
+  color:#646E99;
+  font-size:12px;
+  font-family: Georgia, sans-serif;
 }

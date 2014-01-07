@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', './saturn_options', './helper', 'core_extensions', 'satconf'], function(logger, SaturnOptions, Helper) {
+define(['logger', './saturn_options', 'helper', 'core_extensions', 'satconf'], function(logger, SaturnOptions, Helper) {
 "use strict";
 
 // Je fais la supposition simpliste mais réaliste que pour un produit,
