@@ -125,7 +125,8 @@ class MerchantHelperTest < ActiveSupport::TestCase
               "Es tut uns leid. Der gesuchte Artikel ist leider nicht mehr verfügbar. Im Folgenden zeigen wir Ihnen Produkte, die Ihrer Suche ähnlich sind: strickmütze",
               "Es wurden keine Resultate gefunden für tuch mit fleckenprint Hier finden Sie die Resultate für tuch mit flecken",
               "We're sorry. The page you're looking for cannot be found.", "SORRY, WE COULDN'T FIND A MATCH FOR \"KARENWALKER\".  DID YOU MEAN WALKER?",
-              "Nous n'avons pas trouvé de résultat correspondant à votre recherche.", "Agotado" ]
+              "Nous n'avons pas trouvé de résultat correspondant à votre recherche.", "Agotado",
+              "An error has occurred." ]
     array.each do |str|
       assert_equal false, MerchantHelper.parse_availability(str)[:avail], "with #{str}"
     end
