@@ -13,6 +13,7 @@ class ZaraComTest < ActiveSupport::TestCase
     @availabilities = {
       "No results have been found for crop top turtleneck" => false,
       "Results for: plaid dress" => false,
+      "Aucun résultat n'a été trouvé pour bottines talon pais Vous trouverez ci-après les résultats pour bottines talon epais" => false,
     }
     @price_shipping_text = [{
       input: "",
