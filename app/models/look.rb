@@ -17,7 +17,7 @@ class Look < ActiveRecord::Base
   after_save :update_flinker_looks_count
 
   scope :published, -> { where(is_published:true) }
-  scope :published_of_blog, -> (blog) { published.where(id:Post.where(blog_id:blog.id).select('look_id'))}
+  scope :published_of_blog, ->(blog) { published.where(id:Post.where(blog_id:blog.id).select('look_id'))}
 
   def self.random collection=Look
     collection.offset(rand(collection.count)).first
