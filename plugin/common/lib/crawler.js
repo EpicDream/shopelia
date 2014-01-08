@@ -239,14 +239,17 @@ Crawler.prototype.parseHtml = function (elems) {
 
 //
 Crawler.prototype.parseField = function (field, elems) {
+  var res, images;
+  // Merchant specific processing.
   if (this.helper && this.helper.parseField) {
     if (typeof this.helper.parseField === 'function')
-      return this.helper.parseField(field, elems);
+      res = this.helper.parseField.call(this, field, elems);
     else if (typeof this.helper.parseField === 'object' && typeof this.helper.parseField[field] === 'function')
-      return this.helper.parseField[field](field, elems);
+      res = this.helper.parseField[field].call(this, elems);
+    if (res !== undefined)
+      return res;
   }
-
-  var images;
+  // Generic processing
   switch (field) {
   case 'image_url' :
     return this.parseImage(elems)[0];
