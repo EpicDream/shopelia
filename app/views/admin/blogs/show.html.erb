@@ -16,15 +16,22 @@
 </div>
 
 <div class="coolbox blog-post posts-outline">
-  <ol>
+  <table>
     <% @blog.posts.each_with_index do |post, index| %>
-      <li>
-        <span class="tag has-look-tag-<%= post.look.present? %>">L</span>
-        <span class="tag has-look-published-tag-<%= post.look.present? && post.look.is_published? %>">P</span>
-        <%= link_to "#{post.title} (#{l(post.published_at)})", "#post-#{index}" %>
-      </li>
+      <tr>
+        <td>
+          <span class="tag has-look-tag-<%= post.look.present? %>">L</span>
+          <span class="tag has-look-published-tag-<%= post.look.present? && post.look.is_published? %>">P</span>
+        </td>
+        <td>
+          <%= link_to "#{post.title} (#{l(post.published_at)})", "#post-#{index}" %>
+        </td>
+        <td>
+          <%= link_to 'Voir le look', admin_look_path(post.look) if post.look %>
+        </td>
+      </tr>
     <% end %>
-  </ol>
+  </table>
 </div>
 
 <% @blog.posts.each_with_index do |post, index| %>

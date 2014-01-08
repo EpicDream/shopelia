@@ -226,6 +226,9 @@ div.blogs{
   max-height:180px;
   overflow-y:auto;
 }
+.posts-outline table tr td{
+  padding-left:10px;
+}
 .blog-posts-avatar{
   max-width:100px;
   box-shadow: 1px 1px 1px #aaa;
