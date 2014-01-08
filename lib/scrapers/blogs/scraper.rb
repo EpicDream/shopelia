@@ -37,7 +37,8 @@ module Scrapers
         date = $1
         date =~ /\.(\d\d)$/ ? date[-2..-1] = "20#{$1}" : date 
         date = Date.parse_international(date) if date rescue nil
-        date || Time.now
+        date = Time.now if date.nil? || date > Time.now #in case of parse error
+        date
       end
       
       def link block
