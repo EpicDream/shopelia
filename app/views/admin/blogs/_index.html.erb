@@ -36,6 +36,16 @@
           </span>
           <% end %>
         </td>
+        <td>
+          <span class="tag posts-count-tag" title="Nombre de posts">
+            <i><%= blog.posts.count %></i>
+          </span>
+        </td>
+        <td>
+          <span class="tag looks-count-tag" title="Nombre de looks publiés">
+            <i><%= Look.published_of_blog(blog).count %></i>
+          </span>
+        </td>
       </tr>
     <% end %>
   </tbody>
