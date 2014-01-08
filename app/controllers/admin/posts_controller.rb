@@ -3,6 +3,7 @@ class Admin::PostsController < Admin::AdminController
   
   def index
     @posts = Post.pending_processing
+    @publications = Look.publications_counts_per_day
   end
   
   def show
