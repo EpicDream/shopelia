@@ -8,8 +8,7 @@ define(["logger", "jquery", "html_utils", "helper", "core_extensions"], function
 var Crawler = function (url, doc) {
   this.doc = doc || window.document;
   this.url = url || location.href;
-  if (url)
-    this.helper = Helper.get(url, 'crawler');
+  this.helper = Helper.get(this.url, 'crawler');
 };
 
 Crawler.OPTION_FILTER = /^$|choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible|non disponible|rupture de stock/i;
