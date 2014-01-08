@@ -19,7 +19,7 @@
 // Module framework stuff
 //
 
-define(["./filterNotifier"], function(FilterNotifier) {
+define(["../filterNotifier"], function(FilterNotifier) {
 
   var Compat = {};
 
@@ -71,7 +71,7 @@ define(["./filterNotifier"], function(FilterNotifier) {
   Compat.Cr = Compat.Components.results;
   Compat.Cu = Compat.Components.utils;
 
-  Compat.XPCOMUtils: {
+  Compat.XPCOMUtils = {
     generateQI: function() {}
   };
 
@@ -80,7 +80,7 @@ define(["./filterNotifier"], function(FilterNotifier) {
   //
   Compat.FakeFile = function (path) {
     this.leafName = path;
-  }
+  };
   Compat.FakeFile.prototype = {
     append: function(path) {
       this.leafName += path;
@@ -187,7 +187,7 @@ define(["./filterNotifier"], function(FilterNotifier) {
         return 0;
       }
     }
-  }
+  };
 
   //
   // FileUtils.jsm module emulation

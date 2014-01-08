@@ -6,6 +6,7 @@ class NikeCom < MerchantHelper
     @default_shipping_info = "3 jours ouvrés."
     @availabilities = {
       /\d+ ARTICLES/i => false,
+      /\d+ PRODUCTS/i => false,
     }
     @image_sub = [/(?<=wid=|hei=)\d+(?=&)/, '1860']
 

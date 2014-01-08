@@ -9,6 +9,7 @@ class ZaraCom < MerchantHelper
     @availabilities = {
       "No results have been found" => false,
       "Results for:" => false,
+      "Aucun resultat n'a ete trouve" => false,
     }
 
     @config[:setAvailableIfEmpty] = true

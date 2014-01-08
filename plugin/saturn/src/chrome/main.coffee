@@ -34,6 +34,12 @@ requirejs ['chrome_logger', 'src/chrome/saturn', 'src/chrome/adblock', 'satconf'
   chrome.tabs.onRemoved.addListener (tabId) ->
     saturn.closeTab(tabId)
 
+  chrome.tabs.onReplaced.addListener (addedTabId, removedTabId) ->
+    saturn.sessionsByTabId[addedTabId] = saturn.sessionsByTabId[removedTabId]
+    saturn.sessionsByTabId[removedTabId].tabId = addedTabId
+    delete saturn.sessionsByTabId[removedTabId]
+    saturn.sessionsByTabId[addedTabId].next() # Hotfix
+
   # Inter-extension messaging. Usefull for Ariane.
   chrome.extension.onConnectExternal.addListener (port) ->
     if port.sender.id isnt "aomdggmelcianmnecnijkolfnafpdbhm"

@@ -21,6 +21,8 @@
     "grunt-contrib-clean": "~0.5.0",
     "grunt-contrib-coffee": "~0.7.0",
     "grunt-coffee-jshint": "~0.2.0",
-    "jquery": "~1.8.3"
+    "jquery": "~1.8.3",
+    "requirejs": "~2.1.9",
+    "xmlhttprequest": "~1.6.0"
   }
 }

@@ -62,7 +62,21 @@ Filter.prototype =
   toString: function()
   {
     return this.text;
+  },
+
+  toJSON: function() {
+    return {
+      text: this.text,
+      type: "Filter",
+    };
   }
+};
+
+Filter.fromJSON = function (o, f) {
+  if (! f)
+    f = new Filter(o.text);
+  f.text = o.text;
+  return f;
 };
 
 /**
@@ -102,9 +116,9 @@ Filter.fromText = function(text)
   var ret;
   var match = (text.indexOf("#") >= 0 ? Filter.elemhideRegExp.exec(text) : null);
   if (match)
-    ret = ElemHideBase.fromText(text, match[1], match[2], match[3], match[4], match[5]);
+    return null;//ret = ElemHideBase.fromText(text, match[1], match[2], match[3], match[4], match[5]);
   else if (text[0] == "!")
-    ret = new CommentFilter(text);
+    return null;//ret = new CommentFilter(text);
   else
     ret = RegExpFilter.fromText(text);
 
@@ -191,7 +205,23 @@ InvalidFilter.prototype =
   /**
    * See Filter.serialize()
    */
-  serialize: function(buffer) {}
+  serialize: function(buffer) {},
+
+  toJSON: function() {
+    return {
+      text: this.text,
+      reason: this.reason,
+      type: "InvalidFilter",
+    };
+  }
+};
+
+InvalidFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new InvalidFilter(o.text, o.reason);
+  Filter.fromJSON.call(this, o, f);
+  f.reason = reason;
+  return f;
 };
 
 /**
@@ -213,7 +243,21 @@ CommentFilter.prototype =
   /**
    * See Filter.serialize()
    */
-  serialize: function(buffer) {}
+  serialize: function(buffer) {},
+
+  toJSON: function() {
+    return {
+      text: this.text,
+      type: "CommentFilter",
+    };
+  }
+};
+
+CommentFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new CommentFilter(o.text);
+  Filter.fromJSON.call(this, o, f);
+  return f;
 };
 
 /**
@@ -427,7 +471,30 @@ ActiveFilter.prototype =
       if (this._lastHit)
         buffer.push("lastHit=" + this._lastHit);
     }
+  },
+
+  toJSON: function() {
+    var o = Filter.prototype.toJSON.call(this);
+    o.type = "ActiveFilter";
+    o.domainSource = this.domainSource;
+    o._disabled = this._disabled;
+    o._hitCount = this._hitCount;
+    o._lastHit = this._lastHit;
+    o.domains = this.domains;
+    return o;
   }
+};
+
+ActiveFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new ActiveFilter(o.text, o.domainSource);
+  Filter.fromJSON.call(this, o, f);
+  f.domainSource = o.domainSource;
+  f._disabled = o._disabled;
+  f._hitCount = f._hitCount;
+  f._lastHit = o._lastHit;
+  f.domains = o.domains;
+  return f;
 };
 
 /**
@@ -462,6 +529,7 @@ function RegExpFilter(text, regexpSource, contentType, matchCase, domains, third
   {
     // No need to convert this filter to regular expression yet, do it on demand
     this.regexpSource = regexpSource;
+    this.__defineGetter__("regexp", function() {this.computRegexp(); return this.regexp;});
   }
 }
 // exports.RegExpFilter = RegExpFilter;
@@ -490,35 +558,35 @@ RegExpFilter.prototype =
    * Regular expression to be used when testing against this filter
    * @type RegExp
    */
-  // get regexp()
-  // {
-  //   // Remove multiple wildcards
-  //   var source = this.regexpSource.replace(/\*+/g, "*");
+  computRegexp: function ()
+  {
+    // Remove multiple wildcards
+    var source = this.regexpSource.replace(/\*+/g, "*");
 
-  //   // Remove leading wildcards
-  //   if (source[0] == "*")
-  //     source = source.substr(1);
+    // Remove leading wildcards
+    if (source[0] == "*")
+      source = source.substr(1);
 
-  //   // Remove trailing wildcards
-  //   var pos = source.length - 1;
-  //   if (pos >= 0 && source[pos] == "*")
-  //     source = source.substr(0, pos);
+    // Remove trailing wildcards
+    var pos = source.length - 1;
+    if (pos >= 0 && source[pos] == "*")
+      source = source.substr(0, pos);
 
-  //   source = source.replace(/\^\|$/, "^")       // remove anchors following separator placeholder
-  //                  .replace(/\W/g, "\\$&")    // escape special symbols
-  //                  .replace(/\\\*/g, ".*")      // replace wildcards by .*
-  //                  // process separator placeholders (all ANSI charaters but alphanumeric characters and _%.-)
-  //                  .replace(/\\\^/g, "(?:[\\x00-\\x24\\x26-\\x2C\\x2F\\x3A-\\x40\\x5B-\\x5E\\x60\\x7B-\\x80]|$)")
-  //                  .replace(/^\\\|\\\|/, "^[\\w\\-]+:\\/+(?!\\/)(?:[^.\\/]+\\.)*?") // process extended anchor at expression start
-  //                  .replace(/^\\\|/, "^")       // process anchor at expression start
-  //                  .replace(/\\\|$/, "$");      // process anchor at expression end
+    source = source.replace(/\^\|$/, "^")       // remove anchors following separator placeholder
+                   .replace(/\W/g, "\\$&")    // escape special symbols
+                   .replace(/\\\*/g, ".*")      // replace wildcards by .*
+                   // process separator placeholders (all ANSI charaters but alphanumeric characters and _%.-)
+                   .replace(/\\\^/g, "(?:[\\x00-\\x24\\x26-\\x2C\\x2F\\x3A-\\x40\\x5B-\\x5E\\x60\\x7B-\\x80]|$)")
+                   .replace(/^\\\|\\\|/, "^[\\w\\-]+:\\/+(?!\\/)(?:[^.\\/]+\\.)*?") // process extended anchor at expression start
+                   .replace(/^\\\|/, "^")       // process anchor at expression start
+                   .replace(/\\\|$/, "$");      // process anchor at expression end
 
-  //   var regexp = new RegExp(source, this.matchCase ? "" : "i");
+    var regexp = new RegExp(source, this.matchCase ? "" : "i");
 
-  //   delete this.regexpSource;
-  //   this.__defineGetter__("regexp", function() regexp);
-  //   return this.regexp;
-  // },
+    delete this.regexpSource;
+    this.__defineGetter__("regexp", function() {return regexp;});
+    return this.regexp;
+  },
   /**
    * Content types the filter applies to, combination of values from RegExpFilter.typeMap
    * @type Number
@@ -554,7 +622,31 @@ RegExpFilter.prototype =
     }
 
     return false;
+  },
+
+  toJSON: function() {
+    var o = ActiveFilter.prototype.toJSON.call(this);
+    o.type = "RegExpFilter";
+    o.contentType = this.contentType;
+    o.matchCase = this.matchCase;
+    o.thirdParty = this.thirdParty;
+    o.regexp = this.regexp;
+    o.regexp = this.regexp;
+    o.domainSeparator = this.domainSeparator;
+    return o;
   }
+};
+
+RegExpFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new RegExpFilter(o.text, o.regexp, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty);
+  ActiveFilter.fromJSON.call(this, o, f);
+  f.contentType = o.contentType;
+  f.matchCase = o.matchCase;
+  f.thirdParty = o.thirdParty;
+  f.__defineGetter__("regexp", function() {return o.regexp;});
+  f.domainSeparator = o.domainSeparator;
+  return f;
 };
 
 RegExpFilter.prototype.__defineGetter__("0", function()
@@ -711,7 +803,22 @@ BlockingFilter.prototype =
    * Defines whether the filter should collapse blocked content. Can be null (use the global preference).
    * @type Boolean
    */
-  collapse: null
+  collapse: null,
+
+  toJSON: function() {
+    var o = RegExpFilter.prototype.toJSON.call(this);
+    o.type = "BlockingFilter";
+    o.collapse = this.collapse;
+    return o;
+  }
+};
+
+BlockingFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new BlockingFilter(o.text, o.regexpSource, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.collapse);
+  RegExpFilter.fromJSON.call(this, o, f);
+  f.collapse = o.collapse;
+  return f;
 };
 
 /**
@@ -743,7 +850,22 @@ WhitelistFilter.prototype =
    * List of public keys of websites that this filter should apply to
    * @type String[]
    */
-  siteKeys: null
+  siteKeys: null,
+
+  toJSON: function() {
+    var o = RegExpFilter.prototype.toJSON.call(this);
+    o.type = "WhitelistFilter";
+    o.siteKeys = this.siteKeys;
+    return o;
+  }
+};
+
+WhitelistFilter.fromJSON = function (o) {
+  if (! f)
+    f = new WhitelistFilter(o.text, o.regexpSource, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.siteKeys);
+  RegExpFilter.fromJSON.call(this, o, f);
+  f.siteKeys = o.siteKeys;
+  return f;
 };
 
 /**
