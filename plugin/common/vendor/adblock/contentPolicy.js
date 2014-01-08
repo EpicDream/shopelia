@@ -15,46 +15,49 @@
  * along with Adblock Plus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define(["./chrome/compat", "./timeline", "./filterStorage", "./filterClasses", "./matcher", "./chrome/prefs", "./chrome/utils"],
+function (Compat, TimeLine, FilterStorage, FilterClasses, Matcher, Prefs, Utils) {
+
+  var XPCOMUtils = Compat.XPCOMUtils;
+  var Ci = Compat.Ci;
+  var Cc = Compat.Cc;
+  var Services = Compat.Services;
+  var Components = Compat.Components;
+
+  FilterStorage = FilterStorage.FilterStorage;
+  var defaultMatcher = Matcher.defaultMatcher;
+  var BlockingFilter = FilterClasses.BlockingFilter,
+    WhitelistFilter = FilterClasses.WhitelistFilter;
+
 /**
  * @fileOverview Content policy implementation, responsible for blocking things.
  */
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://gre/modules/Services.jsm");
-
-let {TimeLine} = require("timeline");
-let {Utils} = require("utils");
-let {Prefs} = require("prefs");
-let {FilterStorage} = require("filterStorage");
-let {BlockingFilter, WhitelistFilter} = require("filterClasses");
-let {defaultMatcher} = require("matcher");
-let {objectMouseEventHander} = require("objectTabs");
-let {RequestNotifier} = require("requestNotifier");
-let {ElemHide} = require("elemHide");
+// var {objectMouseEventHander} = require("objectTabs");
+// var {RequestNotifier} = require("requestNotifier");
 
 /**
  * List of explicitly supported content types
  * @type Array of String
  */
-let contentTypes = ["OTHER", "SCRIPT", "IMAGE", "STYLESHEET", "OBJECT", "SUBDOCUMENT", "DOCUMENT", "XMLHTTPREQUEST", "OBJECT_SUBREQUEST", "FONT", "MEDIA"];
+var contentTypes = ["OTHER", "SCRIPT", "IMAGE", "STYLESHEET", "OBJECT", "SUBDOCUMENT", "DOCUMENT", "XMLHTTPREQUEST", "OBJECT_SUBREQUEST", "FONT", "MEDIA"];
 
 /**
  * List of content types that aren't associated with a visual document area
  * @type Array of String
  */
-let nonVisualTypes = ["SCRIPT", "STYLESHEET", "XMLHTTPREQUEST", "OBJECT_SUBREQUEST", "FONT"];
+var nonVisualTypes = ["SCRIPT", "STYLESHEET", "XMLHTTPREQUEST", "OBJECT_SUBREQUEST", "FONT"];
 
 /**
  * Randomly generated class name, to be applied to collapsed nodes.
  */
-let collapsedClass = "";
+var collapsedClass = "";
 
 /**
  * Public policy checking functions and auxiliary objects
  * @class
  */
-let Policy = exports.Policy =
-{
+var Policy = {
   /**
    * Map of content type identifiers by their name.
    * @type Object
@@ -93,12 +96,12 @@ let Policy = exports.Policy =
     TimeLine.enter("Entered content policy initialization");
 
     // type constant by type description and type description by type constant
-    let iface = Ci.nsIContentPolicy;
-    for each (let typeName in contentTypes)
-    {
+    var iface = Ci.nsIContentPolicy;
+    for (var i = 0; i < contentTypes.length; i++) {
+      var typeName = contentTypes[i];
       if ("TYPE_" + typeName in iface)
       {
-        let id = iface["TYPE_" + typeName];
+        var id = iface["TYPE_" + typeName];
         this.type[typeName] = id;
         this.typeDescr[id] = typeName;
         this.localizedDescr[id] = Utils.getString("type_label_" + typeName.toLowerCase());
@@ -113,12 +116,17 @@ let Policy = exports.Policy =
     this.typeDescr[0xFFFE] = "POPUP";
     this.localizedDescr[0xFFFE] = Utils.getString("type_label_popup");
 
-    for each (let type in nonVisualTypes)
+    for (var i = 0; i < nonVisualTypes.length; i++) {
+      var type = nonVisualTypes[i];
       this.nonVisual[this.type[type]] = true;
+    }
 
     // whitelisted URL schemes
-    for each (let scheme in Prefs.whitelistschemes.toLowerCase().split(" "))
+    var schemes = Prefs.whitelistschemes.toLowerCase().split(" ");
+    for (var i = 0; i < schemes.length; i++) {
+      var scheme = schemes[i];
       this.whitelistSchemes[scheme] = true;
+    }
 
     TimeLine.log("done initializing types");
 
@@ -126,11 +134,11 @@ let Policy = exports.Policy =
     // stylesheet.
     TimeLine.log("registering global stylesheet");
 
-    let offset = "a".charCodeAt(0);
-    for (let i = 0; i < 20; i++)
+    var offset = "a".charCodeAt(0);
+    for (var i = 0; i < 20; i++)
       collapsedClass +=  String.fromCharCode(offset + Math.random() * 26);
 
-    let collapseStyle = Services.io.newURI("data:text/css," +
+    var collapseStyle = Services.io.newURI("data:text/css," +
         encodeURIComponent("." + collapsedClass +
         "{-moz-binding: url(chrome://global/content/bindings/general.xml#foobarbazdummy) !important;}"), null, null);
     Utils.styleService.loadAndRegisterSheet(collapseStyle, Ci.nsIStyleSheetService.USER_SHEET);
@@ -154,36 +162,36 @@ let Policy = exports.Policy =
    */
   processNode: function(wnd, node, contentType, location, collapse)
   {
-    let topWnd = wnd.top;
+    var topWnd = wnd.top;
     if (!topWnd || !topWnd.location || !topWnd.location.href)
       return true;
 
-    let originWindow = Utils.getOriginWindow(wnd);
-    let wndLocation = originWindow.location.href;
-    let docDomain = getHostname(wndLocation);
-    let match = null;
+    var originWindow = Utils.getOriginWindow(wnd);
+    var wndLocation = originWindow.location.href;
+    var docDomain = getHostname(wndLocation);
+    var match = null;
     if (!match && Prefs.enabled)
     {
-      let testWnd = wnd;
-      let parentWndLocation = getWindowLocation(testWnd);
+      var testWnd = wnd;
+      var parentWndLocation = getWindowLocation(testWnd);
       while (true)
       {
-        let testWndLocation = parentWndLocation;
+        var testWndLocation = parentWndLocation;
         parentWndLocation = (testWnd == testWnd.parent ? testWndLocation : getWindowLocation(testWnd.parent));
         match = Policy.isWhitelisted(testWndLocation, parentWndLocation);
 
         if (!(match instanceof WhitelistFilter))
         {
-          let keydata = (testWnd.document && testWnd.document.documentElement ? testWnd.document.documentElement.getAttribute("data-adblockkey") : null);
+          var keydata = (testWnd.document && testWnd.document.documentElement ? testWnd.document.documentElement.getAttribute("data-adblockkey") : null);
           if (keydata && keydata.indexOf("_") >= 0)
           {
-            let [key, signature] = keydata.split("_", 2);
-            let keyMatch = defaultMatcher.matchesByKey(testWndLocation, key.replace(/=/g, ""), docDomain);
+            var tmp = keydata.split("_", 2), key = tmp[0], signature = tmp[1];
+            var keyMatch = defaultMatcher.matchesByKey(testWndLocation, key.replace(/=/g, ""), docDomain);
             if (keyMatch && Utils.crypto)
             {
               // Website specifies a key that we know but is the signature valid?
-              let uri = Services.io.newURI(testWndLocation, null, null);
-              let params = [
+              var uri = Services.io.newURI(testWndLocation, null, null);
+              var params = [
                 uri.path.replace(/#.*/, ""),  // REQUEST_URI
                 uri.asciiHost,                // HTTP_HOST
                 Utils.httpProtocol.userAgent  // HTTP_USER_AGENT
@@ -216,16 +224,16 @@ let Policy = exports.Policy =
     if (contentType != Policy.type.OBJECT && (node instanceof Ci.nsIDOMHTMLObjectElement || node instanceof Ci.nsIDOMHTMLEmbedElement))
       contentType = Policy.type.OBJECT;
 
-    let locationText = location.spec;
+    var locationText = location.spec;
     if (!match && contentType == Policy.type.ELEMHIDE)
     {
-      let testWnd = wnd;
-      let parentWndLocation = getWindowLocation(testWnd);
+      var testWnd = wnd;
+      var parentWndLocation = getWindowLocation(testWnd);
       while (true)
       {
-        let testWndLocation = parentWndLocation;
+        var testWndLocation = parentWndLocation;
         parentWndLocation = (testWnd == testWnd.parent ? testWndLocation : getWindowLocation(testWnd.parent));
-        let parentDocDomain = getHostname(parentWndLocation);
+        var parentDocDomain = getHostname(parentWndLocation);
         match = defaultMatcher.matchesAny(testWndLocation, "ELEMHIDE", parentDocDomain, false);
         if (match instanceof WhitelistFilter)
         {
@@ -247,7 +255,7 @@ let Policy = exports.Policy =
       if (!match.isActiveOnDomain(docDomain))
         return true;
 
-      let exception = ElemHide.getException(match, docDomain);
+      var exception = ElemHide.getException(match, docDomain);
       if (exception)
       {
         FilterStorage.increaseHitCount(exception, wnd);
@@ -256,14 +264,14 @@ let Policy = exports.Policy =
       }
     }
 
-    let thirdParty = (contentType == Policy.type.ELEMHIDE ? false : isThirdParty(location, docDomain));
+    var thirdParty = (contentType == Policy.type.ELEMHIDE ? false : isThirdParty(location, docDomain));
 
     if (!match && Prefs.enabled)
     {
       match = defaultMatcher.matchesAny(locationText, Policy.typeDescr[contentType] || "", docDomain, thirdParty);
       if (match instanceof BlockingFilter && node.ownerDocument && !(contentType in Policy.nonVisual))
       {
-        let prefCollapse = (match.collapse != null ? match.collapse : !Prefs.fastcollapse);
+        var prefCollapse = (match.collapse != null ? match.collapse : !Prefs.fastcollapse);
         if (collapse || prefCollapse)
           schedulePostProcess(node);
       }
@@ -306,7 +314,7 @@ let Policy = exports.Policy =
       return null;
 
     // Do not apply exception rules to schemes on our whitelistschemes list.
-    let match = /^([\w\-]+):/.exec(url);
+    var match = /^([\w\-]+):/.exec(url);
     if (match && match[1] in Policy.whitelistSchemes)
       return null;
 
@@ -314,11 +322,11 @@ let Policy = exports.Policy =
       parentUrl = url;
 
     // Ignore fragment identifier
-    let index = url.indexOf("#");
+    var index = url.indexOf("#");
     if (index >= 0)
       url = url.substring(0, index);
 
-    let result = defaultMatcher.matchesAny(url, "DOCUMENT", getHostname(parentUrl), false);
+    var result = defaultMatcher.matchesAny(url, "DOCUMENT", getHostname(parentUrl), false);
     return (result instanceof WhitelistFilter ? result : null);
   },
 
@@ -342,17 +350,17 @@ let Policy = exports.Policy =
     if (entry.filter && !(entry.filter instanceof WhitelistFilter))
       return;
 
-    for each (let node in nodes)
-      Utils.runAsync(refilterNode, this, node, entry);
+    for (var i = 0; i < nodes.length; i++)
+      Utils.runAsync(refilterNode, this, nodes[i], entry);
   }
 };
-Policy.init();
+// Policy.init();
 
 /**
  * Actual nsIContentPolicy and nsIChannelEventSink implementation
  * @class
  */
-let PolicyImplementation =
+var PolicyImplementation =
 {
   classDescription: "Adblock Plus content policy",
   classID: Components.ID("cfeaabe6-1dd1-11b2-a0c6-cb5c268894c9"),
@@ -364,26 +372,29 @@ let PolicyImplementation =
    */
   init: function()
   {
-    let registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
+    var registrar = Components.manager.QueryInterface(Ci.nsIComponentRegistrar);
     try
     {
       registrar.registerFactory(this.classID, this.classDescription, this.contractID, this);
     }
-    catch (e if e.result == Cr.NS_ERROR_FACTORY_EXISTS)
+    catch (e)
     {
-      // See bug 924340 - it might be too early to init now, the old version
-      // we are replacing didn't finish removing itself yet.
-      Utils.runAsync(this.init.bind(this));
-      return;
+      if (e.result == Cr.NS_ERROR_FACTORY_EXISTS) {
+        // See bug 924340 - it might be too early to init now, the old version
+        // we are replacing didn't finish removing itself yet.
+        Utils.runAsync(this.init.bind(this));
+        return;
+      } else
+        throw e;
     }
 
-    let catMan = Utils.categoryManager;
-    for each (let category in this.xpcom_categories)
-      catMan.addCategoryEntry(category, this.contractID, this.contractID, false, true);
+    var catMan = Utils.categoryManager;
+    for (var i = 0; i < this.xpcom_categories.length; i++)
+      catMan.addCategoryEntry(this.xpcom_categories[i], this.contractID, this.contractID, false, true);
 
     // http-on-opening-request is new in Gecko 18, http-on-modify-request can
     // be used in earlier releases.
-    let httpTopic = "http-on-opening-request";
+    var httpTopic = "http-on-opening-request";
     if (Services.vc.compare(Utils.platformVersion, "18.0") < 0)
       httpTopic = "http-on-modify-request";
 
@@ -401,8 +412,8 @@ let PolicyImplementation =
       Services.obs.removeObserver(this, "xpcom-category-entry-removed");
       Services.obs.removeObserver(this, "xpcom-category-cleared");
 
-      for each (let category in this.xpcom_categories)
-        catMan.deleteCategoryEntry(category, this.contractID, false);
+      for (var i = 0; i < this.xpcom_categories.length; i++)
+        catMan.deleteCategoryEntry(this.xpcom_categories[i], this.contractID, false);
 
       // This needs to run asynchronously, see bug 753687
       Utils.runAsync(function()
@@ -435,12 +446,12 @@ let PolicyImplementation =
     if (contentType == Policy.type.OBJECT && node.ownerDocument && !/^text\/|[+\/]xml$/.test(node.ownerDocument.contentType))
       return Ci.nsIContentPolicy.ACCEPT;
 
-    let wnd = Utils.getWindow(node);
+    var wnd = Utils.getWindow(node);
     if (!wnd)
       return Ci.nsIContentPolicy.ACCEPT;
 
     // Ignore whitelisted schemes
-    let location = Utils.unwrapURL(contentLocation);
+    var location = Utils.unwrapURL(contentLocation);
     if (!Policy.isBlockableScheme(location))
       return Ci.nsIContentPolicy.ACCEPT;
 
@@ -448,7 +459,7 @@ let PolicyImplementation =
     if (!(contentType in Policy.typeDescr))
       contentType = Policy.type.OTHER;
 
-    let result = Policy.processNode(wnd, node, contentType, location, false);
+    var result = Policy.processNode(wnd, node, contentType, location, false);
     if (result)
     {
       // We didn't block this request so we will probably see it again in
@@ -476,7 +487,7 @@ let PolicyImplementation =
         if (!(subject instanceof Ci.nsIDOMWindow) || !subject.opener)
           return;
 
-        let uri = additional || Utils.makeURI(subject.location.href);
+        var uri = additional || Utils.makeURI(subject.location.href);
         if (!Policy.processNode(subject.opener, subject.opener.document, Policy.type.POPUP, uri, false))
         {
           subject.stop();
@@ -512,7 +523,7 @@ let PolicyImplementation =
 
         if (this.expectingPopupLoad)
         {
-          let wnd = Utils.getRequestWindow(subject);
+          var wnd = Utils.getRequestWindow(subject);
           if (wnd && wnd.opener && wnd.location.href == "about:blank")
             this.observe(wnd, "content-document-global-created", null, subject.URI);
         }
@@ -522,7 +533,7 @@ let PolicyImplementation =
       case "xpcom-category-entry-removed":
       case "xpcom-category-cleared":
       {
-        let category = data;
+        var category = data;
         if (this.xpcom_categories.indexOf(category) < 0)
           return;
 
@@ -534,7 +545,7 @@ let PolicyImplementation =
         }
 
         // Our category entry was removed, make sure to add it back
-        let catMan = Utils.categoryManager;
+        var catMan = Utils.categoryManager;
         catMan.addCategoryEntry(category, this.contractID, this.contractID, false, true);
         break;
       }
@@ -547,11 +558,11 @@ let PolicyImplementation =
 
   asyncOnChannelRedirect: function(oldChannel, newChannel, flags, callback)
   {
-    let result = Cr.NS_OK;
+    var result = Cr.NS_OK;
     try
     {
       // Try to retrieve previously stored request data from the channel
-      let contentType;
+      var contentType;
       if (oldChannel instanceof Ci.nsIWritablePropertyBag)
       {
         try
@@ -565,7 +576,7 @@ let PolicyImplementation =
         }
       }
 
-      let newLocation = null;
+      var newLocation = null;
       try
       {
         newLocation = newChannel.URI;
@@ -573,7 +584,7 @@ let PolicyImplementation =
       if (!newLocation)
         return;
 
-      let wnd = Utils.getRequestWindow(newChannel);
+      var wnd = Utils.getRequestWindow(newChannel);
       if (!wnd)
         return;
 
@@ -609,13 +620,13 @@ let PolicyImplementation =
     return this.QueryInterface(iid);
   }
 };
-PolicyImplementation.init();
+// PolicyImplementation.init();
 
 /**
  * Nodes scheduled for post-processing (might be null).
  * @type Array of Node
  */
-let scheduledNodes = null;
+var scheduledNodes = null;
 
 /**
  * Schedules a node for post-processing.
@@ -636,26 +647,26 @@ function schedulePostProcess(/**Element*/ node)
  */
 function postProcessNodes()
 {
-  let nodes = scheduledNodes;
+  var nodes = scheduledNodes;
   scheduledNodes = null;
 
-  for each (let node in nodes)
-  {
+  for (var i = 0; i < nodes.length; i++) {
+    var node = nodes[i];
     // adjust frameset's cols/rows for frames
-    let parentNode = node.parentNode;
+    var parentNode = node.parentNode;
     if (parentNode && parentNode instanceof Ci.nsIDOMHTMLFrameSetElement)
     {
-      let hasCols = (parentNode.cols && parentNode.cols.indexOf(",") > 0);
-      let hasRows = (parentNode.rows && parentNode.rows.indexOf(",") > 0);
+      var hasCols = (parentNode.cols && parentNode.cols.indexOf(",") > 0);
+      var hasRows = (parentNode.rows && parentNode.rows.indexOf(",") > 0);
       if ((hasCols || hasRows) && !(hasCols && hasRows))
       {
-        let index = -1;
-        for (let frame = node; frame; frame = frame.previousSibling)
+        var index = -1;
+        for (var frame = node; frame; frame = frame.previousSibling)
           if (frame instanceof Ci.nsIDOMHTMLFrameElement || frame instanceof Ci.nsIDOMHTMLFrameSetElement)
             index++;
 
-        let property = (hasCols ? "cols" : "rows");
-        let weights = parentNode[property].split(",");
+        var property = (hasCols ? "cols" : "rows");
+        var weights = parentNode[property].split(",");
         weights[index] = "0";
         parentNode[property] = weights.join(",");
       }
@@ -679,6 +690,7 @@ function getHostname(/**String*/ url) /**String*/
     return null;
   }
 }
+Matcher.getHostname = getHostname;
 
 /**
  * Retrieves the location of a window.
@@ -692,7 +704,7 @@ function getWindowLocation(wnd)
     // Thunderbird branch
     try
     {
-      let mailWnd = wnd.QueryInterface(Ci.nsIInterfaceRequestor)
+      var mailWnd = wnd.QueryInterface(Ci.nsIInterfaceRequestor)
                        .getInterface(Ci.nsIWebNavigation)
                        .QueryInterface(Ci.nsIDocShellTreeItem)
                        .rootTreeItem
@@ -711,7 +723,7 @@ function getWindowLocation(wnd)
       }
       else if ("currentHeaderData" in mailWnd && "from" in mailWnd.currentHeaderData)
       {
-        let emailAddress = Utils.headerParser.extractHeaderAddressMailboxes(mailWnd.currentHeaderData.from.headerValue);
+        var emailAddress = Utils.headerParser.extractHeaderAddressMailboxes(mailWnd.currentHeaderData.from.headerValue);
         if (emailAddress)
           return 'mailto:' + emailAddress.replace(/^[\s"]+/, "").replace(/[\s"]+$/, "").replace(/\s/g, '%20');
       }
@@ -737,7 +749,7 @@ function isThirdParty(/**nsIURI*/location, /**String*/ docDomain) /**Boolean*/
   catch (e)
   {
     // EffectiveTLDService throws on IP addresses, just compare the host name
-    let host = "";
+    var host = "";
     try
     {
       host = location.host;
@@ -751,7 +763,7 @@ function isThirdParty(/**nsIURI*/location, /**String*/ docDomain) /**Boolean*/
  */
 function refilterNode(/**Node*/ node, /**RequestEntry*/ entry)
 {
-  let wnd = Utils.getWindow(node);
+  var wnd = Utils.getWindow(node);
   if (!wnd || wnd.closed)
     return;
 
@@ -762,3 +774,7 @@ function refilterNode(/**Node*/ node, /**RequestEntry*/ entry)
   }
   Policy.processNode(wnd, node, entry.type, Utils.makeURI(entry.location), true);
 }
+
+return Policy;
+
+});

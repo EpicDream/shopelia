@@ -15,27 +15,26 @@
  * along with Adblock Plus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define(["./timeline"], function (TimeLine) {
+
 /**
  * @fileOverview Module containing file I/O helpers.
  */
 
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
-Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource://gre/modules/FileUtils.jsm");
-Cu.import("resource://gre/modules/NetUtil.jsm");
+// Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+// Cu.import("resource://gre/modules/Services.jsm");
+// Cu.import("resource://gre/modules/FileUtils.jsm");
+// Cu.import("resource://gre/modules/NetUtil.jsm");
 
-let {TimeLine} = require("timeline");
-
-let IO = exports.IO =
-{
+var IO = {
   /**
    * Retrieves the platform-dependent line break string.
    */
-  get lineBreak()
+  lineBreak: function ()
   {
-    let lineBreak = (Services.appinfo.OS == "WINNT" ? "\r\n" : "\n");
+    var lineBreak = (Services.appinfo.OS == "WINNT" ? "\r\n" : "\n");
     delete IO.lineBreak;
-    IO.__defineGetter__("lineBreak", function() lineBreak);
+    IO.__defineGetter__("lineBreak", function() {return lineBreak;});
     return IO.lineBreak;
   },
 
@@ -70,9 +69,9 @@ let IO = exports.IO =
   {
     try
     {
-      let buffer = "";
-      let uri = file instanceof Ci.nsIFile ? Services.io.newFileURI(file) : file;
-      let request = new XMLHttpRequest();
+      var buffer = "";
+      var uri = file instanceof Ci.nsIFile ? Services.io.newFileURI(file) : file;
+      var request = new XMLHttpRequest();
       request.mozBackgroundRequest = true;
       request.open("GET", uri.spec);
       request.responseType = "moz-chunked-text";
@@ -85,17 +84,17 @@ let IO = exports.IO =
           TimeLine.asyncStart(timeLineID);
         }
 
-        let data = event.target.response;
-        let index = Math.max(data.lastIndexOf("\n"), data.lastIndexOf("\r"));
+        var data = event.target.response;
+        var index = Math.max(data.lastIndexOf("\n"), data.lastIndexOf("\r"));
         if (index >= 0)
         {
-          let oldBuffer = buffer;
+          var oldBuffer = buffer;
           buffer = data.substr(index + 1);
           data = data.substr(0, index + 1);
-          let lines = data.split(/[\r\n]+/);
+          var lines = data.split(/[\r\n]+/);
           lines.pop();
           lines[0] = oldBuffer + lines[0];
-          for (let i = 0; i < lines.length; i++)
+          for (var i = 0; i < lines.length; i++)
             listener.process(lines[i]);
         }
         else
@@ -129,7 +128,7 @@ let IO = exports.IO =
 
       request.addEventListener("error", function()
       {
-        let e = Cc["@mozilla.org/js/xpc/Exception;1"].createInstance(Ci.nsIXPCException);
+        var e = Cc["@mozilla.org/js/xpc/Exception;1"].createInstance(Ci.nsIXPCException);
         e.initialize("File read operation failed", result, null, Components.stack, file, null);
         callback(e);
 
@@ -154,19 +153,19 @@ let IO = exports.IO =
   {
     try
     {
-      let fileStream = FileUtils.openSafeFileOutputStream(file, FileUtils.MODE_WRONLY | FileUtils.MODE_CREATE | FileUtils.MODE_TRUNCATE);
+      var fileStream = FileUtils.openSafeFileOutputStream(file, FileUtils.MODE_WRONLY | FileUtils.MODE_CREATE | FileUtils.MODE_TRUNCATE);
 
-      let pipe = Cc["@mozilla.org/pipe;1"].createInstance(Ci.nsIPipe);
+      var pipe = Cc["@mozilla.org/pipe;1"].createInstance(Ci.nsIPipe);
       pipe.init(true, true, 0, 0x8000, null);
 
-      let outStream = pipe.outputStream;
+      var outStream = pipe.outputStream;
       if (encode)
       {
         outStream = Cc["@mozilla.org/intl/converter-output-stream;1"].createInstance(Ci.nsIConverterOutputStream);
         outStream.init(pipe.outputStream, "UTF-8", 0, Ci.nsIConverterInputStream.DEFAULT_REPLACEMENT_CHARACTER);
       }
 
-      let copier = Cc["@mozilla.org/network/async-stream-copier;1"].createInstance(Ci.nsIAsyncStreamCopier);
+      var copier = Cc["@mozilla.org/network/async-stream-copier;1"].createInstance(Ci.nsIAsyncStreamCopier);
       copier.init(pipe.inputStream, fileStream, null, true, false, 0x8000, true, true);
       copier.asyncCopy({
         onStartRequest: function(request, context) {},
@@ -179,7 +178,7 @@ let IO = exports.IO =
 
           if (!Components.isSuccessCode(result))
           {
-            let e = Cc["@mozilla.org/js/xpc/Exception;1"].createInstance(Ci.nsIXPCException);
+            var e = Cc["@mozilla.org/js/xpc/Exception;1"].createInstance(Ci.nsIXPCException);
             e.initialize("File write operation failed", result, null, Components.stack, file, null);
             callback(e);
           }
@@ -188,16 +187,16 @@ let IO = exports.IO =
         }
       }, null);
 
-      let lineBreak = this.lineBreak;
-      let writeNextChunk = function()
+      var lineBreak = this.lineBreak;
+      var writeNextChunk = function()
       {
-        let buf = [];
-        let bufLen = 0;
+        var buf = [];
+        var bufLen = 0;
         while (bufLen < 0x4000)
         {
           try
           {
-            let str = data.next();
+            var str = data.next();
             buf.push(str);
             bufLen += str.length;
           }
@@ -228,7 +227,7 @@ let IO = exports.IO =
 
             if (buf.length)
             {
-              let str = buf.join(lineBreak) + lineBreak;
+              var str = buf.join(lineBreak) + lineBreak;
               if (encode)
                 outStream.writeString(str);
               else
@@ -261,16 +260,16 @@ let IO = exports.IO =
   {
     try
     {
-      let inStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
+      var inStream = Cc["@mozilla.org/network/file-input-stream;1"].createInstance(Ci.nsIFileInputStream);
       inStream.init(fromFile, FileUtils.MODE_RDONLY, 0, Ci.nsIFileInputStream.DEFER_OPEN);
 
-      let outStream = FileUtils.openFileOutputStream(toFile, FileUtils.MODE_WRONLY | FileUtils.MODE_CREATE | FileUtils.MODE_TRUNCATE);
+      var outStream = FileUtils.openFileOutputStream(toFile, FileUtils.MODE_WRONLY | FileUtils.MODE_CREATE | FileUtils.MODE_TRUNCATE);
 
       NetUtil.asyncCopy(inStream, outStream, function(result)
       {
         if (!Components.isSuccessCode(result))
         {
-          let e = Cc["@mozilla.org/js/xpc/Exception;1"].createInstance(Ci.nsIXPCException);
+          var e = Cc["@mozilla.org/js/xpc/Exception;1"].createInstance(Ci.nsIXPCException);
           e.initialize("File write operation failed", result, null, Components.stack, file, null);
           callback(e);
         }
@@ -323,7 +322,7 @@ let IO = exports.IO =
   {
     try
     {
-      let exists = file.exists();
+      var exists = file.exists();
       callback(null, {
         exists: exists,
         isDirectory: exists && file.isDirectory(),
@@ -336,4 +335,8 @@ let IO = exports.IO =
       callback(e);
     }
   }
-}
+};
+
+return IO;
+
+});
