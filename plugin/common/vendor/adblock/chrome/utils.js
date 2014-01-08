@@ -15,9 +15,11 @@
  * along with Adblock Plus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-let runAsyncQueue;
+define(['./prefs'], function(Prefs) {
 
-var Utils = exports.Utils = {
+var runAsyncQueue;
+
+var Utils = {
   systemPrincipal: null,
   getString: function(id)
   {
@@ -38,14 +40,14 @@ var Utils = exports.Utils = {
       {
         // Hack: Opera will happily run asynchronous actions while scripts are
         // loading, queue them until the document is ready.
-        let loadHandler = function()
+        var loadHandler = function()
         {
           document.removeEventListener("DOMContentLoaded", loadHandler, false);
 
-          let queue = runAsyncQueue;
+          var queue = runAsyncQueue;
           runAsyncQueue = null;
-          for each (let callback in queue)
-          {
+          for (var i = 0; i < queue.length; i++) {
+            var callback = queue[i];
             try
             {
               callback();
@@ -65,10 +67,10 @@ var Utils = exports.Utils = {
     else
       window.setTimeout(callback, 0);
   },
-  get appLocale()
+  appLocale: function ()
   {
     var locale = ext.i18n.getMessage("@@ui_locale").replace(/_/g, "-");
-    this.__defineGetter__("appLocale", function() {return locale});
+    this.__defineGetter__("appLocale", function() {return locale;});
     return this.appLocale;
   },
   generateChecksum: function(lines)
@@ -105,7 +107,7 @@ var Utils = exports.Utils = {
       if (!selectedItem)
         selectedItem = subscription;
 
-      var prefix = require("utils").Utils.checkLocalePrefixMatch(subscription.getAttribute("prefixes"));
+      var prefix = Utils.checkLocalePrefixMatch(subscription.getAttribute("prefixes"));
       if (prefix)
       {
         if (!selectedPrefix || selectedPrefix.length < prefix.length)
@@ -140,3 +142,7 @@ var Utils = exports.Utils = {
     return docLink.replace(/%LINK%/g, linkID).replace(/%LANG%/g, Utils.appLocale);
   }
 };
+
+return Utils;
+
+});

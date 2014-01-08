@@ -102,6 +102,26 @@ div.blogs{
 .blogs-table tr:last-child{
   border-bottom:none;
 }
+.blogs-table tr td span.tag{
+  width:30px;
+  height:30px;
+  border-radius:30px;
+  display:inline-block;
+  font-family:Georgia;
+  text-align:center;
+  color:white;
+}
+.blogs-table tr td span.tag i{
+  font-style:normal;
+  margin-top:5px;
+  display:inline-block;
+}
+.blogs-table tr td span.posts-count-tag{
+  background-color:#4C5C99;
+}
+.blogs-table tr td span.looks-count-tag{
+  background-color:#FF72C7;
+}
 .blogs img.heart-overlay-show{
   z-index:100;
   -webkit-animation: heartbeat 2s;
@@ -197,7 +217,7 @@ div.blogs{
   color: black; 
 }
 .pagination a:hover, .pagination a:focus {
-  text-decoration: underline; 
+  text-decoration: none; 
 }
 
 /*Blog posts*/

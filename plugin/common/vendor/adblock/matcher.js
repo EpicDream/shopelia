@@ -172,11 +172,12 @@ Matcher.prototype = {
   _checkEntryMatch: function(keyword, location, contentType, docDomain, thirdParty)
   {
     var list = this.filterByKeyword[keyword];
-    for (var i = 0; i < list.length; i++)
-    {
+    for (var i = 0; i < list.length; i++) {
       var filter = list[i];
-      if (filter.matches(location, contentType, docDomain, thirdParty))
-        return filter;
+      if (typeof filter == 'object' && filter.matches) {
+        if (filter.matches(location, contentType, docDomain, thirdParty))
+          return filter;
+      }
     }
     return null;
   },
@@ -207,7 +208,41 @@ Matcher.prototype = {
     }
 
     return null;
+  },
+
+  /**
+   * Stringify default to false.
+   */
+  toJSON: function(stringify) {
+    var o = {
+      filterByKeyword: this.filterByKeyword,
+    };
+    
+    if (stringify === true)
+      return JSON.stringify(o);
+    else
+      return o;
   }
+};
+
+
+Matcher.fromJSON = function(o) {
+  var m = new Matcher();
+  m.filterByKeyword = {};
+  m.keywordByFilter = {};
+  for (var keyword in o.filterByKeyword) {
+    console.log(keyword)
+    var f = o.filterByKeyword[keyword];
+    var type = f.type;
+    // if (! FilterClasses[type]) {
+      console.log(type);
+    //   console.log(Object.keys(f));
+    // }
+    var filter = FilterClasses[type].fromJSON(f);
+    m.filterByKeyword[keyword] = filter;
+    m.keywordByFilter[filter] = keyword;
+  }
+  return m;
 };
 
 /**
@@ -436,6 +471,25 @@ CombinedMatcher.prototype =
     }
     else
       return null;
+  },
+
+  /**
+   * Stringify default to false.
+   */
+  toJSON: function(stringify) {
+    var o = {
+      blacklist: this.blacklist.toJSON(),
+      whitelist: this.whitelist.toJSON(),
+    };
+    
+    if (stringify === true)
+      return JSON.stringify(o);
+    else
+      return o;
+  },
+  fromJSON: function(o) {
+    this.blacklist = Matcher.fromJSON(o.blacklist);
+    this.whitelist = Matcher.fromJSON(o.whitelist);
   }
 };
 

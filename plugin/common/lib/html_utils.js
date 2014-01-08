@@ -171,7 +171,7 @@ hu.getElementAttrs = function(e) {
   if (e.tagName == "INPUT" && (type == "radio" || type == "checkbox")) data.checked = e.checked;
   if (e.tagName == "IMG") data.src = e.src;
   for (var i = 0 ; i < attrs.length ; i++)
-    if (data[attrs[i].name] === undefined)
+    if (attrs[i].name.search(/on(mouse|click)/) === -1 && data[attrs[i].name] === undefined)
       data[attrs[i].name] = attrs[i].value;
   return data;
 };

@@ -52,9 +52,19 @@ module.exports = function(grunt) {
       },
       adblock: {
         src: [
+          'src/casper/adblock.js',
           '../common/vendor/adblock/filterNotifier.js',
           '../common/vendor/adblock/filterClasses.js',
+          '../common/vendor/adblock/filterListener.js',
+          '../common/vendor/adblock/filterStorage.js',
+          '../common/vendor/adblock/subscriptionClasses.js',
           '../common/vendor/adblock/matcher.js',
+          '../common/vendor/adblock/contentPolicy.js',
+          '../common/vendor/adblock/timeline.js',
+          '../common/vendor/adblock/io.js',
+          '../common/vendor/adblock/chrome/utils.js',
+          '../common/vendor/adblock/chrome/compat.js',
+          '../common/vendor/adblock/chrome/prefs.js',
         ],
         options: {
           loopfunc: true,
@@ -207,7 +217,7 @@ module.exports = function(grunt) {
           out: grunt.option('build-dir')+'chrome_main.js',
         }
       },
-      casper_saturn: {
+      casper_main: {
         options: {
           baseUrl: '',
           mainConfigFile: grunt.option('require_config'),
@@ -216,8 +226,8 @@ module.exports = function(grunt) {
             'build': grunt.option('build-dir')
           },
           optimize: "none",
-          name: 'src/casper/saturn',
-          out: grunt.option('build-dir')+'casper_saturn.js',
+          name: 'src/casper/main',
+          out: grunt.option('build-dir')+'casper_main.js',
         }
       },
       casper_crawler: {
@@ -245,7 +255,19 @@ module.exports = function(grunt) {
           name: 'src/casper/adblock',
           out: grunt.option('build-dir')+'casper_adblock.js',
         }
-
+      },
+      test: {
+        options: {
+          baseUrl: '',
+          mainConfigFile: grunt.option('require_config'),
+          paths: {
+            'vendor': grunt.option('vendor-dir'),
+            'build': grunt.option('build-dir')
+          },
+          optimize: "none",
+          name: 'src/casper/test',
+          out: grunt.option('build-dir')+'casper_test.js',
+        }
       }
     },
     // Add requirejs and "main files" that require others modules.
@@ -273,10 +295,17 @@ module.exports = function(grunt) {
         src: [
           grunt.option('vendor-dir')+'require.js',
           grunt.option('require_config'),
-          grunt.option('build-dir')+'casper_saturn.js',
-          grunt.option('build-dir')+'src/casper/main.js',
+          grunt.option('build-dir')+'casper_main.js',
         ],
         dest: grunt.option('build-dir')+'casper.js'
+      },
+      test: {
+        src: [
+          grunt.option('vendor-dir')+'require.js',
+          grunt.option('require_config'),
+          grunt.option('build-dir')+'casper_test.js',
+        ],
+        dest: grunt.option('build-dir')+'test.js'
       },
       casper_injected: {
         src: [
@@ -383,9 +412,10 @@ module.exports = function(grunt) {
   grunt.registerTask('casper-lint', ['jshint:main', 'jshint:libs', 'coffee_jshint:casper']);
   grunt.registerTask('casper-compile', ['coffee:libs', 'coffee:casper']);
   grunt.registerTask('casper-jasmine', ['jasmine:main', 'jasmine:libs']);
-  grunt.registerTask('casper-test', ['casper-lint', 'casper-compile', 'version', 'config:test', 'copy:libs', 'copy:adblock', 'casper-jasmine']);
-  grunt.registerTask('casper-requirejs', ['requirejs:casper_saturn', 'requirejs:casper_crawler', 'requirejs:casper_adblock']);
+  grunt.registerTask('casper-test', ['casper-lint', 'casper-compile', 'package', 'config:test', 'copy:libs', 'copy:adblock', 'casper-jasmine']);
+  grunt.registerTask('casper-requirejs', ['requirejs:casper_main', 'requirejs:casper_crawler', 'requirejs:casper_adblock']);
   grunt.registerTask('casper-concat', ['concat:casper_main', 'concat:casper_injected']);
 
   grunt.registerTask('casper', ['casper-test', 'config:dev-prod', 'casper-requirejs', 'casper-concat', 'clean:node']);
+  grunt.registerTask('test', ['casper-lint', 'casper-compile', 'package', 'copy:libs', 'copy:adblock', 'requirejs:test', 'concat:test', 'clean:node']);
 };

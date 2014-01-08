@@ -13,7 +13,8 @@ class NikeComTest < ActiveSupport::TestCase
     @availability_text = [
     ]
     @availabilities = {
-      "23 ARTICLES" => false
+      "23 ARTICLES" => false,
+      "6 PRODUCTS" => false,
     }
     @image_url = {
       input: "http://images.nike.com/is/image/emea/THN_PS/Nike-Air-Max-2014-Zapatillas-de-running---Hombre-621077_006_A.jpg?wid=620&fmt=jpg&qty=85&hei=620&bgc=F5F5F5",

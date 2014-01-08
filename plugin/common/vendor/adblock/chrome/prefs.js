@@ -15,11 +15,13 @@
  * along with Adblock Plus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define([], function () {
+
 //
 // The values are hardcoded for now.
 //
 
-let defaults = {
+var defaults = {
   __proto__: null,
   enabled: true,
   data_directory: "",
@@ -39,11 +41,11 @@ let defaults = {
   show_statsinpopup: true
 };
 
-let listeners = [];
+var listeners = [];
 
 function defineProperty(key)
 {
-  let value = null;
+  var value = null;
   Prefs.__defineGetter__(key, function()
   {
     if (value === null)
@@ -70,7 +72,7 @@ function defineProperty(key)
     if (typeof newValue != typeof defaults[key])
       throw new Error("Attempt to change preference type");
 
-    let stringified = JSON.stringify(newValue);
+    var stringified = JSON.stringify(newValue);
     if (stringified != JSON.stringify(defaults[key]))
       localStorage[key] = stringified;
     else
@@ -78,15 +80,15 @@ function defineProperty(key)
 
     value = newValue;
 
-    for each (let listener in listeners)
-      listener(key);
+    for (var i = 0; i < listeners.length; i++)
+      listeners[i](key);
 
     return value;
   });
 }
 
 
-let Prefs = exports.Prefs = {
+var Prefs = {
   addListener: function(listener)
   {
     if (listeners.indexOf(listener) < 0)
@@ -95,11 +97,15 @@ let Prefs = exports.Prefs = {
 
   removeListener: function(listener)
   {
-    let index = listeners.indexOf(listener);
+    var index = listeners.indexOf(listener);
     if (index >= 0)
       listeners.splice(index, 1);
   },
 };
 
-for (let key in defaults)
+for (var key in defaults)
   defineProperty(key);
+
+return Prefs;
+
+});

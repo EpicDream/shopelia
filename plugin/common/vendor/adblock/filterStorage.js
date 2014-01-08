@@ -19,13 +19,16 @@
  * @fileOverview FilterStorage class responsible for managing user's subscriptions and filters.
  */
 
-Cu.import("resource://gre/modules/Services.jsm");
-Cu.import("resource://gre/modules/FileUtils.jsm");
-Cu.import("resource://gre/modules/XPCOMUtils.jsm");
+// Cu.import("resource://gre/modules/Services.jsm");
+// Cu.import("resource://gre/modules/FileUtils.jsm");
+// Cu.import("resource://gre/modules/XPCOMUtils.jsm");
 
-define(["./io", "./prefs", "./filterClasses", "./subscriptionClasses", "./filterNotifier", "./timeline"],
-function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine) {
+define(["./chrome/compat", "./io", "./chrome/prefs", "./filterClasses", "./subscriptionClasses", "./filterNotifier", "./timeline"],
+function(Compat, IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine) {
 
+  var XPCOMUtils = Compat.XPCOMUtils;
+  var Ci = Compat.Ci;
+  var Cc = Compat.Cc;
   var Filter = FilterClasses.Filter;
   var ActiveFilter = FilterClasses.ActiveFilter;
   var Subscription = SubscriptionClasses.Subscription;
@@ -38,7 +41,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
    */
   var formatVersion = 4;
 
-  var exports = {}
+  var exports = {};
   /**
    * This class reads user's filters from disk, manages them in memory and writes them back.
    * @class
@@ -49,13 +52,13 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
      * Version number of the patterns.ini format used.
      * @type Integer
      */
-    get formatVersion() formatVersion,
+    formatVersion: function() { return formatVersion; },
 
     /**
      * File that the filter list has been loaded from and should be saved to
      * @type nsIFile
      */
-    get sourceFile()
+    sourceFile: function()
     {
       var file = null;
       if (Prefs.patternsfile)
@@ -84,7 +87,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
       if (!file)
         Cu.reportError("Adblock Plus: Failed to resolve filter file location from extensions.adblockplus.patternsfile preference");
 
-      this.__defineGetter__("sourceFile", function() file);
+      this.__defineGetter__("sourceFile", function() {return file;});
       return this.sourceFile;
     },
 
@@ -113,8 +116,8 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
     getGroupForFilter: function(/**Filter*/ filter) /**SpecialSubscription*/
     {
       var generalSubscription = null;
-      foreach (var subscription in FilterStorage.subscriptions)
-      {
+      for (var i = 0; i < FilterStorage.subscriptions.length; i++) {
+        var subscription = FilterStorage.subscriptions[i];
         if (subscription instanceof SpecialSubscription && !subscription.disabled)
         {
           // Always prefer specialized subscriptions
@@ -221,7 +224,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
     {
       if (!subscription)
       {
-        if (filter.subscriptions.some(function(s) s instanceof SpecialSubscription && !s.disabled))
+        if (filter.subscriptions.some(function(s) {return s instanceof SpecialSubscription && !s.disabled;}))
           return;   // No need to add
         subscription = FilterStorage.getGroupForFilter(filter);
       }
@@ -251,18 +254,19 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
      * @param {Integer} [position]  position inside the filter group at which the
      *      filter should be removed (if ommited all instances will be removed)
      */
-    removeFilter: function(filter, subscription, position)
+    removeFilter: function(filter, subscription, arg_position)
     {
-      var subscriptions = (subscription ? [subscription] : filter.subscriptions.slice());
+      var subscriptions = (subscription ? [subscription] : filter.subscriptions.slice()),
+        index;
       for (var i = 0; i < subscriptions.length; i++)
       {
-        var subscription = subscriptions[i];
+        subscription = subscriptions[i];
         if (subscription instanceof SpecialSubscription)
         {
           var positions = [];
-          if (typeof position == "undefined")
+          if (typeof arg_position == "undefined")
           {
-            var index = -1;
+            index = -1;
             do
             {
               index = subscription.filters.indexOf(filter, index + 1);
@@ -271,7 +275,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
             } while (index >= 0);
           }
           else
-            positions.push(position);
+            positions.push(arg_position);
 
           for (var j = positions.length - 1; j >= 0; j--)
           {
@@ -281,7 +285,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
               subscription.filters.splice(position, 1);
               if (subscription.filters.indexOf(filter) < 0)
               {
-                var index = filter.subscriptions.indexOf(subscription);
+                index = filter.subscriptions.indexOf(subscription);
                 if (index >= 0)
                   filter.subscriptions.splice(index, 1);
               }
@@ -343,8 +347,8 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
         for (var text in Filter.knownFilters)
           filters.push(Filter.knownFilters[text]);
       }
-      foreach (var filter in filters)
-      {
+      for (var i = 0; i < filters.length; i++) {
+        var filter = filters[i];
         filter.hitCount = 0;
         filter.lastHit = 0;
       }
@@ -371,7 +375,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
         IO.readFromFile(sourceFile, true, parser, function(e)
         {
           TimeLine.enter("FilterStorage.loadFromDisk() read callback");
-          if (!e && parser.subscriptions.length == 0)
+          if (!e && parser.subscriptions.length === 0)
           {
             // No filter subscriptions in the file, this isn't right.
             e = new Error("No data in the file");
@@ -386,7 +390,9 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
             sourceFile = this.sourceFile;
             if (sourceFile)
             {
-              var [, part1, part2] = /^(.*)(\.\w+)$/.exec(sourceFile.leafName) || [null, sourceFile.leafName, ""];
+              var tmp = /^(.*)(\.\w+)$/.exec(sourceFile.leafName) || [null, sourceFile.leafName, ""],
+                part1 = tmp[1],
+                part2 = tmp[2];
 
               sourceFile = sourceFile.clone();
               sourceFile.leafName = part1 + "-backup" + (++backupIndex) + part2;
@@ -412,11 +418,11 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
       {
         // Old special groups might have been converted, remove them if they are empty
         var specialMap = {"~il~": true, "~wl~": true, "~fl~": true, "~eh~": true};
-        var knownSubscriptions = {__proto__: null};
-        for (var i = 0; i < parser.subscriptions.length; i++)
+        var knownSubscriptions = {__proto__: null}, i;
+        for (i = 0; i < parser.subscriptions.length; i++)
         {
           var subscription = parser.subscriptions[i];
-          if (subscription instanceof SpecialSubscription && subscription.filters.length == 0 && subscription.url in specialMap)
+          if (subscription instanceof SpecialSubscription && subscription.filters.length === 0 && subscription.url in specialMap)
             parser.subscriptions.splice(i--, 1);
           else
             knownSubscriptions[subscription.url] = subscription;
@@ -430,13 +436,13 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
 
         if (parser.userFilters)
         {
-          for (var i = 0; i < parser.userFilters.length; i++)
+          for (i = 0; i < parser.userFilters.length; i++)
           {
             var filter = Filter.fromText(parser.userFilters[i]);
             this.addFilter(filter, null, undefined, true);
           }
         }
-        TimeLine.log("Initializing data done, triggering observers")
+        TimeLine.log("Initializing data done, triggering observers");
 
         this._loading = false;
         FilterNotifier.triggerListeners("load");
@@ -468,11 +474,11 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
         {
           if (e || !statData.exists)
           {
-            var {addonRoot} = require("info");
+            var addonRoot = require("info").addonRoot;
             sourceFile = Services.io.newURI(addonRoot + "defaults/patterns.ini", null, null);
           }
           startRead(sourceFile);
-        }
+        };
 
         if (sourceFile)
           IO.statFile(sourceFile, callback);
@@ -485,47 +491,47 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
 
     _generateFilterData: function(subscriptions)
     {
-      yield "# Adblock Plus preferences";
-      yield "version=" + formatVersion;
+    //   yield "# Adblock Plus preferences";
+    //   yield "version=" + formatVersion;
 
-      var saved = {__proto__: null};
-      var buf = [];
+    //   var saved = {__proto__: null};
+    //   var buf = [];
 
-      // Save filter data
-      for (var i = 0; i < subscriptions.length; i++)
-      {
-        var subscription = subscriptions[i];
-        for (var j = 0; j < subscription.filters.length; j++)
-        {
-          var filter = subscription.filters[j];
-          if (!(filter.text in saved))
-          {
-            filter.serialize(buf);
-            saved[filter.text] = filter;
-            for (var k = 0; k < buf.length; k++)
-              yield buf[k];
-            buf.splice(0);
-          }
-        }
-      }
+    //   // Save filter data
+    //   for (var i = 0; i < subscriptions.length; i++)
+    //   {
+    //     var subscription = subscriptions[i];
+    //     for (var j = 0; j < subscription.filters.length; j++)
+    //     {
+    //       var filter = subscription.filters[j];
+    //       if (!(filter.text in saved))
+    //       {
+    //         filter.serialize(buf);
+    //         saved[filter.text] = filter;
+    //         for (var k = 0; k < buf.length; k++)
+    //           yield buf[k];
+    //         buf.splice(0);
+    //       }
+    //     }
+    //   }
 
-      // Save subscriptions
-      for (var i = 0; i < subscriptions.length; i++)
-      {
-        var subscription = subscriptions[i];
+    //   // Save subscriptions
+    //   for (var i = 0; i < subscriptions.length; i++)
+    //   {
+    //     var subscription = subscriptions[i];
 
-        yield "";
+    //     yield "";
 
-        subscription.serialize(buf);
-        if (subscription.filters.length)
-        {
-          buf.push("", "[Subscription filters]")
-          subscription.serializeFilters(buf);
-        }
-        for (var k = 0; k < buf.length; k++)
-          yield buf[k];
-        buf.splice(0);
-      }
+    //     subscription.serialize(buf);
+    //     if (subscription.filters.length)
+    //     {
+    //       buf.push("", "[Subscription filters]")
+    //       subscription.serializeFilters(buf);
+    //     }
+    //     for (var k = 0; k < buf.length; k++)
+    //       yield buf[k];
+    //     buf.splice(0);
+    //   }
     },
 
     /**
@@ -605,13 +611,13 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
               callbackNotRequired();
             else
             {
-              var [, part1, part2] = /^(.*)(\.\w+)$/.exec(targetFile.leafName) || [null, targetFile.leafName, ""];
+              var tmp = /^(.*)(\.\w+)$/.exec(targetFile.leafName) || [null, targetFile.leafName, ""], part1 = tmp[1], part2 = tmp[2];
               var newestBackup = targetFile.clone();
               newestBackup.leafName = part1 + "-backup1" + part2;
               IO.statFile(newestBackup, function(e, statData)
               {
                 if (!e && (!statData.exists || (Date.now() - statData.lastModified) / 3600000 >= Prefs.patternsbackupinterval))
-                  callbackRequired(part1, part2)
+                  callbackRequired(part1, part2);
                 else
                   callbackNotRequired();
               });
@@ -625,7 +631,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
         TimeLine.enter("FilterStorage.saveToDisk() -> removeLastBackup()");
         var file = targetFile.clone();
         file.leafName = part1 + "-backup" + Prefs.patternsbackups + part2;
-        IO.removeFile(file, function(e) renameBackup(part1, part2, Prefs.patternsbackups - 1));
+        IO.removeFile(file, function(e) {return renameBackup(part1, part2, Prefs.patternsbackups - 1);});
         TimeLine.leave("FilterStorage.saveToDisk() <- removeLastBackup()");
       }.bind(this);
 
@@ -639,7 +645,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
 
           var toName = part1 + "-backup" + (index + 1) + part2;
 
-          IO.renameFile(fromFile, toName, function(e) renameBackup(part1, part2, index - 1));
+          IO.renameFile(fromFile, toName, function(e) {return renameBackup(part1, part2, index - 1);});
         }
         else
         {
@@ -652,7 +658,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
       }.bind(this);
 
       // Do not persist external subscriptions
-      var subscriptions = this.subscriptions.filter(function(s) !(s instanceof ExternalSubscription));
+      var subscriptions = this.subscriptions.filter(function(s) {return !(s instanceof ExternalSubscription);});
       if (!explicitFile)
         this._saving = true;
 
@@ -669,7 +675,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
       // TODO: This method should be asynchronous
       var result = [];
 
-      var [, part1, part2] = /^(.*)(\.\w+)$/.exec(FilterStorage.sourceFile.leafName) || [null, FilterStorage.sourceFile.leafName, ""];
+      var tmp = /^(.*)(\.\w+)$/.exec(FilterStorage.sourceFile.leafName) || [null, FilterStorage.sourceFile.leafName, ""], part1 = tmp[1], part2 = tmp[2];
       for (var i = 1; ; i++)
       {
         var file = FilterStorage.sourceFile.clone();
@@ -692,8 +698,8 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
     if (!(subscription.url in FilterStorage.knownSubscriptions))
       return;
 
-    foreach (var filter in subscription.filters)
-      filter.subscriptions.push(subscription);
+    for (var i = 0; i < subscription.filters.length; i++)
+      subscription.filters[i].subscriptions.push(subscription);
   }
 
   /**
@@ -705,11 +711,11 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
     if (!(subscription.url in FilterStorage.knownSubscriptions))
       return;
 
-    foreach (var filter in subscription.filters)
-    {
-      var i = filter.subscriptions.indexOf(subscription);
-      if (i >= 0)
-        filter.subscriptions.splice(i, 1);
+    for (var i = 0; i < subscription.filters.length; i++) {
+      var filter = subscription.filters[i];
+      var j = filter.subscriptions.indexOf(subscription);
+      if (j >= 0)
+        filter.subscriptions.splice(j, 1);
     }
   }
 
@@ -784,7 +790,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
    * IO.readFromFile() listener to parse filter data.
    * @constructor
    */
-  function INIParser()
+  var INIParser = exports.INIParser = function ()
   {
     this.fileProperties = this.curObj = {};
     this.subscriptions = [];
@@ -808,7 +814,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
       Filter.knownFilters = this.knownFilters;
       var origKnownSubscriptions = Subscription.knownSubscriptions;
       Subscription.knownSubscriptions = this.knownSubscriptions;
-      var match;
+      var match, subscription;
       try
       {
         if (this.wantObj === true && (match = /^(\w+)=(.*)$/.exec(val)))
@@ -826,7 +832,7 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
                   Filter.fromObject(this.curObj);
                 break;
               case "subscription":
-                var subscription = Subscription.fromObject(this.curObj);
+                subscription = Subscription.fromObject(this.curObj);
                 if (subscription)
                   this.subscriptions.push(subscription);
                 break;
@@ -834,9 +840,9 @@ function(IO, Prefs, FilterClasses, SubscriptionClasses, FilterNotifier, TimeLine
               case "subscription patterns":
                 if (this.subscriptions.length)
                 {
-                  var subscription = this.subscriptions[this.subscriptions.length - 1];
-                  foreach (var text in this.curObj)
-                  {
+                  subscription = this.subscriptions[this.subscriptions.length - 1];
+                  for (var i = 0; i < this.curObj.length; i++) {
+                    var text = this.curObj[i];
                     var filter = Filter.fromText(text);
                     subscription.filters.push(filter);
                     filter.subscriptions.push(subscription);

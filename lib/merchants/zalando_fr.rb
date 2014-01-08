@@ -1,19 +1,18 @@
 # -*- encoding : utf-8 -*-
-class ZalandoFr
-  DEFAULT_PRICE_SHIPPING = MerchantHelper::FREE_PRICE
+class ZalandoFr < MerchantHelper
+  def initialize(*)
+    super
 
-  AVAILABILITY_HASH = {
-    "vos modeles preferes" => false,
-    "Plus de 1 500 marques" => false,
-    /tous les produits d[eu] /i => false,
-  }
+    @default_price_shipping = MerchantHelper::FREE_PRICE
+    @image_sub = [/(?<=\/)(selector|detail)(?=\/)/, "large"]
 
-  def initialize url
-    @url = url
-  end
+    @availabilities = {
+      "vos modeles preferes" => false,
+      "Plus de 1 500 marques" => false,
+      /tous les produits d[eu] /i => false,
+      /[\d ]+ articles trouve/i => false,
+    }
 
-  def process_price_shipping version
-    version[:price_shipping_text] = DEFAULT_PRICE_SHIPPING if version[:price_shipping_text].blank?
-    version
+    @config[:setDefaultPriceShippingIfEmpty] = true
   end
 end
