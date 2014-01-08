@@ -22,6 +22,11 @@ class Look < ActiveRecord::Base
   def self.random collection=Look
     collection.offset(rand(collection.count)).first
   end
+  
+  def self.publications_counts_per_day from=(Date.today - 7.days)
+    sql = "select updated_at::DATE, count(*) from looks where is_published='t' and updated_at >= '#{from.to_s(:db)}' group by updated_at::DATE order by updated_at desc"
+    connection.execute(sql)
+  end
 
   def mark_post_as_processed
     self.post.update_attributes(processed_at:Time.now)
