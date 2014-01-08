@@ -235,6 +235,7 @@ div.blogs{
 }
 .blog-post{
   margin:5%;
+  font-family:Georgia;
 }
 .blog-post h5{
   border-bottom: 1px solid #ddd;
@@ -266,7 +267,7 @@ div.blogs{
 .blogs-posts-header form{
   margin-top:20px;
   padding:5px;
-  background-color:#E0E6FF;
+  background-color:#FFD3D7;
   border-radius:5px;
 }
 .blogs-posts-header form input[type="submit"]{
@@ -280,5 +281,25 @@ div.blogs{
 .blogs-posts-header form label{
   color:#646E99;
   font-size:12px;
-  font-family: Georgia, sans-serif;
+  font-family: Georgia;
+}
+.blog-post span.tag{
+  display:inline-block;
+  border-radius:16px;
+  width:16px;
+  height:16px;
+  color:white;
+  padding:3px;
+  text-align:center;
+  font-family: Georgia;
+}
+.blog-post span.has-look-tag-true{
+  background-color:#FF74B8;
+}
+.blog-post span.has-look-tag-false,
+.blog-post span.has-look-published-tag-false{
+  background-color:#A6A6A6;
+}
+.blog-post span.has-look-published-tag-true{
+  background-color:#FF17EA;
 }

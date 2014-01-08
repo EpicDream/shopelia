@@ -28,7 +28,7 @@ class Blog < ActiveRecord::Base
       post.blog_id = self.id
       post.save
     end
-    breakdown?
+    self.reload.breakdown?
     self
   rescue => e
     report_incident(:fetch, e.message)
