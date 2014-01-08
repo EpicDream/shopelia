@@ -143,6 +143,10 @@ Crawler.prototype.selectOption = function (elems, value) {
     elems = elems.filter("[href='"+value.href+"']");
     if (elems.length === 0) elems.end(); // undo last filter.
   }
+  if (elems.length > 1 && value.value) {
+    elems = elems.filter("[value='"+value.value+"']");
+    if (elems.length === 0) elems.end(); // undo last filter.
+  }
   if (elems.length > 1 && value.title) {
     elems = elems.filter("[title='"+value.title+"']");
     if (elems.length === 0) elems.end(); // undo last filter.
