@@ -1,6 +1,6 @@
-include ActionView::Helpers::TextHelper
-
 class Post < ActiveRecord::Base
+  include ActionView::Helpers::TextHelper
+  
   belongs_to :blog
   belongs_to :look
   
@@ -46,6 +46,14 @@ class Post < ActiveRecord::Base
       links << { text:(text || "Default"), url:url } if Merchant.from_url(url, false).nil?
     end
     links
+  end
+  
+  def self.create_missing_looks_for_blog blog
+    posts = blog.posts.where("not exists(select id from looks where looks.id=posts.look_id) and published_at >= '2013-12-01'")
+    posts.each do |post|
+      post.update_attributes(processed_at:nil)
+      post.convert
+    end
   end
 
   private
