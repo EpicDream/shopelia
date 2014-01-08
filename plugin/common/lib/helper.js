@@ -57,18 +57,30 @@ var BrandalleyHelper = {
   },
 };
 
+var ZaraHelper = {
+  crawler: {
+    atLoad: function(callback) {
+      var btn = document.querySelector("#wwButtom");
+      if (! btn)
+        return callback();
+      btn.click(); // Go to selected store
+      setTimeout(function () {
+        callback();
+      }, 1000);
+    },
+  },
+};
+
 var PlacedestendancesHelper = {
   crawler: {
     atLoad: function(callback) {
-      // setTimeout(function () {
-        var select = document.querySelector("#taille_id");
-        if (! select)
-          return callback();
-        select.click(); // open and load available sizes
-        setTimeout(function () {
-          callback();
-        }, 1000);
-      // }, 1000);
+      var select = document.querySelector("#taille_id");
+      if (! select)
+        return callback();
+      select.click(); // open and load available sizes
+      setTimeout(function () {
+        callback();
+      }, 1000);
     },
   },
 };
@@ -84,7 +96,18 @@ var SpartooHelper = {
             src = m[1];
           return src;
         });
-      }
+      },
+    }
+  },
+};
+
+var ShopbopHelper = {
+  crawler: {
+    parseField: {
+      availability: function (elems) {
+        if (elems.length === 1 && elems[0].id === "soldOutImage")
+          return ["Sold out"];
+      },
     }
   },
 };
@@ -105,6 +128,10 @@ var Helper = {
       return PlacedestendancesHelper[context];
     } else if (url.search(/^https?:\/\/[\w-]+\.spartoo\.com/) !== -1) {
       return SpartooHelper[context];
+    } else if (url.search(/^https?:\/\/www\.zara\.com/) !== -1) {
+      return ZaraHelper[context];
+    } else if (url.search(/^https?:\/\/www\.shopbop\.com/) !== -1) {
+      return ShopbopHelper[context];
     }
   }
 };
