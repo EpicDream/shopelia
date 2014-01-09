@@ -9,13 +9,14 @@ body {
 
 .column {
   width: 30%;
-  margin: 4.2% 1.66666667%;
-  float: left;
+  display:inline-block;
+  padding:10px;
+  background:white;
+  margin:20px 0 0 0;
+  height:auto;
 }
 
 .column img {
-  display: block;
-  max-width: 100%;
   margin: 0 auto;
 }
 
@@ -29,7 +30,9 @@ body {
   padding: .75em .5em;
   margin: -4em 0 0 -.5em;
   font-family: "Helvetica Neau", helvetica;
+  font-size:1em;
   display: block;  
+  opacity:0.8;
 }
 
 .ribbon-content:before {
