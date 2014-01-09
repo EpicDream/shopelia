@@ -28,7 +28,6 @@ class Blog < ActiveRecord::Base
       post.blog_id = self.id
       post.save
     end
-    self.reload.breakdown?
     self
   rescue => e
     report_incident(:fetch, e.message)
@@ -61,9 +60,7 @@ class Blog < ActiveRecord::Base
   end
 
   def breakdown?
-    breakdown = !self.posts.first || self.posts.first.published_at < Time.now - 1.month
-    report_incident(:check_breakdown, "No post since 1 month...") if breakdown
-    breakdown
+    !self.posts.first || self.posts.first.published_at < Time.now - 1.month
   end
   
   private
