@@ -8,13 +8,14 @@ define 'src/chrome/adblock', ['chrome_logger', 'satconf'],
     id: "cfhdojbkjhnklbpkdaibdccddilifddb"
     lastRestart: Date.now()
     restart: (callback) ->
-      logger.debug("AdBlock : restart !")
+      @restartTimerId = undefined
       @onRestartCb = callback
       if this.canRestart()
-        @saturn.pause()
+        logger.debug("AdBlock : is restarting !")
         this.disable()
       else
-        setInterval (=> this.restart(callback)), 1000*60*5 # 5 min
+        logger.debug("AdBlock : Saturn is busy, will try to restart later.")
+        @restartTimerId = setTimeout (=> this.restart(callback)), 1000*60 # 1 min
     disable: () ->
       logger.debug("Disable AdBlock")
       @restarting = true
@@ -25,7 +26,6 @@ define 'src/chrome/adblock', ['chrome_logger', 'satconf'],
     onRestart: () ->
       logger.debug("AdBlock restarted !")
       @restarting = false
-      @saturn.resume()
       @lastRestart = Date.now()
       if @restartEveryDelay
         this.restartIn(@restartEveryDelay)
@@ -36,7 +36,7 @@ define 'src/chrome/adblock', ['chrome_logger', 'satconf'],
     canRestart: () ->
       return @saturn.canRestart()
     restartIn: (ms) ->
-      setTimeout( () =>
+      @restartTimerId = setTimeout( () =>
         this.restart()
       , ms)
     restartAt: (hour, min) ->
@@ -49,10 +49,12 @@ define 'src/chrome/adblock', ['chrome_logger', 'satconf'],
       return if (! ms)
       @restartEveryDelay = ms
       this.restartIn(@restartEveryDelay)
+    cancelRestart: () ->
+      clearTimeout(@restartTimerId)
   }
 
   chrome.management.onDisabled.addListener (extension) ->
     if extension.id is AdBlock.id && AdBlock.restarting
-      AdBlock.enable()
+      setTimeout (-> AdBlock.enable()), 100
 
   return AdBlock

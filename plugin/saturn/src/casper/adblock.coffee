@@ -17,11 +17,14 @@ define ['logger', "vendor/adblock/filterStorage", "vendor/adblock/filterClasses"
    # Class implementing public Adblock Plus API
    # @class
   AdBlock = {
+    filesList: ["easylist.txt", "easylist_fr.txt"]
+    jsonBackup: "adblock.json"
+
     saveOnDisk: (filename) ->
-      fs.write(filename || "sauvegarde.adblock", defaultMatcher.toJSON(true))
+      fs.write(filename || @jsonBackup, defaultMatcher.toJSON(true))
 
     loadFromDisk: (filename) ->
-      o = JSON.parse fs.read(filename || "sauvegarde.adblock")
+      o = JSON.parse fs.read(filename || @jsonBackup)
       defaultMatcher.fromJSON(o);
       # for key, value in o
       #   defaultMatcher[key] = value

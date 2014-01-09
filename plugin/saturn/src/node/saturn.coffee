@@ -41,7 +41,7 @@ define ['http', 'url', 'child_process', "logger", "mapping", "src/saturn"], (Htt
       @sessions[prod.sessionPort] = prod
 
       logger.debug("[NodeJS@#{port}] Going to launch casper for product #{if prod.id? then "##{prod.id}" else prod.url}")
-      session = ChildProcess.spawn('casperjs', ["--web-security=false", "dist/casper.js", "--port="+port, "--node_port="+@serverPort])
+      session = ChildProcess.spawn('casperjs', ["--web-security=false", "build/casper.js", "--port="+port, "--node_port="+@serverPort, "--adblock"])
       session.stdout.on 'data', (chunk) =>
         logger.print(chunk.toString().trim())
       session.stderr.on 'data', (chunk) =>

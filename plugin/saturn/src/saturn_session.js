@@ -32,6 +32,7 @@ SaturnSession.counter = 0;
 
 SaturnSession.prototype.start = function() {
   logger.info(this.logId(), "Start crawling !", logger.isDebug() ? this : "(url="+this.url+")");
+  this.startTime = Date.now();
   this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE);
   this.openUrl();
 };
@@ -244,7 +245,7 @@ SaturnSession.prototype.sendFinalVersions = function() {
     this.endSession();
   } else {
     this.sendResult({versions: [this._firstVersion], options_completed: true}); //
-    logger.info(this.logId(), "Finish crawling !");
+    logger.info(this.logId(), "Finish crawling ! ("+(Date.now()-this.startTime)+" ms)");
     this.endSession();
   }
 };
