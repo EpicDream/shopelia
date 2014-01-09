@@ -9,6 +9,10 @@ module Scrapers
     class Scraper
       attr_accessor :url
       DATE_PATTERN = /(\d{1,2}[\s\.\/]+[a-zA-Z\d]+[\s\.\/]+\d{2,4})/
+      POST_NODE_XPATHS = [
+        "article", "div.post", "div.blogselection > div", "div.entry", "div.single", "div.post-wrap", "div.post-body", 
+        "div.article", "div.blog_item", "div.entrybody"
+      ]
       
       def initialize url=nil
         @url = url
@@ -28,7 +32,12 @@ module Scrapers
         ProductsFinder.new(block, @url).products
       end
       
-      def date block
+      def date block #TODO find a gem/lib or do it more general way
+        date_node = block.search(".//*[@itemprop='datePublished']").first
+        if date_node
+          date = date_node.attribute('title').value
+          return Date.parse_international(date)
+        end
         block.text =~ DATE_PATTERN
         unless $1
           header = block.search(".//preceding::h2").last
@@ -73,8 +82,10 @@ module Scrapers
       def blocks
         page = @agent.get(@url)
         page = from_blogspot_frame(page) || page
-        page.search("article, div.post, div.blogselection > div, div.entry, div.single, div.post-wrap, div.post-body, div.article, div.blog_item, div.entrybody")
-      rescue
+        POST_NODE_XPATHS.each { |xpath|  
+          blocks = page.search(xpath)
+          return blocks if blocks.any?
+        }
         []
       end
       

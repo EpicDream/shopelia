@@ -35,6 +35,15 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     end
   end
   
+  test "ensure date is not a string, search in itemprop datePublished" do
+    skip
+    @blog.url = "http://chicfashionworld.com"
+    posts = @blog.posts
+    posts.each do |post|
+      assert !post.published_at.is_a?(String)
+    end
+  end
+  
 end
 
   
