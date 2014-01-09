@@ -7,6 +7,38 @@ body {
   margin: 0 auto;
 }
 
+section.header table{
+  margin:10px 0 5px 33%;
+}
+section.header table td{
+  border:thin solid #D4D4D4;
+  text-align:right;
+  font-size:12px;
+  padding:5px;
+}
+
+span.total-looks{
+  color:white;
+  display:inline-block;
+  float:left;
+  width:160px;
+  height:160px;
+  font-size:50px;
+  background-color:#FF6BC4;
+  border-radius:80px;
+  margin:5px 0 0 5px;
+}
+span.total-looks i:first-child{
+  display:block;
+  text-align:center;
+  margin:40% 0 0 0;
+}
+span.total-looks i:nth-child(2){
+  font-size:12px;
+  display:block;
+  text-align:center;
+  margin:30px 0 0 0px;
+}
 .column {
   width: 30%;
   display:inline-block;
