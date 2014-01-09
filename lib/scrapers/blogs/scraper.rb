@@ -32,10 +32,11 @@ module Scrapers
         ProductsFinder.new(block, @url).products
       end
       
-      def date block #TODO find a gem/lib or do it more general way
-        date_node = block.search(".//*[@itemprop='datePublished']").first
+      def date block #TODO find a gem/lib or extract it
+        date_node = block.search(".//*[@itemprop='datePublished'] | .//time").first
         if date_node
-          date = date_node.attribute('title').value
+          date = date_node.attribute('title').value rescue nil
+          date ||= date_node.attribute('datetime').value
           return Date.parse_international(date)
         end
         block.text =~ DATE_PATTERN
@@ -46,6 +47,7 @@ module Scrapers
         date = $1
         date =~ /\.(\d\d)$/ ? date[-2..-1] = "20#{$1}" : date 
         date = Date.parse_international(date) if date rescue nil
+        return date if date.is_a?(String)
         date = Time.now if date.nil? || date > Date.today #in case of parse error
         date
       end

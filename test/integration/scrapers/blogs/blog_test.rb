@@ -35,7 +35,7 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     end
   end
   
-  test "ensure date is not a string, search in itemprop datePublished" do
+  test "search in itemprop datePublished" do
     skip
     @blog.url = "http://chicfashionworld.com"
     posts = @blog.posts
