@@ -231,16 +231,32 @@ Matcher.fromJSON = function(o) {
   m.filterByKeyword = {};
   m.keywordByFilter = {};
   for (var keyword in o.filterByKeyword) {
-    console.log(keyword)
-    var f = o.filterByKeyword[keyword];
-    var type = f.type;
-    // if (! FilterClasses[type]) {
-      console.log(type);
-    //   console.log(Object.keys(f));
-    // }
-    var filter = FilterClasses[type].fromJSON(f);
-    m.filterByKeyword[keyword] = filter;
-    m.keywordByFilter[filter] = keyword;
+    var ary = o.filterByKeyword[keyword];
+    if (ary.length === undefined) {
+      ary.length = 1;
+      ary[0] = ary;
+    }
+    for (var i = 0; i < ary.length; i++) {
+      var f = ary[i];
+      var type = f.type;
+      try {
+        var filter = FilterClasses[type].fromJSON(f);
+        if (m.filterByKeyword[keyword]) {
+          if (m.filterByKeyword[keyword].length === 1)
+            m.filterByKeyword[keyword] = [m.filterByKeyword[keyword], filter];
+          else
+            m.filterByKeyword[keyword].push(filter);
+        } else
+          m.filterByKeyword[keyword] = filter;
+        m.keywordByFilter[filter.text] = keyword;
+      } catch (err) {
+        console.log(err);
+        console.log(keyword);
+        console.log(type);
+        console.log(JSON.stringify(f));
+        throw err;
+      }
+    }
   }
   return m;
 };

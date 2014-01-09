@@ -220,7 +220,7 @@ InvalidFilter.fromJSON = function (o, f) {
   if (! f)
     f = new InvalidFilter(o.text, o.reason);
   Filter.fromJSON.call(this, o, f);
-  f.reason = reason;
+  f.reason = o.reason;
   return f;
 };
 
@@ -630,8 +630,9 @@ RegExpFilter.prototype =
     o.contentType = this.contentType;
     o.matchCase = this.matchCase;
     o.thirdParty = this.thirdParty;
-    o.regexp = this.regexp;
-    o.regexp = this.regexp;
+    o.regexp = ''+this.regexp;
+    if (o.regexp.slice(-1) === "i")
+      o.regexp = o.regexp.slice(0, -1);
     o.domainSeparator = this.domainSeparator;
     return o;
   }
@@ -644,15 +645,13 @@ RegExpFilter.fromJSON = function (o, f) {
   f.contentType = o.contentType;
   f.matchCase = o.matchCase;
   f.thirdParty = o.thirdParty;
-  f.__defineGetter__("regexp", function() {return o.regexp;});
+  var regexp = new RegExp(o.regexp.substr(1, o.regexp.length - 2), o.matchCase ? "" : "i");
+  f.__defineGetter__("regexp", function() {return regexp;});
   f.domainSeparator = o.domainSeparator;
   return f;
 };
 
-RegExpFilter.prototype.__defineGetter__("0", function()
-{
-  return this;
-});
+RegExpFilter.prototype.__defineGetter__("0", function () {return this;});
 
 /**
  * Creates a RegExp filter from its text representation
@@ -815,7 +814,7 @@ BlockingFilter.prototype =
 
 BlockingFilter.fromJSON = function (o, f) {
   if (! f)
-    f = new BlockingFilter(o.text, o.regexpSource, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.collapse);
+    f = new BlockingFilter(o.text, o.regexp, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.collapse);
   RegExpFilter.fromJSON.call(this, o, f);
   f.collapse = o.collapse;
   return f;
@@ -860,9 +859,9 @@ WhitelistFilter.prototype =
   }
 };
 
-WhitelistFilter.fromJSON = function (o) {
+WhitelistFilter.fromJSON = function (o, f) {
   if (! f)
-    f = new WhitelistFilter(o.text, o.regexpSource, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.siteKeys);
+    f = new WhitelistFilter(o.text, o.regexp, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.siteKeys);
   RegExpFilter.fromJSON.call(this, o, f);
   f.siteKeys = o.siteKeys;
   return f;
