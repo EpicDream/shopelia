@@ -50,7 +50,7 @@ class Post < ActiveRecord::Base
   
   def self.create_missing_looks_for_blog blog, after=nil
     after ||= Date.parse('2013-12-01')
-    posts = blog.posts.where("not exists(select id from looks where looks.id=posts.look_id) and published_at >= #{after.to_s(:db)}")
+    posts = blog.posts.where("not exists(select id from looks where looks.id=posts.look_id) and published_at >= '#{after.to_s(:db)}'")
     posts.each do |post|
       post.update_attributes(processed_at:nil)
       post.convert
