@@ -9,7 +9,7 @@ casper = require('casper').create(
 utils = require('utils')
 Server = require('webserver').create()
 
-requirejs ['casper_logger', "src/casper/session", 'satconf'], (logger, CasperSession) ->
+requirejs ['casper_logger', "src/casper/session", 'src/casper/adblock', 'satconf'], (logger, CasperSession, AdBlock) ->
   # DEFINE CONSTANTS
   HOST = "127.0.0.1"
   PORT = casper.cli.get("port")
@@ -31,6 +31,13 @@ requirejs ['casper_logger', "src/casper/session", 'satconf'], (logger, CasperSes
   casper.on "step.error", (msg) ->
     logger.error(caspId, "Step: "+msg)
 
+  # ADBLOCK
+  if casper.cli.get("adblock")
+    startTime = Date.now()
+    AdBlock.loadFromDisk()
+    casper.on 'page.resource.requested', (requestData, request) ->
+      request.abort() if AdBlock.isBlacklisted(requestData.url, casper.page.url)
+
   # CASPER_SATURN INIT
 
   # Retransmit signal emited in page with casper event system.
@@ -46,10 +53,10 @@ requirejs ['casper_logger', "src/casper/session", 'satconf'], (logger, CasperSes
       __utils__.sat_emit ?= (signame, data) ->
         window.callPhantom({signame: signame, data: data}) if typeof window.callPhantom == 'function'
       requirejs ['casper_logger', 'src/casper/crawler'], (logger, Crawler) ->
-        return if Crawler.launched
-        Crawler.launched = true
+        return if window.crawler?
         logger.level = logger.WARN
-        Crawler.goNextStep(1)
+        window.crawler = new Crawler()
+        window.crawler.goNextStep()
     return true
 
   saturn = {
