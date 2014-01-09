@@ -2,43 +2,33 @@
 # Author : Vincent Renaudineau
 # Created at : 2013-09-05
 
-define ['logger', "vendor/adblock/filterStorage", "vendor/adblock/filterClasses", 'vendor/adblock/matcher'],
-(logger, FilterStorage, FilterClasses, Matcher) ->
+define ['logger', "vendor/adblock/filterClasses", 'vendor/adblock/matcher'],
+(logger, FilterClasses, Matcher) ->
   
   fs = require('fs')
   
   Filter = FilterClasses.Filter
-  FilterStorage = FilterStorage.FilterStorage
   BlockingFilter = FilterClasses.BlockingFilter
   defaultMatcher = Matcher.defaultMatcher
 
-  externalPrefix = "~external~"
-
-   # Class implementing public Adblock Plus API
-   # @class
+  # Class implementing public Adblock Plus API
+  # @class
   AdBlock = {
     filesList: ["easylist.txt", "easylist_fr.txt"]
     jsonBackup: "adblock.json"
 
     saveOnDisk: (filename) ->
-      fs.write(filename || @jsonBackup, defaultMatcher.toJSON(true))
+      fs.write(filename || @jsonBackup, JSON.stringify(defaultMatcher))
 
     loadFromDisk: (filename) ->
       o = JSON.parse fs.read(filename || @jsonBackup)
       defaultMatcher.fromJSON(o);
-      # for key, value in o
-      #   defaultMatcher[key] = value
 
     # addSubscriptionFile: function(/**String*/ filename)
     addSubscriptionFile: (filename) ->
-      data = fs.read(filename)
-      lines = data.split("\n")
-
-      filters = (filter for filter in this.addPatterns(lines) when filter isnt null)
-      logger.verbose("Find #{filters.length} filters.")
-
-      for filter in filters
-        defaultMatcher.add(filter)
+      lines = fs.read(filename).split("\n")
+      length = this.addPatterns(lines).length
+      logger.verbose("Find #{length} filters.")
     
     # Adds user-defined filter to the list
     # addPattern: function(/**String*/ filter)
@@ -46,7 +36,7 @@ define ['logger', "vendor/adblock/filterStorage", "vendor/adblock/filterClasses"
       filter = Filter.fromText(Filter.normalize(filter))
       if filter
         filter.disabled = false
-        FilterStorage.addFilter(filter)
+        defaultMatcher.add(filter)
       filter
     
     # Adds user-defined filters to the list
@@ -54,6 +44,8 @@ define ['logger', "vendor/adblock/filterStorage", "vendor/adblock/filterClasses"
     addPatterns: (filters) ->
       filters.map (filter) ->
         AdBlock.addPattern(filter)
+      .filter (filter) ->
+        filter != null
 
     isBlacklisted: (url, parentUrl) ->
       return null if ! url

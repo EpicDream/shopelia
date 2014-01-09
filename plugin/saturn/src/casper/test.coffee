@@ -10,8 +10,10 @@ requirejs ['src/casper/adblock'],
   startDate = Date.now()
 
   if casper.cli.get("load")
+    console.log(AdBlock.jsonBackup)
     AdBlock.loadFromDisk()
   else
+    console.log('./easylist.txt')
     AdBlock.addSubscriptionFile('./easylist.txt')
     AdBlock.addSubscriptionFile('./easylist_fr.txt')
   console.log("init ! (en #{Date.now() - startDate} ms)")
