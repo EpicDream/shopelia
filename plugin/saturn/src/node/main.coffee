@@ -38,3 +38,4 @@ requirejs ['optimist', 'node_logger', 'src/node/saturn', 'satconf'], (optimist, 
   logger.level = logger.INFO
   saturn = new NodeSaturn(serverPort)
   logger.info("[NodeJS] Server listen on port " + serverPort)
+  saturn.startPolling()

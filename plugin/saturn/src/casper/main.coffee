@@ -91,20 +91,26 @@ requirejs ['casper_logger', "src/casper/session", 'src/casper/adblock', 'satconf
             response.closeGracefully()
             return casper.exit()
       logger.debug "#{caspId} Server launch. Listen on #{HOST}:#{PORT}"
-      logger.debug "#{caspId} Send ready signal to NodeJS server on port #{NODE_PORT}"
 
-      casper.evaluate( (host, nodePort, port) ->
-        __utils__.sendAJAX("http://#{host}:#{nodePort}/casper-ready?session=#{port}", 'GET', null, true)
-      , HOST, NODE_PORT, PORT)
-      casper.then () =>
-        logger.debug "#{caspId} Ajax request sent."
-      casper.waitFor () =>
-        @initRequest
-      , null, () =>
-        logger.error("#{caspId} no product received !")
-        casper.exit(1)
-      , 5*60*1000 # 5 min
-
+      if casper.cli.get("prod")
+        try
+          prod = JSON.parse casper.cli.get("prod")
+          this.createSession(prod)
+        catch err
+          logger.error "#{caspId} Fail to parse '#{casper.cli.get("prod")}'"
+      else
+        logger.debug "#{caspId} Send ready signal to NodeJS server on port #{NODE_PORT}"
+        casper.evaluate( (host, nodePort, port) ->
+          __utils__.sendAJAX("http://#{host}:#{nodePort}/casper-ready?session=#{port}", 'GET', null, true)
+        , HOST, NODE_PORT, PORT)
+        casper.then () =>
+          logger.debug "#{caspId} Ajax request sent."
+        casper.waitFor () =>
+          @initRequest
+        , null, () =>
+          logger.error("#{caspId} no product received !")
+          casper.exit(1)
+        , 5*60*1000 # 5 min
 
     createSession: (prod) ->
       @session = new CasperSession(this, prod)
