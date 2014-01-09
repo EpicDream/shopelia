@@ -27,3 +27,4 @@ plugin/priv_keys/
 public/images
 .DS_Store
 dump.rdb
+.ruby-version
