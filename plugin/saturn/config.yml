@@ -1,5 +1,5 @@
 ---
-"version": "3.3.12"
+"version": "3.4.0"
 "default":
   #### Global options
   ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
@@ -46,6 +46,8 @@
 "prod-dev":
   "consum": true
   "run_mode" : "auto"
+  "ADBLOCK_RESTART_DELAY": 60000 # 1min
+  "CHROME_RESTART_DELAY": 300000 # 5min
 ## When all is OK, test in prod condition but don't consum product from real prod.
 "staging":
   "run_mode" : "auto"
