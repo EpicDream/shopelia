@@ -91,10 +91,9 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
 
     evalAndThen: (cmd, callback) ->
       @casper.callback = callback if callback?
-      casper.evaluate (action, mapping, option, value) ->
-        requirejs ['casper_logger', 'src/casper/crawler'], (logger, Crawler) ->
-          Crawler.doNext(action, mapping, option, value)
-      , cmd.action, cmd.mapping, cmd.option, cmd.value
+      casper.evaluate (hash) ->
+        window.crawler.doNext(hash)
+      , cmd
       casper.waitFor =>
         @evalReturns is true
       , () =>

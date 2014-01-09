@@ -6,12 +6,69 @@ define(["logger", "jquery", "html_utils", "helper", "core_extensions"], function
   "use strict";
 
 var Crawler = function (url, doc) {
+  var that = this;
+
   this.doc = doc || window.document;
   this.url = url || location.href;
   this.helper = Helper.get(this.url, 'crawler');
+
+  this.onbeforeunloadBack = window.onbeforeunload;
+  window.onbeforeunload = function () {
+    that.pageWillBeUnloaded = true;
+    if (typeof that.onbeforeunloadBack === 'function')
+      return that.onbeforeunloadBack();
+  };
+
+  $(document).ready(this.onDocumentReady.bind(this));
 };
 
 Crawler.OPTION_FILTER = /^$|choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible|non disponible|rupture de stock/i;
+Crawler.DELAY_BETWEEN_OPTIONS = 1500;
+
+Crawler.prototype.onDocumentReady = function () {
+  if (this.helper && this.helper.atLoad) {
+    this.helper.atLoad(this.goNextStep.bind(this));
+  } else
+    // To handle redirection, that throws false 'complete' state.
+    setTimeout(this.goNextStep.bind(this), 100);
+};
+
+Crawler.prototype.goNextStep = function () {
+  throw "Crawler.goNextStep is a virtual function MUST BE reimplemented.";
+};
+
+Crawler.prototype.waitAjax = function () {
+  if (this.helper && this.helper.waitAjax) {
+    this.helper.waitAjax(this.goNextStep.bind(this));
+  } else if (! this.pageWillBeUnloaded)
+    setTimeout(this.goNextStep.bind(this), Crawler.DELAY_BETWEEN_OPTIONS);
+};
+
+Crawler.prototype.doNext = function (hash) {
+  logger.debug("ProductCrawl", hash.action, "task received", hash);
+  key = "option"+hash.option;
+  switch (hash.action) {
+    case "getOptions":
+      if (hash.mapping[key]) {
+        result = this.getOptions(hash.mapping[key].paths);
+      } else
+        result = [];
+      break;
+    case "setOption":
+      result = this.setOption(hash.mapping[key].paths, hash.value);
+      break;
+    case "crawl":
+      result = this.crawl(hash.mapping);
+      break;
+    default:
+      logger.error("Unknow command", hash.action);
+      result = false;
+  }
+  // wait minimal to let page reload on url change
+  if (hash.action === "setOption")
+    setTimeout(this.waitAjax.bind(this), 1000);
+  return result;
+};
 
 //
 Crawler.prototype.searchImages = function (field, elems) {
