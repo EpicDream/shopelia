@@ -9,21 +9,24 @@ var logger = {
   // server_level: 0,
 
   NONE: 0,
+  PRINT: 0.5,
   FATAL: 1,
   ERROR: 1,
   WARN: 2,
   WARNING: 2,
   INFO: 3,
+  VERB: 4,
   VERBOSE: 4,
   DEBUG: 5,
   ALL: 6,
 
   code2str: {
     0: "NONE",
+    "0.5": "PRINT",
     1: "ERROR",
     2: "WARN",
     3: "INFO",
-    4: "VERBOSE",
+    4: "VERB",
     5: "DEBUG",
     6: "ALL",
   },
@@ -37,9 +40,9 @@ logger.warn = function() { logger._log('WARN', arguments); };
 logger.warning = logger.warn;
 logger.good = function() { logger._log('GOOD', arguments); };
 logger.info = function() { logger._log('INFO', arguments); };
-logger.verbose = function() { logger._log('VERBOSE', arguments); };
+logger.verbose = function() { logger._log('VERB', arguments); };
 logger.debug = function() { logger._log('DEBUG', arguments); };
-logger.print = function() { if (logger.level !== logger.NONE) console.info.apply(console, arguments); };
+logger.print = function() { logger._log('PRINT', arguments); };
 
 logger.isFatal = function() { return this.level >= this.FATAL; };
 logger.isError = function() { return this.level >= this.ERROR; };
@@ -66,7 +69,7 @@ logger.header = function (level, date) {
 logger.format = function(level, args) {
   console.assert(typeof level === 'string', 'level must be a string');
   console.assert(typeof args === 'object' && args instanceof Array, 'args must be an Array');
-  var res = logger.header(level);
+  var res = level != "PRINT" ? logger.header(level) : [""];
 
   for ( i = 0 ; i < args.length ; i++ ) {
     arg = args[i];
@@ -119,6 +122,10 @@ logger.write = function (level, args) {
       if (logger.level >= logger.DEBUG)
         console.debug.apply(console, args);
       break;
+    case 'PRINT' :
+      if (logger.level >= logger.NONE)
+        console.info.apply(console, args);
+      break;
     default :
       if (logger.level >= logger.INFO)
         console.info.apply(console, args);
@@ -128,6 +135,9 @@ logger.write = function (level, args) {
 
 logger._log = function(level, args) {
   var tmp, i, argsArray;
+
+  if (logger[level] > logger.level)
+    return;
 
   if (typeof args !== 'object' || args.length === undefined) {
     args = [args];
@@ -149,9 +159,6 @@ logger._log2 = function(level, args) {
   argsArray = logger.format(level, args);
   if (logger[level] <= logger.level)
     logger.write(level, argsArray);
-
-  // if (logger.server_level >= logger[level])
-  //   logger.writeToServer(argsArray);
 
   return argsArray;
 };

@@ -49,5 +49,14 @@ define(['logger'], function (logger) {
       var str = logger.stringify(["[DEBUG] %s %s", "toto", 5]);
       expect(str).toBe("[DEBUG] toto 5");
     });
+
+    it('methods', function () {
+      expect(function() {logger.debug("Test de debug", 1, {toto: 42});}).not.toThrow();
+      expect(function() {logger.verbose("Test de verbose", 1, {toto: 42});}).not.toThrow();
+      expect(function() {logger.info("Test de info", 1, {toto: 42});}).not.toThrow();
+      expect(function() {logger.warn("Test de warn", 1, {toto: 42});}).not.toThrow();
+      expect(function() {logger.err("Test de err", 1, {toto: 42});}).not.toThrow();
+      expect(function() {logger.print("Test de print", 1, {toto: 42});}).not.toThrow();
+    });
   });
 });
