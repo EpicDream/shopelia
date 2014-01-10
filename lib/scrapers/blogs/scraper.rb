@@ -73,6 +73,7 @@ module Scrapers
           return blocks if blocks.any?
         }
         []
+      rescue []
       end
       
       def url=url
@@ -86,7 +87,7 @@ module Scrapers
        return unless frame = page.search(".//frame[contains(@src, 'blogspot')]").first
        src = frame.attribute('src').value
        @url = src
-       @agent.get(@url)
+       @agent.get(@url) rescue nil
       end
       
       def header block
