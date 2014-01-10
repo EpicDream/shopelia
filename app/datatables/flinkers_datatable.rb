@@ -26,7 +26,7 @@ class FlinkersDatatable
         flinker.email,
         image_tag(flinker.avatar.blank? ? "empty.png" : flinker.avatar.url(:thumb), class:"avatar"),
         number_with_delimiter(flinker.looks_count),
-        number_with_delimiter(flinker.followers_count),
+        number_with_delimiter(flinker.follows_count),
         number_with_delimiter(flinker.likes_count),
         flinker.url,
         flinker.is_publisher? ? "Yes" : "No",

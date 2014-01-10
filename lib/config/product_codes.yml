@@ -14,6 +14,31 @@ codes:
   - high-heels
   - hat
   - leggings
+  - blazer
+  - necklace
+  - bracelet
+  - coat
+  - pants
+  - flats
+  - sweat
+  - collar
+  - perfecto
+  - shirt
+  - belt
+  - crown
+  - backpack
+  - top
+  - tshirt
+  - jacket
+  - scarf
+  - blouse
+  - short
+  - jumper
+  - earrings
+  - ring
+  - tights
+  - gloves
+  - handkerchief
 translations:
   pull:
     FR: Pull
@@ -60,6 +85,78 @@ translations:
   leggings:
     FR: Leggings
     UK: Leggings
-
-
-
+  blazer:
+    FR: Blazer
+    UK: Blazer
+  necklace:
+    FR: Collier
+    UK: Necklace
+  bracelet:
+    FR: Bracelet
+    UK: Bracelet
+  coat:
+    FR: Manteau
+    UK: Coat
+  pants:
+    FR: Pantalon
+    UK: Pants
+  flats:
+    FR: Ballerines
+    UK: Flats
+  sweat:
+    FR: Sweat
+    UK: Sweat
+  collar:
+    FR: Faux col
+    UK: Fake collar
+  perfecto:
+    FR: Perfecto
+    UK: Perfecto
+  shirt:
+    FR: Shirt
+    UK: Shirt
+  belt:
+    FR: Ceinture
+    UK: Belt
+  crown:
+    FR: Couronne
+    UK: Crown
+  backpack:
+    FR: Sac à dos
+    UK: Backpack
+  top:
+    FR: Top
+    UK: Top
+  tshirt:
+    FR: T-Shirt
+    UK: T-Shirt
+  jacket:
+    FR: Veste
+    UK: Jacket
+  scarf:
+    FR: Echarpe
+    UK: Scarf
+  blouse:
+    FR: Blouse
+    UK: Blouse
+  short:
+    FR: Short
+    UK: Short
+  jumper:
+    FR: Jumper
+    UK: Jumper
+  earrings:
+    FR: "Boucles d'oreille"
+    UK: Earrings
+  ring:
+    FR: Bague
+    UK: Ring
+  tights:
+    FR: Collants
+    UK: Tights
+  handkerchief:
+    FR: Pochette
+    UK: Handkerchief
+  gloves:
+    FR: Gants
+    UK: Gloves
