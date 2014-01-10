@@ -46,45 +46,31 @@ span.total-looks i:nth-child(2){
   background:white;
   margin:20px 0 0 0;
   height:auto;
+  vertical-align:bottom;
 }
 
-.column img {
+.column a div img {
   margin: 0 auto;
 }
-
-.ribbon {
-  font-size: 1em;
-  width: 100%;
-  position: relative;
-  background: #E01B6A;
-  color: #fff;
-  text-align: center;
-  padding: .75em .5em;
-  margin: -4em 0 0 -.5em;
-  font-family: "Helvetica Neau", helvetica;
-  font-size:1em;
-  display: block;  
-  opacity:0.8;
+.column a div{
+  position:relative;
 }
-
-.ribbon-content:before {
-  content: "";
-  position: absolute;
-  display: block;
-  border-style: solid;
-  border-width: 0em 0em .5em .5em;
-  border-color: transparent transparent #A3144D;
-  top: -.5em;
-  left: 0;
+.column a div p{
+  width:100%;
+  padding-top:10px;
+  position:absolute;
+  bottom:2px;
+  height:60px;
+  font-family: Lucida;
+  background-color:#68995F;
+  font-size: 22px;
+  line-height:22px;
+  background: #FFF;
+  opacity:0.3;
+  color:black;
+  z-index:100;
+  text-align:center;
 }
-
-.ribbon-content:after {
-  content: "";
-  position: absolute;
-  display: block;
-  border-style: solid;
-  border-width: 0em .5em .5em 0em;
-  border-color: transparent transparent #A3144D;
-  top: -.5em;
-  right: 0;
+.column a div p:hover{
+  opacity:0.7;
 }
