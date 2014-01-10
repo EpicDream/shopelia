@@ -6,7 +6,7 @@ Shopelia::Application.configure do
   config.cache_classes = true
 
   # Always use SSL
-  config.force_ssl = true
+  config.force_ssl = false
 
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false

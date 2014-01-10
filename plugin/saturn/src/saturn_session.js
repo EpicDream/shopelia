@@ -2,7 +2,7 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-05
 
-define(['logger', './saturn_options', './helper', 'core_extensions', 'satconf'], function(logger, SaturnOptions, Helper) {
+define(['logger', './saturn_options', 'helper', 'core_extensions', 'satconf'], function(logger, SaturnOptions, Helper) {
 "use strict";
 
 // Je fais la supposition simpliste mais réaliste que pour un produit,
@@ -32,6 +32,7 @@ SaturnSession.counter = 0;
 
 SaturnSession.prototype.start = function() {
   logger.info(this.logId(), "Start crawling !", logger.isDebug() ? this : "(url="+this.url+")");
+  this.startTime = Date.now();
   this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE);
   this.openUrl();
 };
@@ -116,7 +117,12 @@ SaturnSession.prototype.next = function() { try {
 SaturnSession.prototype.retryLastCmd = function () {
   clearTimeout(this.rescueTimeout);
   this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE);
+  if (! this.lastCmd)
+    return;
   switch (this.lastCmd.action) {
+    case "openUrl":
+      this.openUrl(this.lastCmd.url);
+      break;
     case "getOptions":
       this.getOptions(this.lastCmd.option);
       break;
@@ -127,7 +133,7 @@ SaturnSession.prototype.retryLastCmd = function () {
       this.crawl();
       break;
     default:
-
+      break;
   }
 };
 
@@ -239,7 +245,7 @@ SaturnSession.prototype.sendFinalVersions = function() {
     this.endSession();
   } else {
     this.sendResult({versions: [this._firstVersion], options_completed: true}); //
-    logger.info(this.logId(), "Finish crawling !");
+    logger.info(this.logId(), "Finish crawling ! ("+(Date.now()-this.startTime)+" ms)");
     this.endSession();
   }
 };
@@ -274,7 +280,7 @@ SaturnSession.prototype.logId = function () {
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.openUrl = function(url) {
-  throw "SaturnSession.openUrl: abstract function";
+  this.lastCmd = {action: "openUrl", url: url};
 };
 
 // Virtual, must be reimplement.
@@ -291,13 +297,13 @@ SaturnSession.prototype.fail = function(msg) {
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.sendWarning = function(msg) {
-  this.$e = this;
+  this.$e = msg;
   logger.warn(this.logId(), msg, "\n$e =", this.$e);
 };
 
 // Virtual, must be reimplement.
 SaturnSession.prototype.sendError = function( msg) {
-  this.$e = this;
+  this.$e = msg;
   logger.err(this.logId(), msg, "\n$e =", this.$e);
 };
 

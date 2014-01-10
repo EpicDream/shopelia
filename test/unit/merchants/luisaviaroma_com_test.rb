@@ -10,6 +10,10 @@ class LuisaviaromaComTest < ActiveSupport::TestCase
     @version = {}
     @helper = LuisaviaromaCom.new(@url)
 
+    @availabilities = {
+      "NOUVEAUTÉS" => false,
+    }
+
     @price_shipping_text = {input: "Supplément de 5 €", out: @helper.default_price_shipping}
     @shipping_info = {
       input: "Délai de 5 jours",

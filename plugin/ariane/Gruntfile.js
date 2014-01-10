@@ -64,7 +64,7 @@ module.exports = function(grunt) {
           bare: true
         },
         files: {
-          'vendor/chrome_logger.js': '../common/lib/chrome_logger.js.coffee',
+          'vendor/chrome_logger.js': '../common/lib/chrome_logger.coffee',
         }
       },
     },

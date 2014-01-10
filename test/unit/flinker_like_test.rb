@@ -11,6 +11,8 @@ class FlinkerLikeTest < ActiveSupport::TestCase
   test "it should create flinker like for product" do
     like = FlinkerLike.new(flinker_id:@flinker.id, resource_type:FlinkerLike::PRODUCT, resource_id:@product.id)
     assert like.save
+
+    assert_equal 1, @flinker.reload.likes_count
   end
 
   test "it should create flinker like for look" do

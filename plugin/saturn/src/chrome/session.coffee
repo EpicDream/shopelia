@@ -46,8 +46,7 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn_session", './helper', 
     start: () ->
       if @tabId?
         $$.tabs[@tabId] = this
-        @rescueTimeout = setTimeout (=> this.onTimeout()), satconf.DELAY_RESCUE
-        this.openUrl()
+        super
       else if $$.canOpenNewTab()
         @rescueTimeout = setTimeout (=> this.onTimeout()), satconf.DELAY_RESCUE
         this.openNewTab() 
@@ -133,9 +132,10 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn_session", './helper', 
       chrome.cookies.getAll {}, (cooks) =>
         for cookie in cooks
           chrome.cookies.remove({name: cookie.name, url: "http://"+cookie.domain+cookie.path, storeId: cookie.storeId})
-      this.openUrl()
+      this.start()
 
     openUrl: () ->
+      super(@url)
       chrome.tabs.get @tabId, (tab) =>
         if tab.url != @url
           chrome.tabs.update(@tabId, {url: @url})

@@ -70,6 +70,14 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     assert_equal 10, json_response["looks"].count
   end
 
+  test "it should get only looks from flinker_ids" do
+    sign_in flinkers(:elarch)
+    FlinkerFollow.create!(flinker_id:flinkers(:elarch).id, follow_id:flinkers(:elarch).id)
+
+    get :index, flinker_ids:[flinkers(:betty).id], format: :json
+    assert_equal 10, json_response["looks"].count
+  end
+
   private
 
   def build_looks

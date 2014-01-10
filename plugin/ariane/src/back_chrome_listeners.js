@@ -6,10 +6,10 @@ require(['src/ariane', 'logger'], function(ariane, logger) {
 
 "use strict";
 
-  var SATURN_EXTENSION_ID = "nhledioladlcecbcfenmdibnnndlfikf";
-
-  var port = chrome.runtime.connect(SATURN_EXTENSION_ID);
-  port.onMessage.addListener(function(msg) {
+  // var SATURN_EXTENSION_ID = "nbbhabeamfkgcikpihggcofhhilkhjpp";
+  // var port = chrome.runtime.connect(SATURN_EXTENSION_ID);
+  // port.onMessage.addListener(
+  function onRuntimeMessage(msg) {
     if (msg.errorMsg)
       return alert(msg.errorMsg);
     chrome.storage.local.get('crawlings', function(hash) {
@@ -20,6 +20,19 @@ require(['src/ariane', 'logger'], function(ariane, logger) {
       chrome.storage.local.set(hash);
       chrome.tabs.sendMessage(msg.tabId, {action: msg.kind+'Crawl', strategy: msg.strategy});
     });
+  }
+  // );
+
+  var port, saturn_extension_id;
+  chrome.management.getAll(function (extensions) {
+    for (var i = 0; i < extensions.length; i++) {
+      var ext = extensions[i];
+      if (ext.name !== "Saturn")
+        continue;
+      saturn_extension_id = ext.id;
+      port = chrome.runtime.connect(saturn_extension_id);
+      port.onMessage.addListener(onRuntimeMessage);
+    }
   });
 
   // On extension button clicked, start Ariane on this tab and url.

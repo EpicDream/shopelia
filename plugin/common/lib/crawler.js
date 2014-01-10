@@ -2,15 +2,76 @@
 // Author : Vincent Renaudineau
 // Created at : 2013-09-20
 
-define(["logger", "jquery", "html_utils", "core_extensions"], function(logger, $, hu) {
+define(["logger", "jquery", "html_utils", "helper", "core_extensions"], function(logger, $, hu, Helper) {
   "use strict";
 
-var Crawler = {};
+var Crawler = function (url, doc) {
+  var that = this;
 
-var OPTION_FILTER = /choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible|non disponible|rupture de stock/i;
+  this.doc = doc || window.document;
+  this.url = url || location.href;
+  this.helper = Helper.get(this.url, 'crawler');
+
+  this.onbeforeunloadBack = window.onbeforeunload;
+  window.onbeforeunload = function () {
+    that.pageWillBeUnloaded = true;
+    if (typeof that.onbeforeunloadBack === 'function')
+      return that.onbeforeunloadBack();
+  };
+
+  $(document).ready(this.onDocumentReady.bind(this));
+};
+
+Crawler.OPTION_FILTER = /^$|choi|choo|s(é|e)lect|toute|^\s*tailles?\s*$|^\s*couleurs?\s*$|Indisponible|non disponible|rupture de stock/i;
+Crawler.DELAY_BETWEEN_OPTIONS = 1500;
+
+Crawler.prototype.onDocumentReady = function () {
+  if (this.helper && this.helper.atLoad) {
+    this.helper.atLoad(this.goNextStep.bind(this));
+  } else
+    // To handle redirection, that throws false 'complete' state.
+    setTimeout(this.goNextStep.bind(this), 100);
+};
+
+Crawler.prototype.goNextStep = function () {
+  throw "Crawler.goNextStep is a virtual function MUST BE reimplemented.";
+};
+
+Crawler.prototype.waitAjax = function () {
+  if (this.helper && this.helper.waitAjax) {
+    this.helper.waitAjax(this.goNextStep.bind(this));
+  } else if (! this.pageWillBeUnloaded)
+    setTimeout(this.goNextStep.bind(this), Crawler.DELAY_BETWEEN_OPTIONS);
+};
+
+Crawler.prototype.doNext = function (hash) {
+  logger.debug("ProductCrawl", hash.action, "task received", hash);
+  key = "option"+hash.option;
+  switch (hash.action) {
+    case "getOptions":
+      if (hash.mapping[key]) {
+        result = this.getOptions(hash.mapping[key].paths);
+      } else
+        result = [];
+      break;
+    case "setOption":
+      result = this.setOption(hash.mapping[key].paths, hash.value);
+      break;
+    case "crawl":
+      result = this.crawl(hash.mapping);
+      break;
+    default:
+      logger.error("Unknow command", hash.action);
+      result = false;
+  }
+  // wait minimal to let page reload on url change
+  if (hash.action === "setOption")
+    setTimeout(this.waitAjax.bind(this), 1000);
+  return result;
+};
 
 //
-Crawler.searchImages = function (field, elems) {
+Crawler.prototype.searchImages = function (field, elems) {
   var res;
 
   if (field === 'images' && location.host.match("fnac.com")) {
@@ -34,7 +95,7 @@ function searchImagesOptions(elems) {
   var size = elems.length,
     res;
 
-  if (location.host.match("amazon")) {
+  if (location.host.match("amazon.fr")) {
     res = elems.find(".swatchInnerImage[style]").filter(function(i, e) {
       return $(this).css("background-image").search(/url\(.*\)/) !== -1;
     }).each(function() {
@@ -51,18 +112,17 @@ function searchImagesOptions(elems) {
 }
 
 //
-Crawler.searchOption = function (paths, doc) {
+Crawler.prototype.searchOption = function (paths) {
   var elems, i, l, path, tmp_elems, nbOptions;
 
   if (! paths)
     return $();
   if (! (paths instanceof Array))
     throw "ArgumentError : was waiting an Array of String, and got a " + (typeof paths);
-  doc = doc || window.document;
 
   for (i = 0, l = paths.length; i < l ; i++) {
     path = paths[i];
-    elems = $(path, doc);
+    elems = $(path, this.doc);
     if (elems.length === 0) {
       continue;
     // SELECT, le cas facile
@@ -88,9 +148,9 @@ Crawler.searchOption = function (paths, doc) {
 };
 
 //
-Crawler.parseOption = function (elems) {
+Crawler.prototype.parseOption = function (elems) {
   return elems.toArray().filter(function(elem) {
-    return elem.innerText.match(OPTION_FILTER) === null;
+    return elem.innerText.match(Crawler.OPTION_FILTER) === null || elem.src;
   }).map(function(elem) {
     var h = hu.getElementAttrs(elem);
     h.xpath = hu.getElementXPath(elem);
@@ -104,13 +164,13 @@ Crawler.parseOption = function (elems) {
 };
 
 // Return an array of option's value.
-Crawler.getOptions = function (paths, doc) {
-  var elems = Crawler.searchOption(paths, doc);
-  return Crawler.parseOption(elems);
+Crawler.prototype.getOptions = function (paths) {
+  var elems = this.searchOption(paths);
+  return this.parseOption(elems);
 };
 
 // Return a jQuery instance.
-Crawler.selectOption = function (elems, value) {
+Crawler.prototype.selectOption = function (elems, value) {
   if (elems.length === 0)
     return $();
 
@@ -125,7 +185,7 @@ Crawler.selectOption = function (elems, value) {
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.id) {
-    elems = elems.filter("#"+value.id);
+    elems = elems.filter(function () {return this.id === value.id;});
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.text) {
@@ -138,6 +198,10 @@ Crawler.selectOption = function (elems, value) {
   }
   if (elems.length > 1 && value.href) {
     elems = elems.filter("[href='"+value.href+"']");
+    if (elems.length === 0) elems.end(); // undo last filter.
+  }
+  if (elems.length > 1 && value.value) {
+    elems = elems.filter("[value='"+value.value+"']");
     if (elems.length === 0) elems.end(); // undo last filter.
   }
   if (elems.length > 1 && value.title) {
@@ -153,9 +217,9 @@ Crawler.selectOption = function (elems, value) {
 };
 
 //
-Crawler.setOption = function(paths, value, doc) {
-  var elems = Crawler.searchOption(paths, doc);
-  elems = Crawler.selectOption(elems, value);
+Crawler.prototype.setOption = function(paths, value) {
+  var elems = this.searchOption(paths);
+  elems = this.selectOption(elems, value);
 
   //
   if (elems.length > 1) {
@@ -179,25 +243,23 @@ Crawler.setOption = function(paths, value, doc) {
 };
 
 //
-Crawler.searchField = function (field, paths, doc) {
+Crawler.prototype.searchField = function (field, paths) {
   var elems, i, l, path;
 
   if (field.search(/^option/) !== -1)
-    return Crawler.searchOption(paths, doc);
+    return this.searchOption(paths);
   if (! paths)
     return $();
   if (! (paths instanceof Array))
     throw ("ArgumentError : was waiting an Array of String, and got a " + (typeof paths));
 
-  doc = doc || window.document;
-
   for (i = 0, l=paths.length ; i < l ; i++) {
     path = paths[i];
-    elems = $(path, doc);
+    elems = $(path, this.doc);
     if (elems.length === 0)
       continue;
     if (field === 'image_url' || field === 'images') {
-      elems = Crawler.searchImages(field, elems);
+      elems = this.searchImages(field, elems);
       if (field === 'image_url')
         elems = elems.eq(0);
     }
@@ -208,14 +270,14 @@ Crawler.searchField = function (field, paths, doc) {
 };
 
 //
-Crawler.parseImage = function (elems) {
+Crawler.prototype.parseImage = function (elems) {
   return $unique( elems.toArray().map(function (img) {
     return img.src || img.getAttribute("src");
   }) );
 };
 
 //
-Crawler.parseText = function (elems) {
+Crawler.prototype.parseText = function (elems) {
   return elems.toArray().map(function(elem) {
     var res;
     if (elem.tagName === 'IMG')
@@ -228,50 +290,60 @@ Crawler.parseText = function (elems) {
 };
 
 //
-Crawler.parseHtml = function (elems) {
+Crawler.prototype.parseHtml = function (elems) {
   return elems.toArray().map(function(elem) { return elem.innerHTML.replace(/[ \t]{2,}/g,' ').replace(/(\s*\n\s*)+/g,"\n"); }).join("\n<br>\n<!-- SHOPELIA-END-BLOCK -->") || undefined;
 };
 
 //
-Crawler.parseField = function (field, elems) {
-  var images;
+Crawler.prototype.parseField = function (field, elems) {
+  var res, images;
+  // Merchant specific processing.
+  if (this.helper && this.helper.parseField) {
+    if (typeof this.helper.parseField === 'function')
+      res = this.helper.parseField.call(this, field, elems);
+    else if (typeof this.helper.parseField === 'object' && typeof this.helper.parseField[field] === 'function')
+      res = this.helper.parseField[field].call(this, elems);
+    if (res !== undefined)
+      return res;
+  }
+  // Generic processing
   switch (field) {
   case 'image_url' :
-    return Crawler.parseImage(elems)[0];
+    return this.parseImage(elems)[0];
   case 'images' :
-    images = Crawler.parseImage(elems);
+    images = this.parseImage(elems);
     return images.length > 0 ? images : undefined;
   case 'description' :
-    return Crawler.parseHtml(elems);
+    return this.parseHtml(elems);
   default :
-    return Crawler.parseText(elems);
+    return this.parseText(elems);
   }
 };
 
 //
-Crawler.crawlField = function (fieldMap, field, doc) {
+Crawler.prototype.crawlField = function (fieldMap, field) {
   var elems;
   if (! fieldMap.paths)
     return '';
-  elems = Crawler.searchField(field, fieldMap.paths, doc);
-  return Crawler.parseField(field, elems);
+  elems = this.searchField(field, fieldMap.paths);
+  return this.parseField(field, elems);
 };
 
-Crawler.crawl = function (mapping, doc) {
+Crawler.prototype.crawl = function (mapping) {
   var field, result = {};
   for (field in mapping)
     if (field.search(/^option/) === -1) {
 
-      result[field] = Crawler.crawlField(mapping[field], field, doc);
+      result[field] = this.crawlField(mapping[field], field);
     }
   return result;
 };
 
 //
-Crawler.fastCrawl = function (mapping, doc) {
+Crawler.prototype.fastCrawl = function (mapping) {
   var field, result = {};
   for (field in mapping)
-    result[field] = Crawler.crawlField(mapping[field], field, doc);
+    result[field] = this.crawlField(mapping[field], field);
   return result;
 };
 

@@ -57,6 +57,19 @@ If you want a special version of saturn, rerun grunt. For example, for a prod wi
 
     grunt dev-prod
 
+### PhantomJS & CasperJS
+
+Install phantomjs last release (or at least >= 1.8.2)
+
+    wget -P /tmp/ https://phantomjs.googlecode.com/files/phantomjs-1.9.2-linux-x86_64.tar.bz2
+    tar xvjf /tmp/phantomjs-1.9.2-linux-x86_64.tar.bz2
+    sudo cp /tmp/phantomjs-1.9.2-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
+    rm -r /tmp/phantomjs-1.9.2-linux-x86_64*
+
+Install CasperJS
+
+    sudo npm install -g casperjs
+
 Usage
 -----
   

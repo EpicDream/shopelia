@@ -291,6 +291,10 @@ ActiveRecord::Schema.define(:version => 20140110143234) do
     t.string   "username"
     t.boolean  "is_publisher",           :default => false
     t.integer  "country_id"
+    t.boolean  "staff_pick",             :default => false
+    t.integer  "looks_count",            :default => 0
+    t.integer  "follows_count",          :default => 0
+    t.integer  "likes_count",            :default => 0
   end
 
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true

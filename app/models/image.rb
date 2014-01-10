@@ -1,7 +1,7 @@
 require 'paper_clip_patch'
 
 class Image < ActiveRecord::Base
-  SIZES = { small:["200x200>", :jpg], large:["1200x1200>", :jpg]}
+  SIZES = { pico:["50x50>", :jpg], small:["200x200>", :jpg], large:["1200x1200>", :jpg]}
   
   attr_accessible :url
   alias_attribute :sizes, :picture_sizes
@@ -10,7 +10,7 @@ class Image < ActiveRecord::Base
   
   has_attached_file :picture, 
                     :styles => SIZES,
-                    :convert_options => { :small => "-quality 20", :large => "-quality 80" },
+                    :convert_options => { :pico => "-quality 0", :small => "-quality 20", :large => "-quality 80" },
                     :url  => "/images/:fmd5/:style/:md5.:extension",
                     :path => ":rails_root/public/images/:fmd5/:style/:md5.jpg"
                                         

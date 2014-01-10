@@ -1,5 +1,5 @@
 
-define ['logger', 'src/helper', 'core_extensions'], (logger, Helper) ->
+define ['logger', 'helper', 'core_extensions'], (logger, Helper) ->
   
   class PriceministerComHelper
     this.session =
