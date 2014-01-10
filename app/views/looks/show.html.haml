@@ -16,7 +16,7 @@
   #cover
   #content
     #header
-      - unless @look.flinker.avatar.url.nil?
+      - unless @avatar.nil?
         = image_tag(@look.flinker.avatar.url, size:"75x75", class:"flinker-avatar")
       %h3= @look.flinker.name
       %h5= @look.name
