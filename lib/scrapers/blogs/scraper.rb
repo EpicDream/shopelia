@@ -73,7 +73,8 @@ module Scrapers
           return blocks if blocks.any?
         }
         []
-      rescue []
+      rescue 
+        []
       end
       
       def url=url

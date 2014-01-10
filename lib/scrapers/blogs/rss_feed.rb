@@ -49,6 +49,7 @@ module Scrapers
         post.images = Images.extract(content)
         post.content = Content.extract(content)
         post.products = ProductsFinder.new(content, post.link).products
+        post.link = @url + "/" + post.link unless post.link =~ /http/ #relative link
         post
       end
       
