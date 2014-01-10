@@ -67,6 +67,12 @@ class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
     assert items.count > 0
   end
   
+  test "complete relative links with base url" do
+    parser = Scrapers::Blogs::RSSFeed.new("http://www.collagevintage.com")
+    items = parser.items
+    assert items.first.link =~ /http:\/\/www.collagevintage.com/
+  end
+  
 end
 
   
