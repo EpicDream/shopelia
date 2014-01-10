@@ -28,7 +28,7 @@ define(['jquery', 'casper_logger', 'crawler', 'satconf'], ($, logger, Crawler) -
       @caspId = window.caspId
 
     goNextStep: () ->
-      logger.debug(@caspId, "in Crawler.goNextStep")
+      # logger.debug("in Crawler.goNextStep")
       __utils__.sat_emit('saturn.goNextStep')
 
     doNext: (hash) ->

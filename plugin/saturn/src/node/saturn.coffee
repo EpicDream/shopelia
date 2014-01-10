@@ -42,6 +42,12 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
           return res.end("Unrecognise data.")
       ).listen(@serverPort)
     
+    preProcessData: (data) ->
+      prod = super
+      prod._mainTaskId = data._mainTaskId
+      prod._mainTaskPort = data._mainTaskPort
+      prod
+
     loadMapping: (merchantId, doneCallback, failCallback) ->
       Mapping.load(merchantId)
 

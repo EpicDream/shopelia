@@ -83,7 +83,11 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
     evalAndThen: (cmd, callback) ->
       @casper.callback = callback if callback?
       casper.evaluate (hash) ->
-        window.crawler.doNext(hash)
+        requirejs ["casper_logger", "crawler"], (logger, Crawler) ->
+          # if window.crawler
+          window.crawler.doNext(hash)
+          # else
+          #   logger.error(caspId, "window.crawler is not defined !??")
       , cmd
       casper.waitFor =>
         @evalReturns is true
@@ -111,7 +115,7 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
         @_subTasks is undefined
       , null
       , () =>
-        this.fail("#{@saturn.caspId} Subtasks take too long to finish.")
+        this.fail("Subtasks take too long to finish.")
       , satconf.DELAY_RESCUE * Object.keys(@_subTasks).length
 
     endSession: ->
