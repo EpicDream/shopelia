@@ -71,18 +71,9 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
 
     sendResult: (result) ->
       return if ! @prod_id # Stop pushed or Local Test
-      casper.evaluate( (url, data) ->
-        requirejs ['jquery'], ($) ->
-          $.ajax({type: "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data), tryCount: 0, retryLimit: 1}
-          ).fail (xhr, textStatus, errorThrown) ->
-            if textStatus == 'timeout' || xhr.status == 502
-              $.ajax(this)
-            else if xhr.status == 500 && @tryCount < @retryLimit
-              @tryCount++
-              $.ajax(this)
-            else
-              logger.error(xhr.status, ":", textStatus)
-      , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, result)
+      casper.evaluate( (prod_id, result) ->
+        window.crawler.sendResult(prod_id, result)
+      , @prod_id, result)
       casper.then () =>
         super result
 
@@ -122,5 +113,15 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
       , () =>
         this.fail("#{@saturn.caspId} Subtasks take too long to finish.")
       , satconf.DELAY_RESCUE * Object.keys(@_subTasks).length
+
+    endSession: ->
+      casper.waitFor () ->
+        casper.evaluate () ->
+          window.crawler.resultSending is 0
+      , () =>
+        super
+      , () =>
+        logger.error(@caspId, "Timeout with result still being sending.")
+        super
 
   return CasperSession

@@ -1,5 +1,5 @@
 ---
-"version": "3.4.0"
+"version": "3.4.1"
 "default":
   #### Global options
   ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
@@ -27,7 +27,7 @@
   "SHOPELIA_DOMAIN": "https://www.shopelia.com"
   "PRODUCT_EXTRACT_URL": "https://www.shopelia.com/api/viking/products"
   "MAPPING_URL": "https://www.shopelia.com/api/viking/merchants/"
-  "PRODUCT_EXTRACT_UPDATE": "https://www.shopelia.com/api/viking/products/"
+  "PRODUCT_EXTRACT_UPDATE": "http://www.shopelia.com/api/viking/products/"
 
 #### Specific Profiles
 ## For Jasmine

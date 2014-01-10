@@ -31,7 +31,7 @@ var SaturnSession = function(saturn, prod) {
 SaturnSession.counter = 0;
 
 SaturnSession.prototype.start = function() {
-  logger.info(this.logId(), "Start crawling !", logger.isDebug() ? this : "(url="+this.url+")");
+  logger.info(this.logId(), "Start crawling '"+this.url+"' !");
   this.startTime = Date.now();
   this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE);
   this.openUrl();
@@ -193,7 +193,6 @@ SaturnSession.prototype.crawl = function() {
       return this.fail("No result return for crawl");
     logger.info(this.logId(), "Parse results : ", '{name="'+version.name+
       '", avail="'+version.availability+'", price="'+version.price+'"}');
-    logger.debug(this.logId(), "Parse results : ", version);
 
     if (Object.keys(version).length > 0) {
       this.options.setCurrentVersion(version);

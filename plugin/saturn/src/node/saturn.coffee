@@ -75,19 +75,25 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
       @sessions[port].started = true
 
     startPolling: () ->
+      options = require('url').parse( 'https://www.shopelia.com/api/viking/products' );
+      options.rejectUnauthorized = false;
+      options.agent = new Https.Agent( options );
       @timerId = setInterval2 1000, () =>
-        Https.get('https://www.shopelia.com/api/viking/products', (res) =>
-          return logger.error("[NodeJS] Error #{res.statusCode} retrieving products to crawl : #{res.reasonPhrase}") if res.statusCode isnt 200
+        Https.get(options, (res) =>
+          return logger.error("[NodeJS] Error #{res.statusCode} retrieving products to crawl : #{Http.STATUS_CODES[res.statusCode]}") if res.statusCode isnt 200
+          data = ""
           res.on "data", (chunk) =>
+            data += chunk
             try
-              prods = JSON.parse chunk
-              return unless prods.length > 0
-              logger.verbose("[NodeJS] New products received : #{prods.length}")
-              this.onProductsReceived(prods)
-            catch e
-              logger.error("[NodeJs] #{e}")
+              prods = JSON.parse data
+              data = ""
+            catch err
+              return
+            return unless prods.length > 0
+            logger.verbose("[NodeJS] New products received : #{prods.length}")
+            this.onProductsReceived(prods)
         ).on 'error', (e) ->
-          logger.error("[NodeJS] #{e}")
+          logger.error("[NodeJS] Get product connection error : #{e}")
 
     stopPolling: () ->
       clearInterval(@timerId)
