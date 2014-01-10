@@ -61,7 +61,7 @@ before_fork do |server, worker|
   if File.readable?(f)
     $gpgme_passphrase = File.read(f)
     $gpgme_passphrase.chomp!
-    File.delete(f)
+    #File.delete(f)
   end
 
   begin
@@ -85,8 +85,8 @@ before_fork do |server, worker|
 end
 
 after_fork do |server, worker|
-#    addr = "api.shopelia.fr:#{8000 + worker.nr}"
-    addr = "/var/run/shopelia-unicorn/unicorn_worker_#{worker.nr}"
+    addr = "curie.epicdream.fr:#{8000 + worker.nr}"
+#    addr = "/var/run/shopelia-unicorn/unicorn_worker_#{worker.nr}"
     server.listen(addr, :tries => 0, :delay => 0, :backlog => 32)
   # per-process listener ports for debugging/admin/migrations
   # addr = "127.0.0.1:#{9293 + worker.nr}"
