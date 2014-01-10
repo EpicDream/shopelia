@@ -1,4 +1,2 @@
 %section.column
-  = link_to image_tag(post.images.first), admin_post_path(post)
-  %h2.ribbon
-    %span.ribbon-content= post.title
+  = link_to content_tag(:div) { image_tag(post.images.first) + content_tag(:p, post.title)}, admin_post_path(post)
