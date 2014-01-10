@@ -1,3 +1,5 @@
+require 'paper_clip_patch'
+
 class Image < ActiveRecord::Base
   SIZES = { small:["200x200>", :jpg], large:["1200x1200>", :jpg]}
   
