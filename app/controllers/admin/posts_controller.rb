@@ -2,7 +2,7 @@ class Admin::PostsController < Admin::AdminController
   before_filter :retrieve_post, :only => :show
   
   def index
-    @posts = Post.pending_processing
+    @posts = Post.pending_processing.order("created_at desc")
     @publications = Look.publications_counts_per_day
   end
   
