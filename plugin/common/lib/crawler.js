@@ -151,7 +151,7 @@ Crawler.prototype.searchOption = function (paths) {
 //
 Crawler.prototype.parseOption = function (elems) {
   return elems.toArray().filter(function(elem) {
-    return elem.innerText.match(Crawler.OPTION_FILTER) === null || elem.src;
+    return elem.innerText.match(Crawler.OPTION_FILTER) === null || elem.getAttribute('src');
   }).map(function(elem) {
     var h = hu.getElementAttrs(elem);
     h.xpath = hu.getElementXPath(elem);
