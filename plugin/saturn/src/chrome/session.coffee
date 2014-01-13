@@ -46,6 +46,7 @@ define ["jquery", "chrome_logger", "mapping", "src/saturn_session", './helper', 
     start: () ->
       if @tabId?
         $$.tabs[@tabId] = this
+        clearTimeout(@rescueTimeout) if @rescueTimeout?
         super
       else if $$.canOpenNewTab()
         @rescueTimeout = setTimeout (=> this.onTimeout()), satconf.DELAY_RESCUE
