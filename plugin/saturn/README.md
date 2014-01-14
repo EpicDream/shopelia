@@ -45,17 +45,13 @@ Go in saturn folder :
 
     cd shopelia/plugin/saturn/
 
-Set saturn script executable :
-
-    chmod u+x ./install
-
 Then, run it :
 
-    ./install
+    sudo ./install.sh
 
-If you want a special version of saturn, rerun grunt. For an auto_run with dev logs version of CasperJS script, run
+Next times, just run
 
-    grunt casper-prod-dev
+    ./update.sh
 
 Usage
 -----

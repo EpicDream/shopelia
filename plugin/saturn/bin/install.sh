@@ -1,3 +1,5 @@
+#! /bin/bash
+
 # This script may be called at first installation of Saturn.
 # It will install all necessary software (NodeJS, Grunt, CasperJS, etc),
 # initialize Saturn, and compile it.
