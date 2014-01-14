@@ -39,8 +39,8 @@ define 'chrome_logger', ['logger'], (logger) ->
       when 'FATAL', 'ERROR' then 'color: #f00'
       when 'WARN', 'WARNING' then 'color: #f60'
       when 'INFO' then 'color: #00f'
-      when 'GOOD'then 'color: #090'
-      when 'DEBUG'then 'color: #000'
+      when 'GOOD' then 'color: #090'
+      when 'DEBUG', 'TRACE' then 'color: #000'
       else 'color: #000'
     for arg in _arguments
       args[0] += if typeof arg is 'string' || typeof arg is 'number' || typeof arg is 'boolean' then " %s"

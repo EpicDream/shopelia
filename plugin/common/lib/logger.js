@@ -18,7 +18,8 @@ var logger = {
   VERB: 4,
   VERBOSE: 4,
   DEBUG: 5,
-  ALL: 6,
+  TRACE: 6,
+  ALL: 7,
 
   code2str: {
     0: "NONE",
@@ -28,7 +29,8 @@ var logger = {
     3: "INFO",
     4: "VERB",
     5: "DEBUG",
-    6: "ALL",
+    6: "TRACE",
+    7: "ALL",
   },
 };
 
@@ -43,6 +45,7 @@ logger.info = function() { logger._log('INFO', arguments); };
 logger.verbose = function() { logger._log('VERB', arguments); };
 logger.debug = function() { logger._log('DEBUG', arguments); };
 logger.print = function() { logger._log('PRINT', arguments); };
+logger.trace = function() { logger._log('TRACE', arguments); };
 
 logger.isFatal = function() { return this.level >= this.FATAL; };
 logger.isError = function() { return this.level >= this.ERROR; };
@@ -53,6 +56,7 @@ logger.isGood = function() { return this.level >= this.GOOD; };
 logger.isInfo = function() { return this.level >= this.INFO; };
 logger.isVerbose = function() { return this.level >= this.VERBOSE; };
 logger.isDebug = function() { return this.level >= this.DEBUG; };
+logger.isTrace = function() { return this.level >= this.TRACE; };
 
 logger.timestamp = function (date) {
   date = new Date(date || Date.now());
