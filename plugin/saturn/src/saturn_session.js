@@ -31,7 +31,7 @@ var SaturnSession = function(saturn, prod) {
 SaturnSession.counter = 0;
 
 SaturnSession.prototype.start = function() {
-  logger.info(this.logId(), "Start crawling !", logger.isDebug() ? this : "(url="+this.url+")");
+  logger.info(this.logId(), "Start crawling '"+this.url+"' !");
   this.startTime = Date.now();
   this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE);
   this.openUrl();
@@ -103,6 +103,7 @@ SaturnSession.prototype.next = function() { try {
       break;
 
     case "done" :
+      this.preEndSession();
       this.sendFinalVersions();
       break;
 
@@ -191,14 +192,17 @@ SaturnSession.prototype.crawl = function() {
     var d = this;
     if (typeof version !== 'object')
       return this.fail("No result return for crawl");
-    logger.info(this.logId(), "Parse results : ", '{name="'+version.name+
-      '", avail="'+version.availability+'", price="'+version.price+'"}');
-    logger.debug(this.logId(), "Parse results : ", version);
 
     if (Object.keys(version).length > 0) {
       this.options.setCurrentVersion(version);
       this.sendPartialVersion();
-    }
+      logger.info(this.logId(), "Parse results : ", '{name="'+version.name+
+        '", avail="'+version.availability+'", price="'+version.price+'"'+
+        (version.option1 ? ', color="'+(version.option1.text || version.option1.id || version.option1.hash)+'"' : '')+
+        (version.option2 ? ', size="'+(version.option2.text || version.option2.id || version.option2.hash)+'"' : '')+
+        '}');
+    } else
+      logger.warn(this.logId(), "Parse results : {}");
 
     this.next();
   } catch (err) {
@@ -208,6 +212,8 @@ SaturnSession.prototype.crawl = function() {
 
 //
 SaturnSession.prototype.subTaskEnded = function(subSession) {
+  if ( ! this._subTasks )
+    return logger.warn(this.logId(), "Session.subTaskEnded called without active SubSession.");
   if (this.rescueTimeout) {
     clearTimeout(this.rescueTimeout);
     this.rescueTimeout = setTimeout(this.onTimeout.bind(this), satconf.DELAY_RESCUE * 5);
@@ -238,7 +244,6 @@ SaturnSession.prototype.sendPartialVersion = function() {
 SaturnSession.prototype.sendFinalVersions = function() {
   if (this._subTasks) {
     logger.info(this.logId(), "Main subTask finished, wait for others...");
-    this.preEndSession();
   } else if (this._subTaskId !== undefined) {
     logger.info(this.logId(), "SubTask finished !");
     this._onSubTaskFinished(this);
@@ -259,8 +264,10 @@ SaturnSession.prototype.preEndSession = function() {
 
 //
 SaturnSession.prototype.endSession = function() {
+  logger.trace(this.logId(), "Session.endSession");
   this.strategy = 'ended'; // prevent
   clearTimeout(this.rescueTimeout);
+  this.rescueTimeout = undefined;
   this.saturn.endSession(this);
 };
 

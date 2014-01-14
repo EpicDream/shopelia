@@ -9,7 +9,7 @@ class MangoCom < MerchantHelper
     @image_sub = [/(?<=fotos\/)S\d+(?=\/\d+)/, 'S20']
 
     @availabilities = {
-      "ORDER BY PRICE" => false,
+      "(ORDER|SORT) BY PRICE" => false,
     }
 
     @config[:setAvailableIfEmpty] = true

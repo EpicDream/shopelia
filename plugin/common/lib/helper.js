@@ -41,7 +41,7 @@ var LuisaviaromaHelper = {
     crawl: function() {
       setTimeout(this.oldCrawl.bind(this), 1000);
     }
-  }
+  },
   crawler: {
     atLoad: function(callback) {
       setTimeout(callback, 1000);

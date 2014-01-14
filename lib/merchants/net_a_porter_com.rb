@@ -4,7 +4,7 @@ class NetAPorterCom
   DEFAULT_SHIPPING_INFO = "Livraison entre 9h et 17h, du lundi au vendredi. Réception de vos articles 3 à 4 jours ouvrés après la date de votre commande"
 
   AVAILABILITY_HASH = {
-    /\d+ Result(at)?s/i => false,
+    /\d+ Result(at)?s?/i => false,
   }
 
   def initialize url

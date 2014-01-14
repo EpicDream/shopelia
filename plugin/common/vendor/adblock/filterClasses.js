@@ -15,12 +15,13 @@
  * along with Adblock Plus.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["./filterNotifier"], function(FilterNotifier) {
+define([], function() {
 /**
  * @fileOverview Definition of Filter class and its subclasses.
  */
 
-// var FilterNotifier = require("filterNotifier");
+
+/* ********************************************************************* */
 
 /**
  * Abstract base class for filters
@@ -28,36 +29,81 @@ define(["./filterNotifier"], function(FilterNotifier) {
  * @param {String} text   string representation of the filter
  * @constructor
  */
-function Filter(text)
-{
+function Filter(text) {
   this.text = text;
-  this.subscriptions = [];
 }
-// exports.Filter = Filter;
 
-Filter.prototype =
-{
+/**
+ * @param o is an object from toJSON
+ * @param f (optional) is subclass of Filter
+ */
+Filter.fromJSON = function (o, f) {
+  if (! f)
+    f = new Filter(o.text);
+  return f;
+};
+
+/**
+ * Cache for known filters, maps string representation to filter objects.
+ * @type Object
+ */
+Filter.knownFilters = {__proto__: null};
+
+/**
+ * Regular expression that RegExp filters specified as RegExps should match
+ * @type RegExp
+ */
+Filter.regexpRegExp = /^(@@)?\/.*\/(?:\$~?[\w\-]+(?:=[^,\s]+)?(?:,~?[\w\-]+(?:=[^,\s]+)?)*)?$/;
+/**
+ * Regular expression that options on a RegExp filter should match
+ * @type RegExp
+ */
+Filter.optionsRegExp = /\$(~?[\w\-]+(?:=[^,\s]+)?(?:,~?[\w\-]+(?:=[^,\s]+)?)*)$/;
+
+
+/**
+ * Creates a filter of correct type from its text representation - does the basic parsing and
+ * calls the right constructor then.
+ *
+ * @param {String} text   as in Filter()
+ * @return {Filter}
+ */
+Filter.fromText = function(text) {
+  if (text in Filter.knownFilters)
+    return Filter.knownFilters[text];
+  var ret;
+  if (text[0] == "!" || text[0] == "[")
+    ret = new CommentFilter(text);
+  else
+    ret = RegExpFilter.fromText(text);
+  Filter.knownFilters[ret.text] = ret;
+  return ret;
+};
+
+/**
+ * Removes unnecessary whitespaces from filter text, will only return null if
+ * the input parameter is null.
+ * @param String
+ * @return String
+ */
+Filter.normalize = function(text) {
+  if (!text)
+    return text;
+  // Remove line breaks and such
+  text = text.replace(/[^\S ]/g, "");
+  if (/^\s*!/.test(text)) {
+    // Don't remove spaces inside comments
+    return text.replace(/^\s+/, "").replace(/\s+$/, "");
+  } else
+    return text.replace(/\s/g, "");
+};
+
+Filter.prototype = {
   /**
    * String representation of the filter
    * @type String
    */
   text: null,
-
-  /**
-   * Filter subscriptions the filter belongs to
-   * @type Array of Subscription
-   */
-  subscriptions: null,
-
-  /**
-   * Serializes the filter to an array of strings for writing out on the disk.
-   * @param {Array of String} buffer  buffer to push the serialization results into
-   */
-  serialize: function(buffer)
-  {
-    buffer.push("[Filter]");
-    buffer.push("text=" + this.text);
-  },
 
   toString: function()
   {
@@ -72,110 +118,8 @@ Filter.prototype =
   }
 };
 
-Filter.fromJSON = function (o, f) {
-  if (! f)
-    f = new Filter(o.text);
-  f.text = o.text;
-  return f;
-};
 
-/**
- * Cache for known filters, maps string representation to filter objects.
- * @type Object
- */
-Filter.knownFilters = {__proto__: null};
-
-/**
- * Regular expression that element hiding filters should match
- * @type RegExp
- */
-Filter.elemhideRegExp = /^([^\/\*\|\@"!]*?)#(\@)?(?:([\w\-]+|\*)((?:\([\w\-]+(?:[$^*]?=[^\(\)"]*)?\))*)|#([^{}]+))$/;
-/**
- * Regular expression that RegExp filters specified as RegExps should match
- * @type RegExp
- */
-Filter.regexpRegExp = /^(@@)?\/.*\/(?:\$~?[\w\-]+(?:=[^,\s]+)?(?:,~?[\w\-]+(?:=[^,\s]+)?)*)?$/;
-/**
- * Regular expression that options on a RegExp filter should match
- * @type RegExp
- */
-Filter.optionsRegExp = /\$(~?[\w\-]+(?:=[^,\s]+)?(?:,~?[\w\-]+(?:=[^,\s]+)?)*)$/;
-
-/**
- * Creates a filter of correct type from its text representation - does the basic parsing and
- * calls the right constructor then.
- *
- * @param {String} text   as in Filter()
- * @return {Filter}
- */
-Filter.fromText = function(text)
-{
-  if (text in Filter.knownFilters)
-    return Filter.knownFilters[text];
-
-  var ret;
-  var match = (text.indexOf("#") >= 0 ? Filter.elemhideRegExp.exec(text) : null);
-  if (match)
-    return null;//ret = ElemHideBase.fromText(text, match[1], match[2], match[3], match[4], match[5]);
-  else if (text[0] == "!")
-    return null;//ret = new CommentFilter(text);
-  else
-    ret = RegExpFilter.fromText(text);
-
-  Filter.knownFilters[ret.text] = ret;
-  return ret;
-};
-
-/**
- * Deserializes a filter
- *
- * @param {Object}  obj map of serialized properties and their values
- * @return {Filter} filter or null if the filter couldn't be created
- */
-Filter.fromObject = function(obj)
-{
-  var ret = Filter.fromText(obj.text);
-  if (ret instanceof ActiveFilter)
-  {
-    if ("disabled" in obj)
-      ret._disabled = (obj.disabled == "true");
-    if ("hitCount" in obj)
-      ret._hitCount = parseInt(obj.hitCount) || 0;
-    if ("lastHit" in obj)
-      ret._lastHit = parseInt(obj.lastHit) || 0;
-  }
-  return ret;
-};
-
-/**
- * Removes unnecessary whitespaces from filter text, will only return null if
- * the input parameter is null.
- */
-Filter.normalize = function(/**String*/ text) /**String*/
-{
-  if (!text)
-    return text;
-
-  // Remove line breaks and such
-  text = text.replace(/[^\S ]/g, "");
-
-  if (/^\s*!/.test(text))
-  {
-    // Don't remove spaces inside comments
-    return text.replace(/^\s+/, "").replace(/\s+$/, "");
-  }
-  else if (Filter.elemhideRegExp.test(text))
-  {
-    // Special treatment for element hiding filters, right side is allowed to contain spaces
-    var temp = /^(.*?)(#\@?#?)(.*)$/.exec(text),
-      domain = temp[1],
-      separator = temp[2],
-      selector =  temp[3];
-    return domain.replace(/\s/g, "") + separator + selector.replace(/^\s+/, "").replace(/\s+$/, "");
-  }
-  else
-    return text.replace(/\s/g, "");
-};
+/* ********************************************************************* */
 
 /**
  * Class for invalid filters
@@ -184,28 +128,29 @@ Filter.normalize = function(/**String*/ text) /**String*/
  * @constructor
  * @augments Filter
  */
-function InvalidFilter(text, reason)
-{
+function InvalidFilter(text, reason) {
   Filter.call(this, text);
-
   this.reason = reason;
 }
-// exports.InvalidFilter = InvalidFilter;
 
-InvalidFilter.prototype =
-{
+/**
+ * @param o is an object from toJSON
+ * @param f (optional) is subclass of InvalidFilter
+ */
+InvalidFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new InvalidFilter(o.text, o.reason);
+  Filter.fromJSON.call(this, o, f);
+  return f;
+};
+
+InvalidFilter.prototype = {
   __proto__: Filter.prototype,
-
   /**
    * Reason why this filter is invalid
    * @type String
    */
   reason: null,
-
-  /**
-   * See Filter.serialize()
-   */
-  serialize: function(buffer) {},
 
   toJSON: function() {
     return {
@@ -216,13 +161,8 @@ InvalidFilter.prototype =
   }
 };
 
-InvalidFilter.fromJSON = function (o, f) {
-  if (! f)
-    f = new InvalidFilter(o.text, o.reason);
-  Filter.fromJSON.call(this, o, f);
-  f.reason = o.reason;
-  return f;
-};
+
+/* ********************************************************************* */
 
 /**
  * Class for comments
@@ -230,20 +170,23 @@ InvalidFilter.fromJSON = function (o, f) {
  * @constructor
  * @augments Filter
  */
-function CommentFilter(text)
-{
+function CommentFilter(text) {
   Filter.call(this, text);
 }
-// exports.CommentFilter = CommentFilter;
 
-CommentFilter.prototype =
-{
+/**
+ * @param o is an object from toJSON
+ * @param f (optional) is subclass of CommentFilter
+ */
+CommentFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new CommentFilter(o.text);
+  Filter.fromJSON.call(this, o, f);
+  return f;
+};
+
+CommentFilter.prototype = {
   __proto__: Filter.prototype,
-
-  /**
-   * See Filter.serialize()
-   */
-  serialize: function(buffer) {},
 
   toJSON: function() {
     return {
@@ -253,12 +196,8 @@ CommentFilter.prototype =
   }
 };
 
-CommentFilter.fromJSON = function (o, f) {
-  if (! f)
-    f = new CommentFilter(o.text);
-  Filter.fromJSON.call(this, o, f);
-  return f;
-};
+
+/* ********************************************************************* */
 
 /**
  * Abstract base class for filters that can get hits
@@ -267,155 +206,96 @@ CommentFilter.fromJSON = function (o, f) {
  * @constructor
  * @augments Filter
  */
-function ActiveFilter(text, domains)
-{
+function ActiveFilter(text, domains) {
   Filter.call(this, text);
-
   this.domainSource = domains;
+  this.__defineGetter__("domains", function() {return this.computeDomains();});
 }
-// exports.ActiveFilter = ActiveFilter;
 
-ActiveFilter.prototype =
-{
+/**
+ * @param o is an object from toJSON
+ * @param f (optional) is subclass of ActiveFilter
+ */
+ActiveFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new ActiveFilter(o.text, o.domainSource);
+  Filter.fromJSON.call(this, o, f);
+  if (o.domains)
+    f.__defineGetter__("domains", function () {return o.domains});
+  return f;
+};
+
+ActiveFilter.prototype = {
   __proto__: Filter.prototype,
-
-  _disabled: false,
-  _hitCount: 0,
-  _lastHit: 0,
-
-  /**
-   * Defines whether the filter is disabled
-   * @type Boolean
-   */
-  // get disabled() this._disabled,
-  // set disabled(value)
-  // {
-  //   if (value != this._disabled)
-  //   {
-  //     var oldValue = this._disabled;
-  //     this._disabled = value;
-  //     FilterNotifier.triggerListeners("filter.disabled", this, value, oldValue);
-  //   }
-  //   return this._disabled;
-  // },
-
-  /**
-   * Number of hits on the filter since the last reset
-   * @type Number
-   */
-  // get hitCount() this._hitCount,
-  // set hitCount(value)
-  // {
-  //   if (value != this._hitCount)
-  //   {
-  //     var oldValue = this._hitCount;
-  //     this._hitCount = value;
-  //     FilterNotifier.triggerListeners("filter.hitCount", this, value, oldValue);
-  //   }
-  //   return this._hitCount;
-  // },
-
-  /**
-   * Last time the filter had a hit (in milliseconds since the beginning of the epoch)
-   * @type Number
-   */
-  // get lastHit() this._lastHit,
-  // set lastHit(value)
-  // {
-  //   if (value != this._lastHit)
-  //   {
-  //     var oldValue = this._lastHit;
-  //     this._lastHit = value;
-  //     FilterNotifier.triggerListeners("filter.lastHit", this, value, oldValue);
-  //   }
-  //   return this._lastHit;
-  // },
-
   /**
    * String that the domains property should be generated from
    * @type String
    */
   domainSource: null,
-
   /**
    * Separator character used in domainSource property, must be overridden by subclasses
    * @type String
    */
   domainSeparator: null,
-
   /**
    * Determines whether the trailing dot in domain names isn't important and
    * should be ignored, must be overridden by subclasses.
    * @type Boolean
    */
   ignoreTrailingDot: true,
-
   /**
    * Map containing domains that this filter should match on/not match on or null if the filter should match on all domains
    * @type Object
    */
-  // get domains()
-  // {
-  //   var domains = null;
+  computeDomains: function () {
+    var domains = null;
+    if (this.domainSource) {
+      var list = this.domainSource.split(this.domainSeparator);
+      if (list.length == 1 && list[0][0] != "~") {
+        // Fast track for the common one-domain scenario
+        domains = {__proto__: null, "": false};
+        if (this.ignoreTrailingDot)
+          list[0] = list[0].replace(/\.+$/, "");
+        domains[list[0]] = true;
+      } else {
+        var hasIncludes = false;
+        for (var i = 0; i < list.length; i++) {
+          var domain = list[i];
+          if (this.ignoreTrailingDot)
+            domain = domain.replace(/\.+$/, "");
+          if (domain == "")
+            continue;
+          var include;
+          if (domain[0] == "~") {
+            include = false;
+            domain = domain.substr(1);
+          } else {
+            include = true;
+            hasIncludes = true;
+          }
 
-  //   if (this.domainSource)
-  //   {
-  //     var list = this.domainSource.split(this.domainSeparator);
-  //     if (list.length == 1 && list[0][0] != "~")
-  //     {
-  //       // Fast track for the common one-domain scenario
-  //       domains = {__proto__: null, "": false};
-  //       if (this.ignoreTrailingDot)
-  //         list[0] = list[0].replace(/\.+$/, "");
-  //       domains[list[0]] = true;
-  //     }
-  //     else
-  //     {
-  //       var hasIncludes = false;
-  //       for (var i = 0; i < list.length; i++)
-  //       {
-  //         var domain = list[i];
-  //         if (this.ignoreTrailingDot)
-  //           domain = domain.replace(/\.+$/, "");
-  //         if (domain == "")
-  //           continue;
+          if (!domains)
+            domains = {__proto__: null};
 
-  //         var include;
-  //         if (domain[0] == "~")
-  //         {
-  //           include = false;
-  //           domain = domain.substr(1);
-  //         }
-  //         else
-  //         {
-  //           include = true;
-  //           hasIncludes = true;
-  //         }
-
-  //         if (!domains)
-  //           domains = {__proto__: null};
-
-  //         domains[domain] = include;
-  //       }
-  //       domains[""] = !hasIncludes;
-  //     }
-
-  //     delete this.domainSource;
-  //   }
-
-  //   this.__defineGetter__("domains", function() domains);
-  //   return this.domains;
-  // },
-
+          domains[domain] = include;
+        }
+        domains[""] = !hasIncludes;
+      }
+      delete this.domainSource;
+    }
+    this.__defineGetter__("domains", function() {return domains;});
+    this._domains = domains;
+    return domains;
+  },
   /**
    * Checks whether this filter is active on a domain.
+   * @param String
+   * @return Boolean
    */
-  isActiveOnDomain: function(/**String*/ docDomain) /**Boolean*/
-  {
+  isActiveOnDomain: function(docDomain) {
     // If no domains are set the rule matches everywhere
     if (!this.domains)
       return true;
-
     // If the document has no host name, match only if the filter isn't restricted to specific domains
     if (!docDomain)
       return this.domains[""];
@@ -424,8 +304,7 @@ ActiveFilter.prototype =
       docDomain = docDomain.replace(/\.+$/, "");
     docDomain = docDomain.toUpperCase();
 
-    while (true)
-    {
+    while (true) {
       if (docDomain in this.domains)
         return this.domains[docDomain];
 
@@ -436,12 +315,12 @@ ActiveFilter.prototype =
     }
     return this.domains[""];
   },
-
   /**
    * Checks whether this filter is active only on a domain and its subdomains.
+   * @param String
+   * @return Boolean
    */
-  isActiveOnlyOnDomain: function(/**String*/ docDomain) /**Boolean*/
-  {
+  isActiveOnlyOnDomain: function(docDomain) {
     if (!docDomain || !this.domains || this.domains[""])
       return false;
 
@@ -456,46 +335,17 @@ ActiveFilter.prototype =
     return true;
   },
 
-  /**
-   * See Filter.serialize()
-   */
-  serialize: function(buffer)
-  {
-    if (this._disabled || this._hitCount || this._lastHit)
-    {
-      Filter.prototype.serialize.call(this, buffer);
-      if (this._disabled)
-        buffer.push("disabled=true");
-      if (this._hitCount)
-        buffer.push("hitCount=" + this._hitCount);
-      if (this._lastHit)
-        buffer.push("lastHit=" + this._lastHit);
-    }
-  },
-
   toJSON: function() {
     var o = Filter.prototype.toJSON.call(this);
     o.type = "ActiveFilter";
     o.domainSource = this.domainSource;
-    o._disabled = this._disabled;
-    o._hitCount = this._hitCount;
-    o._lastHit = this._lastHit;
-    o.domains = this.domains;
+    o.domains = this._domains;
     return o;
   }
 };
 
-ActiveFilter.fromJSON = function (o, f) {
-  if (! f)
-    f = new ActiveFilter(o.text, o.domainSource);
-  Filter.fromJSON.call(this, o, f);
-  f.domainSource = o.domainSource;
-  f._disabled = o._disabled;
-  f._hitCount = f._hitCount;
-  f._lastHit = o._lastHit;
-  f.domains = o.domains;
-  return f;
-};
+
+/* ********************************************************************* */
 
 /**
  * Abstract base class for RegExp-based filters
@@ -508,8 +358,7 @@ ActiveFilter.fromJSON = function (o, f) {
  * @constructor
  * @augments ActiveFilter
  */
-function RegExpFilter(text, regexpSource, contentType, matchCase, domains, thirdParty)
-{
+function RegExpFilter(text, regexpSource, contentType, matchCase, domains, thirdParty) {
   ActiveFilter.call(this, text, domains);
 
   if (contentType !== null)
@@ -519,47 +368,64 @@ function RegExpFilter(text, regexpSource, contentType, matchCase, domains, third
   if (thirdParty !== null)
     this.thirdParty = thirdParty;
 
-  if (regexpSource.length >= 2 && regexpSource[0] == "/" && regexpSource[regexpSource.length - 1] == "/")
-  {
+  if (regexpSource.length >= 2 && regexpSource[0] == "/" && regexpSource[regexpSource.length - 1] == "/") {
     // The filter is a regular expression - convert it immediately to catch syntax errors
-    var regexp = new RegExp(regexpSource.substr(1, regexpSource.length - 2), this.matchCase ? "" : "i");
-    this.__defineGetter__("regexp", function() {return regexp;});
-  }
-  else
-  {
+    this._regexp = new RegExp(regexpSource.substr(1, regexpSource.length - 2), this.matchCase ? "" : "i");
+    this.__defineGetter__("regexp", function() {return this._regexp;});
+  } else {
     // No need to convert this filter to regular expression yet, do it on demand
     this.regexpSource = regexpSource;
-    this.__defineGetter__("regexp", function() {this.computRegexp(); return this.regexp;});
+    this.__defineGetter__("regexp", function() {return this.computRegexp();});
   }
 }
-// exports.RegExpFilter = RegExpFilter;
 
-RegExpFilter.prototype =
-{
+/**
+ * @param o is an object from toJSON
+ * @param f (optional) is subclass of RegExpFilter
+ */
+RegExpFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new RegExpFilter(o.text, o.regexp, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty);
+  ActiveFilter.fromJSON.call(this, o, f);
+  return f;
+};
+
+RegExpFilter.prototype = {
   __proto__: ActiveFilter.prototype,
-
   /**
    * Number of filters contained, will always be 1 (required to optimize Matcher).
    * @type Integer
    */
   length: 1,
-
   /**
    * @see ActiveFilter.domainSeparator
    */
   domainSeparator: "|",
-
   /**
    * Expression from which a regular expression should be generated - for delayed creation of the regexp property
    * @type String
    */
   regexpSource: null,
   /**
+   * Content types the filter applies to, combination of values from RegExpFilter.typeMap
+   * @type Number
+   */
+  contentType: 0x7FFFFFFF,
+  /**
+   * Defines whether the filter should distinguish between lower and upper case letters
+   * @type Boolean
+   */
+  matchCase: false,
+  /**
+   * Defines whether the filter should apply to third-party or first-party content only. Can be null (apply to all content).
+   * @type Boolean
+   */
+  thirdParty: null,
+  /**
    * Regular expression to be used when testing against this filter
    * @type RegExp
    */
-  computRegexp: function ()
-  {
+  computRegexp: function () {
     // Remove multiple wildcards
     var source = this.regexpSource.replace(/\*+/g, "*");
 
@@ -581,28 +447,11 @@ RegExpFilter.prototype =
                    .replace(/^\\\|/, "^")       // process anchor at expression start
                    .replace(/\\\|$/, "$");      // process anchor at expression end
 
-    var regexp = new RegExp(source, this.matchCase ? "" : "i");
-
-    delete this.regexpSource;
-    this.__defineGetter__("regexp", function() {return regexp;});
-    return this.regexp;
+    this._regexp = new RegExp(source, this.matchCase ? "" : "i");
+    // delete this.regexpSource;
+    this.__defineGetter__("regexp", function() {return this._regexp;});
+    return this._regexp;
   },
-  /**
-   * Content types the filter applies to, combination of values from RegExpFilter.typeMap
-   * @type Number
-   */
-  contentType: 0x7FFFFFFF,
-  /**
-   * Defines whether the filter should distinguish between lower and upper case letters
-   * @type Boolean
-   */
-  matchCase: false,
-  /**
-   * Defines whether the filter should apply to third-party or first-party content only. Can be null (apply to all content).
-   * @type Boolean
-   */
-  thirdParty: null,
-
   /**
    * Tests whether the URL matches this filter
    * @param {String} location URL to be tested
@@ -611,8 +460,7 @@ RegExpFilter.prototype =
    * @param {Boolean} thirdParty should be true if the URL is a third-party request
    * @return {Boolean} true in case of a match
    */
-  matches: function(location, contentType, docDomain, thirdParty)
-  {
+  matches: function(location, contentType, docDomain, thirdParty) {
     if (this.regexp.test(location) &&
         (RegExpFilter.typeMap[contentType] & this.contentType) !== 0 &&
         (this.thirdParty === null || this.thirdParty == thirdParty) &&
@@ -630,25 +478,14 @@ RegExpFilter.prototype =
     o.contentType = this.contentType;
     o.matchCase = this.matchCase;
     o.thirdParty = this.thirdParty;
-    o.regexp = ''+this.regexp;
-    if (o.regexp.slice(-1) === "i")
-      o.regexp = o.regexp.slice(0, -1);
-    o.domainSeparator = this.domainSeparator;
+    if (this._regexp) {
+      o.regexp = ''+this._regexp;
+      if (o.regexp.slice(-1) === "i")
+        o.regexp = o.regexp.slice(0, -1);  
+    } else
+      o.regexp = this.regexpSource;
     return o;
   }
-};
-
-RegExpFilter.fromJSON = function (o, f) {
-  if (! f)
-    f = new RegExpFilter(o.text, o.regexp, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty);
-  ActiveFilter.fromJSON.call(this, o, f);
-  f.contentType = o.contentType;
-  f.matchCase = o.matchCase;
-  f.thirdParty = o.thirdParty;
-  var regexp = new RegExp(o.regexp.substr(1, o.regexp.length - 2), o.matchCase ? "" : "i");
-  f.__defineGetter__("regexp", function() {return regexp;});
-  f.domainSeparator = o.domainSeparator;
-  return f;
 };
 
 RegExpFilter.prototype.__defineGetter__("0", function () {return this;});
@@ -657,12 +494,10 @@ RegExpFilter.prototype.__defineGetter__("0", function () {return this;});
  * Creates a RegExp filter from its text representation
  * @param {String} text   same as in Filter()
  */
-RegExpFilter.fromText = function(text)
-{
+RegExpFilter.fromText = function(text) {
   var blocking = true;
   var origText = text;
-  if (text.indexOf("@@") === 0)
-  {
+  if (text.indexOf("@@") === 0) {
     blocking = false;
     text = text.substr(2);
   }
@@ -675,28 +510,22 @@ RegExpFilter.fromText = function(text)
   var collapse = null;
   var options;
   var match = (text.indexOf("$") >= 0 ? Filter.optionsRegExp.exec(text) : null);
-  if (match)
-  {
+  if (match) {
     options = match[1].toUpperCase().split(",");
     text = match.input.substr(0, match.index);
-    for (var option in options)
-    {
+    for (var option in options) {
       var value = null;
       var separatorIndex = option.indexOf("=");
-      if (separatorIndex >= 0)
-      {
+      if (separatorIndex >= 0) {
         value = option.substr(separatorIndex + 1);
         option = option.substr(0, separatorIndex);
       }
       option = option.replace(/-/, "_");
-      if (option in RegExpFilter.typeMap)
-      {
+      if (option in RegExpFilter.typeMap) {
         if (contentType === null)
           contentType = 0;
         contentType |= RegExpFilter.typeMap[option];
-      }
-      else if (option[0] === "~" && option.substr(1) in RegExpFilter.typeMap)
-      {
+      } else if (option[0] === "~" && option.substr(1) in RegExpFilter.typeMap) {
         if (contentType === null)
           contentType = RegExpFilter.prototype.contentType;
         contentType &= ~RegExpFilter.typeMap[option.substr(1)];
@@ -733,15 +562,12 @@ RegExpFilter.fromText = function(text)
   if (!blocking && siteKeys)
     contentType = RegExpFilter.typeMap.DOCUMENT;
 
-  try
-  {
+  try {
     if (blocking)
       return new BlockingFilter(origText, text, contentType, matchCase, domains, thirdParty, collapse);
     else
       return new WhitelistFilter(origText, text, contentType, matchCase, domains, thirdParty, siteKeys);
-  }
-  catch (e)
-  {
+  } catch (e) {
     return new InvalidFilter(origText, e);
   }
 };
@@ -768,11 +594,10 @@ RegExpFilter.typeMap = {
   BACKGROUND: 4,    // Backwards compat, same as IMAGE
 
   POPUP: 0x10000000,
-  ELEMHIDE: 0x40000000
 };
 
-// ELEMHIDE, POPUP option shouldn't be there by default
-RegExpFilter.prototype.contentType &= ~(RegExpFilter.typeMap.ELEMHIDE | RegExpFilter.typeMap.POPUP);
+
+/* ********************************************************************* */
 
 /**
  * Class for blocking filters
@@ -786,18 +611,24 @@ RegExpFilter.prototype.contentType &= ~(RegExpFilter.typeMap.ELEMHIDE | RegExpFi
  * @constructor
  * @augments RegExpFilter
  */
-function BlockingFilter(text, regexpSource, contentType, matchCase, domains, thirdParty, collapse)
-{
+function BlockingFilter(text, regexpSource, contentType, matchCase, domains, thirdParty, collapse) {
   RegExpFilter.call(this, text, regexpSource, contentType, matchCase, domains, thirdParty);
-
   this.collapse = collapse;
 }
-// exports.BlockingFilter = BlockingFilter;
 
-BlockingFilter.prototype =
-{
+/**
+ * @param o is an object from toJSON
+ * @param f (optional) is subclass of BlockingFilter
+ */
+BlockingFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new BlockingFilter(o.text, o.regexp, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.collapse);
+  RegExpFilter.fromJSON.call(this, o, f);
+  return f;
+};
+
+BlockingFilter.prototype = {
   __proto__: RegExpFilter.prototype,
-
   /**
    * Defines whether the filter should collapse blocked content. Can be null (use the global preference).
    * @type Boolean
@@ -812,13 +643,8 @@ BlockingFilter.prototype =
   }
 };
 
-BlockingFilter.fromJSON = function (o, f) {
-  if (! f)
-    f = new BlockingFilter(o.text, o.regexp, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.collapse);
-  RegExpFilter.fromJSON.call(this, o, f);
-  f.collapse = o.collapse;
-  return f;
-};
+
+/* ********************************************************************* */
 
 /**
  * Class for whitelist filters
@@ -832,19 +658,26 @@ BlockingFilter.fromJSON = function (o, f) {
  * @constructor
  * @augments RegExpFilter
  */
-function WhitelistFilter(text, regexpSource, contentType, matchCase, domains, thirdParty, siteKeys)
-{
+function WhitelistFilter(text, regexpSource, contentType, matchCase, domains, thirdParty, siteKeys) {
   RegExpFilter.call(this, text, regexpSource, contentType, matchCase, domains, thirdParty);
 
   if (siteKeys !== null)
     this.siteKeys = siteKeys;
 }
-// exports.WhitelistFilter = WhitelistFilter;
 
-WhitelistFilter.prototype =
-{
+/**
+ * @param o is an object from toJSON
+ * @param f (optional) is subclass of WhitelistFilter
+ */
+WhitelistFilter.fromJSON = function (o, f) {
+  if (! f)
+    f = new WhitelistFilter(o.text, o.regexp, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.siteKeys);
+  RegExpFilter.fromJSON.call(this, o, f);
+  return f;
+};
+
+WhitelistFilter.prototype = {
   __proto__: RegExpFilter.prototype,
-
   /**
    * List of public keys of websites that this filter should apply to
    * @type String[]
@@ -859,163 +692,17 @@ WhitelistFilter.prototype =
   }
 };
 
-WhitelistFilter.fromJSON = function (o, f) {
-  if (! f)
-    f = new WhitelistFilter(o.text, o.regexp, o.contentType, o.matchCase, o.sourceDomains, o.thirdParty, o.siteKeys);
-  RegExpFilter.fromJSON.call(this, o, f);
-  f.siteKeys = o.siteKeys;
-  return f;
-};
 
-/**
- * Base class for element hiding filters
- * @param {String} text see Filter()
- * @param {String} domains    (optional) Host names or domains the filter should be restricted to
- * @param {String} selector   CSS selector for the HTML elements that should be hidden
- * @constructor
- * @augments ActiveFilter
- */
-function ElemHideBase(text, domains, selector)
-{
-  ActiveFilter.call(this, text, domains ? domains.toUpperCase() : null);
-
-  if (domains)
-    this.selectorDomain = domains.replace(/,~[^,]+/g, "").replace(/^~[^,]+,?/, "").toLowerCase();
-  this.selector = selector;
-}
-// exports.ElemHideBase = ElemHideBase;
-
-ElemHideBase.prototype =
-{
-  __proto__: ActiveFilter.prototype,
-
-  /**
-   * @see ActiveFilter.domainSeparator
-   */
-  domainSeparator: ",",
-
-  /**
-   * @see ActiveFilter.ignoreTrailingDot
-   */
-  ignoreTrailingDot: false,
-
-  /**
-   * Host name or domain the filter should be restricted to (can be null for no restriction)
-   * @type String
-   */
-  selectorDomain: null,
-  /**
-   * CSS selector for the HTML elements that should be hidden
-   * @type String
-   */
-  selector: null
-};
-
-/**
- * Creates an element hiding filter from a pre-parsed text representation
- *
- * @param {String} text       same as in Filter()
- * @param {String} domain     domain part of the text representation (can be empty)
- * @param {String} tagName    tag name part (can be empty)
- * @param {String} attrRules  attribute matching rules (can be empty)
- * @param {String} selector   raw CSS selector (can be empty)
- * @return {ElemHideFilter|ElemHideException|InvalidFilter}
- */
-// ElemHideBase.fromText = function(text, domain, isException, tagName, attrRules, selector)
-// {
-//   if (!selector)
-//   {
-//     if (tagName == "*")
-//       tagName = "";
-
-//     var id = null;
-//     var additional = "";
-//     if (attrRules) {
-//       attrRules = attrRules.match(/\([\w\-]+(?:[$^*]?=[^\(\)"]*)?\)/g);
-//       for (var rule in attrRules) {
-//         rule = rule.substr(1, rule.length - 2);
-//         var separatorPos = rule.indexOf("=");
-//         if (separatorPos > 0) {
-//           rule = rule.replace(/=/, '="') + '"';
-//           additional += "[" + rule + "]";
-//         }
-//         else {
-//           if (id)
-//           {
-//             var {Utils} = require("utils");
-//             return new InvalidFilter(text, Utils.getString("filter_elemhide_duplicate_id"));
-//           }
-//           else
-//             id = rule;
-//         }
-//       }
-//     }
-
-//     if (id)
-//       selector = tagName + "." + id + additional + "," + tagName + "#" + id + additional;
-//     else if (tagName || additional)
-//       selector = tagName + additional;
-//     else
-//     {
-//       var {Utils} = require("utils");
-//       return new InvalidFilter(text, Utils.getString("filter_elemhide_nocriteria"));
-//     }
-//   }
-//   if (isException)
-//     return new ElemHideException(text, domain, selector);
-//   else
-//     return new ElemHideFilter(text, domain, selector);
-// }
-
-/**
- * Class for element hiding filters
- * @param {String} text see Filter()
- * @param {String} domains  see ElemHideBase()
- * @param {String} selector see ElemHideBase()
- * @constructor
- * @augments ElemHideBase
- */
-function ElemHideFilter(text, domains, selector)
-{
-  ElemHideBase.call(this, text, domains, selector);
-}
-// exports.ElemHideFilter = ElemHideFilter;
-
-ElemHideFilter.prototype =
-{
-  __proto__: ElemHideBase.prototype
-};
-
-/**
- * Class for element hiding exceptions
- * @param {String} text see Filter()
- * @param {String} domains  see ElemHideBase()
- * @param {String} selector see ElemHideBase()
- * @constructor
- * @augments ElemHideBase
- */
-function ElemHideException(text, domains, selector)
-{
-  ElemHideBase.call(this, text, domains, selector);
-}
-// exports.ElemHideException = ElemHideException;
-
-ElemHideException.prototype =
-{
-  __proto__: ElemHideBase.prototype
-};
+/* ********************************************************************* */
 
 return {
   Filter: Filter,
   InvalidFilter: InvalidFilter,
   CommentFilter: CommentFilter,
-  ElemHideBase: ElemHideBase,
+  ActiveFilter: ActiveFilter,
+  RegExpFilter: RegExpFilter,
   WhitelistFilter: WhitelistFilter,
   BlockingFilter: BlockingFilter,
-  RegExpFilter: RegExpFilter,
-  ActiveFilter: ActiveFilter,
-  ElemHideFilter: ElemHideFilter,
-  ElemHideException: ElemHideException,
 };
 
 });

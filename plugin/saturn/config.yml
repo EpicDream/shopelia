@@ -1,5 +1,5 @@
 ---
-"version": "3.4.0"
+"version": "3.4.3"
 "default":
   #### Global options
   ## in ['test', 'dev', 'staging', 'prod']. Shortcut to configue all others values.
@@ -23,11 +23,14 @@
   "ADBLOCK_RESTART_DELAY": 0 # Never
   "CHROME_RESTART_DELAY": 0 # Never
 
+  #### Casper options
+  "MAX_SIMULTANEOUS_SESSION": 5
+
   #### URLs options
   "SHOPELIA_DOMAIN": "https://www.shopelia.com"
   "PRODUCT_EXTRACT_URL": "https://www.shopelia.com/api/viking/products"
   "MAPPING_URL": "https://www.shopelia.com/api/viking/merchants/"
-  "PRODUCT_EXTRACT_UPDATE": "https://www.shopelia.com/api/viking/products/"
+  "PRODUCT_EXTRACT_UPDATE": "http://www.shopelia.com/api/viking/products/"
 
 #### Specific Profiles
 ## For Jasmine

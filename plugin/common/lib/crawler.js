@@ -45,7 +45,7 @@ Crawler.prototype.waitAjax = function () {
 };
 
 Crawler.prototype.doNext = function (hash) {
-  logger.debug("ProductCrawl", hash.action, "task received", hash);
+  logger.debug("ProductCrawl", hash.action, "task received", "option="+hash.option, "value='"+(hash.value && hash.value.hash)+"'");
   key = "option"+hash.option;
   switch (hash.action) {
     case "getOptions":
@@ -64,6 +64,7 @@ Crawler.prototype.doNext = function (hash) {
       logger.error("Unknow command", hash.action);
       result = false;
   }
+  logger.debug("Result is ", result);
   // wait minimal to let page reload on url change
   if (hash.action === "setOption")
     setTimeout(this.waitAjax.bind(this), 1000);
@@ -150,7 +151,7 @@ Crawler.prototype.searchOption = function (paths) {
 //
 Crawler.prototype.parseOption = function (elems) {
   return elems.toArray().filter(function(elem) {
-    return elem.innerText.match(Crawler.OPTION_FILTER) === null || elem.src;
+    return elem.innerText.match(Crawler.OPTION_FILTER) === null || elem.getAttribute('src');
   }).map(function(elem) {
     var h = hu.getElementAttrs(elem);
     h.xpath = hu.getElementXPath(elem);

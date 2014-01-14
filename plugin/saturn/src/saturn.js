@@ -30,6 +30,8 @@ Saturn.prototype.preProcessData = function (data) {
   prod.kind = data.kind;
   prod.keepTabOpen = data.keepTabOpen;
   prod.extensionId = data.extensionId;
+  prod._onSubTaskFinished = data._onSubTaskFinished;
+  prod._subTaskId = data._subTaskId;
   return prod;
 };
 
