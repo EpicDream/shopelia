@@ -4,7 +4,7 @@
   %meta{content: @look.flinker.name, property: "og:title"}/
   %meta{content: @look.description, property: "og:description"}/
   %meta{content: "http://www.flink.io/looks/" + @look.uuid, property: "og:url"}/
-  %meta{content: "http://www.flink.io" + @look.look_images.order(:display_order).first.picture.url(:large), property: "og:image"}/
+  %meta{content: "http://www.flink.io" + @look.look_images.order(:display_order).first.picture.url(:small), property: "og:image"}/
   %meta{content: "photo", name: "twitter:card"}/
   %meta{content: "@FlinkHQ", name: "twitter:site"}/
   %meta{content: "flink.io", name: "twitter:domain"}/
