@@ -1,0 +1,12 @@
+!!!
+%html
+  %head
+    %meta{charset: "utf-8"}/
+    %meta{content: "width=device-width,initial-scale=1.0,maximum-scale=1.0, minimum-scale=1.0, user-scalable=no", name: "viewport"}/
+    = stylesheet_link_tag "flink/application"
+    = javascript_include_tag "flink/application"
+    = yield :head
+    %title= @title || "Flink"
+
+  %body
+    = yield

@@ -3,3 +3,4 @@ agadir:
   name: "Agadir"
   url: "http://www.bla.com"
   flinker: betty
+  published_at: <%= Time.now %>

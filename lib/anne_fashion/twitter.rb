@@ -87,6 +87,7 @@ module AnneFashion
     end
     
     def follow_friends_of_friends n=20
+      session_wait()
       follow friends_of_friends.to_a.sample(n)
     end
     
@@ -95,6 +96,7 @@ module AnneFashion
     end
     
     def schedule_follow_ratio
+      session_wait()
       followings = followings().to_a
       followers = followers().to_a
       unfollows = followings - followers
@@ -130,6 +132,10 @@ module AnneFashion
     
     private
     
+    def session_wait
+      sleep rand(60..1800)
+    end
+
     def maybe
       [true, false].sample
     end

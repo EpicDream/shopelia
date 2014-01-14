@@ -201,6 +201,6 @@ Shopelia::Application.routes.draw do
   get "errors/error_404"
   get "errors/error_500"
 
-  root to: 'home#index'
+  root to: 'flink#index'
 
 end

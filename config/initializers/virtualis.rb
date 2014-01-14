@@ -5,6 +5,13 @@ Virtualis.configure do |c|
     c.endpoint_url  = 'https://www.service-virtualis.com/wspart/services/VirtualisService'
     c.messages_path = "#{Rails.root}/lib/virtualis/messages/"
     c.certificate   = OpenSSL::X509::Certificate.new File.read("#{Rails.root}/keys/virtualis/prod.crt.pem")
+    if $gpgme_passphrase.nil?
+      f = "/home/shopelia/shopelia/tmp/p.dat"
+      if File.readable?(f)
+        $gpgme_passphrase = File.read(f)
+        $gpgme_passphrase.chomp!
+      end
+    end
     if $gpgme_passphrase.present?
       c.key           = OpenSSL::PKey::RSA.new(File.read("#{Rails.root}/keys/virtualis/prod.key.pem"), $gpgme_passphrase)
     end

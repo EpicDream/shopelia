@@ -15,6 +15,7 @@ class FlinklerSerializerTest < ActiveSupport::TestCase
     assert_equal @flinker.name, hash[:flinker][:name]
     assert_equal @flinker.url, hash[:flinker][:url]
     assert_equal Rails.configuration.host + @flinker.avatar.url(:thumb), hash[:flinker][:avatar]
+    assert_equal 1, hash[:flinker][:staff_pick]
     assert_equal "FR", hash[:flinker][:country]
   end
 end

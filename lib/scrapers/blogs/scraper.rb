@@ -2,13 +2,17 @@
 require_relative 'images'
 require_relative 'content'
 require_relative 'products_finder'
+require_relative 'date'
 
 module Scrapers
   module Blogs
     
     class Scraper
       attr_accessor :url
-      DATE_PATTERN = /(\d{1,2}[\s\.\/]+[a-zA-Z\d]+[\s\.\/]+\d{2,4})/
+      POST_NODE_XPATHS = [
+        "article", "div.post", "div.blogselection > div", "div.entry", "div.single", "div.post-wrap", "div.post-body", 
+        "div.article", "div.blog_item", "div.entrybody"
+      ]
       
       def initialize url=nil
         @url = url
@@ -29,15 +33,7 @@ module Scrapers
       end
       
       def date block
-        block.text =~ DATE_PATTERN
-        unless $1
-          header = block.search(".//preceding::h2").last
-          header.text =~ DATE_PATTERN if header
-        end
-        date = $1
-        date =~ /\.(\d\d)$/ ? date[-2..-1] = "20#{$1}" : date 
-        date = Date.parse_international(date) if date rescue nil
-        date || Time.now
+        Date.new(block).extract
       end
       
       def link block
@@ -72,8 +68,12 @@ module Scrapers
       def blocks
         page = @agent.get(@url)
         page = from_blogspot_frame(page) || page
-        page.search("article, div.post, div.blogselection > div, div.entry, div.single, div.post-wrap, div.post-body, div.article, div.blog_item, div.entrybody")
-      rescue
+        POST_NODE_XPATHS.each { |xpath|  
+          blocks = page.search(xpath)
+          return blocks if blocks.any?
+        }
+        []
+      rescue 
         []
       end
       
@@ -88,7 +88,7 @@ module Scrapers
        return unless frame = page.search(".//frame[contains(@src, 'blogspot')]").first
        src = frame.attribute('src').value
        @url = src
-       @agent.get(@url)
+       @agent.get(@url) rescue nil
       end
       
       def header block

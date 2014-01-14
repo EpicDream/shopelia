@@ -65,8 +65,10 @@ class String
   end
   
   def clean
+    self.gsub(/\n|\r|\t/, ' ').strip
+  rescue 
     encoded = encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-    encoded.gsub(/\n|\r|\t/, ' ').strip
+    self.clean
   end
   
 end
@@ -83,15 +85,15 @@ class Date
   end
  
   MONTH_TRANSLATIONS = {}    
-  MONTH_TRANSLATIONS.merge! make_hash(%w/janvier février mars avril mai juin juillet août septembre octobre novembre décembre/) # French
-  MONTH_TRANSLATIONS.merge! make_hash(%w/Januar	Februar	März	April	Mai	Juni	Juli	August	September	Oktober	November	Dezember/)  # German
+  MONTH_TRANSLATIONS.merge! make_hash(%w/janvier fevrier mars avril mai juin juillet aout septembre octobre novembre decembre/) # French
+  MONTH_TRANSLATIONS.merge! make_hash(%w/januar	februar	marz	april	mai	juni	juli	august	september	oktober	november	dezember/)  # German
   MONTH_TRANSLATIONS.merge! make_hash(%w/gennaio	febbraio	marzo	aprile	maggio	giugno	luglio	agosto	settembre	ottobre	novembre	dicembre/)  # Italian
   MONTH_TRANSLATIONS.merge! make_hash(%w/enero	febrero	marzo	abril	mayo	junio	julio	agosto	septiembre	octubre	noviembre	diciembre/) # Spanish
  
   def self.month_to_english(string)
-    month_from = string[/[^\s\d,]+/i]      # Search for a month name
+    month_from = string[/[^\s\d,]+/i]
     if month_from
-      month_to = MONTH_TRANSLATIONS[month_from.downcase]      # Look up the translation
+      month_to = MONTH_TRANSLATIONS[month_from.downcase.unaccent]
       return string.sub(month_from, month_to.to_s) if month_to
     end
     return string

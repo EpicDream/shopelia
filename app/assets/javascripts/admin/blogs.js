@@ -25,7 +25,7 @@ $(document).ready(function() {
   $(document).on("click", "button[id^=skip-blog]", function() {
     var button = $(this);
     var blogId = button.data('id');
-    $.post("/admin/blogs/" + blogId, {_method:'put', blog:{skipped:true}})
+    $.post("/admin/blogs/" + blogId + '.json', {_method:'put', blog:{skipped:true}})
     .success(function() {
       button.parents("tr").toggle();
     });
@@ -33,7 +33,11 @@ $(document).ready(function() {
   
   $(document).on("click", "#create-blog-link", function() {
     $("#create-blog-block").toggleClass("create-blog-block-shown");
-  })
+  });
+  
+  $(document).on("click", "#update-blog-link", function() {
+    $("#update-blog-block").toggleClass("update-blog-block-shown");
+  });
   
   $(document).on("click", "#name-filter", function() {
     var pattern = $("#name-filer-pattern").val();
@@ -66,7 +70,7 @@ $(document).ready(function() {
     var offset = button.offset();
     var success = false;
     
-    $.post("/admin/blogs/" + blogId, {_method:'put', blog:{scraped:true}, fetch:true})
+    $.post("/admin/blogs/" + blogId + '.json', {_method:'put', blog:{scraped:true}, fetch:true})
     .success(function() {
       success = true;
     });

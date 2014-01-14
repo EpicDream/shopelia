@@ -2,24 +2,48 @@
 <%= link_to "Récupérer les nouveaux articles", admin_blog_url(@blog, :fetch => true), class:"btn fetch-post-link" %>
 
 <div class="coolbox blogs-posts-header">
+  <a href="#" id="update-blog-link">Mettre à jour</a>
   <p><%= @blog.name %></p>
   <img src="<%= @blog.avatar_url || "/assets/admin/girl_head.jpg"%>" class="blog-posts-avatar"></img>
   <%= link_to @blog.url, @blog.url %>
+  <div id="update-blog-block" class="update-blog-block-hidden">
+    <%= form_for [:admin, @blog] do |f| %>
+      <%= f.label :avatar_url, "Url de l'avatar" %>
+      <%= f.text_field :avatar_url %>
+      <%= f.submit("Mettre à jour", :class => 'btn btn-success ') %>
+    <% end  %>
+  </div>
 </div>
 
 <div class="coolbox blog-post posts-outline">
-  <ol>
+  <table>
     <% @blog.posts.each_with_index do |post, index| %>
-      <li>
-        <%= link_to "#{post.title} (#{l(post.published_at)})", "#post-#{index}" %>
-      </li>
+      <tr>
+        <td>
+          <span class="tag has-look-tag-<%= post.look.present? %>">L</span>
+          <span class="tag has-look-published-tag-<%= post.look.present? && post.look.is_published? %>">P</span>
+        </td>
+        <td>
+          <%= link_to "#{post.title} (#{l(post.published_at)})", "#post-#{index}" %>
+        </td>
+        <td>
+          <%= link_to 'Voir le look', admin_look_path(post.look) if post.look %>
+        </td>
+      </tr>
     <% end %>
-  </ol>
+  </table>
 </div>
 
 <% @blog.posts.each_with_index do |post, index| %>
   <div class="blog-post coolbox" id="post-<%= index%>">
-    <h5>Intitulé</h5>
+    <div class="tags">
+      <span class="tag has-look-tag-<%= post.look.present? %>">L</span>
+      <span class="tag has-look-published-tag-<%= post.look.present? && post.look.is_published? %>">P</span>
+    </div>
+    
+    <h5>
+      Intitulé
+    </h5>
       <span><%= post.title %></span>
     <h5>Date</h5>
       <span><%= post.published_at %></span>

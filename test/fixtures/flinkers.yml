@@ -16,6 +16,7 @@ betty:
   email: betty@flink.com
   country: france
   is_publisher: true
+  staff_pick: true
 
 boop:
   name: Boop

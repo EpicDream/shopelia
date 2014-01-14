@@ -2,6 +2,17 @@
   %header
     %h1 Posts
     %h2 Building looks
-
+  %span.total-looks
+    %i=Look.published.count
+    %i Looks publiés
+  %table 
+    %thead
+      %th Date
+      %th Nombre de looks publiés
+    - @publications.each do |hash|
+      %tr
+        %td=I18n.l(Date.parse(hash['updated_at']))
+        %td=hash['count']
+        
 .wrapper-column
   = render @posts

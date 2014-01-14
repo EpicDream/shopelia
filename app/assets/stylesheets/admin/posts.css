@@ -7,49 +7,70 @@ body {
   margin: 0 auto;
 }
 
+section.header table{
+  margin:10px 0 5px 33%;
+}
+section.header table td{
+  border:thin solid #D4D4D4;
+  text-align:right;
+  font-size:12px;
+  padding:5px;
+}
+
+span.total-looks{
+  color:white;
+  display:inline-block;
+  float:left;
+  width:160px;
+  height:160px;
+  font-size:50px;
+  background-color:#FF6BC4;
+  border-radius:80px;
+  margin:5px 0 0 5px;
+}
+span.total-looks i:first-child{
+  display:block;
+  text-align:center;
+  margin:40% 0 0 0;
+}
+span.total-looks i:nth-child(2){
+  font-size:12px;
+  display:block;
+  text-align:center;
+  margin:30px 0 0 0px;
+}
 .column {
   width: 30%;
-  margin: 4.2% 1.66666667%;
-  float: left;
+  display:inline-block;
+  padding:10px;
+  background:white;
+  margin:20px 0 0 0;
+  height:auto;
+  vertical-align:bottom;
 }
 
-.column img {
-  display: block;
-  max-width: 100%;
+.column a div img {
   margin: 0 auto;
 }
-
-.ribbon {
-  font-size: 1em;
-  width: 100%;
-  position: relative;
-  background: #E01B6A;
-  color: #fff;
-  text-align: center;
-  padding: .75em .5em;
-  margin: -4em 0 0 -.5em;
-  font-family: "Helvetica Neau", helvetica;
-  display: block;  
+.column a div{
+  position:relative;
 }
-
-.ribbon-content:before {
-  content: "";
-  position: absolute;
-  display: block;
-  border-style: solid;
-  border-width: 0em 0em .5em .5em;
-  border-color: transparent transparent #A3144D;
-  top: -.5em;
-  left: 0;
+.column a div p{
+  width:100%;
+  padding-top:10px;
+  position:absolute;
+  bottom:2px;
+  height:60px;
+  font-family: Lucida;
+  background-color:#68995F;
+  font-size: 22px;
+  line-height:22px;
+  background: #FFF;
+  opacity:0.3;
+  color:black;
+  z-index:100;
+  text-align:center;
 }
-
-.ribbon-content:after {
-  content: "";
-  position: absolute;
-  display: block;
-  border-style: solid;
-  border-width: 0em .5em .5em 0em;
-  border-color: transparent transparent #A3144D;
-  top: -.5em;
-  right: 0;
+.column a div p:hover{
+  opacity:0.7;
 }

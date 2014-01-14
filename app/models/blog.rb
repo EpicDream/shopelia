@@ -10,8 +10,13 @@ class Blog < ActiveRecord::Base
   before_validation :normalize_url
   validates :url, uniqueness:true, presence:true, :on => :create
   after_create :assign_flinker, if: -> { self.flinker_id.nil? }
-  
+  after_update :update_flinker_avatar, if: -> { self.avatar_url_changed? }
+
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
+  scope :without_posts_since, ->(date) { 
+    where("not exists (select id from posts where posts.blog_id = blogs.id and posts.published_at >= '#{date}')") 
+  }
+  scope :without_posts_since_one_month, -> { without_posts_since(Date.today - 1.month)}
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
   scope :not_scraped, -> { scraped(false) }
   scope :skipped, ->(skipped=true) { where(skipped:skipped) }
@@ -27,7 +32,6 @@ class Blog < ActiveRecord::Base
       post.blog_id = self.id
       post.save
     end
-    breakdown?
     self
   rescue => e
     report_incident(:fetch, e.message)
@@ -60,9 +64,7 @@ class Blog < ActiveRecord::Base
   end
 
   def breakdown?
-    breakdown = !self.posts.first || self.posts.first.published_at < Time.now - 1.month
-    report_incident(:check_breakdown, "No post since 1 month...") if breakdown
-    breakdown
+    !self.posts.first || self.posts.first.published_at < Time.now - 1.month
   end
   
   private
@@ -88,6 +90,11 @@ class Blog < ActiveRecord::Base
       country_id:country.id, 
       avatar_url:self.avatar_url)
     update_attribute :flinker_id, flinker.id
+  end
+  
+  def update_flinker_avatar
+    self.flinker.avatar_url = self.avatar_url
+    self.flinker.save!
   end
   
   def normalize_url

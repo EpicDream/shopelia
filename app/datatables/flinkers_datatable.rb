@@ -22,12 +22,16 @@ class FlinkersDatatable
       blog = Blog.find_by_flinker_id(flinker.id)
       [
         flinker.id,
-        link_to(flinker.name || flinker.username || flinker.url, admin_flinker_path(flinker)),
+        link_to(flinker.name || flinker.username || flinker.url || flinker.id, admin_flinker_path(flinker)),
+        flinker.email,
         image_tag(flinker.avatar.blank? ? "empty.png" : flinker.avatar.url(:thumb), class:"avatar"),
-        number_with_delimiter(flinker.looks.where(is_published:true).count),
-        number_with_delimiter(blog ? blog.posts.count : 0),
+        number_with_delimiter(flinker.looks_count),
+        number_with_delimiter(flinker.follows_count),
+        number_with_delimiter(flinker.likes_count),
         flinker.url,
-        flinker.is_publisher? ? "Yes" : "No"
+        flinker.is_publisher? ? "Yes" : "No",
+        flinker.staff_pick? ? "Yes" : "No",
+        "<button type=\"button\" class=\"btn btn-danger\" data-destroy-url=\"#{admin_flinker_path(flinker)}\" data-username=\"#{flinker.username}\" style=\"visibility:hidden\">Delete</button>"
       ]
     end
   end
