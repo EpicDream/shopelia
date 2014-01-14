@@ -4,7 +4,7 @@ casper = require('casper').create(
   verbose: true,
   logLevel: "warning",
   clientScripts: ["build/casper_injected.js"],
-  waitTimeout: 30000,
+  waitTimeout: 60000,
 )
 utils = require('utils')
 Server = require('webserver').create()
@@ -14,22 +14,22 @@ requirejs ['casper_logger', "src/casper/session", 'src/casper/adblock', 'satconf
   HOST = "127.0.0.1"
   PORT = casper.cli.get("port")
   NODE_PORT = casper.cli.get("node_port")
-  caspId =  "[Casper@#{PORT}]"
+  logId =  "[Casper@#{PORT}]"
 
   # LOGS
   logger.level = logger.ALL#logger[satconf.log_level]
   casper.on 'console', (line) ->
-    logger.info(caspId + 'Fom console : ' + line)
+    logger.info(logId + 'Fom console : ' + line)
   casper.on "page.error", (msg, trace) ->
-    logger.error(caspId, "Page: "+msg)
+    logger.error(logId, "Page: "+msg)
   casper.on "error", (msg, trace) ->
-    logger.error(caspId, msg)
+    logger.error(logId, msg)
     this.echo("Error:    " + msg, "ERROR");
     this.echo("file:     " + trace[0].file, "WARNING");
     this.echo("line:     " + trace[0].line, "WARNING");
     this.echo("function: " + trace[0]["function"], "WARNING");
   casper.on "step.error", (msg) ->
-    logger.error(caspId, "Step: "+msg)
+    logger.error(logId, "Step: "+msg)
 
   # ADBLOCK
   if casper.cli.get("adblock")
@@ -48,25 +48,24 @@ requirejs ['casper_logger', "src/casper/session", 'src/casper/adblock', 'satconf
 
   # Load and initialize Crawler when page is loaded.
   casper.on "load.finished", ->
-    casper.evaluate (caspId) ->
+    casper.evaluate (logId) ->
       # Create function to emit signal to casper.
       __utils__.sat_emit ?= (signame, data) ->
         window.callPhantom({signame: signame, data: data}) if typeof window.callPhantom == 'function'
       requirejs ['casper_logger', 'src/casper/crawler'], (logger, Crawler) ->
         return if window.crawler?
         logger.level = logger.ALL
-        window.caspId = caspId
+        window.logId = logId
         window.crawler = new Crawler()
-        window.crawler.goNextStep()
-    , caspId
+    , logId
     return true
 
   saturn = {
-    caspId: caspId
+    logId: logId
     createServer: ->
       @initRequest = false
       @service = Server.listen "#{HOST}:#{PORT}", (request, response) =>
-        logger.debug "#{@caspId} Incoming request at '#{request.url}'."
+        logger.debug @logId, "Incoming request at '#{request.url}'."
         if request.url is "/subTaskFinished"
           try
             res = request.post
@@ -74,7 +73,7 @@ requirejs ['casper_logger', "src/casper/session", 'src/casper/adblock', 'satconf
             response.statusCode = 200
             response.closeGracefully()
           catch err
-            logger.error "#{@caspId} #{err}."
+            logger.error @logId, err
             response.statusCode = 500
             response.write("Fail to parse post data")
             response.closeGracefully()
@@ -87,34 +86,36 @@ requirejs ['casper_logger', "src/casper/session", 'src/casper/adblock', 'satconf
             response.statusCode = 200
             response.closeGracefully()
           catch err
-            logger.error "#{@caspId} Fail to parse '#{request.post}'"
+            logger.error @logId, "Fail to parse '#{request.post}'"
             response.statusCode = 500
             response.write("Fail to parse post data")
             response.closeGracefully()
             return casper.exit()
-      logger.debug "#{@caspId} Server launch. Listen on #{HOST}:#{PORT}"
+      logger.debug @logId, "Server launch. Listen on #{HOST}:#{PORT}"
 
       if casper.cli.get("prod")
         try
           prod = JSON.parse casper.cli.get("prod")
           this.createSession(prod)
+          return
         catch err
-          logger.error "#{@caspId} Fail to parse '#{casper.cli.get("prod")}'"
-      else
-        logger.debug "#{@caspId} Send ready signal to NodeJS server on port #{NODE_PORT}"
-        casper.evaluate( (host, nodePort, port) ->
-          __utils__.sendAJAX("http://#{host}:#{nodePort}/casper-ready?session=#{port}", 'GET', null, true)
-        , HOST, NODE_PORT, PORT)
-        casper.then () =>
-          logger.debug "#{@caspId} Ajax request sent."
-        casper.waitFor () =>
-          @initRequest
-        , null, () =>
-          logger.error("#{@caspId} no product received !")
-          casper.exit(1)
-        , 5*60*1000 # 5 min
+          logger.error @logId, "Fail to parse '#{casper.cli.get("prod")}'"
+
+      logger.debug @logId, "Send ready signal to NodeJS server on port #{NODE_PORT}"
+      casper.evaluate( (host, nodePort, port) ->
+        __utils__.sendAJAX("http://#{host}:#{nodePort}/casper-ready?session=#{port}", 'GET', null, true)
+      , HOST, NODE_PORT, PORT)
+      casper.then () =>
+        logger.debug @logId, "Ajax request sent."
+      casper.waitFor () =>
+        @initRequest
+      , null, () =>
+        logger.error(@logId, "no product received !")
+        casper.exit(1)
+      , 5*60*1000 # 5 min
 
     createSession: (prod) ->
+      logId = @logId = "[Casper@#{PORT}#{if prod.id then "#"+prod.id else ""}]"
       @session = new CasperSession(this, prod)
       # Signal emited when page has finished the eval.
       casper.on "saturn.evalDone", (result) =>
@@ -131,8 +132,8 @@ requirejs ['casper_logger', "src/casper/session", 'src/casper/adblock', 'satconf
       , "http://localhost:#{NODE_PORT}/product", prod
 
     endSession: ->
-      casper.wait 1000, () ->
-        casper.exit()
+      logger.trace(@logId, "CasperSaturn.endSession")
+      casper.exit()
   }
 
   casper.start()

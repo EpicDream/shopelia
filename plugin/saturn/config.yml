@@ -23,6 +23,9 @@
   "ADBLOCK_RESTART_DELAY": 0 # Never
   "CHROME_RESTART_DELAY": 0 # Never
 
+  #### Casper options
+  "MAX_SIMULTANEOUS_SESSION": 5
+
   #### URLs options
   "SHOPELIA_DOMAIN": "https://www.shopelia.com"
   "PRODUCT_EXTRACT_URL": "https://www.shopelia.com/api/viking/products"

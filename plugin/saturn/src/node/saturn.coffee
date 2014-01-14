@@ -5,6 +5,7 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
     constructor: (@serverPort, args...) ->
       super(args...)
       @portCounter = @serverPort
+      @acceptProduct = true
       @server = Http.createServer( (req, res) =>
         uri = Url.parse(req.url, true)
         logger.debug("[NodeJS] Incoming connection from #{req.connection.remoteAddress}")
@@ -13,7 +14,7 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
           this.onSessionReady(uri.query.session)
           res.writeHead(204)
           return res.end()
-        else if req.method is "POST" && req.url is '/product'
+        else if req.method is "POST" && req.url is '/product' && @acceptProduct
           req.setEncoding('utf8')
           return req.on 'data', (chunk) =>
             logger.debug("[NodeJS] Data received : " + chunk);
@@ -28,14 +29,10 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
               res.writeHead(500, {'Content-Type': 'text/plain'})
               res.end("Fail to parse request")
         else if req.method is "POST" && req.url is '/exit'
-          @server.close()
-          for port, session in @sessions
-            if session.started
-              session.process.unref()
-            else
-              logger.warn("[NodeJS@#{port}] CasperJS is spawn but not started for url='#{session.url}'")
-              session.process.kill()
-          process.exit()
+          this.quit()
+        else if req.method is "POST" && req.url is '/product' && ! @acceptProduct
+          res.writeHead(503)
+          return res.end()
         else
           logger.error("[NodeJs] Unrecognise request : METHOD=#{req.method} and url=#{req.url}.")
           res.writeHead(400, {'Content-Type': 'text/plain'})
@@ -51,25 +48,30 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
     loadMapping: (merchantId, doneCallback, failCallback) ->
       Mapping.load(merchantId)
 
+    crawlProduct: () ->
+      super if Object.keys(@sessions).length <= satconf.MAX_SIMULTANEOUS_SESSION
+
     createSession: (prod) ->
       port = prod.sessionPort = ++@portCounter
-      @sessions[prod.sessionPort] = prod
+      logId = "[NodeJS@#{port}#{if prod.id then "#"+prod.id else ""}]"
 
-      logger.debug("[NodeJS@#{port}] Going to launch casper for product #{if prod.id? then "##{prod.id}" else prod.url}")
+      logger.debug(logId, "Going to launch casper for product #{prod.url}")
       session = ChildProcess.spawn('casperjs', ["--web-security=false", "build/casper.js", "--port="+port, "--node_port="+@serverPort, "--prod="+JSON.stringify(prod), "--adblock"])
-      session.stdout.on 'data', (chunk) =>
-        logger.print(chunk.toString().trim())
-      session.stderr.on 'data', (chunk) =>
-        logger.print(chunk.toString().trim())
-      session.on 'close', (code) =>
-        delete @sessions[port]
-        logger.debug("[NodeJS#"+port+"] casper process exited with code " + code)
+      prod.logId = logId # Si on le fait avant, le JSON.parse de CasperSession plante !??
       @sessions[prod.sessionPort] = {process: session, prod: prod}
+
+      session.stdout.on 'data', (chunk) =>
+        this.logCasper(chunk.toString().trim())
+      session.stderr.on 'data', (chunk) =>
+        this.logCasper(chunk.toString().trim())
+      session.on 'close', (code) =>
+        logger.debug(logId, "casper process exited with code " + code)
+        this.clearSession(port)
 
     onSessionReady: (port) ->
       prod = @sessions[port].prod
       prodJSON = JSON.stringify(prod)
-      logger.debug("[NodeJS@"+port+"] going to start session.")
+      logger.debug(prod.logId, "going to start session.")
       Http.request(
         host: "127.0.0.1"
         port: port
@@ -79,6 +81,10 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
           "Content-Length": Buffer.byteLength(prodJSON)
       ).end(prodJSON)
       @sessions[port].started = true
+
+    clearSession: (port) ->
+      delete @sessions[port]
+      this.crawlProduct()
 
     startPolling: () ->
       options = require('url').parse( 'https://www.shopelia.com/api/viking/products' );
@@ -98,8 +104,8 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
             return unless prods.length > 0
             logger.verbose("[NodeJS] New products received : #{prods.length}")
             this.onProductsReceived(prods)
-        ).on 'error', (e) ->
-          logger.error("[NodeJS] Get product connection error : #{e}")
+        ).on 'error', (err) ->
+          logger.error("[NodeJS] Get product connection error : #{err}")
 
     stopPolling: () ->
       clearInterval(@timerId)
@@ -130,5 +136,13 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
           if res.statusCode is 408 || res.statusCode is 502 # Timeout or Unreachable
             setTimeout2 5000, () => this.sendWarning(prod, msg)
         )
+
+    quit: () ->
+      @acceptProduct = false
+      this.stopPolling()
+
+    logCasper: (chunk) ->
+      level = chunk.match(/\[[A-Z ]{5}\]/)?[0] || "[PRINT]"
+      logger.write(level.slice(1,-1).trim(), chunk)
 
   return NodeSaturn

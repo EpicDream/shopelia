@@ -9,14 +9,14 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
       @evalReturns = false
 
     openUrl: () ->
-      logger.debug("#{@saturn.caspId} Going to open #{@url}")
+      logger.debug(@logId(), "Going to open #{@url}")
       casper.open(@url).waitFor () =>
         @evalReturns is true
       , () =>
         @evalReturns = false
         this.next()
       , () =>
-        this.fail("#{@saturn.caspId} Page takes too long to open.")
+        this.fail("Page takes too long to open.")
 
     createSubTasks: () ->
       firstOption = @options.firstOption({nonAlone: true})
@@ -70,6 +70,7 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
         super msg
 
     sendResult: (result) ->
+      logger.trace(@logId(), "CasperSession.sendResult")
       return if ! @prod_id # Stop pushed or Local Test
       casper.evaluate( (prod_id, result) ->
         window.crawler.sendResult(prod_id, result)
@@ -78,54 +79,63 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
         super result
 
     logId: () ->
-      "[Casper@#{@sessionPort}]"
+      @saturn.logId
 
     evalAndThen: (cmd, callback) ->
+      logger.trace(@logId(), "CasperSession.evalAndThen", cmd.action)
       @casper.callback = callback if callback?
       casper.evaluate (hash) ->
         requirejs ["casper_logger", "crawler"], (logger, Crawler) ->
-          # if window.crawler
           window.crawler.doNext(hash)
-          # else
-          #   logger.error(caspId, "window.crawler is not defined !??")
       , cmd
-      casper.waitFor =>
-        @evalReturns is true
-      , () =>
-        @evalReturns = false
-      , () =>
-        this.fail("#{@saturn.caspId} Eval take too long to finish.")
-
+      casper.waitFor () ->
+        false # Unwait it in onEvalDone
 
     onEvalDone: (result) ->
-      @evalReturns = true
-      casper.then () =>
-        @evalReturns = false
-        @casper.callback?(result)
+      logger.trace(@logId(), "CasperSession.onEvalDone")
+      # @evalReturns = true
+      casper.unwait()
+      @casper.callback?(result)
 
     onGoNextStep: () ->
-      @evalReturns = true
-      casper.then () =>
-        @evalReturns = false
-        this.next()
+      logger.trace(@logId(), "CasperSession.onGoNextStep")
+      # @evalReturns = true
+      return if @strategy is "ended"
+      casper.unwait()
+      this.next()
 
     preEndSession: () ->
+      logger.trace(@logId(), "CasperSession.preEndSession")
       super
-      casper.waitFor () =>
-        @_subTasks is undefined
-      , null
-      , () =>
-        this.fail("Subtasks take too long to finish.")
-      , satconf.DELAY_RESCUE * Object.keys(@_subTasks).length
+      if @_subTasks
+        casper.waitFor () =>
+          @_subTasks is undefined
+        , null
+        , () =>
+          this.fail("Subtasks take too long to finish.")
+        , satconf.DELAY_RESCUE * Object.keys(@_subTasks).length
 
     endSession: ->
-      casper.waitFor () ->
-        casper.evaluate () ->
-          window.crawler.resultSending is 0
-      , () =>
-        super
-      , () =>
-        logger.error(@caspId, "Timeout with result still being sending.")
+      logger.trace(@logId(), "CasperSession.endSession")
+      setTimeout2 1000, () =>
+        nb = casper.evaluate () ->
+          window.crawler.resultSending
+        if nb is 0
+          logger.debug(@logId(), "Evaluate to 0, Before Session.endSession")
+          super
+        else
+          logger.error(@logId(), "Timeout with #{nb} result still being sending.")
+          this.endSession()
+
+    onTimeout: () ->
+      logger.trace(@logId(), "CasperSession.onTimeout")
+      casper.unwait()
+      # try to reload before to fail.
+      if ! @alreadyRetried && @strategy isnt 'ended'
+        @alreadyRetried = true
+        @rescueTimeout = setTimeout2 satconf.DELAY_RESCUE, => this.onTimeout()
+        casper.reload () => this.retryLastCmd()
+      else
         super
 
   return CasperSession

@@ -21,8 +21,12 @@ define ['logger', "vendor/adblock/filterClasses", 'vendor/adblock/matcher'],
       fs.write(filename || @jsonBackup, JSON.stringify(defaultMatcher))
 
     loadFromDisk: (filename) ->
-      o = JSON.parse fs.read(filename || @jsonBackup)
-      defaultMatcher.fromJSON(o);
+      try
+        o = JSON.parse fs.read(filename || @jsonBackup)
+        defaultMatcher.fromJSON(o);
+      catch
+        for file in @filesList
+          this.addSubscriptionFile(file)
 
     # addSubscriptionFile: function(/**String*/ filename)
     addSubscriptionFile: (filename) ->

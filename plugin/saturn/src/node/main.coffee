@@ -39,3 +39,6 @@ requirejs ['optimist', 'node_logger', 'src/node/saturn', 'satconf'], (optimist, 
   saturn = new NodeSaturn(serverPort)
   logger.info("[NodeJS] Server listen on port " + serverPort)
   saturn.startPolling()
+
+  process.on 'uncaughtException', (err) ->
+    logger.err('[NodeJS] Uncaught exception: ' + err)

@@ -48,11 +48,14 @@ define(['jquery', 'casper_logger', 'crawler', 'satconf'], ($, logger, Crawler) -
         logger.debug(@caspId, "Result sended.")
       ).fail (xhr, textStatus, errorThrown) ->
         if textStatus == 'timeout' || xhr.status == 502
-          setTimeout2 500, () => $.ajax(this)
+          setTimeout2 2000, () => $.ajax(this)
         else if xhr.status == 500 && @tryCount < @retryLimit
           @tryCount++
-          setTimeout2 500, () => $.ajax(this)
+          setTimeout2 2000, () => $.ajax(this)
         else
+          setTimeout2 10000, ->
+            window.crawler.sendResult(prod_id, result)
+            window.crawler.resultSending--
           logger.error(window.caspId, "Error #{xhr.status} while sending result : #{textStatus}")
 
   CasperCrawler
