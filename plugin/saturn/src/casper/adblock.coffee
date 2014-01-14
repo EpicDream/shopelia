@@ -27,6 +27,7 @@ define ['logger', "vendor/adblock/filterClasses", 'vendor/adblock/matcher'],
       catch
         for file in @filesList
           this.addSubscriptionFile(file)
+        this.saveOnDisk()
 
     # addSubscriptionFile: function(/**String*/ filename)
     addSubscriptionFile: (filename) ->
