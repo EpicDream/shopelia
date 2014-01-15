@@ -1,4 +1,5 @@
 //= require jquery
+//= require lib/jquery-ui.js
 //= require jquery_ujs
 //= require bootstrap
 //= require dataTables/jquery.dataTables

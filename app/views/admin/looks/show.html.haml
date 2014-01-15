@@ -70,7 +70,7 @@
         %button.btn.btn-default{"data-dismiss" => "modal", type: "button"} Close
         %button.btn.btn-primary#look-add-urls-confirm{type: "button", "data-loading-text" => "Processing..."} Add products
 
-#look-add-codes-modal.modal.fade.hidden
+#look-add-codes-modal.modal.fade.hidden{data: {brands:@brands}}
   .modal-dialog
     .modal-content
       .modal-header

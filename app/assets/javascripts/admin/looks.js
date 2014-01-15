@@ -49,7 +49,14 @@ function showAddUrlsModal() {
     $('#look-add-urls-form').submit();
   });
 }
+
+function autocompleteBrands(selector) {
+  var brands = $("#look-add-codes-modal").data("brands");
+	$(selector).autocomplete({ source:brands});
+}
+
 function showAddCodesModal() {
+  autocompleteBrands("input[id^='brand-']");
   $("#look-add-codes-modal").removeClass('hidden');
   $("#look-add-codes-modal").modal('show');
   $('#look-add-codes-confirm').on('click', function() {

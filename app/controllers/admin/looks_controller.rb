@@ -1,5 +1,6 @@
 class Admin::LooksController < Admin::AdminController
   before_filter :retrieve_look, :only => [:show, :publish, :reject]
+  before_filter :retrieve_brands, :only => [:show]
   
   def index
     @looks = Look.all
@@ -25,5 +26,10 @@ class Admin::LooksController < Admin::AdminController
 
   def retrieve_look
     @look = Look.find(params[:id])
+  end
+  
+  def retrieve_brands
+    @brands = LookProduct.select("distinct brand").map(&:brand)
+    puts ">>>" + @brands.inspect
   end
 end
