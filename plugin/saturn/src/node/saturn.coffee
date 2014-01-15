@@ -48,8 +48,11 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
     loadMapping: (merchantId, doneCallback, failCallback) ->
       Mapping.load(merchantId)
 
+    canStartANewSession: () ->
+      Object.keys(@sessions).length <= satconf.MAX_SIMULTANEOUS_SESSION
+
     crawlProduct: () ->
-      super if Object.keys(@sessions).length <= satconf.MAX_SIMULTANEOUS_SESSION
+      super if this.canStartANewSession()
 
     createSession: (prod) ->
       port = prod.sessionPort = ++@portCounter
@@ -91,6 +94,7 @@ define ['http', 'https', 'url', 'child_process', "logger", "mapping", "src/satur
       options.rejectUnauthorized = false;
       options.agent = new Https.Agent( options );
       @timerId = setInterval2 1000, () =>
+        return unless this.canStartANewSession()
         Https.get(options, (res) =>
           return logger.error("[NodeJS] Error #{res.statusCode} retrieving products to crawl : #{Http.STATUS_CODES[res.statusCode]}") if res.statusCode isnt 200
           data = ""

@@ -124,7 +124,7 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
           logger.debug(@logId(), "Evaluate to 0, Before Session.endSession")
           super
         else
-          logger.error(@logId(), "Timeout with #{nb} result still being sending.")
+          logger.error(@logId(), "Try to endSession with still #{nb} result being send.")
           this.endSession()
 
     onTimeout: () ->
