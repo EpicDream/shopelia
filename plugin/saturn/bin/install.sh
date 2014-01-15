@@ -35,4 +35,4 @@ echo "Set ./saturn script executable..."
 chmod u+x ./bin/*
 
 #
-./bin/update.sh
+sh ./bin/update.sh

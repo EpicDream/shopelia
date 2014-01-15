@@ -25,7 +25,7 @@ define(['jquery', 'casper_logger', 'crawler', 'satconf'], ($, logger, Crawler) -
     constructor: ->
       super
       @resultSending = 0
-      @caspId = window.caspId
+      @logId = window.logId
 
     goNextStep: () ->
       # logger.debug("in Crawler.goNextStep")
@@ -36,27 +36,29 @@ define(['jquery', 'casper_logger', 'crawler', 'satconf'], ($, logger, Crawler) -
         result = super
         __utils__.sat_emit('saturn.evalDone', result) if hash.action isnt "setOption"
       catch err
-        logger.error(@caspId, "in evalAndThen :", err.message)
+        logger.error(@logId, "in evalAndThen :", err.message)
         __utils__.sat_emit 'saturn.evalDone', false
 
     sendResult: (prod_id, result) ->
       @resultSending++
+      crawler = this
       $.ajax(
-        {type: "PUT", url: satconf.PRODUCT_EXTRACT_UPDATE+prod_id, contentType: 'application/json', data: JSON.stringify(result), tryCount: 0, retryLimit: 1}
+        {type: "PUT", url: satconf.PRODUCT_EXTRACT_UPDATE+prod_id, contentType: 'application/json', data: JSON.stringify(result), tryCount: 0, retryLimit: 5}
       ).done( (res) =>
         @resultSending--
-        logger.debug(@caspId, "Result sended.")
+        logger.debug(@logId, "Result sended.")
       ).fail (xhr, textStatus, errorThrown) ->
-        if textStatus == 'timeout' || xhr.status == 502
-          setTimeout2 2000, () => $.ajax(this)
-        else if xhr.status == 500 && @tryCount < @retryLimit
-          @tryCount++
-          setTimeout2 2000, () => $.ajax(this)
+        @tryCount++
+        if @tryCount > @retryLimit
+          crawler.resultSending--
+          logger.error(window.logId, "Error #{xhr.status} (#{textStatus}) while sending result and max retry reached.")
+        else if xhr.status == 502 # Server is restarting.
+          setTimeout2 5000, () => $.ajax(this)
+        else if xhr.status == 500 # DB race conflict
+          setTimeout2 500, () => $.ajax(this)
         else
-          setTimeout2 10000, ->
-            window.crawler.sendResult(prod_id, result)
-            window.crawler.resultSending--
-          logger.error(window.caspId, "Error #{xhr.status} while sending result : #{textStatus}")
+          setTimeout2 5000, () => $.ajax(this)
+          logger.error(window.logId, "Error #{xhr.status} while sending result : #{textStatus}")
 
   CasperCrawler
 )
