@@ -139,3 +139,6 @@
 .look-product-box:hover .look-product-info {
   margin-bottom:0;
 }
+.ui-autocomplete{
+  z-index:2000;
+}
