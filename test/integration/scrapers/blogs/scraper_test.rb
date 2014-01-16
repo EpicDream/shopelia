@@ -87,6 +87,16 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert_not_match /(http.*){2,}/, posts.first.link 
   end
   
+  test "new block content markup" do
+    skip
+    @scraper.url = "http://www.yuyufashionbook.com"
+    posts = @scraper.posts
+    posts.each do |post|
+      assert post.content.size > 10
+      assert post.images.count >= 1
+    end
+  end
+  
 end
 
   
