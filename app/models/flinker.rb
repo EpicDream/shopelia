@@ -1,5 +1,6 @@
 class Flinker < ActiveRecord::Base
   include AlgoliaSearch
+  include RankedModel
 
   has_many :looks
   has_many :flinker_authentications
@@ -23,8 +24,11 @@ class Flinker < ActiveRecord::Base
                     :url  => "/images/flinker/:id/:style/avatar.jpg",
                     :path => ":rails_root/public/images/flinker/:id/:style/avatar.jpg"
 
+  ranks :display_order
+
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
+  attr_accessible :display_order_position
   attr_accessor :avatar_url
 
   algoliasearch index_name: "flinkers-#{Rails.env}" do
