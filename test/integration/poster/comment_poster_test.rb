@@ -30,11 +30,6 @@ class Poster::CommentTest < ActiveSupport::TestCase
     assert_equal Poster::Blogspot, @poster.publisher
   end
   
-  test "create incident if publisher not found" do
-    Incident.expects(:create)
-    @poster.post_url = "http://www.prixing.fr"
-  end
-  
   test "fill wordpress comment form" do
     @poster.post_url = "http://www.leblogdebetty.com/new-stuff-17"
     form = @poster.fill @poster.form

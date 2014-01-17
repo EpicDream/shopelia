@@ -29,7 +29,7 @@ class Scrapers::Reviews::AmazonTest < ActiveSupport::TestCase
     assert review.author =~ /[A-Z\d]*/
     assert review.rating > 0
     assert Date.parse("5 novembre 2013") < review.date
-    assert review.content.length > 2
+    assert review.content
   end
   
   test "reviews of first page as hashes" do
@@ -38,7 +38,7 @@ class Scrapers::Reviews::AmazonTest < ActiveSupport::TestCase
       review = review.to_hash
       assert review[:rating].between?(0, 5)
       assert review[:author].length > 10
-      assert review[:content].length > 2
+      assert review[:content]
       assert_equal 1, review[:product_id]
     end
   end
@@ -63,7 +63,7 @@ class Scrapers::Reviews::AmazonTest < ActiveSupport::TestCase
     incident = incidents.first
     expected_description = "url : http://www.amazon.fr/Game-Thrones-Le-Tr%C3%B4ne-Fer/dp/B00AAZ9F6K, index : 1"
   
-    assert_equal "Reviews Scraper : Scrapers::Reviews::Amazon::Scraper", incident.issue
+    assert_equal "Scrapers::Reviews::Scraper#synchronize", incident.issue
     assert_equal 10, Incident.count
     assert_equal expected_description, incident.description
   end
