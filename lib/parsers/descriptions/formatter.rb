@@ -12,20 +12,12 @@ module Descriptions
       log_sample(description, url, result)
       result
     rescue => e
-      report_incident_for url
+      Incident.report("Descriptions::Formatter", :format, "#{url}")
       return nil
-    end
-    
-    def report_incident_for url
-      Incident.create(
-        :issue => "Description Formatter",
-        :severity => Incident::IMPORTANT,
-        :description => "#{url}")
     end
     
     def log_sample description, url, result
       File.open("/tmp/descriptions_formatter", "a+") { |f| 
-        
         f.write("#{url}\n")
         f.write("#{description}\n")
         f.write("#{result}\n")

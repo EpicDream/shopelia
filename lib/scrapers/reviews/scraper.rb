@@ -28,7 +28,7 @@ module Scrapers
         end
       rescue => e
         return if e.respond_to?(:response_code) && e.response_code.to_i == 404
-        report_incident("Run exception")
+        Incident.report("Scrapers::Reviews::Scraper", :run, "Run exception")
       end
       
       private
@@ -38,7 +38,7 @@ module Scrapers
           begin
             Scrapers::Reviews::Synchronizer.synchronize review.to_hash
           rescue
-            report_incident("url : #{@product.url}, index : #{@index}")
+            Incident.report("Scrapers::Reviews::Scraper", :synchronize, "url : #{@product.url}, index : #{@index}")
           end
         end
       end
@@ -50,16 +50,7 @@ module Scrapers
       def stop_scraping? reviews
         reviews.none? || @product.has_review_for_author?(reviews.first.author)
       end
-      
-      def report_incident description=nil
-        Incident.create(
-          :issue => "Reviews Scraper : #{self.class.name}",
-          :severity => Incident::INFORMATIVE,
-          :description => description,
-          :resource_type => 'Product',
-          :resource_id => @product.id)
-      end
-    
+
     end
   end
 end
