@@ -40,7 +40,7 @@ module Scrapers
         atom_version = item.respond_to?(:content_encoded) ? 2 : 1
         post = send("post_from_atom_#{atom_version}", item)
         if post.link =~ /feeds|blogger\.com/
-          report_incident("Post link is rss link #{post.link}")
+          Incident.report("Scrapers::Blog::RSSFeed", :post_from, "Post link is rss link #{post.link}")
           return
         end
         content = post.content
@@ -81,13 +81,6 @@ module Scrapers
       
       def category_name
         Proc.new {|category| category.to_s =~ /<category>(.*?)<\/category>/; $1}
-      end
-      
-      def report_incident description=nil
-        Incident.create(
-          :issue => "Scrapers::Blog::RSSFeed",
-          :severity => Incident::INFORMATIVE,
-          :description => description)
       end
       
     end

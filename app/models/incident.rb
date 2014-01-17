@@ -8,4 +8,11 @@ class Incident < ActiveRecord::Base
   validates :severity, :presence => true, :inclusion => { :in => [ CRITICAL, IMPORTANT, INFORMATIVE ] }
 
   attr_accessible :description, :issue, :severity, :resource_type, :resource_id
+  
+  def self.report klass, method, description, severity=IMPORTANT
+    Incident.create(
+    :issue => "#{klass}##{method}", 
+    :severity => severity, 
+    :description => "#{description}")
+  end
 end

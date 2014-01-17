@@ -35,7 +35,8 @@ module Scrapers
         end
         @posts
       rescue => e
-        report_incident(e)
+        message = @posts && @posts.none? ? "No posts - #{@url}" : "Exception - #{@url} #{e.message}"
+        Incident.report("Scrapers::Blogs::Blog", :posts, message)
         []
       end
       
@@ -57,15 +58,6 @@ module Scrapers
         post.content = @scraper.content(block)
         post.products = @scraper.products(block)
         post
-      end
-      
-      def report_incident e
-        message = @posts && @posts.none? ? "No posts - #{@url}" : "Exception - #{@url} #{e.inspect}"
-        Incident.create(
-          :issue => "Scrapers::Blog#posts",
-          :severity => Incident::IMPORTANT,
-          :description => message,
-          :resource_type => 'Blog')
       end
       
     end

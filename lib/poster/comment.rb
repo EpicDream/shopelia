@@ -27,7 +27,7 @@ module Poster
       @form = fill @form
       submit @form
     rescue => e
-      report_incident("Submit form failure", e)
+      Incident.report("Poster::Comment", :deliver, "#{@post_url} #{e.message}")
       false
     end
     
@@ -50,16 +50,7 @@ module Poster
       }
       @publisher
     rescue => e
-      report_incident("Exception while searching publisher", e)
-    end
-    
-    private
-    
-    def report_incident description=nil, e=nil
-      Incident.create(
-      :issue => "Poster::Comment", 
-      :severity => Incident::IMPORTANT, 
-      :description => "#{description} - #{@post_url}")
+      Incident.report("Poster::Comment", :publisher, "#{e.message}")
     end
     
   end

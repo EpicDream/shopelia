@@ -34,7 +34,7 @@ class Blog < ActiveRecord::Base
     end
     self
   rescue => e
-    report_incident(:fetch, e.message)
+    Incident.report(:Blog, :fetch, "#{self.url} - #{e.message}")
   end
 
   def skipped=skip
@@ -68,13 +68,6 @@ class Blog < ActiveRecord::Base
   end
   
   private
-  
-  def report_incident method, description=nil
-    Incident.create(
-      :issue => "Blog##{method}",
-      :severity => Incident::IMPORTANT,
-      :description => "url : #{self.url} - #{description}")
-  end
   
   def assign_flinker
     email = "#{SecureRandom.hex(4)}@flinker.io"
