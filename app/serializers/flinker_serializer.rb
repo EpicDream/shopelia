@@ -1,5 +1,5 @@
 class FlinkerSerializer < ActiveModel::Serializer
-  attributes :id, :name, :url, :email, :username, :avatar, :country, :follows_count, :looks_count, :likes_count, :staff_pick
+  attributes :id, :name, :url, :email, :username, :avatar, :country, :follows_count, :looks_count, :likes_count, :staff_pick, :rank
 
   def staff_pick
     object.staff_pick ? 1 : 0
@@ -15,5 +15,9 @@ class FlinkerSerializer < ActiveModel::Serializer
 
   def avatar
     Rails.configuration.host + object.avatar.url(:thumb)
+  end
+
+  def rank
+    object.display_order
   end
 end
