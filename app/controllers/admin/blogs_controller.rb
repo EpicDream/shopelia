@@ -24,6 +24,9 @@ class Admin::BlogsController < Admin::AdminController
       format.html { render :show }
       format.json { render json: {}.to_json, status: updated ? 200 : 500 }
     end
+  rescue
+    flash.now[:error] = "Erreur lors de la mise à jour"
+    render :show
   end
   
   def create
