@@ -32,6 +32,7 @@ class NetAPorterComTest < ActiveSupport::TestCase
 
   test "it should parse specific availability" do
     assert_equal false, MerchantHelper.parse_availability("88 Résultats", @url)[:avail]
+    assert_equal false, MerchantHelper.parse_availability("1 Résultat", @url)[:avail]
     assert_equal false, MerchantHelper.parse_availability("2 Results", @url)[:avail]
   end
 

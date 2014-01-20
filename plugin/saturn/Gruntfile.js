@@ -81,14 +81,14 @@ module.exports = function(grunt) {
       chrome: {
         options: {
           jshintOptions: ["browser", "devel"],
-          globals: ['FileError', 'define', 'requirejs', 'chrome', 'satconf'],
+          globals: ['FileError', 'define', 'requirejs', 'chrome', 'satconf', 'setInterval2', 'setTimeout2'],
         },
         src: ['src/chrome/*.coffee', '../common/lib/chrome_logger.js.coffee']
       },
       casper: {
         options: {
           jshintOptions: ["node", "browser", "devel"],
-          globals: ['define', 'requirejs', '__utils__', 'casper', 'satconf'],
+          globals: ['define', 'requirejs', '__utils__', 'casper', 'satconf', 'setInterval2', 'setTimeout2'],
         },
         src: ['src/node/*.coffee', 'src/casper/*.coffee', '../common/lib/casper_logger.js.coffee', '../common/lib/node_logger.js.coffee']
       }

@@ -5,6 +5,6 @@ class MerkavWorker
     transaction = MerkavTransaction.find(hash["merkav_transaction_id"])
     merkav = Customers::Merkav.new(transaction)
     merkav.run
-  rescue 
+  #rescue 
   end
 end

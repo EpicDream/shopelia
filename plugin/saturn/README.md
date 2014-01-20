@@ -1,7 +1,7 @@
-Saturn Chromium Extension
-=========================
+Saturn Chromium Extension and CasperJS script
+=============================================
 
-Saturn is a Chromium plugin used to extract products informations.
+Saturn is a Chromium plugin and a NodeJS/CasperJS script used to extract products informations.
   
 He gets a product url from shopelia server, open it, extract all usefull informations and send them back to server.
   
@@ -21,57 +21,42 @@ He can extract for example :
 Installation
 ------------
 
-There are also different way to install it :
+### Chrome Extension
 
-- Automatically, via 'install' script (recommended).
-- Manually, with the packaged extension.
+First of all, install the latest version of Chrome.
 
-#### With the packaged extension
+Then run
 
-Just download the saturn.crx file, and drop it in the Google-Chrome window.
-  
-You may also find it in shopelia/plugin/extensions/
+    ./bin/saturn
 
-#### Automatically, via 'install' script
+You call also run
 
-The first thing to do is to install grunt.
+    grunt exec
 
-1. If they are not already installed, install nodejs (> 0.8) and npm. Look http://doc.ubuntu-fr.org/nodejs for furthermore details. Take a look at the 'Depuis un PPA' section if nodejs package is too old in the repositories.
-2. Install grunt
-    
-    sudo npm install -g grunt-cli
+which will create a saturn.crx file, that you can add directly to your Chrome by drag and drop.
+
+If you want a special version of saturn, rerun grunt. For example, for a prod with manual-launch Saturn, run
+
+    grunt chrome-dev-prod
+
+### CasperJS script
 
 Go in saturn folder :
 
     cd shopelia/plugin/saturn/
 
-The first time, set saturn script executable :
-
-    chmod u+x ./install
-
 Then, run it :
 
-    ./install
+    sudo ./install.sh
 
-If you want a special version of saturn, rerun grunt. For example, for a prod with manual-launch Saturn, run
+Next times, just run
 
-    grunt dev-prod
-
-### PhantomJS & CasperJS
-
-Install phantomjs last release (or at least >= 1.8.2)
-
-    wget -P /tmp/ https://phantomjs.googlecode.com/files/phantomjs-1.9.2-linux-x86_64.tar.bz2
-    tar xvjf /tmp/phantomjs-1.9.2-linux-x86_64.tar.bz2
-    sudo cp /tmp/phantomjs-1.9.2-linux-x86_64/bin/phantomjs /usr/bin/phantomjs
-    rm -r /tmp/phantomjs-1.9.2-linux-x86_64*
-
-Install CasperJS
-
-    sudo npm install -g casperjs
+    ./update.sh
 
 Usage
 -----
+
+### Chrome Extension
   
 There are different way to use Saturn :
 
@@ -94,7 +79,7 @@ Then, run it :
 
     ./saturn
 
-Or, on a server, specify the output display :
+On a server, you may have to specify the output display :
 
     DISPLAY=:0 ./saturn
 
@@ -109,7 +94,7 @@ All configuration is done in the config.yml file. You can find
 - MAPPING_URL : where to find mapping (prod, staging, local).
 - consum : cunsum or not the products (usefull when getting real products from prod for tests)
 - MAX_NB_TABS : the max number of tab it can open simultaneously.
-- log_level : ALL, DEBUG, INFO, WARNING, ERROR, NONE.
+- log_level : ALL, TRACE, DEBUG, VERBOSE, INFO, WARNING, ERROR, NONE.
 
 Developpers
 -----------
@@ -125,7 +110,7 @@ Then, insteed of use packaged extension, open Chrome and in extensions' tab :
 
 After you have modify a file, run
 
-    grunt
+    grunt [chrome|casper]
 
 It will
 
@@ -135,24 +120,18 @@ It will
 - clean build files,
 - and update manifest.json file.
 
-and reload extension in Chrome extensions' tab.
+Then, for Chrome, reload extension in Chrome extensions' tab, or restart NodeJs server.
 
 When modifications are good, before commit it with git, run
 
-    grunt prod
+    grunt [chrome|casper]-prod
 
-It will additionnaly
+Additionnaly to just grunt [chrome|casper], are also available :
 
-- minimize/uglify files,
-- do more cleaning tasks,
-- and package extension.
-
-Additionnaly to just grunt, are also available :
-
-- grunt test : just run test, doesn't build or clean anything.
-- grunt dev-prod : like dev but crawl a product like in prod, not just first options.
-- grunt prod-dev : like prod, but log all and doesn't uglify.
-- grunt staging : like prod, but doesn't consum prod.
+- grunt [chrome|casper]-test : just run test, doesn't build or clean anything.
+- grunt [chrome|casper]-dev-prod : like dev but crawl a product like in prod, not just first options.
+- grunt [chrome|casper]-prod-dev : like prod, but log all and doesn't uglify.
+- grunt [chrome|casper]-staging : like prod, but doesn't consum prod.
 
 More info on [Grunt](http://gruntjs.com/)
 ### Files
@@ -163,11 +142,11 @@ There are three main files :
 - saturn_session.js
 - crawler.js
 
-### saturn.js + saturn_session.js
+### saturn.js + session.js
 
 They are the logic piece of the program.
 Saturn communicate with the server and load pages, 
-while SaturnSession ask the crawler to crawl the current page.
+while Session ask the crawler to crawl the current page.
 
 Common scenario :
 
@@ -201,8 +180,3 @@ The mapping must be previously set with Humanis extension.
 [Chrome extensions, Content Scripts.](http://developer.chrome.com/extensions/content_scripts.html)  
 
 [CSS selectors.](http://www.w3schools.com/cssref/css_selectors.asp)
-
-TODO list
----------
-
-Add the possibility to click on an element to get other images.

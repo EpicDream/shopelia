@@ -106,6 +106,16 @@ function $unique(ary, fct){
   return r;
 }
 
+// Just like setTimeout, but with reverse args
+function setTimeout2(timeout, callback) {
+  return setTimeout(callback, timeout);
+}
+
+// Just like setTimeout, but with reverse args
+function setInterval2(timeout, callback) {
+  return setInterval(callback, timeout);
+}
+
 // NodeJS support
 if (typeof global !== 'undefined') {
   global.$extend = $extend;

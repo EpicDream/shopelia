@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [[ `pwd` =~ "saturn/bin" ]]; then
+  cd ..
+fi
+
 if [ "$1" = "" ]; then
   dir="extension"
 else

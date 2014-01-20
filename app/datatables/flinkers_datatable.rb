@@ -26,11 +26,12 @@ class FlinkersDatatable
         flinker.email,
         image_tag(flinker.avatar.blank? ? "empty.png" : flinker.avatar.url(:thumb), class:"avatar"),
         number_with_delimiter(flinker.looks_count),
-        number_with_delimiter(flinker.followers_count),
+        number_with_delimiter(flinker.follows_count),
         number_with_delimiter(flinker.likes_count),
         flinker.url,
         flinker.is_publisher? ? "Yes" : "No",
         flinker.staff_pick? ? "Yes" : "No",
+        flinker.display_order,
         "<button type=\"button\" class=\"btn btn-danger\" data-destroy-url=\"#{admin_flinker_path(flinker)}\" data-username=\"#{flinker.username}\" style=\"visibility:hidden\">Delete</button>"
       ]
     end
@@ -41,7 +42,7 @@ class FlinkersDatatable
   end
 
   def fetch_flinkers
-    flinkers = Flinker.order(:id)
+    flinkers = Flinker.rank(:display_order)
     flinkers = flinkers.where("is_publisher=?", @filters[:publisher] == 'yes') if @filters[:publisher].present?
     flinkers = flinkers.where("name like :search or url like :search", search: "%#{params[:sSearch]}%") if params[:sSearch].present?
     flinkers.page(page).per_page(per_page)

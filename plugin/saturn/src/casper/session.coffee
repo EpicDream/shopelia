@@ -9,14 +9,14 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
       @evalReturns = false
 
     openUrl: () ->
-      logger.debug("#{@saturn.caspId} Going to open #{@url}")
+      logger.debug(@logId(), "Going to open #{@url}")
       casper.open(@url).waitFor () =>
         @evalReturns is true
       , () =>
         @evalReturns = false
         this.next()
       , () =>
-        this.fail("#{@saturn.caspId} Page takes too long to open.")
+        this.fail("Page takes too long to open.")
 
     createSubTasks: () ->
       firstOption = @options.firstOption({nonAlone: true})
@@ -70,57 +70,72 @@ define ["casper_logger", "src/saturn_session"], (logger, Session) ->
         super msg
 
     sendResult: (result) ->
+      logger.trace(@logId(), "CasperSession.sendResult")
       return if ! @prod_id # Stop pushed or Local Test
-      casper.evaluate( (url, data) ->
-        requirejs ['jquery'], ($) ->
-          $.ajax({type: "PUT", url: url, contentType: 'application/json', data: JSON.stringify(data), tryCount: 0, retryLimit: 1}
-          ).fail (xhr, textStatus, errorThrown) ->
-            if textStatus == 'timeout' || xhr.status == 502
-              $.ajax(this)
-            else if xhr.status == 500 && @tryCount < @retryLimit
-              @tryCount++
-              $.ajax(this)
-            else
-              logger.error(xhr.status, ":", textStatus)
-      , satconf.PRODUCT_EXTRACT_UPDATE+@prod_id, result)
+      casper.evaluate( (prod_id, result) ->
+        window.crawler.sendResult(prod_id, result)
+      , @prod_id, result)
       casper.then () =>
         super result
 
     logId: () ->
-      "[Casper@#{@sessionPort}]"
+      @saturn.logId
 
     evalAndThen: (cmd, callback) ->
+      logger.trace(@logId(), "CasperSession.evalAndThen", cmd.action)
       @casper.callback = callback if callback?
       casper.evaluate (hash) ->
-        window.crawler.doNext(hash)
+        requirejs ["casper_logger", "crawler"], (logger, Crawler) ->
+          window.crawler.doNext(hash)
       , cmd
-      casper.waitFor =>
-        @evalReturns is true
-      , () =>
-        @evalReturns = false
-      , () =>
-        this.fail("#{@saturn.caspId} Eval take too long to finish.")
-
+      casper.waitFor () ->
+        false # Unwait it in onEvalDone
 
     onEvalDone: (result) ->
-      @evalReturns = true
-      casper.then () =>
-        @evalReturns = false
-        @casper.callback?(result)
+      logger.trace(@logId(), "CasperSession.onEvalDone")
+      # @evalReturns = true
+      casper.unwait()
+      @casper.callback?(result)
 
     onGoNextStep: () ->
-      @evalReturns = true
-      casper.then () =>
-        @evalReturns = false
-        this.next()
+      logger.trace(@logId(), "CasperSession.onGoNextStep")
+      # @evalReturns = true
+      return if @strategy is "ended"
+      casper.unwait()
+      this.next()
 
     preEndSession: () ->
+      logger.trace(@logId(), "CasperSession.preEndSession")
       super
-      casper.waitFor () =>
-        @_subTasks is undefined
-      , null
-      , () =>
-        this.fail("#{@saturn.caspId} Subtasks take too long to finish.")
-      , satconf.DELAY_RESCUE * Object.keys(@_subTasks).length
+      if @_subTasks
+        casper.waitFor () =>
+          @_subTasks is undefined
+        , null
+        , () =>
+          this.fail("Subtasks take too long to finish.")
+        , satconf.DELAY_RESCUE * Object.keys(@_subTasks).length
+
+    endSession: ->
+      logger.trace(@logId(), "CasperSession.endSession")
+      setTimeout2 1000, () =>
+        nb = casper.evaluate () ->
+          window.crawler.resultSending
+        if nb is 0
+          logger.debug(@logId(), "Evaluate to 0, Before Session.endSession")
+          super
+        else
+          logger.error(@logId(), "Try to endSession with still #{nb} result being send.")
+          this.endSession()
+
+    onTimeout: () ->
+      logger.trace(@logId(), "CasperSession.onTimeout")
+      casper.unwait()
+      # try to reload before to fail.
+      if ! @alreadyRetried && @strategy isnt 'ended'
+        @alreadyRetried = true
+        @rescueTimeout = setTimeout2 satconf.DELAY_RESCUE, => this.onTimeout()
+        casper.reload () => this.retryLastCmd()
+      else
+        super
 
   return CasperSession

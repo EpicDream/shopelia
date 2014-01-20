@@ -126,13 +126,14 @@ body {
 
   #center {
     //background-color: green;
-    height: 30%;
+    height: 20%;
   }
 
   #footer{
-    height: 25%;
-    h4 {
-      margin-bottom: 20px;
+    height: 30%;
+    h5 {
+      line-height: 20px;
+      margin-bottom: 30px;
     }
   }
 }
@@ -141,7 +142,7 @@ body {
   display: block;
   margin: auto;
   width: 250px;
-  margin-top: 20px;
+  margin-top: 50px;
   .fb-like {
     margin-right: 5px;
   }

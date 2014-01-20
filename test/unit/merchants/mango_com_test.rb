@@ -12,6 +12,7 @@ class MangoComTest < ActiveSupport::TestCase
 
     @availabilities = {
       "ORDER BY PRICE ASCENDING · DESCENDING" => false,
+      "SORT BY PRICE ASCENDING · DESCENDING" => false,
     }
 
 

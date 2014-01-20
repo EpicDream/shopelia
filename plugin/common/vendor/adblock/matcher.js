@@ -25,6 +25,9 @@ var Filter = FilterClasses.Filter,
   RegExpFilter = FilterClasses.RegExpFilter,
   WhitelistFilter = FilterClasses.WhitelistFilter;
 
+
+/* ********************************************************************* */
+
 /**
  * Blacklist/whitelist filter matching
  * @constructor
@@ -148,25 +151,6 @@ Matcher.prototype = {
   },
 
   /**
-   * Checks whether a particular filter is being matched against.
-   */
-  hasFilter: function(/**RegExpFilter*/ filter) /**Boolean*/
-  {
-    return (filter.text in this.keywordByFilter);
-  },
-
-  /**
-   * Returns the keyword used for a filter, null for unknown filters.
-   */
-  getKeywordForFilter: function(/**RegExpFilter*/ filter) /**String*/
-  {
-    if (filter.text in this.keywordByFilter)
-      return this.keywordByFilter[filter.text];
-    else
-      return null;
-  },
-
-  /**
    * Checks whether the entries for a particular keyword match a URL
    */
   _checkEntryMatch: function(keyword, location, contentType, docDomain, thirdParty)
@@ -227,28 +211,29 @@ Matcher.prototype = {
 
 
 Matcher.fromJSON = function(o) {
-  var m = new Matcher();
-  m.filterByKeyword = {};
-  m.keywordByFilter = {};
-  for (var keyword in o.filterByKeyword) {
-    var ary = o.filterByKeyword[keyword];
+  var matcher = new Matcher(),
+    keyword, ary, filter, type, f, i;
+  matcher.filterByKeyword = {};
+  matcher.keywordByFilter = {};
+  for (keyword in o.filterByKeyword) {
+    ary = o.filterByKeyword[keyword];
     if (ary.length === undefined) {
       ary.length = 1;
       ary[0] = ary;
     }
-    for (var i = 0; i < ary.length; i++) {
-      var f = ary[i];
-      var type = f.type;
+    for (i = 0; i < ary.length; i++) {
+      f = ary[i];
+      type = f.type;
       try {
-        var filter = FilterClasses[type].fromJSON(f);
-        if (m.filterByKeyword[keyword]) {
-          if (m.filterByKeyword[keyword].length === 1)
-            m.filterByKeyword[keyword] = [m.filterByKeyword[keyword], filter];
+        filter = FilterClasses[type].fromJSON(f);
+        if (matcher.filterByKeyword[keyword]) {
+          if (matcher.filterByKeyword[keyword].length === 1)
+            matcher.filterByKeyword[keyword] = [matcher.filterByKeyword[keyword], filter];
           else
-            m.filterByKeyword[keyword].push(filter);
+            matcher.filterByKeyword[keyword].push(filter);
         } else
-          m.filterByKeyword[keyword] = filter;
-        m.keywordByFilter[filter.text] = keyword;
+          matcher.filterByKeyword[keyword] = filter;
+        matcher.keywordByFilter[filter.text] = keyword;
       } catch (err) {
         console.log(err);
         console.log(keyword);
@@ -258,16 +243,18 @@ Matcher.fromJSON = function(o) {
       }
     }
   }
-  return m;
+  return matcher;
 };
+
+
+/* ********************************************************************* */
 
 /**
  * Combines a matcher for blocking and exception rules, automatically sorts
  * rules into two Matcher instances.
  * @constructor
  */
-function CombinedMatcher()
-{
+function CombinedMatcher() {
   this.blacklist = new Matcher();
   this.whitelist = new Matcher();
   this.keys = {__proto__: null};
@@ -281,55 +268,46 @@ function CombinedMatcher()
  */
 CombinedMatcher.maxCacheEntries = 1000;
 
-CombinedMatcher.prototype =
-{
+CombinedMatcher.prototype = {
   /**
    * Matcher for blocking rules.
    * @type Matcher
    */
   blacklist: null,
-
   /**
    * Matcher for exception rules.
    * @type Matcher
    */
   whitelist: null,
-
   /**
    * Exception rules that are limited by public keys, mapped by the corresponding keys.
    * @type Object
    */
   keys: null,
-
   /**
    * Lookup table of previous matchesAny results
    * @type Object
    */
   resultCache: null,
-
   /**
    * Number of entries in resultCache
    * @type Number
    */
   cacheEntries: 0,
-
   /**
    * @see Matcher#clear
    */
-  clear: function()
-  {
+  clear: function () {
     this.blacklist.clear();
     this.whitelist.clear();
     this.keys = {__proto__: null};
     this.resultCache = {__proto__: null};
     this.cacheEntries = 0;
   },
-
   /**
    * @see Matcher#add
    */
-  add: function(filter)
-  {
+  add: function (filter) {
     if (filter instanceof WhitelistFilter)
     {
       if (filter.siteKeys)
@@ -373,51 +351,6 @@ CombinedMatcher.prototype =
       this.resultCache = {__proto__: null};
       this.cacheEntries = 0;
     }
-  },
-
-  /**
-   * @see Matcher#findKeyword
-   */
-  findKeyword: function(filter)
-  {
-    if (filter instanceof WhitelistFilter)
-      return this.whitelist.findKeyword(filter);
-    else
-      return this.blacklist.findKeyword(filter);
-  },
-
-  /**
-   * @see Matcher#hasFilter
-   */
-  hasFilter: function(filter)
-  {
-    if (filter instanceof WhitelistFilter)
-      return this.whitelist.hasFilter(filter);
-    else
-      return this.blacklist.hasFilter(filter);
-  },
-
-  /**
-   * @see Matcher#getKeywordForFilter
-   */
-  getKeywordForFilter: function(filter)
-  {
-    if (filter instanceof WhitelistFilter)
-      return this.whitelist.getKeywordForFilter(filter);
-    else
-      return this.blacklist.getKeywordForFilter(filter);
-  },
-
-  /**
-   * Checks whether a particular filter is slow
-   */
-  isSlowFilter: function(/**RegExpFilter*/ filter) /**Boolean*/
-  {
-    var matcher = (filter instanceof WhitelistFilter ? this.whitelist : this.blacklist);
-    if (matcher.hasFilter(filter))
-      return !matcher.getKeywordForFilter(filter);
-    else
-      return !matcher.findKeyword(filter);
   },
 
   /**
@@ -472,42 +405,22 @@ CombinedMatcher.prototype =
   },
 
   /**
-   * Looks up whether any filters match the given website key.
-   */
-  matchesByKey: function(/**String*/ location, /**String*/ key, /**String*/ docDomain)
-  {
-    key = key.toUpperCase();
-    if (key in this.keys)
-    {
-      var filter = Filter.knownFilters[this.keys[key]];
-      if (filter && filter.matches(location, "DOCUMENT", docDomain, false))
-        return filter;
-      else
-        return null;
-    }
-    else
-      return null;
-  },
-
-  /**
    * Stringify default to false.
    */
-  toJSON: function(stringify) {
-    var o = {
+  toJSON: function() {
+    return {
       blacklist: this.blacklist.toJSON(),
       whitelist: this.whitelist.toJSON(),
     };
-    
-    if (stringify === true)
-      return JSON.stringify(o);
-    else
-      return o;
   },
   fromJSON: function(o) {
     this.blacklist = Matcher.fromJSON(o.blacklist);
     this.whitelist = Matcher.fromJSON(o.whitelist);
   }
 };
+
+
+/* ********************************************************************* */
 
 /**
  * Shared CombinedMatcher instance that should usually be used.

@@ -1501,4 +1501,3 @@ _regiepub/
 @@||voyageforum.com/static/adframe.js?
 @@||wakanim.tv/content/js/ads.js?
 @@||yovoyages.com/js/advertisement.js
-crash-aerien.aero#@#.publicite
