@@ -3,6 +3,7 @@ class Flinker < ActiveRecord::Base
   include RankedModel
 
   has_many :looks
+  has_many :comments
   has_many :flinker_authentications
   has_many :flinker_likes
   has_many :flinker_follows
