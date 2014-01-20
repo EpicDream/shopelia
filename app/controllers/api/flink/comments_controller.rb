@@ -4,6 +4,7 @@ class Api::Flink::CommentsController < Api::Flink::BaseController
   before_filter :retrieve_comments , :only => [:index]
   before_filter :prepare_comment_hash, :only => [:create]
 
+
   api :GET, "/looks/:look_id/comments", "Get Comments of a look"
   def index
     render json: {
@@ -13,8 +14,7 @@ class Api::Flink::CommentsController < Api::Flink::BaseController
 
   api :POST, "/looks/:look_id/comments", "Post Comment"
   def create
-    @look = Look.find_by_uuid(params[:look_id].scan(/^[^\-]+/))
-    @comment = @look.comments.create(@comment_hash)
+    @comment = Comment.create_comment_for_look(@comment_hash,params[:look_id].scan(/^[^\-]+/))
     if @comment.persisted?
       render json: CommentSerializer.new(@comment).as_json, status: :created
     else

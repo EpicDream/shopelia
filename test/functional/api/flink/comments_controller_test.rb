@@ -6,7 +6,7 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
   setup do
     Comment.destroy_all
     Look.destroy_all
-    @flinker = flinkers(:betty)
+    @flinker = flinkers(:lilou)
     build_look
     build_comments
   end
@@ -21,8 +21,8 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
     sign_in @flinker
 
     assert_difference(['Comment.count']) do
-      post :create,look_id: @look.uuid, comment: {
-          body: "je creee un commentaire",
+      post :create,look_id: "a0d04c87", comment: {
+          body: "Radieuse <3",
       }, format: :json
     end
     assert_response 201
