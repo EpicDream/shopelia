@@ -10,6 +10,8 @@
     <%= form_for [:admin, @blog] do |f| %>
       <%= f.label :avatar_url, "Url de l'avatar" %>
       <%= f.text_field :avatar_url %>
+      <%= f.label :name, "Nom du blog" %>
+      <%= f.text_field :name %>
       <%= f.submit("Mettre à jour", :class => 'btn btn-success ') %>
     <% end  %>
   </div>

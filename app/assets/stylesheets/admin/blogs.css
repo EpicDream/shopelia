@@ -283,9 +283,9 @@ div.blogs{
   overflow: hidden;
 }
 .blogs-posts-header .update-blog-block-shown{
-  height:200px;
   display:block;
   opacity:1;
+  height:200px;
 }
 .blogs-posts-header form{
   margin-top:20px;
@@ -295,7 +295,6 @@ div.blogs{
 }
 .blogs-posts-header form input[type="submit"]{
   display:block;
-  margin-top:60px;
 }
 .blogs-posts-header form input[type="text"]{
   width:90%;

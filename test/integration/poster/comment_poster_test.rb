@@ -99,7 +99,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "deliver commment blogspot site http://www.adenorah.com/2013/11/chanel.html" do
-    skip
+    skip #OK COMMENT POSTED
     comment = "Super joli. Le bleu te va à ravir."
     url = "http://www.adenorah.com/2014/01/stella-luna-look.html"
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL, post_url:url)
@@ -108,7 +108,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "deliver commment wordpress site http://www.garancedore.fr/2013/12/16/rashida/" do
-    skip
+    skip #OK COMMENT POSTED
     comment = "J'aime beaucoup cette photo, bel arrangement. Cadrage nickel ;)"
     url = "http://www.garancedore.fr/2014/01/18/weekend-inspiration-138/"
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL, post_url:url)
