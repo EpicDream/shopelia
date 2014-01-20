@@ -4,14 +4,16 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   setup do
+    Comment.any_instance.stubs(:can_be_posted_on_blog?).returns(true)
     Comment.destroy_all
     Look.destroy_all
     @flinker = flinkers(:lilou)
     build_look
-    build_comments
   end
 
   test "should get comments of a post index" do
+    build_comments
+    
     get :index, look_id: @look.uuid, format: :json
     assert_response :success
     assert_equal 20, json_response["comments"].count
@@ -19,15 +21,17 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
 
   test "should create a comment" do
     sign_in @flinker
+    Poster::Comment.any_instance.expects(:deliver)
 
     assert_difference(['Comment.count']) do
-      post :create,look_id: "a0d04c87", comment: {
+      post :create, look_id:@look.uuid, comment: {
           body: "Radieuse <3",
       }, format: :json
     end
-    assert_response 201
-
+    
     comment = Comment.find(json_response["comment"]["id"])
+    
+    assert_response 201
     assert_equal comment.flinker_id, @flinker.id
     assert_equal comment.look_id, @look.id
   end
