@@ -90,6 +90,12 @@ module Shopelia
             port: 2195,
             pass: ""
         },
+        beta: {
+           host: 'gateway.push.apple.com',
+           pem: "#{Rails.root}/keys/apple/beta.pem",
+           port: 2195,
+           pass: ""
+        },                
         production: {
             host: 'gateway.push.apple.com',
             pem: "#{Rails.root}/keys/apple/production.pem",
