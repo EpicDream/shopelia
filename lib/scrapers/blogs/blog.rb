@@ -48,7 +48,7 @@ module Scrapers
       private
       
       def complete? post
-        !(post.images.count.zero? || post.content.empty?)
+        post.images.count > 1 && !post.content.empty?
       end
       
       def scrape post
