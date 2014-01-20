@@ -18,6 +18,16 @@ betty:
   is_publisher: true
   staff_pick: true
 
+lilou:
+  name: Lilou
+  url:
+  encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
+  username: Lilou
+  email: lilou@flink.com
+  country: france
+  is_publisher: false
+  staff_pick: false
+
 boop:
   name: Boop
   url: http://www.leblogdebetty.com

@@ -3,6 +3,10 @@ require 'api_constraints'
 Shopelia::Application.routes.draw do
 
 
+  get "comments/index"
+
+  get "comments/create"
+
   match "/cgu" => "home#general_terms_of_use"  
   match "/legal" => "home#legal"
   match "/confidentiality" => "home#confidentiality"
@@ -187,6 +191,7 @@ Shopelia::Application.routes.draw do
       devise_for :flinkers
       resources :flinkers, :only => :index
       resources :looks, :only => :index do
+        resources :comments
         resources :likes, :only => :create, :controller => "looks/likes"
         delete "likes" => "looks/likes#destroy"
       end
