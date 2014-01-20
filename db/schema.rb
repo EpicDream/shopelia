@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140117094148) do
+ActiveRecord::Schema.define(:version => 20140120111503) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -154,6 +154,17 @@ ActiveRecord::Schema.define(:version => 20140117094148) do
     t.string   "image_size"
     t.integer  "rank"
   end
+
+  create_table "comments", :force => true do |t|
+    t.text     "body"
+    t.integer  "look_id"
+    t.integer  "flinker_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "comments", ["flinker_id"], :name => "index_comments_on_flinker_id"
+  add_index "comments", ["look_id"], :name => "index_comments_on_look_id"
 
   create_table "countries", :force => true do |t|
     t.string   "iso"

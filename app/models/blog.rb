@@ -76,8 +76,8 @@ class Blog < ActiveRecord::Base
     flinker = Flinker.create(
       name:self.name, 
       url:self.url, 
-      email:email, 
-      password:password, 
+      email:email,
+      password:password,
       password_confirmation:password, 
       is_publisher:true, 
       country_id:country.id, 
