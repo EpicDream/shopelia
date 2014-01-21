@@ -1,11 +1,12 @@
 class Comment < ActiveRecord::Base
   attr_accessible :body , :flinker_id, :look_id , :posted
+  attr_accessor :post_to_blog
   
   belongs_to :look
   belongs_to :flinker
   
-  after_create :post_comment_on_blog, if: -> { can_be_posted_on_blog? }
-
+  after_create :post_comment_on_blog, if: -> { can_be_posted_on_blog? && post_to_blog }
+  
   def to_html
     "#{self.flinker.username} <br/> #{self.body} <br/> send via  <a href='http://flink.io'>flink</a>"
   end

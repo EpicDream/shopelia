@@ -23,7 +23,7 @@ class CommentTest < ActiveSupport::TestCase
   private
 
   def comment
-    {:comment=>"bettyusername <br/> trop belle <br/> send via  <a href='http://flink.io'>flink</a>", :author=>"bettyusername", :email=>"hello@flink.io", :post_url=>"http://www.bla.com"}
+    {:comment=>"bettyusername <br/> trop belle <br/> send via  <a href='http://flink.io'>flink</a>", :author=>"bettyusername", :email=>"flinkhq@gmail.com", :post_url=>"http://www.bla.com"}
   end
 
 end
