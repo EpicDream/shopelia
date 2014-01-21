@@ -15,7 +15,7 @@ class Comment < ActiveRecord::Base
     look.post.blog.can_comment?
   end
 
-  def post_comment_on_blog
+  def post_on_blog
     poster = Poster::Comment.new(comment:self.to_html, author:flinker.username, email:sender, post_url:look.url)
     self.posted = poster.deliver
     self.save
