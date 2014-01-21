@@ -18,7 +18,8 @@ class Comment < ActiveRecord::Base
   
   def post_comment_on_blog
     poster = Poster::Comment.new(comment:self.to_html, author:flinker.username, email:sender, post_url:look.url)
-    poster.deliver
+    self.posted = poster.deliver
+    self.save
   end
   
   def sender

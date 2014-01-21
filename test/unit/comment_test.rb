@@ -10,12 +10,14 @@ class CommentTest < ActiveSupport::TestCase
   test "create comment then post the comment on blog with formatted body" do
     Comment.any_instance.stubs(:can_be_posted_on_blog?).returns(true)
     commenter = Poster::Comment.new
-    commenter.expects(:deliver)
+    commenter.expects(:deliver).returns(true)
     Poster::Comment.expects(:new).with(comment).returns(commenter)
-     
+    
     assert_difference 'Comment.count' do
       Comment.create(body: "trop belle", flinker_id:@flinker.id, look_id:@look.id)
     end
+    
+    assert Comment.last.posted?
   end
    
   private
