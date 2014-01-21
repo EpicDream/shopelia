@@ -1,5 +1,5 @@
 class CommentSerializer < ActiveModel::Serializer
-  attributes :id, :body , :flinker , :created_at
+  attributes :id, :body , :flinker , :created_at , :posted
 
   def flinker
     FlinkerSerializer.new(object.flinker).as_json[:flinker]
