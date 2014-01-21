@@ -1,5 +1,5 @@
 class Comment < ActiveRecord::Base
-  attr_accessible :body , :flinker_id, :look_id
+  attr_accessible :body , :flinker_id, :look_id , :posted
   
   belongs_to :look
   belongs_to :flinker
