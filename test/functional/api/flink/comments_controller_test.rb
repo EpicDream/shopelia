@@ -35,8 +35,24 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
     assert_equal comment.flinker_id, @flinker.id
     assert_equal comment.look_id, @look.id
   end
+  
+  test "if device is development device, comment must not be posted to blog" do
+    stubs_retrieve_device_returns_dev_device
+    sign_in @flinker
+    Comment.any_instance.expects(:post_comment_on_blog).never
+    
+    post :create, look_id:@look.uuid, comment: { body: "Radieuse <3" }, format: :json
+  end
 
   private
+  
+  def stubs_retrieve_device_returns_dev_device
+    Api::Flink::BaseController.class_eval do
+      def retrieve_device
+        @device = Device.new(is_dev:true)
+      end
+    end
+  end
 
   def build_comments
     build_look

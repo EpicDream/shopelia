@@ -12,7 +12,10 @@ class Api::Flink::CommentsController < Api::Flink::BaseController
 
   api :POST, "/looks/:look_id/comments", "Post Comment"
   def create
-    @comment = Comment.create(params[:comment].merge(comment_options))
+    @comment = Comment.new(params[:comment].merge(comment_options))
+    @comment.post_to_blog = @device && !@device.is_dev
+    @comment.save
+    
     if @comment.persisted?
       render json: CommentSerializer.new(@comment).as_json, status: :created
     else
