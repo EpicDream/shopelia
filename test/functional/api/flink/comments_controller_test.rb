@@ -5,6 +5,7 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
 
   setup do
     Comment.any_instance.stubs(:can_be_posted_on_blog?).returns(true)
+    Poster::Comment.any_instance.stubs(:deliver).returns(true)
     Comment.destroy_all
     Look.destroy_all
     @flinker = flinkers(:lilou)
@@ -21,7 +22,6 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
 
   test "should create a comment" do
     sign_in @flinker
-    Poster::Comment.any_instance.expects(:deliver)
 
     assert_difference(['Comment.count']) do
       post :create, look_id:@look.uuid, comment: {
