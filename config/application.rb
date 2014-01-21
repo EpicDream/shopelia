@@ -106,6 +106,9 @@ module Shopelia
 
     # Static image server
     config.image_host = "https://www.shopelia.com"
+
+    # Flink google account to post comments on blogspot sites
     config.flinker_google_account = {email:"flinkhq@gmail.com", password:"$hopeliaRocks1"}
   end
+  
 end
