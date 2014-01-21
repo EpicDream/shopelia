@@ -2,8 +2,6 @@ class Api::Flink::CommentsController < Api::Flink::BaseController
   skip_before_filter :authenticate_flinker!, :only => [:index]
   before_filter :prepare_scope
   before_filter :retrieve_comments , :only => [:index]
-  # before_filter :prepare_comment_hash, :only => [:create]
-
 
   api :GET, "/looks/:look_id/comments", "Get Comments of a look"
   def index
