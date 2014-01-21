@@ -34,10 +34,7 @@ class Api::Flink::CommentsController < Api::Flink::BaseController
   
   def comment_options
     look = Look.find_by_uuid(params[:look_id].scan(/^[^\-]+/))
-    {developer_id:@developer.id, flinker_id:current_flinker.id, look_id:look.id }
+    { flinker_id:current_flinker.id, look_id:look.id }
   end
 
-  # def prepare_comment_hash
-  #   @comment_hash = params[:comment].merge({:developer_id => @developer.id, :flinker_id => current_flinker.id })
-  # end
 end
