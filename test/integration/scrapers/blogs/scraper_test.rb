@@ -97,6 +97,15 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     end
   end
   
+  test "new block content markup II" do
+    skip
+    @scraper.url = "http://www.lesdessousdemarine.com/2014/01/20/home-sweet-home/"
+    posts = @scraper.posts
+    posts.each do |post|
+      assert post.images.count > 1
+    end
+  end
+  
 end
 
   

@@ -10,8 +10,8 @@ module Scrapers
     class Scraper
       attr_accessor :url
       POST_NODE_XPATHS = [
-        "article", "div.post", "div.blogselection > div", "div.entry", "div.single", "div.post-wrap", "div.post-body", 
-        "div.article", "div.blog_item", "div.entrybody", "div.content-box", "div#content"
+        "article", "div#content", "div.post", "div.blogselection > div", "div.entry", "div.single", "div.post-wrap", "div.post-body", 
+        "div.article", "div.blog_item", "div.entrybody", "div.content-box"
       ]
       
       def initialize url=nil
