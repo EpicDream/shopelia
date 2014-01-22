@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140120111503) do
+ActiveRecord::Schema.define(:version => 20140121111749) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -159,8 +159,9 @@ ActiveRecord::Schema.define(:version => 20140120111503) do
     t.text     "body"
     t.integer  "look_id"
     t.integer  "flinker_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+    t.boolean  "posted",     :default => false
   end
 
   add_index "comments", ["flinker_id"], :name => "index_comments_on_flinker_id"

@@ -5,10 +5,12 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
 
   setup do
     Comment.any_instance.stubs(:can_be_posted_on_blog?).returns(true)
+    Poster::Comment.any_instance.stubs(:deliver).returns(true)
     Comment.destroy_all
     Look.destroy_all
     @flinker = flinkers(:lilou)
     build_look
+    Sidekiq::Testing.inline!
   end
 
   test "should get comments of a post index" do
@@ -21,7 +23,6 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
 
   test "should create a comment" do
     sign_in @flinker
-    Poster::Comment.any_instance.expects(:deliver)
 
     assert_difference(['Comment.count']) do
       post :create, look_id:@look.uuid, comment: {
@@ -35,8 +36,24 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
     assert_equal comment.flinker_id, @flinker.id
     assert_equal comment.look_id, @look.id
   end
+  
+  test "if device is development device, comment must not be posted to blog" do
+    stubs_retrieve_device_returns_dev_device
+    sign_in @flinker
+    Comment.any_instance.expects(:post_comment_on_blog).never
+    
+    post :create, look_id:@look.uuid, comment: { body: "Radieuse <3" }, format: :json
+  end
 
   private
+  
+  def stubs_retrieve_device_returns_dev_device
+    Api::Flink::BaseController.class_eval do
+      def retrieve_device
+        @device = Device.new(is_dev:true)
+      end
+    end
+  end
 
   def build_comments
     build_look

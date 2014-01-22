@@ -90,6 +90,12 @@ module Shopelia
             port: 2195,
             pass: ""
         },
+        beta: {
+           host: 'gateway.push.apple.com',
+           pem: "#{Rails.root}/keys/apple/beta.pem",
+           port: 2195,
+           pass: ""
+        },                
         production: {
             host: 'gateway.push.apple.com',
             pem: "#{Rails.root}/keys/apple/production.pem",
@@ -100,6 +106,9 @@ module Shopelia
 
     # Static image server
     config.image_host = "https://www.shopelia.com"
-    config.flinker_google_account = {email:"hello@flink.io", password:"$hopeliaRocks1"}
+
+    # Flink google account to post comments on blogspot sites
+    config.flinker_google_account = {email:"flinkhq@gmail.com", password:"ShopeliaRocks1"}
   end
+  
 end

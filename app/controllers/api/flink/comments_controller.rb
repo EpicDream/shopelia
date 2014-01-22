@@ -2,8 +2,6 @@ class Api::Flink::CommentsController < Api::Flink::BaseController
   skip_before_filter :authenticate_flinker!, :only => [:index]
   before_filter :prepare_scope
   before_filter :retrieve_comments , :only => [:index]
-  # before_filter :prepare_comment_hash, :only => [:create]
-
 
   api :GET, "/looks/:look_id/comments", "Get Comments of a look"
   def index
@@ -14,7 +12,10 @@ class Api::Flink::CommentsController < Api::Flink::BaseController
 
   api :POST, "/looks/:look_id/comments", "Post Comment"
   def create
-    @comment = Comment.create(params[:comment].merge(comment_options))
+    @comment = Comment.new(params[:comment].merge(comment_options))
+    @comment.post_to_blog = @device && !@device.is_dev
+    @comment.save
+    
     if @comment.persisted?
       render json: CommentSerializer.new(@comment).as_json, status: :created
     else
@@ -34,10 +35,7 @@ class Api::Flink::CommentsController < Api::Flink::BaseController
   
   def comment_options
     look = Look.find_by_uuid(params[:look_id].scan(/^[^\-]+/))
-    {developer_id:@developer.id, flinker_id:current_flinker.id, look_id:look.id }
+    { flinker_id:current_flinker.id, look_id:look.id }
   end
 
-  # def prepare_comment_hash
-  #   @comment_hash = params[:comment].merge({:developer_id => @developer.id, :flinker_id => current_flinker.id })
-  # end
 end
