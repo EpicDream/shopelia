@@ -102,7 +102,7 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     @scraper.url = "http://www.lesdessousdemarine.com"
     posts = @scraper.posts
     posts.each do |post|
-      assert post.images.count >= 1
+      assert post.images.count > 1
     end
   end
   

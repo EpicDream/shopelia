@@ -10,8 +10,8 @@ module Scrapers
     class Scraper
       attr_accessor :url
       POST_NODE_XPATHS = [
-        "article", "div#content", "div.post", "div.blogselection > div", "div.entry", "div.single", "div.post-wrap", "div.post-body", 
-        "div.article", "div.blog_item", "div.entrybody", "div.content-box"
+        "article", "div.post", "div.blogselection > div", "div.entry", "div.single", "div.post-wrap", "div.post-body", 
+        "div.article", "div.blog_item", "div.entrybody", "div.content-box", "div#content"
       ]
       
       def initialize url=nil
@@ -24,8 +24,9 @@ module Scrapers
         images = Images.extract(block)
         if images.count <= 1 #images can be on post page but not on blog posts list
           block = blocks(link(block)).first
-          Images.extract(block.search(".//ancestor::*"))
+          images = Images.extract(block.search(".//ancestor::*"))
         end
+        images
       end
       
       def content block
