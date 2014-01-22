@@ -13,10 +13,11 @@
 }
 .img-delete {
   position: absolute;
-  top: 0px;
+  top: 5px;
   left: 5px;
   color: #f00;
   font-weight: bold;
+  font-size:28px;
 }
 .img-delete a {
   color: #f00;
