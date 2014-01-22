@@ -97,12 +97,12 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     end
   end
   
-  test "new block content markup II" do
+  test "search images in blog post link and from node parent if images <= 1" do
     skip
-    @scraper.url = "http://www.lesdessousdemarine.com/2014/01/20/home-sweet-home/"
+    @scraper.url = "http://www.lesdessousdemarine.com"
     posts = @scraper.posts
     posts.each do |post|
-      assert post.images.count > 1
+      assert post.images.count >= 1
     end
   end
   

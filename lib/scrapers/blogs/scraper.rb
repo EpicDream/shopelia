@@ -21,7 +21,11 @@ module Scrapers
       end
       
       def images block
-        Images.extract(block)
+        images = Images.extract(block)
+        if images.count <= 1 #images can be on post page but not on blog posts list
+          block = blocks(link(block)).first
+          Images.extract(block.search(".//ancestor::*"))
+        end
       end
       
       def content block
@@ -65,8 +69,8 @@ module Scrapers
         }
       end
       
-      def blocks
-        page = @agent.get(@url)
+      def blocks url=@url
+        page = @agent.get(url)
         page = from_blogspot_frame(page) || page
         POST_NODE_XPATHS.each { |xpath|  
           blocks = page.search(xpath)
