@@ -97,6 +97,15 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     end
   end
   
+  test "search images in blog post link and from node parent if images <= 1" do
+    skip
+    @scraper.url = "http://www.lesdessousdemarine.com"
+    posts = @scraper.posts
+    posts.each do |post|
+      assert post.images.count >= 1
+    end
+  end
+  
 end
 
   

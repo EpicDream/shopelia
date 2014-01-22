@@ -46,10 +46,10 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
   
   test "launch scraping if number of images <= 1" do
     skip
-    @blog.url = "http://www.alamode2sasou.com"
+    @blog.url = "http://www.lesdessousdemarine.com"
     posts = @blog.posts
     posts.each do |post|
-      assert post.images.count > 1
+      assert post.images.count >= 2
     end
   end
   
