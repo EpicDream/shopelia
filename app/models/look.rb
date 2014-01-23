@@ -20,7 +20,7 @@ class Look < ActiveRecord::Base
   scope :published, -> { where(is_published:true) }
   scope :published_of_blog, ->(blog) { published.where(id:Post.where(blog_id:blog.id).select('look_id'))}
   scope :top_commented, ->(n=5) { 
-    Look.joins(:comments).group(:look_id).order('count(*) desc').select('look_id, count(*) as count').limit(n) 
+    Look.joins(:comments).group('looks.id').order('count(*) desc').select('looks.id, count(*) as count').limit(n) 
   }
   
   def self.random collection=Look
