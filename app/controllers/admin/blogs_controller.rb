@@ -1,3 +1,4 @@
+# -*- encoding : utf-8 -*-
 class Admin::BlogsController < Admin::AdminController
   before_filter :validates_scope, only: :index
   
