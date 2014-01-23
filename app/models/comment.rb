@@ -7,6 +7,8 @@ class Comment < ActiveRecord::Base
   
   after_create :post_comment_on_blog_async, if: -> { can_be_posted_on_blog? && post_to_blog }
   
+  scope :posted, -> { where(posted:true) }
+
   def to_html
     "#{self.flinker.username} <br/> #{self.body} <br/> send via  <a href='http://flink.io'>flink</a>"
   end
@@ -19,6 +21,14 @@ class Comment < ActiveRecord::Base
     poster = Poster::Comment.new(comment:self.to_html, author:flinker.username, email:sender, post_url:look.url)
     self.posted = poster.deliver
     self.save
+  end
+  
+  def post
+    Post.where(look_id:look_id).first
+  end
+  
+  def blog
+    post.blog
   end
 
   private
