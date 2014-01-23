@@ -14,8 +14,8 @@ table.comments-top-five:hover{
   opacity:1;
 }
 table.comments-top-five img.avatar{
-  width:50px;
-  border-radius:2px;
+  width:60px;
+  border-radius:30px;
 }
 table.comments-top-five a{
   color:white;
