@@ -3,8 +3,7 @@ class Admin::PostsController < Admin::AdminController
   
   def index
     @posts = Post.pending_processing.order("created_at desc")
-    # @publications = Look.publications_counts_per_day
-    @publications = []
+    @publications = Look.publications_counts_per_day
   end
   
   def show
