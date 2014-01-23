@@ -1,0 +1,49 @@
+<table class="comments-top-five">
+  <thead>
+    <th colspan="4">Top Ten</th>
+  </thead>
+  <tbody>
+    <% Look.top_commented(10).each do |look| %>
+      <% post = look.post %>
+      <% blog = post.blog %>
+      <tr>
+        <td><img src="<%= blog.avatar_url || "/assets/admin/girl_head.jpg" %>" class="avatar"></img></td>
+        <td><%= blog.name %></td>
+        <td><%= link_to 'Voir le post', post.link %></td>
+        <td><span class="small-bubble"><span><%= look.count %></span></span></td>
+      </tr>
+      <% end %>
+  </tbody>
+</table>
+
+<table class="comments-list">
+  <thead>
+    <tr>
+      <th colspan="4">
+        <p class="comment-total-count">
+          <span><%= Comment.count %></span>
+          <span>Commentaires</span>
+        </p>
+      </th>
+    </tr>
+    <tr>
+      <th colspan="4">
+        <p class="comment-posted-count">
+          <span><%= Comment.posted.count %></span>
+          <span>Commentaires postés</span>
+        </p>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @comments.each do |comment| %>
+      <tr>
+        <td><%= comment.flinker.name %></td>
+        <td><%= truncate(comment.body, length: 50) %></td>
+        <td><%= link_to 'Voir le post', comment.post.link %></td>
+        <td><%= I18n.l(comment.created_at)%></td>
+        
+      </tr>
+    <% end  %>
+  </tbody>
+</table>
