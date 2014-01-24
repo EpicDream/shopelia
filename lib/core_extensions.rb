@@ -115,3 +115,9 @@ class ActiveRecord::Base
     end
   end
 end
+
+class URI::Generic
+  def base_url
+    "#{self.scheme}://#{self.host}"
+  end
+end
