@@ -67,8 +67,7 @@ before_fork do |server, worker|
   begin
     $crypto.decrypt($crypto.encrypt('hello', :recipients => 'gpg-production@shopelia.com'))
   rescue => e
-    puts "Failed decryption: exit"
-    exit
+    puts "Failed decryption of GPG key: ignoring"
   end
 
   old_pid = "#{server.config[:pid]}.oldbin"
