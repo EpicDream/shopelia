@@ -13,6 +13,7 @@
       %tr
         %td=I18n.l(Date.parse(hash['updated_at']))
         %td=hash['count']
-        
+  %select.country-select{}
+    =options_for_select(countries_for_select, selected:params[:country_code])
 .wrapper-column
   = render @posts

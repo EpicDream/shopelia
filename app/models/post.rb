@@ -14,8 +14,9 @@ class Post < ActiveRecord::Base
   before_validation :set_published_at, if: -> { self.published_at.nil? }
   after_create :convert
   
-  scope :pending_processing, where("processed_at is null and look_id is not null and published_at > ?", 1.month.ago).order("published_at desc")
-
+  scope :pending_processing, where("processed_at is null and look_id is not null and published_at > ?", 1.month.ago).order("published_at asc")
+  scope :of_country, ->(code) { where("blogs.country = ?", code).joins(:blog) unless code.blank? }
+  
   def convert
     if self.images.count > 1 && self.look.nil?
       look = Look.create!(
