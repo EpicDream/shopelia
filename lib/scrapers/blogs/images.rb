@@ -24,7 +24,7 @@ module Scrapers
           if src =~ /^http/
             src
           else
-            base_url + src
+            base_url + src if src
           end
         }
       end
