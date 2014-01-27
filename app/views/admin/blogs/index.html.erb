@@ -16,9 +16,9 @@
       <input type='radio' name='scope' value='scraped.without_posts_since_one_month'>
       <span>Sans articles depuis 1 mois</span>
       <span>(<%= Blog.scraped.without_posts_since_one_month.count %>)</span>
-      <input type='radio' name='scope' value='not_scraped.not_skipped'>
-      <span>A intégrer</span>
-      <span>(<%= Blog.not_scraped.not_skipped.count %>)</span>
+      <input type='radio' name='scope' value='scraped.without_look_published'>
+      <span>Sans look publié</span>
+      <span>(<%= Blog.without_look_published.count %>)</span>
       <input type='radio' name='scope' value='skipped'>
       <span>Non intégrés</span>
       <span>(<%= Blog.skipped.count %>)</span>
