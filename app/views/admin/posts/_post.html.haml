@@ -1,2 +1,3 @@
 %section.column
-  = link_to content_tag(:div) { image_tag(post.images.first) + content_tag(:p, post.title)}, admin_post_path(post)
+  = look_preview_header(post)
+  = look_preview(post)
