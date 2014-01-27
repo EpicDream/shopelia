@@ -55,4 +55,14 @@ class PostTest < ActiveSupport::TestCase
     end
     assert_equal "http://www.fake.com", Post.first.link
   end
+  
+  test "clean title long spaces ranges" do
+    Linker.stubs(:clean).returns("http://www.fake.com")
+    
+    title = "\n\nCOFFEE... BUT NOT IN PARIS\n\n\n\n                                    — \n                                    \n                                      by\n                                    \nJessie Pink\n\n      "
+    post = Post.new(link: "http://www.toto.fr", blog_id: blogs(:betty).id, title:title, products:{}.to_json, images:[].to_json)
+    assert post.save
+    post.reload
+    assert_equal "COFFEE... BUT NOT IN PARIS — by Jessie Pink", post.title
+  end
 end
