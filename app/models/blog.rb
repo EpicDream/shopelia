@@ -24,6 +24,10 @@ class Blog < ActiveRecord::Base
   scope :with_name_like, ->(pattern) { 
     where('url ~* :pattern or name ~* :pattern', pattern:pattern) unless pattern.blank?
   }
+  scope :without_look_published, -> { 
+    where('not exists(select posts.id from posts join looks on looks.id = posts.look_id 
+    and looks.is_published = ? and posts.blog_id = blogs.id)', true)
+  }
   
   def fetch
     self.update_attributes(scraped:true) unless self.scraped
