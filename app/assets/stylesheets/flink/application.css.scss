@@ -23,7 +23,6 @@ body {
   height: 100%;
   padding: 0;
   margin: 0;
-  overflow: hidden;
 }
 /*== Style starts here ==*/
 body {
@@ -225,7 +224,6 @@ $color: #707070;
 }
 
 .tagline {
-  margin-top: 40px;
   margin-bottom: 40px;
   font-size: 24px;
 }
@@ -250,12 +248,13 @@ $color: #707070;
 }
 
 #background-page {
-  background: asset-url("flink/background-flink.png", image) center center fixed;
-  -webkit-background-size: 100% auto;
-  -moz-background-size: 100% auto;
-  -o-background-size: 100% auto;
-  background-size: 100% auto;
-  position: absolute;
+  background: asset-url("flink/background-flink.png", image);
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  position: fixed;
   right: 0%;
   left: 0%;
   top: 0%;

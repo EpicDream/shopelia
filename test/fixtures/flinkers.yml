@@ -25,7 +25,7 @@ lilou:
   username: Lilou
   email: lilou@flink.com
   country: france
-  is_publisher: false
+  is_publisher: true
   staff_pick: false
 
 boop:
@@ -36,3 +36,4 @@ boop:
   email: boop@flink.com
   country: france
   is_publisher: true
+  staff_pick: true
