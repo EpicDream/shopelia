@@ -31,9 +31,13 @@ module Scrapers
       
       def extract_from_date_node
         return unless node = @document.search(DATE_NODE_XPATH).first
-        DATE_NODE_ATTRIBUTES.inject(nil) { |date, attribute|  
-          date = node.attribute(attribute).value rescue nil
-          break ::Date.parse_international(date) if date
+        DATE_NODE_ATTRIBUTES.inject(nil) { |date, attribute| 
+          begin 
+            date = node.attribute(attribute).value rescue nil
+            break ::Date.parse_international(date) if date
+          rescue 
+            nil
+          end
         }
       end
       

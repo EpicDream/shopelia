@@ -8,23 +8,24 @@ module Scrapers
   module Blogs
     
     class Scraper
-      attr_accessor :url
+      attr_accessor :url, :base_url
       POST_NODE_XPATHS = [
         "article", "div.post", "div.blogselection > div", "div.entry", "div.single", "div.post-wrap", "div.post-body", 
         "div.article", "div.blog_item", "div.entrybody", "div.content-box", "div#content"
       ]
       
       def initialize url=nil
-        @url = url
+        self.url = url
+        @base_url = URI.parse(url).base_url if url
         @agent = Mechanize.new
         @agent.user_agent_alias = 'Mac Safari'
       end
       
       def images block
-        images = Images.extract(block)
+        images = Images.extract(block, base_url)
         if images.count <= 1 #images can be on post page but not on blog posts list
           block = blocks(link(block)).first
-          images = Images.extract(block.search(".//ancestor::*"))
+          images = Images.extract(block.search(".//ancestor::*"), base_url) if block
         end
         images
       end
@@ -57,7 +58,7 @@ module Scrapers
       
       def posts
         return @posts if @posts
-        blocks.map { |block| 
+        blocks.map { |block|
           block.xpath(".//script").map(&:remove) 
           post = Post.new
           post.published_at = date(block)
@@ -85,6 +86,7 @@ module Scrapers
       def url=url
         @posts = nil
         @url = url
+        @base_url = URI.parse(url).base_url if url
       end
       
       private

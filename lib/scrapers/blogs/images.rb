@@ -8,8 +8,8 @@ module Scrapers
       MIN_WIDTH = 300
       MIN_HEIGHT = 50
       
-      def self.extract document
-        document.xpath('.//img').map(&src).compact.map do |href|
+      def self.extract document, base_url
+        document.xpath('.//img').map(&src(base_url)).compact.map do |href|
           next unless dimensions = FastImage.size(href) rescue nil
           next if dimensions[0] < MIN_WIDTH || dimensions[1] < 50
           href
@@ -18,10 +18,14 @@ module Scrapers
       
       private
       
-      def self.src
-        Proc.new { |img| 
+      def self.src(base_url)
+        Proc.new { |img|
           src = img.attribute('src').value rescue nil #img without src, we dont mind
-          src if src =~ /^http/
+          if src =~ /^http/
+            src
+          else
+            base_url + src if src
+          end
         }
       end
       

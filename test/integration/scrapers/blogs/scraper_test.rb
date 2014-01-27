@@ -12,17 +12,6 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     @post = @@posts.first
   end
   
-  test "scrape post when content in rss feed is not complete(can happen with feedburner)" do
-    skip
-    blog = Scrapers::Blogs::Blog.new
-    blog.url = "http://www.leblogdebetty.com/"
-    
-    blog.posts.each do |post|
-      assert !post.content.empty?
-      assert post.images.count >= 1
-    end
-  end
-  
   test "scrape posts(when no feed)" do
     @scraper.url = "http://www.adenorah.com/"
     posts = @scraper.posts
@@ -42,7 +31,7 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
   end
   
   test "scrape any product url" do
-    products = @post.products
+    products = @@posts.last.products
     assert products.count >= 1
   end
   
@@ -87,6 +76,19 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     assert_not_match /(http.*){2,}/, posts.first.link 
   end
   
+  ###### Skipped Tests for CI Semaphore ######
+  
+  test "scrape post when content in rss feed is not complete(can happen with feedburner)" do
+    skip
+    blog = Scrapers::Blogs::Blog.new
+    blog.url = "http://www.leblogdebetty.com/"
+    
+    blog.posts.each do |post|
+      assert !post.content.empty?
+      assert post.images.count >= 1
+    end
+  end
+  
   test "new block content markup" do
     skip
     @scraper.url = "http://www.yuyufashionbook.com"
@@ -103,6 +105,16 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     posts = @scraper.posts
     posts.each do |post|
       assert post.images.count > 1
+    end
+  end
+  
+  test "add base url to images if relative" do
+    skip
+    @scraper.url = "http://personaluniform.creatorsofdesire.com/melancholy-phnom-penh/"
+    posts = @scraper.posts
+    posts.each do |post|
+      assert post.images.count > 1
+      assert post.images.last =~ /http:\/\/personaluniform.creatorsofdesire.com\//
     end
   end
   
