@@ -10,6 +10,7 @@ class Post < ActiveRecord::Base
   
   before_validation :link_urls
   before_validation :set_a_title, if: -> { self.title.blank? }
+  before_validation :clean_title
   before_validation :set_published_at, if: -> { self.published_at.nil? }
   after_create :convert
   
@@ -73,5 +74,9 @@ class Post < ActiveRecord::Base
   
   def set_published_at
     self.published_at = Time.now
+  end
+  
+  def clean_title
+    self.title = self.title.clean.gsub(/\s{2,}/, ' ')
   end
 end
