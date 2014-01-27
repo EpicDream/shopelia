@@ -1,7 +1,8 @@
 require 'test_helper'
 
 class PostTest < ActiveSupport::TestCase
-  
+  fixtures :all
+
   setup do
     @post = Post.new(
       link: "http://www.toto.fr", 
@@ -49,7 +50,7 @@ class PostTest < ActiveSupport::TestCase
     Linker.stubs(:clean).returns("http://www.fake.com")
     assert_difference('Post.count', 1) do
       1.upto(3) { 
-        @post = Post.new(link: "http://www.toto.fr", blog_id: blogs(:betty).id, products:{}.to_json, images:[].to_json)
+        @post = Post.new(link: "http://www.toto.fr", blog_id: blogs(:betty).id, products:{}.to_json, images:[].to_json, )
         @post.save
       }
     end
@@ -65,4 +66,22 @@ class PostTest < ActiveSupport::TestCase
     post.reload
     assert_equal "COFFEE... BUT NOT IN PARIS — by Jessie Pink", post.title
   end
+  
+  test "validates uniquess domain name independant" do
+    post = Post.new(link: "http://www.toto.fr/lingerie.html", blog_id: blogs(:betty).id, title:'hello', products:{}.to_json, images:[].to_json)
+    assert post.save
+
+    post = Post.new(link: "http://www.toto.com/lingerie.html", blog_id: blogs(:betty).id, title:'hello', products:{}.to_json, images:[].to_json)
+    assert !post.valid?
+    assert_equal({:link=>["already exists"]}, post.errors.messages)
+  end
+  
+  test "validates uniquess with query component different must not add error" do
+    post = Post.new(link: "http://www.toto.fr/?p=34", blog_id: blogs(:betty).id, title:'hello', products:{}.to_json, images:[].to_json)
+    assert post.save
+    
+    post = Post.new(link: "http://www.toto.com/?p=35", blog_id: blogs(:betty).id, title:'hello', products:{}.to_json, images:[].to_json)
+    assert post.valid?
+  end
+  
 end
