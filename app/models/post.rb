@@ -1,12 +1,13 @@
 class Post < ActiveRecord::Base
   include ActionView::Helpers::TextHelper
+  json_attributes [:images, :products, :categories]
   
   belongs_to :blog
   belongs_to :look
   
   validates :blog, presence:true
-  validates :link, presence:true, uniqueness:true
-  json_attributes [:images, :products, :categories]
+  validates :link, presence:true
+  validate :uniqueness_domain_independant #same post on multiple domains
   
   before_validation :link_urls
   before_validation :set_a_title, if: -> { self.title.blank? }
@@ -16,7 +17,7 @@ class Post < ActiveRecord::Base
   
   scope :pending_processing, where("processed_at is null and look_id is not null and published_at > ?", 1.month.ago).order("published_at asc")
   scope :of_country, ->(code) { where("blogs.country = ?", code).joins(:blog) unless code.blank? }
-  
+
   def convert
     if self.images.count > 1 && self.look.nil?
       look = Look.create!(
@@ -78,6 +79,15 @@ class Post < ActiveRecord::Base
   end
   
   def clean_title
-    self.title = self.title.clean.gsub(/\s{2,}/, ' ')
+    self.title = self.title.clean.gsub(/\s{2,}/, ' ') if self.title
   end
+  
+  def uniqueness_domain_independant
+    uri = URI.parse(self.link)
+    exist = self.blog.posts.where('link like ?', "%#{uri.path}%#{uri.query}%").count > 0
+    errors.add(:link, 'already exists') if exist
+  rescue URI::InvalidURIError #some url have heart and so on ascii charts ...
+    true
+  end
+  
 end
