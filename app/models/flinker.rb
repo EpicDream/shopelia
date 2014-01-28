@@ -13,6 +13,7 @@ class Flinker < ActiveRecord::Base
   devise :rememberable, :trackable, :validatable, :token_authenticatable
 
   before_save :ensure_authentication_token
+  after_create :follow_staff_picked
 
   validates :email, :presence => true
   validates :username, length:{minimum:2}, allow_nil: true
@@ -47,6 +48,12 @@ class Flinker < ActiveRecord::Base
     if self.email.eql?("test@flink.io")
       user = Flinker.find_by_email("test@flink.io")
       user.destroy unless user.nil?
+    end
+  end
+
+  def follow_staff_picked
+    Flinker.where(is_publisher:true,staff_pick:true).each do |flinker|
+      FlinkerFollow.create(flinker_id:self.id,follow_id:flinker.id)
     end
   end
 end
