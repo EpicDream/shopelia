@@ -15,6 +15,7 @@ module Shopelia
   
     # Base host
     config.host = 'https://www.shopelia.fr'
+    config.image_host = 'http://www.flink.io'
 
     # Maximum number of times the order is allowed to retry a new account creation
     config.max_retry = 3
@@ -103,9 +104,6 @@ module Shopelia
             pass: ""
         },
     }
-
-    # Static image server
-    config.image_host = "https://www.shopelia.com"
 
     # Flink google account to post comments on blogspot sites
     config.flinker_google_account = {email:"flinkhq@gmail.com", password:"ShopeliaRocks1"}
