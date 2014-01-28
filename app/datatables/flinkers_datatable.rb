@@ -44,6 +44,7 @@ class FlinkersDatatable
   def fetch_flinkers
     flinkers = Flinker.rank(:display_order)
     flinkers = flinkers.where("is_publisher=?", @filters[:publisher] == 'yes') if @filters[:publisher].present?
+    flinkers = flinkers.where("staff_pick = ?", @filters[:staff_pick] == 'yes') unless @filters[:staff_pick].blank?
     flinkers = flinkers.where("name like :search or url like :search", search: "%#{params[:sSearch]}%") if params[:sSearch].present?
     flinkers.page(page).per_page(per_page)
   end
