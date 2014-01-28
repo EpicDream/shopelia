@@ -45,4 +45,16 @@ class LookSerializerTest < ActiveSupport::TestCase
     look_serializer = LookSerializer.new(@look, scope:{flinker:flinker})
     assert_equal 1, look_serializer.as_json[:look][:liked]
   end
+
+  test "it should translate codes" do
+    flinker = flinkers(:elarch)
+    @look.look_products.destroy_all
+    LookProduct.create!(look_id:@look.id,code:"dress",brand:"test")
+    
+    look_serializer = LookSerializer.new(@look.reload, scope:{flinker:flinker})
+    hash = look_serializer.as_json
+
+    assert_equal "Robe", hash[:look][:products][0][:code]
+    assert_equal "test", hash[:look][:products][0][:brand]
+  end
 end
