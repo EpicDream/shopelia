@@ -58,4 +58,12 @@ class BlogTest < ActiveSupport::TestCase
     assert_equal "http://www.superimage.com/image.png", blog.flinker.avatar_url
   end
   
+  test "when blog name is updated, it should update flinker name" do
+    blog = Blog.create(url:"http://fashion.fr", name:"Anne")
+    assert_equal "Anne", blog.flinker.name
+    
+    blog.update_attributes(name:"Marie")
+    assert_equal "Marie", blog.reload.flinker.name
+  end
+  
 end

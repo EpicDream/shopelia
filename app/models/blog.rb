@@ -11,6 +11,7 @@ class Blog < ActiveRecord::Base
   validates :url, uniqueness:true, presence:true, :on => :create
   after_create :assign_flinker, if: -> { self.flinker_id.nil? }
   after_update :update_flinker_avatar, if: -> { self.avatar_url_changed? }
+  after_update :update_flinker_name, if: -> { self.name_changed? }
 
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
   scope :without_posts_since, ->(date) { 
@@ -92,6 +93,11 @@ class Blog < ActiveRecord::Base
   def update_flinker_avatar
     self.flinker.avatar_url = self.avatar_url
     self.flinker.save!
+  end
+  
+  def update_flinker_name
+    self.flinker.name = self.name
+    self.flinker.save
   end
   
   def normalize_url
