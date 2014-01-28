@@ -12,6 +12,11 @@ namespace :anne_fashion do
       AnneFashion::Twitter.new.follow_friends_of_friends(10)
     end
     
+    desc "follow from fashion tweets"
+    task :follow_from_tweets => :environment do
+      AnneFashion::Twitter.new.follow_from_tweets("#lookbook")
+    end
+    
     desc "schedule followings/followers ratio"
     task :schedule => :environment do
       AnneFashion::Twitter.new.schedule_follow_ratio
