@@ -8,12 +8,13 @@ class Flinker < ActiveRecord::Base
   has_many :flinker_likes
   has_many :flinker_follows
   belongs_to :country
-
+  has_one :blog
+  
   devise :database_authenticatable, :registerable, :recoverable
   devise :rememberable, :trackable, :validatable, :token_authenticatable
 
   before_save :ensure_authentication_token
-
+  
   validates :email, :presence => true
   validates :username, length:{minimum:2}, allow_nil: true
   validates_confirmation_of :password
@@ -36,6 +37,16 @@ class Flinker < ActiveRecord::Base
     attribute :name, :username, :url
     attributesToIndex [:name, :username, :url, :avatar_url]
   end
+  
+  def url=url
+    write_attribute(:url, url)
+    self.blog.update_attributes(url:url) if self.blog
+  end
+  
+  def name=name
+    write_attribute(:name, name)
+    self.blog.update_attributes(name:name) if self.blog
+  end
 
   private
 
@@ -49,4 +60,5 @@ class Flinker < ActiveRecord::Base
       user.destroy unless user.nil?
     end
   end
+  
 end
