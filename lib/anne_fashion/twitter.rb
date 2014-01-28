@@ -68,6 +68,7 @@ module AnneFashion
     end
     
     def follow_from_tweets query, max=MAX_FOLLOW_FROM_TWEETS, retweet=false, favorite=false
+      session_wait()
       tweets = tweets(query)
       users_ids = tweets.map(&:user_mentions).flatten.map(&:id).uniq
       tweets_ids = tweets.map(&:id)
