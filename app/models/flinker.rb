@@ -8,7 +8,8 @@ class Flinker < ActiveRecord::Base
   has_many :flinker_likes
   has_many :flinker_follows
   belongs_to :country
-
+  has_one :blog
+  
   devise :database_authenticatable, :registerable, :recoverable
   devise :rememberable, :trackable, :validatable, :token_authenticatable
 
@@ -37,6 +38,16 @@ class Flinker < ActiveRecord::Base
     attribute :name, :username, :url
     attributesToIndex [:name, :username, :url, :avatar_url]
   end
+  
+  def url=url
+    write_attribute(:url, url)
+    self.blog.update_attributes(url:url) if self.blog
+  end
+  
+  def name=name
+    write_attribute(:name, name)
+    self.blog.update_attributes(name:name) if self.blog
+  end
 
   private
 
@@ -56,4 +67,5 @@ class Flinker < ActiveRecord::Base
       FlinkerFollow.create(flinker_id:self.id,follow_id:flinker.id)
     end
   end
+
 end

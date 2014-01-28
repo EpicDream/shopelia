@@ -1,7 +1,8 @@
-require 'test_helper'
+require 'test__helper'
 
 class FlinkerTest < ActiveSupport::TestCase
-
+  fixtures :all
+  
   test "it should create flinker" do
     new_flinker
     assert @flinker.save
@@ -23,7 +24,21 @@ class FlinkerTest < ActiveSupport::TestCase
       @flinker.save
     end
   end
+  
+  test "when name or url change, it should be changed on blog" do
+    flinker = flinkers(:elarch)
+    blog = blogs(:betty) and blog.flinker_id = flinker.id
+    assert blog.save
+    
+    assert flinker.update_attributes(name:"Toto", url:"http://www.blagues.com")
+    blog.reload
 
+    assert_equal "Toto", flinker.name
+    assert_equal "http://www.blagues.com", flinker.url
+    assert_equal "Toto", blog.name
+    assert_equal "http://www.blagues.com", blog.url
+  end
+  
   private
 
   def new_flinker
@@ -34,5 +49,6 @@ class FlinkerTest < ActiveSupport::TestCase
       email:"test@flink.io",
       password:"password",
       password_confirmation:"password")
-  end
+  end  
+  
 end
