@@ -7,7 +7,7 @@ class Post < ActiveRecord::Base
   
   validates :blog, presence:true
   validates :link, presence:true
-  validate :uniqueness_domain_independant #same post on multiple domains
+  validate :uniqueness_domain_independant, :on => :create #same post on multiple domains
   
   before_validation :link_urls
   before_validation :set_a_title, if: -> { self.title.blank? }
