@@ -41,7 +41,8 @@ class Admin::FlinkersController < Admin::AdminController
 
   def prepare_filters
     @filters = {
-      :publisher => params[:publisher]
+      :publisher => params[:publisher],
+      :staff_pick => params[:staff_pick]
     }
   end  
 end
