@@ -16,10 +16,10 @@ class LookSerializer < ActiveModel::Serializer
   def products
     object.look_products.map do |lp|
       if lp.product.present? && lp.product.available?
-        { code: I18n.t("flink.products." + lp.code),
+        { code: lp.code.blank? ? "" : I18n.t("flink.products." + lp.code),
           product: ProductSerializer.new(lp.product, scope:scope).as_json[:product] }
       elsif lp.brand.present?
-        { code: I18n.t("flink.products." + lp.code),
+        { code: lp.code.blank? ? "" : I18n.t("flink.products." + lp.code),
           brand: lp.brand }
       end
     end.compact

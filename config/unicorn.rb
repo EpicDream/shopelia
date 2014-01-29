@@ -6,7 +6,7 @@
 
 # Use at least one worker per core if you're on a dedicated server,
 # more will usually help for _short_ waits on databases/caches.
-worker_processes 6
+worker_processes 16
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.

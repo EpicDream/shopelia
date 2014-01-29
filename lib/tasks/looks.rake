@@ -13,5 +13,19 @@ namespace :flinker do
         look.save
       end
     end
+
+    desc "Check images integrity"
+    task :images_check => :environment do
+      Image.find_each do |image|
+        md5 = image.picture_fingerprint
+        file = "#{Rails.root}/public/images/#{md5.first(3)}/large/#{md5}.jpg"
+        next if File.exists?(file)
+        begin
+          image.picture = URI.parse image.url
+          image.save
+        rescue
+        end
+      end
+    end
   end
 end
