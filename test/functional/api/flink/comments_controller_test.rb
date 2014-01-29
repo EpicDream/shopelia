@@ -2,7 +2,7 @@ require 'test_helper'
 
 class Api::Flink::CommentsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
-
+  
   setup do
     Comment.any_instance.stubs(:can_be_posted_on_blog?).returns(true)
     Poster::Comment.any_instance.stubs(:deliver).returns(true)
@@ -40,7 +40,7 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
   test "if device is development device, comment must not be posted to blog" do
     stubs_retrieve_device_returns_dev_device
     sign_in @flinker
-    Comment.any_instance.expects(:post_comment_on_blog).never
+    Comment.any_instance.expects(:post_comment_on_blog_async).never
     
     post :create, look_id:@look.uuid, comment: { body: "Radieuse <3" }, format: :json
   end
@@ -50,7 +50,7 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
   def stubs_retrieve_device_returns_dev_device
     Api::Flink::BaseController.class_eval do
       def retrieve_device
-        @device = Device.new(is_dev:true)
+        @device = Device.new(is_dev:true, is_beta:true)
       end
     end
   end
