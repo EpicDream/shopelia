@@ -5,6 +5,10 @@
   %span.total-looks
     %i=Look.published.count
     %i Looks publiés
+  .filters      
+    %select.country-select{}
+      =options_for_select(countries_for_select, selected:params[:country_code])
+    %input#blog-name-filter{placeholder:"Filtrer par le nom du blog", 'data-blogs-names' => Blog.names }
   %table 
     %thead
       %th Date
@@ -13,7 +17,6 @@
       %tr
         %td=I18n.l(Date.parse(hash['updated_at']))
         %td=hash['count']
-  %select.country-select{}
-    =options_for_select(countries_for_select, selected:params[:country_code])
+    
 .wrapper-column
   = render @posts
