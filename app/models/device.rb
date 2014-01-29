@@ -55,6 +55,10 @@ class Device < ActiveRecord::Base
   def ios?
     self.os == 'iOS'
   end
+  
+  def real_user?
+    !(is_dev && is_beta)
+  end
 
   def authorize_push_channel
     Nest.new("device")[self.id][:created_at].set(Time.now.to_i)
