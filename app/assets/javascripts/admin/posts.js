@@ -23,4 +23,16 @@ $(document).ready(function() {
     var countryCode = $(this).val();
     window.location = "/admin/posts?country_code=" + countryCode;
   });
+  
+  (function autocompleteBlogName() {
+    var names = $("#blog-name-filter").data("blogs-names");
+  	$("#blog-name-filter").autocomplete({ 
+      source:names,
+      change:function(event, ui) { 
+        var name = $("#blog-name-filter").val();
+        window.location = "/admin/posts?blog_name=" + name;
+      }
+    });
+  })();
+  
 });

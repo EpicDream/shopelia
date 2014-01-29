@@ -15,5 +15,7 @@
         %td=hash['count']
   %select.country-select{}
     =options_for_select(countries_for_select, selected:params[:country_code])
+  %input#blog-name-filter{placeholder:"Filtrer par le nom du blog", 'data-blogs-names' => Blog.names }
+    
 .wrapper-column
   = render @posts
