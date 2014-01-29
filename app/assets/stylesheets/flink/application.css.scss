@@ -370,3 +370,70 @@ $color: #707070;
   }
 
 }
+
+
+@media (max-width: 993px) {
+  .right-column {
+    display: none;
+  }
+
+  .tagline {
+    font-size: 18px;
+  }
+
+  #flink_footer {
+    display: none;
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  body {
+    overflow: hidden;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+
+  .spacer40 {
+    height: 20px;
+    width: 100%;
+    font-size: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    display: block;
+  }
+
+  #diamond img {
+    width: 25%;
+    margin: auto;
+  }
+
+  #download-btn img {
+    width: 50%;
+    margin: auto;
+  }
+
+
+  #background-page {
+    background: asset-url("flink/background-flink.png", image) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+
+  .tagline {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  #landing-page .left-colum {
+    margin-top: 20px;
+  }
+
+
+}
