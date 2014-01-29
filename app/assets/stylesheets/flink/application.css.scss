@@ -90,6 +90,8 @@ body {
   background-size:contain;
   background-position: 0px -40px;
   position: absolute;
+  background-repeat:  no-repeat;
+  background-position: center center;
 }
 
 #content {
@@ -433,6 +435,34 @@ $color: #707070;
 
   #landing-page .left-colum {
     margin-top: 20px;
+  }
+
+
+  //Share page
+  #mobile-cover{
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    position: absolute;
+    right: 0%;
+    left: 0%;
+    top: 0%;
+    bottom: 0%;
+    z-index: -2;
+  }
+
+  #appstore-btn {
+    text-align: center;
+
+    img {
+      width: 50%;
+      max-width: 200px;
+    }
+    position: absolute;
+    z-index: 1000;
+    top: 0;
+    width: 100%;
   }
 
 
