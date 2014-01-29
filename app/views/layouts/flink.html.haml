@@ -11,4 +11,6 @@
     %title= @title || "Flink"
 
   %body
-    = yield
+    #wrap
+      = yield
+    = render 'flink/footer'
