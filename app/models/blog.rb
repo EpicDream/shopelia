@@ -72,6 +72,10 @@ class Blog < ActiveRecord::Base
     !self.posts.first || self.posts.first.published_at < Time.now - 1.month
   end
   
+  def self.names
+    connection.execute("select name from blogs where name <> '' and name is not null").map { |r| r["name"]  }
+  end
+  
   private
   
   def assign_flinker

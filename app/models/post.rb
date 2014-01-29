@@ -17,7 +17,8 @@ class Post < ActiveRecord::Base
   
   scope :pending_processing, where("processed_at is null and look_id is not null and published_at > ?", 1.month.ago).order("published_at asc")
   scope :of_country, ->(code) { where("blogs.country = ?", code).joins(:blog) unless code.blank? }
-
+  scope :of_blog_with_name, ->(name) { where("blogs.name = ?", name).joins(:blog) unless name.blank? }
+  
   def convert
     if self.images.count > 1 && self.look.nil?
       look = Look.create!(
