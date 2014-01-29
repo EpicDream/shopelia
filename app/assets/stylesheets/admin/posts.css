@@ -87,8 +87,15 @@ span.total-looks i:nth-child(2){
   margin-right:5px;
   font-style:italic;
 }
-select.country-select{
+.filters{
   float:right;
-  margin-right:5px;
+  margin:10px 5px 0 0;
   font-size:12px;
+  background:#F7F7F7;
+  padding:20px;
+  border-radius:3px;
+}
+.filters input{
+  display:block;
+  margin-top:10px;
 }
