@@ -3,6 +3,7 @@ require 'api_constraints'
 Shopelia::Application.routes.draw do
 
 
+  match "/terms" => "flink#terms"
   get "comments/index"
 
   get "comments/create"

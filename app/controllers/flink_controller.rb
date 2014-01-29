@@ -4,6 +4,10 @@ class FlinkController < ApplicationController
   def index
   end
 
+  def terms
+
+  end
+
   def download
     user_agent = request.env['HTTP_USER_AGENT'].downcase
     if user_agent.match(/iphone/) || user_agent.match(/ipod/) || user_agent.match(/ipad/)
