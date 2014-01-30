@@ -15,7 +15,8 @@ class Flinker < ActiveRecord::Base
 
   before_save :ensure_authentication_token
   after_create :follow_staff_picked
-
+  before_update :update_coordinates_async, if: -> { self.last_sign_in_ip_changed? }
+  
   validates :email, :presence => true
   validates :username, length:{minimum:2}, allow_nil: true, uniqueness:true
   validates_confirmation_of :password
@@ -39,21 +40,23 @@ class Flinker < ActiveRecord::Base
     attributesToIndex [:name, :username, :url, :avatar_url]
   end
   
-  
   def name=name
     write_attribute(:name, name)
     self.blog.update_attributes(name:name) if self.blog
   end
   
-  def self.coordinates #TODO set lat,lng via rake task and use it instead of cache
-    Rails.cache.fetch(:"flinkers-coordinates", expires_in:1.day ) {
-      coords = proc { |record| Geocoder.coordinates(record['last_sign_in_ip']) }
-      Flinker.connection.execute('select last_sign_in_ip from flinkers where last_sign_in_ip is not null').map(&coords)
-    }
+  def self.coordinates
+    coords = proc { |record| [record['lat'], record['lng']] }
+    connection.execute("select lat, lng from flinkers where lat is not null and current_sign_in_at >= '#{Time.now - 2.hours}'")
+    .map(&coords)
   end
 
   private
 
+  def update_coordinates_async
+    FlinkerCoordinatesWorker.perform_async(self.id)
+  end
+  
   def set_avatar
     self.avatar = URI.parse(self.avatar_url) if self.avatar_url.present?
   end

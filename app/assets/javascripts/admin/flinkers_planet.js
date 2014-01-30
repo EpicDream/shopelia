@@ -5,7 +5,6 @@
 $(document).ready(function() {
   var planet = planetaryjs.planet();
   var canvas = document.getElementById('flinkers-planet');
-  var coordinates = $("#flinkers-coordinates").data("flinkers-coordinates");
   
   planet.loadPlugin(planetaryjs.plugins.earth({
     topojson: { file: '../json/world-110m.json' },
@@ -29,10 +28,20 @@ $(document).ready(function() {
   });
   
   setInterval(function() {
+    var coordinates = $("#flinkers-coordinates").data("flinkers-coordinates");
+    
     for (var i = coordinates.length - 1; i >= 0; i--) {
       var lat = coordinates[i][0];
       var lng = coordinates[i][1];
       planet.plugins.pings.add(lng, lat, { color: '#FF3EB9', ttl:2000, angle: 3});
     }
   }, 2000);
+
+  setInterval(function() {
+    $.get("/admin/flinkers_planet.json", function(payload) {
+      $("#flinkers-coordinates").data("flinkers-coordinates", payload);
+    });
+  }, 30000);
+  
+  
 });
