@@ -48,6 +48,11 @@ class Flinker < ActiveRecord::Base
     write_attribute(:name, name)
     self.blog.update_attributes(name:name) if self.blog
   end
+  
+  def self.coordinates
+    coords = proc { |record| Geocoder.coordinates(record['last_sign_in_ip']) }
+    connection.execute('select last_sign_in_ip from flinkers where last_sign_in_ip is not null').map(&coords)
+  end
 
   private
 
