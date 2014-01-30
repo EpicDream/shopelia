@@ -29,7 +29,7 @@ $(document).ready(function() {
   
   setInterval(function() {
     var coordinates = $("#flinkers-coordinates").data("flinkers-coordinates");
-    
+    $("#total-flinkers").text(coordinates.length);
     for (var i = coordinates.length - 1; i >= 0; i--) {
       var lat = coordinates[i][0];
       var lng = coordinates[i][1];
@@ -40,6 +40,7 @@ $(document).ready(function() {
   setInterval(function() {
     $.get("/admin/flinkers_planet.json", function(payload) {
       $("#flinkers-coordinates").data("flinkers-coordinates", payload);
+      $("#total-flinkers").text(payload.size);
     });
   }, 30000);
   
