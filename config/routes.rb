@@ -74,6 +74,7 @@ Shopelia::Application.routes.draw do
     resources :comments, :only => [:index, :show]
     resources :posts
     resources :flinkers
+    resources :flinkers_planet, only:[:index]
     resources :looks do
       get :publish, :on => :member
       get :reject, :on => :member

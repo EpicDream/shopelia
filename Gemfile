@@ -59,6 +59,7 @@ gem 'fb_graph'
 gem 'twitter', require:false
 gem 'instagram', require:false
 gem 'bitly', require:false
+gem 'geocoder'
 
 # Gems used only for assets and not required
 # in production environments by default.
