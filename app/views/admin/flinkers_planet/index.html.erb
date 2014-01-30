@@ -1,0 +1,7 @@
+<% content_for :head  do %>
+  <script type='text/javascript' src='http://d3js.org/d3.v3.min.js'></script>
+  <script type='text/javascript' src='http://d3js.org/topojson.v1.min.js'></script>
+<% end %>
+<%= image_tag 'flink/diamond.png', class:'logo-flink' %>
+<canvas id='flinkers-planet' width='1000' height='1000'></canvas>
+<p id="flinkers-coordinates" data-flinkers-coordinates="<%= @coordinates %>">  

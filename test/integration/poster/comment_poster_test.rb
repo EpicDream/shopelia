@@ -25,6 +25,7 @@ class Poster::CommentTest < ActiveSupport::TestCase
   end
   
   test "include appropriate publisher module blogspot with popup" do
+    skip
     @poster.post_url = "http://1finedai.blogspot.fr/2013/12/winter-pink.html"
     assert @poster.respond_to?(:form)
     assert_equal Poster::Blogspot, @poster.publisher
@@ -112,6 +113,15 @@ class Poster::CommentTest < ActiveSupport::TestCase
     comment = "J'aime beaucoup cette photo, bel arrangement. Cadrage nickel ;)"
     url = "http://www.garancedore.fr/2014/01/18/weekend-inspiration-138/"
     @poster = Poster::Comment.new(comment:comment, author:NAME, email:EMAIL, post_url:url)
+    Incident.expects(:create).never
+    assert @poster.deliver
+  end
+  
+  test "deliver commment wordpress site http://kutchetcouture.com" do
+    skip
+    comment = "anoiaque. Somptueuse comme d'habitude! Sympa l'image animée. Que dire à part que tu es romantique à shouait ;) <br/> <a href='http://flink.io'>Flink</a>"
+    url = "http://kutchetcouture.com/2014/01/29/impression-python/"
+    @poster = Poster::Comment.new(comment:comment, author:"anoiaque", email:"flinkhq@gmail.com", post_url:url)
     Incident.expects(:create).never
     assert @poster.deliver
   end

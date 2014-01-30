@@ -1,0 +1,2 @@
+module Admin::FlinkersPlanetHelper
+end
