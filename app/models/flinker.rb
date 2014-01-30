@@ -49,9 +49,11 @@ class Flinker < ActiveRecord::Base
     self.blog.update_attributes(name:name) if self.blog
   end
   
-  def self.coordinates
-    coords = proc { |record| Geocoder.coordinates(record['last_sign_in_ip']) }
-    connection.execute('select last_sign_in_ip from flinkers where last_sign_in_ip is not null').map(&coords)
+  def self.coordinates #TODO set lat,lng via rake task and use it instead of cache
+    Rails.cache.fetch(:"flinkers-coordinates", expires_in:1.day ) {
+      coords = proc { |record| Geocoder.coordinates(record['last_sign_in_ip']) }
+      Flinker.connection.execute('select last_sign_in_ip from flinkers where last_sign_in_ip is not null').map(&coords)
+    }
   end
 
   private
