@@ -7,7 +7,7 @@ class Api::Flink::FollowsController < Api::Flink::BaseController
 
   def create
     (params[:follows] || []).each do |id|
-      FlinkerFollow.create!(
+      FlinkerFollow.create(
        flinker_id:current_flinker.id,
        follow_id:id.to_i)
     end
