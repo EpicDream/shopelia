@@ -7,7 +7,6 @@ table.comments-top-five{
   opacity:0.9;
   display:inline-block;
   position:absolute;
-  height:100%;
   transition:opacity .2s ease-in-out;
 }
 table.comments-top-five:hover{
