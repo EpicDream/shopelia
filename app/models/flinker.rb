@@ -17,7 +17,7 @@ class Flinker < ActiveRecord::Base
   after_create :follow_staff_picked
 
   validates :email, :presence => true
-  validates :username, length:{minimum:2}, allow_nil: true
+  validates :username, length:{minimum:2}, allow_nil: true, uniqueness:true
   validates_confirmation_of :password
   before_validation :reset_test_account
   before_validation :set_avatar

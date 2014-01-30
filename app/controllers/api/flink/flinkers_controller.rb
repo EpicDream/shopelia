@@ -5,21 +5,32 @@ class Api::Flink::FlinkersController < Api::Flink::BaseController
   api :GET, "/flinkers", "Get flinkers"
   def index
     render json: {
-      flinkers: ActiveModel::ArraySerializer.new(@flinkers, scope:@scope)
+      flinkers: @flinkers_json
     }
   end
 
   private
 
-  def retrieve_flinkers
-    @page = params[:page] || 1
-    @per_page = params[:per_page] || 10
-    query = Flinker.where(is_publisher:true)
-    if params[:staff_pick].present?
-      query = query.where(staff_pick: params[:staff_pick].to_i == 1)
+  def flinkers_cache
+    Rails.cache.fetch([:flinker], :expires_in => 1.hour) do
+      flinkers = Flinker.where(is_publisher:true)
+      ActiveModel::ArraySerializer.new(flinkers, scope:@scope)
     end
-    
-    @flinkers = query.paginate(page:@page, per_page:@per_page)
+  end
+
+  def retrieve_flinkers
+    if params[:page].present?
+      @page = params[:page]
+      @per_page = params[:per_page] || 10
+      query = Flinker.where(is_publisher:true)
+      if params[:staff_pick].present?
+        query = query.where(staff_pick: params[:staff_pick].to_i == 1)
+      end
+      @flinkers = query.paginate(page:@page, per_page:@per_page)
+      @flinkers_json = ActiveModel::ArraySerializer.new(@flinkers, scope:@scope)
+    else
+      @flinkers_json = flinkers_cache
+    end
   end
 
   def prepare_scope
