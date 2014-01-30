@@ -15,6 +15,6 @@ class FlinkerLike < ActiveRecord::Base
   private
 
   def update_flinker_likes_count
-    self.flinker.update_attribute :likes_count, self.flinker.flinker_likes.count
-  end  
+    Look.find(self.resource_id).flinker.update_attribute :likes_count, FlinkerLike.where(resource_id:self.resource_id,resource_type:LOOK).count if self.resource_type == LOOK
+  end
 end

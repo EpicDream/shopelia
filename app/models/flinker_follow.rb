@@ -11,6 +11,6 @@ class FlinkerFollow < ActiveRecord::Base
   private
 
   def update_flinker_follows_count
-    self.flinker.update_attribute :follows_count, self.flinker.flinker_follows.count
+    Flinker.find(self.follow_id).update_attribute :follows_count, FlinkerFollow.where(follow_id:self.follow_id).count
   end
 end

@@ -10,7 +10,7 @@ class FlinkerFollowTest < ActiveSupport::TestCase
     follow = FlinkerFollow.new(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
     assert follow.save
 
-    assert_equal 1, @flinker.reload.follows_count
+    assert_equal 1, flinkers(:betty).reload.follows_count
 
     follow = FlinkerFollow.new(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
     assert !follow.save
