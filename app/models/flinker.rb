@@ -39,10 +39,6 @@ class Flinker < ActiveRecord::Base
     attributesToIndex [:name, :username, :url, :avatar_url]
   end
   
-  def url=url
-    write_attribute(:url, url)
-    self.blog.update_attributes(url:url) if self.blog
-  end
   
   def name=name
     write_attribute(:name, name)
