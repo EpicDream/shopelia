@@ -12,7 +12,8 @@ module AnneFashion
     MAX_FAVORITE = 3
     MAX_FOLLOW_FROM_TWEETS = 20
     FOLLOW_TAGS = ["#lookbook", "#fashion", "#stylish"]
-    
+    DM_DISCOVER = "Just discovered this new app! Discover awesome looks from top fashion bloggers! https://itunes.apple.com/au/app/flink-discover-share-awesome/id798552697?mt=8&ign-mpt=uo%3D2"
+
     attr_reader :client
     
     def initialize
@@ -42,6 +43,11 @@ module AnneFashion
     
     def twit message
       client.update(message)
+    end
+    
+    def dm user_id, text
+      message = client.create_direct_message(user_id, text)
+      client.direct_message(message.id)
     end
     
     def search query, opts={}
