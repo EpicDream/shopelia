@@ -1,4 +1,6 @@
-//= require admin/planetaryjs.min.js
+//= require admin/lib/d3.v3.min.js
+//= require admin/lib/topojson.v1.min.js
+//= require admin/lib/planetaryjs.min.js
 
 $(document).ready(function() {
   var planet = planetaryjs.planet();
