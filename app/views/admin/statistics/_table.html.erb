@@ -1,0 +1,20 @@
+<table id="<%= table_id %>" class="table table-striped dataTable">
+  <thead>
+    <th>Flinker</th>
+    <th>Url</th>
+    <th>Nombre de looks</th>
+    <th>Nombre de follows</th>
+    <th>Nombre de likes</th>
+  </thead>
+  <tbody>
+    <% collection.each do |stat| %>
+      <tr>
+        <td><%= stat["username"] || stat["name"] %></td>
+        <td><%= stat["url"]%></td>
+        <td><%= stat["looks_count"]%></td>
+        <td><%= stat["follows_count"]%></td>
+        <td><%= stat["likes_count"]%></td>
+      </tr>
+    <% end  %>
+  </tbody>
+</table>

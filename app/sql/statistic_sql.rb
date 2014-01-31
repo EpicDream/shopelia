@@ -2,7 +2,7 @@ class StatisticSql
   
   def self.of_publishers from, to
     %Q{
-      select fl.username, fl.name, vlooks.count as looks_count, vfollows.count as follows_count, 
+      select fl.username, fl.name, fl.url, vlooks.count as looks_count, vfollows.count as follows_count, 
              vlikes.count as likes_count
       from flinkers as fl
 
