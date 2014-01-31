@@ -33,7 +33,7 @@ $(document).ready(function() {
     for (var i = coordinates.length - 1; i >= 0; i--) {
       var lat = coordinates[i][0];
       var lng = coordinates[i][1];
-      planet.plugins.pings.add(lng, lat, { color: '#FF3EB9', ttl:500, angle: 0.5});
+      planet.plugins.pings.add(lng, lat, { color: '#FF3EB9', ttl:1500, angle: 2});
     }
   }, 2000);
 
