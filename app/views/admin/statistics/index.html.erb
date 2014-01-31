@@ -1,0 +1,45 @@
+<h1>Aujourd'hui</h1>
+<table id="statistics-for-day" class="table table-striped dataTable">
+  <thead>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </thead>
+  <tbody>
+    <% @statistics_for_day.each do |stat| %>
+      <tr>
+        <td><%= stat["username"]%></td>
+        <td><%= stat["name"]%></td>
+        <td><%= stat["looks_count"]%></td>
+        <td><%= stat["follows_count"]%></td>
+        <td><%= stat["likes_count"]%></td>
+      </tr>
+    <% end  %>
+  </tbody>
+</table>
+
+<h1>Depuis 0 after Flink</h1>
+
+<table id="statistics" class="table table-striped dataTable">
+  <thead>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </thead>
+  <tbody>
+    <% @statistics.each do |stat| %>
+      <tr>
+        <td><%= stat["username"]%></td>
+        <td><%= stat["name"]%></td>
+        <td><%= stat["looks_count"]%></td>
+        <td><%= stat["follows_count"]%></td>
+        <td><%= stat["likes_count"]%></td>
+      </tr>
+    <% end  %>
+  </tbody>
+</table>
+
