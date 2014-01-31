@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140130141749) do
+ActiveRecord::Schema.define(:version => 20140131103933) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -363,10 +363,11 @@ ActiveRecord::Schema.define(:version => 20140130141749) do
     t.string   "url"
     t.integer  "flinker_id"
     t.datetime "published_at"
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
-    t.boolean  "is_published", :default => false
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
+    t.boolean  "is_published",            :default => false
     t.string   "description"
+    t.datetime "is_published_updated_at"
   end
 
   add_index "looks", ["is_published"], :name => "index_looks_on_is_published"

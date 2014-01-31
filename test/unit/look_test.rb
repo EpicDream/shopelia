@@ -30,4 +30,11 @@ class LookTest < ActiveSupport::TestCase
     FlinkerLike.create!(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
     assert @look.liked_by?(@flinker)
   end
+  
+  test "set is_published_changed_at timestamp when a look is_published status change" do
+    @look.is_published = true
+    @look.save
+
+    assert @look.is_published_updated_at.between?(Time.now - 10.seconds, Time.now)
+  end
 end
