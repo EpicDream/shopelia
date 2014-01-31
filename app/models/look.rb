@@ -16,7 +16,8 @@ class Look < ActiveRecord::Base
 
   before_validation :generate_uuid
   after_save :update_flinker_looks_count
-
+  before_update :touch_is_published_updated_at, if: -> { is_published_changed? }
+  
   scope :published, -> { where(is_published:true) }
   scope :published_of_blog, ->(blog) { published.where(id:Post.where(blog_id:blog.id).select('look_id'))}
   scope :top_commented, ->(n=5) { 
@@ -41,6 +42,10 @@ class Look < ActiveRecord::Base
   end
 
   private
+  
+  def touch_is_published_updated_at
+    self.is_published_updated_at = Time.now
+  end
 
   def generate_uuid
     self.uuid = SecureRandom.hex(4) if self.uuid.blank?
