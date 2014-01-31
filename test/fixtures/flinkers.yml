@@ -17,6 +17,7 @@ betty:
   country: france
   is_publisher: true
   staff_pick: true
+  looks_count: 1
 
 lilou:
   name: Lilou
@@ -27,6 +28,7 @@ lilou:
   country: france
   is_publisher: true
   staff_pick: false
+  looks_count: 1
 
 boop:
   name: Boop
@@ -37,3 +39,4 @@ boop:
   country: france
   is_publisher: true
   staff_pick: true
+  looks_count: 1
