@@ -2,7 +2,7 @@ class Statistic
   FROM_REFERENCE = Date.parse("2014/01/01")
   
   def initialize from: FROM_REFERENCE, to: Date.today
-    @from = from || FROM_REFERENCE
+    @from = from || Date.today
     @to = to || Date.today
     @from, @to = [@from, @to].map { |date| to_ruby_date(date)}
   end
