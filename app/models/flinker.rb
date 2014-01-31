@@ -1,5 +1,4 @@
 class Flinker < ActiveRecord::Base
-  include AlgoliaSearch
   include RankedModel
 
   has_many :looks
@@ -35,11 +34,6 @@ class Flinker < ActiveRecord::Base
   attr_accessible :display_order_position
   attr_accessor :avatar_url
 
-  algoliasearch index_name: "flinkers-#{Rails.env}" do
-    attribute :name, :username, :url
-    attributesToIndex [:name, :username, :url, :avatar_url]
-  end
-  
   def name=name
     write_attribute(:name, name)
     self.blog.update_attributes(name:name) if self.blog
