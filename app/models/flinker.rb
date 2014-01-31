@@ -48,7 +48,10 @@ class Flinker < ActiveRecord::Base
   private
 
   def update_coordinates_async
-    FlinkerCoordinatesWorker.perform_async(self.id)
+    begin
+      FlinkerCoordinatesWorker.perform_async(self.id)
+    rescue
+    end
   end
   
   def set_avatar
