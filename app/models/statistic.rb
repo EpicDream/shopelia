@@ -1,14 +1,12 @@
 class Statistic
   FROM_REFERENCE = Date.parse("2014/01/01")
   
-  def initialize from: FROM_REFERENCE, to: Date.today
-    @from = from || Date.today
-    @to = to || Date.today
-    @from, @to = [@from, @to].map { |date| to_ruby_date(date)}
+  def initialize from: FROM_REFERENCE
+    @from = to_ruby_date(from) || Date.today
   end
   
-  def of_publishers from: @from, to: @to
-    sql = StatisticSql.of_publishers(from, to)
+  def of_publishers from: @from
+    sql = StatisticSql.of_publishers(from)
     ActiveRecord::Base.connection.execute(sql)
   end
   
