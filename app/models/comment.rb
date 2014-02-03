@@ -8,7 +8,8 @@ class Comment < ActiveRecord::Base
   after_create :post_comment_on_blog_async, if: -> { can_be_posted_on_blog? && post_to_blog }
   
   scope :posted, -> { where(posted:true) }
-
+  scope :last_ones, ->(n=10) { order('created_at desc').limit(n) }
+  
   def to_html
     "#{self.flinker.username} <br/> #{self.body} <br/> send via  <a href='http://flink.io'>flink</a>"
   end
