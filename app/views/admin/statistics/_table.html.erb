@@ -5,6 +5,7 @@
     <th>Nombre de looks</th>
     <th>Nombre de follows</th>
     <th>Nombre de likes</th>
+    <th>Nombre de commentaires</th>
   </thead>
   <tbody>
     <% collection.each do |stat| %>
@@ -14,6 +15,7 @@
         <td><%= stat["looks_count"]%></td>
         <td><%= stat["follows_count"]%></td>
         <td><%= stat["likes_count"]%></td>
+        <td><%= stat["comments_count"]%></td>
       </tr>
     <% end  %>
   </tbody>
