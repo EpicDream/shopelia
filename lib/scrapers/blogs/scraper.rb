@@ -27,6 +27,13 @@ module Scrapers
           block = blocks(link(block)).first
           images = Images.extract(block.search(".//ancestor::*"), base_url) if block
         end
+        if images.count == 0 #search in iframe
+          if iframe = block.search(".//iframe[@class='photoset']").first
+            src = iframe.attribute("src").value
+            block = @agent.get(src).search(".//body")
+            images = Images.extract(block, base_url)
+          end
+        end
         images
       end
       

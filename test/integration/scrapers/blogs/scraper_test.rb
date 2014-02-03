@@ -118,6 +118,17 @@ class Scrapers::Blogs::ScraperTest < ActiveSupport::TestCase
     end
   end
   
+  test "scrape images in sucking iframes" do
+    skip
+    @scraper.url = "http://anisasojka.com/post/74823909689/outfit-post-25-sporty-spice-click-on-the"
+    posts = @scraper.posts
+    posts.each do |post|
+      assert post.images.count >= 2
+      assert post.images.last =~ /media.tumblr.com.*?jpg/
+    end
+    
+  end
+  
 end
 
   
