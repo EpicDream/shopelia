@@ -2,7 +2,7 @@ class Admin::PostsController < Admin::AdminController
   before_filter :retrieve_post, :only => :show
   
   def index
-    @posts = Post.pending_processing.of_country(params[:country_code]).of_blog_with_name(params[:blog_name])
+    @posts = Post.pending_processing.of_country(params[:country_code]).of_blog_with_name(params[:blog_name]).with_followers_count
     @publications = Look.publications_counts_per_day
   end
   

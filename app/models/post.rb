@@ -15,9 +15,15 @@ class Post < ActiveRecord::Base
   before_validation :set_published_at, if: -> { self.published_at.nil? }
   after_create :convert
   
-  scope :pending_processing, where("processed_at is null and look_id is not null and published_at > ?", 1.month.ago).order("published_at asc")
+  scope :pending_processing, where("processed_at is null and look_id is not null and posts.published_at > ?", 1.month.ago)
   scope :of_country, ->(code) { where("blogs.country = ?", code).joins(:blog) unless code.blank? }
   scope :of_blog_with_name, ->(name) { where("blogs.name = ?", name).joins(:blog) unless name.blank? }
+  scope :with_followers_count, -> {
+    joins(:look).select('posts.*, vfollows.count as flinker_followers_count')
+    .joins('join flinkers on flinkers.id = looks.flinker_id')
+    .joins('left outer join (select follow_id, count(*) as count from flinker_follows group by follow_id) vfollows on vfollows.follow_id = flinkers.id')
+    .order('vfollows.count desc')
+  }
   
   def convert
     if self.images.count > 1 && self.look.nil?
