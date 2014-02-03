@@ -37,6 +37,9 @@ function sortable() {
         dataType: "json",
         data: {look_image:{display_order_position:index}},
         type: "put"
+      })
+      .fail(function(jqXHR, textStatus, errorThrown){
+        alert("Une erreur s'est produite lors de la mise à jour de la position");
       });              
     }
   });
