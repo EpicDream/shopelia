@@ -39,7 +39,8 @@ function sortable() {
         type: "put"
       })
       .fail(function(jqXHR, textStatus, errorThrown){
-        alert("Une erreur s'est produite lors de la mise à jour de la position");
+         $('#grid').sortable("cancel");
+         alert("Une erreur s'est produite lors de la mise à jour de la position");
       });              
     }
   });
