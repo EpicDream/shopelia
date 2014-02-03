@@ -38,7 +38,7 @@
   <tbody>
     <% @comments.each do |comment| %>
       <tr>
-        <td><%= comment.flinker.name %></td>
+        <td><%= comment.flinker.username || comment.flinker.name %></td>
         <td><%= truncate(comment.body, length: 50) %></td>
         <td><%= link_to 'Voir le post', comment.post.link %></td>
         <td><%= I18n.l(comment.created_at)%></td>
