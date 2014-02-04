@@ -4,6 +4,7 @@ class LookProductTest < ActiveSupport::TestCase
 
   setup do
     @look = looks(:agadir)
+    LookProduct.any_instance.stubs(:generate_event)
   end
 
   test "it should create look product item" do
@@ -32,11 +33,10 @@ class LookProductTest < ActiveSupport::TestCase
   end
 
   test "it should generate event" do
-    assert_difference ["EventsWorker.jobs.count"] do
-      item = LookProduct.create(
-        look_id:@look.id, 
-        url:"http://www.amazon.fr/gp/product/1")
-    end
+    LookProduct.any_instance.expects(:generate_event)
+    item = LookProduct.create(
+      look_id:@look.id, 
+      url:"http://www.amazon.fr/gp/product/1")
   end
 
   test "it shouldn't create association from bad url" do
@@ -70,6 +70,17 @@ class LookProductTest < ActiveSupport::TestCase
     assert_equal "ok", version.shipping_info
     assert_equal "En stock", version.availability_info
   end
+  
+  test "when look product is updated, look must be touched(for api updated looks since)" do
+    assert_change(@look, :updated_at, :>) { 
+      @look.look_products << LookProduct.new(look_id:@look.id, feed:example_feed)
+    }
+    assert_change(@look, :updated_at, :>) { 
+      @look.look_products.first.update_attributes(brand:"toto")
+    }
+  end
+  
+  private
 
   def example_feed
     {

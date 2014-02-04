@@ -30,4 +30,9 @@ class LookImageTest < ActiveSupport::TestCase
     @look.look_images << LookImage.create(url:@url)
     assert_equal 1, @look.reload.look_images.count
   end
+  
+  test "when look image is updated, look must be touched(for api updated looks since)" do
+    assert_change(@look, :updated_at, :>) { @look.look_images << LookImage.create(url:@url)}
+    assert_change(@look, :updated_at, :>) { @look.look_images.first.update_attributes(display_order:12)}
+  end
 end
