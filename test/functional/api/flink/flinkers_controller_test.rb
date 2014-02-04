@@ -4,6 +4,7 @@ class Api::Flink::FlinkersControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   setup do
+    Rails.cache.delete(:flinker)
     @flinker = flinkers(:elarch)
     sign_in @flinker
   end
@@ -16,14 +17,14 @@ class Api::Flink::FlinkersControllerTest < ActionController::TestCase
   end
   
   test "it should get publishing staff picked flinkers" do
-    get :index, staff_pick:1, format: :json
+    get :index, staff_pick:1, page:1, format: :json
     assert_response :success
     
     assert_equal 2, json_response["flinkers"].count
   end
 
   test "it should get publishing non staff picked flinkers" do
-    get :index, staff_pick:0, format: :json
+    get :index, staff_pick:0, page:1, format: :json
     assert_response :success
     
     assert_equal 1, json_response["flinkers"].count

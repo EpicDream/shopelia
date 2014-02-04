@@ -1,6 +1,18 @@
 namespace :shopelia do
   namespace :integrity do
-    
+
+    desc "Fix broken permissions for images"
+    task :fix_img_permissions => :environment do
+      Find.find('/home/shopelia/shopelia/public/images') do |path|
+        next if File.world_readable?(path)
+        if FileTest.directory?(path)
+          FileUtils.chmod 0755, path, :verbose => true
+        else
+          FileUtils.chmod 0644, path, :verbose => true
+        end
+      end
+    end
+
     desc "Verify integrity of daily MangoPay report"
     task :mangopay_report => :environment do
       report = File.read("tmp/mangopay_report.csv")
