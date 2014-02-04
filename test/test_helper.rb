@@ -35,6 +35,14 @@ class ActiveSupport::TestCase
     card = { number:"4970100000000154", exp_month:"12", exp_year:"2020", cvv:"123" }
     contribution = MangoPayDriver.credit_master_account card, value if value > 0
   end
+  
+  def assert_change object, attribute, test_on=:"!="
+    before = object.send(attribute)
+    yield
+    after = object.reload.send(attribute)
+    assert after.send(test_on, before)
+  end
+  
 end
 
 class ActionDispatch::IntegrationTest
