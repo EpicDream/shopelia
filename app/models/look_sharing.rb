@@ -1,8 +1,4 @@
 class LookSharing < ActiveRecord::Base
-  FACEBOOK = "facebook"
-  TWITTER = "twitter"
-  MAIL = "mail"
-  
   attr_accessible :look_id, :flinker_id, :social_network_id
   
   belongs_to :look

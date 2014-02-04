@@ -1,3 +1,3 @@
-["facebook", "twitter", "mail"].each do |name|
+["facebook", "twitter", "mail", "openpost"].each do |name|
   SocialNetwork.create(name:name)  
 end
