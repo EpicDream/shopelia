@@ -42,7 +42,6 @@
     .span9
       %article.coolbox#grid
         %h3 Images
-        .temp
         - @look.look_images.order(:display_order).each do |image|
           .img-block.sort{"data-id" => "#{image.id}"}
             = image_tag image.url, class:"thumb"
