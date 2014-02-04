@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140131103933) do
+ActiveRecord::Schema.define(:version => 20140203162503) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -357,6 +357,16 @@ ActiveRecord::Schema.define(:version => 20140131103933) do
 
   add_index "look_products", ["look_id"], :name => "index_look_products_on_look_id"
 
+  create_table "look_sharings", :force => true do |t|
+    t.integer  "look_id"
+    t.integer  "flinker_id"
+    t.integer  "social_network_id"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
+
+  add_index "look_sharings", ["look_id"], :name => "index_look_sharings_on_look_id"
+
   create_table "looks", :force => true do |t|
     t.string   "uuid"
     t.string   "name"
@@ -626,6 +636,12 @@ ActiveRecord::Schema.define(:version => 20140131103933) do
     t.integer  "prices_count"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+  end
+
+  create_table "social_networks", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
   create_table "states", :force => true do |t|
