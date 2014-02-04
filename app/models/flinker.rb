@@ -14,7 +14,6 @@ class Flinker < ActiveRecord::Base
 
   before_save :ensure_authentication_token
   after_create :follow_staff_picked
-  before_update :update_coordinates_async, if: -> { self.last_sign_in_ip_changed? }
   
   validates :email, :presence => true
   validates :username, length:{minimum:2}, allow_nil: true, uniqueness:true
@@ -39,17 +38,7 @@ class Flinker < ActiveRecord::Base
     self.blog.update_attributes(name:name) if self.blog
   end
   
-  def self.coordinates
-    coords = proc { |record| [record['lat'], record['lng']] }
-    connection.execute("select lat, lng from flinkers where lat is not null and current_sign_in_at >= '#{Time.now - 2.hours}'")
-    .map(&coords)
-  end
-
   private
-
-  def update_coordinates_async
-    FlinkerCoordinatesWorker.perform_async(self.id)
-  end
   
   def set_avatar
     self.avatar = URI.parse(self.avatar_url) if self.avatar_url.present?
