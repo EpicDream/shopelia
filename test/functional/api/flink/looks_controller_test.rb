@@ -77,6 +77,19 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     get :index, flinker_ids:[flinkers(:betty).id], format: :json
     assert_equal 10, json_response["looks"].count
   end
+  
+  test "get looks published, updated after <timestamp> (and published before <timestamp>)" do
+    sign_in flinkers(:elarch)
+    FlinkerFollow.create!(flinker_id:flinkers(:elarch).id, follow_id:flinkers(:betty).id)
+    
+    look = Look.last
+    look.updated_at = Time.now + 1.hour
+    look.save
+
+    get :index, format: :json, updated_after:(Time.now + 2.minutes).to_i
+    
+    assert_equal 1, json_response["looks"].count
+  end
 
   private
 
@@ -93,6 +106,7 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
       name:"Article",
       flinker_id:@flinker.id,
       published_at:published_at,
+      is_published_updated_at:Time.now,
       is_published:true,
       url:"http://www.leblogdebetty.com/article")
   end

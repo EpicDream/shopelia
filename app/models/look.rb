@@ -1,5 +1,5 @@
 class Look < ActiveRecord::Base
-  attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description
+  attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :is_published_updated_at
   
   belongs_to :flinker
   has_one :post
@@ -23,6 +23,7 @@ class Look < ActiveRecord::Base
   scope :top_commented, ->(n=5) { 
     Look.joins(:comments).group('looks.id').order('count(*) desc').select('looks.id, count(*) as count').limit(n) 
   }
+  scope :published_updated_after, ->(date) { where('is_published_updated_at < ? and updated_at >= ?', date, date)}
   
   def self.random collection=Look
     collection.offset(rand(collection.count)).first
