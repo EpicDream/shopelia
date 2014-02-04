@@ -20,7 +20,7 @@ class Api::Flink::Looks::SharingsControllerTest < ActionController::TestCase
     sign_in @flinker
     
     LookSharing.any_instance.expects(:save).returns(:true)
-    post :create, look_id:@look.id, flinker_id:@flinker.id, social_network:"twitter", format: :json
+    post :create, look_id:@look.uuid, flinker_id:@flinker.id, social_network:"twitter", format: :json
 
     assert_response :success
   end
