@@ -196,6 +196,7 @@ Shopelia::Application.routes.draw do
       resources :flinkers, :only => :index
       resources :looks, :only => :index do
         resources :comments
+        resources :sharings, :only => :create, :controller => "looks/sharings"
         resources :likes, :only => :create, :controller => "looks/likes"
         delete "likes" => "looks/likes#destroy"
       end
