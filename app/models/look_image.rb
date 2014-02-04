@@ -7,6 +7,4 @@ class LookImage < Image
   validates :url, :uniqueness => { :scope => :resource_id }
 
   ranks :display_order, :with_same => :resource_id
-
-  attr_accessible :display_order_position
 end
