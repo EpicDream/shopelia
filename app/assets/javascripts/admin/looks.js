@@ -38,6 +38,9 @@ function sortable() {
         data: {look_image:{display_order_position:index}},
         type: "put"
       })
+      .success(function(){
+        $(".temp").append("<span>X</span>"); //temporaire pour voir si pb côté client ou serveur
+      })
       .fail(function(jqXHR, textStatus, errorThrown){
          $('#grid').sortable("cancel");
          alert("Une erreur s'est produite lors de la mise à jour de la position");
