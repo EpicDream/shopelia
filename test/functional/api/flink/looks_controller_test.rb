@@ -110,7 +110,7 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
       name:"Article",
       flinker_id:@flinker.id,
       published_at:published_at,
-      is_published_updated_at:Time.now,
+      is_published_updated_at:published_at + 1.hour,
       is_published:true,
       url:"http://www.leblogdebetty.com/article")
   end

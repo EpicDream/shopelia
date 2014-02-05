@@ -15,6 +15,7 @@ class LookSerializerTest < ActiveSupport::TestCase
       products:{"Amazon"=>"http://www.amazon.fr/dp/B00BIXXTCY"}.to_json,
       images:["http://farm4.staticflickr.com/3681/10980880355_0a0151fbd1_o.jpg","http://mytrendymarket.com/wp-content/uploads/2013/11/pull-maiami-1.png"].to_json)
     @look = post.look
+    @look.update_attributes(:is_published_updated_at => Time.now + 1.hour)
     LookProduct.create(look_id:@look.id,brand:"Zara",code:"Jean")
   end
 
@@ -31,6 +32,8 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert_equal @look.url, hash[:look][:url]
     assert_equal @look.published_at.to_i, hash[:look][:published_at]
     assert_equal @look.updated_at.to_i, hash[:look][:updated_at]
+    assert_equal @look.is_published_updated_at.to_i, hash[:look][:is_published_updated_at]
+    
     assert hash[:look][:flinker].present?
     assert_equal 1, hash[:look][:products].count
     assert_equal 2, hash[:look][:images].count
