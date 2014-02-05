@@ -19,4 +19,10 @@ module ApplicationHelper
         flash_type.to_s
     end
   end
+  
+  def countries_for_select
+    [['Tous les pays', ''], ['France', 'FR'], ['Allemagne', 'DE'], ['Grande Bretagne', 'GB'],
+     ['Italie', 'IT'], ['Etats Unis', 'US']]
+  end
+  
 end

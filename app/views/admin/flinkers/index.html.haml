@@ -16,6 +16,8 @@
           %option{value:''} Staff Pick
           %option{value:'yes'} Yes
           %option{value:'no'} No
+        %select.country-select.input-medium.filter-option#country-filter
+          =options_for_select(countries_for_select, selected:params[:country_code])
         
     .span10
       %article.coolbox
