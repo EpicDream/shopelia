@@ -4,6 +4,8 @@ require 'test_helper'
 class LookSerializerTest < ActiveSupport::TestCase
   
   setup do
+    LookProduct.any_instance.stubs(:generate_event)
+    
     post = Post.create!(
       link: "http://www.toto.fr", 
       title:"test", 
@@ -28,6 +30,7 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert_equal @look.name, hash[:look][:name]
     assert_equal @look.url, hash[:look][:url]
     assert_equal @look.published_at.to_i, hash[:look][:published_at]
+    assert_equal @look.updated_at.to_i, hash[:look][:updated_at]
     assert hash[:look][:flinker].present?
     assert_equal 1, hash[:look][:products].count
     assert_equal 2, hash[:look][:images].count
