@@ -31,7 +31,7 @@ class Api::Flink::FlinkersControllerTest < ActionController::TestCase
   end
   
   test "get staff picked flinkers with coutry filter" do
-    get :index, staff_pick:1, page:1, country:'FR', format: :json
+    get :index, staff_pick:1, page:1, country:'fr', format: :json
     assert_response :success
     
     assert_equal 2, json_response["flinkers"].count
