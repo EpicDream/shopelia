@@ -13,14 +13,14 @@ class Api::Flink::FlinkersControllerTest < ActionController::TestCase
     get :index, format: :json
     assert_response :success
     
-    assert_equal 3, json_response["flinkers"].count
+    assert_equal 4, json_response["flinkers"].count
   end
   
   test "it should get publishing staff picked flinkers" do
     get :index, staff_pick:1, page:1, format: :json
     assert_response :success
     
-    assert_equal 2, json_response["flinkers"].count
+    assert_equal 3, json_response["flinkers"].count
   end
 
   test "it should get publishing non staff picked flinkers" do
@@ -29,4 +29,12 @@ class Api::Flink::FlinkersControllerTest < ActionController::TestCase
     
     assert_equal 1, json_response["flinkers"].count
   end
+  
+  test "get staff picked flinkers with coutry filter" do
+    get :index, staff_pick:1, page:1, country:'FR', format: :json
+    assert_response :success
+    
+    assert_equal 2, json_response["flinkers"].count
+  end
+  
 end

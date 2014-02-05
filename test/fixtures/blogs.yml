@@ -2,3 +2,25 @@ betty:
   name: "Betty"
   url: "http://www.leblogdebetty.com"
   flinker: betty
+  country: 'FR'
+  
+lilou:
+  name: "lilou"
+  url: "http://www.lilou.com"
+  flinker: lilou
+  country: 'GB'  
+  
+boop:
+  name: "boop"
+  url: "http://www.boop.com"
+  flinker: boop
+  country: 'FR'
+
+nana:
+  name: "nana"
+  url: "http://www.nana.com"
+  flinker: nana
+  country: 'IT'
+
+  
+  

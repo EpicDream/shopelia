@@ -29,7 +29,7 @@ lilou:
   is_publisher: true
   staff_pick: false
   looks_count: 1
-
+  
 boop:
   name: Boop
   url: http://www.leblogdebetty.com
@@ -40,3 +40,13 @@ boop:
   is_publisher: true
   staff_pick: true
   looks_count: 1
+
+nana:
+  name: Nana
+  url: http://www.leblogdenana.com
+  encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
+  username: nanausername
+  email: nana@flink.com
+  is_publisher: true
+  staff_pick: true
+  looks_count: 1  
