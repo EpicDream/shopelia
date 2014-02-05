@@ -25,7 +25,7 @@ lilou:
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   username: Lilou
   email: lilou@flink.com
-  country: france
+  country: italy
   is_publisher: true
   staff_pick: false
   looks_count: 1
@@ -47,6 +47,7 @@ nana:
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   username: nanausername
   email: nana@flink.com
+  country: angleterre
   is_publisher: true
   staff_pick: true
   looks_count: 1  
