@@ -7,7 +7,8 @@ class Api::ApiController < ActionController::Base
   before_filter :set_navigator_properties
   before_filter :retrieve_tracker
   before_filter :retrieve_device
-
+  before_filter :retrieve_country_iso
+  
   rescue_from ActiveRecord::RecordNotFound do |e|
     render :json => {:error => "Object not found"}, :status => :not_found
   end
@@ -46,5 +47,9 @@ class Api::ApiController < ActionController::Base
       visitor = cookies[:visitor] || params[:visitor]
       @device = Device.find_by_uuid(visitor) unless visitor.blank?
     end
+  end
+  
+  def retrieve_country_iso
+    params[:"x-country-iso"] = request.headers["X-Flink-Country-Iso"]
   end
 end
