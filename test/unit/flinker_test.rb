@@ -20,7 +20,7 @@ class FlinkerTest < ActiveSupport::TestCase
 
   test "it should auto follow staff picked flinkers" do 
     new_flinker
-    assert_difference "FlinkerFollow.count", 2 do
+    assert_difference "FlinkerFollow.count", 3 do
       @flinker.save
     end
   end

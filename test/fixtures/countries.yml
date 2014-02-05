@@ -2,6 +2,14 @@ france:
   iso: FR
   name: France
 
+angleterre:
+  iso: GB
+  name: 'United Kingdom'
+
+italy:
+  iso: IT
+  name: Italie
+
 morocco:
   iso: MA
   name: Morocco

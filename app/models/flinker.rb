@@ -29,7 +29,7 @@ class Flinker < ActiveRecord::Base
   ranks :display_order
   
   scope :publishers, where(is_publisher:true)
-  scope :of_country, ->(country) { joins(:blog).where('blogs.country = ?', country) }
+  scope :of_country, ->(iso_code) { joins(:country).where('countries.iso = ?', iso_code) }
   scope :with_looks, where("looks_count > 0")
   
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
