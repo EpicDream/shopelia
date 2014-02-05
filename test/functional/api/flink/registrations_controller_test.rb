@@ -35,7 +35,6 @@ class Api::Flink::RegistrationsControllerTest < ActionController::TestCase
     end
   end
   
-  
   private
   
   def params
