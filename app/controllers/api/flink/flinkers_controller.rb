@@ -26,7 +26,7 @@ class Api::Flink::FlinkersController < Api::Flink::BaseController
       if params[:staff_pick].present?
         query = query.where(staff_pick: params[:staff_pick].to_i == 1)
       end
-      query = query.of_country(params[:country]) unless params[:country].blank?
+      query = query.of_country(params[:country_iso]) unless params[:country_iso].blank?
       @flinkers = query.paginate(page:@page, per_page:@per_page)
       @flinkers_json = ActiveModel::ArraySerializer.new(@flinkers, scope:@scope)
     else
