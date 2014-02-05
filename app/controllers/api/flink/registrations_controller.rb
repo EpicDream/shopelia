@@ -15,9 +15,7 @@ class Api::Flink::RegistrationsController < Api::Flink::BaseController
   private
 
   def prepare_flinker_hash
-    @flinker_hash = params[:flinker].merge({
-                                         :developer_id => @developer.id,
-                                     })
+    @flinker_hash = params[:flinker].merge({:developer_id => @developer.id})
   end
 
 end
