@@ -143,3 +143,8 @@
 .ui-autocomplete{
   z-index:2000;
 }
+.modal-backdrop,
+.modal-backdrop.fade.in {
+  opacity: 0.1;
+  filter: alpha(opacity=10);
+}
