@@ -1,10 +1,5 @@
 module Admin::PostsHelper
   
-  def countries_for_select
-    [['Tous les pays', ''], ['France', 'FR'], ['Allemagne', 'DE'], ['Grande Bretagne', 'GB'],
-     ['Italie', 'IT'], ['Etats Unis', 'US']]
-  end
-  
   def look_preview_header post
     content_tag(:span, I18n.l(post.published_at), class:'look-published-at') +
     content_tag(:span, "#{post.flinker_followers_count} followers", class:'look-published-at') +

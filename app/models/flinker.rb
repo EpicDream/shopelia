@@ -27,7 +27,10 @@ class Flinker < ActiveRecord::Base
                     :path => ":rails_root/public/images/flinker/:id/:style/avatar.jpg"
 
   ranks :display_order
-
+  
+  scope :publishers, where(is_publisher:true)
+  scope :of_country, ->(country) { joins(:blog).where('blogs.country = ?', country) }
+  
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
   attr_accessible :display_order_position
