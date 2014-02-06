@@ -5,7 +5,7 @@ class Admin::PostsController < Admin::AdminController
     @posts = Post.pending_processing.of_country(params[:country_code]).of_blog_with_name(params[:blog_name])
     .order('published_at asc')
     #UNDO FOR ONE WEEK .with_followers_count
-    @publications = []#Look.publications_counts_per_day
+    @publications = Look.publications_counts_per_day
   end
   
   def show
