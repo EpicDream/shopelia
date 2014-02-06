@@ -19,7 +19,6 @@ class Flinker < ActiveRecord::Base
   validates :email, :presence => true
   validates :username, length:{minimum:2}, allow_nil: true, uniqueness:true
   validates_confirmation_of :password
-  before_validation :reset_test_account
   before_validation :set_avatar
 
   has_attached_file :avatar, 
@@ -31,12 +30,15 @@ class Flinker < ActiveRecord::Base
   
   scope :publishers, where(is_publisher:true)
   scope :of_country, ->(iso) { !iso.blank? && joins(:country).where('countries.iso' => iso.upcase) }
+  scope :of_country_or_universal, ->(iso) { joins(:country).where('countries.iso = ? or flinkers.universal = ?', iso.upcase, true) }
+  
   scope :with_looks, where("looks_count > 0")
   scope :staff_pick, where(staff_pick:true)
+  scope :universals, where(universal:true)
   
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
-  attr_accessible :display_order_position, :country_iso
+  attr_accessible :display_order_position, :country_iso, :universal
   attr_accessor :avatar_url, :country_iso
 
   def name=name
@@ -54,15 +56,9 @@ class Flinker < ActiveRecord::Base
     self.avatar = URI.parse(self.avatar_url) if self.avatar_url.present?
   end
 
-  def reset_test_account
-    if self.email.eql?("test@flink.io")
-      user = Flinker.find_by_email("test@flink.io")
-      user.destroy unless user.nil?
-    end
-  end
-
   def follow_staff_picked
-    Flinker.publishers.staff_pick.of_country(self.country.try(:iso)).each do |flinker|
+    flinkers = Flinker.publishers.staff_pick.of_country_or_universal(self.country.try(:iso))
+    flinkers.each do |flinker|
       FlinkerFollow.create(flinker_id:self.id, follow_id:flinker.id)
     end
   end

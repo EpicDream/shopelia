@@ -12,14 +12,17 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal 0, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
   end
 
-  test "it should create infinitely flinker with email test@flink.io" do
-    1.upto(2) {
-      assert new_flinker.save
-    }
-  end
-
   test "it should auto follow staff picked flinkers of same country" do 
     assert_difference "FlinkerFollow.count", 2 do
+      @flinker.save
+    end
+  end
+  
+  test "it should auto follow staff picked flinkers of same country more universal flinkers if ones" do 
+    flinker = Flinker.new(attributes.merge({email:"univ@me.com", name:"Universal", universal:true, country_iso:'GB', staff_pick:true}))
+    assert flinker.save!
+
+    assert_difference "FlinkerFollow.count", 3 do
       @flinker.save
     end
   end
@@ -48,14 +51,17 @@ class FlinkerTest < ActiveSupport::TestCase
   private
 
   def new_flinker
-    Flinker.new(
-      name:"Name",
+    Flinker.new(attributes)
+  end 
+  
+  def attributes
+    { name:"Name",
       url:"http://www.url.to",
       is_publisher:true,
       email:"test@flink.io",
       password:"password",
       country_id:countries(:france).id,
-      password_confirmation:"password")
-  end  
+      password_confirmation:"password"}
+  end
   
 end
