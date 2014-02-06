@@ -9,7 +9,6 @@ class Api::Flink::RegistrationsControllerTest < ActionController::TestCase
     end
 
     assert_response 201
-    assert_equal nil, Flinker.last.country
     assert json_response["auth_token"].present?
     assert json_response["flinker"].present?
   end
@@ -42,7 +41,6 @@ class Api::Flink::RegistrationsControllerTest < ActionController::TestCase
       post :create, params, format: :json
     end
   end
-  
   
   private
   

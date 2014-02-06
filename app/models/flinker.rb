@@ -31,7 +31,7 @@ class Flinker < ActiveRecord::Base
   scope :publishers, where(is_publisher:true)
   scope :of_country, ->(iso) { !iso.blank? && joins(:country).where('countries.iso' => iso.upcase) }
   scope :of_country_or_universal, ->(iso) { 
-    if iso
+    unless iso.blank?
       joins(:country).where('countries.iso = ? or flinkers.universal = ?', iso.upcase, true) 
     else
       self.universals
@@ -63,7 +63,7 @@ class Flinker < ActiveRecord::Base
   end
 
   def follow_staff_picked
-    flinkers = Flinker.publishers.staff_pick.of_country_or_universal(self.country.try(:iso))
+    flinkers = Flinker.publishers.staff_pick.of_country_or_universal(self.country.try(:iso)).limit(25)
     flinkers.each do |flinker|
       FlinkerFollow.create(flinker_id:self.id, follow_id:flinker.id)
     end
