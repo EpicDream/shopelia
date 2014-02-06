@@ -13,7 +13,7 @@ class Api::Flink::FlinkersController < Api::Flink::BaseController
 
   def flinkers_cache
     Rails.cache.fetch([:flinker], :expires_in => 1.hour) do
-      flinkers = Flinker.publishers.with_looks
+      flinkers = Flinker.publishers.with_looks.includes(:country)
       ActiveModel::ArraySerializer.new(flinkers, scope:@scope)
     end
   end
@@ -22,7 +22,7 @@ class Api::Flink::FlinkersController < Api::Flink::BaseController
     if params[:page].present?
       @page = params[:page]
       @per_page = params[:per_page] || 10
-      query = Flinker.publishers.with_looks
+      query = Flinker.publishers.with_looks.includes(:country)
       if params[:staff_pick].present?
         query = query.where(staff_pick: params[:staff_pick].to_i == 1)
       end
