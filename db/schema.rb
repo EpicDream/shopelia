@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140206095939) do
+ActiveRecord::Schema.define(:version => 20140206115008) do
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -316,7 +316,9 @@ ActiveRecord::Schema.define(:version => 20140206095939) do
   end
 
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true
+  add_index "flinkers", ["country_id"], :name => "index_flinkers_on_country_id"
   add_index "flinkers", ["email"], :name => "index_flinkers_on_email", :unique => true
+  add_index "flinkers", ["is_publisher", "staff_pick"], :name => "index_flinkers_on_is_publisher_and_staff_pick"
   add_index "flinkers", ["reset_password_token"], :name => "index_flinkers_on_reset_password_token", :unique => true
 
   create_table "images", :force => true do |t|
