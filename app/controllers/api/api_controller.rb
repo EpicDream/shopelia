@@ -51,5 +51,21 @@ class Api::ApiController < ActionController::Base
   
   def retrieve_country_iso
     params[:"x-country-iso"] = request.headers["X-Flink-Country-Iso"]
+    params[:"x-country-iso"] ||= iso_from_accept_language_header
   end
+  
+  def iso_from_accept_language_header
+    lang = request.env["HTTP_ACCEPT_LANGUAGE"].split(",").first
+    case lang
+    when /fr/ then return 'FR'
+    when /en/ then return 'GB'
+    when /es/ then return 'ES'
+    when /it/ then return 'IT'
+    when /de/ then return 'DE'
+    else 'FR'
+    end
+  rescue
+    'FR'
+  end
+  
 end

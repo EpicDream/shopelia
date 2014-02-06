@@ -9,7 +9,6 @@ class Api::Flink::RegistrationsControllerTest < ActionController::TestCase
     end
 
     assert_response 201
-    assert_equal nil, Flinker.last.country
     assert json_response["auth_token"].present?
     assert json_response["flinker"].present?
   end
@@ -29,6 +28,14 @@ class Api::Flink::RegistrationsControllerTest < ActionController::TestCase
   
   test "assign country to autofollow top blogs of the flinker country" do
     @request.env["X-Flink-Country-Iso"] = "FR"
+    
+    assert_difference "FlinkerFollow.count", 2 do
+      post :create, params, format: :json
+    end
+  end
+  
+  test "iso country code from accept language header" do
+    @request.env["HTTP_ACCEPT_LANGUAGE"] = "fr;q=1, en;q=0.9, de;q=0.8, ja;q=0.7, nl;q=0.6, it;q=0.5"
     
     assert_difference "FlinkerFollow.count", 2 do
       post :create, params, format: :json
