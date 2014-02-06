@@ -30,7 +30,13 @@ class Flinker < ActiveRecord::Base
   
   scope :publishers, where(is_publisher:true)
   scope :of_country, ->(iso) { !iso.blank? && joins(:country).where('countries.iso' => iso.upcase) }
-  scope :of_country_or_universal, ->(iso) { joins(:country).where('countries.iso = ? or flinkers.universal = ?', iso.upcase, true) }
+  scope :of_country_or_universal, ->(iso) { 
+    if iso
+      joins(:country).where('countries.iso = ? or flinkers.universal = ?', iso.upcase, true) 
+    else
+      self.universals
+    end
+  }
   
   scope :with_looks, where("looks_count > 0")
   scope :staff_pick, where(staff_pick:true)
