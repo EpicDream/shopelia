@@ -1,6 +1,6 @@
 class Api::Flink::SessionsController < Api::Flink::BaseController
   skip_before_filter :authenticate_flinker!, :only => :create
-  
+
   api :POST, "/flinkers/sign_in", "Sign in a flinker"
   param :email, String, "Email of the flinker", :required => true
   param :password, String, "Password of the flinker", :required => true
@@ -25,8 +25,13 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     flinker.authentication_token = nil
     flinker.save
     render json: {}, status: :ok
-  rescue
-    render server_error
+  end
+  
+  def update
+    render unauthorized and return unless current_flinker
+    auth = FlinkerAuthentication.facebook_of(current_flinker).first
+    auth.refresh_token!(params[:token])
+    render json_for(current_flinker)
   end
   
   private

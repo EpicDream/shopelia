@@ -79,6 +79,17 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
   
     assert_response :unauthorized
   end
+  
+  test "update flinker auth provider token" do
+    sign_in @flinker
+    token  = @fanny.token
+    assert @fanny.update_attributes(token:"oldtoken")
+    
+    put :update, provider: "facebook", token: token, format: :json
+    
+    assert_response :success
+    assert_equal token, @fanny.reload.token
+  end
 
 end
 
