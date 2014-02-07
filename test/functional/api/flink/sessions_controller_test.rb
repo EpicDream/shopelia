@@ -6,6 +6,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
   setup do
     @flinker = flinkers(:elarch)
     @fanny = flinker_authentications(:fanny)
+    flinkers(:fanny).destroy
   end
 
   test "login flinker with valid email and password" do
