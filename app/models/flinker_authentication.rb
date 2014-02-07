@@ -1,40 +1,30 @@
 class FlinkerAuthentication < ActiveRecord::Base
-  # attr_accessible :title, :body
+  FACEBOOK = "facebook"
+  
+  attr_accessible :provider, :uid, :token, :picture, :email, :flinker_id
+  
   belongs_to :flinker
-  attr_accessible :provider,:uid,:token
 
-  def self.fetch_data provider, access_token ,secret=nil
-    begin
-      if provider == "facebook"
-        fb_user = FbGraph::User.me(access_token).fetch
-        data =  {
-            email: fb_user.email,
-            uid: fb_user.identifier,
-            username: fb_user.username
-        }
-      end
-    rescue Exception => e
-      if e.code == 400 || 401
-        data = {:status => 401, :message => "you are not authorized to get data from #{provider.capitalize}"}
-      else
-        data = {:status => 500, :message => "#{provider.capitalize} servers are unreachable or #{provider.capitalize} API is down"}
-      end
-    else
-      data = data.merge(provider: provider, token: access_token, secret: secret)
-    end
-    data
+  def self.facebook token
+    user = FbGraph::User.me(token).fetch
+    auth = where(uid:user.identifier).first || create!(uid:user.identifier, email:user.email, picture:user.picture, provider:FACEBOOK)
+    auth.update_attributes!(token:token)
+    auth.flinker || assign_flinker(user, auth) || create_flinker_from(user, auth)
   end
-
-  def self.find_flinker_by_email_or_uid data
-    flinker = FlinkerAuthentication.find_by_uid(data.id).flinker
-    unless flinker
-      flinker = Flinker.find_by_email(data.email)
-    end
+  
+  private
+  
+  def self.assign_flinker user, auth
+    return unless flinker = Flinker.where(email:user.email).first 
+    auth.update_attributes!(flinker_id:flinker.id)
     flinker
   end
-
-  def merge_account
-
+  
+  def self.create_flinker_from user, auth
+    password = SecureRandom.hex(4)
+    flinker = Flinker.create!(email:user.email, username:user.username, password:password, password_confirmation:password)
+    auth.update_attributes!(flinker_id:flinker.id)
+    flinker
   end
 
 end

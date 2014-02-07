@@ -17,4 +17,15 @@ class Api::Flink::BaseController < Api::ApiController
   def retrieve_device
     @device = Device.from_flink_user_agent(@user_agent, current_flinker) if @user_agent =~ /^flink\:/ && current_flinker.present?
   end
+  
+  protected
+  
+  def unauthorized error=I18n.t('devise.failure.invalid')
+    { json: { error:error }, status: :unauthorized }
+  end
+  
+  def server_error error=nil
+    { json: { error:error }, status: 500 }
+  end
+  
 end
