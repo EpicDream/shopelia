@@ -55,5 +55,11 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     auth = FlinkerAuthentication.where(uid:"1583562383").first
     assert_equal flinker, auth.flinker
   end
+  
+  test "refresh token" do
+    @fanny.refresh_token!("new_token")
+    
+    assert_equal "new_token", @fanny.reload.token
+  end
 
 end

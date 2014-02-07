@@ -4,12 +4,18 @@ class FlinkerAuthentication < ActiveRecord::Base
   attr_accessible :provider, :uid, :token, :picture, :email, :flinker_id
   
   belongs_to :flinker
+  
+  scope :facebook_of, ->(flinker) { where(flinker_id:flinker.id, provider:FACEBOOK).first }
 
   def self.facebook token
     user = FbGraph::User.me(token).fetch
     auth = where(uid:user.identifier).first || create!(uid:user.identifier, email:user.email, picture:user.picture, provider:FACEBOOK)
     auth.update_attributes!(token:token)
     auth.flinker || assign_flinker(user, auth) || create_flinker_from(user, auth)
+  end
+  
+  def refresh_token! token
+    update_attributes!(token:token)
   end
   
   private
