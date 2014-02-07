@@ -20,7 +20,7 @@ class Flinker < ActiveRecord::Base
   has_many :comments
   has_many :flinker_authentications
   has_many :flinker_likes
-  has_many :flinker_follows
+  has_many :flinker_follows, include: :following
   belongs_to :country
   has_one :blog
 
@@ -49,6 +49,10 @@ class Flinker < ActiveRecord::Base
   def name=name
     write_attribute(:name, name)
     self.blog.update_attributes(name:name) if self.blog
+  end
+  
+  def followings
+    flinker_follows.map(&:following)
   end
   
   private
