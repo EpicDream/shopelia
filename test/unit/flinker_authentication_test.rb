@@ -4,10 +4,11 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
 
   setup do
     @fanny = flinker_authentications(:fanny)
+    @flinker = flinkers(:fanny)
   end
   
   test "create new fb auth and new flinker" do
-    fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy
+    fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy and @flinker.destroy
     flinker = nil
     
     assert_difference("FlinkerAuthentication.count") { 
@@ -22,6 +23,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     assert_equal "fanny.louvel@wanadoo.fr", auth.email
     assert_equal auth.email, flinker.email
     assert_equal 'LOUVEL.F', flinker.username
+    assert_match /images\/flinker\/\d+\/original\/avatar.jpg/, flinker.avatar.url
   end
   
   test "retrieve fb auth if exists with same uid" do
@@ -48,18 +50,32 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
   
   test "if flinker with same email as facebook one exists attach auth to it" do
     token  = @fanny.token and @fanny.destroy
-    flinker = Flinker.create(email: "fanny.louvel@wanadoo.fr", password: "password", password_confirmation:"password")
 
     assert_no_difference("Flinker.count") { FlinkerAuthentication.facebook(token) }
     
     auth = FlinkerAuthentication.where(uid:"1583562383").first
-    assert_equal flinker, auth.flinker
+    assert_equal @flinker, auth.flinker
   end
   
   test "refresh token" do
     @fanny.refresh_token!("new_token")
     
     assert_equal "new_token", @fanny.reload.token
+  end
+  
+  test "update avatar from provider avatar if flinker has default avatar" do
+    FlinkerAuthentication.facebook(@fanny.token)
+    
+    @flinker.reload
+    assert_match /images\/flinker\/\d+\/original\/avatar.jpg/, @flinker.avatar.url
+  end
+  
+  test "does not update avatar if flinker has one which is not the default one" do
+    @flinker.avatar_url = "https://www.smartangels.fr/bundles/theodosmartangels/images/default-avatar.png"
+    @flinker.save!
+    
+    @flinker.expects(:avatar_url=).never
+    FlinkerAuthentication.facebook(@fanny.token)
   end
 
 end

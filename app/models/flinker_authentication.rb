@@ -11,11 +11,19 @@ class FlinkerAuthentication < ActiveRecord::Base
     user = FbGraph::User.me(token).fetch
     auth = where(uid:user.identifier).first || create!(uid:user.identifier, email:user.email, picture:user.picture, provider:FACEBOOK)
     auth.update_attributes!(token:token)
-    auth.flinker || assign_flinker(user, auth) || create_flinker_from(user, auth)
+    flinker = auth.flinker || assign_flinker(user, auth) || create_flinker_from(user, auth)
+    auth.update_avatar(flinker)
+    flinker
   end
   
   def refresh_token! token
     update_attributes!(token:token)
+  end
+  
+  def update_avatar flinker
+    return unless flinker.avatar.url =~ /missing/
+    flinker.avatar_url = self.picture
+    flinker.save! rescue nil
   end
   
   private
