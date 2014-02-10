@@ -9,6 +9,13 @@ class FlinkerFollow < ActiveRecord::Base
 
   after_save :update_flinker_follows_count
   
+  def self.mutual_following flinker, flinkers
+    flinkers.each do |flinkr|
+      create(follow_id:flinkr.id, flinker_id:flinker.id)
+      create(follow_id:flinker.id, flinker_id:flinkr.id)
+    end
+  end
+  
   private
 
   def update_flinker_follows_count
