@@ -1,0 +1,2 @@
+class MentionActivity < Activity
+end

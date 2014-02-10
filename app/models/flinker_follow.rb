@@ -1,4 +1,5 @@
 class FlinkerFollow < ActiveRecord::Base
+  act_as_flink_activity :follow
   attr_accessible :flinker_id, :follow_id
   
   belongs_to :flinker

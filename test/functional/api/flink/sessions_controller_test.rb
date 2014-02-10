@@ -100,6 +100,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     
     put :update, provider: "facebook", token: @fanny.token, format: :json
     
+    assert_equal "ES", json_response["flinker"]["country"]
     assert_equal countries(:spain), @flinker.reload.country
   end
 
