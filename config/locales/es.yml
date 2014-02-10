@@ -1,0 +1,4 @@
+es:
+  flink:
+    notification:
+      follow: "%{username} te siga!"

@@ -55,6 +55,10 @@ class Flinker < ActiveRecord::Base
     flinker_follows.map(&:following)
   end
   
+  def device
+    Device.where(flinker_id:self.id).last
+  end
+  
   private
   
   def country_from_iso_code

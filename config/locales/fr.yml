@@ -419,6 +419,8 @@ fr:
     my_payment_cards: "Mes cartes"
 
   flink:
+    notification:
+      follow: "%{username} te suit!"
     products:
       pull: "Pull"
       dress: "Robe"

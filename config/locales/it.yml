@@ -1,0 +1,4 @@
+it:
+  flink:
+    notification:
+      follow: "%{username} ti segue!"

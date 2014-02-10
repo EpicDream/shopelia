@@ -38,9 +38,9 @@ class FlinkerTest < ActiveSupport::TestCase
   end
   
   test "assign country from country_iso transcient attribute" do
-    flinker = Flinker.new(email:"test@flink.io", name:"flink", password:"toto1234", password_confirmation:"toto1234", country_iso:"fr")
+    flinker = Flinker.new(email:"test@flink.io", username:"flink", password:"toto1234", password_confirmation:"toto1234", country_iso:"fr")
     
-    assert flinker.save
+    assert flinker.save!
     assert_equal countries(:france), flinker.country
   end
   
