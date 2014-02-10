@@ -32,6 +32,7 @@ class FlinkerAuthentication < ActiveRecord::Base
     friends = user.friends.map(&:identifier)
     flinkers = self.class.where(uid:friends).includes(:flinker).map(&:flinker)
     FlinkerFollow.mutual_following(self.flinker, flinkers)
+    self.flinker.followings.each { |flinkr| FollowNotificationWorker.perform_in(1.minute, flinkr.id, self.flinker.id) }
   end
   
   def after_sign_in
