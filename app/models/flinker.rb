@@ -1,25 +1,13 @@
 class Flinker < ActiveRecord::Base
   include RankedModel
-
-  has_many :looks
-  has_many :comments
-  has_many :flinker_authentications
-  has_many :flinker_likes
-  has_many :flinker_follows
-  belongs_to :country
-  has_one :blog
   
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :username
+  attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
+  attr_accessible :display_order_position, :country_iso, :universal
+  attr_accessor :avatar_url, :country_iso
+
   devise :database_authenticatable, :registerable, :recoverable
   devise :rememberable, :trackable, :validatable, :token_authenticatable
-
-  before_save :ensure_authentication_token
-  before_create :country_from_iso_code, unless: -> { self.country_iso.blank? }
-  after_create :follow_staff_picked
-  
-  validates :email, :presence => true
-  validates :username, length:{minimum:2}, allow_nil: true, uniqueness:true
-  validates_confirmation_of :password
-  before_validation :set_avatar
 
   has_attached_file :avatar, 
                     :styles => { thumb:["200x200>", :jpg] },
@@ -27,6 +15,23 @@ class Flinker < ActiveRecord::Base
                     :path => ":rails_root/public/images/flinker/:id/:style/avatar.jpg"
 
   ranks :display_order
+
+  has_many :looks
+  has_many :comments
+  has_many :flinker_authentications
+  has_many :flinker_likes
+  has_many :flinker_follows, include: :following
+  belongs_to :country
+  has_one :blog
+
+  before_save :ensure_authentication_token
+  before_create :country_from_iso_code, unless: -> { self.country_iso.blank? }
+  after_create :follow_staff_picked
+  before_validation :set_avatar
+  
+  validates :email, :presence => true
+  validates :username, length:{minimum:2}, allow_nil: true, uniqueness:true
+  validates_confirmation_of :password
   
   scope :publishers, where(is_publisher:true)
   scope :of_country, ->(iso) { !iso.blank? && joins(:country).where('countries.iso' => iso.upcase) }
@@ -37,19 +42,21 @@ class Flinker < ActiveRecord::Base
       self.universals
     end
   }
-  
   scope :with_looks, where("looks_count > 0")
   scope :staff_pick, where(staff_pick:true)
   scope :universals, where(universal:true)
-  
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :username
-  attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
-  attr_accessible :display_order_position, :country_iso, :universal
-  attr_accessor :avatar_url, :country_iso
 
   def name=name
     write_attribute(:name, name)
     self.blog.update_attributes(name:name) if self.blog
+  end
+  
+  def followings
+    flinker_follows.map(&:following)
+  end
+  
+  def device
+    Device.where(flinker_id:self.id).last
   end
   
   private

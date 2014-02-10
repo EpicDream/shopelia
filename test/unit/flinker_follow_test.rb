@@ -9,6 +9,7 @@ class FlinkerFollowTest < ActiveSupport::TestCase
   test "it should create flinker follow" do
     follow = FlinkerFollow.new(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
     assert follow.save
+    assert_equal flinkers(:betty), follow.following
 
     assert_equal 1, flinkers(:betty).reload.follows_count
 

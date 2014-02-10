@@ -9,6 +9,18 @@ angleterre:
 italy:
   iso: IT
   name: Italie
+  
+united-states:
+  iso: US
+  name: "Unites States"
+
+spain:
+  iso: GB
+  name: 'United Kingdom'
+
+allemagne:
+  iso: DE
+  name: 'Allemagne'  
 
 morocco:
   iso: MA

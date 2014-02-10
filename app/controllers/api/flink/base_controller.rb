@@ -5,6 +5,10 @@ class Api::Flink::BaseController < Api::ApiController
   before_filter :set_navigator_properties
   before_filter :retrieve_device
 
+  rescue_from Exception do |e|
+    render server_error
+  end
+
   def set_locale
     available = %w{fr en}
     I18n.locale = Rails.env.test? ? "fr" : http_accept_language.compatible_language_from(available)
@@ -17,4 +21,15 @@ class Api::Flink::BaseController < Api::ApiController
   def retrieve_device
     @device = Device.from_flink_user_agent(@user_agent, current_flinker) if @user_agent =~ /^flink\:/ && current_flinker.present?
   end
+  
+  protected
+  
+  def unauthorized error=I18n.t('devise.failure.invalid')
+    { json: { error:error }, status: :unauthorized }
+  end
+  
+  def server_error error=nil
+    { json: { error:error }, status: 500 }
+  end
+  
 end
