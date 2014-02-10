@@ -59,11 +59,11 @@ class Flinker < ActiveRecord::Base
     Device.where(flinker_id:self.id).last
   end
   
-  private
-  
   def country_from_iso_code
     self.country = Country.where(iso:self.country_iso.upcase).first
   end
+  
+  private
   
   def set_avatar
     self.avatar = URI.parse(self.avatar_url) if self.avatar_url.present?

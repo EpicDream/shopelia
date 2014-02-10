@@ -91,6 +91,17 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal token, @fanny.reload.token
   end
+  
+  test "assign country on update if none(this is temp feature to retrieve countries)" do
+    @request.env["X-Flink-Country-Iso"] = "ES"
+    sign_in  @flinker
+    @flinker.country = nil
+    assert @flinker.save
+    
+    put :update, provider: "facebook", token: @fanny.token, format: :json
+    
+    assert_equal countries(:spain), @flinker.reload.country
+  end
 
 end
 

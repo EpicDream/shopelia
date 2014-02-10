@@ -15,8 +15,8 @@ united-states:
   name: "Unites States"
 
 spain:
-  iso: GB
-  name: 'United Kingdom'
+  iso: ES
+  name: 'Spain'
 
 allemagne:
   iso: DE
