@@ -6,6 +6,7 @@ class Api::Flink::BaseController < Api::ApiController
   before_filter :retrieve_device
 
   rescue_from Exception do |e|
+    Rails.logger.error(e.backtrace.join("\n"))
     render server_error
   end
 

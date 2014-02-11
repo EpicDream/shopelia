@@ -6,7 +6,6 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
   setup do
     @flinker = flinkers(:elarch)
     @fanny = flinker_authentications(:fanny)
-    flinkers(:fanny).destroy
   end
 
   test "login flinker with valid email and password" do
@@ -40,6 +39,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
   end
   
   test "create flinker from facebook" do
+    flinkers(:fanny).destroy
     token = @fanny.token and @fanny.destroy
     
     assert_difference(['Flinker.count']) do
@@ -52,6 +52,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
   end
   
   test "sign existing flinker without creating new one" do
+    flinkers(:fanny).destroy
 
     assert_difference('Flinker.count', 1) do
       1.upto(2) {
@@ -82,9 +83,9 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
   end
   
   test "update flinker auth provider token" do
-    sign_in @flinker
+    sign_in flinkers(:fanny)
     token  = @fanny.token
-    assert @fanny.update_attributes(token:"oldtoken")
+    assert @fanny.update_attributes(token:"oldtoken", flinker_id:flinkers(:fanny).id)
     
     put :update, provider: "facebook", token: token, format: :json
     
@@ -94,14 +95,14 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
   
   test "assign country on update if none(this is temp feature to retrieve countries)" do
     @request.env["X-Flink-Country-Iso"] = "ES"
-    sign_in  @flinker
-    @flinker.country = nil
-    assert @flinker.save
+    sign_in flinkers(:fanny)
+    @fanny.update_attributes(flinker_id:flinkers(:fanny).id)
     
     put :update, provider: "facebook", token: @fanny.token, format: :json
     
+    assert_response :success
     assert_equal "ES", json_response["flinker"]["country"]
-    assert_equal countries(:spain), @flinker.reload.country
+    assert_equal countries(:spain), flinkers(:fanny).reload.country
   end
 
 end
