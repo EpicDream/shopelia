@@ -205,7 +205,7 @@ Shopelia::Application.routes.draw do
   end
 
   match "about" => "home#about"
-  put "api/flink/flinkers", to: "api/flink/sessions#update"
+  put "api/flink/flinkers/session_touch", to: "api/flink/sessions#update"
 
   match '*not_found', to: 'errors#error_404'
   get "errors/error_404"

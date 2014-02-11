@@ -1,9 +1,15 @@
 class Comment < ActiveRecord::Base
+  act_as_flink_activity :comment
+  act_as_flink_activity :mention
+  
   attr_accessible :body , :flinker_id, :look_id , :posted
   attr_accessor :post_to_blog
   
   belongs_to :look
   belongs_to :flinker
+  
+  validates :flinker_id, :presence => true
+  validates :look_id, :presence => true
   
   after_create :post_comment_on_blog_async, if: -> { can_be_posted_on_blog? && post_to_blog }
   
