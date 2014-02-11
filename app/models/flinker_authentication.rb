@@ -1,7 +1,7 @@
 class FlinkerAuthentication < ActiveRecord::Base
   FACEBOOK = "facebook"
   
-  attr_accessible :provider, :uid, :token, :picture, :email, :flinker_id
+  attr_accessible :provider, :uid, :token, :picture, :email, :flinker_id, :user
   attr_accessor :user
   
   belongs_to :flinker
@@ -11,7 +11,8 @@ class FlinkerAuthentication < ActiveRecord::Base
   def self.facebook token
     user = FbGraph::User.me(token).fetch
     
-    auth = where(uid:user.identifier).first and auth.user = user and auth.after_sign_in
+    auth = where(uid:user.identifier).first 
+    auth and auth.update_attributes!(user:user, picture:user.picture) and auth.after_sign_in
     auth ||= create!(uid:user.identifier, email:user.email, picture:user.picture, provider:FACEBOOK) and auth.user = user and auth.after_sign_up
     auth.refresh_token!(token)
     auth.flinker

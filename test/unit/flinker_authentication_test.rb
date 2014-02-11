@@ -39,14 +39,15 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     assert_equal flinkers(:lilou), flinker
   end
   
-  test "update auth token" do
+  test "update auth token and avatar" do
     token  = @fanny.token
-    assert @fanny.update_attributes(token:"oldtoken")
+    assert @fanny.update_attributes(token:"oldtoken", picture:nil)
 
     flinker = FlinkerAuthentication.facebook(token) 
     
     auth = flinker.flinker_authentications.first
     assert_equal token, auth.token
+    assert_match /images\/flinker\/\d+\/original\/avatar.jpg/, flinker.avatar.url
   end
   
   test "if flinker with same email as facebook one exists attach auth to it" do
