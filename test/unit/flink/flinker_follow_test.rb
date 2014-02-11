@@ -5,6 +5,7 @@ class FlinkerFollowTest < ActiveSupport::TestCase
   setup do
     @flinker = flinkers(:lilou)
     @followed = flinkers(:betty)
+    Sidekiq::Testing.fake!
   end
 
   test "create flinker follow unique on (flinker_id, follow_id)" do
