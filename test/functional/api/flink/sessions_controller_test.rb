@@ -82,15 +82,16 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     assert_response :unauthorized
   end
   
-  test "update flinker auth provider token" do
+  test "update flinker auth provider token and avatar if none" do
     sign_in flinkers(:fanny)
     token  = @fanny.token
     assert @fanny.update_attributes(token:"oldtoken", flinker_id:flinkers(:fanny).id)
-    
+
     put :update, provider: "facebook", token: token, format: :json
     
     assert_response :success
     assert_equal token, @fanny.reload.token
+    assert_not_match(/missing/, flinkers(:fanny).reload.avatar.url)
   end
   
   test "assign country on update if none(this is temp feature to retrieve countries)" do
