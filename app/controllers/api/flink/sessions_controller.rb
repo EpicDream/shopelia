@@ -31,7 +31,8 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     render unauthorized and return unless current_flinker
     fix_country() #temp
     auth = FlinkerAuthentication.facebook_of(current_flinker).first
-    auth.refresh_token!(params[:token])
+    FlinkerAuthentication.facebook(params[:token])
+    # auth.update_flinker_avatar
     render json_for(current_flinker)
   end
   
