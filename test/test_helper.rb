@@ -1,10 +1,10 @@
 ENV['CODECLIMATE_REPO_TOKEN'] = "ca2789d1f39a05e6a153ca9b548f617909b6b9d7f86721714af809b9520ce3ef"
 ENV["RAILS_ENV"] = "test"
 
-unless ENV['TM_TEST']
-  require "codeclimate-test-reporter"
-  CodeClimate::TestReporter.start
-end
+# unless ENV['TM_TEST']
+#   require "codeclimate-test-reporter"
+#   CodeClimate::TestReporter.start
+# end
 
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
