@@ -6,7 +6,7 @@ class FlinkerAuthentication < ActiveRecord::Base
   
   belongs_to :flinker
   
-  scope :facebook_of, ->(flinker) { where(flinker_id:flinker.id, provider:FACEBOOK).first }
+  scope :facebook_of, ->(flinker) { where(flinker_id:flinker.id, provider:FACEBOOK).limit(1) }
   
   def self.facebook token
     user = FbGraph::User.me(token).fetch
