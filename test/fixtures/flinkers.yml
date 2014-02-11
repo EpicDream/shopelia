@@ -34,7 +34,7 @@ boop:
   name: Boop
   url: http://www.leblogdebetty.com
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
-  username: boopusername
+  username: boop
   email: boop@flink.com
   country: france
   is_publisher: true

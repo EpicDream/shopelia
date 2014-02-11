@@ -28,7 +28,8 @@ class FlinkerFollowTest < ActiveSupport::TestCase
     
     activity = FollowActivity.last
     assert_equal @flinker, activity.flinker
-    assert_equal @followed, activity.followed
+    assert_equal @followed, activity.target
+    assert_equal FlinkerFollow.last, activity.resource
   end
   
 end

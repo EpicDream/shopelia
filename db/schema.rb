@@ -16,12 +16,14 @@ ActiveRecord::Schema.define(:version => 20140210161547) do
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
     t.integer  "resource_id"
+    t.integer  "target_id"
     t.string   "type"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end
 
   add_index "activities", ["flinker_id"], :name => "index_activities_on_flinker_id"
+  add_index "activities", ["target_id"], :name => "index_activities_on_target_id"
   add_index "activities", ["type"], :name => "index_activities_on_type"
 
   create_table "addresses", :force => true do |t|

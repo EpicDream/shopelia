@@ -16,8 +16,6 @@ class FlinkerLikeTest < ActiveSupport::TestCase
   test "it should create flinker like for look" do
     like = FlinkerLike.new(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
     assert like.save
-
-    assert_equal 1, @look.flinker.reload.likes_count
   end
 
   test "it shouldn't be able to create duplicate likes" do
