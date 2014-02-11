@@ -3,16 +3,32 @@ require 'test_helper'
 class FlinkerFollowTest < ActiveSupport::TestCase
 
   setup do
-    @flinker = flinkers(:elarch)
+    @flinker = flinkers(:lilou)
+    @followed = flinkers(:betty)
   end
 
-  test "it should create flinker follow" do
-    follow = FlinkerFollow.new(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
-    assert follow.save
+  test "create flinker follow unique on (flinker_id, follow_id)" do
+    follow = nil
 
-    assert_equal 1, flinkers(:betty).reload.follows_count
+    assert_difference(['FlinkerFollow.count', '@followed.reload.follows_count'], 1) do
+      2.times {
+        follow = FlinkerFollow.create(flinker_id:@flinker.id, follow_id:@followed.id)
+      }
+    end
 
-    follow = FlinkerFollow.new(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
-    assert !follow.save
+    assert_equal @followed, follow.following
   end
+  
+  test "create follow activity after flinker_follow creation" do
+    assert_difference('FollowActivity.count', 1) do
+      2.times {
+        FlinkerFollow.create(flinker_id:@flinker.id, follow_id:@followed.id)
+      }
+    end
+    
+    activity = FollowActivity.last
+    assert_equal @flinker, activity.flinker
+    assert_equal @followed, activity.followed
+  end
+  
 end

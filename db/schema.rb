@@ -11,7 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140206165505) do
+ActiveRecord::Schema.define(:version => 20140210161547) do
+
+  create_table "activities", :force => true do |t|
+    t.integer  "flinker_id"
+    t.integer  "resource_id"
+    t.string   "type"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "activities", ["flinker_id"], :name => "index_activities_on_flinker_id"
+  add_index "activities", ["type"], :name => "index_activities_on_type"
 
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
@@ -259,6 +270,8 @@ ActiveRecord::Schema.define(:version => 20140206165505) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "flinker_id"
+    t.string   "email"
+    t.text     "picture"
   end
 
   create_table "flinker_follows", :force => true do |t|
@@ -320,6 +333,7 @@ ActiveRecord::Schema.define(:version => 20140206165505) do
   add_index "flinkers", ["email"], :name => "index_flinkers_on_email", :unique => true
   add_index "flinkers", ["is_publisher", "staff_pick"], :name => "index_flinkers_on_is_publisher_and_staff_pick"
   add_index "flinkers", ["reset_password_token"], :name => "index_flinkers_on_reset_password_token", :unique => true
+  add_index "flinkers", ["username"], :name => "index_flinkers_on_username"
 
   create_table "images", :force => true do |t|
     t.text     "url"
@@ -392,6 +406,18 @@ ActiveRecord::Schema.define(:version => 20140206165505) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "mentions", :force => true do |t|
+    t.integer  "flinker_id"
+    t.integer  "comment_id"
+    t.integer  "flinker_mentionned_id"
+    t.string   "type"
+    t.datetime "created_at",            :null => false
+    t.datetime "updated_at",            :null => false
+  end
+
+  add_index "mentions", ["flinker_id"], :name => "index_mentions_on_flinker_id"
+  add_index "mentions", ["type"], :name => "index_mentions_on_type"
 
   create_table "merchant_accounts", :force => true do |t|
     t.integer  "user_id"

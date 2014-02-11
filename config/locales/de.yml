@@ -1,0 +1,4 @@
+de:
+  flink:
+    notification:
+      follow: "%{username} folgt Ihnen!"
