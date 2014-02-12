@@ -18,6 +18,10 @@ class Leftronic
     push_number("mau_percentage", mau_count)
   end
 
+  def notify_flinkers_count
+    push_number("flinkers_count", Flinker.count)
+  end
+
 
   #Shopelia
   def notify_order order

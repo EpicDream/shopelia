@@ -15,6 +15,8 @@ class Flinker < ActiveRecord::Base
   before_save :ensure_authentication_token
   before_create :country_from_iso_code, unless: -> { self.country_iso.blank? }
   after_create :follow_staff_picked
+  after_create :leftronic_flinkers_count
+  after_destroy :leftronic_flinkers_count
   
   validates :email, :presence => true
   validates :username, length:{minimum:2}, allow_nil: true, uniqueness:true
@@ -67,6 +69,10 @@ class Flinker < ActiveRecord::Base
     flinkers.each do |flinker|
       FlinkerFollow.create(flinker_id:self.id, follow_id:flinker.id)
     end
+  end
+
+  def leftronic_flinkers_count
+    Leftronic.new.notify_flinkers_count
   end
 
 end
