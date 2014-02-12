@@ -82,6 +82,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
   
   test "auto follow flinkers who are facebook friends, reciprocally and send apn to followers" do
     Sidekiq::Testing.inline! do
+      FollowNotificationWorker.unstub(:perform_in)
       flinkers = Flinker.all
 
       ["523331154", "524109067", "525274445"].each_with_index { |uid, index|
