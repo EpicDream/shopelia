@@ -10,7 +10,6 @@ class Api::Flink::CommentsControllerTest < ActionController::TestCase
     Look.destroy_all
     @flinker = flinkers(:lilou)
     build_look
-    Sidekiq::Testing.inline!
   end
 
   test "should get comments of a post index" do

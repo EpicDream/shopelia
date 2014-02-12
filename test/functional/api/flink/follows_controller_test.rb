@@ -6,7 +6,6 @@ class Api::Flink::FollowsControllerTest < ActionController::TestCase
   setup do
     @flinker = flinkers(:elarch)
     sign_in @flinker
-    Sidekiq::Testing.fake!
   end
 
   test "it should create multiple follows" do
