@@ -14,8 +14,8 @@ class Leftronic
     push_number("dau_percentage", dau_count)
   end
 
-  def notify_mau_count mau_count
-    push_number("mau_percentage", mau_count)
+  def notify_wau_count wau_count
+    push_number("wau_percentage", wau_count)
   end
 
   def notify_flinkers_count

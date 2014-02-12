@@ -72,7 +72,7 @@ class Flinker < ActiveRecord::Base
   end
 
   def leftronic_flinkers_count
-    Leftronic.new.notify_flinkers_count
+    LeftronicLiveFlinkersWorker.perform_async
   end
 
 end
