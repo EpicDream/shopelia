@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140210161547) do
+ActiveRecord::Schema.define(:version => 20140212105417) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -264,6 +264,15 @@ ActiveRecord::Schema.define(:version => 20140210161547) do
   add_index "events", ["developer_id"], :name => "index_events_on_developer_id"
   add_index "events", ["device_id"], :name => "index_events_on_device_id"
   add_index "events", ["product_id"], :name => "index_events_on_product_id"
+
+  create_table "facebook_friends", :force => true do |t|
+    t.integer  "flinker_id"
+    t.integer  "friend_flinker_id"
+    t.string   "identifier"
+    t.string   "name"
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+  end
 
   create_table "flinker_authentications", :force => true do |t|
     t.string   "provider"
