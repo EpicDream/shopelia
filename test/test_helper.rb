@@ -13,9 +13,11 @@ require 'capybara/rails'
 
 Dir["#{Rails.root}/test/helper/*.rb"].each {|f| require f}
 
+Sidekiq::Testing.fake!
+
 class ActiveSupport::TestCase
   fixtures :all
-
+  
   setup do
     $sms_gateway_count = 0
     $push_delivery_count = 0

@@ -9,16 +9,17 @@ class CommentTest < ActiveSupport::TestCase
   end
 
   test "create comment then post the comment on blog with formatted body" do
-    can_be_posted(true)
-    Sidekiq::Testing.inline!
+    Sidekiq::Testing.inline! do
+      can_be_posted(true)
+      
+      assert_difference 'Comment.count' do
+        comment = Comment.new(body: "trop belle", flinker_id:@flinker.id, look_id:@look.id)
+        comment.post_to_blog = true
+        comment.save
+      end
     
-    assert_difference 'Comment.count' do
-      comment = Comment.new(body: "trop belle", flinker_id:@flinker.id, look_id:@look.id)
-      comment.post_to_blog = true
-      comment.save
+      assert Comment.last.posted?
     end
-    
-    assert Comment.last.posted?
   end
   
   test "create comment should create comment activity for flinker" do
