@@ -12,6 +12,7 @@ class FacebookFriendTest < ActiveSupport::TestCase
     
     2.times { FacebookFriend.create_or_update_friends(@flinker) }
 
+    assert_match /graph.facebook.com\/\d+\/picture\?width=200&height=200&type=normal/, FacebookFriend.last.picture
     assert_equal 518, FacebookFriend.of_flinker(@flinker).count
     assert_equal 1, FacebookFriend.flinker_friends_of(@flinker).count
   end

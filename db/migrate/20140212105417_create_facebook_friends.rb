@@ -5,6 +5,7 @@ class CreateFacebookFriends < ActiveRecord::Migration
       t.integer :friend_flinker_id, :default => nil #if is a flinker too
       t.string :identifier
       t.string :name
+      t.string :picture
       t.timestamps
     end
     add_index :facebook_friends, :flinker_id

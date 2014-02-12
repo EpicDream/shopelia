@@ -14,10 +14,11 @@ class FacebookFriend < ActiveRecord::Base
     user = FbGraph::User.me(auth.token).fetch
 
     user.friends.each do |friend|
-      attributes = [:identifier, :name].inject({}) {|h, attribute| h.merge(attribute => friend.send(attribute))}
-      friend_flinker_id = FlinkerAuthentication.with_uid(friend.identifier).first.try(:id)
-      attributes.merge!({ friend_flinker_id: friend_flinker_id, flinker_id:flinker.id })
-      create(attributes)
+      fb_friend = FacebookFriend.new(name:friend.name, identifier:friend.identifier)
+      fb_friend.picture = "#{friend.picture}?width=200&height=200&type=normal"
+      fb_friend.friend_flinker_id = FlinkerAuthentication.with_uid(friend.identifier).first.try(:id)
+      fb_friend.flinker_id = flinker.id
+      fb_friend.save
     end
   end
   
