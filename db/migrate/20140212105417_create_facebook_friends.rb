@@ -7,5 +7,7 @@ class CreateFacebookFriends < ActiveRecord::Migration
       t.string :name
       t.timestamps
     end
+    add_index :facebook_friends, :flinker_id
+    add_index :facebook_friends, :friend_flinker_id
   end
 end
