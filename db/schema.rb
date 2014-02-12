@@ -270,6 +270,7 @@ ActiveRecord::Schema.define(:version => 20140212105417) do
     t.integer  "friend_flinker_id"
     t.string   "identifier"
     t.string   "name"
+    t.string   "picture"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
   end

@@ -194,6 +194,7 @@ Shopelia::Application.routes.draw do
     namespace :flink do
       devise_for :flinkers
       resources :flinkers, :only => :index
+      resources :facebook_friends, :only => :index
       resources :looks, :only => :index do
         resources :comments
         resources :sharings, :only => :create, :controller => "looks/sharings"

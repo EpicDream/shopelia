@@ -1,12 +1,16 @@
 class FacebookFriend < ActiveRecord::Base
   attr_accessible *column_names  
   
+  belongs_to :flinker
+  belongs_to :friend, foreign_key: :friend_flinker_id, class_name:'Flinker' #fb friend who is flinker
+  
   validates :identifier, presence:true, uniqueness: { scope: :flinker_id } 
   validates :name, presence:true
   validates :flinker_id, presence:true
   
   scope :of_flinker, ->(flinker) { where(flinker_id:flinker.id) }
-  scope :flinker_friends_of, ->(flinker) { of_flinker(flinker).where('friend_flinker_id is not null') }
+  scope :flinkers, -> { where('friend_flinker_id is not null') }
+  scope :not_flinkers, -> { where('friend_flinker_id is null') }
   
   def self.create_or_update_friends flinker
     return unless auth = FlinkerAuthentication.facebook_of(flinker).first
@@ -14,10 +18,11 @@ class FacebookFriend < ActiveRecord::Base
     user = FbGraph::User.me(auth.token).fetch
 
     user.friends.each do |friend|
-      attributes = [:identifier, :name].inject({}) {|h, attribute| h.merge(attribute => friend.send(attribute))}
-      friend_flinker_id = FlinkerAuthentication.with_uid(friend.identifier).first.try(:id)
-      attributes.merge!({ friend_flinker_id: friend_flinker_id, flinker_id:flinker.id })
-      create(attributes)
+      fb_friend = FacebookFriend.new(name:friend.name, identifier:friend.identifier)
+      fb_friend.picture = "#{friend.picture}?width=200&height=200&type=normal"
+      fb_friend.friend_flinker_id = FlinkerAuthentication.with_uid(friend.identifier).first.try(:id)
+      fb_friend.flinker_id = flinker.id
+      fb_friend.save
     end
   end
   
