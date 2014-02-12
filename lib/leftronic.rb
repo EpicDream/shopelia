@@ -19,7 +19,7 @@ class Leftronic
   end
 
   def notify_flinkers_count
-    push_number("flinkers_count", Flinker.count)
+    push_number("flinkers_count", Flinker.where(:is_publisher => false).count)
   end
 
 
