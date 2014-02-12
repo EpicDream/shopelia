@@ -12,6 +12,12 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal 0, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
   end
 
+  test "it should queue flinkers count" do
+    assert_difference "LeftronicLiveFlinkersWorker.jobs.count", 1 do
+      @flinker.save
+    end
+  end
+
   test "it should auto follow staff picked flinkers of same country" do 
     assert_difference "FlinkerFollow.count", 2 do
       @flinker.save
