@@ -7,10 +7,11 @@ class FlinkerAuthentication < ActiveRecord::Base
   belongs_to :flinker
   
   scope :facebook_of, ->(flinker) { where(flinker_id:flinker.id, provider:FACEBOOK).limit(1) }
+  scope :with_uid, ->(uid) { where(uid:uid).limit(1) }
   
   def self.facebook token
     user = FbGraph::User.me(token).fetch
-    
+
     auth = where(uid:user.identifier).first 
     auth and auth.update_attributes!(user:user, picture:user.picture) and auth.after_sign_in
     auth ||= create!(uid:user.identifier, email:user.email, picture:user.picture, provider:FACEBOOK) and auth.user = user and auth.after_sign_up
