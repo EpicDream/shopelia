@@ -1,12 +1,16 @@
 class FacebookFriend < ActiveRecord::Base
   attr_accessible *column_names  
   
+  belongs_to :flinker
+  belongs_to :friend, foreign_key: :friend_flinker_id, class_name:'Flinker' #fb friend who is flinker
+  
   validates :identifier, presence:true, uniqueness: { scope: :flinker_id } 
   validates :name, presence:true
   validates :flinker_id, presence:true
   
   scope :of_flinker, ->(flinker) { where(flinker_id:flinker.id) }
-  scope :flinker_friends_of, ->(flinker) { of_flinker(flinker).where('friend_flinker_id is not null') }
+  scope :flinkers, -> { where('friend_flinker_id is not null') }
+  scope :not_flinkers, -> { where('friend_flinker_id is null') }
   
   def self.create_or_update_friends flinker
     return unless auth = FlinkerAuthentication.facebook_of(flinker).first
