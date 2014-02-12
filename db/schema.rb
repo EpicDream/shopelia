@@ -274,6 +274,9 @@ ActiveRecord::Schema.define(:version => 20140212105417) do
     t.datetime "updated_at",        :null => false
   end
 
+  add_index "facebook_friends", ["flinker_id"], :name => "index_facebook_friends_on_flinker_id"
+  add_index "facebook_friends", ["friend_flinker_id"], :name => "index_facebook_friends_on_friend_flinker_id"
+
   create_table "flinker_authentications", :force => true do |t|
     t.string   "provider"
     t.string   "uid"
