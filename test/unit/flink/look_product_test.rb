@@ -32,13 +32,6 @@ class LookProductTest < ActiveSupport::TestCase
     end
   end
 
-  test "it should generate event" do
-    LookProduct.any_instance.expects(:generate_event)
-    item = LookProduct.create(
-      look_id:@look.id, 
-      url:"http://www.amazon.fr/gp/product/1")
-  end
-
   test "it shouldn't create association from bad url" do
     item = LookProduct.new(
       look_id:@look.id, 
