@@ -5,6 +5,7 @@ require 'open-uri'
 module Scrapers
   module Blogs
     class RSSFeed
+      MAX_ITEMS = 20
       
       def initialize url
         @url = url
@@ -14,7 +15,7 @@ module Scrapers
       def items
         open(@feed_urls.shift) do |rss|
           feed = RSS::Parser.parse(rss)
-          feed.items.map do |item|
+          feed.items.first(MAX_ITEMS).map do |item|
             post_from(item)
           end.compact
         end
