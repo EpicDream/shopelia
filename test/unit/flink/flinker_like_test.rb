@@ -28,5 +28,13 @@ class FlinkerLikeTest < ActiveSupport::TestCase
     FlinkerLike.create!(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
     like = FlinkerLike.new(flinker_id:flinkers(:elarch).id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
     assert like.save
-  end    
+  end
+  
+  test "top like flinkers ordered" do
+    flinkers = FlinkerLike.top_likers.map(&:flinker)
+    
+    assert_equal 3, flinkers.count
+    assert_equal flinkers(:fanny), flinkers.first 
+    assert_equal flinkers(:boop), flinkers.last 
+  end
 end
