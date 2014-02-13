@@ -7,8 +7,23 @@ class Leftronic
 
   ACCESS_KEY = "yiOeiGcux3ZuhdsWuVHJ" 
   ALLOWED_COLORS = [:red, :yellow, :green, :blue, :purple]
-  attr_accessor :key 
+  attr_accessor :key
 
+  #Flink
+  def notify_dau_count dau_count
+    push_number("dau_percentage", dau_count)
+  end
+
+  def notify_wau_count wau_count
+    push_number("wau_percentage", wau_count)
+  end
+
+  def notify_flinkers_count
+    push_number("flinkers_count", Flinker.where(:is_publisher => false).count)
+  end
+
+
+  #Shopelia
   def notify_order order
     return if order.order_items.blank?
     product = order.order_items.first.product
