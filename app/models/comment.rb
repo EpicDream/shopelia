@@ -17,7 +17,7 @@ class Comment < ActiveRecord::Base
   scope :last_ones, ->(n=10) { order('created_at desc').limit(n) }
   
   def to_html
-    "#{self.flinker.username} <br/> #{self.body} <br/> send via  <a href='http://flink.io'>flink</a>"
+    "#{self.body} <br/> sent via  <a href='http://flink.io'>Flink app</a>"
   end
   
   def can_be_posted_on_blog?

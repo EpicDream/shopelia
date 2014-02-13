@@ -14,7 +14,6 @@ class LookProduct < ActiveRecord::Base
   before_validation :find_or_create_product, if:Proc.new{ |item| item.url.present? && item.errors.empty? }
   before_validation :build_from_feed, if:Proc.new{ |item| item.feed.present? }
   before_validation :ensure_brand_or_product
-  after_create :generate_event, if:Proc.new{ |item| item.product.present? }
 
   def self.codes
     dic = YAML.load(File.open(CODES))
