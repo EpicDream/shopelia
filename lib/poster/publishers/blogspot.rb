@@ -17,7 +17,7 @@ module Poster
     end
     
     def submit form
-      comment = Shellwords.shellescape("#{@comment} #{@website_url}")
+      comment = Shellwords.shellescape("#{@author}<br/>#{@comment} #{@website_url}")
       url = Shellwords.shellescape(@post_url)
       command = "casperjs #{CASPER_SCRIPT_PATH} #{url} #{comment} #{GOOGLE_ACCOUNT[:email]} #{GOOGLE_ACCOUNT[:password]}"
       ret = %x{#{command}}
