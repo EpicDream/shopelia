@@ -30,7 +30,7 @@ class Flinker < ActiveRecord::Base
   before_validation :set_avatar
   
   validates :email, :presence => true
-  validates :username, length:{minimum:2}, allow_nil: true, uniqueness:true
+  validates :username, length:{ minimum:2 }, allow_nil: true, uniqueness:true
   validates_confirmation_of :password
   
   scope :publishers, where(is_publisher:true)
@@ -43,8 +43,9 @@ class Flinker < ActiveRecord::Base
     end
   }
   scope :with_looks, where("looks_count > 0")
-  scope :staff_pick, where(staff_pick:true)
+  scope :staff_pick, ->(staff_pick=true) { where(staff_pick:staff_pick)}
   scope :universals, where(universal:true)
+  scope :with_username_like, ->(username) { where('username like ?', "#{username}%") unless username.blank? }
 
   def name=name
     write_attribute(:name, name)

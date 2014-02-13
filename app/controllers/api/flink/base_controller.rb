@@ -7,7 +7,7 @@ class Api::Flink::BaseController < Api::ApiController
 
   rescue_from Exception do |e|
     Rails.logger.error(e.backtrace.join("\n"))
-    render server_error
+    render server_error("Global Error")
   end
 
   def set_locale

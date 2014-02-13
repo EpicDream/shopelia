@@ -18,15 +18,14 @@ class Api::Flink::FlinkersController < Api::Flink::BaseController
     end
   end
 
-  def retrieve_flinkers
+  def retrieve_flinkers #TODO redo this fucking code
     if params[:page].present?
       @page = params[:page]
       @per_page = params[:per_page] || 10
       query = Flinker.publishers.with_looks.includes(:country)
-      if params[:staff_pick].present?
-        query = query.where(staff_pick: params[:staff_pick].to_i == 1)
-      end
-      query = query.of_country(params[:country_iso]) unless params[:country_iso].blank?
+      query = query.staff_pick(params[:staff_pick].to_i == 1)
+      query = query.with_username_like(params[:username])
+      query = query.of_country(params[:country_iso])
       @flinkers = query.paginate(page:@page, per_page:@per_page)
       @flinkers_json = ActiveModel::ArraySerializer.new(@flinkers, scope:@scope)
     else

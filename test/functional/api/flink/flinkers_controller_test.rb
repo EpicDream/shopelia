@@ -37,4 +37,17 @@ class Api::Flink::FlinkersControllerTest < ActionController::TestCase
     assert_equal 2, json_response["flinkers"].count
   end
   
+  test "search flinkers by username" do
+    get :index, page:1, username:"li", format: :json
+    assert_response :success
+    
+    assert_equal 1, json_response["flinkers"].count
+    assert_equal "lilou@flink.com", json_response["flinkers"].first["email"]
+    
+    get :index, page:1, username:"zeta", format: :json
+
+    assert_response :success
+    assert_equal 0, json_response["flinkers"].count
+  end
+  
 end
