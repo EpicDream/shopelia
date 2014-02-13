@@ -2,10 +2,7 @@ class Api::Flink::FacebookFriendsController < Api::Flink::BaseController
   DEFAULT_PER_PAGE = 40
   
   def index
-    render json: {
-      flinkers:flinkers,
-      has_next:@has_next
-    }
+    render json: { flinkers:flinkers, has_next:@has_next }
   end
   
   private
