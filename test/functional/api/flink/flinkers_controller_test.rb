@@ -37,12 +37,12 @@ class Api::Flink::FlinkersControllerTest < ActionController::TestCase
     assert_equal 2, json_response["flinkers"].count
   end
   
-  test "search flinkers by username" do
-    get :index, page:1, username:"li", format: :json
+  test "search flinkers by username (this must skip publisher filter)" do
+    get :index, page:1, username:"fann", format: :json
     assert_response :success
     
     assert_equal 1, json_response["flinkers"].count
-    assert_equal "lilou@flink.com", json_response["flinkers"].first["email"]
+    assert_equal "fanny@flink.com", json_response["flinkers"].first["email"]
     
     get :index, page:1, username:"zeta", format: :json
 

@@ -56,6 +56,7 @@ fanny:
   email: "fanny.louvel@wanadoo.fr"
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   is_publisher: false
+  email: fanny@flink.com
   username: fanny
   
   
