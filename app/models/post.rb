@@ -39,7 +39,6 @@ class Post < ActiveRecord::Base
         text, url = product.to_a.flatten
         if Merchant.from_url(url, false).present?
           p = Product.fetch(url)
-          Event.create(product_id:p.id,developer_id:developer.id,tracker:'look-converter',action:Event::REQUEST)
           LookProduct.create(product_id:p.id, look_id:self.look_id)
         end
       end
