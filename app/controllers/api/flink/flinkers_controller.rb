@@ -1,39 +1,17 @@
 class Api::Flink::FlinkersController < Api::Flink::BaseController
-  before_filter :retrieve_flinkers, :only => :index
-  before_filter :prepare_scope
   
   api :GET, "/flinkers", "Get flinkers"
   def index
-    render json: {
-      flinkers: @flinkers_json
-    }
+    render json: { flinkers: flinkers() }
   end
 
   private
 
-  def flinkers_cache
-    Rails.cache.fetch([:flinker], :expires_in => 1.hour) do
-      flinkers = Flinker.publishers.with_looks.includes(:country)
-      ActiveModel::ArraySerializer.new(flinkers, scope:@scope)
-    end
+  def flinkers
+    query = params[:username] ? Flinker.with_username_like(params[:username]) : Flinker.publishers.with_looks
+    query = query.of_country(params[:country_iso]).includes(:country)
+    flinkers = query.paginate(pagination())
+    ActiveModel::ArraySerializer.new(flinkers)
   end
 
-  def retrieve_flinkers #TODO redo this fucking code
-    if params[:page].present?
-      @page = params[:page]
-      @per_page = params[:per_page] || 10
-      query = params[:username] ? Flinker.with_username_like(params[:username]) : Flinker.publishers.with_looks
-      query.includes(:country)
-      query = query.staff_pick(params[:staff_pick].to_i == 1)
-      query = query.of_country(params[:country_iso])
-      @flinkers = query.paginate(page:@page, per_page:@per_page)
-      @flinkers_json = ActiveModel::ArraySerializer.new(@flinkers, scope:@scope)
-    else
-      @flinkers_json = flinkers_cache
-    end
-  end
-
-  def prepare_scope
-    @scope = { developer:@developer, device:@device, flinker:current_flinker, short:true }
-  end
 end
