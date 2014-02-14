@@ -16,4 +16,8 @@ class ActiveRecord::Base
     MentionActivity.create!(self)
   end
   
+  def flink_create_like_activity
+    LikeActivity.create!(self)
+  end
+  
 end
