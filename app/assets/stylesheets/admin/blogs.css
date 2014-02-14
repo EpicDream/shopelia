@@ -285,7 +285,7 @@ div.blogs{
 .blogs-posts-header .update-blog-block-shown{
   display:block;
   opacity:1;
-  height:200px;
+  height:250px;
 }
 .blogs-posts-header form{
   margin-top:20px;
@@ -324,4 +324,9 @@ div.blogs{
 }
 .blog-post span.has-look-published-tag-true{
   background-color:#FF17EA;
+}
+#blog_country{
+  width:140px;
+  height:22px;
+  font-size:12px;
 }
