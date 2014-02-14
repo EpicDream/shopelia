@@ -5,6 +5,7 @@ class Api::Flink::FacebookFriendsControllerTest < ActionController::TestCase
 
   setup do
     @flinker = flinkers(:boop)
+    FacebookFriend.expects(:create_or_update_friends).with(@flinker).never
   end
   
   test "get index of facebook friends" do
@@ -17,6 +18,7 @@ class Api::Flink::FacebookFriendsControllerTest < ActionController::TestCase
     assert !json_response["has_next"]
     assert_equal 2, json_response["flinkers"]["facebook"].count
     assert_equal 2, json_response["flinkers"]["flink"].count
+    assert_equal "fanny.louvel@wanadoo.fr", json_response["flinkers"]["flink"].first["email"]
   end
   
   test "has next flag" do
@@ -30,6 +32,17 @@ class Api::Flink::FacebookFriendsControllerTest < ActionController::TestCase
     assert json_response["has_next"]
     assert_equal 1, json_response["flinkers"]["facebook"].count
     assert_equal 1, json_response["flinkers"]["flink"].count
+  end
+  
+  test "fetch facebook friends if none at request time" do
+    sign_in @flinker
+    
+    FacebookFriend.destroy_all
+    FacebookFriend.expects(:create_or_update_friends).with(@flinker)
+    
+    get :index, page:1, per_page:1, format: :json
+    
+    assert_response :success
   end
   
   

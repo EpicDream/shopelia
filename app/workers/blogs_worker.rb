@@ -1,8 +1,13 @@
+require 'timeout'
+
 class BlogsWorker
   include Sidekiq::Worker
-  sidekiq_options :queue => :blogs_scraper
+  TIMEOUT = 15.minutes
+  sidekiq_options :queue => :blogs_scraper, retry:false
   
   def perform blog_id
-    Blog.find(blog_id).fetch
+    Timeout::timeout(TIMEOUT) {
+      Blog.find(blog_id).fetch
+    }
   end
 end

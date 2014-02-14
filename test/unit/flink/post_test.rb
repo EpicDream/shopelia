@@ -23,11 +23,10 @@ class PostTest < ActiveSupport::TestCase
   end
 
   test "it should convert to look" do
-    LookProduct.any_instance.expects(:generate_event)
     @post.products = {"Amazon"=>"http://www.amazon.fr/dp/B00BIXXTCY","Other"=>"http://www.other.com"}.to_json
     @post.images = ["http://farm4.staticflickr.com/3681/10980880355_0a0151fbd1_o.jpg", "http://4.bp.blogspot.com/-GGA8yv0lU8U/UPuvNd5LAlI/AAAAAAAAJmk/DSvdiYMmbYI/s1600/signature.png"].to_json
     
-    assert_difference ["Look.count","Product.count","Event.count","LookProduct.count"] do
+    assert_difference ["Look.count","Product.count", "LookProduct.count"] do
       @post.save
     end
 

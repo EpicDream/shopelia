@@ -22,9 +22,9 @@ class Api::Flink::FlinkersController < Api::Flink::BaseController
     if params[:page].present?
       @page = params[:page]
       @per_page = params[:per_page] || 10
-      query = Flinker.publishers.with_looks.includes(:country)
+      query = params[:username] ? Flinker.with_username_like(params[:username]) : Flinker.publishers.with_looks
+      query.includes(:country)
       query = query.staff_pick(params[:staff_pick].to_i == 1)
-      query = query.with_username_like(params[:username])
       query = query.of_country(params[:country_iso])
       @flinkers = query.paginate(page:@page, per_page:@per_page)
       @flinkers_json = ActiveModel::ArraySerializer.new(@flinkers, scope:@scope)

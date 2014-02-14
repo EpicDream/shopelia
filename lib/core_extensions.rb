@@ -67,8 +67,9 @@ class String
   def clean
     self.gsub(/\n|\r|\t/, ' ').strip
   rescue 
+    @attempts ||= 0 and @attempts += 1
     encoded = encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-    self.clean
+    @attempts < 2 ? encoded.clean : encoded 
   end
   
 end
