@@ -14,10 +14,11 @@ class FlinkerAuthentication < ActiveRecord::Base
         }
       end
     rescue Exception => e
-      if e.code == 400 || 401
+      
+      if e.respond_to?(:code) && e.code == 400 || 401
         data = {:status => 401, :message => "you are not authorized to get data from #{provider.capitalize}"}
       else
-        data = {:status => 500, :message => "#{provider.capitalize} servers are unreachable or #{provider.capitalize} API is down"}
+        raise e
       end
     else
       data = data.merge(provider: provider, token: access_token, secret: secret)
