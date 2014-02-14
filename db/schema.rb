@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140212105417) do
+ActiveRecord::Schema.define(:version => 20140214114634) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -273,6 +273,7 @@ ActiveRecord::Schema.define(:version => 20140212105417) do
     t.string   "picture"
     t.datetime "created_at",        :null => false
     t.datetime "updated_at",        :null => false
+    t.string   "username"
   end
 
   add_index "facebook_friends", ["flinker_id"], :name => "index_facebook_friends_on_flinker_id"
