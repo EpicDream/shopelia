@@ -21,7 +21,7 @@ class FacebookFriend < ActiveRecord::Base
     friends.each do |friend|
       fb_friend = FacebookFriend.new(name:friend["name"], identifier:friend["uid"])
       fb_friend.picture = "http://graph.facebook.com/#{friend['uid']}/picture?width=200&height=200&type=normal"
-      fb_friend.friend_flinker_id = FlinkerAuthentication.with_uid(friend["uid"]).first.try(:id)
+      fb_friend.friend_flinker_id = FlinkerAuthentication.with_uid(friend["uid"]).first.try(:flinker_id)
       fb_friend.username = friend["username"]
       fb_friend.flinker_id = flinker.id
       fb_friend.save
