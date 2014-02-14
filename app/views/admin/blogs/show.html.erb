@@ -12,6 +12,8 @@
       <%= f.text_field :avatar_url %>
       <%= f.label :name, "Nom du blog" %>
       <%= f.text_field :name %>
+      <%= f.select :country, options_for_select(countries_for_select, @blog.country) %>
+      
       <%= f.submit("Mettre à jour", :class => 'btn btn-success ') %>
     <% end  %>
   </div>
