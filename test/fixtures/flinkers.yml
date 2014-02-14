@@ -19,7 +19,7 @@ betty:
   is_publisher: true
   staff_pick: true
   looks_count: 1
-  lang_iso: 'fr'
+  lang_iso: 'fr-FR'
   
 
 lilou:
