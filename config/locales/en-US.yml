@@ -1,0 +1,4 @@
+en-US:
+  flink:
+    notification:
+      follow: "%{username} is following you!"
