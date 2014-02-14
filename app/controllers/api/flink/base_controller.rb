@@ -40,4 +40,14 @@ class Api::Flink::BaseController < Api::ApiController
     { page:params[:page] || PAGINATION_DEFAULT_PAGE, per_page: params[:per_page] || per_page }
   end
   
+  def paged collection, per_page: PAGINATION_DEFAULT_PER_PAGE
+    res = collection.paginate(pagination(per_page))
+    @has_next = @has_next || res.total_pages > params[:page].to_i
+    res
+  end
+  
+  def serialize collection
+    ActiveModel::ArraySerializer.new(collection)
+  end
+  
 end

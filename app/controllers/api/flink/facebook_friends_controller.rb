@@ -8,15 +8,9 @@ class Api::Flink::FacebookFriendsController < Api::Flink::BaseController
   private
   
   def flinkers
-    flink = paged(FacebookFriend.of_flinker(current_flinker).flinkers).map(&:friend)
-    facebook = paged FacebookFriend.of_flinker(current_flinker).not_flinkers
-    { facebook:ActiveModel::ArraySerializer.new(facebook), flink:ActiveModel::ArraySerializer.new(flink) }
-  end
-  
-  def paged collection
-    res = collection.paginate(pagination(40))
-    @has_next = @has_next || res.total_pages > params[:page].to_i
-    res
+    flinks = paged FacebookFriend.of_flinker(current_flinker).flinkers, per_page:40
+    facebooks = paged FacebookFriend.of_flinker(current_flinker).not_flinkers, per_page:40
+    { facebook: serialize(facebooks), flink: serialize(flinks.map(&:friend)) }
   end
   
   def fetch_facebook_friends
