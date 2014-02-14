@@ -38,6 +38,7 @@ class Blog < ActiveRecord::Base
     end
     self
   rescue => e
+    Rails.logger.error(%Q{[#{Time.now}] [BlogScraping] #{e.backtrace.join("\n")}})
     Incident.report(:Blog, :fetch, "#{self.url} - #{e.message}")
   end
 
