@@ -1,0 +1,4 @@
+fr-FR:
+  flink:
+    notification:
+      follow: "%{username} te suit!"

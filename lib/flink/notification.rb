@@ -18,7 +18,11 @@ class Flink::FollowNotification < Flink::Notification
   end
   
   def message
-    I18n.t("flink.notification.follow", username:@follower.username, :locale => @flinker.lang_iso)
+    begin
+      I18n.translate!("flink.notification.follow", username:@follower.username, :locale => @flinker.lang_iso, raise:true)
+    rescue I18n::MissingTranslationData
+      I18n.translate!("flink.notification.follow", username:@follower.username, :locale => "en-GB", raise:true)
+    end
   end
   
 end

@@ -7,8 +7,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     flinker = flinkers(:betty)
     follower = flinkers(:lilou)
     
-    
-    ["fr", "en-US", "en-GB", "it", "de", "es"].each do |lang|
+    ["fr-FR", "en-US", "en-GB", "it", "de", "es"].each do |lang|
       flinker.update_attributes!(lang_iso:lang)
       notif = Flink::FollowNotification.new(flinker, follower)
       
@@ -26,8 +25,9 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     Flink::FollowNotification.new(flinker, follower).deliver
   end
   
-  test "default translation is in english en-GB locale" do
+  test "missing translation is in english en-GB" do
     flinker = flinkers(:nana)
+    flinker.update_attributes!(lang_iso:"unknown")
     follower = flinkers(:lilou)
     devices(:mobile).update_attributes(flinker_id:flinker.id)
     
@@ -40,7 +40,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
   
   def follow_message_for flinker
     case flinker.lang_iso
-    when 'fr' then return "Lilou te suit!"
+    when 'fr-FR' then return "Lilou te suit!"
     when 'es' then return "Lilou te siga!"
     when 'it' then return "Lilou ti segue!"
     when 'de' then return "Lilou folgt Ihnen!"
