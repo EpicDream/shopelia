@@ -14,7 +14,7 @@ class FlinkerAuthentication < ActiveRecord::Base
         }
       end
     rescue Exception => e
-      
+      Rails.logger.error("FBGRAPH #{access_token} #{fb_user.nil?}")
       if e.respond_to?(:code) && e.code == 400 || 401
         data = {:status => 401, :message => "you are not authorized to get data from #{provider.capitalize}"}
       else
