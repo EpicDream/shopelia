@@ -4,9 +4,7 @@ class Api::Flink::FlinkersControllerTest < ActionController::TestCase
   include Devise::TestHelpers
 
   setup do
-    Rails.cache.delete(:flinker)
-    @flinker = flinkers(:elarch)
-    sign_in @flinker
+    sign_in flinkers(:elarch)
   end
 
   test "it should get publishing flinkers" do
