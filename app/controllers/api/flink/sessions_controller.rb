@@ -41,6 +41,8 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
 
       invalid_login_attempt
     end
+  rescue => e
+    Rails.logger.error(%Q{SESSION-CONTROLLER#{Time.now}#{e.backtrace.join("\n")}})
   end
 
   api :DELETE, "/flinkers/sign_out", "Sign out a flinker"
