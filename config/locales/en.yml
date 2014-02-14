@@ -17,8 +17,6 @@ en:
     cannot_destroy: "Cannot destroy a user with completed orders"
 
   flink:
-    notification:
-      follow: "%{username} is following you!"
     products:
       pull: "Pull"
       dress: "Dress"

@@ -6,12 +6,4 @@ class Country < ActiveRecord::Base
   
   attr_accessible :id, :name, :iso
   
-  def i18n_locale #TODO : add column i18n_locale and set it in database
-    case iso
-    when 'US' then  :'en'
-    when 'GB' then :'en'
-    else iso.downcase.to_sym
-    end
-  end
-  
 end

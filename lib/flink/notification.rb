@@ -18,8 +18,7 @@ class Flink::FollowNotification < Flink::Notification
   end
   
   def message
-    locale = (@flinker.country && @flinker.country.i18n_locale) || :en
-    I18n.t("flink.notification.follow", username:@follower.username, :locale => locale)
+    I18n.t("flink.notification.follow", username:@follower.username, :locale => @flinker.lang_iso)
   end
   
 end
