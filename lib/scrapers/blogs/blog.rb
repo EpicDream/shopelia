@@ -21,7 +21,6 @@ module Scrapers
       
       def posts
         return @posts if @posts
-        Mechanize.new.get(@url) #to check if url still exists
         feed =  RSSFeed.new(@url)
 
         @posts = feed.items.map do |post|
