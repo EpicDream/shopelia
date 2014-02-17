@@ -1,4 +1,6 @@
 class Country < ActiveRecord::Base
+  FRANCE = :FR
+  
   has_many :addresses
   has_many :states
   has_many :users

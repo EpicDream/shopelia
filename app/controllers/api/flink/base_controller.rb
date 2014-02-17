@@ -53,7 +53,7 @@ class Api::Flink::BaseController < Api::ApiController
   
   def api_log key, exception=nil
     return unless exception
-    Rails.logger.error(%Q{[API #{key}] #{exception.inspect}\n#{exception.backtrace.join("\n")})
+    Rails.logger.error(%Q{[API #{key}] #{exception.inspect} \n #{exception.backtrace.join("\n")}})
   end
   
 end

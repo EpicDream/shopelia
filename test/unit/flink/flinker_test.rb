@@ -18,8 +18,8 @@ class FlinkerTest < ActiveSupport::TestCase
     end
   end
 
-  test "it should auto follow staff picked flinkers of same country" do 
-    assert_difference "FlinkerFollow.count", 2 do
+  test "it should auto follow staff picked flinkers of same country or universal" do 
+    assert_difference "FlinkerFollow.count", 3 do
       @flinker.save
     end
   end
@@ -28,7 +28,7 @@ class FlinkerTest < ActiveSupport::TestCase
     flinker = Flinker.new(attributes.merge({email:"univ@me.com", name:"Universal", universal:true, country_iso:'GB', staff_pick:true}))
     assert flinker.save!
 
-    assert_difference "FlinkerFollow.count", 3 do
+    assert_difference "FlinkerFollow.count", 4 do
       @flinker.save
     end
   end

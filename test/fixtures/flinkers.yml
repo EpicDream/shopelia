@@ -20,7 +20,6 @@ betty:
   staff_pick: true
   looks_count: 1
   lang_iso: 'fr-FR'
-  
 
 lilou:
   name: Lilou
@@ -54,6 +53,7 @@ nana:
   country: angleterre
   is_publisher: true
   staff_pick: true
+  universal: true
   looks_count: 1
 
 fanny:
