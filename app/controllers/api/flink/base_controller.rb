@@ -9,8 +9,7 @@ class Api::Flink::BaseController < Api::ApiController
   before_filter :retrieve_device
   
   rescue_from Exception do |e|
-    Rails.logger.error(e.backtrace.join("\n"))
-    render server_error("Global Error")
+    render server_error(e)
   end
 
   def set_locale
@@ -28,12 +27,14 @@ class Api::Flink::BaseController < Api::ApiController
   
   protected
   
-  def unauthorized error=I18n.t('devise.failure.invalid')
+  def unauthorized error=I18n.t('devise.failure.invalid'), exception=nil
+    api_log("#unauthorized", exception)
     { json: { error:error }, status: :unauthorized }
   end
   
-  def server_error error=nil
-    { json: { error:error }, status: 500 }
+  def server_error exception=nil
+    api_log("#server_error", exception)
+    { json: { error:"Server Error" }, status: 500 }
   end
   
   def pagination per_page=PAGINATION_DEFAULT_PER_PAGE
@@ -48,6 +49,11 @@ class Api::Flink::BaseController < Api::ApiController
   
   def serialize collection
     ActiveModel::ArraySerializer.new(collection)
+  end
+  
+  def api_log key, exception=nil
+    return unless exception
+    Rails.logger.error(%Q{[API #{key}] #{exception.inspect}\n#{exception.backtrace.join("\n")})
   end
   
 end
