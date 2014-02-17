@@ -54,6 +54,14 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal Flinker.of_country("fr"), Flinker.of_country("FR") 
   end
   
+  test "it should auto follow french staff picked flinkers if none of its country" do 
+    @flinker.country_id = countries(:morocco).id
+
+    assert_difference "FlinkerFollow.count", 3 do
+      @flinker.save
+    end
+  end
+  
   private
 
   def new_flinker
