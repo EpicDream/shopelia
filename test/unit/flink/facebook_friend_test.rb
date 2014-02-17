@@ -8,6 +8,7 @@ class FacebookFriendTest < ActiveSupport::TestCase
   end
   
   test "create facebook friends from facebook graph and attach flinker if fb user if flinker" do
+    FacebookFriend.destroy_all
     @fanny.update_attributes(flinker_id:@flinker.id)
     
     2.times { FacebookFriend.create_or_update_friends(@flinker) }

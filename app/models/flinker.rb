@@ -66,6 +66,10 @@ class Flinker < ActiveRecord::Base
     self.country = Country.where(iso:self.country_iso.upcase).first
   end
   
+  def friends
+    followings | FacebookFriend.of_flinker(self).flinkers.map(&:friend)
+  end
+  
   private
   
   def set_avatar
