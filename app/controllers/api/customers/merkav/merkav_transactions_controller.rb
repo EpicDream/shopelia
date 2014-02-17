@@ -10,7 +10,6 @@ class Api::Customers::Merkav::MerkavTransactionsController < Api::Customers::Mer
   def create
     @transaction = MerkavTransaction.new(params[:merkav_transaction])
     if @transaction.save
-      MerkavWorker.perform_async({merkav_transaction_id:@transaction.id})
       render json: MerkavTransactionSerializer.new(@transaction).as_json[:merkav_transaction], status: :created
     else
       render json: @transaction.errors, status: :unprocessable_entity
