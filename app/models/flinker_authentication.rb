@@ -30,6 +30,12 @@ class FlinkerAuthentication < ActiveRecord::Base
     flinker.save!
   end
   
+  def update_flinker_name
+    return unless flinker.name.blank?
+    flinker.name = user.name
+    flinker.save!
+  end
+  
   def after_sign_up
     after_sign_in
     friends = user.friends.map(&:identifier)
@@ -41,6 +47,7 @@ class FlinkerAuthentication < ActiveRecord::Base
   def after_sign_in
     flinker or assign_flinker or create_flinker
     update_flinker_avatar
+    update_flinker_name
   end
   
   private

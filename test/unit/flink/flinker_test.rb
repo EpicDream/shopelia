@@ -62,6 +62,17 @@ class FlinkerTest < ActiveSupport::TestCase
     end
   end
   
+  test "friends of flinkers : flinkers facebook friends U followings" do
+    #3 followings friends + 1 from facebook + 1 (followings + facebook)
+    flinker = flinkers(:fanny)
+    flinker.send(:follow_staff_picked) 
+
+    friends = flinker.friends
+
+    assert_equal 4, friends.count
+    assert_equal ["boop", "bettyusername", "nanausername", "Lilou"].to_set, friends.map(&:username).to_set
+  end
+  
   private
 
   def new_flinker

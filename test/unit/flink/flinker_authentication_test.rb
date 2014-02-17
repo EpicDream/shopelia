@@ -8,6 +8,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
   end
   
   test "create new fb auth and new flinker" do
+    @flinker.update_attributes(name:nil)
     fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy and @flinker.destroy
     flinker = nil
     
@@ -24,6 +25,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     assert_equal "fanny.louvel@wanadoo.fr", auth.email
     assert_equal auth.email, flinker.email
     assert_equal 'LOUVEL.F', flinker.username
+    assert_equal 'Fanny Louvel', flinker.name
     assert_match /images\/flinker\/\d+\/original\/avatar.jpg/, flinker.avatar.url
   end
   
@@ -100,6 +102,14 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
         assert flinkr.followings.include?(flinker) 
       }
     end
+  end
+  
+  test "update flinker username from facebook if none" do
+    @flinker.update_attributes(name:nil)
+
+    flinker = FlinkerAuthentication.facebook(@fanny.token) 
+    
+    assert_equal 'Fanny Louvel', @flinker.reload.name
   end
 
 end

@@ -1,10 +1,24 @@
 fanny:
   identifier: "909090"
   picture: "http://fanny.jpg"
-  name: "Fanny"
+  name: "Boop"
+  flinker: fanny
+  friend: lilou
+
+fanny_2nd:
+  identifier: "9090901"
+  picture: "http://toto.jpg"
+  name: "Boopy"
+  flinker: fanny
+  friend: betty
+
+boop:
+  identifier: "9090902"
+  picture: "http://fanny.jpg"
+  name: "Boop"
   flinker: boop
   friend: fanny
-  
+    
 bibi:
   identifier: "9090909"
   picture: "http://bibi.jpg"
