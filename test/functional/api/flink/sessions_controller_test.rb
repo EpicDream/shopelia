@@ -35,7 +35,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     end
     
     assert_response :unauthorized
-    assert_equal "facebook token is invalid", json_response["error"]
+    assert_equal "Facebook token is invalid", json_response["error"]
   end
   
   test "create flinker from facebook" do

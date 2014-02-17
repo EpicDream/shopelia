@@ -53,6 +53,7 @@ nana:
   country: angleterre
   is_publisher: true
   staff_pick: true
+  universal: true
   looks_count: 1
 
 fanny:

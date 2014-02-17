@@ -9,8 +9,8 @@ class Api::Flink::FlinkersControllerTest < ActionController::TestCase
   
   test "search flinkers by username with username matching" do
     get :index, username:"fann", format: :json
-    assert_response :success
     
+    assert_response :success
     assert_equal 1, json_response["flinkers"].count
     assert_equal "fanny.louvel@wanadoo.fr", json_response["flinkers"].first["email"]
   end
