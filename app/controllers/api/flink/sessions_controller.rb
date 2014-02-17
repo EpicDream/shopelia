@@ -12,8 +12,8 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     flinker.ensure_authentication_token!
     render json_for(flinker)
   rescue => e
-    render unauthorized("facebook token is invalid") and return if e.respond_to?(:code) && [400, 401].include?(e.code)
-    render server_error
+    render unauthorized("Facebook token is invalid", e) and return if e.respond_to?(:code) && [400, 401].include?(e.code)
+    render server_error(e)
   end
   
   api :DELETE, "/flinkers/sign_out", "Sign out a flinker"
