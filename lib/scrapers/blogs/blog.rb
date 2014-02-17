@@ -21,7 +21,6 @@ module Scrapers
       
       def posts
         return @posts if @posts
-        Mechanize.new.get(@url) #to check if url still exists
         feed =  RSSFeed.new(@url)
 
         @posts = feed.items.map do |post|
@@ -35,6 +34,7 @@ module Scrapers
         end
         @posts
       rescue => e
+        Rails.logger.error(%Q{[#{Time.now}] [Blog#posts] #{e.backtrace.join("\n")}})
         message = @posts && @posts.none? ? "No posts - #{@url}" : "Exception - #{@url} #{e.message}"
         Incident.report("Scrapers::Blogs::Blog", :posts, message)
         []
