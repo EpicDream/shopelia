@@ -28,4 +28,10 @@ class FacebookFriend < ActiveRecord::Base
     end
   end
   
+  def self.assign_flinker_from_sign_up flinker_authentication
+    self.where(identifier:flinker_authentication.uid).each { |instance|
+      instance.update_attributes!(friend_flinker_id: flinker_authentication.flinker_id)
+    }
+  end
+  
 end

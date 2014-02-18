@@ -20,4 +20,9 @@ class ActiveRecord::Base
     LikeActivity.create!(self)
   end
   
+  def flink_create_facebook_friend_signed_up_activity
+    FacebookFriendSignedUpActivity.create!(self)
+  end
+  
+  
 end

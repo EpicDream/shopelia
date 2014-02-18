@@ -111,5 +111,16 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     
     assert_equal 'Fanny Louvel', @flinker.reload.name
   end
+  
+  test "set facebook friend_flinker_id with same uid" do
+    FollowNotificationWorker.stubs(:perform_in)
+    
+    fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy and @flinker.destroy
+    
+    fb_friend = FacebookFriend.create!(identifier:fanny[:uid], name:"Fanny", flinker_id:flinkers(:boop).id)
+    flinker = FlinkerAuthentication.facebook(fanny[:token])
+    
+    assert_equal flinker.id, fb_friend.reload.friend_flinker_id
+  end
 
 end
