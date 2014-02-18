@@ -18,6 +18,7 @@ class FacebookFriendTest < ActiveSupport::TestCase
     assert_match /graph.facebook.com\/\d+\/picture\?width=200&height=200&type=normal/, friends.last.picture
     assert friends.last.username.length > 2
     assert friends.count > 500
+    assert friends.last.sex
     assert_equal 1, FacebookFriend.of_flinker(@flinker).flinkers.count
     assert_equal friends.count - 1, FacebookFriend.of_flinker(@flinker).not_flinkers.count
   end
