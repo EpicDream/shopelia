@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class Api::Flink::CommentsControllerTest < ActionController::TestCase
+class Api::Flink::Looks::CommentsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
   
   setup do

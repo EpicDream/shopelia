@@ -1,13 +1,11 @@
-class Api::Flink::CommentsController < Api::Flink::BaseController
+class Api::Flink::Looks::CommentsController < Api::Flink::BaseController
   skip_before_filter :authenticate_flinker!, :only => [:index]
   before_filter :prepare_scope
   before_filter :retrieve_comments , :only => [:index]
 
   api :GET, "/looks/:look_id/comments", "Get Comments of a look"
   def index
-    render json: {
-        comments: ActiveModel::ArraySerializer.new(@comments, scope:@scope)
-    }
+    render json: { comments: ActiveModel::ArraySerializer.new(@comments, scope:@scope) }
   end
 
   api :POST, "/looks/:look_id/comments", "Post Comment"

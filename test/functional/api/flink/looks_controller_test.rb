@@ -94,6 +94,16 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     assert_equal 2, looks.count
     assert looks[0]["updated_at"] < looks[1]["updated_at"]
   end
+  
+  test "get looks for given looks uuids" do
+    looks = Look.first(2)
+
+    get :index, format: :json, looks_ids:looks.map(&:uuid)
+
+    assert_response :success
+    assert_equal 2, json_response["looks"].count
+    assert_equal looks.map(&:uuid), json_response["looks"].map { |l| l["uuid"] }
+  end
 
   private
 
