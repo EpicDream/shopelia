@@ -71,17 +71,34 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
     assert_equal flinkers(:boop).id, activity["flinker_id"]
   end
   
+  test "get facebook friend sign up activity related to current flinker" do
+    FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
+    
+    get :index, format: :json
+    
+    activity = json_response["activities"].first
+
+    assert_response :success
+    assert_equal 1, json_response["activities"].count
+    assert_equal nil, activity["comment_id"]
+    assert_equal nil, activity["look_uuid"]
+    assert_equal "FacebookFriendSignedUpActivity", activity["type"]
+    assert_equal flinkers(:boop).id, activity["flinker_id"]
+  end
+  
   test "get all different activities related to current flinker" do
     MentionActivity.create!(comments(:agadir))
     FlinkerFollow.create(flinker_id:flinkers(:boop).id, follow_id:@fanny.id)
     CommentActivity.create!(comments(:agadir))
     LikeActivity.create!(flinker_likes(:boop_like))
+    FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
     
     get :index, format: :json
     
     activities = json_response["activities"]
 
     assert_response :success
-    assert_equal 4, activities.count
+    assert_equal 5, activities.count
+    assert_equal 5, activities.map{ |activity| activity["type"] }.uniq.count
   end
 end

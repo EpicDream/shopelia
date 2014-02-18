@@ -15,4 +15,5 @@ class MentionActivitySerializer < ActivitySerializer;end
 class FollowActivitySerializer < ActivitySerializer;end
 class CommentActivitySerializer < ActivitySerializer;end
 class LikeActivitySerializer < ActivitySerializer;end
+class FacebookFriendSignedUpActivitySerializer < ActivitySerializer;end
 
