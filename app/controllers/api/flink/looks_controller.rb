@@ -13,9 +13,11 @@ class Api::Flink::LooksController < Api::Flink::BaseController
   end
 
   private
-  # TODO:Refactoring ; move to Look model
+  # TODO:Refactoring this legacy shit !!
   def retrieve_looks
-    if params[:liked]
+    if params[:looks_ids]
+      @looks = Look.published.where(uuid:params[:looks_ids])
+    elsif params[:liked]
       render json: {}, status: :unauthorized and return if current_flinker.nil?
       ids = current_flinker.flinker_likes.where(resource_type:FlinkerLike::LOOK).map(&:resource_id)
       @looks = Look.where(id:ids, is_published:true).order("published_at desc")

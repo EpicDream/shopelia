@@ -5,9 +5,7 @@ class Api::Flink::Looks::CommentsController < Api::Flink::BaseController
 
   api :GET, "/looks/:look_id/comments", "Get Comments of a look"
   def index
-    render json: {
-        comments: ActiveModel::ArraySerializer.new(@comments, scope:@scope)
-    }
+    render json: { comments: ActiveModel::ArraySerializer.new(@comments, scope:@scope) }
   end
 
   api :POST, "/looks/:look_id/comments", "Post Comment"
