@@ -2,11 +2,16 @@ require 'test_helper'
 
 class MentionActivityTest < ActiveSupport::TestCase
   
-  test "find flinkers arobase mentionned in text" do
-    text = "Salut @Lilou super ton look, regardez ça @boop et @non_flinker!"
-    flinkers = MentionActivity.flinkers_mentionned_in(text)
+  setup do
+    @flinker = flinkers(:fanny)
+    @commenter = flinkers(:boop)
+  end
+  
+  test "mentionned scope" do
+    MentionActivity.create!(comments(:agadir))
     
-    assert_equal [flinkers(:lilou), flinkers(:boop)], flinkers
+    mentions = MentionActivity.mentionned(@flinker)
+    assert_equal @flinker, mentions.first.target
   end
   
 end

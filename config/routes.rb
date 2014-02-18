@@ -197,6 +197,7 @@ Shopelia::Application.routes.draw do
       resources :flinkers_search, :only => :index
       resources :publishers, :only => :index
       resources :staff_picks, :only => :index
+      resources :activities, :only => :index
       resources :facebook_friends, :only => :index
       resources :top_flinkers, :only => :index
       resources :looks, :only => :index do

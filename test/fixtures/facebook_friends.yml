@@ -23,13 +23,13 @@ bibi:
   identifier: "9090909"
   picture: "http://bibi.jpg"
   name: "Bibi"
-  flinker: boop
+  flinker: fanny
 
 zoe:
-  identifier: "90909209"
+  identifier: "9090909"
   picture: "http://zoe.jpg"
   name: "Zoe"
-  flinker: boop
+  flinker: lilou
 
 nana:
   identifier: "9091090"
@@ -37,3 +37,15 @@ nana:
   name: "Anne"
   flinker: boop
   friend: nana  
+  
+toto:
+  identifier: "9091092230"
+  picture: "http://nana.jpg"
+  name: "Toto"
+  flinker: boop
+
+titi:
+  identifier: "102020202200220"
+  picture: "http://nana.jpg"
+  name: "Titi"
+  flinker: boop

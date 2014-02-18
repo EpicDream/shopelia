@@ -22,15 +22,16 @@ class CommentTest < ActiveSupport::TestCase
     end
   end
   
-  test "create comment should create comment activity for flinker" do
+  test "create comment should create comment activity for flinker friends" do
+    flinker = flinkers(:boop)
     
-    assert_difference('CommentActivity.count') do
-      Comment.create(flinker_id:@flinker.id, body:"comment", look_id:@look.id)
+    assert_difference('CommentActivity.count', 2) do
+      Comment.create(flinker_id:flinker.id, body:"comment", look_id:@look.id)
     end
     
     activity = CommentActivity.last
-    assert_equal @flinker, activity.flinker
-    assert_equal @look.flinker, activity.target
+    assert_equal flinker, activity.flinker
+    assert flinker.friends.include?(activity.target)
     assert_equal Comment.last, activity.resource
   end
   

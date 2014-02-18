@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140218094714) do
+ActiveRecord::Schema.define(:version => 20140218140853) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -279,6 +279,7 @@ ActiveRecord::Schema.define(:version => 20140218094714) do
 
   add_index "facebook_friends", ["flinker_id"], :name => "index_facebook_friends_on_flinker_id"
   add_index "facebook_friends", ["friend_flinker_id"], :name => "index_facebook_friends_on_friend_flinker_id"
+  add_index "facebook_friends", ["identifier"], :name => "index_facebook_friends_on_identifier"
 
   create_table "flinker_authentications", :force => true do |t|
     t.string   "provider"
