@@ -7,7 +7,7 @@ class Api::Flink::PublishersController < Api::Flink::BaseController
   private
   
   def flinkers
-    serialize Flinker.publishers.with_looks.paginate(pagination)
+    serialize Flinker.publishers.with_looks.paginate(pagination).order("name asc")
   end
   
 end
