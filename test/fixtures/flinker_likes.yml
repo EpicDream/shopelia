@@ -4,9 +4,14 @@ two:
   flinker: betty
 three:
   flinker: fanny
+  resource_type: 'product'
 four:
   flinker: fanny
 five:
   flinker: fanny
 six:
   flinker: boop
+boop_like:
+  flinker: boop
+  resource_type: "look"
+  look: agadir
