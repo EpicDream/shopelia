@@ -1,4 +1,4 @@
-class Api::Flink::CommentsController < Api::Flink::BaseController
+class Api::Flink::Looks::CommentsController < Api::Flink::BaseController
   skip_before_filter :authenticate_flinker!, :only => [:index]
   before_filter :prepare_scope
   before_filter :retrieve_comments , :only => [:index]
