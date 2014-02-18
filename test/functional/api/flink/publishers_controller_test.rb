@@ -7,12 +7,12 @@ class Api::Flink::PublishersControllerTest < ActionController::TestCase
     sign_in flinkers(:fanny)
   end
   
-  test "get publishing flinkers with looks" do
+  test "get publishing flinkers with looks ordered by name" do
     get :index, format: :json
     
     assert_response :success
     assert_equal 4, json_response["flinkers"].count
-    assert_equal "lilou@flink.com", json_response["flinkers"].first["email"]
+    assert_equal "betty@flink.com", json_response["flinkers"].first["email"]
   end
   
 end
