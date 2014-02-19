@@ -1,0 +1,1 @@
+class FollowActivitySerializer < ActivitySerializer;end
