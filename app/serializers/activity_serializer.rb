@@ -9,4 +9,8 @@ class ActivitySerializer < ActiveModel::Serializer
     object.look_uuid if object.respond_to?(:look_uuid)
   end
   
+  def created_at
+    object.created_at.to_i
+  end
+  
 end
