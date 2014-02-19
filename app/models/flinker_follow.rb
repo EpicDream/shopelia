@@ -8,8 +8,6 @@ class FlinkerFollow < ActiveRecord::Base
   
   validates :flinker_id, :presence => true
   validates :follow_id, :presence => true, :uniqueness => { :scope => :flinker_id }
-
-  after_save :update_flinker_follows_count
   
   def self.mutual_following flinker, flinkers
     flinkers.each do |flinkr|
@@ -18,9 +16,4 @@ class FlinkerFollow < ActiveRecord::Base
     end
   end
   
-  private
-
-  def update_flinker_follows_count
-    Flinker.find(self.follow_id).update_attribute :follows_count, FlinkerFollow.where(follow_id:self.follow_id).count
-  end
 end
