@@ -10,7 +10,7 @@ class FlinkerFollowTest < ActiveSupport::TestCase
   test "create flinker follow unique on (flinker_id, follow_id)" do
     follow = nil
 
-    assert_difference(['FlinkerFollow.count', '@followed.reload.follows_count'], 1) do
+    assert_difference(['FlinkerFollow.count'], 1) do
       2.times {
         follow = FlinkerFollow.create(flinker_id:@flinker.id, follow_id:@followed.id)
       }

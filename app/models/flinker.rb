@@ -70,6 +70,10 @@ class Flinker < ActiveRecord::Base
     followings | FacebookFriend.of_flinker(self).flinkers.map(&:friend)
   end
   
+  def activities_counts
+    @activities_counts ||= Hash[connection.execute(ActivitySql.counts(self)).first.collect {|k,v| [k, v.to_i] }]
+  end
+  
   private
   
   def set_avatar

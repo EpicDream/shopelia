@@ -1,5 +1,6 @@
 class FlinkerSerializer < ActiveModel::Serializer
-  attributes :id, :name, :url, :email, :username, :avatar, :country, :follows_count, :looks_count, :likes_count, :staff_pick, :rank, :publisher
+  attributes :id, :name, :url, :email, :username, :avatar, :country, :staff_pick, :rank, :publisher
+  attributes :likes_count, :follows_count, :looks_count, :comments_count, :followed_count
 
   def publisher
     object.is_publisher? ? 1 : 0
@@ -24,4 +25,25 @@ class FlinkerSerializer < ActiveModel::Serializer
   def rank
     object.display_order
   end
+  
+  def likes_count
+    object.activities_counts["likes"]
+  end
+  
+  def follows_count
+    object.activities_counts["followings"]
+  end
+  
+  def looks_count
+    object.activities_counts["looks"]
+  end
+  
+  def comments_count
+    object.activities_counts["comments"]
+  end
+  
+  def followed_count
+    object.activities_counts["followed"]
+  end
+  
 end
