@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140218140853) do
+ActiveRecord::Schema.define(:version => 20140219153343) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -311,6 +311,7 @@ ActiveRecord::Schema.define(:version => 20140218140853) do
   end
 
   add_index "flinker_likes", ["flinker_id", "resource_type", "resource_id"], :name => "index_flinker_likes_on_all_fields"
+  add_index "flinker_likes", ["flinker_id"], :name => "index_flinker_likes_on_flinker_id"
   add_index "flinker_likes", ["resource_type", "resource_id"], :name => "index_flinker_likes_on_resource_type_and_resource_id"
 
   create_table "flinkers", :force => true do |t|
@@ -350,7 +351,7 @@ ActiveRecord::Schema.define(:version => 20140218140853) do
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true
   add_index "flinkers", ["country_id"], :name => "index_flinkers_on_country_id"
   add_index "flinkers", ["email"], :name => "index_flinkers_on_email", :unique => true
-  add_index "flinkers", ["is_publisher", "staff_pick"], :name => "index_flinkers_on_is_publisher_and_staff_pick"
+  add_index "flinkers", ["is_publisher", "looks_count"], :name => "index_flinkers_on_is_publisher_and_looks_count"
   add_index "flinkers", ["reset_password_token"], :name => "index_flinkers_on_reset_password_token", :unique => true
   add_index "flinkers", ["username"], :name => "index_flinkers_on_username"
 
@@ -416,6 +417,7 @@ ActiveRecord::Schema.define(:version => 20140218140853) do
     t.datetime "is_published_updated_at"
   end
 
+  add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"
   add_index "looks", ["is_published"], :name => "index_looks_on_is_published"
   add_index "looks", ["uuid"], :name => "index_looks_on_uuid"
 
