@@ -1,6 +1,8 @@
 class CommentTimelineActivity < Activity
   belongs_to :resource, foreign_key: :resource_id, class_name:'Comment'
   
+  validates :resource_id, uniqueness: { scope:[:flinker_id, :target_id] }
+
   def self.create! comment
     comments = Comment.timeline(comment.look_id).where('flinker_id <> ?', comment.flinker_id).includes(:flinker)
     

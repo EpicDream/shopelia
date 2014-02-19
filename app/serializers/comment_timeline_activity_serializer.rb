@@ -1,0 +1,2 @@
+class CommentTimelineActivitySerializer < ActivitySerializer;end
+ 

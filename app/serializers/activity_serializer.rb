@@ -1,5 +1,5 @@
 class ActivitySerializer < ActiveModel::Serializer
-  attributes :flinker_id, :comment_id, :look_uuid, :type, :created_at
+  attributes :flinker_id, :comment_id, :look_uuid, :type, :created_at, :id
   
   def comment_id
     object.comment_id if object.respond_to?(:comment_id)
