@@ -10,7 +10,7 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
   
   test "get mentions activities related to current flinker" do
     MentionActivity.create!(comments(:agadir))
-    
+
     get :index, format: :json
     
     activity = json_response["activities"].first
