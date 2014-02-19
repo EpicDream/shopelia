@@ -24,5 +24,8 @@ class ActiveRecord::Base
     FacebookFriendSignedUpActivity.create!(self)
   end
   
-  
+  def flink_create_comment_timeline_activity
+    CommentTimelineActivity.create!(self)
+  end
+
 end
