@@ -1,6 +1,7 @@
 class Comment < ActiveRecord::Base
   act_as_flink_activity :comment
   act_as_flink_activity :mention
+  act_as_flink_activity :comment_timeline
   
   attr_accessible :body , :flinker_id, :look_id , :posted
   attr_accessor :post_to_blog
@@ -15,6 +16,7 @@ class Comment < ActiveRecord::Base
   
   scope :posted, -> { where(posted:true) }
   scope :last_ones, ->(n=10) { order('created_at desc').limit(n) }
+  scope :timeline, ->(look_id) { where(look_id:look_id) }
   
   def to_html
     "#{self.body} <br/> sent via  <a href='http://flink.io'>Flink app</a>"
