@@ -53,10 +53,6 @@ class Blog < ActiveRecord::Base
     scrap
   end
   
-  def country
-    read_attribute(:country) || 'FR'
-  end
-  
   def can_comment? opt={}
     return read_attribute(:can_comment) unless opt[:checkout]
     return if posts.none?
