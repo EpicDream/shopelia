@@ -6,6 +6,8 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
   setup do
     Look.destroy_all
     @flinker = flinkers(:betty)
+    sign_in @flinker
+    
     build_looks
   end
 
@@ -14,7 +16,6 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     assert_response :success
     
     assert_equal 10, json_response["looks"].count
-    assert_equal 10, json_response["per_page"]
   end
 
   test "it should get first 20 looks" do
@@ -22,7 +23,6 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     assert_response :success
     
     assert_equal 20, json_response["looks"].count
-    assert_equal 20, json_response["per_page"]
   end
 
   test "it should get looks after a date" do
@@ -40,13 +40,12 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
   end
 
   test "it should reply with 401 when getting liked looks and not logged in" do
+    sign_out @flinker
     get :index, format: :json, liked:1
     assert_response 401
   end
 
   test "it should get liked looks" do
-    sign_in @flinker
-
     FlinkerLike.create!(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:Look.last.id)
 
     get :index, format: :json, liked:1

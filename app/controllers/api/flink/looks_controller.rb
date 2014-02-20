@@ -1,49 +1,39 @@
 class Api::Flink::LooksController < Api::Flink::BaseController
+  LOOKS_ORDER = "looks.published_at desc"
+  
   skip_before_filter :authenticate_flinker!
-  before_filter :retrieve_looks, :only => :index
+  before_filter { epochs_to_dates [:updated_after, :published_before, :published_after] }
   
   api :GET, "/looks", "Get looks"
   def index
-    render json: {
-      published_before: @before,
-      published_after: @after,
-      per_page: @per_page,
-      looks: ActiveModel::ArraySerializer.new(@looks, scope:scope())
-    }
+    render unauthorized and return unless current_flinker
+    render json: { looks: serialize(looks, scope:scope()) }
   end
 
   private
-  # TODO:Refactoring this legacy shit !!
-  def retrieve_looks
-    if params[:looks_ids]
-      @looks = Look.published.where(uuid:params[:looks_ids])
-    elsif params[:liked]
-      render json: {}, status: :unauthorized and return if current_flinker.nil?
-      ids = current_flinker.flinker_likes.where(resource_type:FlinkerLike::LOOK).map(&:resource_id)
-      @looks = Look.where(id:ids, is_published:true).order("published_at desc")
-    elsif !params[:updated_after].blank?
-      flinker_ids = current_flinker.flinker_follows.map(&:follow_id) if current_flinker.present?
-      query = Look.where(is_published:true)
-      query = query.where(flinker_id:flinker_ids) if (flinker_ids || []).any?
-      query = query.published_updated_after(Time.at(params[:updated_after].to_i))
-      @per_page = params[:per_page] || 10
-      @looks = query.order('updated_at asc').limit(@per_page)
+
+  def looks
+    case
+    when params[:looks_ids]  
+      Look.published.where(uuid:params[:looks_ids])
+    when params[:liked]
+      FlinkerLike.likes_for(current_flinker).includes(:look).order(LOOKS_ORDER).map(&:look)
+    when params[:updated_after]
+      Look.of_flinker_followings(current_flinker)
+      .published_after(params[:updated_after])
+      .order('updated_at asc')
+      .paginate(pagination)
+    when params[:flinker_ids]
+      Look.where(flinker_id:params[:flinker_ids])
+      .published_between(params[:published_after], params[:published_before])
+      .order(LOOKS_ORDER)
+      .paginate(pagination)
     else
-      @before = Time.at(params[:published_before].to_i) unless params[:published_before].blank?
-      @after = Time.at(params[:published_after].to_i) unless params[:published_after].blank?
-      @per_page = params[:per_page] || 10
-
-      flinker_ids = params[:flinker_ids] || current_flinker.flinker_follows.map(&:follow_id) if current_flinker.present?
-
-      query = Look.where(is_published:true)
-      query = query.where(flinker_id:flinker_ids) if (flinker_ids || []).any?
-      query = query.where("published_at < ?", @before) if @before.present?
-      query = query.where("published_at > ?", @after) if @after.present?
-      @looks = query.order("published_at desc").limit(@per_page)
+      Look.of_flinker_followings(current_flinker)
+      .published_between(params[:published_after], params[:published_before])
+      .order(LOOKS_ORDER)
+      .paginate(pagination)
     end
   end
 
-  def scope
-    { developer:@developer, device:@device, flinker:current_flinker, short:true }
-  end
 end

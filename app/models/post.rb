@@ -9,9 +9,9 @@ class Post < ActiveRecord::Base
   validates :link, presence:true
   validate :uniqueness_domain_independant, :on => :create #same post on multiple domains
   
-  before_validation :link_urls
+  before_validation :link_urls, on: :create
   before_validation :set_a_title, if: -> { self.title.blank? }
-  before_validation :clean_title
+  before_validation :clean_title, on: :create
   before_validation :set_published_at, if: -> { self.published_at.nil? }
   after_create :convert
   

@@ -23,7 +23,18 @@ class Look < ActiveRecord::Base
   scope :top_commented, ->(n=5) { 
     Look.joins(:comments).group('looks.id').order('count(*) desc').select('looks.id, count(*) as count').limit(n) 
   }
-  scope :published_updated_after, ->(date) { where('is_published_updated_at < ? and updated_at >= ?', date, date)}
+  scope :published_after, ->(date) {
+     where('is_published_updated_at < ? and updated_at >= ?', date, date)
+   }
+  scope :of_flinker_followings, ->(flinker){
+    ids = flinker.followings.map(&:id)
+    ids.any? && published.where(flinker_id:ids)
+  }
+  scope :published_between, ->(since, before) {
+    since ||= Time.at(0)
+    before ||= Date.today
+    published.where("published_at > ? and published_at < ?", since, before)
+  }
   
   def self.random collection=Look
     collection.offset(rand(collection.count)).first
