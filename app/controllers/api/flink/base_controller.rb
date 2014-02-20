@@ -47,13 +47,24 @@ class Api::Flink::BaseController < Api::ApiController
     res
   end
   
-  def serialize collection
-    ActiveModel::ArraySerializer.new(collection)
+  def serialize collection, opts={}
+    ActiveModel::ArraySerializer.new(collection, opts)
   end
   
   def api_log key, exception=nil
     return unless exception
     Rails.logger.error(%Q{[API #{key}] #{exception.inspect} \n #{exception.backtrace.join("\n")}})
+  end
+  
+  def scope
+    { developer:@developer, device:@device, flinker:current_flinker, short:true }
+  end
+  
+  def epochs_to_dates keys
+    keys.each { |key|  
+      date = params[key] && Time.at(params[key].to_i)
+      params[key] = date
+    }
   end
   
 end

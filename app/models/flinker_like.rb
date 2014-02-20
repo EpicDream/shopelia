@@ -22,6 +22,10 @@ class FlinkerLike < ActiveRecord::Base
     .order('count(*) desc')
   }
   
+  scope :likes_for, ->(flinker, type=LOOK) {
+    where(flinker_id:flinker.id, resource_type:type)
+  }
+  
   def product?
     resource_type == PRODUCT
   end
