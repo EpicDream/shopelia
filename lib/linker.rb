@@ -14,31 +14,37 @@ class Linker
   end
 
   def self.clean url
-    @canonizer = UrlCanonizer.new
-    count = 0
-    url = self.decode(url)
-    canonical = MerchantHelper.canonize(url) || self.by_rule(url) || @canonizer.get(url)
-    if canonical.nil?
-      orig = url
+    Timeout::timeout(10) do
       begin
-        uri = Utils.parse_uri_safely(url)
-        res = self.get(uri)
-        code = res.code
-        if res['refresh'].present?
-          res['location'] = res['refresh'].gsub(/\A.*URL=/, "")
-          code = "302"
-        end
-        url = self.ensure_url(res['location'], uri) if code =~ /^30/
-        count += 1
-      end while code =~ /^30/ && count < 10
+        @canonizer = UrlCanonizer.new
+        count = 0
+        url = self.decode(url)
+        canonical = MerchantHelper.canonize(url) || self.by_rule(url) || @canonizer.get(url)
+        if canonical.nil?
+          orig = url
+          begin
+            uri = Utils.parse_uri_safely(url)
+            res = self.get(uri)
+            code = res.code
+            if res['refresh'].present?
+              res['location'] = res['refresh'].gsub(/\A.*URL=/, "")
+              code = "302"
+            end
+            url = self.ensure_url(res['location'], uri) if code =~ /^30/
+            count += 1
+          end while code =~ /^30/ && count < 10
 
-      canonical = self.clean_url url
-      @canonizer.set(orig, canonical)
-      @canonizer.set(canonical, canonical)
+          canonical = self.clean_url url
+          @canonizer.set(orig, canonical)
+          @canonizer.set(canonical, canonical)
+        end
+        canonical
+      rescue
+        orig || url
+      end
     end
-    canonical
-  rescue
-    orig || url
+  rescue Timeout::Error
+    url
   end
 
   def self.monetize url
