@@ -17,6 +17,14 @@ class Image < ActiveRecord::Base
   before_validation :create_files
   after_post_process { self.picture_sizes = formats.to_json }
 
+  def self.upload payload
+    file = Tempfile.new('paper-clip-attachment')
+    file.write(payload)
+    yield file
+    file.close
+    file.unlink
+  end
+  
   private
   
   def create_files

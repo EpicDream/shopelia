@@ -34,7 +34,8 @@ class Flinker < ActiveRecord::Base
   validates :email, :presence => true
   validates :username, length:{ minimum:2 }, allow_nil: true, uniqueness:true
   validates_confirmation_of :password
-  
+  validates_attachment :avatar, :content_type => { :not => [:html] }
+    
   scope :publishers, where(is_publisher:true)
   scope :of_country, ->(iso) { !iso.blank? && joins(:country).where('countries.iso' => iso.upcase) }
   scope :of_country_or_universal, ->(iso) { 
