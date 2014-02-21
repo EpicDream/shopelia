@@ -4,3 +4,9 @@ agadir:
   url: "http://www.bla.com"
   flinker: betty
   published_at: <%= Time.now %>
+quimper:
+  uuid: "uuid"
+  name: "quimper"
+  url: "http://www.bla.com"
+  flinker: betty
+  published_at: <%= Time.now %>

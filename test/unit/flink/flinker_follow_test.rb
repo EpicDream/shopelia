@@ -19,17 +19,4 @@ class FlinkerFollowTest < ActiveSupport::TestCase
     assert_equal @followed, follow.following
   end
   
-  test "create follow activity after flinker_follow creation" do
-    assert_difference('FollowActivity.count', 1) do
-      2.times {
-        FlinkerFollow.create(flinker_id:@flinker.id, follow_id:@followed.id)
-      }
-    end
-    
-    activity = FollowActivity.last
-    assert_equal @flinker, activity.flinker
-    assert_equal @followed, activity.target
-    assert_equal FlinkerFollow.last, activity.resource
-  end
-  
 end

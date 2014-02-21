@@ -15,3 +15,7 @@ boop_like:
   flinker: boop
   resource_type: "look"
   look: agadir
+boop_like_two:
+  flinker: boop
+  resource_type: "look"
+  look: quimper

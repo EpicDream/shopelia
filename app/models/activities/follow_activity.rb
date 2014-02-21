@@ -6,4 +6,8 @@ class FollowActivity < Activity
     FollowNotificationWorker.perform_in(10.seconds, follow.follow_id, follow.flinker_id) unless follow.skip_notification
   end
   
+  def self.destroy_related_to! follow
+    FollowActivity.where(resource_id:follow.id).destroy_all
+  end
+  
 end

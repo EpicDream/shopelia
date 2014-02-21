@@ -22,4 +22,13 @@ class LikeActivityTest < ActiveSupport::TestCase
     end
   end
   
+  test "when flinker like is destroyed, the activities for this resource must be destroyed too" do
+    LikeActivity.create!(flinker_likes(:boop_like))
+    LikeActivity.create!(flinker_likes(:boop_like_two))
+    
+    assert_difference("LikeActivity.count", -2) do
+      flinker_likes(:boop_like).destroy
+    end
+  end
+  
 end
