@@ -2,6 +2,9 @@ class ActiveRecord::Base
   
   def self.act_as_flink_activity activity
     self.after_create(:"flink_create_#{activity}_activity")
+    if [:like, :follow].include?(activity)
+      self.after_destroy(:"flink_destroy_#{activity}_activities")
+    end
   end
   
   def flink_create_follow_activity
@@ -26,6 +29,14 @@ class ActiveRecord::Base
   
   def flink_create_comment_timeline_activity
     CommentTimelineActivity.create!(self)
+  end
+  
+  def flink_destroy_like_activities
+    LikeActivity.destroy_related_to!(self)
+  end
+  
+  def flink_destroy_follow_activities
+    FollowActivity.destroy_related_to!(self)
   end
 
 end

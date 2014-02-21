@@ -9,6 +9,11 @@ class LikeActivity < Activity
     end
   end
   
+  def self.destroy_related_to! flinker_like
+    return if flinker_like.product?
+    LikeActivity.where(resource_id:flinker_like.id).destroy_all
+  end
+  
   def look_uuid
     resource.look.uuid
   end
