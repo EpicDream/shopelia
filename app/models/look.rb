@@ -24,7 +24,7 @@ class Look < ActiveRecord::Base
     Look.joins(:comments).group('looks.id').order('count(*) desc').select('looks.id, count(*) as count').limit(n) 
   }
   scope :published_after, ->(date) {
-     where('is_published_updated_at < ? and updated_at >= ?', date, date)
+    where('is_published_updated_at < ? and updated_at >= ?', date, date)
    }
   scope :of_flinker_followings, ->(flinker){
     flinkers_ids = flinker.followings.map(&:id)
