@@ -17,11 +17,13 @@ class Admin::LooksController < Admin::AdminController
   private
 
   def set_published is_published
-    @look.update_attributes(is_published: is_published)
-    @look.mark_post_as_processed
-
-    look = Post.where("processed_at is null and look_id is not null").order("published_at desc").first.try(:look)
-    redirect_to look ? admin_look_path(look) : admin_posts_path
+    if @look.update_attributes(is_published: is_published) && @look.mark_post_as_processed
+      look = Post.where("processed_at is null and look_id is not null").order("published_at desc").first.try(:look)
+      redirect_to look ? admin_look_path(look) : admin_posts_path
+    else
+      flash[:error] = "La publication a échoué"
+      redirect_to admin_look_path(@look)
+    end
   end
 
   def retrieve_look
