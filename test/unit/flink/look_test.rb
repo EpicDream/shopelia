@@ -32,9 +32,21 @@ class LookTest < ActiveSupport::TestCase
   end
   
   test "set is_published_changed_at timestamp when a look is_published status change" do
-    @look.is_published = true
+    @look.is_published = false
     @look.save
 
     assert @look.is_published_updated_at.between?(Time.now - 10.seconds, Time.now)
+  end
+  
+  test "get looks of followings more looks liked by followings non publishers" do
+    flinker = flinkers(:fanny)
+    FlinkerFollow.create!(flinker_id:flinker.id, follow_id:flinkers(:betty).id)
+    FlinkerFollow.create!(flinker_id:flinker.id, follow_id:flinkers(:fanny).id)
+    FlinkerLike.create!(flinker_id:flinkers(:fanny).id, resource_type:"look", resource_id:looks(:quimper).id)
+    
+    looks = Look.of_flinker_followings(flinker)
+    
+    assert_equal 2, looks.count
+    assert_equal ["Agadir", "Quimper"].to_set, looks.map(&:name).to_set
   end
 end
