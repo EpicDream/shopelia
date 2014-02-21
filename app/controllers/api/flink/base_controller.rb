@@ -37,6 +37,10 @@ class Api::Flink::BaseController < Api::ApiController
     { json: { error:"Server Error" }, status: 500 }
   end
   
+  def success
+    { json: { status: :ok }}
+  end
+  
   def pagination per_page=PAGINATION_DEFAULT_PER_PAGE
     { page:params[:page] || PAGINATION_DEFAULT_PAGE, per_page: params[:per_page] || per_page }
   end

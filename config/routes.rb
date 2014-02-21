@@ -199,6 +199,7 @@ Shopelia::Application.routes.draw do
       resources :activities, :only => :index
       resources :facebook_friends, :only => :index
       resources :top_flinkers, :only => :index
+      resources :avatars, :only => :create
       resources :looks, :only => :index do
         resources :comments, :only => [:index, :create], :controller => "looks/comments"
         resources :sharings, :only => :create, :controller => "looks/sharings"
