@@ -42,22 +42,37 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
   test "it should reply with 401 when getting liked looks and not logged in" do
     sign_out @flinker
     get :index, format: :json, liked:1
+    
     assert_response 401
   end
 
-  test "it should get liked looks" do
+  test "it should get liked looks of current flinker" do
     FlinkerLike.create!(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:Look.last.id)
 
     get :index, format: :json, liked:1
+    
     assert_response :success
     assert_equal 1, json_response["looks"].count
+    assert_equal Look.last.uuid, json_response["looks"].first["uuid"]
+  end 
+  
+  test "it should get liked looks of flinker" do
+    flinker = flinkers(:fanny)
+    FlinkerLike.create!(flinker_id:flinker.id, resource_type:FlinkerLike::LOOK, resource_id:Look.first.id)
+
+    get :index, format: :json, liked:1, flinker_id:flinker.id
+    
+    assert_response :success
+    assert_equal 1, json_response["looks"].count
+    assert_equal Look.first.uuid, json_response["looks"].first["uuid"]
   end 
 
   test "it should get only looks you are following (1)" do
     sign_in flinkers(:elarch)
-
     FlinkerFollow.create!(flinker_id:flinkers(:elarch).id, follow_id:flinkers(:elarch).id)
+
     get :index, format: :json
+    
     assert_equal 0, json_response["looks"].count
   end
 

@@ -22,8 +22,9 @@ class FlinkerLike < ActiveRecord::Base
     .order('count(*) desc')
   }
   
-  scope :likes_for, ->(flinker, type=LOOK) {
-    where(flinker_id:flinker.id, resource_type:type)
+  scope :likes_for, ->(flinkers, type=LOOK) {
+    flinkers = [flinkers].flatten
+    where(flinker_id:flinkers.map(&:id), resource_type:type)
   }
   
   def product?

@@ -24,11 +24,12 @@ class Look < ActiveRecord::Base
     Look.joins(:comments).group('looks.id').order('count(*) desc').select('looks.id, count(*) as count').limit(n) 
   }
   scope :published_after, ->(date) {
-     where('is_published_updated_at < ? and updated_at >= ?', date, date)
+    where('is_published_updated_at < ? and updated_at >= ?', date, date)
    }
   scope :of_flinker_followings, ->(flinker){
-    ids = flinker.followings.map(&:id)
-    ids.any? && published.where(flinker_id:ids)
+    flinkers_ids = flinker.followings.map(&:id)
+    looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
+    (flinkers_ids.any? || looks_ids.any?) && published.where('flinker_id in (?) or id in (?)', flinkers_ids, looks_ids)
   }
   scope :published_between, ->(since, before) {
     since ||= Time.at(0)

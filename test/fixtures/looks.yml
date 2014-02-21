@@ -3,10 +3,12 @@ agadir:
   name: "Agadir"
   url: "http://www.bla.com"
   flinker: betty
+  is_published: true
   published_at: <%= Time.now %>
 quimper:
-  uuid: "uuid"
-  name: "quimper"
+  uuid: "1991991"
+  name: "Quimper"
   url: "http://www.bla.com"
-  flinker: betty
+  flinker: lilou
+  is_published: true
   published_at: <%= Time.now %>
