@@ -19,7 +19,7 @@ class FlinkerSerializer < ActiveModel::Serializer
   end
 
   def avatar
-    Rails.configuration.image_host + object.avatar.url(:thumb, timestamp:true)
+    Rails.configuration.avatar_host + object.avatar.url(:thumb, timestamp:true)
   end
 
   def rank
