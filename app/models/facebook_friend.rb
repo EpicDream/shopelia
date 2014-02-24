@@ -8,7 +8,7 @@ class FacebookFriend < ActiveRecord::Base
   validates :name, presence:true
   validates :flinker_id, presence:true
   
-  scope :of_flinker, ->(flinker) { where(flinker_id:flinker.id) }
+  scope :of_flinker, ->(flinker) { where(flinker_id:flinker.id, sex:"female") }
   scope :flinkers, -> { where('friend_flinker_id is not null') }
   scope :not_flinkers, -> { where('friend_flinker_id is null') }
   
