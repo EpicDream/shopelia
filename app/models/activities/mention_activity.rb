@@ -10,7 +10,7 @@ class MentionActivity < Activity
   end
   
   def self.flinkers_mentionned_in text
-    usernames = text.scan(/@([\w\d]+)\s/)
+    usernames = text.scan(/@([\w\d\._-]+)\s/)
     Flinker.where(username:usernames)
   end
   
