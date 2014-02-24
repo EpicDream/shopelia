@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 require 'test_helper'
 
 class CommentSerializerTest < ActiveSupport::TestCase
@@ -8,11 +7,8 @@ class CommentSerializerTest < ActiveSupport::TestCase
     @look = looks(:agadir)
   end
 
-  test "it should correctly serialize comment" do
+  test "serialize comment" do
     Comment.any_instance.stubs(:can_be_posted_on_blog?).returns(true)
-    commenter = Poster::Comment.new
-    commenter.expects(:deliver).returns(true)
-    Poster::Comment.expects(:new).with(comment).returns(commenter)
 
     @comment = Comment.create(body: "trop belle", flinker_id:@flinker.id, look_id:@look.id)
 
@@ -24,7 +20,6 @@ class CommentSerializerTest < ActiveSupport::TestCase
     assert_equal @comment.created_at.to_i, hash[:comment][:created_at]
     assert_equal @comment.posted, hash[:comment][:posted]
     assert hash[:comment][:flinker].present?
-
   end
 
   private
