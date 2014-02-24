@@ -13,7 +13,7 @@ class Api::Flink::AvatarsControllerTest < ActionController::TestCase
     @flinker.save!
     assert_match(/missing/, @flinker.avatar.url)
     
-    post :create, format: :json, payload:File.read("#{Rails.root}/app/assets/images/admin/girl_head.jpg")
+    post :create, format: :json, avatar:File.new("#{Rails.root}/app/assets/images/admin/girl_head.jpg")
     
     assert_response :success
     assert_not_match(/missing/, @flinker.reload.avatar.url)
