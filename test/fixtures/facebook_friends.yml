@@ -2,6 +2,7 @@ fanny:
   identifier: "909090"
   picture: "http://fanny.jpg"
   name: "Boop"
+  sex: "female"
   flinker: fanny
   friend: lilou
 
@@ -11,11 +12,13 @@ fanny_2nd:
   name: "Boopy"
   flinker: fanny
   friend: betty
+  sex: "female"
 
 boop:
   identifier: "9090902"
   picture: "http://fanny.jpg"
   name: "Boop"
+  sex: "female"
   flinker: boop
   friend: fanny
     
@@ -23,18 +26,21 @@ bibi:
   identifier: "9090909"
   picture: "http://bibi.jpg"
   name: "Bibi"
+  sex: "female"
   flinker: fanny
 
 zoe:
   identifier: "9090909"
   picture: "http://zoe.jpg"
   name: "Zoe"
+  sex: "female"
   flinker: lilou
 
 nana:
   identifier: "9091090"
   picture: "http://nana.jpg"
   name: "Anne"
+  sex: "female"
   flinker: boop
   friend: nana  
   
@@ -42,10 +48,12 @@ toto:
   identifier: "9091092230"
   picture: "http://nana.jpg"
   name: "Toto"
+  sex: "female"
   flinker: boop
 
 titi:
   identifier: "102020202200220"
   picture: "http://nana.jpg"
   name: "Titi"
+  sex: "female"
   flinker: boop
