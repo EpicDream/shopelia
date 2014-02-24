@@ -4,7 +4,7 @@ Shopelia::Application.configure do
   config.action_mailer.default_url_options = { :host => 'zola.epicdream.fr:4444' }
   #config.action_mailer.delivery_method = :letter_opener
   config.action_mailer.asset_host = "http://zola.epicdream.fr:4444"
-  config.avatar_host = 'http://www.flink.io:3440'
+  config.avatar_host = 'http://shopelia.fr:3440'
 
 
   # In the development environment your application's code is reloaded on
