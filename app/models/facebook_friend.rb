@@ -18,7 +18,7 @@ class FacebookFriend < ActiveRecord::Base
     query = "SELECT uid, name, username, sex FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1='#{auth.uid}')"
     friends = FbGraph::Query.new(query).fetch(access_token: auth.token)
     friends.each do |friend|
-      fb_friend = where(identifier:friend["uid"]).first || new(name:friend["name"], identifier:friend["uid"])
+      fb_friend = where(identifier:friend["uid"].to_s).first || new(name:friend["name"], identifier:friend["uid"])
       fb_friend.picture = "http://graph.facebook.com/#{friend['uid']}/picture?width=200&height=200&type=normal"
       fb_friend.friend_flinker_id = FlinkerAuthentication.with_uid(friend["uid"].to_s).first.try(:flinker_id)
       fb_friend.username = friend["username"]
