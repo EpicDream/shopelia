@@ -1,5 +1,5 @@
 class Api::Flink::FacebookFriendsController < Api::Flink::BaseController
-  before_filter :fetch_facebook_friends, if: -> { FacebookFriend.of_flinker(current_flinker).limit(1).count.zero? }
+  before_filter :fetch_facebook_friends
   
   def index
     render json: { flinkers:flinkers, has_next:@has_next }
