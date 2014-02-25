@@ -59,6 +59,10 @@ class Flinker < ActiveRecord::Base
     flinker_follows.map(&:following)
   end
   
+  def followers
+    FlinkerFollow.where(follow_id:self.id).map(&:flinker)
+  end
+  
   def device
     Device.where(flinker_id:self.id).last
   end
