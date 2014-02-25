@@ -32,4 +32,16 @@ class Api::Flink::FollowsControllerTest < ActionController::TestCase
 
     assert_equal 1, json_response.count
   end
+  
+  test "flinker follows with flinker_id param" do
+    boop = flinkers(:boop)
+    FlinkerFollow.create!(flinker_id:boop.id, follow_id:flinkers(:betty).id)
+    
+    get :index, format: :json, flinker_id:boop.id
+    
+    assert_response :success
+    assert_equal 1, json_response.count
+    assert_equal flinkers(:betty).id, json_response.first["id"]
+  end
+  
 end
