@@ -13,19 +13,6 @@
 
 ActiveRecord::Schema.define(:version => 20140225093246) do
 
-  create_table "activities", :force => true do |t|
-    t.integer  "flinker_id"
-    t.integer  "resource_id"
-    t.integer  "target_id"
-    t.string   "type"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-  end
-
-  add_index "activities", ["flinker_id"], :name => "index_activities_on_flinker_id"
-  add_index "activities", ["target_id"], :name => "index_activities_on_target_id"
-  add_index "activities", ["type"], :name => "index_activities_on_type"
-
   create_table "addresses", :force => true do |t|
     t.integer  "user_id"
     t.string   "code_name"
@@ -265,22 +252,6 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
   add_index "events", ["device_id"], :name => "index_events_on_device_id"
   add_index "events", ["product_id"], :name => "index_events_on_product_id"
 
-  create_table "facebook_friends", :force => true do |t|
-    t.integer  "flinker_id"
-    t.integer  "friend_flinker_id"
-    t.string   "identifier"
-    t.string   "name"
-    t.string   "picture"
-    t.datetime "created_at",        :null => false
-    t.datetime "updated_at",        :null => false
-    t.string   "username"
-    t.string   "sex"
-  end
-
-  add_index "facebook_friends", ["flinker_id"], :name => "index_facebook_friends_on_flinker_id"
-  add_index "facebook_friends", ["friend_flinker_id"], :name => "index_facebook_friends_on_friend_flinker_id"
-  add_index "facebook_friends", ["identifier"], :name => "index_facebook_friends_on_identifier"
-
   create_table "flinker_authentications", :force => true do |t|
     t.string   "provider"
     t.string   "uid"
@@ -288,8 +259,6 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
     t.integer  "flinker_id"
-    t.string   "email"
-    t.text     "picture"
   end
 
   create_table "flinker_follows", :force => true do |t|
@@ -311,7 +280,6 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
   end
 
   add_index "flinker_likes", ["flinker_id", "resource_type", "resource_id"], :name => "index_flinker_likes_on_all_fields"
-  add_index "flinker_likes", ["flinker_id"], :name => "index_flinker_likes_on_flinker_id"
   add_index "flinker_likes", ["resource_type", "resource_id"], :name => "index_flinker_likes_on_resource_type_and_resource_id"
 
   create_table "flinkers", :force => true do |t|
@@ -321,10 +289,10 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
     t.string   "avatar_content_type"
     t.integer  "avatar_file_size"
     t.datetime "avatar_updated_at"
-    t.datetime "created_at",                                  :null => false
-    t.datetime "updated_at",                                  :null => false
-    t.string   "email",                  :default => "",      :null => false
-    t.string   "encrypted_password",     :default => "",      :null => false
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
+    t.string   "email",                  :default => "",    :null => false
+    t.string   "encrypted_password",     :default => "",    :null => false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
@@ -345,22 +313,20 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
     t.decimal  "lat"
     t.decimal  "lng"
     t.boolean  "universal",              :default => false
-    t.string   "lang_iso",               :default => "en-GB"
   end
 
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true
   add_index "flinkers", ["country_id"], :name => "index_flinkers_on_country_id"
   add_index "flinkers", ["email"], :name => "index_flinkers_on_email", :unique => true
-  add_index "flinkers", ["is_publisher", "looks_count"], :name => "index_flinkers_on_is_publisher_and_looks_count"
+  add_index "flinkers", ["is_publisher", "staff_pick"], :name => "index_flinkers_on_is_publisher_and_staff_pick"
   add_index "flinkers", ["reset_password_token"], :name => "index_flinkers_on_reset_password_token", :unique => true
-  add_index "flinkers", ["username"], :name => "index_flinkers_on_username"
 
   create_table "images", :force => true do |t|
-    t.text     "url",                  :limit => 1024
+    t.text     "url"
     t.string   "type"
-    t.datetime "created_at",                           :null => false
-    t.datetime "updated_at",                           :null => false
-    t.text     "picture_file_name",    :limit => 255
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+    t.text     "picture_file_name"
     t.string   "picture_content_type"
     t.integer  "picture_file_size"
     t.datetime "picture_updated_at"
@@ -417,7 +383,6 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
     t.datetime "is_published_updated_at"
   end
 
-  add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"
   add_index "looks", ["is_published"], :name => "index_looks_on_is_published"
   add_index "looks", ["uuid"], :name => "index_looks_on_uuid"
 
@@ -427,18 +392,6 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
-
-  create_table "mentions", :force => true do |t|
-    t.integer  "flinker_id"
-    t.integer  "comment_id"
-    t.integer  "flinker_mentionned_id"
-    t.string   "type"
-    t.datetime "created_at",            :null => false
-    t.datetime "updated_at",            :null => false
-  end
-
-  add_index "mentions", ["flinker_id"], :name => "index_mentions_on_flinker_id"
-  add_index "mentions", ["type"], :name => "index_mentions_on_type"
 
   create_table "merchant_accounts", :force => true do |t|
     t.integer  "user_id"
@@ -530,9 +483,9 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
     t.integer  "merchant_id"
     t.string   "uuid"
     t.string   "state_name"
-    t.text     "message",                    :limit => 255
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.text     "message"
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
     t.string   "questions_json"
     t.string   "error_code"
     t.integer  "retry_count"
@@ -634,10 +587,10 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
     t.float    "price_strikeout"
     t.string   "shipping_info"
     t.text     "description"
-    t.datetime "created_at",                       :null => false
-    t.datetime "updated_at",                       :null => false
-    t.text     "option2",           :limit => 255
-    t.text     "option1",           :limit => 255
+    t.datetime "created_at",        :null => false
+    t.datetime "updated_at",        :null => false
+    t.text     "option2"
+    t.text     "option1"
     t.string   "name"
     t.boolean  "available"
     t.text     "image_url"
@@ -660,10 +613,10 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
   create_table "products", :force => true do |t|
     t.string   "name"
     t.integer  "merchant_id"
-    t.text     "url",                 :limit => 255
-    t.text     "image_url",           :limit => 255
-    t.datetime "created_at",                                            :null => false
-    t.datetime "updated_at",                                            :null => false
+    t.text     "url"
+    t.text     "image_url"
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.text     "description"
     t.integer  "product_master_id"
     t.string   "brand"
@@ -671,7 +624,7 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
     t.boolean  "viking_failure"
     t.string   "reference"
     t.datetime "muted_until"
-    t.boolean  "options_completed",                  :default => false
+    t.boolean  "options_completed",   :default => false
     t.datetime "viking_sent_at"
     t.string   "image_size"
     t.float    "rating"
