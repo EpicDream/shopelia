@@ -1,7 +1,7 @@
 class Comment < ActiveRecord::Base
+  act_as_flink_activity :comment_timeline
   act_as_flink_activity :comment
   act_as_flink_activity :mention
-  act_as_flink_activity :comment_timeline
   
   attr_accessible :body , :flinker_id, :look_id , :posted
   attr_accessor :post_to_blog

@@ -9,7 +9,6 @@ class CommentTimelineActivity < Activity
   
   def self.create! comment
     comments = Comment.timeline(comment.look_id).where('flinker_id <> ?', comment.flinker_id).includes(:flinker)
-    
     comments.map(&:flinker).uniq.each do |flinker|
       super(flinker_id:comment.flinker_id, target_id:flinker.id, resource_id:comment.id)
     end
