@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140219153343) do
+ActiveRecord::Schema.define(:version => 20140225093246) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -96,7 +96,7 @@ ActiveRecord::Schema.define(:version => 20140219153343) do
     t.datetime "updated_at",                     :null => false
     t.integer  "flinker_id"
     t.string   "avatar_url"
-    t.string   "country"
+    t.string   "country",     :default => "FR"
     t.boolean  "scraped",     :default => true
     t.boolean  "skipped",     :default => false
     t.boolean  "can_comment", :default => false
