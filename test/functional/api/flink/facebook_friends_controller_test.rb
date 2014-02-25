@@ -5,7 +5,7 @@ class Api::Flink::FacebookFriendsControllerTest < ActionController::TestCase
 
   setup do
     @flinker = flinkers(:boop)
-    FacebookFriend.expects(:create_or_update_friends).with(@flinker).never
+    FacebookFriend.expects(:create_or_update_friends).with(@flinker)
   end
   
   test "get index of facebook friends" do
@@ -38,7 +38,6 @@ class Api::Flink::FacebookFriendsControllerTest < ActionController::TestCase
     sign_in @flinker
     
     FacebookFriend.destroy_all
-    FacebookFriend.expects(:create_or_update_friends).with(@flinker)
     
     get :index, page:1, per_page:1, format: :json
     

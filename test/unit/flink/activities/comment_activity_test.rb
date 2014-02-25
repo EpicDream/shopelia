@@ -16,4 +16,14 @@ class CommentActivityTest < ActiveSupport::TestCase
     assert_equal @commenter.friends.to_set, CommentActivity.all.map(&:target).to_set
   end
   
+  test "don't create comment activity if related timeline activity exists" do
+    comment = comments(:agadir)
+    target = flinkers(:fanny)
+    CommentTimelineActivity.create(flinker_id:comment.flinker_id, target_id:target.id, resource_id:comment.id)
+    
+    assert_difference("CommentActivity.count", 1) do
+      CommentActivity.create!(comments(:agadir))
+    end
+  end
+  
 end

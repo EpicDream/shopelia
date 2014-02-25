@@ -4,6 +4,7 @@ class CommentActivity < Activity
   def self.create! comment
     friends = comment.flinker.friends
     friends.each do |friend|
+      next if CommentTimelineActivity.for_comment_and_target(comment, friend).first
       super(flinker_id:comment.flinker_id, target_id:friend.id, resource_id:comment.id)
     end
   end

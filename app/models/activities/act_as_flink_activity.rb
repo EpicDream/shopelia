@@ -1,7 +1,8 @@
 class ActiveRecord::Base
   
   def self.act_as_flink_activity activity
-    self.after_create(:"flink_create_#{activity}_activity")
+    opts = activity == :comment_timeline ? { prepend:true } : {}
+    self.after_create(:"flink_create_#{activity}_activity", opts)
     if [:like, :follow].include?(activity)
       self.after_destroy(:"flink_destroy_#{activity}_activities")
     end
