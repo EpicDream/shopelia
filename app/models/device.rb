@@ -70,7 +70,9 @@ class Device < ActiveRecord::Base
   end
   
   def env
-    is_dev? || is_beta? ? :development : :production
+    return :development if is_dev?
+    return :beta if is_beta?
+    :production
   end
 
   private
