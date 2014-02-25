@@ -60,7 +60,7 @@ class Flinker < ActiveRecord::Base
   end
   
   def followers
-    FlinkerFollow.where(follow_id:self.id).map(&:flinker)
+    Flinker.where(id:FlinkerFollow.where(follow_id:self.id).map(&:flinker_id)).includes(:country)
   end
   
   def device
