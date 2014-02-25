@@ -2,8 +2,7 @@ class Api::Flink::FollowsController < Api::Flink::BaseController
 
   def index
     flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
-    flinkers = Flinker.where(id:flinker.followings.map(&:id)).includes(:country)
-    render json: ActiveModel::ArraySerializer.new(flinkers)
+    render json: ActiveModel::ArraySerializer.new(flinker.followings)
   end
 
   def create
@@ -20,4 +19,5 @@ class Api::Flink::FollowsController < Api::Flink::BaseController
     FlinkerFollow.where("flinker_id=? and follow_id=?", current_flinker.id, params[:id]).destroy_all
     head :no_content
   end
+  
 end
