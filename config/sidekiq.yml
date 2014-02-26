@@ -3,3 +3,4 @@
 :queues:
   - [default, 5]
   - [blogs_scraper, 4]
+  - [notifications, 10]
