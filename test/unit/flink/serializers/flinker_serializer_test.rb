@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 require 'test_helper'
 
 class FlinklerSerializerTest < ActiveSupport::TestCase
@@ -7,9 +6,9 @@ class FlinklerSerializerTest < ActiveSupport::TestCase
     @flinker = flinkers(:betty)
   end
   
-  test "it should correctly serialize flinker" do
-    flinker_serializer = FlinkerSerializer.new(@flinker)
-    hash = flinker_serializer.as_json
+  test "serialize flinker" do
+    serializer = FlinkerSerializer.new(@flinker)
+    hash = serializer.as_json
       
     assert_equal @flinker.id, hash[:flinker][:id]
     assert_equal @flinker.name, hash[:flinker][:name]
@@ -17,5 +16,14 @@ class FlinklerSerializerTest < ActiveSupport::TestCase
     assert_equal Rails.configuration.image_host + @flinker.avatar.url(:thumb), hash[:flinker][:avatar]
     assert_equal 1, hash[:flinker][:staff_pick]
     assert_equal "FR", hash[:flinker][:country]
+    assert_equal 1, hash[:flinker][:liked_count]
   end
+  
+  test "serialize non publisher without liked count" do
+    flinker = flinkers(:fanny)
+    hash = FlinkerSerializer.new(flinker).as_json
+    
+    assert !hash[:flinker].has_key?(:liked_count)
+  end
+  
 end
