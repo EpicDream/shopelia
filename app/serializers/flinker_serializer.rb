@@ -1,7 +1,8 @@
 class FlinkerSerializer < ActiveModel::Serializer
   attributes :id, :name, :url, :email, :username, :avatar, :country, :staff_pick, :rank, :publisher
   attributes :likes_count, :follows_count, :looks_count, :comments_count, :followed_count
-
+  attributes :liked_count
+  
   def publisher
     object.is_publisher? ? 1 : 0
   end
@@ -44,6 +45,14 @@ class FlinkerSerializer < ActiveModel::Serializer
   
   def followed_count
     object.activities_counts["followed"]
+  end
+  
+  def liked_count
+    FlinkerLike.liked_for(object).count
+  end
+  
+  def include_liked_count?
+    object.is_publisher?
   end
   
 end
