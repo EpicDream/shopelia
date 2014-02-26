@@ -5,7 +5,7 @@ module Flink
     attr_accessor :message, :flinker
     
     def deliver
-      Flink::Push.deliver(message, flinker.device)
+      Flink::Push.deliver(message, flinker.device) if flinker.device
     end
   end
 end

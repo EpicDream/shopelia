@@ -1,6 +1,5 @@
 class Api::ApiController < ActionController::Base
-  prepend_before_filter :get_auth_token
-  before_filter :authenticate_developer!
+  prepend_before_filter :get_auth_token, :authenticate_developer!
   before_filter :authenticate_user!
   before_filter :set_api_locale
   after_filter :remove_session_cookie
@@ -8,6 +7,8 @@ class Api::ApiController < ActionController::Base
   before_filter :retrieve_tracker
   before_filter :retrieve_device
   before_filter :retrieve_country_iso
+  before_filter :retrieve_user_language
+  before_filter :complete_flinker_params
   
   rescue_from ActiveRecord::RecordNotFound do |e|
     render :json => {:error => "Object not found"}, :status => :not_found
@@ -56,6 +57,16 @@ class Api::ApiController < ActionController::Base
   
   def retrieve_user_language
     params[:"x-user-language"] = request.headers["X-Flink-User-Language"]
+  end
+  
+  def complete_flinker_params
+    return unless params[:flinker]
+    
+    params[:flinker].merge!({ 
+      developer_id:@developer.id, 
+      country_iso:params[:"x-country-iso"],
+      lang_iso:params[:"x-user-language"],
+    })
   end
   
   def iso_from_accept_language_header #TODO temp

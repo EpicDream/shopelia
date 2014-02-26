@@ -42,6 +42,16 @@ class Api::Flink::RegistrationsControllerTest < ActionController::TestCase
     end
   end
   
+  test "assign lang iso code to flinker" do
+    @request.env["X-Flink-User-Language"] = "fr-FR"
+    
+    post :create, params, format: :json
+    
+    flinker = Flinker.last
+    
+    assert_equal "fr-FR", flinker.lang_iso
+  end
+  
   private
   
   def params
