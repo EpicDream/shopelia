@@ -107,6 +107,19 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     assert_equal "ES", json_response["flinker"]["country"]
     assert_equal countries(:spain), flinkers(:fanny).reload.country
   end
+  
+  test "update lang iso code" do
+    fanny = flinkers(:fanny)
+    @request.env["X-Flink-User-Language"] = "fr-FR"
+    sign_in fanny
+    
+    assert_equal 'en-GB', fanny.lang_iso
+    
+    put :update, format: :json
+    
+    assert_response :success
+    assert_equal 'fr-FR', fanny.reload.lang_iso
+  end
 
 end
 

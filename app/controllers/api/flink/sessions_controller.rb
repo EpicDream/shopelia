@@ -29,16 +29,21 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
   
   def update
     render unauthorized and return unless current_flinker
-    fix_country() #temp
-    FlinkerAuthentication.facebook(params[:token])
+    update_country_iso
+    update_lang_iso
+    FlinkerAuthentication.facebook(params[:token]) if params[:token]
     render json_for(current_flinker)
   end
   
   private
   
-  def fix_country
+  def update_country_iso
     current_flinker.country_iso = params[:"x-country-iso"]
     current_flinker.country_from_iso_code and current_flinker.save
+  end
+  
+  def update_lang_iso
+    current_flinker.update_attributes(lang_iso:params[:"x-user-language"])
   end
   
   def sign_in_by_email
