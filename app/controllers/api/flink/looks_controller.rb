@@ -22,7 +22,7 @@ class Api::Flink::LooksController < Api::Flink::BaseController
       Look.where(id:ids).order(LOOKS_ORDER).paginate(pagination)
     when params[:updated_after]
       Look.of_flinker_followings(current_flinker)
-      .published_after(params[:updated_after])
+      .updated_after(params[:updated_after])
       .order('updated_at asc')
       .paginate(pagination)
     when params[:flinker_ids]

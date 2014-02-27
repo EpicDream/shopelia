@@ -23,19 +23,24 @@ class Look < ActiveRecord::Base
   scope :top_commented, ->(n=5) { 
     Look.joins(:comments).group('looks.id').order('count(*) desc').select('looks.id, count(*) as count').limit(n) 
   }
-  scope :published_after, ->(date) {
+  scope :updated_after, ->(date) {
     where('flink_published_at < ? and updated_at >= ?', date, date)
    }
-  scope :of_flinker_followings, ->(flinker){ #TODO: faire scope liked_looks_of_followings...
+  scope :of_flinker_followings, ->(flinker){
     flinkers_ids = flinker.followings.map(&:id)
     looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
     
     (flinkers_ids.any? || looks_ids.any?) && published.where('flinker_id in (?) or id in (?)', flinkers_ids, looks_ids)
   }
-  scope :published_between, ->(since, before) {#WARNING:#old verion
+  scope :published_between, ->(since, before) {
     since ||= Time.at(0)
     before ||= Date.today
     published.where("published_at > ? and published_at < ?", since, before)
+  }
+  scope :flink_published_between, ->(since, before) {
+    since ||= Time.at(0)
+    before ||= Date.today
+    published.where("flink_published_at > ? and flink_published_at < ?", since, before)
   }
   
   def self.random collection=Look
