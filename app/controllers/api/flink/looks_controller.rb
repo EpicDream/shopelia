@@ -1,5 +1,5 @@
 class Api::Flink::LooksController < Api::Flink::BaseController
-  LOOKS_ORDER = "looks.flink_published_at desc"
+  LOOKS_ORDER = "looks.published_at desc"
   
   skip_before_filter :authenticate_flinker!
   before_filter { epochs_to_dates [:updated_after, :published_before, :published_after] }
@@ -12,7 +12,7 @@ class Api::Flink::LooksController < Api::Flink::BaseController
 
   private
 
-  def looks#TODO refactor, split in different controllers
+  def looks #TODO refactor, split in different controllers
     case
     when params[:looks_ids]  
       Look.published.where(uuid:params[:looks_ids])
