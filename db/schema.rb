@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140225093246) do
+ActiveRecord::Schema.define(:version => 20140227112252) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -410,11 +410,11 @@ ActiveRecord::Schema.define(:version => 20140225093246) do
     t.string   "url"
     t.integer  "flinker_id"
     t.datetime "published_at"
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
-    t.boolean  "is_published",            :default => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.boolean  "is_published",       :default => false
     t.string   "description"
-    t.datetime "is_published_updated_at"
+    t.datetime "flink_published_at"
   end
 
   add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"
