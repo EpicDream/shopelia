@@ -1,5 +1,6 @@
 class LookSerializer < ActiveModel::Serializer
-  attributes :uuid, :name, :url, :published_at, :flinker, :products, :images, :liked, :description, :updated_at
+  attributes :uuid, :name, :url, :published_at, :flinker, :products, :images, :liked, :description
+  attributes :updated_at, :flink_published_at
   
   def name
     object.name.try(:strip)
@@ -11,6 +12,10 @@ class LookSerializer < ActiveModel::Serializer
   
   def updated_at
     object.updated_at.to_i
+  end
+  
+  def flink_published_at
+    object.flink_published_at.to_i
   end
 
   def flinker

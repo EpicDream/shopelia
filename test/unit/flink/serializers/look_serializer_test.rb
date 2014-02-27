@@ -22,7 +22,8 @@ class LookSerializerTest < ActiveSupport::TestCase
     LookImage.destroy_all #to clear paper clip files
   end  
   
-  test "it should correctly serialize look" do
+  test "serialize look" do
+    @look.update_attributes(flink_published_at:Time.now + 1.day)
     look_serializer = LookSerializer.new(@look)
     hash = look_serializer.as_json
       
@@ -31,6 +32,8 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert_equal @look.url, hash[:look][:url]
     assert_equal @look.published_at.to_i, hash[:look][:published_at]
     assert_equal @look.updated_at.to_i, hash[:look][:updated_at]
+    assert_equal @look.flink_published_at.to_i, hash[:look][:flink_published_at]
+    
     assert hash[:look][:flinker].present?
     assert_equal 1, hash[:look][:products].count
     assert_equal 2, hash[:look][:images].count
