@@ -201,6 +201,7 @@ Shopelia::Application.routes.draw do
       resources :top_flinkers, :only => :index
       resources :avatars, :only => :create
       resources :follows, :only => [:index, :create, :destroy]
+      resources :followings, :only => [:index, :create, :destroy]
       resources :followers, :only => :index
       resources :looks, :only => :index do
         resources :comments, :only => [:index, :create], :controller => "looks/comments"
