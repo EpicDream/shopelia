@@ -35,7 +35,7 @@ class LookTest < ActiveSupport::TestCase
     @look.is_published = false
     @look.save
 
-    assert @look.is_published_updated_at.between?(Time.now - 10.seconds, Time.now)
+    assert @look.flink_published_at.between?(Time.now - 10.seconds, Time.now)
   end
   
   test "get looks of followings more looks liked by followings non publishers" do
