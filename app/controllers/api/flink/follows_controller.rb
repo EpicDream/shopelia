@@ -2,10 +2,7 @@ class Api::Flink::FollowsController < Api::Flink::BaseController
 
   def index
     flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
-    render json: {
-      flinkers:serialize(paged flinker.followings),
-      has_next:@has_next
-    }
+    render json:ActiveModel::ArraySerializer.new(flinker.followings)
   end
 
   def create
