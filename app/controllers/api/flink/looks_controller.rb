@@ -1,5 +1,5 @@
 class Api::Flink::LooksController < Api::Flink::BaseController
-  LOOKS_ORDER = "looks.published_at desc"
+  LOOKS_ORDER = "looks.flink_published_at desc"
   
   skip_before_filter :authenticate_flinker!
   before_filter { epochs_to_dates [:updated_after, :published_before, :published_after] }
@@ -18,7 +18,7 @@ class Api::Flink::LooksController < Api::Flink::BaseController
       Look.published.where(uuid:params[:looks_ids])
     when params[:liked]
       flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
-      ids = FlinkerLike.likes_for(flinker).includes(:look).map(&:resource_id)
+      ids = FlinkerLike.likes_for(flinker).map(&:resource_id)
       Look.where(id:ids).order(LOOKS_ORDER).paginate(pagination)
     when params[:updated_after]
       Look.of_flinker_followings(current_flinker)
