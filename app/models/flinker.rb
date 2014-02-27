@@ -55,11 +55,11 @@ class Flinker < ActiveRecord::Base
     self.blog.update_attributes(name:name) if self.blog
   end
   
-  def followings
-    flinker_follows.map(&:following)
+  def followings#TODO Refactor
+    Flinker.where(id:flinker_follows.map(&:follow_id))
   end
   
-  def followers
+  def followers#TODO Refactor
     Flinker.where(id:FlinkerFollow.where(follow_id:self.id).map(&:flinker_id)).includes(:country)
   end
   

@@ -24,13 +24,15 @@ class Api::Flink::FollowsControllerTest < ActionController::TestCase
     end    
   end
 
-  test "it should sent all following id" do
+  test "flinker follows of current flinker" do
     FlinkerFollow.create!(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
 
     get :index, format: :json
+    
+    flinkers = json_response["flinkers"]
+    
     assert_response :success
-
-    assert_equal 1, json_response.count
+    assert_equal 1, flinkers.count
   end
   
   test "flinker follows with flinker_id param" do
@@ -39,9 +41,10 @@ class Api::Flink::FollowsControllerTest < ActionController::TestCase
     
     get :index, format: :json, flinker_id:boop.id
     
+    flinkers = json_response["flinkers"]
     assert_response :success
-    assert_equal 1, json_response.count
-    assert_equal flinkers(:betty).id, json_response.first["id"]
+    assert_equal 1, flinkers.count
+    assert_equal flinkers(:betty).id, flinkers.first["id"]
   end
   
 end
