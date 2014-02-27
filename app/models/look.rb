@@ -26,16 +26,16 @@ class Look < ActiveRecord::Base
   scope :published_after, ->(date) {
     where('flink_published_at < ? and updated_at >= ?', date, date)
    }
-  scope :of_flinker_followings, ->(flinker){
+  scope :of_flinker_followings, ->(flinker){ #TODO: faire scope liked_looks_of_followings...
     flinkers_ids = flinker.followings.map(&:id)
     looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
     
     (flinkers_ids.any? || looks_ids.any?) && published.where('flinker_id in (?) or id in (?)', flinkers_ids, looks_ids)
   }
-  scope :published_between, ->(since, before) {
+  scope :published_between, ->(since, before) {#WARNING:#old verion
     since ||= Time.at(0)
     before ||= Date.today
-    published.where("flink_published_at > ? and flink_published_at < ?", since, before)
+    published.where("published_at > ? and published_at < ?", since, before)
   }
   
   def self.random collection=Look
