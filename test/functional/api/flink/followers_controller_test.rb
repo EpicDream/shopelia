@@ -16,9 +16,10 @@ class Api::Flink::FollowersControllerTest < ActionController::TestCase
 
     get :index, format: :json
     
+    flinkers = json_response["flinkers"]
     assert_response :success
-    assert_equal 2, json_response.count
-    assert_equal [boop.id, lilou.id].to_set, json_response.map { |f| f["id"] }.to_set
+    assert_equal 2, flinkers.count
+    assert_equal [boop.id, lilou.id].to_set, flinkers.map { |f| f["id"] }.to_set
   end
   
   test "followers of any flinker" do
@@ -28,9 +29,10 @@ class Api::Flink::FollowersControllerTest < ActionController::TestCase
 
     get :index, format: :json, flinker_id:flinkers(:lilou).id
     
+    flinkers = json_response["flinkers"]
     assert_response :success
-    assert_equal 2, json_response.count
-    assert_equal [flinkers(:boop).id, @fanny.id].to_set, json_response.map { |f| f["id"] }.to_set
+    assert_equal 2, flinkers.count
+    assert_equal [flinkers(:boop).id, @fanny.id].to_set, flinkers.map { |f| f["id"] }.to_set
   end
   
 end

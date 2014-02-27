@@ -18,7 +18,8 @@ class Api::Flink::LooksController < Api::Flink::BaseController
       Look.published.where(uuid:params[:looks_ids])
     when params[:liked]
       flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
-      FlinkerLike.likes_for(flinker).includes(:look).order(LOOKS_ORDER).map(&:look)
+      ids = FlinkerLike.likes_for(flinker).includes(:look).order(LOOKS_ORDER).map(&:resource_id)
+      Look.where(id:ids).paginate(pagination)
     when params[:updated_after]
       Look.of_flinker_followings(current_flinker)
       .published_after(params[:updated_after])
