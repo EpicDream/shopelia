@@ -12,7 +12,7 @@ class Api::Flink::LooksController < Api::Flink::BaseController
 
   private
 
-  def looks
+  def looks#TODO refactor, split in different controllers
     case
     when params[:looks_ids]  
       Look.published.where(uuid:params[:looks_ids])
