@@ -43,6 +43,10 @@ class Look < ActiveRecord::Base
     published.where("flink_published_at > ? and flink_published_at < ?", since, before)
   }
   
+  scope :with_comment_matching, ->(pattern) {
+    joins(:comments).where('comments.body ~* ?', pattern).select('distinct on(looks.id) *')
+  }
+  
   def self.random collection=Look
     collection.offset(rand(collection.count)).first
   end
