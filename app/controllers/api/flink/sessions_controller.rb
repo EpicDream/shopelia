@@ -24,6 +24,7 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     render unauthorized and return unless flinker
     flinker.authentication_token = nil
     flinker.save
+    flinker.devices.destroy_all
     render json: {}, status: :ok
   end
   

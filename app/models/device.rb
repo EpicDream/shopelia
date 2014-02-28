@@ -16,6 +16,8 @@ class Device < ActiveRecord::Base
   attr_accessible :referrer, :phone, :user_agent, :email, :uuid
   attr_accessible :pending_answer, :is_dev, :is_beta, :rating, :flinker_id
   
+  scope :of_flinker, ->(flinker) { where(flinker_id:flinker.id) }
+  
   def self.fetch uuid, ua
     Device.find_by_uuid(uuid) || Device.create(uuid:uuid,user_agent:ua)
   end

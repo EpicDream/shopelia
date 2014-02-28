@@ -20,6 +20,7 @@ class Flinker < ActiveRecord::Base
   has_many :comments
   has_many :flinker_authentications
   has_many :flinker_likes
+  has_many :devices, dependent: :destroy
   has_many :flinker_follows, include: :following
   belongs_to :country
   has_one :blog
@@ -64,7 +65,7 @@ class Flinker < ActiveRecord::Base
   end
   
   def device
-    Device.where(flinker_id:self.id).last
+    devices.last
   end
   
   def country_from_iso_code

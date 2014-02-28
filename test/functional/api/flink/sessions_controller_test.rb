@@ -120,6 +120,18 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal 'fr-FR', fanny.reload.lang_iso
   end
+  
+  test "destroy flinker devices after sign out" do
+    fanny = flinkers(:fanny)
+    sign_in fanny
+    
+    assert_equal 2, Device.of_flinker(fanny).count
+
+    post :destroy, email: fanny.email, format: :json
+
+    assert_response :success
+    assert_equal 0, Device.of_flinker(fanny).count
+  end
 
 end
 
