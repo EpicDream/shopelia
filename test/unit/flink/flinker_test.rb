@@ -73,6 +73,13 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal ["boop", "bettyusername", "nanausername", "Lilou"].to_set, friends.map(&:username).to_set
   end
   
+  test "activities counts only looks published" do
+    flinker = flinkers(:betty)
+    flinker.looks.first.update_attributes(is_published:false)
+    
+    assert_equal 0, flinker.activities_counts["looks"]
+  end
+  
   private
 
   def new_flinker

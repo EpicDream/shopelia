@@ -11,7 +11,7 @@ module ActivitySql
        (select count(*) as count from flinker_follows where flinker_id = #{flinker.id}) followings,
        (select count(*) as count from flinker_follows where follow_id = #{flinker.id}) followed,
        (select count(*) as count from flinker_likes where flinker_id = #{flinker.id}) likes,
-       (select count(*) as count from looks where flinker_id = #{flinker.id}) looks,
+       (select count(*) as count from looks where flinker_id = #{flinker.id} and is_published = 't') looks,
        (select count(*) as count from comments where flinker_id = #{flinker.id}) comments
     }
   end
