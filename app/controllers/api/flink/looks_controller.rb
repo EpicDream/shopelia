@@ -25,7 +25,7 @@ class Api::Flink::LooksController < Api::Flink::BaseController
       .updated_after(params[:updated_after])
       .order('updated_at asc')
       .paginate(pagination)
-    when params[:flinker_ids]
+    when params[:flinker_ids] #CHANGED: => /flink/flinkers/looks
       Look.where(flinker_id:params[:flinker_ids])
       .published_between(params[:published_after], params[:published_before])
       .order(LOOKS_ORDER)

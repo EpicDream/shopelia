@@ -216,6 +216,9 @@ Shopelia::Application.routes.draw do
         resources :looks, only: :index
         resources :updated_looks, only: :index
       end
+      namespace :flinkers do
+        resources :looks, only: :index
+      end
     end
   end
 
