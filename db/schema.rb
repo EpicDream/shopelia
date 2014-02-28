@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140227112252) do
+ActiveRecord::Schema.define(:version => 20140228144248) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -177,6 +177,7 @@ ActiveRecord::Schema.define(:version => 20140227112252) do
     t.boolean  "posted",     :default => false
   end
 
+  add_index "comments", ["body"], :name => "index_comments_on_body"
   add_index "comments", ["flinker_id"], :name => "index_comments_on_flinker_id"
   add_index "comments", ["look_id"], :name => "index_comments_on_look_id"
 
