@@ -43,4 +43,24 @@ class Api::Flink::Followings::LooksControllerTest < ActionController::TestCase
     assert_equal 2, json_response["looks"].count
   end
   
+  test "include ids of friends who liked the look" do
+    lilou = flinkers(:lilou) #lilou is flinker fb friend of fanny
+    betty = flinkers(:betty)
+    liked_look = betty.looks.first
+    follow betty
+    FlinkerLike.create(flinker_id:lilou.id, resource_type:"look", resource_id:liked_look.id)
+    
+    get :index, format: :json, per_page:10
+    
+    assert_response :success
+    
+    json_response["looks"].each do |look|
+      if look["uuid"] == liked_look.uuid
+        assert_equal([lilou.id], look["liked_by_friends"]) 
+      else
+        assert_equal [], look["liked_by_friends"]
+      end
+    end
+  end
+  
 end
