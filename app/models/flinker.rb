@@ -57,12 +57,14 @@ class Flinker < ActiveRecord::Base
     self.blog.update_attributes(name:name) if self.blog
   end
   
-  def followings#TODO: Refactor
-    Flinker.where(id:flinker_follows.map(&:follow_id))
+  def followings
+    Flinker.joins('join flinker_follows on flinkers.id = flinker_follows.follow_id')
+    .where('flinker_follows.flinker_id = ?', self.id)
   end
   
-  def followers#TODO: Refactor
-    Flinker.where(id:FlinkerFollow.where(follow_id:self.id).map(&:flinker_id)).includes(:country)
+  def followers
+    Flinker.joins('join flinker_follows on flinkers.id = flinker_follows.flinker_id')
+    .where('flinker_follows.follow_id = ?', self.id)
   end
   
   def device
