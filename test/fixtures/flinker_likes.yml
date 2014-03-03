@@ -2,11 +2,15 @@ one:
   flinker: betty
 two:
   flinker: betty
+  look: brest
+  resource_type: 'look'
 three:
   flinker: fanny
   resource_type: 'product'
 four:
   flinker: fanny
+  look: agadir
+  resource_type: 'look'
 five:
   flinker: fanny
 six:

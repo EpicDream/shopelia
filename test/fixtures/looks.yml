@@ -12,3 +12,10 @@ quimper:
   flinker: lilou
   is_published: true
   published_at: <%= Time.now %>
+brest:
+  uuid: "199891991"
+  name: "Brest"
+  url: "http://www.bla.com"
+  flinker: boop
+  is_published: false
+  published_at: <%= Time.now %>

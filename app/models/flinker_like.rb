@@ -14,7 +14,8 @@ class FlinkerLike < ActiveRecord::Base
   validates :resource_id, :presence => true, :uniqueness => { :scope => [:flinker_id, :resource_type]}
 
   scope :top_likers, ->(max=20, since=Date.parse("2014-01-01")) { 
-    where('created_at >= ?', since)
+    where('created_at::DATE >= ?', since)
+    .where(resource_type:LOOK)
     .includes(:flinker)
     .group('flinker_id')
     .select('flinker_id, count(*)')

@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class FlinklerSerializerTest < ActiveSupport::TestCase
+class FlinkerSerializerTest < ActiveSupport::TestCase
   
   setup do
     @flinker = flinkers(:betty)
@@ -16,7 +16,7 @@ class FlinklerSerializerTest < ActiveSupport::TestCase
     assert_equal Rails.configuration.image_host + @flinker.avatar.url(:thumb), hash[:flinker][:avatar]
     assert_equal 1, hash[:flinker][:staff_pick]
     assert_equal "FR", hash[:flinker][:country]
-    assert_equal 1, hash[:flinker][:liked_count]
+    assert_equal 2, hash[:flinker][:liked_count]
   end
   
   test "serialize non publisher without liked count" do

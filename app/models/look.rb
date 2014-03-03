@@ -24,9 +24,9 @@ class Look < ActiveRecord::Base
     Look.joins(:comments).group('looks.id').order('count(*) desc').select('looks.id, count(*) as count').limit(n) 
   }
   scope :updated_after, ->(date) {
-    where('flink_published_at < ? and updated_at >= ?', date, date)
+    where('flink_published_at < ? and updated_at > ?', date, date)
    }
-  scope :of_flinker_followings, ->(flinker){
+  scope :of_flinker_followings, ->(flinker){#TODO:refactor using jointure
     flinkers_ids = flinker.followings.map(&:id)
     looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
     
@@ -40,13 +40,11 @@ class Look < ActiveRecord::Base
   scope :flink_published_between, ->(since, before) {
     since ||= Time.at(0)
     before ||= Date.today
-    published.where("flink_published_at > ? and flink_published_at < ?", since, before)
+    published.where("flink_published_at::DATE >= ? and flink_published_at::DATE <= ?", since, before)
   }
-  
   scope :with_comment_matching, ->(pattern) {
     joins(:comments).where('comments.body ~* ?', pattern).select('distinct on(looks.id) *')
   }
-  
   scope :liked_by, ->(flinker) {
     joins('join flinker_likes on flinker_likes.resource_id = looks.id').where('flinker_likes.flinker_id = ?', flinker.id)
   }

@@ -16,7 +16,7 @@ class CommentTimelineActivityTest < ActiveSupport::TestCase
       Comment.create!(body:"Cool!", look_id:initial_comment.look.id, flinker_id:commenter.id) #fanny comment
     end
     
-    activity = CommentTimelineActivity.last
+    activity = CommentTimelineActivity.find_by_target_id(flinkers(:lilou).id)
     
     assert_equal [flinkers(:boop), flinkers(:lilou)].to_set, CommentTimelineActivity.all.map(&:target).to_set
     assert_equal Comment.last, activity.resource

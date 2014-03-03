@@ -6,6 +6,7 @@ class Api::Flink::Likes::LooksControllerTest < ActionController::TestCase
   setup do
     @flinker = flinkers(:fanny)
     sign_in @flinker
+    FlinkerLike.destroy_all
   end
 
   test "looks liked of current flinker" do
@@ -20,7 +21,6 @@ class Api::Flink::Likes::LooksControllerTest < ActionController::TestCase
   
   test "looks liked of flinker with given id" do
     flinker = flinkers(:lilou)
-    FlinkerLike.destroy_all
     FlinkerLike.create!(flinker_id:flinker.id, resource_type:FlinkerLike::LOOK, resource_id:Look.first.id)
     
     get :index, format: :json, flinker_id:flinker.id

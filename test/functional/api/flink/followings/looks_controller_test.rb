@@ -40,7 +40,7 @@ class Api::Flink::Followings::LooksControllerTest < ActionController::TestCase
     get :index, format: :json, per_page:20, flink_published_after:after, flink_published_before:before
     
     assert_response :success
-    assert_equal 2, json_response["looks"].count
+    assert_equal 3, json_response["looks"].count
   end
   
   test "include ids of friends who liked the look" do

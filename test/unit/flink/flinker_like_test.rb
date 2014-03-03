@@ -32,7 +32,7 @@ class FlinkerLikeTest < ActiveSupport::TestCase
   
   test "top like flinkers ordered" do
     flinkers = FlinkerLike.top_likers.map(&:flinker)
-    
+
     assert_equal 3, flinkers.count
     assert_equal flinkers(:boop), flinkers.first 
     assert_equal flinkers(:betty), flinkers.last 

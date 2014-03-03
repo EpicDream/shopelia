@@ -42,7 +42,7 @@ class CommentTest < ActiveSupport::TestCase
       Comment.create(flinker_id:@flinker.id, body:text, look_id:@look.id)
     end
     
-    assert_equal [flinkers(:lilou), flinkers(:boop)], MentionActivity.all.map(&:target)
+    assert_equal [flinkers(:lilou), flinkers(:boop)].to_set, MentionActivity.all.map(&:target).to_set
 
     activity = MentionActivity.last
     assert_equal @flinker, activity.flinker

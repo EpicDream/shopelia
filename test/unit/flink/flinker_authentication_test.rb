@@ -86,7 +86,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     Sidekiq::Testing.inline! do
       FollowNotificationWorker.unstub(:perform_in)
       flinkers = Flinker.all
-
+      
       ["523331154", "524109067", "525274445"].each_with_index { |uid, index|
         FlinkerAuthentication.create!(uid:uid, flinker_id:flinkers[index].id)
       }
