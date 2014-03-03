@@ -47,6 +47,10 @@ class Look < ActiveRecord::Base
     joins(:comments).where('comments.body ~* ?', pattern).select('distinct on(looks.id) *')
   }
   
+  scope :liked_by, ->(flinker) {
+    joins('join flinker_likes on flinker_likes.resource_id = looks.id').where('flinker_likes.flinker_id = ?', flinker.id)
+  }
+  
   def self.random collection=Look
     collection.offset(rand(collection.count)).first
   end

@@ -9,10 +9,9 @@ class Api::Flink::Likes::LooksController < Api::Flink::BaseController
 
   private
 
-  def looks#TODO: Virer les where ids:
-    flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
-    ids = FlinkerLike.likes_for(flinker).map(&:resource_id)
-    Look.where(id:ids).order(LOOKS_ORDER).paginate(pagination)
+  def looks
+    flinker = (params[:flinker_id] && Flinker.find_by_id(params[:flinker_id])) || current_flinker
+    Look.liked_by(flinker).order(LOOKS_ORDER).paginate(pagination)
   end
 
 end
