@@ -6,7 +6,7 @@ class Api::Flink::Followings::LooksController < Api::Flink::BaseController
   api :GET, "/looks", "Get looks of current flinker followings"
   def index
     render unauthorized and return unless current_flinker
-    render json: { looks: serialize(looks, scope:scope()) }
+    render json: { looks: serialize(looks, scope:scope.merge(include_liked_by_friends:true)) }
   end
 
   private

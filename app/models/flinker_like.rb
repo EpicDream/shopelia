@@ -31,6 +31,10 @@ class FlinkerLike < ActiveRecord::Base
     where(resource_type:type).joins(:look).where('looks.flinker_id = ?', flinker.id)
   }
   
+  scope :liked_by_friends, ->(flinker, look) {
+    likes_for(flinker.friends).where(resource_id:look.id)
+  }
+  
   def product?
     resource_type == PRODUCT
   end

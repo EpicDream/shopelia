@@ -1,6 +1,6 @@
 class LookSerializer < ActiveModel::Serializer
   attributes :uuid, :name, :url, :published_at, :flinker, :products, :images, :liked, :description
-  attributes :updated_at, :flink_published_at
+  attributes :updated_at, :flink_published_at, :liked_by_friends
   
   def name
     object.name.try(:strip)
@@ -37,6 +37,10 @@ class LookSerializer < ActiveModel::Serializer
   def images
     ActiveModel::ArraySerializer.new(object.look_images.order(:display_order)).as_json
   end
+  
+  def liked_by_friends
+    FlinkerLike.liked_by_friends(scope[:flinker], object).map(&:flinker_id)
+  end
 
   def liked
     object.liked_by?(scope[:flinker]) ? 1 : 0
@@ -44,5 +48,9 @@ class LookSerializer < ActiveModel::Serializer
 
   def include_liked?
     scope.present? && scope[:flinker].present?
+  end
+  
+  def include_liked_by_friends?
+    scope && scope[:include_liked_by_friends]
   end
 end
