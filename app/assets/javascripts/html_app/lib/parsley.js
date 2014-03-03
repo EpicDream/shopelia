@@ -857,7 +857,6 @@
         this.manageErrorContainer();
       }
 
-      // TODO: refacto properly
       // if required constraint but field is not null, do not display
       if ( 'required' === constraint.name && null !== this.getVal() && this.getVal().length > 0 ) {
         return;
@@ -866,7 +865,6 @@
         return;
       }
 
-      // TODO: refacto error name w/ proper & readable function
       var constraintName = constraint.name
         , liClass = false !== this.options.errorMessage ? 'custom-error-message' : constraintName
         , liError = {}
