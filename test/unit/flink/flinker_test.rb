@@ -80,6 +80,14 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal 0, flinker.activities_counts["looks"]
   end
   
+  test "username must only contain (. or letter or digit or - or _)" do
+    flinker = new_flinker
+    flinker.username = "Anne de Paris"
+    
+    assert !flinker.save
+    assert flinker.errors.messages[:username]
+  end
+  
   private
 
   def new_flinker

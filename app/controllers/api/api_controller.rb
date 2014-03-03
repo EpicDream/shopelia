@@ -69,7 +69,7 @@ class Api::ApiController < ActionController::Base
     })
   end
   
-  def iso_from_accept_language_header #TODO temp
+  def iso_from_accept_language_header #TODO temp, to remove when new features released
     lang = request.env["HTTP_ACCEPT_LANGUAGE"].split(",").first
     case lang
     when /fr/ then return 'FR'

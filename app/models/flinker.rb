@@ -33,7 +33,8 @@ class Flinker < ActiveRecord::Base
   after_destroy :leftronic_flinkers_count
   
   validates :email, :presence => true
-  validates :username, length:{ minimum:2 }, allow_nil: true, uniqueness:true
+  validates :username, uniqueness:true, allow_nil: true
+  validates_format_of :username, with: /^[\w\d\._-]{2,}$/, allow_nil: true
   validates_confirmation_of :password
   validates_attachment :avatar, :content_type => { :not => [:html] }
     
@@ -56,11 +57,11 @@ class Flinker < ActiveRecord::Base
     self.blog.update_attributes(name:name) if self.blog
   end
   
-  def followings#TODO Refactor
+  def followings#TODO: Refactor
     Flinker.where(id:flinker_follows.map(&:follow_id))
   end
   
-  def followers#TODO Refactor
+  def followers#TODO: Refactor
     Flinker.where(id:FlinkerFollow.where(follow_id:self.id).map(&:flinker_id)).includes(:country)
   end
   
