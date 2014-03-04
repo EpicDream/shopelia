@@ -51,7 +51,10 @@ class Flinker < ActiveRecord::Base
   scope :staff_pick, ->(staff_pick=true) { where(staff_pick:staff_pick)}
   scope :universals, where(universal:true)
   scope :with_username_like, ->(username) { where('username like ?', "#{username}%") unless username.blank? }
-
+  scope :with_blog_matching, ->(pattern) {
+    publishers.joins(:blog).where('blogs.url ~* ? or blogs.name ~* ?', pattern, pattern) unless pattern.blank?
+  }
+  
   def name=name
     write_attribute(:name, name)
     self.blog.update_attributes(name:name) if self.blog

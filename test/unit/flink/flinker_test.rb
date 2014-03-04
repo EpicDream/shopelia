@@ -88,6 +88,13 @@ class FlinkerTest < ActiveSupport::TestCase
     assert flinker.errors.messages[:username]
   end
   
+  test "with blog name or url matching pattern" do
+    publishers = Flinker.with_blog_matching("blog")
+    
+    assert_equal 1, publishers.count
+    assert_equal flinkers(:betty), publishers.first
+  end
+  
   private
 
   def new_flinker
