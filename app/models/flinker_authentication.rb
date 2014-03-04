@@ -62,9 +62,14 @@ class FlinkerAuthentication < ActiveRecord::Base
   
   def create_flinker
     password = SecureRandom.hex(4)
-    flinker = Flinker.create!(email:user.email, username:user.username, password:password, password_confirmation:password)
+    username = user.username || default_username
+    flinker = Flinker.create!(email:user.email, username:username, password:password, password_confirmation:password)
     self.update_attributes!(flinker_id:flinker.id)
     flinker
+  end
+  
+  def default_username
+    user.email[/(.*)@/, 1].to_s + Time.now.to_i.to_s
   end
 
 end

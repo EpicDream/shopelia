@@ -8,7 +8,6 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
   end
   
   test "create new fb auth and new flinker" do
-    @flinker.update_attributes(name:nil)
     fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy and @flinker.destroy
     flinker = nil
     
@@ -121,6 +120,15 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     flinker = FlinkerAuthentication.facebook(fanny[:token])
     
     assert_equal flinker.id, fb_friend.reload.friend_flinker_id
+  end
+  
+  test "set default username to flinker if facebook username missing" do
+    fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy and @flinker.destroy
+    FbGraph::User.any_instance.stubs(username:nil)
+    
+    flinker = FlinkerAuthentication.facebook(fanny[:token])
+    
+    assert_match /^fanny.louvel\d+/, flinker.username
   end
 
 end
