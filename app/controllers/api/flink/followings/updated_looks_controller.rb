@@ -3,7 +3,7 @@ class Api::Flink::Followings::UpdatedLooksController < Api::Flink::BaseControlle
   
   before_filter { epochs_to_dates [:updated_after] }
   
-  api :GET, "/looks", "Get looks updated of current flinker followings"
+  api :GET, "/followings/looks", "Get looks updated of current flinker followings"
   def index
     render unauthorized and return unless current_flinker
     render json: { looks: serialize(looks, scope:scope()) }
