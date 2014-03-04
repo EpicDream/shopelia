@@ -43,7 +43,7 @@ class Look < ActiveRecord::Base
     published.where("flink_published_at::DATE >= ? and flink_published_at::DATE <= ?", since, before)
   }
   scope :with_comment_matching, ->(pattern) {
-    joins(:comments).where('comments.body ~* ?', pattern).select('distinct on(looks.id) *')
+    joins(:comments).where('comments.body ~* ?', pattern)
   }
   scope :liked_by, ->(flinker) {
     joins('join flinker_likes on flinker_likes.resource_id = looks.id').where('flinker_likes.flinker_id = ?', flinker.id)
