@@ -8,7 +8,7 @@ class Api::Flink::FollowersControllerTest < ActionController::TestCase
     sign_in @fanny
   end
   
-  test "followers of current flinker" do
+  test "followers of current flinker ordered by username asc" do
     boop, lilou = flinkers(:boop), flinkers(:lilou)
     [boop, lilou].each do |flinker|
       FlinkerFollow.create!(flinker_id:flinker.id, follow_id:@fanny.id)
@@ -19,7 +19,7 @@ class Api::Flink::FollowersControllerTest < ActionController::TestCase
     flinkers = json_response["flinkers"]
     assert_response :success
     assert_equal 2, flinkers.count
-    assert_equal [boop.id, lilou.id].to_set, flinkers.map { |f| f["id"] }.to_set
+    assert_equal [lilou.id, boop.id], flinkers.map { |f| f["id"] }
   end
   
   test "followers of any flinker" do
@@ -32,7 +32,7 @@ class Api::Flink::FollowersControllerTest < ActionController::TestCase
     flinkers = json_response["flinkers"]
     assert_response :success
     assert_equal 2, flinkers.count
-    assert_equal [flinkers(:boop).id, @fanny.id].to_set, flinkers.map { |f| f["id"] }.to_set
+    assert_equal [flinkers(:boop).id, @fanny.id], flinkers.map { |f| f["id"] }
   end
   
 end

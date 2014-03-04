@@ -24,14 +24,17 @@ class Api::Flink::FollowingsControllerTest < ActionController::TestCase
     end    
   end
 
-  test "followings of current flinker" do
+  test "followings of current flinker order by username asc" do
     FlinkerFollow.create!(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
+    FlinkerFollow.create!(flinker_id:@flinker.id, follow_id:flinkers(:lilou).id)
 
     get :index, format: :json
     
     flinkers = json_response["flinkers"]
+    
     assert_response :success
-    assert_equal 1, flinkers.count
+    assert_equal 2, flinkers.count
+    assert_equal ["Lilou", "bettyusername"], flinkers.map {|f| f["username"]}
   end
   
   test "flinker follows with flinker_id param" do

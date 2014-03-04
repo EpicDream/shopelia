@@ -1,9 +1,10 @@
 class Api::Flink::FollowingsController < Api::Flink::BaseController
+  FLINKERS_ORDER = "username asc"
 
   def index
     flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
     render json: {
-      flinkers:serialize(paged flinker.followings),
+      flinkers:serialize(paged flinker.followings.order(FLINKERS_ORDER)),
       has_next:@has_next
     }
   end
