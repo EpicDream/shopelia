@@ -9,6 +9,10 @@ class ApplicationController < ActionController::Base
   before_filter :retrieve_cart
   layout :set_layout
 
+  rescue_from Exception, :with => :render_error
+  rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found   
+  rescue_from ActionController::RoutingError, :with => :render_not_found
+
   def retrieve_cart
     @current_cart = current_cart
   end
@@ -19,25 +23,32 @@ class ApplicationController < ActionController::Base
 
   def after_sign_out_path_for(resource)
     home_index_path
-  end  
-
-  unless Rails.application.config.consider_all_requests_local
-    #rescue_from Exception, with: lambda { |exception| render_error 500, exception }
   end
-
-  rescue_from ActionController::RoutingError, ActionController::UnknownController, ::AbstractController::ActionNotFound, ActiveRecord::RecordNotFound, with: lambda { |exception| render_error 404, exception }
+  
+  def raise_not_found!
+    raise ActionController::RoutingError.new("No route matches #{params[:unmatched_route]}")
+  end
 
   private
 
-  def current_cart
-    @current_cart = current_user ? (current_user.carts.checkout.first || current_user.carts.create) : nil
+  def render_error(e)
+    respond_to do |format| 
+      format.html { render template: "errors/error_500", layout: 'layouts/application', status: 500 }
+      format.json { render json:{}, :status => 500 }
+      format.all { render nothing: true, status: 500 }
+    end
   end
 
-  def render_error(status, exception)
-    respond_to do |format|
-      format.html { render template: "errors/error_#{status}", layout: 'layouts/application', status: status }
-      format.all { render nothing: true, status: status }
+  def render_not_found(e)
+    respond_to do |format| 
+      format.html { render template: "errors/error_404", layout: 'layouts/application', status: 404 }
+      format.json { render json:{}, :status => 404 }
+      format.all { render nothing: true, status: 404 }
     end
+  end
+
+  def current_cart
+    @current_cart = current_user ? (current_user.carts.checkout.first || current_user.carts.create) : nil
   end
   
   def set_locale
