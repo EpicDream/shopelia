@@ -27,10 +27,12 @@ class Look < ActiveRecord::Base
     where('flink_published_at < ? and updated_at > ?', date, date)
    }
   scope :of_flinker_followings, ->(flinker){#TODO:refactor using jointure
-    flinkers_ids = flinker.followings.map(&:id)
-    looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
+    if flinker
+      flinkers_ids = flinker.followings.map(&:id)
+      looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
     
-    (flinkers_ids.any? || looks_ids.any?) && published.where('flinker_id in (?) or id in (?)', flinkers_ids, looks_ids)
+      (flinkers_ids.any? || looks_ids.any?) && published.where('flinker_id in (?) or id in (?)', flinkers_ids, looks_ids)
+    end
   }
   scope :published_between, ->(since, before) {
     since ||= Time.at(0)

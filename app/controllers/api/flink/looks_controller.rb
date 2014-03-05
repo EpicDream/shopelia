@@ -6,7 +6,6 @@ class Api::Flink::LooksController < Api::Flink::BaseController
   
   api :GET, "/looks", "Get looks"
   def index
-    render unauthorized and return unless current_flinker
     render json: { looks: serialize(looks, scope:scope()) }
   end
 
@@ -35,6 +34,7 @@ class Api::Flink::LooksController < Api::Flink::BaseController
       .order(LOOKS_ORDER)
       .paginate(pagination)
     end
+    #TODO: Lorsque suppresion des when, laisse un published_between pour mode déconnecté
   end
 
 end
