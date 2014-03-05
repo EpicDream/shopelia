@@ -4,10 +4,10 @@ class AlgoliaTest < ActiveSupport::TestCase
 
   setup do
     @flinker = flinkers(:betty)
+    Flinker.reindex!
   end
   
   test "search" do
-    Flinker.reindex!
     flinkers = Flinker.search("betty")
     assert_equal @flinker.id, flinkers.first.id
   end
