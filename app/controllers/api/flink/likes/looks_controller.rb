@@ -1,6 +1,8 @@
 class Api::Flink::Likes::LooksController < Api::Flink::BaseController
   LOOKS_ORDER = "looks.flink_published_at desc"
   
+  skip_before_filter :authenticate_flinker!
+  
   api :GET, "/likes/looks", "Get liked looks of current flinker or flinker with flinker_id"
   def index
     render unauthorized and return unless current_flinker

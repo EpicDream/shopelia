@@ -1,6 +1,7 @@
 class Api::Flink::Followings::UpdatedLooksController < Api::Flink::BaseController
   LOOKS_ORDER = "looks.updated_at asc"
   
+  skip_before_filter :authenticate_flinker!
   before_filter { epochs_to_dates [:updated_after] }
   
   api :GET, "/followings/looks", "Get looks updated of current flinker followings"
