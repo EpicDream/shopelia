@@ -42,7 +42,7 @@ class Look < ActiveRecord::Base
   scope :flink_published_between, ->(since, before) {
     since ||= Time.at(0)
     before ||= Date.today
-    published.where("flink_published_at::DATE >= ? and flink_published_at::DATE <= ?", since, before)
+    published.where("flink_published_at > ? and flink_published_at < ?", since, before)
   }
   scope :with_comment_matching, ->(pattern) {
     joins(:comments).where('comments.body ~* ?', pattern)

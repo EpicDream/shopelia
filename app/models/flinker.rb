@@ -2,7 +2,7 @@ require 'flink/algolia'
 
 class Flinker < ActiveRecord::Base
   include RankedModel
-  include Algolia::FlinkerSearch
+  include Algolia::FlinkerSearch unless Rails.env.test? #algolia webmock does not mock http request at all...!!
   
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick

@@ -29,7 +29,7 @@ class Api::Flink::Flinkers::LooksControllerTest < ActionController::TestCase
     
     looks = json_response["looks"]
     assert_equal 4, looks.count
-    assert looks.first["flink_published_at"] > looks.last["flink_published_at"]
+    assert looks.first["flink_published_at"] >= looks.last["flink_published_at"]
   end
   
 
