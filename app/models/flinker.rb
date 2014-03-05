@@ -45,7 +45,11 @@ class Flinker < ActiveRecord::Base
       FlinkerLike.liked_for(self).count if self.is_publisher? 
     end
     
-    attributesToIndex ['username', 'name', 'url']
+    tags do
+      [is_publisher? ? 'publisher' : 'non-publisher']
+    end
+    
+    attributesToIndex ['username', 'name']
   end
     
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
