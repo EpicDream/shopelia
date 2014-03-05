@@ -6,6 +6,7 @@ class Api::Flink::LooksController < Api::Flink::BaseController
   
   api :GET, "/looks", "Get looks"
   def index
+    render unauthorized and return if params[:liked] && !current_flinker
     render json: { looks: serialize(looks, scope:scope()) }
   end
 
