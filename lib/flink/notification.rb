@@ -26,3 +26,20 @@ class Flink::FollowNotification < Flink::Notification
   end
   
 end
+
+class Flink::MentionNotification < Flink::Notification
+  
+  def initialize flinker, mentionner
+    @flinker = flinker
+    @mentionner = mentionner
+  end
+  
+  def message
+    begin
+      I18n.translate!("flink.notification.mention", username:@mentionner.username, :locale => @flinker.lang_iso, raise:true)
+    rescue I18n::MissingTranslationData
+      I18n.translate!("flink.notification.mention", username:@mentionner.username, :locale => "en-GB", raise:true)
+    end
+  end
+  
+end

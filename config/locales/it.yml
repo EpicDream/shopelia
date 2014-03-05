@@ -2,3 +2,4 @@ it:
   flink:
     notification:
       follow: "%{username} ti segue!"
+      mention: "Lei è stato citato da @%{username}"

@@ -36,6 +36,18 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     Flink::FollowNotification.new(flinker, follower).deliver
   end
   
+  test "mention notification message" do
+    flinker = flinkers(:betty)
+    mentionner = flinkers(:lilou)
+    
+    ["fr-FR", "en-US", "en-GB", "it", "de", "es"].each do |lang|
+      flinker.update_attributes!(lang_iso:lang)
+      notif = Flink::MentionNotification.new(flinker, mentionner)
+      
+      assert_equal mention_message_for(flinker), notif.message, "Failure for #{lang}"
+    end
+  end
+  
   private
   
   def follow_message_for flinker
@@ -48,5 +60,17 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     when 'en-GB' then return "Lilou is following you!"
     end  
   end
+  
+  def mention_message_for flinker
+    case flinker.lang_iso
+    when 'fr-FR' then return "Tu as été mentionnée par @Lilou"
+    when 'es' then return "Usted fue mencionado por @Lilou"
+    when 'it' then return "Lei è stato citato da @Lilou"
+    when 'de' then return "Sie wurden von @Lilou erwähnt"
+    when 'en-US' then return "You were mentioned by @Lilou"
+    when 'en-GB' then return "You were mentioned by @Lilou"
+    end  
+  end
+  
   
 end

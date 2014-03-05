@@ -6,6 +6,7 @@ class MentionActivity < Activity
   def self.create! comment
     flinkers_mentionned_in(comment.body).each { |flinker|  
       super(flinker_id:comment.flinker_id, target_id:flinker.id, resource_id:comment.id)
+      MentionNotificationWorker.perform_async(flinker.id, comment.flinker_id)
     }
   end
   
