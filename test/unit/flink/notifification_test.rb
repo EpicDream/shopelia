@@ -48,6 +48,18 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     end
   end
   
+  test "signup notification message" do
+    flinker = flinkers(:betty)
+    signed_up = flinkers(:lilou)
+    
+    ["fr-FR", "en-US", "en-GB", "it", "de", "es"].each do |lang|
+      flinker.update_attributes!(lang_iso:lang)
+      notif = Flink::SignupNotification.new(flinker, signed_up)
+      
+      assert_equal signup_message_for(flinker), notif.message, "Failure for #{lang}"
+    end
+  end
+  
   private
   
   def follow_message_for flinker
@@ -61,6 +73,17 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     end  
   end
   
+  def signup_message_for flinker
+    case flinker.lang_iso
+    when 'fr-FR' then return "Ton amie facebook @Lilou a rejoint Flink"
+    when 'es' then return "Su amigo del facebook @Lilou ha unido Flink"
+    when 'it' then return "Il tuo amico facebook @Lilou ha aderito Flink"
+    when 'de' then return "Ihr Facebook-Freund @Lilou hat Flink beigetreten"
+    when 'en-US' then return "Your facebook friend @Lilou has joined Flink"
+    when 'en-GB' then return "Your facebook friend @Lilou has joined Flink"
+    end  
+  end
+  
   def mention_message_for flinker
     case flinker.lang_iso
     when 'fr-FR' then return "Tu as été mentionnée par @Lilou"
@@ -71,6 +94,5 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     when 'en-GB' then return "You were mentioned by @Lilou"
     end  
   end
-  
   
 end

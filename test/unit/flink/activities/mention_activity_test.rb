@@ -14,4 +14,12 @@ class MentionActivityTest < ActiveSupport::TestCase
     assert_equal @flinker, mentions.first.target
   end
   
+  test "send notification to mentionned flinkers" do
+    comment = comments(:agadir)
+    comment.update_attributes(body:"@fanny regarde!")
+    
+    MentionNotificationWorker.expects(:perform_async).with(@flinker.id, @commenter.id)
+    MentionActivity.create!(comment)
+  end
+  
 end

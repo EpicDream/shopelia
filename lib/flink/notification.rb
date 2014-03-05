@@ -43,3 +43,20 @@ class Flink::MentionNotification < Flink::Notification
   end
   
 end
+
+class Flink::SignupNotification < Flink::Notification
+  
+  def initialize flinker, signed_up
+    @flinker = flinker
+    @signed_up = signed_up
+  end
+  
+  def message
+    begin
+      I18n.translate!("flink.notification.signup", username:@signed_up.username, :locale => @flinker.lang_iso, raise:true)
+    rescue I18n::MissingTranslationData
+      I18n.translate!("flink.notification.signup", username:@signed_up.username, :locale => "en-GB", raise:true)
+    end
+  end
+  
+end

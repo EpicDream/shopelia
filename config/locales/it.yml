@@ -3,3 +3,4 @@ it:
     notification:
       follow: "%{username} ti segue!"
       mention: "Lei è stato citato da @%{username}"
+      signup: "Il tuo amico facebook @%{username} ha aderito Flink"      

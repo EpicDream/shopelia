@@ -9,6 +9,10 @@ class FacebookFriendSignedUpActivityTest < ActiveSupport::TestCase
     flinker = flinkers(:boop)
     auth = nil
     
+    [:fanny, :lilou].each do |f|
+      SignupNotificationWorker.expects(:perform_async).with(flinkers(f).id, flinker.id)
+    end
+    
     assert_difference("FacebookFriendSignedUpActivity.count", 2) do
       auth = FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinker.id)
     end

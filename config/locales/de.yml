@@ -3,3 +3,4 @@ de:
     notification:
       follow: "%{username} folgt Ihnen!"
       mention: "Sie wurden von @%{username} erwähnt"
+      signup: "Ihr Facebook-Freund @%{username} hat Flink beigetreten"    
