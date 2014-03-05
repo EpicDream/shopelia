@@ -1,6 +1,53 @@
 class Flinker < ActiveRecord::Base
   include RankedModel
+  include AlgoliaSearch
   
+  algoliasearch per_environment: true do
+    attribute :username, :name, :url, :email, :staff_pick
+      
+    attribute :avatar do
+      Rails.configuration.avatar_host + self.avatar.url(:thumb, timestamp:true)
+    end
+    
+    attribute :country do
+       country.try(:iso) 
+     end
+    
+    attribute :rank do
+      display_order
+    end
+    
+    attribute :publisher do
+      is_publisher
+    end
+    
+    attribute :likes_count do 
+      activities_counts["likes"]
+    end
+    
+    attribute :follows_count do 
+      activities_counts["followings"]
+    end
+    
+    attribute :looks_count do 
+      activities_counts["looks"]
+    end
+    
+    attribute :comments_count do 
+      activities_counts["comments"]
+    end
+      
+    attribute :followed_count do 
+      activities_counts["followed"]
+    end
+    
+    attribute :liked_count do 
+      FlinkerLike.liked_for(self).count if self.is_publisher? 
+    end
+    
+    attributesToIndex ['username', 'name', 'url']
+  end
+    
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
   attr_accessible :display_order_position, :country_iso, :universal, :lang_iso
