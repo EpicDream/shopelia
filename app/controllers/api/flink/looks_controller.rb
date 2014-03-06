@@ -32,13 +32,17 @@ class Api::Flink::LooksController < Api::Flink::BaseController
       .order(LOOKS_ORDER)
       .paginate(pagination)
     else #CHANGED: => /flink/followings/looks
-      after = params[:flink_published_after] || params[:published_after]
-      before = params[:flink_published_before] || params[:published_before] 
-      order = params[:published_after] ? LOOKS_ORDER : "looks.flink_published_at desc"
-      Look.of_flinker_followings(current_flinker)
-      .published_between(after, before)
-      .order(order)
-      .paginate(pagination)
+      if params[:published_after] || params[:published_before]
+        Look.of_flinker_followings(current_flinker)
+        .published_between(params[:published_after], params[:published_before])
+        .order(LOOKS_ORDER)
+        .paginate(pagination)
+      else
+        Look.of_flinker_followings(current_flinker)
+        .flink_published_between(params[:flink_published_after], params[:flink_published_before])
+        .order("looks.flink_published_at desc")
+        .paginate(pagination)
+      end
     end
     #TODO: Lorsque suppresion des when, laisse un published_between pour mode déconnecté
   end
