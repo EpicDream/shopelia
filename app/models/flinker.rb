@@ -20,11 +20,12 @@ class Flinker < ActiveRecord::Base
   ranks :display_order
 
   has_many :looks
-  has_many :comments
-  has_many :flinker_authentications
-  has_many :flinker_likes
+  has_many :comments, dependent: :destroy
+  has_many :flinker_authentications, dependent: :destroy
+  has_many :flinker_likes, dependent: :destroy
+  has_many :facebook_friends, dependent: :destroy
   has_many :devices, dependent: :destroy
-  has_many :flinker_follows, include: :following
+  has_many :flinker_follows, include: :following, dependent: :destroy
   belongs_to :country
   has_one :blog
 
