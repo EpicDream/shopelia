@@ -2,7 +2,9 @@ class Api::Flink::LooksController < Api::Flink::BaseController
   LOOKS_ORDER = "looks.published_at desc"
   
   skip_before_filter :authenticate_flinker!
-  before_filter { epochs_to_dates [:updated_after, :published_before, :published_after] }
+  before_filter { 
+    epochs_to_dates [:updated_after, :published_before, :published_after, :flink_published_after, :flink_published_before] 
+  }
   
   api :GET, "/looks", "Get looks"
   def index
@@ -30,8 +32,10 @@ class Api::Flink::LooksController < Api::Flink::BaseController
       .order(LOOKS_ORDER)
       .paginate(pagination)
     else #CHANGED: => /flink/followings/looks
+      after = params[:flink_published_after] || params[:published_after]
+      before = params[:flink_published_before] || params[:published_before] 
       Look.of_flinker_followings(current_flinker)
-      .published_between(params[:published_after], params[:published_before])
+      .published_between(after, before)
       .order(LOOKS_ORDER)
       .paginate(pagination)
     end
