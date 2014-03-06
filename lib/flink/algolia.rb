@@ -52,6 +52,7 @@ module Algolia
             [is_publisher? ? 'publisher' : 'non-publisher']
           end
     
+          customRanking ['asc(username)', 'asc(name)']
           attributesToIndex ['username', 'name']
         end
       end
