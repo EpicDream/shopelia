@@ -20,7 +20,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     follower = flinkers(:lilou)
     devices(:mobile).update_attributes(flinker_id:flinker.id)
     
-    APNS.expects(:send_notification).with(flinker.device.push_token, alert:'Lilou te suit!', :"content-available" => 1)
+    APNS.expects(:send_notification).with(flinker.device.push_token, alert:'@Lilou te suit!', :"content-available" => 1)
     
     Flink::FollowNotification.new(flinker, follower).deliver
   end
@@ -31,7 +31,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     follower = flinkers(:lilou)
     devices(:mobile).update_attributes(flinker_id:flinker.id)
     
-    APNS.expects(:send_notification).with(flinker.device.push_token, alert:'Lilou is following you!', :"content-available" => 1)
+    APNS.expects(:send_notification).with(flinker.device.push_token, alert:'@Lilou is following you!', :"content-available" => 1)
     
     Flink::FollowNotification.new(flinker, follower).deliver
   end
@@ -64,12 +64,12 @@ class Flink::NotificationTest < ActiveSupport::TestCase
   
   def follow_message_for flinker
     case flinker.lang_iso
-    when 'fr-FR' then return "Lilou te suit!"
-    when 'es' then return "Lilou te siga!"
-    when 'it' then return "Lilou ti segue!"
-    when 'de' then return "Lilou folgt Ihnen!"
-    when 'en-US' then return "Lilou is following you!"
-    when 'en-GB' then return "Lilou is following you!"
+    when 'fr-FR' then return "@Lilou te suit!"
+    when 'es' then return "@Lilou te siga!"
+    when 'it' then return "@Lilou ti segue!"
+    when 'de' then return "@Lilou folgt Ihnen!"
+    when 'en-US' then return "@Lilou is following you!"
+    when 'en-GB' then return "@Lilou is following you!"
     end  
   end
   

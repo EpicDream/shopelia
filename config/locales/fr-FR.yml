@@ -1,6 +1,6 @@
 fr-FR:
   flink:
     notification:
-      follow: "%{username} te suit!"
+      follow: "@%{username} te suit!"
       mention: "Tu as été mentionnée par @%{username}"
       signup: "Ton amie facebook @%{username} a rejoint Flink"
