@@ -22,7 +22,7 @@ class Api::Flink::Flinkers::LooksControllerTest < ActionController::TestCase
   end
   
   test "looks of given flinkers published between" do
-    options = { format: :json, flinkers_ids:@publishers.map(&:id), flink_published_after:2.days.ago }
+    options = { format: :json, flinkers_ids:@publishers.map(&:id), flink_published_after:2.days.ago - 1.hour }
     get :index, options
     
     assert_response :success
