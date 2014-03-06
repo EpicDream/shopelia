@@ -34,9 +34,10 @@ class Api::Flink::LooksController < Api::Flink::BaseController
     else #CHANGED: => /flink/followings/looks
       after = params[:flink_published_after] || params[:published_after]
       before = params[:flink_published_before] || params[:published_before] 
+      order = params[:published_after] ? LOOKS_ORDER : "looks.flink_published_at desc"
       Look.of_flinker_followings(current_flinker)
       .published_between(after, before)
-      .order(LOOKS_ORDER)
+      .order(order)
       .paginate(pagination)
     end
     #TODO: Lorsque suppresion des when, laisse un published_between pour mode déconnecté
