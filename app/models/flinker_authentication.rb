@@ -16,7 +16,11 @@ class FlinkerAuthentication < ActiveRecord::Base
     auth = where(uid:user.identifier).first 
     picture = "#{user.picture}?width=200&height=200&type=normal"
     auth and auth.update_attributes!(user:user, picture:picture) and auth.after_sign_in
-    auth ||= create!(uid:user.identifier, email:user.email, picture:picture, provider:FACEBOOK) and auth.user = user and auth.after_sign_up
+    unless auth
+      auth = create!(uid:user.identifier, email:user.email, picture:picture, provider:FACEBOOK) 
+      auth.user = user
+      auth.after_sign_up
+    end
     auth.refresh_token!(token)
     auth.flinker
   end

@@ -83,6 +83,8 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
   
   test "auto follow flinkers who are facebook friends, reciprocally and send apn to followers" do
     Sidekiq::Testing.inline! do
+      fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy
+      
       FollowNotificationWorker.unstub(:perform_in)
       flinkers = Flinker.all
       
@@ -94,7 +96,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
         Flink::FollowNotification.expects(:new).with(flinkr, flinkers(:fanny)).returns(stub(:deliver => nil))
       }
     
-      flinker = FlinkerAuthentication.facebook(@fanny.token)
+      flinker = FlinkerAuthentication.facebook(fanny[:token])
       assert_equal 3, flinker.followings.count
     
       flinkers[0..2].each { |flinkr| 
