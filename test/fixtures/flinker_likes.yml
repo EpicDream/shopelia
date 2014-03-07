@@ -1,0 +1,25 @@
+one:
+  flinker: betty
+two:
+  flinker: betty
+  look: brest
+  resource_type: 'look'
+three:
+  flinker: fanny
+  resource_type: 'product'
+four:
+  flinker: fanny
+  look: agadir
+  resource_type: 'look'
+five:
+  flinker: fanny
+six:
+  flinker: boop
+boop_like:
+  flinker: boop
+  resource_type: "look"
+  look: agadir
+boop_like_two:
+  flinker: boop
+  resource_type: "look"
+  look: quimper

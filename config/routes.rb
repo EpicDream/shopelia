@@ -74,7 +74,6 @@ Shopelia::Application.routes.draw do
     resources :comments, :only => [:index, :show]
     resources :posts
     resources :flinkers
-    resources :flinkers_planet, only:[:index]
     resources :statistics, only:[:index]
     resources :looks do
       get :publish, :on => :member
@@ -194,23 +193,45 @@ Shopelia::Application.routes.draw do
     namespace :flink do
       devise_for :flinkers
       resources :flinkers, :only => :index
+      resources :flinkers_search, :only => :index
+      resources :publishers, :only => :index
+      resources :staff_picks, :only => :index
+      resources :activities, :only => :index
+      resources :facebook_friends, :only => :index
+      resources :top_flinkers, :only => :index
+      resources :avatars, :only => :create
+      resources :follows, :only => [:index, :create, :destroy]
+      resources :followings, :only => [:index, :create, :destroy]
+      resources :followers, :only => :index
       resources :looks, :only => :index do
-        resources :comments
+        resources :comments, :only => [:index, :create], :controller => "looks/comments"
         resources :sharings, :only => :create, :controller => "looks/sharings"
         resources :likes, :only => :create, :controller => "looks/likes"
         delete "likes" => "looks/likes#destroy"
       end
-      resources :follows, :only => [:index, :create, :destroy]
+      namespace :likes do
+        resources :looks, only: :index
+      end
+      namespace :followings do
+        resources :looks, only: :index
+        resources :updated_looks, only: :index
+      end
+      namespace :flinkers do
+        resources :looks, only: :index
+      end
+      namespace :hashtags do
+        resources :looks, only: :index
+      end
     end
   end
 
   match "about" => "home#about"
+  put "api/flink/flinkers/session_touch", to: "api/flink/sessions#update"
 
-
-  match '*not_found', to: 'errors#error_404'
-  get "errors/error_404"
-  get "errors/error_500"
+  # match '*not_found', to: 'errors#error_404', format: false
+  # get "errors/error_404", format: false
+  # get "errors/error_500"
 
   root to: 'flink#index'
-
+  match '*unmatched_route', :to => 'application#raise_not_found!'
 end

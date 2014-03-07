@@ -4,60 +4,62 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
   api :POST, "/flinkers/sign_in", "Sign in a flinker"
   param :email, String, "Email of the flinker", :required => true
   param :password, String, "Password of the flinker", :required => true
+  
   def create
-    if !params[:provider].blank? && !params[:token].blank?
-      data = FlinkerAuthentication.fetch_data(params[:provider],params[:token])
-      if data[:status] == 401
-        render json: { error: "facebook token is invalid" } , status: :unauthorized
-      else
-        flinker_auth = FlinkerAuthentication.find_by_uid(data[:uid])
-        flinker = flinker_auth.flinker unless flinker_auth.nil?
-        unless flinker
-          flinker = Flinker.find_for_database_authentication(:email => data[:email])
-          unless flinker
-            password = SecureRandom.hex(4)
-            flinker = Flinker.create!(email:data[:email],username: data[:username], password:password, password_confirmation:password)
-          end
-          flinker_auth = FlinkerAuthentication.create!(provider:params[:provider],token:params[:token],uid:data[:uid])
-          flinker_auth.flinker = flinker
-        end
-        flinker_auth.token = params[:token]
-        flinker_auth.save
-        sign_in(:flinker, flinker)
-        flinker.ensure_authentication_token!
-        render json: FlinkerSerializer.new(flinker).as_json.merge({auth_token:flinker.authentication_token})
-        return
-      end
-    else
-      resource = Flinker.find_for_database_authentication(:email => params[:email])
-      return invalid_login_attempt unless resource
-
-      if resource.valid_password?(params[:password])
-        sign_in(:flinker, resource)
-        resource.ensure_authentication_token!
-        render json: FlinkerSerializer.new(resource).as_json.merge({auth_token:resource.authentication_token})
-        return
-      end
-
-      invalid_login_attempt
-    end
+    render sign_in_by_email and return unless params[:provider]
+    flinker = FlinkerAuthentication.facebook(params[:token])
+    sign_in(:flinker, flinker)
+    flinker.ensure_authentication_token!
+    update_country_iso
+    update_lang_iso
+    render json_for(flinker)
   rescue => e
-    Rails.logger.error(%Q{SESSION-CONTROLLER#{Time.now}#{e.backtrace.join("\n")}})
+    render unauthorized("Facebook token is invalid", e) and return if e.respond_to?(:code) && [400, 401].include?(e.code)
+    render server_error(e)
   end
-
+  
   api :DELETE, "/flinkers/sign_out", "Sign out a flinker"
   param :email, String, "Email of the flinker", :required => true
+  
   def destroy
     flinker = Flinker.find_for_database_authentication(:email => params[:email])
-    return invalid_login_attempt unless flinker
+    render unauthorized and return unless flinker
     flinker.authentication_token = nil
     flinker.save
-    render json: {}
+    flinker.devices.destroy_all
+    render json: {}, status: :ok
+  end
+  
+  def update
+    render unauthorized and return unless current_flinker
+    update_country_iso
+    update_lang_iso
+    FlinkerAuthentication.facebook(params[:token]) if params[:token]
+    render json_for(current_flinker)
+  end
+  
+  private
+  
+  def update_country_iso
+    current_flinker.country_iso = params[:"x-country-iso"]
+    current_flinker.country_from_iso_code and current_flinker.save
+  end
+  
+  def update_lang_iso
+    current_flinker.update_attributes(lang_iso:params[:"x-user-language"])
+  end
+  
+  def sign_in_by_email
+    flinker = Flinker.find_for_database_authentication(email:params[:email])
+    return unauthorized unless flinker && flinker.valid_password?(params[:password])
+    
+    sign_in(:flinker, flinker)
+    flinker.ensure_authentication_token!
+    json_for(flinker)
+  end
+  
+  def json_for flinker
+    { json: FlinkerSerializer.new(flinker).as_json.merge({ auth_token:flinker.authentication_token })}
   end
 
-  protected
-
-  def invalid_login_attempt
-    render json: { error:I18n.t('devise.failure.invalid') }, status: :unauthorized
-  end
 end

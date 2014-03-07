@@ -1,11 +1,4 @@
-# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-
-one:
-  body: MyText
-  look: 
-  flinker: 
-
-two:
-  body: MyText
-  look: 
-  flinker: 
+agadir:
+  body: "@fanny super!"
+  look: agadir
+  flinker: boop

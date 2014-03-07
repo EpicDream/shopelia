@@ -5,10 +5,10 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
 
   setup do
     @flinker = flinkers(:elarch)
-    @token = "CAAKcj4ETCX4BAN4RSgpT73WjZBU3HZAj8Ub3BVNlQosUUybYV4iDvbeHTXkkwQCxwqvidsNyFVUHazIZCLQytY8quxVwznZBKKHjHEC9fbfZAhqtHP0fvtJWdlmXKY3EsvU0KibTh4K5tYAb9Eokuzeb5PLJxP0BxJygrIJZC46pEdPK68sLreB5HddVuP1a0ZD"
+    @fanny = flinker_authentications(:fanny)
   end
 
-  test "it should login flinker with email and password" do
+  test "login flinker with valid email and password" do
     post :create, email: @flinker.email, password: "tototo", format: :json
     assert_response :success
 
@@ -16,76 +16,121 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     assert_equal @flinker.reload.authentication_token, json_response["auth_token"]
   end
 
-  test "it should send an error when facebook token is invalid" do
-    assert_difference(['Flinker.count'],0) do
-      post :create, provider: "facebook", token: "tototo", format: :json
-    end
-    assert_response :unauthorized
-    assert_equal "facebook token is invalid", json_response["error"]
-  end
-
-  test "it should create a flinker with facebook token" do
-    skip
-    assert_difference(['Flinker.count']) do
-      post :create, provider: "facebook", token: @token, format: :json
-    end
-    assert_response :success
-    assert json_response["auth_token"].present?
-    assert json_response["flinker"].present?
-  end
-
-  test "it should merge flinker account with facebook token when email already exists" do
-    skip
-    flinker = Flinker.create!(email: "bellakra@eleves.enpc.fr",password: "tototo",password_confirmation:"tototo")
-    assert_difference(['Flinker.count'],0) do
-      post :create, provider: "facebook", token: @token, format: :json
-    end
-    assert_response :success
-    assert json_response["auth_token"], "Auth token must be sent back"
-    assert_equal flinker.reload.authentication_token, json_response["auth_token"]
-    flinker_auth = FlinkerAuthentication.where(flinker_id: flinker.id).first
-    assert_equal flinker_auth.uid, "693006605"
-  end
-
-  test "it should sign in flinker without creating a new one if he already exists" do
-    skip
-    post :create, provider: "facebook", token: @token, format: :json
-    assert_difference(['Flinker.count'],0) do
-      post :create, provider: "facebook", token: @token, format: :json
-    end
-    assert_response :success
-    assert json_response["auth_token"].present?
-    assert json_response["flinker"].present?
-  end
-
-  test "it shouldn't login a flinker with blank password" do
+  test "login a flinker with a blank password is unauthorized" do
     post :create, email: @flinker.email, password: "", format: :json
-
+  
     assert_response :unauthorized
   end
-
-  test "it should logout flinker" do
-    sign_in @flinker
-    token = @flinker.reload.authentication_token
-    post :destroy, email: @flinker.email, format: :json
-    assert_response :success
-
-    assert_not_equal token, @flinker.reload.authentication_token, "Auth token must have changed after logout"
-  end
-
-  test "it should fail login when bad email or password" do
+  
+  test "login when bad email or password return unauthorized with error description" do
     post :create, email: @flinker.email, password: "invalid", format: :json
+    
     assert_response :unauthorized
-
     assert_equal I18n.t('devise.failure.invalid'), json_response["error"]
   end
 
+  test "facebook token must be valid to fetch or create flinker" do
+    assert_no_difference('Flinker.count') do
+      post :create, provider: "facebook", token: "tototo", format: :json
+    end
+    
+    assert_response :unauthorized
+    assert_equal "Facebook token is invalid", json_response["error"]
+  end
+  
+  test "create flinker from facebook" do
+    flinkers(:fanny).destroy
+    token = @fanny.token and @fanny.destroy
+    
+    assert_difference(['Flinker.count']) do
+      post :create, provider: "facebook", token: token, format: :json
+    end
+
+    assert_response :success
+    assert json_response["auth_token"].present?
+    assert json_response["flinker"].present?
+    assert_equal "Fanny Louvel", json_response["flinker"]["name"]
+  end
+  
+  test "sign existing flinker without creating new one" do
+    flinkers(:fanny).destroy
+
+    assert_difference('Flinker.count', 1) do
+      1.upto(2) {
+        post :create, provider: "facebook", token: @fanny.token, format: :json
+      }
+    end
+
+    assert_response :success
+    assert json_response["auth_token"].present?
+    assert_equal "fanny.louvel@wanadoo.fr", json_response["flinker"]["email"]
+    assert_equal "Fanny Louvel", json_response["flinker"]["name"]
+  end
+  
+  test "logout flinker" do
+    sign_in @flinker
+    token = @flinker.authentication_token
+
+    post :destroy, email: @flinker.email, format: :json
+    assert_response :success
+  
+    assert_not_equal token, @flinker.reload.authentication_token, "Auth token must have changed after logout"
+  end
+  
   test "it should fail logout with incorrect email address" do
     sign_in @flinker
-    token = @flinker.reload.authentication_token
-    post :destroy, email: "invalid", format: :json
-
+    post :destroy, email: "invalid@death.com", format: :json
+  
     assert_response :unauthorized
+  end
+  
+  test "update flinker auth provider token and avatar if none" do
+    sign_in flinkers(:fanny)
+    token  = @fanny.token
+    assert @fanny.update_attributes(token:"oldtoken", flinker_id:flinkers(:fanny).id)
+
+    put :update, provider: "facebook", token: token, format: :json
+    
+    assert_response :success
+    assert_equal token, @fanny.reload.token
+    assert_not_match(/missing/, flinkers(:fanny).reload.avatar.url)
+  end
+  
+  test "assign country on update if none(this is temp feature to retrieve countries)" do
+    @request.env["X-Flink-Country-Iso"] = "ES"
+    sign_in flinkers(:fanny)
+    @fanny.update_attributes(flinker_id:flinkers(:fanny).id)
+    
+    put :update, provider: "facebook", token: @fanny.token, format: :json
+    
+    assert_response :success
+    assert_equal "ES", json_response["flinker"]["country"]
+    assert_equal countries(:spain), flinkers(:fanny).reload.country
+  end
+  
+  test "update lang iso code" do
+    fanny = flinkers(:fanny)
+    @request.env["X-Flink-User-Language"] = "fr-FR"
+    sign_in fanny
+    
+    assert_equal 'en-GB', fanny.lang_iso
+    
+    put :update, format: :json
+    
+    assert_response :success
+    assert_equal 'fr-FR', fanny.reload.lang_iso
+  end
+  
+  test "destroy flinker devices after sign out" do
+    fanny = flinkers(:fanny)
+    sign_in fanny
+    
+    assert_equal 2, Device.of_flinker(fanny).count
+
+    post :destroy, email: fanny.email, format: :json
+
+    assert_response :success
+    assert_equal 0, Device.of_flinker(fanny).count
   end
 
 end

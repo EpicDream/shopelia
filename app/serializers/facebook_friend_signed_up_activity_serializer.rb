@@ -1,0 +1,1 @@
+class FacebookFriendSignedUpActivitySerializer < ActivitySerializer;end

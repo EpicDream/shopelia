@@ -11,3 +11,13 @@ samsung:
   uuid: "uuid3"
   user_agent: "samsung"
   user: elarch
+
+iphone:
+  uuid: "uuid4"
+  user_agent: "iphone"
+  flinker: fanny
+
+ipad:
+  uuid: "uuid5"
+  user_agent: "ipad"
+  flinker: fanny

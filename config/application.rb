@@ -1,13 +1,9 @@
 require File.expand_path('../boot', __FILE__)
-
 require 'rails/all'
 require File.join(File.dirname(__FILE__), '../lib/core_extensions')
 
 if defined?(Bundler)
-  # If you precompile assets before deploying to production, use this line
   Bundler.require(*Rails.groups(:assets => %w(development test)))
-  # If you want your assets lazily compiled in production, use this line
-  # Bundler.require(:default, :assets, Rails.env)
 end
 
 module Shopelia
@@ -16,12 +12,12 @@ module Shopelia
     # Base host
     config.host = 'https://www.shopelia.fr'
     config.image_host = 'http://www.flink.io'
-
+    config.avatar_host = 'http://www.flink.io' #cause, need another base url for avatars in dev.
+    
     # Maximum number of times the order is allowed to retry a new account creation
     config.max_retry = 3
   
-    config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/merchants)
-    
+    config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/merchants #{config.root}/app/models/activities)
     config.action_mailer.default_url_options = { :host => 'www.shopelia.fr', :protocol => 'https' }
     config.action_mailer.asset_host = "http://www.shopelia.fr"
 

@@ -3,4 +3,19 @@ agadir:
   name: "Agadir"
   url: "http://www.bla.com"
   flinker: betty
+  is_published: true
+  published_at: <%= Time.now %>
+quimper:
+  uuid: "1991991"
+  name: "Quimper"
+  url: "http://www.bla.com"
+  flinker: lilou
+  is_published: true
+  published_at: <%= Time.now %>
+brest:
+  uuid: "199891991"
+  name: "Brest"
+  url: "http://www.bla.com"
+  flinker: boop
+  is_published: false
   published_at: <%= Time.now %>

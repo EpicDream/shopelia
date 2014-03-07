@@ -58,7 +58,6 @@ class Shopelia.Views.CardFields extends Shopelia.Views.Form
     enableButton(@ui.validation)
 
   addCardType: ->
-    #TODO Refacto boucle each
     #console.log(@ui.cardNumber.val().charAt(0))
     if @ui.cardNumber.val().length > 2
       if  @ui.cardNumber.val().charAt(0) == "3"

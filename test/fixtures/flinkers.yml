@@ -7,6 +7,7 @@ elarch:
   username: ericusername
   country: france
   is_publisher: false
+  lang_iso: 'fr_FR'
 
 betty:
   name: Betty
@@ -18,6 +19,7 @@ betty:
   is_publisher: true
   staff_pick: true
   looks_count: 1
+  lang_iso: 'fr_FR'
 
 lilou:
   name: Lilou
@@ -29,12 +31,13 @@ lilou:
   is_publisher: true
   staff_pick: false
   looks_count: 1
+  lang_iso: 'en_GB'
   
 boop:
   name: Boop
   url: http://www.leblogdebetty.com
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
-  username: bettyusername
+  username: boop
   email: boop@flink.com
   country: france
   is_publisher: true
@@ -50,4 +53,13 @@ nana:
   country: angleterre
   is_publisher: true
   staff_pick: true
-  looks_count: 1  
+  universal: true
+  looks_count: 1
+
+fanny:
+  email: "fanny.louvel@wanadoo.fr"
+  encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
+  is_publisher: false
+  username: fanny
+  
+  

@@ -8,7 +8,7 @@ class StatisticSql
 
        inner join (select looks.flinker_id, count(*) as count from looks 
          where looks.is_published = 't'
-         and looks.is_published_updated_at > '#{from}'
+         and looks.flink_published_at > '#{from}'
          group by looks.flinker_id order by count desc) vlooks
        on vlooks.flinker_id = fl.id
   

@@ -6,6 +6,8 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
   setup do
     Look.destroy_all
     @flinker = flinkers(:betty)
+    sign_in @flinker
+    
     build_looks
   end
 
@@ -14,7 +16,6 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     assert_response :success
     
     assert_equal 10, json_response["looks"].count
-    assert_equal 10, json_response["per_page"]
   end
 
   test "it should get first 20 looks" do
@@ -22,7 +23,6 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     assert_response :success
     
     assert_equal 20, json_response["looks"].count
-    assert_equal 20, json_response["per_page"]
   end
 
   test "it should get looks after a date" do
@@ -40,25 +40,39 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
   end
 
   test "it should reply with 401 when getting liked looks and not logged in" do
+    sign_out @flinker
     get :index, format: :json, liked:1
+    
     assert_response 401
   end
 
-  test "it should get liked looks" do
-    sign_in @flinker
-
+  test "it should get liked looks of current flinker" do
     FlinkerLike.create!(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:Look.last.id)
 
     get :index, format: :json, liked:1
+    
     assert_response :success
     assert_equal 1, json_response["looks"].count
+    assert_equal Look.last.uuid, json_response["looks"].first["uuid"]
+  end 
+  
+  test "it should get liked looks of flinker" do
+    flinker = flinkers(:fanny)
+    FlinkerLike.create!(flinker_id:flinker.id, resource_type:FlinkerLike::LOOK, resource_id:Look.first.id)
+
+    get :index, format: :json, liked:1, flinker_id:flinker.id
+    
+    assert_response :success
+    assert_equal 1, json_response["looks"].count
+    assert_equal Look.first.uuid, json_response["looks"].first["uuid"]
   end 
 
   test "it should get only looks you are following (1)" do
     sign_in flinkers(:elarch)
-
     FlinkerFollow.create!(flinker_id:flinkers(:elarch).id, follow_id:flinkers(:elarch).id)
+
     get :index, format: :json
+    
     assert_equal 0, json_response["looks"].count
   end
 
@@ -87,12 +101,22 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
       look.save
     }
     
-    get :index, format: :json, updated_after:(Time.now + 2.minutes).to_i
+    get :index, format: :json, updated_after:(Time.now + 5.minutes).to_i
     
     looks = json_response["looks"]
     
     assert_equal 2, looks.count
     assert looks[0]["updated_at"] < looks[1]["updated_at"]
+  end
+  
+  test "get looks for given looks uuids" do
+    looks = Look.first(2)
+
+    get :index, format: :json, looks_ids:looks.map(&:uuid)
+
+    assert_response :success
+    assert_equal 2, json_response["looks"].count
+    assert_equal looks.map(&:uuid), json_response["looks"].map { |l| l["uuid"] }
   end
 
   private
@@ -110,7 +134,7 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
       name:"Article",
       flinker_id:@flinker.id,
       published_at:published_at,
-      is_published_updated_at:Time.now,
+      flink_published_at:published_at + 1.minute,
       is_published:true,
       url:"http://www.leblogdebetty.com/article")
   end
