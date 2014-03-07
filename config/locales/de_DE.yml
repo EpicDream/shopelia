@@ -1,4 +1,4 @@
-de:
+de_DE:
   flink:
     notification:
       follow: "@%{username} folgt Ihnen!"

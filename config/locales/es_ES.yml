@@ -1,4 +1,4 @@
-es:
+es_ES:
   flink:
     notification:
       follow: "@%{username} te siga!"
