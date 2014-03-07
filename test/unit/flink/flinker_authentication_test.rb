@@ -91,10 +91,6 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
       ["523331154", "524109067", "525274445"].each_with_index { |uid, index|
         FlinkerAuthentication.create!(uid:uid, flinker_id:flinkers[index].id)
       }
-
-      flinkers[0..2].each { |flinkr| 
-        Flink::FollowNotification.expects(:new).with(flinkr, flinkers(:fanny)).returns(stub(:deliver => nil))
-      }
     
       flinker = FlinkerAuthentication.facebook(fanny[:token])
       assert_equal 3, flinker.followings.count
