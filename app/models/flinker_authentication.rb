@@ -45,7 +45,7 @@ class FlinkerAuthentication < ActiveRecord::Base
     after_sign_in
     FacebookFriend.assign_flinker_from_sign_up(self)
     friends = self.user.friends.map(&:identifier)
-    flinkers = FacebookFriend.where(identifier:friends).includes(:flinker).map(&:flinker)
+    flinkers = self.class.where(uid:friends).includes(:flinker).map(&:flinker)
     FlinkerFollow.mutual_following(self.flinker, flinkers)
   end
   
