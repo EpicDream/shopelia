@@ -17,7 +17,7 @@ class FlinkerAuthentication < ActiveRecord::Base
     picture = "#{user.picture}?width=200&height=200&type=normal"
     auth and auth.update_attributes!(user:user, picture:picture) and auth.after_sign_in
     unless auth
-      auth = create!(uid:user.identifier, email:user.email, picture:picture, provider:FACEBOOK) 
+      auth = create!(uid:user.identifier, email:user.email, token:token, picture:picture, provider:FACEBOOK) 
       auth.user = user
       auth.after_sign_up
     end
@@ -47,7 +47,7 @@ class FlinkerAuthentication < ActiveRecord::Base
     friends = user.friends.map(&:identifier)
     flinkers = self.class.where(uid:friends).includes(:flinker).map(&:flinker)
     FlinkerFollow.mutual_following(self.flinker, flinkers)
-    self.flinker.followings.each { |flinkr| FollowNotificationWorker.perform_in(1.minute, flinkr.id, self.flinker.id) }
+    self.flinker.reload.followings.each { |flinkr| FollowNotificationWorker.perform_in(1.minute, flinkr.id, self.flinker.id) }
   end
   
   def after_sign_in
@@ -69,6 +69,8 @@ class FlinkerAuthentication < ActiveRecord::Base
     username = user.username || default_username
     flinker = Flinker.create!(email:user.email, username:username, password:password, password_confirmation:password)
     self.update_attributes!(flinker_id:flinker.id)
+    FacebookFriend.create_or_update_friends(flinker) #Temp hack
+    FacebookFriendSignedUpActivity.create!(self) #
     flinker
   end
   
