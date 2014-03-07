@@ -9,7 +9,7 @@ class FacebookFriendSignedUpActivityTest < ActiveSupport::TestCase
     flinker = flinkers(:boop)
     auth = nil
     
-    [:fanny, :lilou].each do |f|
+    [:fanny, :nana].each do |f|
       SignupNotificationWorker.expects(:perform_async).with(flinkers(f).id, flinker.id)
     end
     
@@ -21,7 +21,7 @@ class FacebookFriendSignedUpActivityTest < ActiveSupport::TestCase
     
     assert_equal [flinker], activities.map(&:flinker).uniq
     assert_equal [auth], activities.map(&:resource).uniq
-    assert_equal [flinkers(:fanny), flinkers(:lilou)].to_set, activities.map(&:target).to_set
+    assert_equal [flinkers(:fanny), flinkers(:nana)].to_set, activities.map(&:target).to_set
   end
   
 end
