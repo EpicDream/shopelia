@@ -1,4 +1,4 @@
-fr-FR:
+fr_FR:
   flink:
     notification:
       follow: "@%{username} te suit!"

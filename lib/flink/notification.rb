@@ -21,7 +21,7 @@ class Flink::FollowNotification < Flink::Notification
     begin
       I18n.translate!("flink.notification.follow", username:@follower.username, :locale => @flinker.lang_iso, raise:true)
     rescue I18n::MissingTranslationData
-      I18n.translate!("flink.notification.follow", username:@follower.username, :locale => "en-GB", raise:true)
+      I18n.translate!("flink.notification.follow", username:@follower.username, :locale => "en_GB", raise:true)
     end
   end
   
@@ -55,7 +55,7 @@ class Flink::SignupNotification < Flink::Notification
     begin
       I18n.translate!("flink.notification.signup", username:@signed_up.username, :locale => @flinker.lang_iso, raise:true)
     rescue I18n::MissingTranslationData
-      I18n.translate!("flink.notification.signup", username:@signed_up.username, :locale => "en-GB", raise:true)
+      I18n.translate!("flink.notification.signup", username:@signed_up.username, :locale => "en_GB", raise:true)
     end
   end
   

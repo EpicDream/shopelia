@@ -7,7 +7,7 @@ elarch:
   username: ericusername
   country: france
   is_publisher: false
-  lang_iso: 'fr'
+  lang_iso: 'fr_FR'
 
 betty:
   name: Betty
@@ -19,7 +19,7 @@ betty:
   is_publisher: true
   staff_pick: true
   looks_count: 1
-  lang_iso: 'fr-FR'
+  lang_iso: 'fr_FR'
 
 lilou:
   name: Lilou
@@ -31,7 +31,7 @@ lilou:
   is_publisher: true
   staff_pick: false
   looks_count: 1
-  lang_iso: 'en-GB'
+  lang_iso: 'en_GB'
   
 boop:
   name: Boop

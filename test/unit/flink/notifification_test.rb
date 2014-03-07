@@ -7,7 +7,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     flinker = flinkers(:betty)
     follower = flinkers(:lilou)
     
-    ["fr-FR", "en-US", "en-GB", "it", "de", "es"].each do |lang|
+    ["fr_FR", "en_US", "en_GB", "it", "de", "es"].each do |lang|
       flinker.update_attributes!(lang_iso:lang)
       notif = Flink::FollowNotification.new(flinker, follower)
       
@@ -25,7 +25,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     Flink::FollowNotification.new(flinker, follower).deliver
   end
   
-  test "missing translation is in english en-GB" do
+  test "missing translation is in english en_GB" do
     flinker = flinkers(:nana)
     flinker.update_attributes!(lang_iso:"unknown")
     follower = flinkers(:lilou)
@@ -40,7 +40,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     flinker = flinkers(:betty)
     mentionner = flinkers(:lilou)
     
-    ["fr-FR", "en-US", "en-GB", "it", "de", "es"].each do |lang|
+    ["fr_FR", "en_US", "en_GB", "it", "de", "es"].each do |lang|
       flinker.update_attributes!(lang_iso:lang)
       notif = Flink::MentionNotification.new(flinker, mentionner)
       
@@ -52,7 +52,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     flinker = flinkers(:betty)
     signed_up = flinkers(:lilou)
     
-    ["fr-FR", "en-US", "en-GB", "it", "de", "es"].each do |lang|
+    ["fr_FR", "en_US", "en_GB", "it", "de", "es"].each do |lang|
       flinker.update_attributes!(lang_iso:lang)
       notif = Flink::SignupNotification.new(flinker, signed_up)
       
@@ -64,34 +64,34 @@ class Flink::NotificationTest < ActiveSupport::TestCase
   
   def follow_message_for flinker
     case flinker.lang_iso
-    when 'fr-FR' then return "@Lilou te suit!"
+    when 'fr_FR' then return "@Lilou te suit!"
     when 'es' then return "@Lilou te siga!"
     when 'it' then return "@Lilou ti segue!"
     when 'de' then return "@Lilou folgt Ihnen!"
-    when 'en-US' then return "@Lilou is following you!"
-    when 'en-GB' then return "@Lilou is following you!"
+    when 'en_US' then return "@Lilou is following you!"
+    when 'en_GB' then return "@Lilou is following you!"
     end  
   end
   
   def signup_message_for flinker
     case flinker.lang_iso
-    when 'fr-FR' then return "Ton amie facebook @Lilou a rejoint Flink"
+    when 'fr_FR' then return "Ton amie facebook @Lilou a rejoint Flink"
     when 'es' then return "Su amigo del facebook @Lilou ha unido Flink"
     when 'it' then return "Il tuo amico facebook @Lilou ha aderito Flink"
     when 'de' then return "Ihr Facebook-Freund @Lilou hat Flink beigetreten"
-    when 'en-US' then return "Your facebook friend @Lilou has joined Flink"
-    when 'en-GB' then return "Your facebook friend @Lilou has joined Flink"
+    when 'en_US' then return "Your facebook friend @Lilou has joined Flink"
+    when 'en_GB' then return "Your facebook friend @Lilou has joined Flink"
     end  
   end
   
   def mention_message_for flinker
     case flinker.lang_iso
-    when 'fr-FR' then return "Tu as été mentionnée par @Lilou"
+    when 'fr_FR' then return "Tu as été mentionnée par @Lilou"
     when 'es' then return "Usted fue mencionado por @Lilou"
     when 'it' then return "Lei è stato citato da @Lilou"
     when 'de' then return "Sie wurden von @Lilou erwähnt"
-    when 'en-US' then return "You were mentioned by @Lilou"
-    when 'en-GB' then return "You were mentioned by @Lilou"
+    when 'en_US' then return "You were mentioned by @Lilou"
+    when 'en_GB' then return "You were mentioned by @Lilou"
     end  
   end
   
