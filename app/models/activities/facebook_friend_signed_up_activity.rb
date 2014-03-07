@@ -4,8 +4,10 @@ class FacebookFriendSignedUpActivity < Activity
   def self.create! auth
     friendships = FacebookFriend.where(identifier:auth.uid).includes(:flinker)
     friendships.each do |friendship|
-      super(flinker_id:auth.flinker_id, target_id:friendship.flinker_id, resource_id:auth.id) if auth.flinker_id
-      SignupNotificationWorker.perform_async(friendship.flinker_id, auth.flinker_id)
+      if auth.flinker_id
+        super(flinker_id:auth.flinker_id, target_id:friendship.flinker_id, resource_id:auth.id) 
+        SignupNotificationWorker.perform_async(friendship.flinker_id, auth.flinker_id)
+      end
     end
   end
   
