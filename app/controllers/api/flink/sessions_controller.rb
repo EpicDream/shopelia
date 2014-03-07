@@ -10,6 +10,8 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     flinker = FlinkerAuthentication.facebook(params[:token])
     sign_in(:flinker, flinker)
     flinker.ensure_authentication_token!
+    update_country_iso
+    update_lang_iso
     render json_for(flinker)
   rescue => e
     render unauthorized("Facebook token is invalid", e) and return if e.respond_to?(:code) && [400, 401].include?(e.code)
