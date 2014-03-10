@@ -15,7 +15,7 @@
       %th Nombre de looks publiés
     - @publications.each do |hash|
       %tr
-        %td=I18n.l(Date.parse(hash['is_published_updated_at'])) if hash.has_key?('is_published_updated_at')
+        %td=I18n.l(Date.parse(hash['flink_published_at']))
         %td=hash['count']
     
 .wrapper-column
