@@ -22,7 +22,7 @@ betty:
   lang_iso: 'fr_FR'
 
 lilou:
-  name: Lilou
+  name: LilouName
   url:
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   username: Lilou

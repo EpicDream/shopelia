@@ -3,4 +3,4 @@ en_US:
     notification:
       follow: "@%{username} is following you!"
       mention: "You were mentioned by @%{username}"
-      signup: "Your facebook friend @%{username} has joined Flink"      
+      signup: "Your facebook friend %{username} has joined Flink"      

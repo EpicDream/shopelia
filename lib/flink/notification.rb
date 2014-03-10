@@ -49,13 +49,14 @@ class Flink::SignupNotification < Flink::Notification
   def initialize flinker, signed_up
     @flinker = flinker
     @signed_up = signed_up
+    @fb_signed_up = FacebookFriend.where(friend_flinker_id:@signed_up.id).first
   end
   
   def message
     begin
-      I18n.translate!("flink.notification.signup", username:@signed_up.username, :locale => @flinker.lang_iso, raise:true)
+      I18n.translate!("flink.notification.signup", username:@fb_signed_up.name, :locale => @flinker.lang_iso, raise:true)
     rescue I18n::MissingTranslationData
-      I18n.translate!("flink.notification.signup", username:@signed_up.username, :locale => "en_GB", raise:true)
+      I18n.translate!("flink.notification.signup", username:@fb_signed_up.name, :locale => "en_GB", raise:true)
     end
   end
   

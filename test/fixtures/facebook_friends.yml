@@ -1,7 +1,7 @@
 fanny:
   identifier: "909090"
   picture: "http://fanny.jpg"
-  name: "Boop"
+  name: "LilouName"
   sex: "female"
   flinker: fanny
   friend: lilou
