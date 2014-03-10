@@ -3,4 +3,4 @@ es_ES:
     notification:
       follow: "@%{username} te siga!"
       mention: "Usted fue mencionado por @%{username}"
-      signup: "Su amigo del facebook @%{username} ha unido Flink"      
+      signup: "Su amigo del facebook %{username} ha unido Flink"      

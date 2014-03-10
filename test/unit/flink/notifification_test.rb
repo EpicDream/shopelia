@@ -75,12 +75,12 @@ class Flink::NotificationTest < ActiveSupport::TestCase
   
   def signup_message_for flinker
     case flinker.lang_iso
-    when 'fr_FR' then return "Ton amie facebook @Lilou a rejoint Flink"
-    when 'es_ES' then return "Su amigo del facebook @Lilou ha unido Flink"
-    when 'it_IT' then return "Il tuo amico facebook @Lilou ha aderito Flink"
-    when 'de_DE' then return "Ihr Facebook-Freund @Lilou hat Flink beigetreten"
-    when 'en_US' then return "Your facebook friend @Lilou has joined Flink"
-    when 'en_GB' then return "Your facebook friend @Lilou has joined Flink"
+    when 'fr_FR' then return "Ton amie facebook LilouName a rejoint Flink"
+    when 'es_ES' then return "Su amigo del facebook LilouName ha unido Flink"
+    when 'it_IT' then return "Il tuo amico facebook LilouName ha aderito Flink"
+    when 'de_DE' then return "Ihr Facebook-Freund LilouName hat Flink beigetreten"
+    when 'en_US' then return "Your facebook friend LilouName has joined Flink"
+    when 'en_GB' then return "Your facebook friend LilouName has joined Flink"
     end  
   end
   
