@@ -39,6 +39,9 @@ codes:
   - tights
   - gloves
   - handkerchief
+  - playsuit
+  - socks
+  - cardigan
 translations:
   pull:
     FR: Pull
