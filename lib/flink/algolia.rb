@@ -5,7 +5,7 @@ module Algolia
       klass.class_eval do
         include AlgoliaSearch
         
-        algoliasearch auto_index: false, per_environment: true do
+        algoliasearch auto_index: true, per_environment: true do
           attribute :username, :name, :url, :email, :staff_pick
       
           attribute :avatar do

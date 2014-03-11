@@ -25,8 +25,11 @@ class AlgoliaTest < ActiveSupport::TestCase
   
   test "live update on touch" do #does not work on composed attributes !!
     skip
+    Flinker.reindex!
+    assert_equal 0, Flinker.raw_search("betty")["hits"].first["comments_count"]
     Comment.any_instance.stubs(:can_be_posted_on_blog?).returns(false)
     comment = Comment.create(flinker_id:@flinker.id, look_id:looks(:agadir).id, body:"yes")
+    assert_equal 1, Flinker.raw_search("betty")["hits"].first["comments_count"]
   end
   
   test "search filtering with tags" do
