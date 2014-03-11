@@ -3,8 +3,8 @@ class FlinkerFollow < ActiveRecord::Base
   attr_accessible :flinker_id, :follow_id, :skip_notification
   attr_accessor :skip_notification
   
-  belongs_to :flinker, include: :country
-  belongs_to :following, foreign_key: :follow_id, class_name:'Flinker', include: :country
+  belongs_to :flinker, include: :country, touch: true
+  belongs_to :following, foreign_key: :follow_id, class_name:'Flinker', include: :country, touch: true
   
   validates :flinker_id, :presence => true
   validates :follow_id, :presence => true, :uniqueness => { :scope => :flinker_id }

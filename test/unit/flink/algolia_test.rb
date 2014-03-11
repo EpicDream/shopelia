@@ -12,20 +12,21 @@ class AlgoliaTest < ActiveSupport::TestCase
   
   test "search" do
     skip
-    
     flinkers = Flinker.search("betty")
     assert_equal @flinker.id, flinkers.first.id
-    FlinkerLike.create!(flinker_id:flinkers(:betty).id, :resource_type => "look", :resource_id => looks(:agadir).id)
-    
   end
   
   test "live update" do
     skip
-    
-    assert @flinker.update_attributes(email:"Zorro@toto.com")
-  
+    assert @flinker.update_attributes(name:"Zorro", username:"Zorro")
     assert_equal nil, Flinker.search("betty").first
     assert_equal @flinker, Flinker.search("zor").first
+  end
+  
+  test "live update on touch" do #does not work on composed attributes !!
+    skip
+    Comment.any_instance.stubs(:can_be_posted_on_blog?).returns(false)
+    comment = Comment.create(flinker_id:@flinker.id, look_id:looks(:agadir).id, body:"yes")
   end
   
   test "search filtering with tags" do
