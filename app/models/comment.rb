@@ -7,7 +7,7 @@ class Comment < ActiveRecord::Base
   attr_accessor :post_to_blog
   
   belongs_to :look
-  belongs_to :flinker
+  belongs_to :flinker, touch: true
   
   validates :flinker_id, :presence => true
   validates :look_id, :presence => true

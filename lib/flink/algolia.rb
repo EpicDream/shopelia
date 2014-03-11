@@ -5,7 +5,7 @@ module Algolia
       klass.class_eval do
         include AlgoliaSearch
         
-        algoliasearch auto_index: false, per_environment: true do
+        algoliasearch auto_index: true, per_environment: true do
           attribute :username, :name, :url, :email, :staff_pick
       
           attribute :avatar do
@@ -13,11 +13,11 @@ module Algolia
           end
     
           attribute :country do
-             country.try(:iso) 
-           end
+            country.try(:iso) 
+          end
     
           attribute :rank do
-            display_order
+            display_order if self.is_publisher?
           end
     
           attribute :publisher do
@@ -49,12 +49,24 @@ module Algolia
           end
     
           tags do
-            [is_publisher? ? 'publisher' : 'non-publisher']
+            [self.is_publisher? ? 'publisher' : 'non-publisher']
           end
     
           customRanking ['asc(username)', 'asc(name)']
           attributesToIndex ['username', 'name']
         end
+      
+        #TEMPORARY ALGOLIA QUICK PATCH
+        private
+        
+        def algolia_perform_index_tasks
+          return if !@algolia_auto_indexing || @algolia_must_reindex == false || @algolia_must_reindex.nil?
+          algolia_index!
+          remove_instance_variable(:@algolia_auto_indexing) if instance_variable_defined?(:@algolia_auto_indexing)
+          remove_instance_variable(:@algolia_synchronous) if instance_variable_defined?(:@algolia_synchronous)
+          remove_instance_variable(:@algolia_must_reindex) if instance_variable_defined?(:@algolia_must_reindex)
+        end
+        
       end
     end
 
