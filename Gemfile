@@ -60,7 +60,7 @@ gem 'twitter', require:false
 gem 'instagram', require:false
 gem 'bitly', require:false
 gem 'geocoder', require:false
-gem 'rmagick'
+gem 'rmagick', require:'RMagick'
 
 # Gems used only for assets and not required
 # in production environments by default.
