@@ -1,0 +1,28 @@
+/* ...
+*= require_self
+*= require admin/jquery.Jcrop.min.css
+*/
+
+.navbar{
+  display:none;
+}
+.image-container{
+  display:inline-block;
+  margin:10px;
+}
+.crop-form{
+  display:inline-block;
+  vertical-align:top;
+  margin-left:60px;
+  padding:10px;
+  width:300px;
+  border:thin solid #BEBEBE;
+}
+label{
+  color:#6E6E6E;
+  font-size:14px;
+  font-family:'Hevetica';
+}
+input[type=submit]{
+  margin-top:100px;
+}
