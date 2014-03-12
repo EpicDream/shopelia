@@ -25,6 +25,19 @@ class Image < ActiveRecord::Base
     file.unlink
   end
   
+  def crop coordinates
+    return if coordinates[:width].to_i * coordinates[:height].to_i == 0
+    original = Magick::ImageList.new(self.picture.path(:original))
+    original.crop!(*coordinates.values_at(:x, :y, :width, :height).map(&:to_i))
+    original.write(self.picture.path(:original))
+    self.picture.reprocess!
+    self.save
+  end
+  
+  def real_sizes
+    JSON.parse(picture_sizes)
+  end
+  
   private
   
   def create_files

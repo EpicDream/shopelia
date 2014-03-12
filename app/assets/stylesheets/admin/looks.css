@@ -8,19 +8,17 @@
   height: 200px;
   width: 200px;
 }
-.img-block, .img-delete {
+.img-block{
   position: relative;
 }
 .img-delete {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  color: #f00;
-  font-weight: bold;
+  position:absolute;
+  right:5px;
+  bottom:5px;
   font-size:28px;
 }
 .img-delete a {
-  color: #f00;
+  color: #991746;
 }
 .img-delete a:hover {
   text-decoration: none;
@@ -147,4 +145,21 @@
 .modal-backdrop.fade.in {
   opacity: 0.1;
   filter: alpha(opacity=10);
+}
+.img-block{
+  border:thin solid gray;
+  height:260px;
+  width:200px;
+  padding:10px;
+  margin:5px;
+  vertical-align:top;
+}
+.img-sizes{
+  font-size:12px;
+  font-family:'Hevetica';
+}
+.img-tools{
+  position:absolute;
+  bottom:5px;
+  left:5px;
 }

@@ -44,9 +44,15 @@
         %h3 Images
         - @look.look_images.order(:display_order).each do |image|
           .img-block.sort{"data-id" => "#{image.id}"}
-            = image_tag image.url, class:"thumb"
+            = image_tag image.picture.url, class:"thumb"
             .img-delete
               = link_to "X", admin_look_image_path(image), method:"delete", remote: true
+            .img-sizes
+              %span=image.real_sizes["large"]
+            .img-tools
+              %a.crop-image{ href: "#{admin_image_path(image)}"}
+                =image_tag "admin/crop-25.png"
+                
       %article.coolbox
         %h3 Products
         .row-fluid#look-products

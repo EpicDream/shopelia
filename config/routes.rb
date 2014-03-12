@@ -73,6 +73,7 @@ Shopelia::Application.routes.draw do
     resources :blogs
     resources :comments, :only => [:index, :show]
     resources :posts
+    resources :images, :only => [:show, :update]
     resources :flinkers
     resources :statistics, only:[:index]
     resources :looks do

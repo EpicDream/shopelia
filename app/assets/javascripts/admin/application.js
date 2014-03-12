@@ -17,3 +17,4 @@
 //= require monitor
 //= require products-feed
 //= require catalogue
+//= require ./lib/jquery.Jcrop.min
