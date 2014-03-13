@@ -2,7 +2,7 @@ class Admin::LookImagesController < Admin::AdminController
   before_filter :retrieve_item, :only => [:update, :destroy]
 
   def update
-    updated = @item.update_attribute :display_order_position, params[:look_image][:display_order_position].to_i
+    # updated = @item.update_attribute :display_order_position, params[:look_image][:display_order_position].to_i
     respond_to do |format|
       format.json { render json:"{}", status: updated ? :ok : :error } 
     end
