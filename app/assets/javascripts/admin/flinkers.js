@@ -48,6 +48,8 @@ var Index = {
         aoData.push( { "name":"publisher", "value":$('#publisherFilter').val() } );
         aoData.push( { "name":"staff_pick", "value":$('#staff-pick-filter').val() } );
         aoData.push( { "name":"country", "value":$('#country-filter').val() } );
+        aoData.push( { "name":"universal", "value":$('#universal-filter').val() } );
+        
         $.getJSON( sSource, aoData, function (json) { 
           fnCallback(json)
         } );

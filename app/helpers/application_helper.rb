@@ -25,4 +25,8 @@ module ApplicationHelper
      ['Italie', 'IT'], ['Etats Unis', 'US']]
   end
   
+  def actual_countries_for_select
+    Country.in_use.map{|c| [c.name, c.id]}
+  end
+  
 end

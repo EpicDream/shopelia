@@ -1,7 +1,8 @@
 <%= link_to "Retour à l'index", admin_blogs_url, class:'back-link' %>
-<%= link_to "Récupérer les nouveaux articles", admin_blog_url(@blog, :fetch => true), class:"btn fetch-post-link" %>
 
 <div class="coolbox blogs-posts-header">
+  <%= link_to "Récupérer les nouveaux articles", admin_blog_url(@blog, :fetch => true), class:"btn fetch-post-link", confirm:"Confirmer" %>
+  
   <a href="#" id="update-blog-link">Mettre à jour</a>
   <p><%= @blog.name %></p>
   <img src="<%= @blog.avatar_url || "/assets/admin/girl_head.jpg"%>" class="blog-posts-avatar"></img>

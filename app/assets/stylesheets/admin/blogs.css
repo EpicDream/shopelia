@@ -272,8 +272,9 @@ div.blogs{
   font-style:italic;
 }
 .fetch-post-link{
-  float:right;
-  margin:10px;
+  display:block;
+  margin-bottom:80px;
+  width:40%;
 }
 .blogs-posts-header .update-blog-block-hidden{
   display: block;
