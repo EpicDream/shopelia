@@ -43,6 +43,7 @@ class Look < ActiveRecord::Base
     case 
     when since then published.where("flink_published_at >= ?", since)
     when before then published.where("flink_published_at <= ?", before)
+    else published
     end
   }
   scope :with_comment_matching, ->(pattern) {
