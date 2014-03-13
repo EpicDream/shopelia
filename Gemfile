@@ -54,7 +54,6 @@ gem 'pushmeup'
 gem 'net-http-digest_auth', require:false
 gem "paperclip", "~> 3.0"
 gem 'fastimage'
-gem 'ranked-model'
 gem 'fb_graph'
 gem 'twitter', require:false
 gem 'instagram', require:false
