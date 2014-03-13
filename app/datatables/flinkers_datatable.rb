@@ -42,7 +42,7 @@ class FlinkersDatatable
   end
 
   def fetch_flinkers
-    flinkers = Flinker.rank(:display_order)
+    flinkers = Flinker
     flinkers = flinkers.where("is_publisher=?", @filters[:publisher] == 'yes') if @filters[:publisher].present?
     flinkers = flinkers.where("staff_pick = ?", @filters[:staff_pick] == 'yes') unless @filters[:staff_pick].blank?
     flinkers = flinkers.of_country(@filters[:country]) unless @filters[:country].blank?
