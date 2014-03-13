@@ -23,6 +23,8 @@ class Api::Flink::BaseController < Api::ApiController
 
   def retrieve_device
     @device = Device.from_flink_user_agent(@user_agent, current_flinker) if @user_agent =~ /^flink\:/ && current_flinker.present?
+  rescue
+    @device = nil
   end
   
   protected
