@@ -43,7 +43,8 @@ class Admin::FlinkersController < Admin::AdminController
     @filters = {
       :publisher => params[:publisher],
       :staff_pick => params[:staff_pick],
-      :country => params[:country]
+      :country => params[:country],
+      :universal => params[:universal]
     }
   end  
 end
