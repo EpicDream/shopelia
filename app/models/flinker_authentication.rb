@@ -74,7 +74,7 @@ class FlinkerAuthentication < ActiveRecord::Base
   end
   
   def default_username
-    user.email[/(.*)@/, 1].to_s + Time.now.to_i.to_s
+    user.email[/(.*)@/, 1].to_s + Time.now.to_i.to_s if user.email
   end
 
 end
