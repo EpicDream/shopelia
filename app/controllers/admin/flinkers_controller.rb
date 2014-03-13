@@ -21,6 +21,7 @@ class Admin::FlinkersController < Admin::AdminController
     if @flinker.update_attributes(params[:flinker])
       redirect_to admin_flinker_path(@flinker)
     else
+      flash[:error] = "La validation a échoué : #{@flinker.errors.full_messages}"
       render :action => 'edit'
     end
   end
