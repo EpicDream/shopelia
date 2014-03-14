@@ -1,9 +1,14 @@
 class Admin::LooksController < Admin::AdminController
-  before_filter :retrieve_look, :only => [:show, :publish, :reject]
+  before_filter :retrieve_look, :only => [:show, :publish, :reject, :reinitialize_images]
   before_filter :retrieve_brands, :only => [:show]
   
   def index
     @looks = Look.all
+  end
+  
+  def reinitialize_images
+    @look.post.reinitialize_images
+    redirect_to admin_look_path(@look.reload)
   end
   
   def publish

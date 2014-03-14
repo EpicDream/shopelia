@@ -2,13 +2,6 @@
   %header
     %h1= @look.name
     %h2= @look.flinker.name || @look.flinker.url
-    .action-buttons
-      %a.btn.btn-large.btn-success.update-look{href: "#{publish_admin_look_path(@look)}"}
-        %i.icon-check.icon-white
-        Publish look
-      %a.btn.btn-large.btn-danger.update-look{href: "#{reject_admin_look_path(@look)}"}
-        %i.icon-trash.icon-white
-        Reject look
 
 .container-fluid
   .row-fluid
@@ -41,18 +34,27 @@
           Add custom product
     .span9
       %article.coolbox#grid
-        %h3 Images
-        - @look.look_images.order(:display_order).each do |image|
-          .img-block.sort{"data-id" => "#{image.id}"}
-            = image_tag image.picture.url, class:"thumb"
-            .img-delete
-              = link_to "X", admin_look_image_path(image), method:"delete", remote: true
-            .img-sizes
-              %span=image.real_sizes["large"]
-            .img-tools
-              %a.crop-image{ href: "#{admin_image_path(image)}"}
-                =image_tag "admin/crop-25.png"
-                
+        %a{href: "#{publish_admin_look_path(@look)}", id:"publish-look"}
+          %i.icon-check.icon-white
+          Publish look
+        %a{href: "#{reject_admin_look_path(@look)}", id:"reject-look"}
+          %i.icon-trash.icon-white
+          Reject look
+        %a{href: "#{reinitialize_images_admin_look_path(@look)}", id:"reinitialize-images", method:"put", confirm:"Confirmez"}
+          %i.icon-refresh.icon-white
+          Rénitialiser les images
+        %hr  
+        %div.images
+          - @look.look_images.order(:display_order).each do |image|
+            .img-block.sort{"data-id" => "#{image.id}"}
+              = image_tag image.picture.url, class:"thumb"
+              .img-delete
+                = link_to "X", admin_look_image_path(image), method:"delete", remote: true
+              .img-sizes
+                %span=image.real_sizes["large"]
+              .img-tools
+                %a.crop-image{ href: "#{admin_image_path(image)}"}
+                  =image_tag "admin/crop-25.png"
       %article.coolbox
         %h3 Products
         .row-fluid#look-products
