@@ -66,10 +66,11 @@ class FlinkerAuthentication < ActiveRecord::Base
   def create_flinker
     password = SecureRandom.hex(4)
     username = user.username || default_username
-    flinker = Flinker.create!(email:user.email, username:username, password:password, password_confirmation:password)
+    email = user.email || "#{SecureRandom.hex(4)}@flinker.io"
+    flinker = Flinker.create!(email:email, username:username, password:password, password_confirmation:password)
     self.update_attributes!(flinker_id:flinker.id)
-    FacebookFriend.create_or_update_friends(flinker) #Temp hack
-    FacebookFriendSignedUpActivity.create!(self) #
+    FacebookFriend.create_or_update_friends(flinker)
+    FacebookFriendSignedUpActivity.create!(self)
     flinker
   end
   

@@ -128,5 +128,15 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     
     assert_match /^fanny.louvel\d+/, flinker.username
   end
+  
+  test "create flinker from facebook without email, assign default email" do
+    fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy and @flinker.destroy
+    flinker = nil
+    FbGraph::User.any_instance.stubs(email:nil)
+    
+    assert_difference("Flinker.count") { 
+      FlinkerAuthentication.facebook(fanny[:token])
+    }
+  end
 
 end
