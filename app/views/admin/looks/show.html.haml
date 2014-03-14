@@ -40,9 +40,8 @@
         %a{href: "#{reject_admin_look_path(@look)}", id:"reject-look"}
           %i.icon-trash.icon-white
           Reject look
-        %a{href: "#{reinitialize_images_admin_look_path(@look)}", id:"reinitialize-images", method:"put", confirm:"Confirmez"}
-          %i.icon-refresh.icon-white
-          Rénitialiser les images
+        = link_to 'Rénitialiser les images', reinitialize_images_admin_look_path(@look), id:"reinitialize-images", method:"put", confirm:"Confirmez"
+          
         %hr  
         %div.images
           - @look.look_images.order(:display_order).each do |image|
