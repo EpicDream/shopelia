@@ -18,4 +18,4 @@
         %h3 Looks
         - @flinker.looks.where(is_published:true).order("created_at desc").each do |look|
           .img-block
-            = link_to image_tag(look.look_images.order(:display_order).first.picture.url(:large), class:"thumb"), admin_look_path(look)
+            = link_to image_tag(look.look_images.first.picture.url(:large), class:"thumb"), admin_look_path(look)

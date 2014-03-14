@@ -18,7 +18,6 @@ class PostTest < ActiveSupport::TestCase
     @post.products = {"jupe" => "http://bit.ly/17uPRlU"}.to_json
     
     Linker.expects(:clean).with("http://bit.ly/17uPRlU")
-    Linker.expects(:clean).with("http://www.toto.fr")
     @post.save
   end
 
@@ -47,14 +46,13 @@ class PostTest < ActiveSupport::TestCase
   end
   
   test "post link must be unique" do
-    Linker.stubs(:clean).returns("http://www.fake.com")
     assert_difference('Post.count', 1) do
       1.upto(3) { 
         @post = Post.new(link: "http://www.toto.fr", blog_id: blogs(:betty).id, products:{}.to_json, images:[].to_json, )
         @post.save
       }
     end
-    assert_equal "http://www.fake.com", Post.first.link
+    assert_equal "http://www.toto.fr", Post.first.link
   end
   
   test "clean title long spaces ranges" do
@@ -68,8 +66,7 @@ class PostTest < ActiveSupport::TestCase
   end
   
   test "validates uniquess domain name independant" do
-    post = Post.new(link: "http://www.toto.fr/lingerie.html", blog_id: blogs(:betty).id, title:'hello', products:{}.to_json, images:[].to_json)
-    assert post.save
+    assert Post.create(link: "http://www.toto.fr/lingerie.html", blog_id: blogs(:betty).id, title:'hello', products:{}.to_json, images:[].to_json)
 
     post = Post.new(link: "http://www.toto.com/lingerie.html", blog_id: blogs(:betty).id, title:'hello', products:{}.to_json, images:[].to_json)
     assert !post.valid?
