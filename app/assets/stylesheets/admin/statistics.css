@@ -1,8 +1,31 @@
 #statistics_wrapper,
 #statistics-for-day_wrapper{
-  width:60%;
-  margin:60px;
+  width:90%;
+  padding:60px;
 }
-h1{
-  margin-top:80px;
+.dataTable{
+  margin-top:60px;
+  border:thin solid #FFABEE;
 }
+table thead th{
+  color:#FF6FDE;
+  padding:10px;
+  margin:10px;
+  font-weight:normal !important;
+}
+.dataTables_paginate a{
+  margin:5px;
+}
+.dataTables_paginate:hover{
+  cursor:pointer;
+}
+.coolbox{
+  margin:100px 2%;
+  font-family:'Helvetica';
+  font-size:12px !important;
+}
+.dataTables_info{
+  font-style:italic;
+}
+
+

@@ -2,7 +2,7 @@ class StatisticSql
   
   def self.of_publishers from
     %Q{
-      select fl.username, fl.name, fl.url, vlooks.count as looks_count, vfollows.count as follows_count, 
+      select fl.username, fl.name, fl.url, countries.iso as country, vlooks.count as looks_count, vfollows.count as follows_count, 
              vlikes.count as likes_count, vcomments.count as comments_count
       from flinkers as fl
 
@@ -12,6 +12,8 @@ class StatisticSql
          group by looks.flinker_id order by count desc) vlooks
        on vlooks.flinker_id = fl.id
   
+       left outer join countries on countries.id = fl.country_id
+       
        left outer join (select follow_id, count(*) as count from flinker_follows
          where flinker_follows.updated_at > '#{from}'
          group by follow_id order by count desc) vfollows
