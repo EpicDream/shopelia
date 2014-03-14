@@ -74,7 +74,6 @@ class Post < ActiveRecord::Base
       next hash unless link = Linker.clean(link)
       hash.merge!({name => link.clean })
     end.to_json
-    self.link = Linker.clean(link)
   end
   
   def set_a_title
@@ -91,7 +90,7 @@ class Post < ActiveRecord::Base
   
   def uniqueness_domain_independant
     uri = URI.parse(self.link)
-    exist = self.blog.posts.where('link like ?', "%#{uri.path}%#{uri.query}%").count > 0
+    exist = self.blog.posts.where('link ~* ?', "#{uri.path}.*?#{uri.query}").count > 0
     errors.add(:link, 'already exists') if exist
   rescue URI::InvalidURIError #some url have heart and so on ascii charts ...
     true
