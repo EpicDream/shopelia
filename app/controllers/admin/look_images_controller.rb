@@ -1,15 +1,17 @@
 class Admin::LookImagesController < Admin::AdminController
-  before_filter :retrieve_item, :only => [:update, :destroy]
 
-  def update
-    # updated = @item.update_attribute :display_order_position, params[:look_image][:display_order_position].to_i
+  def update#TODO:Quick temp raw reorder, cause RankedModel do whatever with Rails3/Postgres and so has been removed
+    params[:look_image][:display_orders].each do |id , pos|
+      id, pos = [id, pos].map { |value| ActiveRecord::Base.sanitize(value) }
+      Image.connection.execute("update images set display_order = #{pos} where id = #{id}")
+    end
     respond_to do |format|
       format.json { render json:"{}", status: :ok } 
     end
   end    
 
   def destroy
-    @item.destroy
+    look_image.destroy
     respond_to do |format|
       format.json { render json:"{}", status: :ok } 
     end
@@ -17,7 +19,7 @@ class Admin::LookImagesController < Admin::AdminController
 
   private
 
-  def retrieve_item
-    @item = LookImage.find(params[:id])
+  def look_image
+    @look_image ||= LookImage.find(params[:id])
   end
 end

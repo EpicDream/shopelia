@@ -30,12 +30,19 @@ function sortable() {
     items: '.sort',
     revert: 150,
     update: function(event, ui) {
-      id = $(ui.item).data("id");
-      index = ui.item.index() - 1;
+      var orders = {};
+      $(".img-block").each(function (index, node) {
+        var item = $(node);
+        var obj = {};
+        obj[item.data("id")] = item.index() - 1;
+        orders = $.extend(orders, obj );
+      });
+      var id = $(ui.item).data("id");
+      var index = ui.item.index() - 1;
       $.ajax({
         url: "/admin/look_images/" + id,
         dataType: "json",
-        data: {look_image:{display_order_position:index}},
+        data: {look_image:{display_orders:orders}},
         type: "put"
       })
       .fail(function(jqXHR, textStatus, errorThrown){
