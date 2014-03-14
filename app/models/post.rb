@@ -48,6 +48,12 @@ class Post < ActiveRecord::Base
       end
     end
   end
+  
+  def reinitialize_images
+    self.images.each do |url|
+      self.look.look_images << LookImage.create(url:url)
+    end
+  end
 
   def links
     links = []

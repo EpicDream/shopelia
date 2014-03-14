@@ -163,3 +163,39 @@
   bottom:5px;
   left:5px;
 }
+#reinitialize-images{
+  position:absolute;
+  font-family:'Hevetica';
+  font-size:13px;
+  top:10px;
+  left:300px;
+  padding:6px;
+  background:#474747;
+  border-radius:2px;
+  color:snow;
+}
+#publish-look{
+  position:absolute;
+  top:10px;
+  left:100px;
+  font-family:'Hevetica';
+  font-size:13px;
+  padding:6px;
+  background:#629651;
+  border-radius:2px;
+  color:snow;
+}
+#reject-look{
+  position:absolute;
+  top:10px;
+  left:200px;
+  font-family:'Hevetica';
+  font-size:13px;
+  padding:6px;
+  background:#96362F;
+  border-radius:2px;
+  color:snow;
+}
+div.images{
+  margin-top:60px;
+}

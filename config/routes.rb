@@ -79,6 +79,7 @@ Shopelia::Application.routes.draw do
     resources :looks do
       get :publish, :on => :member
       get :reject, :on => :member
+      put :reinitialize_images, :on => :member
     end
     resources :look_images
     resources :look_products
