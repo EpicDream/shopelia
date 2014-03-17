@@ -50,4 +50,12 @@ class AlgoliaTest < ActiveSupport::TestCase
     flinkers = Flinker.search("Alb")
     assert_equal flinker, flinkers.first
   end
+  
+  test "skip index publishers without looks" do
+    skip
+    Look.destroy_all
+    Flinker.reindex!
+    hits = Flinker.raw_search("betty")["hits"]
+    assert_equal 0, hits.count
+  end
 end

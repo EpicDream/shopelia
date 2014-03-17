@@ -1,7 +1,7 @@
 require 'flink/algolia'
 
 class Flinker < ActiveRecord::Base
-  include Algolia::FlinkerSearch unless Rails.env.test? #algolia webmock does not mock http request at all...!!
+  include Algolia::FlinkerSearch unless Rails.env.test? #algolia webmock does not mock http request at all.
   
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
@@ -86,6 +86,10 @@ class Flinker < ActiveRecord::Base
   
   def activities_counts
     @activities_counts ||= Hash[connection.execute(ActivitySql.counts(self)).first.collect {|k,v| [k, v.to_i] }]
+  end
+  
+  def publisher_without_looks?
+    self.is_publisher? && self.looks.count.zero?
   end
   
   private
