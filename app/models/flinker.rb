@@ -32,7 +32,6 @@ class Flinker < ActiveRecord::Base
   before_validation :set_avatar
   after_create :leftronic_flinkers_count
   after_destroy :leftronic_flinkers_count
-  after_touch { |record| record.reload.index! unless Rails.env.test? }
   
   validates :email, :presence => true
   validates :username, uniqueness:true, allow_nil: true
