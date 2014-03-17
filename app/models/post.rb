@@ -80,6 +80,7 @@ class Post < ActiveRecord::Base
       next hash unless link = Linker.clean(link)
       hash.merge!({name => link.clean })
     end.to_json
+    self.link = Linker.clean(link)
   end
   
   def set_a_title
