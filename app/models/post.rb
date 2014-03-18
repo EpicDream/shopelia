@@ -97,7 +97,7 @@ class Post < ActiveRecord::Base
   
   def uniqueness_domain_independant
     uri = URI.parse(self.link)
-    exist = self.blog.posts.where('link ~* ?', "#{uri.path}.*?#{uri.query}").count > 0
+    exist = self.blog.reload.posts.where('link ~* ?', "#{uri.path}.*?#{uri.query}").count > 0
     errors.add(:link, 'already exists') if exist
   rescue URI::InvalidURIError #some url have heart and so on ascii charts ...
     true
