@@ -55,7 +55,7 @@ Shopelia::Application.routes.draw do
   resources :payment_cards
 
   namespace :admin do
-    match "/", to: "dashboard#index"
+    match "/", to: "posts#index"
     resources :collections do
       get :up, :on => :member
       get :down, :on => :member
