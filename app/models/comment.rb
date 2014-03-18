@@ -11,6 +11,7 @@ class Comment < ActiveRecord::Base
   
   validates :flinker_id, :presence => true
   validates :look_id, :presence => true
+  validate :flinker_can_comment?
   
   after_create :post_comment_on_blog_async, if: -> { can_be_posted_on_blog? && post_to_blog }
   
@@ -41,6 +42,12 @@ class Comment < ActiveRecord::Base
   end
 
   private
+  
+  def flinker_can_comment?
+    can_comment = Flinker.find(self.flinker_id).can_comment?
+    self.errors.add(:cannot_comment, "Can't comment") unless can_comment
+    can_comment
+  end
   
   def post_comment_on_blog_async
     CommentsWorker.perform_async(self.id)

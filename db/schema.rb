@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140228144248) do
+ActiveRecord::Schema.define(:version => 20140318133034) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -347,6 +347,7 @@ ActiveRecord::Schema.define(:version => 20140228144248) do
     t.decimal  "lng"
     t.boolean  "universal",              :default => false
     t.string   "lang_iso",               :default => "en-GB"
+    t.boolean  "can_comment",            :default => true
   end
 
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true
