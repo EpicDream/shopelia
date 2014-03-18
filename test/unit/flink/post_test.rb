@@ -18,6 +18,7 @@ class PostTest < ActiveSupport::TestCase
     @post.products = {"jupe" => "http://bit.ly/17uPRlU"}.to_json
     
     Linker.expects(:clean).with("http://bit.ly/17uPRlU")
+    Linker.expects(:clean).with("http://www.toto.fr")
     @post.save
   end
 

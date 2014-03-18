@@ -49,6 +49,17 @@ class CommentTest < ActiveSupport::TestCase
     assert_equal flinkers(:boop), activity.target
     assert_equal Comment.last, activity.resource
   end
+  
+  test "dont create comment if flinker is blacklisted" do
+    flinker = flinkers(:fanny)
+    flinker.can_comment = false
+    flinker.save!
+    assert_no_difference 'Comment.count' do
+      assert_no_difference('CommentActivity.count') do
+        Comment.create(body: "trop belle", flinker_id:flinker.id, look_id:@look.id)
+      end
+    end
+  end
    
   private
   
