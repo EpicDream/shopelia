@@ -1,0 +1,24 @@
+<div class="themes-content">
+  <%= link_to 'Créer une nouvelle collection', '#', id:"create-theme-link"%>
+  
+  <div id="new-theme-form" class="new-theme-form-hidden">
+    <%= form_for [:admin, Theme.new] do |f| %>
+      <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
+      <%= f.fields_for :theme_cover_attributes do |ff| %>
+        <%= ff.label :picture, "Choisir une image de couverture"%>
+        <%= ff.file_field :picture %>
+      <% end %>
+      <%= f.submit 'Créer cette nouvelle collection', class:"btn" %>
+    <% end  %>  
+  </div>
+
+  <% @themes.each do |theme| %>
+    <div class="theme-banner">
+      <span class="looks-count"><%= theme.looks.count %>&nbsp;Looks</span>
+      <span class="publishers-count"><%= theme.flinkers.count %>&nbsp;Blogeuses</span>
+      <p><%= theme.title %></p>
+      <%= image_tag theme.theme_cover.picture.url(:small)%>
+    </div>
+  <% end %>
+  
+</div>

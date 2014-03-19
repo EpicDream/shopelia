@@ -3,7 +3,7 @@ require 'paper_clip_patch'
 class Image < ActiveRecord::Base
   SIZES = { pico:["50x50>", :jpg], small:["200x200>", :jpg], large:["1200x1200>", :jpg]}
   
-  attr_accessible :url, :display_order
+  attr_accessible :url, :display_order, :picture
   alias_attribute :sizes, :picture_sizes
   validates :url, presence:true, unless: ->(record) { record.class == ThemeCover } 
   validates :picture, presence:true, on: :create
