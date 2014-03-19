@@ -3,6 +3,11 @@
 namespace :shopelia do
   namespace :flinkers do
     
+    desc "Reindex algolia flinkers index, by batch of 10000"
+    task :algolia_reindex => :environment do
+      Flinker.reindex!(10000)
+    end
+    
     desc "Generate flinkers from blogs objects"
     task :seed => :environment do
       Blog.where(flinker_id:nil).each do |blog|
