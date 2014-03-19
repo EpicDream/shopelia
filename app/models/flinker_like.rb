@@ -6,7 +6,7 @@ class FlinkerLike < ActiveRecord::Base
 
   attr_accessible :flinker_id, :resource_id, :resource_type
 
-  belongs_to :flinker, touch: true
+  belongs_to :flinker
   belongs_to :look, foreign_key: :resource_id, class_name:'Look'
 
   validates :flinker_id, :presence => true
