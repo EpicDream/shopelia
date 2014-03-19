@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140318133034) do
+ActiveRecord::Schema.define(:version => 20140318162652) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -357,6 +357,22 @@ ActiveRecord::Schema.define(:version => 20140318133034) do
   add_index "flinkers", ["reset_password_token"], :name => "index_flinkers_on_reset_password_token", :unique => true
   add_index "flinkers", ["username"], :name => "index_flinkers_on_username"
 
+  create_table "flinkers_themes", :force => true do |t|
+    t.integer "flinker_id"
+    t.integer "theme_id"
+  end
+
+  create_table "hashtags", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "hashtags_themes", :force => true do |t|
+    t.integer "theme_id"
+    t.integer "hashtag_id"
+  end
+
   create_table "images", :force => true do |t|
     t.text     "url"
     t.string   "type"
@@ -422,6 +438,11 @@ ActiveRecord::Schema.define(:version => 20140318133034) do
   add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"
   add_index "looks", ["is_published"], :name => "index_looks_on_is_published"
   add_index "looks", ["uuid"], :name => "index_looks_on_uuid"
+
+  create_table "looks_themes", :force => true do |t|
+    t.integer "look_id"
+    t.integer "theme_id"
+  end
 
   create_table "mappings", :force => true do |t|
     t.text     "mapping"
@@ -712,6 +733,13 @@ ActiveRecord::Schema.define(:version => 20140318133034) do
 
   create_table "tags", :force => true do |t|
     t.string   "name"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "themes", :force => true do |t|
+    t.integer  "rank"
+    t.string   "title"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
