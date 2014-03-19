@@ -7,7 +7,7 @@ class Post < ActiveRecord::Base
   
   validates :blog, presence:true
   validates :link, presence:true
-  validate :uniqueness_domain_independant, :on => :create #same post on multiple domains
+  validate :uniqueness_by_post_title, :on => :create
   
   before_validation :link_urls, on: :create
   before_validation :set_a_title, if: -> { self.title.blank? }
@@ -95,12 +95,9 @@ class Post < ActiveRecord::Base
     self.title = self.title.clean.gsub(/\s{2,}/, ' ') if self.title
   end
   
-  def uniqueness_domain_independant
-    uri = URI.parse(self.link)
-    exist = self.blog.reload.posts.where('link ~* ?', "#{uri.path}.*?#{uri.query}").count > 0
+  def uniqueness_by_post_title
+    exist = self.blog.reload.posts.where('title = ?', self.title).count > 0
     errors.add(:link, 'already exists') if exist
-  rescue URI::InvalidURIError #some url have heart and so on ascii charts ...
-    true
   end
   
 end

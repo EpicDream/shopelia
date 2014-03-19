@@ -1,5 +1,5 @@
 class LookProduct < ActiveRecord::Base
-  belongs_to :look, touch:true
+  belongs_to :look
   belongs_to :product
 
   CODES = "#{Rails.root}/lib/config/product_codes.yml"
