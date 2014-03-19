@@ -1,7 +1,7 @@
 class Look < ActiveRecord::Base
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at 
   
-  belongs_to :flinker, touch: true
+  belongs_to :flinker
   has_one :post
   has_many :comments
   has_many :look_images, :foreign_key => "resource_id", :dependent => :destroy

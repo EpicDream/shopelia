@@ -1,4 +1,4 @@
-class FlinkerAuthentication < ActiveRecord::Base
+class FlinkerAuthentication < ActiveRecord::Base #TODO:Refactoring
   FACEBOOK = "facebook"
   act_as_flink_activity :facebook_friend_signed_up
   

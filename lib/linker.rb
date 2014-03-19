@@ -14,7 +14,7 @@ class Linker
   end
 
   def self.clean url
-    Timeout::timeout(10) do
+    Timeout::timeout(20) do
       begin
         @canonizer = UrlCanonizer.new
         count = 0
