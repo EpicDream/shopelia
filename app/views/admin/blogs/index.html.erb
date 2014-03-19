@@ -11,18 +11,22 @@
 
   <div class="radio-filters">
     <input type='radio' name='scope' value='scraped' checked=checked>
-      <span>Scrapés</span>
-      <span>(<%= Blog.scraped.count %>)</span>
-      <input type='radio' name='scope' value='scraped.without_posts_since_one_month'>
-      <span>Sans articles depuis 1 mois</span>
-      <span>(<%= Blog.scraped.without_posts_since_one_month.count %>)</span>
-      <input type='radio' name='scope' value='scraped.without_look_published'>
-      <span>Sans look publié</span>
-      <span>(<%= Blog.without_look_published.count %>)</span>
-      <input type='radio' name='scope' value='skipped'>
-      <span>Non intégrés</span>
-      <span>(<%= Blog.skipped.count %>)</span>
-      <br/>
+    <span>Scrapés</span>
+    <span>(<%= Blog.scraped.count %>)</span>
+    
+    <input type='radio' name='scope' value='scraped.without_posts_since_15_days'>
+    <span>Sans articles depuis 15 jours</span>
+    <span>(<%= Blog.scraped.without_posts_since_15_days.count %>)</span>
+    
+    <input type='radio' name='scope' value='scraped.without_look_published'>
+    <span>Sans look publié</span>
+    <span>(<%= Blog.without_look_published.count %>)</span>
+    
+    <input type='radio' name='scope' value='skipped'>
+    <span>Non intégrés</span>
+    <span>(<%= Blog.skipped.count %>)</span>
+    
+    <br/>
     <input id="name-filer-pattern" type="search">
     <%= button_tag "Filtre", class:'btn rounded-btn', id:"name-filter" do %>
       <i class="icon-search icon-red"></i>

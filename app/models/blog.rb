@@ -16,7 +16,7 @@ class Blog < ActiveRecord::Base
   scope :without_posts_since, ->(date) { 
     where("not exists (select id from posts where posts.blog_id = blogs.id and posts.published_at >= '#{date}')") 
   }
-  scope :without_posts_since_one_month, -> { without_posts_since(Date.today - 1.month)}
+  scope :without_posts_since_15_days, -> { without_posts_since(Date.today - 15.days)}
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
   scope :not_scraped, -> { scraped(false) }
   scope :skipped, ->(skipped=true) { where(skipped:skipped) }
