@@ -12,7 +12,8 @@ div.theme-banner{
   position:relative;
   margin:10px;
   width:300px;
-  height:300px;
+  height:260px;
+  vertical-align:top;
   box-shadow: 1px 1px 0px #BDBDBD; 
 }
 div.theme-banner:hover{
@@ -32,20 +33,19 @@ div span{
   color:#838383;
 }
 div.theme-banner p{
-  width:100%;
+  width:96%;
+  margin:2%;
   padding-top:10px;
   position:absolute;
   bottom:2px;
-  height:60px;
-  font-family: Lucida;
-  background-color:#68995F;
-  font-size: 22px;
-  line-height:22px;
-  background: #FFF;
-  opacity:0.8;
-  color:black;
+  height:40px;
+  font-family: Palatino;
+  font-size: 20px;
+  opacity:0.5;
+  color:#696969;
   z-index:100;
   text-align:center;
+  border-radius:1px;
 }
 div.theme-banner a.delete-theme{
   position:absolute;
