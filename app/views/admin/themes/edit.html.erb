@@ -1,0 +1,23 @@
+<p>
+  <a href="#" id="close-overlay">Fermer</a>
+  <%= form_for [:admin, @theme] do |f| %>
+    <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
+    
+    <h4>Hashtags</h4>
+    <hr/>
+    
+    <%= f.fields_for :hashtags do |ff| %>
+      <%= ff.text_field :name, class: "hashtag-input" %>
+    <% end %>
+
+    <h4>Couverture</h4>
+    <hr/>
+    <%= image_tag @theme.theme_cover.picture.url(:large)%>
+    
+    <%= f.fields_for :theme_cover do |ff| %>
+      <%= ff.file_field :picture, class:"custom-file-input" %>
+    <% end %>
+        
+    <%= f.submit 'Mettre à jour', class:"btn" %>
+  <% end  %>  
+</p>  

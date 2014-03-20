@@ -1,3 +1,58 @@
+/*Upload button*/
+
+input[type=file]{
+  width:600px;
+  height:40px;
+  outline:none;
+  border:none;
+  color: transparent;
+  display:block;
+}
+input[type=file]:focus{
+  outline:none;
+}
+input[type=file]:hover{
+  cursor: pointer;
+}
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-file-input::before {
+  content: 'Choisir une image de couverture';
+  font-family:'Hevetica';
+  font-size:13px;
+  padding:6px;
+  color:#961E3F;
+  width:300px;
+  text-decoration:underline;
+  height:100px;
+  -webkit-user-select: none;
+  cursor: pointer;
+}
+.custom-file-input::after {
+  width:0px;
+}
+
+/*Common*/
+
+input[type=text]{
+  width:400px;
+}
+input[type=submit]{
+  margin-top:100px;
+  font-family:'Hevetica';
+  font-size:13px;
+  padding:6px;
+  border-radius:2px;
+  color:#961E3F;
+  width:300px;
+  position:absolute;
+  right:2px;
+  bottom:2px;
+}
+
+
+/*Content*/
 div.themes-content{
   margin:60px 5px 5px 5px;
   font-family: Helvetica;
@@ -80,41 +135,6 @@ div#new-theme-form *{
   display:block;
   margin:20px;
 }
-div#new-theme-form input[type=text]{
-  width:400px;
-}
-input[type=file]{
-  width:0;
-  height:0;
-}
-input[type=file]::-webkit-file-upload-button {
-  display:none;
-  width:0;
-  height:0;
-  position:absolute;
-  top:-2000px;
-}
-div#new-theme-form label{
-  font-family:'Hevetica';
-  font-size:13px;
-  padding:6px;
-  border-radius:2px;
-  color:#961E3F;
-  width:300px;
-  text-decoration:underline;
-}
-div#new-theme-form input[type=submit]{
-  margin-top:100px;
-  font-family:'Hevetica';
-  font-size:13px;
-  padding:6px;
-  border-radius:2px;
-  color:#961E3F;
-  width:300px;
-  position:absolute;
-  right:2px;
-  bottom:2px;
-}
 div.themes-content .new-theme-form-hidden{
   display: block;
   transition: height 1s ease-out, opacity 1s ease-out;
@@ -126,4 +146,50 @@ div.themes-content .new-theme-form-show{
   height:300px;
   display:block;
   opacity:1;
+}
+
+/*Edit Theme*/
+
+div.overlay{
+  display:none;
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:#202020;
+  opacity:0.5;
+  z-index:0;
+}
+div.theme-edit-overlay{
+  display:none;
+  position:absolute;
+  top:10%;
+  left:10%;
+  width:80%;
+  height:80%;
+  background:white;
+  opacity:1;
+  z-index:100;
+  padding:10px;
+  border-radius:2px;
+  overflow-y:auto;
+}
+input[type=text].hashtag-input{
+  width:100px;
+  height:10px;
+  font-size:12px;
+  outline:none;
+  display:inline-block;
+  font-family: Courier;
+  border:thin dashed red;
+}
+div.theme-edit-overlay img{
+  width:20%;
+  max-height:240px;
+}
+#close-overlay{
+  position:absolute;
+  top:2px;
+  right:5px;
 }
