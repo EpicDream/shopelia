@@ -11,13 +11,17 @@ div.theme-banner{
   border-radius:1px;
   position:relative;
   margin:10px;
+  width:300px;
+  height:300px;
   box-shadow: 1px 1px 0px #BDBDBD; 
 }
 div.theme-banner:hover{
   cursor:pointer;
 }
 div.theme-banner img{
-  margin:10px;
+  margin:5%;
+  width:90%;
+  max-height:240px;
 }
 div span{
   display:block;
@@ -43,6 +47,17 @@ div.theme-banner p{
   z-index:100;
   text-align:center;
 }
+div.theme-banner a.delete-theme{
+  position:absolute;
+  top:2px;
+  right:2px;
+  padding:4px;
+  background:#961D20;
+  border:thin solid #961D20;
+}
+div.theme-banner a.delete-theme:hover{
+  background:#A71E22;
+}
 
 /*New theme form*/
 
@@ -52,7 +67,6 @@ div.theme-banner p{
   font-size:13px;
   padding:6px;
   background:#629651;
-  border-radius:2px;
   color:snow;
 }
 div#new-theme-form{
