@@ -1,0 +1,10 @@
+<p>
+  <a href="#" id="close-overlay">Fermer</a>
+  <%= form_for [:admin, @theme] do |f| %>
+    <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
+    <%= f.fields_for :theme_cover do |ff| %>
+      <%= ff.file_field :picture, class:"custom-file-input" %>
+    <% end %>
+    <%= f.submit 'Mettre à jour', class:"btn" %>
+  <% end  %>  
+</p>  

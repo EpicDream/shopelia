@@ -5,15 +5,14 @@
     <%= form_for [:admin, Theme.new] do |f| %>
       <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
       <%= f.fields_for :theme_cover_attributes do |ff| %>
-        <%= ff.label :picture, "Choisir une image de couverture"%>
-        <%= ff.file_field :picture %>
+        <%= ff.file_field :picture, class: 'custom-file-input' %>
       <% end %>
       <%= f.submit 'Créer cette nouvelle collection', class:"btn" %>
     <% end  %>  
   </div>
 
   <% @themes.each do |theme| %>
-    <div class="theme-banner">
+    <div class="theme-banner" data-theme-id="<%= theme.id %>">
       <span class="looks-count"><%= theme.looks.count %>&nbsp;Looks</span>
       <span class="publishers-count"><%= theme.flinkers.count %>&nbsp;Blogeuses</span>
       <%= link_to "/admin/themes/#{theme.id}", method:'delete', class:'delete-theme', confirm:"Confirmer la suppression" do %>
@@ -24,4 +23,8 @@
     </div>
   <% end %>
   
+  <div class="overlay"></div>
+  <div class="theme-edit-overlay">
+    <%= render :partial => 'edit.html' %>
+  </div>
 </div>
