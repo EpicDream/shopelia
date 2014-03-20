@@ -14,4 +14,12 @@ class Admin::ThemesController < Admin::AdminController
     
   end
   
+  def destroy
+    theme = Theme.find(params[:id])
+    unless theme.destroy
+      flash[:error] = "Cette collection n'a pas pu être détruite"
+    end
+    redirect_to admin_themes_path
+  end
+  
 end

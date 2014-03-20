@@ -1,5 +1,5 @@
 <div class="themes-content">
-  <%= link_to 'Créer une nouvelle collection', '#', id:"create-theme-link"%>
+  <%= link_to 'Nouvelle collection', '#', id:"create-theme-link"%>
   
   <div id="new-theme-form" class="new-theme-form-hidden">
     <%= form_for [:admin, Theme.new] do |f| %>
@@ -16,8 +16,11 @@
     <div class="theme-banner">
       <span class="looks-count"><%= theme.looks.count %>&nbsp;Looks</span>
       <span class="publishers-count"><%= theme.flinkers.count %>&nbsp;Blogeuses</span>
+      <%= link_to "/admin/themes/#{theme.id}", method:'delete', class:'delete-theme', confirm:"Confirmer la suppression" do %>
+        <i class="icon-trash icon-white"></i>
+      <% end %>
       <p><%= theme.title %></p>
-      <%= image_tag theme.theme_cover.picture.url(:small)%>
+      <%= image_tag theme.theme_cover.picture.url(:large)%>
     </div>
   <% end %>
   
