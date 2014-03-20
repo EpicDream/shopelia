@@ -2,14 +2,20 @@ require 'scrapers/blogs/blog'
 require 'poster/comment'
 
 class Blog < ActiveRecord::Base
-  attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id, :skipped, :can_comment
+  attr_accessible :url, :name, :avatar_url, :country, :scraped, :flinker_id
+  attr_accessible :username, :skipped, :can_comment
+  attr_accessor :username
   
   belongs_to :flinker
   has_many :posts, dependent: :destroy, order: 'published_at desc'
 
   before_validation :normalize_url
+  before_validation :assign_flinker, if: -> { self.flinker_id.nil? }
+
   validates :url, uniqueness:true, presence:true, :on => :create
-  after_create :assign_flinker, if: -> { self.flinker_id.nil? }
+  validates :name, presence:true
+  validates :flinker_id, presence:true
+  
   after_update :update_flinker_avatar, if: -> { self.avatar_url_changed? }
 
   scope :without_posts, -> { where('not exists (select id from posts where posts.blog_id = blogs.id)') }
@@ -78,7 +84,8 @@ class Blog < ActiveRecord::Base
     password = SecureRandom.hex(4)
     country = Country.find_by_iso(self.country || 'FR')
     flinker = Flinker.create(
-      name:self.name, 
+      name:self.name,
+      username:self.username || self.name.gsub(/[^\w\d\._-]/, ''),
       url:self.url, 
       email:email,
       password:password,
@@ -86,7 +93,8 @@ class Blog < ActiveRecord::Base
       is_publisher:true, 
       country_id:country.id, 
       avatar_url:self.avatar_url)
-    update_attribute :flinker_id, flinker.id
+    self.errors.add(:flinker, "Can't create flinker") unless flinker.valid? 
+    self.flinker = flinker
   end
   
   def update_flinker_avatar

@@ -31,7 +31,12 @@ class Admin::BlogsController < Admin::AdminController
   
   def create
     blog = Blog.create(params[:blog])
-    BlogsWorker.perform_async(blog.id) rescue nil
+    if blog.valid?
+      BlogsWorker.perform_async(blog.id) rescue nil
+    else
+      flash[:error] = blog.errors.full_messages
+    end
+    
     redirect_to admin_blogs_url
   end
   
