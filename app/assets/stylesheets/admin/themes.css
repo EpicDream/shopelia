@@ -151,8 +151,8 @@ div.themes-content .new-theme-form-show{
 /*Edit Theme*/
 
 div.overlay{
-/*  display:none;
-*/  position:absolute;
+  display:none;
+  position:absolute;
   top:0;
   left:0;
   width:100%;
@@ -162,8 +162,8 @@ div.overlay{
   z-index:0;
 }
 div.theme-edit-overlay{
-/*  display:none;
-*/  position:absolute;
+  display:none;
+  position:absolute;
   top:10%;
   left:10%;
   width:80%;
@@ -172,6 +172,24 @@ div.theme-edit-overlay{
   opacity:1;
   z-index:100;
   padding:10px;
+  border-radius:2px;
+  overflow-y:auto;
 }
-div.edit-content{
+input[type=text].hashtag-input{
+  width:100px;
+  height:10px;
+  font-size:12px;
+  outline:none;
+  display:inline-block;
+  font-family: Courier;
+  border:thin dashed red;
+}
+div.theme-edit-overlay img{
+  width:20%;
+  max-height:240px;
+}
+#close-overlay{
+  position:absolute;
+  top:2px;
+  right:5px;
 }

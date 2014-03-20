@@ -1,5 +1,5 @@
 class Theme < ActiveRecord::Base
-  attr_accessible :title, :rank, :theme_cover_attributes, :theme_cover
+  attr_accessible :title, :rank, :theme_cover_attributes, :hashtags_attributes
   attr_accessor :theme_cover_attributes
   
   has_and_belongs_to_many :looks
@@ -12,6 +12,7 @@ class Theme < ActiveRecord::Base
   before_create :assign_default_rank
   
   accepts_nested_attributes_for :theme_cover
+  accepts_nested_attributes_for :hashtags
   
   private
   
