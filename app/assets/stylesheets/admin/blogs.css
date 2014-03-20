@@ -152,7 +152,7 @@ div.blogs{
   overflow: hidden;
 }
 .blogs .create-blog-block-shown{
-  height:200px;
+  height:250px;
   display:block;
   opacity:1;
 }
@@ -286,7 +286,7 @@ div.blogs{
 .blogs-posts-header .update-blog-block-shown{
   display:block;
   opacity:1;
-  height:250px;
+  height:400px;
 }
 .blogs-posts-header form{
   margin-top:20px;
