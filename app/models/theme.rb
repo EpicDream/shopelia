@@ -4,7 +4,7 @@ class Theme < ActiveRecord::Base
   has_and_belongs_to_many :looks
   has_and_belongs_to_many :flinkers
   has_and_belongs_to_many :hashtags
-  has_one :theme_cover, foreign_key: :resource_id
+  has_one :theme_cover, foreign_key: :resource_id, dependent: :destroy
   
   validates :title, presence:true
   

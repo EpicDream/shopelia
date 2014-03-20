@@ -3,8 +3,9 @@
   <a href="#" id="create-blog-link">Créer un blog</a>
   <div id="create-blog-block" class="create-blog-block-hidden">
     <%= form_for([:admin, Blog.new]) do |f| %>
-      <%= f.text_field :name, placeholder:"nom du blog"%>
-      <%= f.text_field :url, placeholder:"url du blog"%>
+      <%= f.text_field :name, placeholder:"Nom du blog"%>
+      <%= f.text_field :url, placeholder:"URL du blog"%>
+      <%= f.text_field :username, placeholder:"Username"%>
       <%= f.submit("Intégrer", :class => 'btn btn-success ') %>
     <% end %>
   </div>
