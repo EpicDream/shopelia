@@ -27,5 +27,11 @@ table thead th{
 .dataTables_info{
   font-style:italic;
 }
+table.tops{
+  width:100%;
+}
+table.tops td{
+  text-align:center;
+}
 
 

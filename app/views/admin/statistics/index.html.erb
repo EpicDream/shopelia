@@ -1,12 +1,54 @@
 <article class="coolbox">
-  <h3>En ce jour de grâce</h3>
+  <h3>Les looks les plus aimés hier</h3>
+  <table class="tops">
+    <thead>
+      <th>Flinker</th>
+      <th>Lien vers l'article</th>
+      <th>Nombre de likes</th>
+    </thead>
+    <tbody>
+      <% Statistic.top_liked_looks_for_day(Date.today - 1.day).each do |like| %>
+        <tr>
+          <% look = Look.find(like.look_id) %>
+          <td><%= link_to look.flinker.username, admin_flinker_path(look.flinker) %></td>
+          <td><%= link_to look.url, look.url %></td>
+          <td><%= like.count %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</article>
+
+<article class="coolbox">
+  <h3>Les looks les commentés hier</h3>
+  <table class="tops">
+    <thead>
+      <th>Flinker</th>
+      <th>Lien vers l'article</th>
+      <th>Nombre de commentaires</th>
+    </thead>
+    <tbody>
+      <% Statistic.top_commented_looks_for_day(Date.today - 1.day).each do |comment| %>
+        <tr>
+          <% look = Look.find(comment.look_id) %>
+          <td><%= link_to look.flinker.username, admin_flinker_path(look.flinker) %></td>
+          <td><%= link_to look.url, look.url %></td>
+          <td><%= comment.count %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</article>
+
+<article class="coolbox">
+  <h3>Statistiques : aujourd'hui</h3>
   <div class="dataTables_wrapper form-inline" role="grid">
     <%= render partial:'table', locals:{collection:@statistics_for_day, table_id:'statistics-for-day'}%>
   </div>
 </article>
 
 <article class="coolbox">
-  <h3>Depuis le 1/02/2014</h3>
+  <h3>Statistiques : depuis la date de lancement de Flink Fashion Link</h3>
   <div class="dataTables_wrapper form-inline" role="grid">
     <%= render partial:'table', locals:{collection:@statistics, table_id:'statistics'}%>
   </div>
