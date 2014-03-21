@@ -1,8 +1,4 @@
 $(document).ready(function() {
- 
-  $(document).on("click", "#create-theme-link", function() {
-    $("#new-theme-form").toggleClass("new-theme-form-show");
-  });
   
   $(document).on("click", "#close-overlay", function(e){
     $("div.theme-edit-overlay").toggle();

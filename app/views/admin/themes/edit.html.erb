@@ -17,6 +17,32 @@
     <%= f.fields_for :theme_cover do |ff| %>
       <%= ff.file_field :picture, class:"custom-file-input" %>
     <% end %>
+    
+    <h4>Looks</h4>
+    <hr/>
+    <table class="looks">
+      <thead>
+        <th>Flinkeuse</th>
+        <th>Look</th>
+        <th>Images</th>
+      </thead>
+      <tbody>
+        <% @theme.looks.each do |look| %>
+          <tr>
+            <td><%= link_to look.flinker.username, admin_flinker_path(look.flinker) %></td>
+            <td><%= link_to look.name, admin_look_path(look) %></td>
+            <td class="look-images-miniatures-td">
+              <div class="look-images-miniatures">
+                <% look.look_images.each do |look_image| %>
+                  <%= image_tag look_image.picture.url(:pico) %>
+                <% end %>
+              </div>  
+            </td>
+            
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
         
     <%= f.submit 'Mettre à jour', class:"btn" %>
   <% end  %>  

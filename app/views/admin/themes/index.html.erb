@@ -1,16 +1,6 @@
 <div class="themes-content">
-  <%= link_to 'Nouvelle collection', '#', id:"create-theme-link"%>
-  
-  <div id="new-theme-form" class="new-theme-form-hidden">
-    <%= form_for [:admin, Theme.new] do |f| %>
-      <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
-      <%= f.fields_for :theme_cover_attributes do |ff| %>
-        <%= ff.file_field :picture, class: 'custom-file-input' %>
-      <% end %>
-      <%= f.submit 'Créer cette nouvelle collection', class:"btn" %>
-    <% end  %>  
-  </div>
-
+  <%= link_to 'Nouvelle collection', '/admin/themes', method:'post', id:"create-theme-link"%>
+  <br/>
   <% @themes.each do |theme| %>
     <div class="theme-banner" data-theme-id="<%= theme.id %>">
       <span class="looks-count"><%= theme.looks.count %>&nbsp;Looks</span>
@@ -19,7 +9,7 @@
         <i class="icon-trash icon-white"></i>
       <% end %>
       <p><%= theme.title %></p>
-      <%= image_tag theme.theme_cover.picture.url(:large)%>
+      <%= image_tag theme.theme_cover.picture.url(:large) %>
     </div>
   <% end %>
   

@@ -199,3 +199,9 @@
 div.images{
   margin-top:60px;
 }
+select.theme-select{
+  font-family:'Hevetica';
+  position:absolute;
+  top:5px;
+  right:5px;
+}
