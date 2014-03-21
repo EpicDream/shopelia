@@ -6,6 +6,7 @@ class LookProduct < ActiveRecord::Base
 
   validates :look_id, :presence => true
   validates :product_id, :uniqueness => { :scope => :look_id }, :allow_nil => true
+  validates :code, :uniqueness => { :scope => [:brand, :look_id] }
 
   attr_accessible :look_id, :product_id, :code, :brand, :url, :feed
   attr_accessor :url, :feed
