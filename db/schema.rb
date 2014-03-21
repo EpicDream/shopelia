@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140318162652) do
+ActiveRecord::Schema.define(:version => 20140321162705) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -362,6 +362,8 @@ ActiveRecord::Schema.define(:version => 20140318162652) do
     t.integer "theme_id"
   end
 
+  add_index "flinkers_themes", ["flinker_id", "theme_id"], :name => "index_flinkers_themes_on_flinker_id_and_theme_id", :unique => true
+
   create_table "hashtags", :force => true do |t|
     t.string   "name"
     t.datetime "created_at", :null => false
@@ -443,6 +445,8 @@ ActiveRecord::Schema.define(:version => 20140318162652) do
     t.integer "look_id"
     t.integer "theme_id"
   end
+
+  add_index "looks_themes", ["look_id", "theme_id"], :name => "index_looks_themes_on_look_id_and_theme_id", :unique => true
 
   create_table "mappings", :force => true do |t|
     t.text     "mapping"

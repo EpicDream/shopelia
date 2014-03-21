@@ -29,4 +29,8 @@ module ApplicationHelper
     Country.in_use.map{|c| [c.name, c.id]}
   end
   
+  def themes_for_select
+    [["Ajouter à une collection", nil]] + Theme.all.map { |theme| [theme.title, theme.id] }
+  end
+  
 end
