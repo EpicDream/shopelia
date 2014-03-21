@@ -73,6 +73,12 @@ class LookProductTest < ActiveSupport::TestCase
     }
   end
   
+  test "uniqueness on code-brand for a given look" do
+    assert_difference('LookProduct.count') do
+      2.times { LookProduct.create(code:"ET", brand:"H", look_id:@look.id)}
+    end
+  end
+  
   private
 
   def example_feed
