@@ -86,7 +86,7 @@ class Flinker < ActiveRecord::Base
   end
   
   def publisher_without_looks?
-    self.is_publisher? && self.looks.count.zero?
+    self.is_publisher? && self.looks.published.count.zero?
   end
   
   private
