@@ -1,43 +1,32 @@
 body {
   background: #eee;
 }
-
 .wrapper-column {
   width: 90%;
   margin: 0 auto;
 }
-
+section.header{
+  background:white;
+  box-shadow: 1px 1px 0px #BDBDBD; 
+}
+section.header h4{
+  color:#AB100F;
+  margin-top:60px;
+  font-family:Palatino;
+}
+div.statistics{
+  width:50%;
+  margin:10px 0 5px 20px;
+  padding:20px;
+}
 section.header table{
-  margin:10px 0 5px 33%;
+  width:100%;
 }
 section.header table td{
   border:thin solid #D4D4D4;
-  text-align:right;
+  text-align:center;
   font-size:12px;
   padding:5px;
-}
-
-span.total-looks{
-  color:white;
-  display:inline-block;
-  float:left;
-  width:160px;
-  height:160px;
-  font-size:50px;
-  background-color:#FF6BC4;
-  border-radius:80px;
-  margin:5px 0 0 5px;
-}
-span.total-looks i:first-child{
-  display:block;
-  text-align:center;
-  margin:40% 0 0 0;
-}
-span.total-looks i:nth-child(2){
-  font-size:12px;
-  display:block;
-  text-align:center;
-  margin:30px 0 0 0px;
 }
 .column {
   width: 30%;
@@ -45,12 +34,12 @@ span.total-looks i:nth-child(2){
   padding:10px;
   background:white;
   margin:20px 0 0 0;
-  height:auto;
-  vertical-align:bottom;
+  height:300px;
+  vertical-align:top;
 }
-
 .column a div img {
   margin: 0 auto;
+  max-height:280px;
 }
 .column a div{
   position:relative;
@@ -91,9 +80,7 @@ span.total-looks i:nth-child(2){
   float:right;
   margin:10px 5px 0 0;
   font-size:12px;
-  background:#F7F7F7;
   padding:20px;
-  border-radius:3px;
 }
 .filters input{
   display:block;
