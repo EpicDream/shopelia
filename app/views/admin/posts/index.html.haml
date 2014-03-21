@@ -2,21 +2,32 @@
   %header
     %h1 Posts
     %h2 Building looks
-  %span.total-looks
-    %i=Look.published.count
-    %i Looks publiés
   .filters      
     %select.country-select{}
       =options_for_select(countries_for_select, selected:params[:country_code])
     %input#blog-name-filter{placeholder:"Filtrer par le nom du blog", 'data-blogs-names' => Blog.names }
-  %table 
-    %thead
-      %th Date
-      %th Nombre de looks publiés
-    - @publications.each do |hash|
-      %tr
-        %td=I18n.l(Date.parse(hash['flink_published_at']))
-        %td=hash['count']
+  %div.statistics  
+    %h4="Publications : #{ Look.published.count }"
+    %hr 
+    %table 
+      %thead
+        %th Date
+        %th Nombre de looks publiés
+      - @publications.each do |hash|
+        %tr
+          %td=I18n.l(Date.parse(hash['flink_published_at']))
+          %td=hash['count']
+    %h4 Les 10 derniers looks publiés  
+    %hr 
+    %table 
+      %thead
+        %th Flinker
+        %th Look
+      - Look.published.order('flink_published_at desc').limit(10).each do |look|
+        %tr
+          %td=look.flinker.username
+          %td=link_to look.name, admin_look_path(look)
+        
     
 .wrapper-column
   = render @posts
