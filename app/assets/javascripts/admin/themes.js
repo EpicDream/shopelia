@@ -28,23 +28,32 @@ $(document).ready(function() {
     });
   });
   
-  $(document).on("submit", ".edit_theme", function(e) {
+  $(document).on("submit", ".edit_theme", function(e, data) {
     e.preventDefault();
  
     var form = $(this);
     var themeID = $(this).data('theme-id');
-    var url = form.attr("action");
-    var data = form.serialize();
-    var posting = $.post(url, data);
-    
-    posting.done(function() {
-      var url = "/admin/themes/" + themeID + "/edit";
-      $(".theme-edit-overlay").load(url, function(){
-      });
-    });
-    
-    posting.error(function(){
-      alert("Erreur");
+
+    $.ajax({
+        url: form.attr("action"),
+        type: "post",
+        contentType: false,
+        processData: false,
+        data: function() {
+          var data = new FormData(form.get(0));
+          var fileData = $("#theme_theme_cover_attributes_picture").get(0).files[0];
+          if (fileData) {
+            data.append("theme[theme_cover_attributes][picture]", fileData);
+          }
+          return data;
+        }(),
+        error: function(_, textStatus, errorThrown) {
+          alert("Erreur");
+        },
+        success: function(response, textStatus) {
+          var url = "/admin/themes/" + themeID + "/edit";
+          $(".theme-edit-overlay").load(url, function(){});
+        }
     });
   });
   
