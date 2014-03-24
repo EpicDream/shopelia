@@ -1,7 +1,7 @@
 class Admin::ThemesController < Admin::AdminController
 
   def index
-    @themes = Theme.order('created_at desc')
+    @themes = Theme.order('position asc')
   end
   
   def edit
@@ -20,6 +20,7 @@ class Admin::ThemesController < Admin::AdminController
   def update
     @theme = Theme.find(params[:id])
     updated = @theme.update_attributes(params[:theme])
+    
     render json:{}, status: updated ? :ok : :error
   end
   
@@ -28,6 +29,7 @@ class Admin::ThemesController < Admin::AdminController
     unless theme.destroy
       flash[:error] = "Cette collection n'a pas pu être détruite"
     end
+    
     redirect_to admin_themes_path
   end
   
