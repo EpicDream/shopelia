@@ -4,11 +4,30 @@
   border-radius:2px;
 }
 .thumb {
-  max-height: 200px;
-  max-width: 200px;
+  margin: 0 auto;
+  max-height:280px;
 }
 .img-block {
-  display: inline-block;
-  height: 200px;
-  width: 200px;
+  width: 30%;
+  display:inline-block;
+  padding:10px;
+  background:white;
+  margin:20px 0 0 0;
+  height:400px;
+  vertical-align:top;
+  box-shadow: 1px 1px 1px 1px #BDBDBD; 
+}
+div.actions{
+  margin:0 0 20px 0;
+}
+.bitly-link{
+  display:block;
+  padding:4px;
+  color:#656565;
+  font-size:12px;
+}
+select.theme-select{
+  font-family:'Hevetica';
+  height:22px;
+  width:175px;
 }

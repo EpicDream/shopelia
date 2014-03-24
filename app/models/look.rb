@@ -1,5 +1,5 @@
 class Look < ActiveRecord::Base
-  attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at 
+  attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
   
   belongs_to :flinker
   has_one :post
@@ -69,6 +69,15 @@ class Look < ActiveRecord::Base
 
   def liked_by? flinker
     !FlinkerLike.where("flinker_id=? and resource_type=? and resource_id=?", flinker.id, FlinkerLike::LOOK, self.id).empty?
+  end
+  
+  def bitly_url
+    @bitly_url = read_attribute(:bitly_url)
+    unless @bitly_url
+      @bitly_url = Bitly.client.shorten(self.url).short_url
+      self.update_attributes(bitly_url: @bitly_url)
+    end
+    @bitly_url
   end
 
   private
