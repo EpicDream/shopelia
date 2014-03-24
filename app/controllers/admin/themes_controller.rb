@@ -1,7 +1,7 @@
 class Admin::ThemesController < Admin::AdminController
 
   def index
-    @themes = Theme.order('created_at desc')
+    @themes = Theme.order('position asc')
   end
   
   def edit
@@ -18,9 +18,10 @@ class Admin::ThemesController < Admin::AdminController
   end
   
   def update
-    theme = Theme.find(params[:id])
-    theme.update_attributes(params[:theme])
-    redirect_to admin_themes_path
+    @theme = Theme.find(params[:id])
+    updated = @theme.update_attributes(params[:theme])
+    
+    render json:{}, status: updated ? :ok : :error
   end
   
   def destroy
@@ -28,16 +29,8 @@ class Admin::ThemesController < Admin::AdminController
     unless theme.destroy
       flash[:error] = "Cette collection n'a pas pu être détruite"
     end
+    
     redirect_to admin_themes_path
-  end
-  
-  def add_new_look
-    theme = Theme.find(params[:theme_id])
-    look = Look.find(params[:id])
-    theme.looks << look rescue PG::UniqueViolation
-    respond_to do |format|
-      format.json { render json:{}, status: :ok}
-    end
   end
   
 end

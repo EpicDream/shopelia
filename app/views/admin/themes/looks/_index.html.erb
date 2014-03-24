@@ -1,0 +1,16 @@
+<table class="looks">
+  <thead>
+    <th>Flinker</th>
+    <th>Look</th>
+    <th>Actions</th>
+  </thead>
+  <tbody>
+    <% @theme.looks.each do |look| %>
+      <tr>
+        <td><%= link_to look.flinker.username, admin_flinker_path(look.flinker) %></td>
+        <td><%= link_to look.name, admin_look_path(look) %></td>
+        <td><%= link_to 'remove', admin_theme_look_path(@theme, look.id), id:'remove-look' %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

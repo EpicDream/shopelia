@@ -77,7 +77,7 @@ Shopelia::Application.routes.draw do
     resources :flinkers
     resources :statistics, only:[:index]
     resources :themes do
-      put "/add_new_look/:id", to: "themes#add_new_look"
+      resources :looks, only:[:index, :create, :destroy], controller:'themes/looks'
     end
     resources :looks do
       get :publish, :on => :member

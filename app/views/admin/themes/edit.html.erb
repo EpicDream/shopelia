@@ -1,8 +1,8 @@
 <p>
   <a href="#" id="close-overlay">Fermer</a>
-  <%= form_for [:admin, @theme] do |f| %>
+  <%= form_for [:admin, @theme], html:{'data-theme-id' => @theme.id, multipart:true} do |f| %>
     <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
-    
+    <%= f.text_field :position %>
     <h4>Hashtags</h4>
     <hr/>
     
@@ -20,29 +20,29 @@
     
     <h4>Looks</h4>
     <hr/>
-    <table class="looks">
+    <div id="looks-index-container">
+      <%= render partial: 'admin/themes/looks/index'%>
+    </div>
+    
+    <h4>Flinkers</h4>
+    <hr/>
+    <table class="flinkers">
       <thead>
-        <th>Flinkeuse</th>
-        <th>Look</th>
-        <th>Images</th>
+        <th>Flinker</th>
+        <th>Nombre de looks dans cette collections</th>
+        <th>Actions</th>
       </thead>
       <tbody>
-        <% @theme.looks.each do |look| %>
+        <% @theme.flinkers.each do |flinker| %>
           <tr>
-            <td><%= link_to look.flinker.username, admin_flinker_path(look.flinker) %></td>
-            <td><%= link_to look.name, admin_look_path(look) %></td>
-            <td class="look-images-miniatures-td">
-              <div class="look-images-miniatures">
-                <% look.look_images.each do |look_image| %>
-                  <%= image_tag look_image.picture.url(:pico) %>
-                <% end %>
-              </div>  
-            </td>
-            
+            <td><%= link_to flinker.username, admin_flinker_path(flinker) %></td>
+            <td><%= @theme.looks_of_flinker(flinker).count %></td>
+            <td></td>
           </tr>
         <% end %>
       </tbody>
     </table>
+    
         
     <%= f.submit 'Mettre à jour', class:"btn" %>
   <% end  %>  
