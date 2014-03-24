@@ -18,9 +18,9 @@ class Admin::ThemesController < Admin::AdminController
   end
   
   def update
-    theme = Theme.find(params[:id])
-    theme.update_attributes(params[:theme])
-    redirect_to admin_themes_path
+    @theme = Theme.find(params[:id])
+    updated = @theme.update_attributes(params[:theme])
+    render json:{}, status: updated ? :ok : :error
   end
   
   def destroy

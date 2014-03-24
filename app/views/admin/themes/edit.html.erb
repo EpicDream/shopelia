@@ -1,6 +1,6 @@
 <p>
   <a href="#" id="close-overlay">Fermer</a>
-  <%= form_for [:admin, @theme] do |f| %>
+  <%= form_for [:admin, @theme], html:{'data-theme-id' => @theme.id} do |f| %>
     <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
     
     <h4>Hashtags</h4>

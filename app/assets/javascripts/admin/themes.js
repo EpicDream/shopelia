@@ -28,4 +28,24 @@ $(document).ready(function() {
     });
   });
   
+  $(document).on("submit", ".edit_theme", function(e) {
+    e.preventDefault();
+ 
+    var form = $(this);
+    var themeID = $(this).data('theme-id');
+    var url = form.attr("action");
+    var data = form.serialize();
+    var posting = $.post(url, data);
+    
+    posting.done(function() {
+      var url = "/admin/themes/" + themeID + "/edit";
+      $(".theme-edit-overlay").load(url, function(){
+      });
+    });
+    
+    posting.error(function(){
+      alert("Erreur");
+    });
+  });
+  
 });
