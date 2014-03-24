@@ -57,7 +57,7 @@ gem 'fastimage'
 gem 'fb_graph'
 gem 'twitter', require:false
 gem 'instagram', require:false
-gem 'bitly', require:false
+gem 'bitly'
 gem 'geocoder', require:false
 gem 'rmagick', require:'RMagick'
 
