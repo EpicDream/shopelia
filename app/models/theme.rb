@@ -19,6 +19,17 @@ class Theme < ActiveRecord::Base
     self.flinkers << look.flinker rescue PG::UniqueViolation
   end
   
+  def remove_look look
+    self.looks.destroy(look)
+    if self.looks_of_flinker(look.flinker).count.zero?
+      self.flinkers.destroy(look.flinker)
+    end
+  end
+  
+  def looks_of_flinker flinker
+    looks.where(flinker_id: flinker.id)
+  end
+  
   private
   
   def remove_blanks_hashtags 

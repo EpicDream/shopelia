@@ -20,22 +20,9 @@
     
     <h4>Looks</h4>
     <hr/>
-    <table class="looks">
-      <thead>
-        <th>Flinker</th>
-        <th>Look</th>
-        <th>Actions</th>
-      </thead>
-      <tbody>
-        <% @theme.looks.each do |look| %>
-          <tr>
-            <td><%= link_to look.flinker.username, admin_flinker_path(look.flinker) %></td>
-            <td><%= link_to look.name, admin_look_path(look) %></td>
-            <td></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <div id="looks-index-container">
+      <%= render partial: 'admin/themes/looks/index'%>
+    </div>
     
     <h4>Flinkers</h4>
     <hr/>
@@ -49,7 +36,7 @@
         <% @theme.flinkers.each do |flinker| %>
           <tr>
             <td><%= link_to flinker.username, admin_flinker_path(flinker) %></td>
-            <td></td>
+            <td><%= @theme.looks_of_flinker(flinker).count %></td>
             <td></td>
           </tr>
         <% end %>

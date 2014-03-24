@@ -15,4 +15,17 @@ $(document).ready(function() {
     });
   });
   
+  $(document).on("click", "#remove-look", function(e){
+    e.preventDefault();
+    var url = $(this).attr('href');
+    
+    $.post(url, {_method:'delete'})
+    .success(function(html){
+      $("#looks-index-container").replaceWith(html);
+    })
+    .error(function(){
+      alert("Erreur");
+    });
+  });
+  
 });
