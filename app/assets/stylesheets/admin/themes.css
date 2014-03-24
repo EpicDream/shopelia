@@ -199,16 +199,3 @@ table.looks{
   width:100%;
   text-align:center;
 }
-td.look-images-miniatures-td{
-  width:50%;
-}
-.look-images-miniatures{
-  overflow-y:auto;
-  height:50px;
-  width:100%;
-}
-.look-images-miniatures img{
-  width:50px !important;
-  height:50px;
-  display:inline-block;
-}  

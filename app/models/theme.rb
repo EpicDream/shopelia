@@ -14,6 +14,11 @@ class Theme < ActiveRecord::Base
   accepts_nested_attributes_for :theme_cover
   accepts_nested_attributes_for :hashtags
   
+  def append_look look
+    self.looks << look rescue PG::UniqueViolation #uniq => true seems not work on many to many, so we use uniq index
+    self.flinkers << look.flinker rescue PG::UniqueViolation
+  end
+  
   private
   
   def remove_blanks_hashtags 

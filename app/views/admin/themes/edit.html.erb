@@ -22,27 +22,40 @@
     <hr/>
     <table class="looks">
       <thead>
-        <th>Flinkeuse</th>
+        <th>Flinker</th>
         <th>Look</th>
-        <th>Images</th>
+        <th>Actions</th>
       </thead>
       <tbody>
         <% @theme.looks.each do |look| %>
           <tr>
             <td><%= link_to look.flinker.username, admin_flinker_path(look.flinker) %></td>
             <td><%= link_to look.name, admin_look_path(look) %></td>
-            <td class="look-images-miniatures-td">
-              <div class="look-images-miniatures">
-                <% look.look_images.each do |look_image| %>
-                  <%= image_tag look_image.picture.url(:pico) %>
-                <% end %>
-              </div>  
-            </td>
-            
+            <td></td>
           </tr>
         <% end %>
       </tbody>
     </table>
+    
+    <h4>Flinkers</h4>
+    <hr/>
+    <table class="flinkers">
+      <thead>
+        <th>Flinker</th>
+        <th>Nombre de looks dans cette collections</th>
+        <th>Actions</th>
+      </thead>
+      <tbody>
+        <% @theme.flinkers.each do |flinker| %>
+          <tr>
+            <td><%= link_to flinker.username, admin_flinker_path(flinker) %></td>
+            <td></td>
+            <td></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
         
     <%= f.submit 'Mettre à jour', class:"btn" %>
   <% end  %>  

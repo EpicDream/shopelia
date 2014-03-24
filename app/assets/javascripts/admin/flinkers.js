@@ -69,13 +69,14 @@ $(document).ready(function() {
   $(document).on("change", "#assign-to-theme", function(){
     var themeID = $(this).val();
     var lookID = $(this).data("look-id");
-    var url = "/admin/themes/" + themeID + "/add_new_look/" + lookID ;
+    var url = "/admin/themes/" + themeID + "/looks";
     
     if (themeID) {
-      $.post(url, { _method:'put', contentType:"application/json; charset=utf-8"})
+      $.post(url, { look_id: lookID, contentType:"application/json; charset=utf-8" })
       .error(function() {
         alert("Erreur");
       });
     }
-  })
+  });
+  
 });

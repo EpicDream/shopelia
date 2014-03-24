@@ -31,13 +31,4 @@ class Admin::ThemesController < Admin::AdminController
     redirect_to admin_themes_path
   end
   
-  def add_new_look
-    theme = Theme.find(params[:theme_id])
-    look = Look.find(params[:id])
-    theme.looks << look rescue PG::UniqueViolation
-    respond_to do |format|
-      format.json { render json:{}, status: :ok}
-    end
-  end
-  
 end
