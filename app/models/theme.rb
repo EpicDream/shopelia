@@ -35,7 +35,7 @@ class Theme < ActiveRecord::Base
   end
   
   def medaillon
-    looks.first && looks.last.look_images.last && looks.last.look_images.last.picture.url(:small)
+    looks.first && looks.last.look_images.first && looks.last.look_images.first.picture.url(:small)
   end
   
   private

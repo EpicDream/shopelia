@@ -1,0 +1,16 @@
+<table class="flinkers">
+  <thead>
+    <th>Flinker</th>
+    <th>Nombre de looks dans cette collections</th>
+    <th>Actions</th>
+  </thead>
+  <tbody>
+    <% @theme.flinkers.each do |flinker| %>
+      <tr>
+        <td><%= link_to flinker.username, admin_flinker_path(flinker) %></td>
+        <td><%= @theme.looks_of_flinker(flinker).count %></td>
+        <td></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
