@@ -38,19 +38,6 @@ input[type=file]:hover{
 input[type=text]{
   width:400px;
 }
-input[type=submit]{
-  margin-top:100px;
-  font-family:'Hevetica';
-  font-size:13px;
-  padding:6px;
-  border-radius:2px;
-  color:#961E3F;
-  width:300px;
-  position:absolute;
-  right:2px;
-  bottom:2px;
-}
-
 
 /*Content*/
 div.themes-content{
@@ -189,7 +176,8 @@ div.theme-looks-images-overlay{
   left:10%;
   width:80%;
   height:80%;
-  background:white;
+  background:snow;
+  font-family: Palatino;
   opacity:1;
   z-index:100;
   padding:10px;
@@ -214,6 +202,42 @@ div.theme-edit-overlay img{
   top:2px;
   right:5px;
 }
+fieldset.theme-attributes label{
+  width:100px;
+  height:30px;
+  padding:10px;
+  display:inline-block;
+  vertical-align:top;
+  margin-right:20px;
+  color:#4E4E4E;
+}
+fieldset.theme-attributes label:before{
+  width: 0;
+  height: 0;
+  content:"";
+  display:inline-block;
+	border-top: 10px solid transparent;
+	border-left: 20px solid #FF6CAB;
+	border-bottom: 10px solid transparent;
+}
+fieldset.theme-attributes input{
+  display:inline-block;
+}
+fieldset input.position-input{
+  width:20px;
+}
+div.theme-edit-overlay input[type=submit]{
+  font-size:13px;
+  margin-bottom:60px;
+  padding:6px;
+  border-radius:2px;
+  color:snow;
+  text-shadow:none;
+  border:thin solid #629651;
+  background:#629651;
+  width:auto;
+}
+
 
 /*Looks Images*/
 
@@ -223,6 +247,7 @@ a.see-theme-images{
 }
 a.see-theme-images img{
   width:60px;
+  height:60px;
   border-radius:30px;
   margin:auto;
   opacity:0.8;
@@ -247,8 +272,20 @@ a.see-theme-images img:hover{
   max-height:300px;
 }
 
-/*Looks Table*/
-table.looks{
+/*Looks and FLinkers Table*/
+table.looks,
+table.flinkers{
   width:100%;
   text-align:center;
+  border:thin solid #D4D4D4;
+  text-align:center;
+  font-size:12px;
+  padding:5px;
+}
+table.looks td,
+table.flinkers td{
+  border:thin solid #D4D4D4;
+  text-align:center;
+  font-size:12px;
+  padding:5px;
 }

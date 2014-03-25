@@ -1,51 +1,45 @@
 <p>
   <a href="#" id="close-overlay">Fermer</a>
   <%= form_for [:admin, @theme], html:{'data-theme-id' => @theme.id, multipart:true} do |f| %>
-    <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
-    <%= f.text_field :position %>
-    <%= f.check_box :published %>
-    
-    <h4>Hashtags</h4>
-    <hr/>
-    
-    <%= f.fields_for :hashtags do |ff| %>
-      <%= ff.text_field :name, class: "hashtag-input" %>
-    <% end %>
-
-    <h4>Couverture</h4>
-    <hr/>
-    <%= image_tag @theme.theme_cover.picture.url(:large)%>
-    
-    <%= f.fields_for :theme_cover do |ff| %>
-      <%= ff.file_field :picture, class:"custom-file-input" %>
-    <% end %>
-    
-    <h4>Looks</h4>
-    <hr/>
-    <div id="looks-index-container">
-      <%= render partial: 'admin/themes/looks/index'%>
-    </div>
-    
-    <h4>Flinkers</h4>
-    <hr/>
-    <table class="flinkers">
-      <thead>
-        <th>Flinker</th>
-        <th>Nombre de looks dans cette collections</th>
-        <th>Actions</th>
-      </thead>
-      <tbody>
-        <% @theme.flinkers.each do |flinker| %>
-          <tr>
-            <td><%= link_to flinker.username, admin_flinker_path(flinker) %></td>
-            <td><%= @theme.looks_of_flinker(flinker).count %></td>
-            <td></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-    
-        
     <%= f.submit 'Mettre à jour', class:"btn" %>
+    
+    <fieldset class="theme-attributes">
+      <%= f.label :title, ' Titre' %>
+      <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
+      <br/>
+      
+      <%= f.label :position, ' Position' %>
+      <%= f.text_field :position, class:'position-input' %>
+      <br/>
+      
+      <%= f.label :published, ' Publication' %>
+      <%= f.check_box :published %>
+      <br/>
+      
+      <%= f.label :hashtags, ' Hashtags' %>
+      <%= f.fields_for :hashtags do |ff| %>
+        <%= ff.text_field :name, class: "hashtag-input" %>
+      <% end %>
+      <br/>
+
+      <%= f.label :theme_cover, ' Couverture' %>
+      <%= image_tag @theme.theme_cover.picture.url(:large)%>
+      <%= f.fields_for :theme_cover do |ff| %>
+        <%= ff.file_field :picture, class:"custom-file-input" %>
+      <% end %>
+      <br/>
+      
+      <%= f.label :looks, ' Looks' %>
+      <div id="looks-index-container">
+        <%= render partial: 'admin/themes/looks/index'%>
+      </div>
+      <br/>
+      
+      <%= f.label :flinkers, ' Blogeuses' %>
+      <div id="looks-index-container">
+        <%= render partial: 'admin/themes/flinkers/index'%>
+      </div>
+      
+    </fieldset>
   <% end  %>  
 </p>  
