@@ -11,7 +11,7 @@ class Api::Flink::Hashtags::LooksController < Api::Flink::BaseController
 
   def looks
     Look.with_comment_matching(params[:hashtag])
-    .select('distinct on(looks.id, looks.flink_published_at) *')
+    .uniq
     .order(LOOKS_ORDER)
     .paginate(pagination)
   end

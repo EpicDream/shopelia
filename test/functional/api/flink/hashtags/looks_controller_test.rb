@@ -15,7 +15,9 @@ class Api::Flink::Hashtags::LooksControllerTest < ActionController::TestCase
     assert_response :success
     
     looks = json_response["looks"]
+
     assert_equal 1, looks.count
+    assert_equal flinkers(:betty).id, looks.first["flinker"]["id"]
   end
   
 end
