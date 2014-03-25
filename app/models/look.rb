@@ -74,7 +74,7 @@ class Look < ActiveRecord::Base
   def bitly_url
     @bitly_url = read_attribute(:bitly_url)
     unless @bitly_url
-      @bitly_url = Bitly.client.shorten(self.url).short_url
+      @bitly_url = Bitly.client.shorten("http://www.flink.io/looks/#{self.uuid}").short_url
       self.update_attributes(bitly_url: @bitly_url)
     end
     @bitly_url
