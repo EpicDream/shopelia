@@ -6,11 +6,24 @@ $(document).ready(function() {
     window.location.reload();
   });
   
-  $(document).on("click", "div.theme-banner", function() {
-    var themeID = $(this).data("theme-id");
-    var url = "/admin/themes/" + themeID + "/edit";
+  $(document).on("click", ".overlay", function(e){
+    $("div.theme-edit-overlay").css('display', 'none');
+    $("div.theme-looks-images-overlay").css('display', 'none');
+    $("div.overlay").css('display', 'none');
+  });
+  
+  $(document).on("click", ".see-theme-images", function(e){
+    e.preventDefault();
+    $(".theme-looks-images-overlay").load($(this).attr('href'), function(){
+      $(".theme-looks-images-overlay").toggle();
+      $(".overlay").toggle();
+    });
+  });
+  
+  $(document).on("click", ".theme-banner-cover", function(e) {
+    e.preventDefault();
     
-    $(".theme-edit-overlay").load(url, function(){
+    $(".theme-edit-overlay").load($(this).attr('href'), function(){
       $(".theme-edit-overlay").toggle();
       $(".overlay").toggle();
     });

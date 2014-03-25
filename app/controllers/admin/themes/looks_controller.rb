@@ -1,6 +1,7 @@
 class Admin::Themes::LooksController < Admin::AdminController
   
   def index
+    @theme = Theme.find(params[:theme_id])
     render partial: 'index'
   end
   

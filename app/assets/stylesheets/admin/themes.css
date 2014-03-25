@@ -67,16 +67,14 @@ div.theme-banner{
   position:relative;
   margin:10px;
   width:300px;
-  height:260px;
+  height:280px;
   vertical-align:top;
   padding:2px;
   box-shadow: 1px 1px 0px #BDBDBD; 
 }
-div.theme-banner:hover{
-  cursor:pointer;
-}
-div.theme-banner img{
-  margin:5%;
+a.theme-banner-cover{
+  display:block;
+  margin: 40px 5% 0 5%;
   width:90%;
   max-height:240px;
 }
@@ -112,7 +110,7 @@ span.hashtag{
   margin-bottom:2px;
   text-align:center;
   font-size:12px;
-  color:#FF3DAF;
+  color:#AB1370;
   display:inline-block;
 }
 span.hashtag:before{
@@ -182,7 +180,8 @@ div.overlay{
   opacity:0.5;
   z-index:0;
 }
-div.theme-edit-overlay{
+div.theme-edit-overlay, 
+div.theme-looks-images-overlay{
   display:none;
   position:absolute;
   top:10%;
@@ -213,6 +212,38 @@ div.theme-edit-overlay img{
   position:absolute;
   top:2px;
   right:5px;
+}
+
+/*Looks Images*/
+
+a.see-theme-images{
+  display:block;
+  margin:6px;
+}
+a.see-theme-images img{
+  width:60px;
+  border-radius:30px;
+  margin:auto;
+  opacity:0.8;
+  display:block;
+}
+a.see-theme-images img:hover{
+  opacity:1;
+}
+.img-block {
+  width: 30%;
+  display:inline-block;
+  padding:10px;
+  background:white;
+  margin:20px 0 0 0;
+  height:300px;
+  vertical-align:middle;
+  box-shadow: 1px 1px 1px 1px #BDBDBD; 
+}
+.img-block img{
+  display: block;
+  margin:auto;
+  max-height:300px;
 }
 
 /*Looks Table*/
