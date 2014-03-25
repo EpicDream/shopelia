@@ -67,7 +67,7 @@ div.theme-banner{
   position:relative;
   margin:10px;
   width:300px;
-  height:280px;
+  height:300px;
   vertical-align:top;
   padding:2px;
   box-shadow: 1px 1px 0px #BDBDBD; 
@@ -111,6 +111,7 @@ span.hashtag{
   text-align:center;
   font-size:12px;
   color:#AB1370;
+  font-family: Palatino;
   display:inline-block;
 }
 span.hashtag:before{
@@ -127,7 +128,7 @@ span.published-tag{
 }
 span.info{
   display:block;
-  font-family: Helvetica;
+  font-family: Palatino;
   font-size:11px;
   color:#ADADAD;
   font-style:italic;
