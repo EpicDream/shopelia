@@ -34,6 +34,10 @@ class Theme < ActiveRecord::Base
     looks.where(flinker_id: flinker.id)
   end
   
+  def medaillon
+    looks.first && looks.last.look_images.last && looks.last.look_images.last.picture.url(:small)
+  end
+  
   private
 
   #to avoid validation error if hashtag blank, while not creating blank hashtags, another way ?

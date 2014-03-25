@@ -1,0 +1,5 @@
+<% @look_images.each do |look_image| %>
+  <div class="img-block">
+    <%= image_tag look_image.picture.url(:large) %>
+  </div>
+<% end %>

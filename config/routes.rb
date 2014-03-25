@@ -78,6 +78,7 @@ Shopelia::Application.routes.draw do
     resources :statistics, only:[:index]
     resources :themes do
       resources :looks, only:[:index, :create, :destroy], controller:'themes/looks'
+      resources :look_images, only:[:index], controller:'themes/look_images'
     end
     resources :looks do
       get :publish, :on => :member
