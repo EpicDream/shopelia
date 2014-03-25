@@ -19,4 +19,8 @@ class ThemeCover < Image
     image
   end
   
+  def default?
+    self.picture_file_name == DEFAULT_COVER
+  end
+  
 end
