@@ -52,7 +52,8 @@ module Scrapers
       def link block
         header = header(block)
         node = header.search('.//a').first if header
-        href = node && node.attribute("href").value
+        attribute = node && node.attribute("href")
+        href =  attribute && attribute.value
         return @url unless href
         href = @url + href unless href =~ /http/
         href
