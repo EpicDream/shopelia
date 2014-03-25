@@ -1,0 +1,17 @@
+<div class="theme-banner" data-theme-id="<%= theme.id %>">
+  <span class="info"><%= pluralize(theme.looks.count, 'Look')%></span>
+  <span class="info"><%= pluralize(theme.flinkers.count, 'Blogeuse')%></span>
+  
+  <% theme.hashtags.each do |hashtag| %>
+    <span class="hashtag"><%= hashtag.name %></span>
+  <% end %>
+  
+  <%= link_to "/admin/themes/#{theme.id}", method:'delete', class:'delete-theme', confirm:"Confirmer la suppression" do %>
+    <i class="icon-trash icon-white"></i>
+  <% end %>
+  <p><%= theme.title %></p>
+  <%= image_tag theme.theme_cover.picture.url(:large) %>
+  <% if theme.published? %>
+    <span class="published-tag">Publié</span>
+  <% end%>
+</div>

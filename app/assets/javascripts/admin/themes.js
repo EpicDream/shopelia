@@ -3,6 +3,7 @@ $(document).ready(function() {
   $(document).on("click", "#close-overlay", function(e){
     $("div.theme-edit-overlay").toggle();
     $("div.overlay").toggle();
+    window.location.reload();
   });
   
   $(document).on("click", "div.theme-banner", function() {

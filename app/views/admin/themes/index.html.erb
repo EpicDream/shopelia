@@ -1,17 +1,13 @@
 <div class="themes-content">
-  <%= link_to 'Nouvelle collection', '/admin/themes', method:'post', id:"create-theme-link"%>
-  <br/>
-  <% @themes.each do |theme| %>
-    <div class="theme-banner" data-theme-id="<%= theme.id %>">
-      <span class="looks-count"><%= theme.looks.count %>&nbsp;Looks</span>
-      <span class="publishers-count"><%= theme.flinkers.count %>&nbsp;Blogeuses</span>
-      <%= link_to "/admin/themes/#{theme.id}", method:'delete', class:'delete-theme', confirm:"Confirmer la suppression" do %>
-        <i class="icon-trash icon-white"></i>
-      <% end %>
-      <p><%= theme.title %></p>
-      <%= image_tag theme.theme_cover.picture.url(:large) %>
-    </div>
-  <% end %>
+  <%= link_to 'Nouvelle collection', '/admin/themes', method:'post', id:"create-theme-link" %>
+
+  <div>
+    <%= render partial:'theme', collection:@themes.published(true) %>
+  </div>
+  
+  <div>
+    <%= render partial:'theme', collection:@themes.published(false) %>
+  </div>
   
   <div class="overlay"></div>
   <div class="theme-edit-overlay">

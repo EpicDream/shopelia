@@ -1,5 +1,7 @@
 class Theme < ActiveRecord::Base
-  attr_accessible :title, :rank, :theme_cover_attributes, :hashtags_attributes
+  acts_as_list
+  
+  attr_accessible :title, :rank, :theme_cover_attributes, :hashtags_attributes, :published, :position
   attr_accessor :theme_cover_attributes
   
   has_and_belongs_to_many :looks
@@ -13,10 +15,11 @@ class Theme < ActiveRecord::Base
   accepts_nested_attributes_for :theme_cover
   accepts_nested_attributes_for :hashtags
   
-  acts_as_list
-  
+  scope :published, ->(published) { where(published:published) }
+
+  #uniq => true seems not work on many to many with rails 3, so we use uniq index
   def append_look look
-    self.looks << look rescue PG::UniqueViolation #uniq => true seems not work on many to many, so we use uniq index
+    self.looks << look rescue PG::UniqueViolation 
     self.flinkers << look.flinker rescue PG::UniqueViolation
   end
   
@@ -32,9 +35,9 @@ class Theme < ActiveRecord::Base
   end
   
   private
-  
+
+  #to avoid validation error if hashtag blank, while not creating blank hashtags, another way ?
   def remove_blanks_hashtags 
-    #to avoid validation error if hashtag blank, while not creating blank hashtags, another way ?
     self.hashtags.delete_if { |hashtag| hashtag.name.blank?  }
   end
   
