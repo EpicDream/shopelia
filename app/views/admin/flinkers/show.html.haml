@@ -13,6 +13,10 @@
       %article.coolbox
         %h3 Details
         = render "form"
+        %hr
+        %select.flinker-theme-select{id:"assign-flinker-to-theme", "data-flinker-id" => @flinker.id}
+          =options_for_select(themes_for_select(default:"Ajouter ce flinker à une collection"))
+        
     .span9
       %article.coolbox
         %h3 Looks
@@ -20,7 +24,7 @@
           .img-block
             %div.actions
               %span.bitly-link=look.bitly_url
-              %select.theme-select{id:"assign-to-theme", "data-look-id" => look.id}
-                =options_for_select(themes_for_select)
+              %select.look-theme-select{id:"assign-look-to-theme", "data-look-id" => look.id}
+                =options_for_select(themes_for_select(default:"Ajouter à une collection"))
             = link_to image_tag(look.look_images.first.picture.url(:large), class:"thumb"), admin_look_path(look)
               

@@ -9,7 +9,7 @@
       <tr>
         <td><%= link_to flinker.username, admin_flinker_path(flinker) %></td>
         <td><%= @theme.looks_of_flinker(flinker).count %></td>
-        <td></td>
+        <td><%= link_to 'remove', admin_theme_flinker_path(@theme, flinker.id), id:'remove-flinker' %></td>
       </tr>
     <% end %>
   </tbody>
