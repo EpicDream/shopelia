@@ -41,7 +41,7 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
   end
   
   test "get comments activities related to current flinker" do
-    assert flinkers(:boop).friends.include?(@fanny)
+    follow(flinkers(:boop), @fanny)
     
     CommentActivity.create!(comments(:agadir)) #boop comment
     
@@ -58,7 +58,7 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
   end
   
   test "get likes activities related to current flinker" do
-    assert flinkers(:boop).friends.include?(@fanny)
+    follow(flinkers(:boop), @fanny)
     LikeActivity.create!(flinker_likes(:boop_like))
     
     get :index, format: :json
@@ -105,6 +105,8 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
   end
   
   test "get all different activities related to current flinker" do
+    follow(flinkers(:boop), @fanny)
+    
     MentionActivity.create!(comments(:agadir))
     FlinkerFollow.create(flinker_id:flinkers(:boop).id, follow_id:@fanny.id)
     CommentActivity.create!(comments(:agadir))
