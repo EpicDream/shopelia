@@ -4,7 +4,7 @@ class LikeActivity < Activity
   def self.create! flinker_like
     return if flinker_like.product?
     flinker = flinker_like.flinker
-    flinker.friends.each do |friend|
+    flinker.followers.each do |friend|
       super(flinker_id:flinker.id, target_id:friend.id, resource_id:flinker_like.id)
     end
   end

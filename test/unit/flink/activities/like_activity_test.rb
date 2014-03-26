@@ -4,16 +4,18 @@ class LikeActivityTest < ActiveSupport::TestCase
   
   setup do
     @liker = flinkers(:boop)
+    follow(@liker, flinkers(:elarch))
+    follow(@liker, flinkers(:fanny))
   end
   
-  test "create like activity for friends of liker only" do
+  test "create like activity for followers of liker only" do
     
     assert_difference("LikeActivity.count", 2) do
       LikeActivity.create!(flinker_likes(:boop_like)) #boop likes
     end
     
     assert @liker.friends.count > 0
-    assert_equal @liker.friends.to_set, LikeActivity.all.map(&:target).to_set
+    assert_equal @liker.followers.to_set, LikeActivity.all.map(&:target).to_set
   end
   
   test "dont create like activity if resource is product" do

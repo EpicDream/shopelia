@@ -31,8 +31,8 @@ class ActiveSupport::TestCase
     assert after.send(test_on, before)
   end
   
-  def follow publisher
-    FlinkerFollow.create!(flinker_id:@flinker.id, follow_id:publisher.id)
+  def follow publisher, flinker=@flinker
+    FlinkerFollow.create!(flinker_id:flinker.id, follow_id:publisher.id)
   end
 
   def populate_looks_for publishers

@@ -22,8 +22,10 @@ class CommentTest < ActiveSupport::TestCase
     end
   end
   
-  test "create comment should create comment activity for flinker friends" do
+  test "create comment should create comment activity for flinker followers" do
     flinker = flinkers(:boop)
+    follow(flinker, flinkers(:elarch))
+    follow(flinker, flinkers(:fanny))
     
     assert_difference('CommentActivity.count', 2) do
       Comment.create(flinker_id:flinker.id, body:"comment", look_id:@look.id)
