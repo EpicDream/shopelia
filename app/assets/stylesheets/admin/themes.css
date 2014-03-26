@@ -238,9 +238,9 @@ fieldset.theme-attributes label:before{
   height: 0;
   content:"";
   display:inline-block;
-	border-top: 10px solid transparent;
-	border-left: 20px solid #FF6CAB;
-	border-bottom: 10px solid transparent;
+	border-top: 8px solid transparent;
+	border-left: 16px solid #961E3F;
+	border-bottom: 8px solid transparent;
 }
 fieldset.theme-attributes input{
   display:inline-block;

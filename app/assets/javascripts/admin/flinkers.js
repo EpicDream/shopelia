@@ -66,7 +66,7 @@ $(document).ready(function() {
     Index.init();
   }
   
-  $(document).on("change", "#assign-to-theme", function(){
+  $(document).on("change", "#assign-look-to-theme", function(){
     var themeID = $(this).val();
     var lookID = $(this).data("look-id");
     var url = "/admin/themes/" + themeID + "/looks";
@@ -78,5 +78,19 @@ $(document).ready(function() {
       });
     }
   });
+  
+  $(document).on("change", "#assign-flinker-to-theme", function(){
+    var themeID = $(this).val();
+    var flinkerID = $(this).data("flinker-id");
+    var url = "/admin/themes/" + themeID + "/flinkers";
+    
+    if (themeID) {
+      $.post(url, { flinker_id: flinkerID, contentType:"application/json; charset=utf-8" })
+      .error(function() {
+        alert("Erreur");
+      });
+    }
+  });
+  
   
 });

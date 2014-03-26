@@ -38,6 +38,16 @@ class Theme < ActiveRecord::Base
     looks.first && looks.last.look_images.first && looks.last.look_images.first.picture.url(:small)
   end
   
+  def append_flinker flinker
+    self.flinkers << flinker rescue PG::UniqueViolation
+    self.looks << flinker.looks rescue PG::UniqueViolation 
+  end
+  
+  def remove_flinker flinker
+    self.flinkers.destroy(flinker)
+    self.looks.destroy(flinker.looks)
+  end
+  
   private
 
   #to avoid validation error if hashtag blank, while not creating blank hashtags, another way ?

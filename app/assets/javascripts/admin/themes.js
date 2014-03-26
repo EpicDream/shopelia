@@ -22,7 +22,6 @@ $(document).ready(function() {
   
   $(document).on("click", ".theme-banner-cover", function(e) {
     e.preventDefault();
-    
     $(".theme-edit-overlay").load($(this).attr('href'), function(){
       $(".theme-edit-overlay").toggle();
       $(".overlay").toggle();
@@ -41,6 +40,23 @@ $(document).ready(function() {
       alert("Erreur");
     });
   });
+  
+  $(document).on("click", "#remove-flinker", function(e){
+    e.preventDefault();
+    var url = $(this).attr('href');
+    
+    $.post(url, {_method:'delete'})
+    .success(function(html){
+      var themeID = $(".edit_theme").data("theme-id");
+      $("#flinkers-index-container").replaceWith(html);
+      $("#looks-index-container").load("/admin/themes/" + themeID + "/flinkers");
+      $('html, body').animate({ scrollTop:0 }, 'slow');
+    })
+    .error(function(){
+      alert("Erreur");
+    });
+  });
+  
   
   $(document).on("submit", ".edit_theme", function(e, data) {
     e.preventDefault();
