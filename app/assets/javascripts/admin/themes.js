@@ -147,7 +147,9 @@ $(document).ready(function() {
         },
         success: function(response, textStatus) {
           var url = "/admin/themes/" + themeID + "/edit";
-          $(".theme-edit-overlay").load(url, function(){});
+          $(".theme-edit-overlay").load(url, function(){
+            Theme.rebuildTitlesBlocks();
+          });
         }
     });
   });
