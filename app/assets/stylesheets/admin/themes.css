@@ -309,7 +309,9 @@ a.titles-reset,
 a.subtitles-reset{
   display:block;
 }
-
+input.cover-height-input{
+  width:40px;
+}
 
 
 /*Looks Images*/
