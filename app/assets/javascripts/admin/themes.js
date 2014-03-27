@@ -1,4 +1,65 @@
+var Theme = {
+  
+  titleWithFontBlock:function(fontName, type, title){
+    var title = title || '';
+    var type = type || 'title-part';
+    var span = "<span class='font-tag'>" + fontName + "</span>";
+    var input = "<input class='" + type + "' data-font='" + fontName + "' type='text' value='" + title +"'>";
+    
+    return span + " " + input;
+  },
+  
+  markupForTitle:function(type){
+    var fontSize = $("#" + type + "-fontsize-select").val();
+    var markup = "";
+    var inputCount = $("." + type + "-block").children('input').length;
+    
+    $("." + type + "-block").children('input').each(function(index, input){
+      var value = input.value;
+      var fontName = input.dataset['font'];
+      
+      if (index < inputCount - 1) {
+        value += " ";
+      }
+      
+      markup += "<style font='" + fontName +"' size='" + fontSize + "'>" + value + "</style>";
+    });
+    
+    return markup;
+  },
+  
+  nodesFromTitle:function(title, type){
+    var fontRegexp = /font='(.*?)'/g;
+    var valueRegexp = />(.*?)<\/style>/g;
+    var sizeRegexp = /size='(\d+)'/g;
+    var fonts = [];
+    var values = [];
+    var size = sizeRegexp.exec(title);
+    var match = fontRegexp.exec(title);
+    var i = 0;
+    
+    while (match != null) {
+      fonts[i] = match[1];
+      values[i] = valueRegexp.exec(title)[1];
+      i++;
+      match = fontRegexp.exec(title);
+    }
+    
+    for (var i = 0; i < fonts.length; i++) {
+      $("p." + type + "-block").append(Theme.titleWithFontBlock(fonts[i], type, values[i]));
+    }
+    
+    if (size) {
+      $("#" + type + "-fontsize-select").val(size[1]);
+    }
+    
+  }
+};
+
 $(document).ready(function() {
+  
+  Theme.nodesFromTitle($("#theme_title").val(), 'title');
+  Theme.nodesFromTitle($("#theme_subtitle").val(), 'subtitle');
   
   $(document).on("click", "#close-overlay", function(e){
     $("div.theme-edit-overlay").toggle();
@@ -57,12 +118,14 @@ $(document).ready(function() {
     });
   });
   
-  
   $(document).on("submit", ".edit_theme", function(e, data) {
     e.preventDefault();
  
     var form = $(this);
     var themeID = $(this).data('theme-id');
+    
+    $("#theme_title").val(Theme.markupForTitle('title'));
+    $("#theme_subtitle").val(Theme.markupForTitle('subtitle'));
 
     $.ajax({
         url: form.attr("action"),
@@ -85,6 +148,22 @@ $(document).ready(function() {
           $(".theme-edit-overlay").load(url, function(){});
         }
     });
+  });
+  
+  $(document).on("change", "#title-font-select", function(){
+    $("p.title-block").append(Theme.titleWithFontBlock($(this).val()));
+  });
+  
+  $(document).on("change", "#subtitle-font-select", function(){
+    $("p.subtitle-block").append(Theme.titleWithFontBlock($(this).val(), 'subtitle-part'));
+  });  
+  
+  $(document).on("click", "#title-reset", function(){
+    $("p.title-block").children().remove();
+  });
+  
+  $(document).on("click", "#subtitle-reset", function(){
+    $("p.subtitle-block").children().remove();
   });
   
 });

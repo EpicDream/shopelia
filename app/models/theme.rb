@@ -1,7 +1,8 @@
 class Theme < ActiveRecord::Base
   acts_as_list
   
-  attr_accessible :title, :rank, :theme_cover_attributes, :hashtags_attributes, :published, :position
+  attr_accessible :title, :rank, :published, :position, :subtitle
+  attr_accessible :theme_cover_attributes, :hashtags_attributes
   attr_accessor :theme_cover_attributes
   
   has_and_belongs_to_many :looks
@@ -46,6 +47,10 @@ class Theme < ActiveRecord::Base
   def remove_flinker flinker
     self.flinkers.destroy(flinker)
     self.looks.destroy(flinker.looks)
+  end
+  
+  def title_for_display
+    title.scan(/>(.*?)<\/style>/).flatten.join
   end
   
   private
