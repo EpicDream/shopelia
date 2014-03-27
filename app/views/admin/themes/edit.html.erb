@@ -4,8 +4,35 @@
     <%= f.submit 'Mettre à jour', class:"btn" %>
     
     <fieldset class="theme-attributes">
+      
       <%= f.label :title, ' Titre' %>
-      <%= f.text_field :title, placeholder:'Intitulé de la collection' %>
+      <p class="title-block">
+        <% if @theme.title.blank? %>
+          <span class="font-tag">HelveticaNeue</span>
+          <%= text_field_tag nil, '', class:'title-part', 'data-font' => 'HelveticaNeue' %>
+        <% end %>
+      </p>
+      <%= f.text_area :title, placeholder:'Intitulé de la collection' %>
+      <div class="title-style-selects">
+        <%= select_tag nil, options_for_select(fonts_for_select, selected:'HelveticaNeue'), id:'title-font-select' %>
+        <%= select_tag nil, options_for_select(fonts_sizes_for_select, selected:20), id:'title-fontsize-select' %>
+        <%= link_to 'Effacer', '#', id:'title-reset', class:'titles-reset' %>
+      </div>
+      <br/>
+
+      <%= f.label :subtitle, ' Sous titre' %>
+      <p class="subtitle-block">
+        <% if @theme.subtitle.blank? %>
+          <span class="font-tag">HelveticaNeue-Thin</span>
+          <%= text_field_tag nil, '', class:'subtitle-part', 'data-font' => 'HelveticaNeue-Thin' %>
+        <% end %>
+      </p>
+      <%= f.text_area :subtitle, placeholder:'Sous titre' %>
+      <div class="subtitle-style-selects">
+        <%= select_tag nil, options_for_select(fonts_for_select, selected:'HelveticaNeue-Thin'), id:'subtitle-font-select' %>
+        <%= select_tag nil, options_for_select(fonts_sizes_for_select, selected:14), id:'subtitle-fontsize-select' %>
+        <%= link_to 'Effacer', '#', id:'subtitle-reset', class:'subtitles-reset' %>
+      </div>
       <br/>
       
       <%= f.label :position, ' Position' %>

@@ -33,4 +33,13 @@ module ApplicationHelper
     [[opts[:default], nil]] + Theme.all.map { |theme| [theme.title, theme.id] }
   end
   
+  def fonts_for_select
+    ['HelveticaNeue-Bold','HelveticaNeue-BoldItalic', 'HelveticaNeue-Medium', 'HelveticaNeue-MediumItalic', 
+      'HelveticaNeue', 'HelveticaNeue-Italic', 'HelveticaNeue-Light', 'HelveticaNeue-LightItalic', 
+      'HelveticaNeue-Thin', 'HelveticaNeue-ThinItalic']
+  end
+  
+  def fonts_sizes_for_select
+    (10..30).step(2).to_a
+  end
 end

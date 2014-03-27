@@ -259,6 +259,57 @@ div.theme-edit-overlay input[type=submit]{
   background:#629651;
   width:auto;
 }
+fieldset.theme-attributes textarea{
+  width:50%;
+  height:100px;
+  resize:none;
+  display:inline-block;
+}
+fieldset .title-style-selects,
+fieldset .subtitle-style-selects{
+  display:inline-block;
+  vertical-align:top;
+  width:20%;
+}
+fieldset div[class*='style-selects']{
+  display:inline-block;
+}
+fieldset div[class*='style-selects'] select{
+  font-family:'Palatino';
+  width:165px;
+}
+fieldset #theme_title,
+fieldset #theme_subtitle{
+  display:none;
+}
+fieldset p.title-block,
+fieldset p.subtitle-block{
+  width:60%;
+  display:inline-block;
+  height:auto;
+  margin-bottom:30px;
+}
+p.title-block span.font-tag,
+p.subtitle-block span.font-tag{
+  background:#FF4399;
+  font-size:12px;
+  padding:2px;
+  color:white;
+  border-radius:2px;
+  font-family:'Palatino';
+  display:inline-block;
+  width:20%;
+  text-align:center;
+}
+p.title-block input,
+p.subtitle-block input{
+  width:70%;
+}
+a.titles-reset,
+a.subtitles-reset{
+  display:block;
+}
+
 
 
 /*Looks Images*/

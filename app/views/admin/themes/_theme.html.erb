@@ -16,7 +16,7 @@
     <%= link_to image_tag(theme.medaillon), admin_theme_look_images_path(theme), class:'see-theme-images' %>
   <% end %>
 
-  <p><%= theme.title %></p>
+  <p><%= theme.title_for_display %></p>
   
   <% if theme.published? %>
     <span class="published-tag">Publié</span>
