@@ -50,7 +50,7 @@ class Theme < ActiveRecord::Base
   end
   
   def title_for_display
-    title.scan(/>(.*?)<\/style>/).flatten.join
+    title.scan(/>(.*?)<\/style>/).flatten.join if title
   end
   
   private
