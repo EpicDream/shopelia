@@ -52,14 +52,15 @@ var Theme = {
     if (size) {
       $("#" + type + "-fontsize-select").val(size[1]);
     }
-    
+  },
+  
+  rebuildTitlesBlocks:function() {
+    Theme.nodesFromTitle($("#theme_title").val(), 'title');
+    Theme.nodesFromTitle($("#theme_subtitle").val(), 'subtitle');
   }
 };
 
 $(document).ready(function() {
-  
-  Theme.nodesFromTitle($("#theme_title").val(), 'title');
-  Theme.nodesFromTitle($("#theme_subtitle").val(), 'subtitle');
   
   $(document).on("click", "#close-overlay", function(e){
     $("div.theme-edit-overlay").toggle();
@@ -86,6 +87,7 @@ $(document).ready(function() {
     $(".theme-edit-overlay").load($(this).attr('href'), function(){
       $(".theme-edit-overlay").toggle();
       $(".overlay").toggle();
+      Theme.rebuildTitlesBlocks();
     });
   });
   
