@@ -41,7 +41,7 @@ class Theme < ActiveRecord::Base
   
   def append_flinker flinker
     self.flinkers << flinker rescue PG::UniqueViolation
-    self.looks << flinker.looks rescue PG::UniqueViolation 
+    self.looks << flinker.looks - looks_of_flinker(flinker)
   end
   
   def remove_flinker flinker

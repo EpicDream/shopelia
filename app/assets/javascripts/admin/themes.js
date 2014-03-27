@@ -97,7 +97,7 @@ $(document).ready(function() {
     
     $.post(url, {_method:'delete'})
     .success(function(html){
-      $("#looks-index-container").replaceWith(html);
+      $("table.looks").replaceWith(html);
     })
     .error(function(){
       alert("Erreur");
@@ -111,7 +111,7 @@ $(document).ready(function() {
     $.post(url, {_method:'delete'})
     .success(function(html){
       var themeID = $(".edit_theme").data("theme-id");
-      $("#flinkers-index-container").replaceWith(html);
+      $("table.flinkers").replaceWith(html);
       $("#looks-index-container").load("/admin/themes/" + themeID + "/flinkers");
       $('html, body').animate({ scrollTop:0 }, 'slow');
     })
