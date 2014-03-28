@@ -1,11 +1,9 @@
 %section.header
   %table 
     %thead
-      %th Flinker
       %th Look
       %th Date de publication
     - @looks.each do |look|
       %tr
-        %td=look.flinker.username
-        %td=link_to look.name, admin_look_path(look)
+        %td=link_to image_tag(look.post.images.first), admin_post_path(look.post)
         %td=l(look.flink_published_at)
