@@ -220,10 +220,10 @@ section.header tr td:first-child {
   padding:10px;
   background:white;
   margin:20px 0 0 0;
-  height:300px;
+  height:200px;
   border:thin solid #D4D4D4;
 }
 section.header td img {
   margin: 0 auto;
-  max-height:280px;
+  max-height:200px;
 }
