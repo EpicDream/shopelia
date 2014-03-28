@@ -7,7 +7,7 @@ class Admin::ThemesController < Admin::AdminController
   def edit
     @theme = Theme.find(params[:id])
     @theme.hashtags.build
-    
+    @theme.countries.build if @theme.countries.none?
     render 'edit', layout:false
   end
   

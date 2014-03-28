@@ -2,12 +2,13 @@ class Theme < ActiveRecord::Base
   acts_as_list
   
   attr_accessible :title, :rank, :published, :position, :subtitle, :cover_height
-  attr_accessible :theme_cover_attributes, :hashtags_attributes
+  attr_accessible :theme_cover_attributes, :hashtags_attributes, :country_ids
   attr_accessor :theme_cover_attributes
   
   has_and_belongs_to_many :looks
   has_and_belongs_to_many :flinkers
   has_and_belongs_to_many :hashtags
+  has_and_belongs_to_many :countries
   has_one :theme_cover, foreign_key: :resource_id, dependent: :destroy
   
   before_create :assign_default_cover, unless: -> { self.theme_cover }
@@ -50,7 +51,7 @@ class Theme < ActiveRecord::Base
   end
   
   def title_for_display
-    title.scan(/>(.*?)<\/style>/).flatten.join if title
+    title.scan(/<style\s.*?>(.*?)<\/style>/).flatten.join if title
   end
   
   private

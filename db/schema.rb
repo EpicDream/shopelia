@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140327161553) do
+ActiveRecord::Schema.define(:version => 20140328144258) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -187,6 +187,13 @@ ActiveRecord::Schema.define(:version => 20140327161553) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "countries_themes", :force => true do |t|
+    t.integer "country_id"
+    t.integer "theme_id"
+  end
+
+  add_index "countries_themes", ["country_id", "theme_id"], :name => "index_countries_themes_on_country_id_and_theme_id"
 
   create_table "developers", :force => true do |t|
     t.string   "name"
@@ -374,6 +381,8 @@ ActiveRecord::Schema.define(:version => 20140327161553) do
     t.integer "theme_id"
     t.integer "hashtag_id"
   end
+
+  add_index "hashtags_themes", ["hashtag_id", "theme_id"], :name => "index_hashtags_themes_on_hashtag_id_and_theme_id"
 
   create_table "images", :force => true do |t|
     t.text     "url"
