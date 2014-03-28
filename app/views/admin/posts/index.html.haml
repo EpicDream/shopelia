@@ -27,7 +27,7 @@
         %tr
           %td=look.flinker.username
           %td=link_to look.name, admin_look_path(look)
-        
+    =link_to 'Voir plus', admin_looks_path, target:'blank'    
     
 .wrapper-column
   = render @posts
