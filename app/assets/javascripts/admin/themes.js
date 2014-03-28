@@ -170,4 +170,8 @@ $(document).ready(function() {
     $("p.subtitle-block").children().remove();
   });
   
+  $(document).on("change", ".hashtag-destroy-checkbox", function(){
+    $(this).parents('p').hide();
+  });
+  
 });

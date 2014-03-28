@@ -233,7 +233,7 @@ fieldset.theme-attributes label{
   margin-right:20px;
   color:#5A5A5A;
 }
-fieldset.theme-attributes label:before{
+fieldset.theme-attributes > label:before{
   width: 0;
   height: 0;
   content:"";
@@ -311,6 +311,28 @@ a.subtitles-reset{
 }
 input.cover-height-input{
   width:40px;
+}
+fieldset div.hashtags-block{
+  margin-left:20px;
+}
+fieldset div.hashtags-block p{
+  display:inline-block;
+}
+
+fieldset div.hashtags-block input[type=checkbox]{
+  display:none;
+}
+fieldset div.hashtags-block label.hashtag-destroy-label{
+  color:red;
+  font-family:system;
+  display:inline-block;
+  width:10px;
+  height:10px;
+  text-align:center;
+  padding:2px;
+}
+fieldset div.hashtags-block label.hashtag-destroy-label:hover{
+  color:purple;
 }
 
 /*Looks Images*/

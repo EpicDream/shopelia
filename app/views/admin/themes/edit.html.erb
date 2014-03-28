@@ -48,10 +48,16 @@
       <br/>
       
       <%= f.label :hashtags, ' Hashtags' %>
-      <%= f.fields_for :hashtags do |ff| %>
-        <%= ff.text_field :name, class: "hashtag-input" %>
-      <% end %>
-      <br/>
+
+      <div class="hashtags-block">
+        <%= f.fields_for :hashtags do |ff| %>
+          <p>
+            <%= ff.text_field :name, class: "hashtag-input" %>
+            <%= ff.label :_destroy, 'x', class:'hashtag-destroy-label' %>
+            <%= ff.check_box :_destroy, class:'hashtag-destroy-checkbox' %>
+          </p>
+        <% end %>
+      </div>
 
       <%= f.label :theme_cover, ' Couverture' %>
       <%= image_tag @theme.theme_cover.picture.url(:large)%>

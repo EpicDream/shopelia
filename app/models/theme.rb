@@ -11,10 +11,10 @@ class Theme < ActiveRecord::Base
   has_one :theme_cover, foreign_key: :resource_id, dependent: :destroy
   
   before_create :assign_default_cover, unless: -> { self.theme_cover }
-  before_validation :remove_blanks_hashtags
+  before_validation :find_or_create_hashtag
   
   accepts_nested_attributes_for :theme_cover
-  accepts_nested_attributes_for :hashtags
+  accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
   
   scope :published, ->(published) { where(published:published) }
 
@@ -54,10 +54,15 @@ class Theme < ActiveRecord::Base
   end
   
   private
-
-  #to avoid validation error if hashtag blank, while not creating blank hashtags, another way ?
-  def remove_blanks_hashtags 
-    self.hashtags.delete_if { |hashtag| hashtag.name.blank?  }
+  
+  def find_or_create_hashtag
+    self.hashtags = self.hashtags.map { |hashtag|  
+      if hashtag.new_record?
+        Hashtag.find_by_name(hashtag.name) || hashtag
+      else
+        hashtag
+      end
+    }
   end
   
   def assign_default_cover
