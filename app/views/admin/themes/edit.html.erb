@@ -59,6 +59,11 @@
         <% end %>
       </div>
 
+      <!-- <%= f.fields_for :countries do |ff| %>
+        <%= ff.select :country_id, options_for_select(actual_countries_for_select) %>
+        <%= ff.check_box :_destroy %>
+      <% end %> -->
+
       <%= f.label :theme_cover, ' Couverture' %>
       <%= image_tag @theme.theme_cover.picture.url(:large)%>
       <%= f.fields_for :theme_cover do |ff| %>

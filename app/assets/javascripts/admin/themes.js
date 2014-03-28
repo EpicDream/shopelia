@@ -25,12 +25,12 @@ var Theme = {
       markup += "<style font='" + fontName +"' size='" + fontSize + "'>" + value + "</style>";
     });
     
-    return markup;
+    return "<styles>" + markup + "</styles>";
   },
   
   nodesFromTitle:function(title, type){
     var fontRegexp = /font='(.*?)'/g;
-    var valueRegexp = />(.*?)<\/style>/g;
+    var valueRegexp = /<style\s.*?>(.*?)<\/style>/g;
     var sizeRegexp = /size='(\d+)'/g;
     var fonts = [];
     var values = [];
@@ -44,7 +44,7 @@ var Theme = {
       i++;
       match = fontRegexp.exec(title);
     }
-    
+    debugger;
     for (var i = 0; i < fonts.length; i++) {
       $("p." + type + "-block").append(Theme.titleWithFontBlock(fonts[i], type, values[i]));
     }
