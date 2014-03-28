@@ -4,7 +4,7 @@ class Admin::LooksController < Admin::AdminController
   
   def index
     since = params[:since] || Time.now - 1.week
-    @looks = Look.flink_published_between(params[:since], Time.now)
+    @looks = Look.flink_published_between(since, nil).order('flink_published_at desc')
   end
   
   def reinitialize_images
