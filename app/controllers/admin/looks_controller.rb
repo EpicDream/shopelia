@@ -3,7 +3,8 @@ class Admin::LooksController < Admin::AdminController
   before_filter :retrieve_brands, :only => [:show]
   
   def index
-    @looks = Look.all
+    since = params[:since] || Time.now - 1.week
+    @looks = Look.flink_published_between(params[:since], Time.now)
   end
   
   def reinitialize_images
