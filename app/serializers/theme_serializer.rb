@@ -1,5 +1,6 @@
 class ThemeSerializer < ActiveModel::Serializer
   attributes :title, :subtitle, :position, :cover_height, :cover, :country
+  attributes :hashtags
   
   def cover
     Rails.configuration.image_host + object.theme_cover.picture.url(:large, timestamp:true)

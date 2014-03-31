@@ -22,14 +22,10 @@ class Theme < ActiveRecord::Base
   #uniq => true seems not work on many to many with rails 3, so we use uniq index
   def append_look look
     self.looks << look rescue PG::UniqueViolation 
-    self.flinkers << look.flinker rescue PG::UniqueViolation
   end
   
   def remove_look look
     self.looks.destroy(look)
-    if self.looks_of_flinker(look.flinker).count.zero?
-      self.flinkers.destroy(look.flinker)
-    end
   end
   
   def looks_of_flinker flinker
@@ -42,12 +38,10 @@ class Theme < ActiveRecord::Base
   
   def append_flinker flinker
     self.flinkers << flinker rescue PG::UniqueViolation
-    self.looks << flinker.looks - looks_of_flinker(flinker)
   end
   
   def remove_flinker flinker
     self.flinkers.destroy(flinker)
-    self.looks.destroy(flinker.looks)
   end
   
   def title_for_display
