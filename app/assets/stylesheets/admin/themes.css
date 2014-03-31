@@ -32,6 +32,18 @@ input[type=file]:hover{
 .custom-file-input::after {
   width:0px;
 }
+.ui-autocomplete {
+  z-index: 2000;
+}
+p.add-flinker-block{
+  padding:6px;
+}
+div#looks-index-container{
+  display:none;
+}
+input#flinker_id{
+  width:160px;
+}
 
 /*Common*/
 
@@ -40,6 +52,7 @@ input[type=text]{
 }
 
 /*Content*/
+
 div.themes-content{
   margin:5px 5px 5px 5px;
   font-family: Helvetica;
@@ -55,8 +68,8 @@ div.theme-banner{
   border-radius:1px;
   position:relative;
   margin:10px;
-  width:300px;
-  height:300px;
+  width:340px;
+  height:340px;
   vertical-align:top;
   padding:2px;
   box-shadow: 1px 1px 0px #BDBDBD; 
