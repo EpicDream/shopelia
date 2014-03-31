@@ -5,7 +5,7 @@
     <th>Actions</th>
   </thead>
   <tbody>
-    <% @theme.flinkers.each do |flinker| %>
+    <% @theme.flinkers.includes(:looks).each do |flinker| %>
       <tr>
         <td><%= link_to flinker.username, admin_flinker_path(flinker) %></td>
         <td><%= @theme.looks_of_flinker(flinker).count %></td>

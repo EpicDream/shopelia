@@ -70,17 +70,22 @@
       <% end %>
       <br/>
       
-      <%= f.label :looks, ' Looks' %>
+      <%= f.label :looks, ' Looks', id:'looks-label' %>
       <div id="looks-index-container">
         <%= render partial: 'admin/themes/looks/index'%>
       </div>
       <br/>
       
       <%= f.label :flinkers, ' Blogeuses' %>
+      <p class="add-flinker-block">
+        <%= text_field_tag :flinker_id, nil, 'data-id' => nil %>
+        <%= link_to "Ajouter cette blogueuse", "#", id:"add-flinker-button" %>
+      </p>
       <div id="flinkers-index-container">
         <%= render partial: 'admin/themes/flinkers/index'%>
       </div>
       
     </fieldset>
   <% end  %>  
-</p>  
+  
+</p>

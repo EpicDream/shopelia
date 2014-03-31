@@ -48,4 +48,8 @@ module ApplicationHelper
   def country_flag_image iso
     image_tag "flags/#{iso.downcase}.png" if iso
   end
+  
+  def autocomplete_publishers_usernames
+    Flinker.publishers.select([:id, :username]).map{ |f| { id:f.id, label:f.username } }.to_json
+  end
 end

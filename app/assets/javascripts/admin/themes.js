@@ -44,7 +44,7 @@ var Theme = {
       i++;
       match = fontRegexp.exec(title);
     }
-    debugger;
+
     for (var i = 0; i < fonts.length; i++) {
       $("p." + type + "-block").append(Theme.titleWithFontBlock(fonts[i], type, values[i]));
     }
@@ -57,6 +57,28 @@ var Theme = {
   rebuildTitlesBlocks:function() {
     Theme.nodesFromTitle($("#theme_title").val(), 'title');
     Theme.nodesFromTitle($("#theme_subtitle").val(), 'subtitle');
+  },
+  
+  refreshEditView:function() {
+    var themeID = $('form').data('theme-id');
+    var url = "/admin/themes/" + themeID + "/edit";
+    
+    $(".theme-edit-overlay").load(url, function(){
+      Theme.rebuildTitlesBlocks();
+      Theme.autocompleteUsername();
+    });
+  },
+  
+  autocompleteUsername:function(){
+    $("#flinker_id").autocomplete({
+        minLength: 1,
+        source: $("#flinkers-usernames").data('usernames'),
+        select: function(event, ui) {
+          $("#flinker_id").val(ui.item.label);
+          $("#flinker_id").data('id', ui.item.id);
+          return false;
+        }
+    });
   }
 };
 
@@ -88,6 +110,7 @@ $(document).ready(function() {
       $(".theme-edit-overlay").toggle();
       $(".overlay").toggle();
       Theme.rebuildTitlesBlocks();
+      Theme.autocompleteUsername();
     });
   });
   
@@ -113,7 +136,7 @@ $(document).ready(function() {
       var themeID = $(".edit_theme").data("theme-id");
       $("table.flinkers").replaceWith(html);
       $("#looks-index-container").load("/admin/themes/" + themeID + "/flinkers");
-      $('html, body').animate({ scrollTop:0 }, 'slow');
+      $('html, body').animate({ scrollTop:100 }, 'slow');
     })
     .error(function(){
       alert("Erreur");
@@ -124,7 +147,6 @@ $(document).ready(function() {
     e.preventDefault();
  
     var form = $(this);
-    var themeID = $(this).data('theme-id');
     
     $("#theme_title").val(Theme.markupForTitle('title'));
     $("#theme_subtitle").val(Theme.markupForTitle('subtitle'));
@@ -146,10 +168,7 @@ $(document).ready(function() {
           alert("Erreur");
         },
         success: function(response, textStatus) {
-          var url = "/admin/themes/" + themeID + "/edit";
-          $(".theme-edit-overlay").load(url, function(){
-            Theme.rebuildTitlesBlocks();
-          });
+          Theme.refreshEditView();
         }
     });
   });
@@ -172,6 +191,28 @@ $(document).ready(function() {
   
   $(document).on("change", ".hashtag-destroy-checkbox", function(){
     $(this).parents('p').hide();
+  });
+  
+  $(document).on("click", "#add-flinker-button", function(e){
+    e.preventDefault();
+    
+    var flinkerID = $("#flinker_id").data('id');
+    var themeID = $(this).parents('form').data('theme-id');
+    var url = "/admin/themes/" + themeID + "/flinkers";
+
+    if (flinkerID == undefined) return;
+    
+    $.post(url, {flinker_id:flinkerID})
+    .error(function(){
+      alert("Erreur");
+    })
+    .success(function(){
+      Theme.refreshEditView();
+    });
+  });
+  
+  $(document).on("click", "#looks-label", function(){
+    $("#looks-index-container").toggle();
   });
   
 });
