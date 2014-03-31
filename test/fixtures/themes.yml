@@ -1,0 +1,15 @@
+mode:
+  title: "La mode c'est fun"
+  subtitle: "Carrément"
+  position: 1
+  published: true
+sexy:
+  title: "Sexy girls"
+  subtitle: "Hot"
+  position: 2
+  published: true
+sacamains:
+  title: "Sacs à mains"
+  subtitle: "Pratiques"
+  position: 3
+  published: false

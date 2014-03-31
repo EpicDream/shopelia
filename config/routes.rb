@@ -229,6 +229,7 @@ Shopelia::Application.routes.draw do
       namespace :hashtags do
         resources :looks, only: :index
       end
+      resources :themes, :only => [:index, :show]
     end
   end
 
