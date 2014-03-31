@@ -1,7 +1,8 @@
 <div class="theme-banner" data-theme-id="<%= theme.id %>">
+  <span class="country-flag"><%= country_flag_image theme.countries.first.try(:iso) %></span>
   <span class="info"><%= pluralize(theme.looks.count, 'Look')%></span>
   <span class="info"><%= pluralize(theme.flinkers.count, 'Blogeuse')%></span>
- 
+  
   <% theme.hashtags.each do |hashtag| %>
     <span class="hashtag"><%= hashtag.name %></span>
   <% end %>

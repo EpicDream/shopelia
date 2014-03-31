@@ -60,8 +60,7 @@
       </div>
 
       <%= f.label :countries, ' Diffusion' %>
-      <%= f.select :country_ids, options_for_select(actual_countries_for_select(include_all_option:true), 
-                                selected:@theme.countries.first.try(:id)) %>
+      <%= f.select :country_ids, options_for_select(actual_countries_for_select(include_all_option:true), selected:@theme.countries.first.try(:id)) %>
       <br/>
       
       <%= f.label :theme_cover, ' Couverture' %>
