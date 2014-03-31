@@ -135,7 +135,6 @@ $(document).ready(function() {
     .success(function(html){
       var themeID = $(".edit_theme").data("theme-id");
       $("table.flinkers").replaceWith(html);
-      $("#looks-index-container").load("/admin/themes/" + themeID + "/flinkers");
       $('html, body').animate({ scrollTop:100 }, 'slow');
     })
     .error(function(){
