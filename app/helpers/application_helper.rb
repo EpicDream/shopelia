@@ -27,7 +27,7 @@ module ApplicationHelper
   
   def actual_countries_for_select opts={}
     countries = Country.in_use.map{|c| [c.name, c.id]}
-    countries.insert(0, ["Toutes", nil]) if opts[:include_all_option]
+    countries.insert(0, ["Tous les pays", nil]) if opts[:include_all_option]
     countries
   end
   
@@ -43,5 +43,9 @@ module ApplicationHelper
   
   def fonts_sizes_for_select
     (10..30).step(2).to_a
+  end
+  
+  def country_flag_image iso
+    image_tag "flags/#{iso.downcase}.png" if iso
   end
 end

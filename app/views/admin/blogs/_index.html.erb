@@ -7,7 +7,7 @@
         <td><img src="<%= blog.avatar_url || "/assets/admin/girl_head.jpg" %>" class="avatar"></img></td>
         <td class="name"><%= blog.name %></td>
         <td><%= link_to blog.url, blog.url %></td>
-        <td><%= image_tag "flags/#{blog.country.downcase}.png"%></td>
+        <td><%= country_flag_image(blog.country) %></td>
         <td>
           <% unless blog.scraped? %>
             <%= button_tag "Intégrer", :title => "Intégrer ce blog", class:'btn btn-success rounded-btn', id:"integrate-blog-#{blog.id}", 'data-id' => blog.id do %>
