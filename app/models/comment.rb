@@ -1,4 +1,5 @@
 class Comment < ActiveRecord::Base
+  POST_ON_BLOG = false
   act_as_flink_activity :comment_timeline
   act_as_flink_activity :comment
   act_as_flink_activity :mention
@@ -13,7 +14,7 @@ class Comment < ActiveRecord::Base
   validates :look_id, :presence => true
   validate :flinker_can_comment?
   
-  after_create :post_comment_on_blog_async, if: -> { can_be_posted_on_blog? && post_to_blog }
+  after_create :post_comment_on_blog_async, if: -> { POST_ON_BLOG && can_be_posted_on_blog? && post_to_blog }
   
   scope :posted, -> { where(posted:true) }
   scope :last_ones, ->(n=10) { order('created_at desc').limit(n) }

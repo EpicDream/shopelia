@@ -2,12 +2,15 @@ require 'test_helper'
 
 class ThemeSerializerTest < ActiveSupport::TestCase
   
+  setup do
+    @theme = themes(:mode)
+    @theme.send(:assign_default_cover)
+  end
+  
   test "minimal serialization" do
-    theme = themes(:mode)
-    theme.send(:assign_default_cover)
-    theme.countries << Country.first
+    @theme.countries << Country.first
 
-    object = ThemeSerializer.new(theme).as_json[:theme]
+    object = ThemeSerializer.new(@theme).as_json[:theme]
 
     assert_equal [:title, :subtitle, :position, :cover_height, :cover, :country].to_set, object.keys.to_set
     assert_match "La mode c'est fun", object[:title]
@@ -16,7 +19,9 @@ class ThemeSerializerTest < ActiveSupport::TestCase
   end
   
   test "maximal serialization, with hashtags, looks, flinkers" do
+    object = ThemeSerializer.new(@theme, scope:{complete:true}).as_json[:theme]
     
+    puts object.inspect
   end
   
 end
