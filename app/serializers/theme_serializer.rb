@@ -1,6 +1,6 @@
 class ThemeSerializer < ActiveModel::Serializer
   attributes :id, :title, :subtitle, :position, :cover_height, :cover, :country
-  attributes :hashtags
+  attributes :looks, :flinkers
   
   def cover
     {small: cover_with_format(:pico), large: cover_with_format(:large)}
@@ -10,16 +10,24 @@ class ThemeSerializer < ActiveModel::Serializer
     object.countries.first.iso
   end
   
-  def hashtags
-    []
+  def looks
+    ActiveModel::ArraySerializer.new(object.looks).as_json
   end
   
-  def include_hashtags?
-    scope && scope[:complete]
+  def flinkers
+    ActiveModel::ArraySerializer.new(object.flinkers).as_json
   end
   
   def include_country?
     object.countries.first.present?
+  end
+  
+  def include_looks?
+    scope && scope[:full] && object.looks.any?
+  end
+
+  def include_flinkers?
+    scope && scope[:full] && object.flinkers.any?
   end
   
   private

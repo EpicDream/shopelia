@@ -22,13 +22,17 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
   
   test "get theme detail" do
     theme = Theme.first
+    theme.looks << Look.first(3)
+    theme.flinkers << Flinker.first(2)
     
     get :show, format: :json, id:theme.id
     
     assert_response :success
     
-    puts json_response.inspect
     theme = json_response["theme"]
+
+    assert_equal 3, theme["looks"].count
+    assert_equal 2, theme["flinkers"].count
   end
 
 end
