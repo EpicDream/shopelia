@@ -6,7 +6,7 @@ class Admin::LooksController < Admin::AdminController
     since = params[:since] || Time.now - 1.week
     @looks = Look.flink_published_between(since, nil)
     .order('flink_published_at desc')
-    .paginate(:page => params[:page], :per_page => 20)
+    .paginate(:page => params[:page], :per_page => 40)
   end
   
   def reinitialize_images
