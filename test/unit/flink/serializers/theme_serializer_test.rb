@@ -12,10 +12,12 @@ class ThemeSerializerTest < ActiveSupport::TestCase
 
     object = ThemeSerializer.new(@theme).as_json[:theme]
 
-    assert_equal [:title, :subtitle, :position, :cover_height, :cover, :country].to_set, object.keys.to_set
+    assert_equal [:id, :title, :subtitle, :position, :cover_height, :cover, :country].to_set, object.keys.to_set
     assert_match "La mode c'est fun", object[:title]
-    assert_match /http:\/\/www.flink.io\/images\/ae4\/large\/ae4fc89942443f7d5dda587fd1791ee7.jpg/, object[:cover]
+    assert_match /http:\/\/www.flink.io\/images\/ae4\/large\/ae4fc89942443f7d5dda587fd1791ee7.jpg/, object[:cover][:large]
+    assert_match /http:\/\/www.flink.io\/images\/ae4\/pico\/ae4fc89942443f7d5dda587fd1791ee7.jpg/, object[:cover][:small]
     assert_equal Country.first.iso, object[:country]
+    assert_equal @theme.id, object[:id]
   end
   
   test "maximal serialization, with hashtags, looks, flinkers" do

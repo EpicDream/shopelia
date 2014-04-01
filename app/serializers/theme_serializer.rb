@@ -1,9 +1,9 @@
 class ThemeSerializer < ActiveModel::Serializer
-  attributes :title, :subtitle, :position, :cover_height, :cover, :country
+  attributes :id, :title, :subtitle, :position, :cover_height, :cover, :country
   attributes :hashtags
   
   def cover
-    Rails.configuration.image_host + object.theme_cover.picture.url(:large, timestamp:true)
+    {small: cover_with_format(:pico), large: cover_with_format(:large)}
   end
   
   def country
@@ -20,6 +20,12 @@ class ThemeSerializer < ActiveModel::Serializer
   
   def include_country?
     object.countries.first.present?
+  end
+  
+  private
+  
+  def cover_with_format format
+    Rails.configuration.image_host + object.theme_cover.picture.url(format, timestamp:true)
   end
   
 end
