@@ -61,7 +61,7 @@ class Look < ActiveRecord::Base
   }
   
   def self.search keywords
-    return [] if keywords.blank? || keywords.empty?
+    return where(id:nil) if keywords.blank? || keywords.empty?
     published.with_keywords(keywords).includes(:flinker).includes(:look_images)
   end
   
