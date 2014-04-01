@@ -21,7 +21,9 @@ class FlinkerMerge
       Activity.where(target_id:@flinker.id).update_all(target_id:@target.id)
       FacebookFriend.where(friend_flinker_id:@flinker.id).update_all(friend_flinker_id:@target.id)
       
-      @flinker.update_attributes(email:@flinker.email + "--")
+      @flinker.email += "--"
+      @flinker.authentication_token += "--"
+      @flinker.save!
       
       @target.save!
     end
