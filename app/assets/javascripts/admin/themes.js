@@ -19,7 +19,7 @@ var Theme = {
       var fontName = input.dataset['font'];
       
       if (index < inputCount - 1) {
-        value += " ";
+        value = $.trim(value) + " ";
       }
       
       markup += "<style font='" + fontName +"' size='" + fontSize + "'>" + value + "</style>";
