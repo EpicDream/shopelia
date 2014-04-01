@@ -1,4 +1,5 @@
 %section.header
+  =will_paginate @looks
   %table 
     %thead
       %th Look
@@ -7,3 +8,4 @@
       %tr
         %td=link_to image_tag(look.look_images.first.picture(:large)), admin_post_path(look.post)
         %td=l(look.flink_published_at)
+  =will_paginate @looks
