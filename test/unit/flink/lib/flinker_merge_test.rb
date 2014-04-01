@@ -8,6 +8,8 @@ class FlinkerMergeTest < ActiveSupport::TestCase
     @target = flinkers(:betty)
     follow(flinkers(:boop), @flinker)
     follow(flinkers(:fanny), flinkers(:lilou))
+    @flinker.authentication_token = "ZZZZZZZZ"
+    @flinker.save!
   end
   
   test "merge" do
