@@ -15,7 +15,7 @@ class ThemeSerializer < ActiveModel::Serializer
   end
   
   def looks
-    ActiveModel::ArraySerializer.new(object.looks).as_json
+    ActiveModel::ArraySerializer.new(object.looks.includes(:flinker)).as_json
   end
   
   def flinkers
