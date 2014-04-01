@@ -23,7 +23,7 @@ div.look-block{
   padding:10px;
   background:white;
   margin:20px 0 0 0;
-  height:300px;
+  height:340px;
   vertical-align:top;
   box-shadow: 1px 1px 1px 1px #BDBDBD; 
 }
@@ -60,7 +60,7 @@ div.look-block img{
 }
 .pagination .current {
   font-style: normal;
-  background-color: #e44eaf;
+  background-color: #992E7D;
   display: inline-block;
   width: 1.4em;
   height: 1.4em;
