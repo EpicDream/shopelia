@@ -53,6 +53,18 @@ class Look < ActiveRecord::Base
     joins('join flinker_likes on flinker_likes.resource_id = looks.id').where('flinker_likes.flinker_id = ?', flinker.id)
   }
   
+  scope :with_keywords, ->(keywords){
+    regexp = keywords.join("|")
+    Look.joins(:look_products)
+    .where('look_products.brand ~* ? or look_products.code ~* ?', regexp, regexp)
+    .uniq
+  }
+  
+  def self.search keywords
+    return [] if keywords.blank? || keywords.empty?
+    with_keywords(keywords).includes(:flinker).includes(:look_images)
+  end
+  
   def self.random collection=Look
     collection.offset(rand(collection.count)).first
   end

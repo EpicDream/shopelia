@@ -1,0 +1,10 @@
+<div class="looks-search-content">
+  <%= form_tag [:admin, :search, :looks], method:'get', id:'search-form' do %>
+    <%= text_field_tag :keywords %>
+    <button type=submit class="btn rounded-btn">
+      <i class='icon-search icon-red'></i>
+    </button>
+  <% end %>
+  
+  <%= render partial:'look', collection:@looks %>
+</div>

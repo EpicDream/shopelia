@@ -86,24 +86,14 @@ Shopelia::Application.routes.draw do
       get :reject, :on => :member
       put :reinitialize_images, :on => :member
     end
+    namespace :search do
+      resources :looks, only:[:index]#, controller:'search/looks'
+    end
     resources :look_images
     resources :look_products
     resources :products do
       get :retry, :on => :member
       get :mute, :on => :member
-    end
-    get "/georges/status", to: "georges#status"
-    namespace :georges do
-      get "/devices/lobby", to: "devices#lobby"
-      resources :traces, :only => :show
-      resources :devices do
-        match "/messages/check", to: "messages#check"
-        get "/messages/collection_builder", to: "messages#collection_builder"
-        get :end, :on => :member
-        resources :messages do
-          get :append_chat, :on => :member
-        end
-      end
     end
   end
 
