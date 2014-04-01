@@ -5,6 +5,9 @@
       <i class='icon-search icon-red'></i>
     </button>
   <% end %>
-  
+
+  <%= will_paginate @looks %>
   <%= render partial:'look', collection:@looks %>
+  <%= will_paginate @looks %>
+  
 </div>
