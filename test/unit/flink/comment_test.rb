@@ -9,6 +9,7 @@ class CommentTest < ActiveSupport::TestCase
   end
 
   test "create comment then post the comment on blog with formatted body" do
+    skip #post on blog feature temp disabled
     Sidekiq::Testing.inline! do
       can_be_posted(true)
       
