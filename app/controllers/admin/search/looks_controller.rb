@@ -1,7 +1,8 @@
 class Admin::Search::LooksController < Admin::AdminController
   
   def index
-    @looks = Look.search(params[:keywords].split(","))
+    keywords = params[:keywords] ? params[:keywords].split(",") : []
+    @looks = Look.search(keywords)
   end
   
 end
