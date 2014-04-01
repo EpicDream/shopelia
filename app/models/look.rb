@@ -62,7 +62,7 @@ class Look < ActiveRecord::Base
   
   def self.search keywords
     return [] if keywords.blank? || keywords.empty?
-    with_keywords(keywords).includes(:flinker).includes(:look_images)
+    published.with_keywords(keywords).includes(:flinker).includes(:look_images)
   end
   
   def self.random collection=Look
