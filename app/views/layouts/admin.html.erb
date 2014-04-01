@@ -18,6 +18,11 @@
       .sidebar-nav {
         padding: 9px 0;
       }
+      .logo-navbar{
+        width:40px;
+        height:auto;
+      }
+      
 
       @media (max-width: 980px) {
         /* Enable use of floated navbar text */
@@ -40,19 +45,23 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="brand" href="/admin"><img class="logo-navbar" src="/images/shopelia25.png"></a>
+          <a class="brand" href="/admin">
+            <img class="logo-navbar" src="/images/diamond.png">
+          </a>
           <div class="nav-collapse collapse">
             <p class="navbar-text pull-right">
-              Restricted area
+              <ul>
+              <li class="navbar-text pull-right"><%= link_to(raw("Incidents" + incidents_count), admin_incidents_path, id:"incidentsMenu") %></li>
+            </ul>
             </p>
             <ul class="nav">
-              <li><%= link_to(raw("Incidents" + incidents_count),admin_incidents_path, id:"incidentsMenu") %></li>
               <li><%= link_to("Blogs", admin_blogs_path) %></li>
               <li><%= link_to(raw("Posts" + posts_count),admin_posts_path, id:"postsMenu") %></li>
               <li><%= link_to("Flinkers", admin_flinkers_path) %></li>
               <li><%= link_to("Collections", admin_themes_path) %></li>
               <li><%= link_to("Comments", admin_comments_path) %></li>
-              <li><%= link_to("Statistiques", admin_statistics_path) %></li>
+              <li><%= link_to("Statistics", admin_statistics_path) %></li>
+              <li><%= link_to("Looks Search", admin_search_looks_path) %></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>

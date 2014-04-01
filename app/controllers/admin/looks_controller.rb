@@ -39,6 +39,6 @@ class Admin::LooksController < Admin::AdminController
   end
   
   def retrieve_brands
-    @brands =  LookProduct.select("distinct brand").map(&:brand).compact
+    @brands = LookProduct.select("distinct brand").map(&:brand).compact
   end
 end

@@ -1,0 +1,13 @@
+<div class="look-block">
+  <p class="look-infos">
+    <span><%= truncate(look.name, length:60) %></span>
+    <span><%= l(look.flink_published_at) %></span>
+  </p>
+  <p class="look-keywords">
+    <span><%= look.look_products.map(&:brand).join(" ")%></span>
+    <span><%= look.look_products.map(&:code).join(" ")%></span>
+  </p>
+  <p>
+    <%= link_to image_tag(look.look_images.first.picture.url(:large)), admin_look_path(look) %>  
+  </p>
+</div>
