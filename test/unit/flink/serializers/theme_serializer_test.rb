@@ -21,6 +21,17 @@ class ThemeSerializerTest < ActiveSupport::TestCase
     assert_equal @theme.id, object[:id]
   end
   
+  test "include look or flinker iff only one" do
+    @theme.flinkers << Flinker.first(1)
+    object = ThemeSerializer.new(@theme).as_json[:theme]
+    
+    assert_equal (FULL_ATTRIBUTES + [:flinkers, :looks]).to_set, object.keys.to_set
+    assert_equal 1, object[:flinkers].count
+    assert_equal 0, object[:looks].count
+    assert_equal 0, object[:looks_count]
+    assert_equal 1, object[:flinkers_count]
+  end
+  
   test "maximal serialization, with hashtags, looks, flinkers" do
     @theme.looks << Look.first(3)
     @theme.flinkers << Flinker.first(2)
