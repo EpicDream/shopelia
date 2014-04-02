@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class DeviseOverride::PasswordsController < Devise::PasswordsController
 
   def create
