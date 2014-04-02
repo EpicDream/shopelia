@@ -28,3 +28,4 @@ public/images
 .DS_Store
 dump.rdb
 .ruby-version
+app/mailers/tmp
