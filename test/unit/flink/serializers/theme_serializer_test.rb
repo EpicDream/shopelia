@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class ThemeSerializerTest < ActiveSupport::TestCase
-  ATTRIBUTES = [:id, :title, :subtitle, :position, :cover_height, :cover_large, :cover_small, :country]
+  ATTRIBUTES = [:id, :title, :subtitle, :position, :cover_height, :cover_large, :cover_small, :country, :looks_count, :flinkers_count]
   FULL_ATTRIBUTES = ATTRIBUTES + [:looks, :flinkers]
   
   setup do
@@ -29,6 +29,8 @@ class ThemeSerializerTest < ActiveSupport::TestCase
     assert_equal FULL_ATTRIBUTES.to_set, object.keys.to_set
     assert_equal 3, object[:looks].count
     assert_equal 2, object[:flinkers].count
+    assert_equal 3, object[:looks_count]
+    assert_equal 2, object[:flinkers_count]
   end
   
 end

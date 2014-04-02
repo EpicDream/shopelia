@@ -20,11 +20,8 @@ class Admin::ThemesController < Admin::AdminController
   def update
     @theme = Theme.find(params[:id])
     updated = @theme.update_attributes(params[:theme])
-    raise unless updated
-    render json:{}, status: :ok
-  rescue => e
-    Rails.logger.error(%Q{[THEME-UPDATE]\n#{e.inspect}\n#{e.backtrace.join("\n")}})
-    render json:{}, status: :error
+    
+    render json:{}, status: updated ? :ok : :error
   end
   
   def destroy
