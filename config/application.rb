@@ -103,6 +103,10 @@ module Shopelia
 
     # Flink google account to post comments on blogspot sites
     config.flinker_google_account = {email:"flinkhq@gmail.com", password:"ShopeliaRocks1"}
+    
+    config.to_prepare do
+        Devise::PasswordsController.layout "flink"
+    end
   end
   
 end
