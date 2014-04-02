@@ -1,23 +1,20 @@
 <div class="theme-banner" data-theme-id="<%= theme.id %>">
-  <span class="country-flag"><%= country_flag_image theme.countries.first.try(:iso) %></span>
-  <span class="info"><%= pluralize(theme.looks.count, 'Look')%></span>
-  <span class="info"><%= pluralize(theme.flinkers.count, 'Blogeuse')%></span>
+  <div class="theme-banner-infos">
+    <span class="country-flag"><%= country_flag_image theme.countries.first.try(:iso) %></span>
+    <span class="info"><%= pluralize(theme.looks.count, 'Look')%></span>
+    <span class="info"><%= pluralize(theme.flinkers.count, 'Blogeuse')%></span>
   
-  <% theme.hashtags.each do |hashtag| %>
-    <span class="hashtag"><%= hashtag.name %></span>
-  <% end %>
+    <% theme.hashtags.each do |hashtag| %>
+      <span class="hashtag"><%= hashtag.name %></span>
+    <% end %>
   
-  <%= link_to "/admin/themes/#{theme.id}", method:'delete', class:'delete-theme', confirm:"Confirmer la suppression" do %>
-    <i class="icon-trash icon-white"></i>
-  <% end %>
-  
+    <%= link_to "/admin/themes/#{theme.id}", method:'delete', class:'delete-theme', confirm:"Confirmer la suppression" do %>
+      <i class="icon-trash icon-white"></i>
+    <% end %>
+  </div>
+
   <%= link_to(image_tag(theme.theme_cover.picture.url(:large)), edit_admin_theme_path(theme), class:"theme-banner-cover") %>
-
-  <% if theme.medaillon %>
-    <%= link_to image_tag(theme.medaillon), admin_theme_look_images_path(theme), class:'see-theme-images' %>
-  <% end %>
-
-  <p><%= theme.title_for_display %></p>
+  <%= link_to content_tag(:p, theme.title_for_display ), admin_theme_look_images_path(theme), class:'see-theme-images' %>
   
   <% if theme.published? %>
     <span class="published-tag">Publié</span>

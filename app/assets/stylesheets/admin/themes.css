@@ -74,26 +74,30 @@ div.theme-banner{
   padding:2px;
   box-shadow: 1px 1px 0px #BDBDBD; 
 }
+div.theme-banner-infos{
+  height:90px;
+}
 a.theme-banner-cover{
   display:block;
-  margin: 40px 5% 0 5%;
+  margin: 2px 5% 0 5%;
   width:90%;
   max-height:240px;
 }
+a.theme-banner-cover img{
+  max-height:200px;
+  border-radius:2px;
+}
 div.theme-banner p{
-  width:96%;
+  width:100%;
   margin:2%;
   padding-top:10px;
   position:absolute;
   bottom:2px;
-  height:40px;
   font-family: Palatino;
   font-size: 20px;
-  opacity:0.5;
-  color:#696969;
+  color:#991E64;
   z-index:100;
   text-align:center;
-  border-radius:1px;
 }
 div.theme-banner a.delete-theme{
   position:absolute;
@@ -353,15 +357,8 @@ a.see-theme-images{
   display:block;
   margin:6px;
 }
-a.see-theme-images img{
-  width:60px;
-  height:60px;
-  border-radius:30px;
-  margin:auto;
-  opacity:0.8;
-  display:block;
-}
-a.see-theme-images img:hover{
+a.see-theme-images p:hover{
+  color:#598A57;
   opacity:1;
 }
 .img-block {
