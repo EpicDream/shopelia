@@ -2,7 +2,8 @@
   %header
     %h1= @look.name
     %h2= @look.flinker.name || @look.flinker.url
-
+    %h2= @look.uuid
+    
 .container-fluid
   .row-fluid
     .span3
@@ -42,7 +43,7 @@
           Reject look
         = link_to 'Rénitialiser les images', reinitialize_images_admin_look_path(@look), id:"reinitialize-images", method:"put", confirm:"Confirmez"
         %select.theme-select{id:"assign-to-theme", "data-look-id" => @look.id}
-          =options_for_select(themes_for_select)
+          =options_for_select(themes_for_select(default:"Ajouter à une collection"))
         %hr  
         %div.images
           - @look.look_images.order(:display_order).each do |image|
