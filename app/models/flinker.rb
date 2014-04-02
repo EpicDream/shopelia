@@ -16,7 +16,8 @@ class Flinker < ActiveRecord::Base
                     :url  => "/images/flinker/:id/:style/avatar.jpg",
                     :path => ":rails_root/public/images/flinker/:id/:style/avatar.jpg"
 
-  has_many :looks
+  has_many :looks, dependent: :destroy
+  has_many :activities, dependent: :destroy
   has_many :comments, dependent: :destroy
   has_many :flinker_authentications, dependent: :destroy
   has_many :flinker_likes, dependent: :destroy
@@ -24,12 +25,17 @@ class Flinker < ActiveRecord::Base
   has_many :devices, dependent: :destroy
   has_many :flinker_follows, include: :following, dependent: :destroy
   belongs_to :country
-  has_one :blog
+  has_one :blog, dependent: :destroy
 
   before_save :ensure_authentication_token
   before_create :country_from_iso_code, unless: -> { self.country_iso.blank? }
   after_create :follow_staff_picked
   before_validation :set_avatar
+  before_destroy ->(record) {
+    Activity.where(target_id:record.id).destroy_all
+    FlinkerFollow.where(follow_id:record.id).destroy_all
+    FacebookFriend.where(friend_flinker_id:record.id).destroy_all
+  }
   
   validates :email, :presence => true
   validates :username, uniqueness:true, allow_nil: true

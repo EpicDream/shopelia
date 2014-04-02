@@ -89,6 +89,20 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal flinkers(:betty), publishers.first
   end
   
+  test "destroy" do
+    betty_id = flinkers(:betty).id
+    Activity.create!(flinker_id:flinkers(:boop).id, target_id:betty_id)
+    FlinkerFollow.create!(flinker_id:flinkers(:boop).id, follow_id:betty_id)
+    FacebookFriend.create!(flinker_id:flinkers(:boop).id, friend_flinker_id:betty_id, identifier:"hhhdd", name:'bop')
+    
+    assert flinkers(:betty).destroy
+    
+    assert_equal 0, Activity.where(target_id:betty_id).count
+    assert_equal 0, FlinkerFollow.where(follow_id:betty_id).count
+    assert_equal 0, FacebookFriend.where(friend_flinker_id:betty_id).count
+    assert_equal 0, Blog.where(flinker_id:betty_id).count
+  end
+  
   private
 
   def new_flinker
