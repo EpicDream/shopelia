@@ -215,6 +215,7 @@ Shopelia::Application.routes.draw do
       end
       namespace :flinkers do
         resources :looks, only: :index
+        resources :passwords, only: :create
       end
       namespace :hashtags do
         resources :looks, only: :index
