@@ -68,6 +68,10 @@ en:
       email: "Your email"
       password: "Your new Password"
   app:
+    hello: Hello
+    change_password: "Change my password"
+    change_password_warn: "If you didn't request this, please ignore this email. Your password won't change until you access the link above and create a new one."
+    request_change_password: "Someone has requested a link to change your password, and you can do this through the link below."
     confirm_reset: "Change my Password"
     wait: "Wait..."
     invalid_password_or_session_expiration: "The new password is not valid or your session has expired"
