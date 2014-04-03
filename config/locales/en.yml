@@ -62,4 +62,19 @@ en:
       cardigan: "Cardigan"
       skort: "Skort"
       'total look': "Total Look"
-            
+      
+  placeholders:
+    user:
+      email: "Your email"
+      password: "Your new Password"
+  app:
+    confirm_reset: "Change my Password"
+    wait: "Wait..."
+    invalid_password_or_session_expiration: "The new password is not valid or your session has expired"
+    password:
+      change_info: Enter a new password of at least 5 characters.
+      reset: "Initialize my password"
+      change: "Password Change"
+    
+    
+                

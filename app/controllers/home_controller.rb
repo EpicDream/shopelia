@@ -3,6 +3,7 @@ class HomeController < ApplicationController
 
   def index
     logger.error request.original_url
+    redirect_to :root
   end
 
   def download

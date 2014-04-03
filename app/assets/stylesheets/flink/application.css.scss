@@ -467,3 +467,24 @@ $color: #707070;
 
 
 }
+
+/*Password reset form*/
+
+div.password-reset-section .btn-password-reset{
+  background:#419843;
+  border:none;
+  color:white;
+  padding:5px;
+  width:100%;
+  text-align:center;
+  height:40px;
+  border-radius:2px;
+  margin-top:20px;
+}
+div.password-reset-section .alert-danger{
+  background:white;
+  border:thin solid #81252F;
+  text-align:center;
+  color:#81252F;
+  font-weight:bold;
+}
