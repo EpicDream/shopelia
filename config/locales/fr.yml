@@ -404,6 +404,7 @@ fr:
       forgot: "Mot de passe oublié ?"
       change: "Changement du mot de passe"
       send_instructions: "Recevoir les instructions"
+      change_info: Entrez un nouveau mot de passe comportant au moins 5 caractères.
       instructions_sent: "Les informations pour réinitialiser votre mot de passe vous ont été envoyées par email. Nous vous invitons à consulter votre boite email (pensez à vérifier votre dossier SPAM)."
       instructions_fail: "Erreur dans l'email. Merci de vérifier et recommencer."
     cart_items:
@@ -413,10 +414,12 @@ fr:
     cancel: "Annuler"
     close: "Fermer"
     confirm: "Valider"
+    confirm_reset: "Changer mon mot de passe"
     wait: "Patientez..."
     new_session: "Se connecter sur Shopelia"
     my_addresses: "Mes adresses"
     my_payment_cards: "Mes cartes"
+    invalid_password_or_session_expiration: "Le nouveau mot de passe n'est pas valide ou votre session a expiré"
 
   flink:
     products:

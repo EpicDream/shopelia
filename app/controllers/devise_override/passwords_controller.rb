@@ -15,5 +15,11 @@ class DeviseOverride::PasswordsController < Devise::PasswordsController
       end
     end
   end
+  
+  protected
+
+  def after_update_path_for(resource)
+    root_path
+  end
 
 end
