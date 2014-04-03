@@ -349,6 +349,10 @@ fr:
       bad_rating: "Votre satisfaction est ma priorité ! Que dois-je améliorer afin que le service Shopelia soit à la hauteur de vos attentes ?"
 
   app:
+    hello: Bonjour
+    change_password: "Changer mon mot de passe"
+    change_password_warn: "Si vous n'avez pas demandé le changement de votre mot de passe, vous pouvez ignorer cet email. Votre mot de passe ne sera changé que si vous cliquez sur le lien ci-dessus et en définissez un nouveau."
+    request_change_password: "Vous avez demandé à réinitialiser votre mot de passe. Vous pouvez le faire en cliquant sur le lien ci-dessous :"
     catalogue:
       search: "Rechercher des produits dans le catalogue"
     collections:
