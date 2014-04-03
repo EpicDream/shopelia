@@ -4,6 +4,7 @@ Shopelia::Application.routes.draw do
 
 
   match "/terms" => "flink#terms"
+  get "/flinkers/:id", to: redirect('/')
   get "comments/index"
 
   get "comments/create"
@@ -14,7 +15,6 @@ Shopelia::Application.routes.draw do
   match "/security" => "home#security"
   match "/download" => "home#download"
   match "/connect", to: "home#connect"
-
   match "/checkout", :controller => "html_app", :action => "index"
 
   apipie
