@@ -10,7 +10,7 @@ module Shopelia
   class Application < Rails::Application
   
     # Base host
-    config.host = 'https://www.flink.io'
+    config.host = 'https://shopelia.fr'
     config.image_host = 'http://www.flink.io'
     config.avatar_host = 'http://www.flink.io' #cause, need another base url for avatars in dev.
     
@@ -18,7 +18,7 @@ module Shopelia
     config.max_retry = 3
   
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/merchants #{config.root}/app/models/activities)
-    config.action_mailer.default_url_options = { :host => 'flink.io', :protocol => 'https' }
+    config.action_mailer.default_url_options = { :host => 'lipstick.flink.io', :protocol => 'https' }
     config.action_mailer.asset_host = "http://www.flink.io"
 
     WillPaginate.per_page = 20
