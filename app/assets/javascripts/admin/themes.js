@@ -149,7 +149,8 @@ $(document).ready(function() {
     
     $("#theme_title").val(Theme.markupForTitle('title'));
     $("#theme_subtitle").val(Theme.markupForTitle('subtitle'));
-
+    $("#update-button").css("color", "#66A9FF");
+    
     $.ajax({
         url: form.attr("action"),
         type: "post",
@@ -164,7 +165,7 @@ $(document).ready(function() {
           return data;
         }(),
         error: function(_, textStatus, errorThrown) {
-          alert("Erreur");
+          alert("Une erreur s'est produite");
         },
         success: function(response, textStatus) {
           Theme.refreshEditView();

@@ -1,7 +1,7 @@
 <p>
-  <a href="#" id="close-overlay">Fermer</a>
   <%= form_for [:admin, @theme], html:{'data-theme-id' => @theme.id, multipart:true} do |f| %>
-    <%= f.submit 'Mettre à jour', class:"btn" %>
+    <%= f.submit 'Mettre à jour', id:"update-button" %>
+    <a href="#" id="close-overlay">Fermer</a>
     
     <fieldset class="theme-attributes">
       
@@ -46,6 +46,11 @@
       <%= f.label :published, ' Publication' %>
       <%= f.check_box :published %>
       <br/>
+      
+      <%= f.label :dev_publication, ' Pré-publication' %>
+      <%= f.check_box :dev_publication %>
+      <br/>
+      
       
       <%= f.label :hashtags, ' Hashtags' %>
 

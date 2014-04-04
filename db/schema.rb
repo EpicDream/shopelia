@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140403153535) do
+ActiveRecord::Schema.define(:version => 20140404095216) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -754,12 +754,13 @@ ActiveRecord::Schema.define(:version => 20140403153535) do
   create_table "themes", :force => true do |t|
     t.integer  "rank"
     t.text     "title"
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
     t.integer  "position"
-    t.boolean  "published",    :default => false
+    t.boolean  "published",       :default => false
     t.text     "subtitle"
-    t.integer  "cover_height", :default => 100
+    t.integer  "cover_height",    :default => 100
+    t.boolean  "dev_publication", :default => false
   end
 
   create_table "traces", :force => true do |t|
