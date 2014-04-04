@@ -53,12 +53,12 @@ class FlinkerSerializer < ActiveModel::Serializer
   
   def cover_small
     return unless image = object.cover_image
-    image.picture.url(:pico)
+    Rails.configuration.image_host + image.picture.url(:pico)
   end
 
   def cover_large
     return unless image = object.cover_image
-    image.picture.url(:large)
+    Rails.configuration.image_host + image.picture.url(:large)
   end
     
   def include_liked_count?
