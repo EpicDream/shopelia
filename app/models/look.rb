@@ -91,6 +91,10 @@ class Look < ActiveRecord::Base
     end
     @bitly_url
   end
+  
+  def image_for_cover
+    look_images.order('display_order asc').limit(1).first
+  end
 
   private
   
