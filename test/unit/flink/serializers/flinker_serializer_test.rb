@@ -18,6 +18,7 @@ class FlinkerSerializerTest < ActiveSupport::TestCase
     assert_equal "FR", hash[:flinker][:country]
     assert_equal 2, hash[:flinker][:liked_count]
     assert !hash[:flinker].has_key?(:cover_image)
+    assert hash[:flinker].has_key?(:certified)
   end
   
   test "serialize non publisher without liked count" do
