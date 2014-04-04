@@ -97,7 +97,7 @@ class Flinker < ActiveRecord::Base
   end
   
   def cover_image
-    look = self.looks.order('flink_published_at desc').limit(1).first
+    look = self.looks.published.order('flink_published_at desc').limit(1).first
     look && look.image_for_cover
   end
   
