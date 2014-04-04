@@ -40,8 +40,11 @@ div.look-block p.look-infos span:first-child{
   color:#992E7D;
 }
 div.look-block img{
-  margin: auto 10%;
-  max-width:80%;
+  display:block;
+  margin-top:20px;
+  margin-left:auto;
+  margin-right:auto;
+  max-width:90%;
   max-height:200px;
 }
 
