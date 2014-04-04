@@ -4,7 +4,13 @@
   <div>
     <%= render partial:'theme', collection:@themes.published(true) %>
   </div>
-  
+  <hr/>
+
+  <div>
+    <%= render partial:'theme', collection:@themes.pre_published %>
+  </div>
+  <hr/>
+
   <div>
     <%= render partial:'theme', collection:@themes.published(false) %>
   </div>

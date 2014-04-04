@@ -1,7 +1,7 @@
 class Theme < ActiveRecord::Base
   acts_as_list
   
-  attr_accessible :title, :rank, :published, :position, :subtitle, :cover_height
+  attr_accessible :title, :rank, :published, :position, :subtitle, :cover_height, :dev_publication
   attr_accessible :theme_cover_attributes, :hashtags_attributes, :country_ids
   attr_accessor :theme_cover_attributes
   
@@ -17,8 +17,9 @@ class Theme < ActiveRecord::Base
   accepts_nested_attributes_for :theme_cover
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
   
-  scope :published, ->(published) { where(published:published) }
-
+  scope :published, ->(published) { where(published:published, dev_publication:false) }
+  scope :pre_published, -> { where(dev_publication:true) }
+  
   #uniq => true seems not work on many to many with rails 3, so we use uniq index
   def append_look look
     self.looks << look rescue PG::UniqueViolation 

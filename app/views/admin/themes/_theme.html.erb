@@ -19,5 +19,9 @@
   <% if theme.published? %>
     <span class="published-tag">Publié</span>
   <% end%>
+  <% if theme.dev_publication? %>
+    <span class="pre-published-tag">Prépublié</span>
+  <% end%>
+  
   
 </div>
