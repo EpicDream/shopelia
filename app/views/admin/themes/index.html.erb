@@ -1,6 +1,12 @@
 <div class="themes-content">
   <%= link_to 'Nouvelle collection', '/admin/themes', method:'post', id:"create-theme-link" %>
 
+  <div class="theme-looks-images-overlay">
+  </div>
+
+  <div class="theme-edit-overlay">
+  </div>
+
   <div>
     <%= render partial:'theme', collection:@themes.published(true) %>
   </div>
@@ -16,9 +22,5 @@
   </div>
   
   <div class="overlay"></div>
-  <div class="theme-edit-overlay">
-  </div>
-  <div class="theme-looks-images-overlay">
-  </div>
   <div id="flinkers-usernames" data-usernames=<%= autocomplete_publishers_usernames %>
 </div>

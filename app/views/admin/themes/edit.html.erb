@@ -1,59 +1,82 @@
 <p>
-  <%= form_for [:admin, @theme], html:{'data-theme-id' => @theme.id, multipart:true} do |f| %>
-    <%= f.submit 'Mettre à jour', id:"update-button" %>
-    <a href="#" id="close-overlay">Fermer</a>
-    
-    <fieldset class="theme-attributes">
-      
-      <%= f.label :title, ' Titre' %>
+  <%= image_tag @theme.theme_cover.picture.url(:large)%>
+  <%= @theme.title_for_display %>
+  <a href="#" id="close-overlay">Fermer</a>
+</p>  
+
+<%= form_for [:admin, @theme], html:{'data-theme-id' => @theme.id, multipart:true} do |f| %>
+  <%= f.submit 'Mettre à jour', id:"update-button" %>
+  
+  <table>
+    <thead>
+      <th>Hauteur</th>
+      <th>Position</th>
+      <th>Publication</th>
+      <th>Pré-publication</th>
+      <th>Diffusion</th>
+      <th>Couverture</th>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <%= f.text_field :cover_height, class:'cover-height-input' %>
+        </td>
+        <td>
+          <%= f.text_field :position, class:'position-input' %>
+        </td>
+        <td>
+          <%= f.check_box :published %>
+        </td>
+        <td>
+          <%= f.check_box :dev_publication %>
+        </td>
+        <td>
+          <%= f.select :country_ids, options_for_select(actual_countries_for_select(include_all_option:true), selected:@theme.countries.first.try(:id)) %>
+        </td>
+        <td>
+          <%= f.fields_for :theme_cover do |ff| %>
+            <%= ff.file_field :picture, class:"custom-file-input" %>
+          <% end %>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <fieldset class="theme-attributes">
+    <div class="block-wrapper">
+      <%= f.label :title, 'Titre' %>
       <p class="title-block">
         <% if @theme.title.blank? %>
           <span class="font-tag">HelveticaNeue</span>
           <%= text_field_tag nil, '', class:'title-part', 'data-font' => 'HelveticaNeue' %>
         <% end %>
       </p>
-      <%= f.text_area :title, placeholder:'Intitulé de la collection' %>
+      <%= f.text_area :title %>
       <div class="title-style-selects">
         <%= select_tag nil, options_for_select(fonts_for_select, selected:'HelveticaNeue'), id:'title-font-select' %>
         <%= select_tag nil, options_for_select(fonts_sizes_for_select, selected:20), id:'title-fontsize-select' %>
         <%= link_to 'Effacer', '#', id:'title-reset', class:'titles-reset' %>
       </div>
-      <br/>
+    </div>
 
-      <%= f.label :subtitle, ' Sous titre' %>
+    <div class="block-wrapper">
+      <%= f.label :subtitle, 'Sous titre' %>
       <p class="subtitle-block">
         <% if @theme.subtitle.blank? %>
           <span class="font-tag">HelveticaNeue-Thin</span>
           <%= text_field_tag nil, '', class:'subtitle-part', 'data-font' => 'HelveticaNeue-Thin' %>
         <% end %>
       </p>
-      <%= f.text_area :subtitle, placeholder:'Sous titre' %>
+      <%= f.text_area :subtitle %>
       <div class="subtitle-style-selects">
         <%= select_tag nil, options_for_select(fonts_for_select, selected:'HelveticaNeue-Thin'), id:'subtitle-font-select' %>
         <%= select_tag nil, options_for_select(fonts_sizes_for_select, selected:14), id:'subtitle-fontsize-select' %>
         <%= link_to 'Effacer', '#', id:'subtitle-reset', class:'subtitles-reset' %>
       </div>
-      <br/>
-
-      <%= f.label :cover_height, ' Hauteur' %>
-      <%= f.text_field :cover_height, class:'cover-height-input' %>
-      <br/>
-      
-      <%= f.label :position, ' Position' %>
-      <%= f.text_field :position, class:'position-input' %>
-      <br/>
-      
-      <%= f.label :published, ' Publication' %>
-      <%= f.check_box :published %>
-      <br/>
-      
-      <%= f.label :dev_publication, ' Pré-publication' %>
-      <%= f.check_box :dev_publication %>
-      <br/>
-      
-      
+    </div>
+    
+    <!-- <div class="block-wrapper">
       <%= f.label :hashtags, ' Hashtags' %>
-
       <div class="hashtags-block">
         <%= f.fields_for :hashtags do |ff| %>
           <p>
@@ -65,34 +88,27 @@
         <br/>
         <%= f.submit '+', class:"btn hashtag-submit" %>
       </div>
-
-      <%= f.label :countries, ' Diffusion' %>
-      <%= f.select :country_ids, options_for_select(actual_countries_for_select(include_all_option:true), selected:@theme.countries.first.try(:id)) %>
-      <br/>
-      
-      <%= f.label :theme_cover, ' Couverture' %>
-      <%= image_tag @theme.theme_cover.picture.url(:large)%>
-      <%= f.fields_for :theme_cover do |ff| %>
-        <%= ff.file_field :picture, class:"custom-file-input" %>
-      <% end %>
-      <br/>
-      
-      <%= f.label :looks, ' Looks', id:'looks-label' %>
+    </div> -->
+    
+    <div class="block-wrapper">
+      <%= f.label :looks, 'Looks', id:'looks-label' %>
       <div id="looks-index-container">
         <%= render partial: 'admin/themes/looks/index'%>
       </div>
-      <br/>
-      
-      <%= f.label :flinkers, ' Blogeuses' %>
-      <p class="add-flinker-block">
-        <%= text_field_tag :flinker_id, nil, 'data-id' => nil %>
-        <%= link_to "Ajouter cette blogueuse", "#", id:"add-flinker-button" %>
-      </p>
+    </div>
+    
+    <div class="block-wrapper">
+      <%= f.label :flinkers, 'Blogueuses', id:'blogeuz-label' %>
       <div id="flinkers-index-container">
+        <p class="add-flinker-block">
+          <%= text_field_tag :flinker_id, nil, 'data-id' => nil %>
+          <%= link_to "Ajouter cette blogueuse", "#", id:"add-flinker-button" %>
+        </p>
+        
         <%= render partial: 'admin/themes/flinkers/index'%>
       </div>
-      
-    </fieldset>
-  <% end  %>  
-  
-</p>
+    </div>
+    
+  </fieldset>
+
+<% end  %>  

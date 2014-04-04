@@ -86,7 +86,6 @@ $(document).ready(function() {
   
   $(document).on("click", "#close-overlay", function(e){
     $("div.theme-edit-overlay").toggle();
-    $("div.overlay").toggle();
     window.location.reload();
   });
   
@@ -101,6 +100,7 @@ $(document).ready(function() {
     $(".theme-looks-images-overlay").load($(this).attr('href'), function(){
       $(".theme-looks-images-overlay").toggle();
       $(".overlay").toggle();
+      $('html, body').animate({ scrollTop:0 }, 'slow');
     });
   });
   
@@ -108,7 +108,7 @@ $(document).ready(function() {
     e.preventDefault();
     $(".theme-edit-overlay").load($(this).attr('href'), function(){
       $(".theme-edit-overlay").toggle();
-      $(".overlay").toggle();
+      $('html, body').animate({ scrollTop:0 }, 'slow');
       Theme.rebuildTitlesBlocks();
       Theme.autocompleteUsername();
     });
@@ -135,7 +135,6 @@ $(document).ready(function() {
     .success(function(html){
       var themeID = $(".edit_theme").data("theme-id");
       $("table.flinkers").replaceWith(html);
-      $('html, body').animate({ scrollTop:100 }, 'slow');
     })
     .error(function(){
       alert("Erreur");
@@ -214,5 +213,10 @@ $(document).ready(function() {
   $(document).on("click", "#looks-label", function(){
     $("#looks-index-container").toggle();
   });
+  
+  $(document).on("click", "#blogeuz-label", function(){
+    $("#flinkers-index-container").toggle();
+  });
+  
   
 });
