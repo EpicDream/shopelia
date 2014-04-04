@@ -13,3 +13,4 @@ sacamains:
   subtitle: "Pratiques"
   position: 3
   published: false
+  dev_publication: true
