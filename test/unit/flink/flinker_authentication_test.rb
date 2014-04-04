@@ -23,7 +23,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     assert_equal "https://graph.facebook.com/1583562383/picture?width=200&height=200&type=normal", auth.picture
     assert_equal "fanny.louvel@wanadoo.fr", auth.email
     assert_equal auth.email, flinker.email
-    assert_equal 'louvel.f', flinker.username
+    assert_equal 'LOUVEL.F', flinker.username
     assert_equal 'Fanny Louvel', flinker.name
     assert_match /images\/flinker\/\d+\/original\/avatar.jpg/, flinker.avatar.url
   end

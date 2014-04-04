@@ -31,7 +31,6 @@ class Flinker < ActiveRecord::Base
   before_create :country_from_iso_code, unless: -> { self.country_iso.blank? }
   after_create :follow_staff_picked
   before_validation :set_avatar
-  before_validation :downcase_username
   before_destroy ->(record) {
     Activity.where(target_id:record.id).destroy_all
     FlinkerFollow.where(follow_id:record.id).destroy_all
@@ -102,10 +101,6 @@ class Flinker < ActiveRecord::Base
   end
   
   private
-  
-  def downcase_username
-    self.username && self.username.downcase!
-  end
   
   def set_avatar
     self.avatar = URI.parse(self.avatar_url) if self.avatar_url.present?
