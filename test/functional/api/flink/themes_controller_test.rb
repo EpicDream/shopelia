@@ -6,7 +6,7 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
   setup do
     @fanny = flinkers(:fanny)
     sign_in @fanny
-    Theme.published(true).each { |theme| theme.send(:assign_default_cover) }
+    Theme.all.each { |theme| theme.send(:assign_default_cover) }
   end
 
   test "get themes published with minimal informations" do
@@ -33,6 +33,19 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
 
     assert_equal 3, theme["looks"].count
     assert_equal 2, theme["flinkers"].count
+  end
+  
+  test "get themes pre published only if current flinker device is dev" do
+    @fanny.device.update_attributes(is_dev:true)
+    
+    get :index, format: :json
+    
+    assert_response :success
+    
+    themes = json_response["themes"]
+    
+    assert_equal 3, themes.count
+    assert_equal ["La mode c'est fun", "Sexy girls", "Sacs à mains"].to_set, themes.map{ |t| t["title"] }.to_set
   end
 
 end

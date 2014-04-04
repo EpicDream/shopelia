@@ -59,7 +59,7 @@ class Device < ActiveRecord::Base
   end
   
   def real_user?
-    !(is_dev && is_beta)
+    !(is_dev || is_beta)
   end
 
   def authorize_push_channel

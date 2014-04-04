@@ -19,8 +19,9 @@ class Theme < ActiveRecord::Base
   
   scope :published, ->(published) { where(published:published, dev_publication:false) }
   scope :pre_published, -> { where(dev_publication:true) }
+  scope :pre_published_or_published, -> {where('dev_publication = ? or published = ?', true, true)}
   
-  #uniq => true seems not work on many to many with rails 3, so we use uniq index
+  #NOTE:uniq => true seems not work on many to many with rails 3, so we use uniq index
   def append_look look
     self.looks << look rescue PG::UniqueViolation 
   end
