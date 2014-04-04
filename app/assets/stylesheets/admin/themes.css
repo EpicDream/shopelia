@@ -86,6 +86,8 @@ a.theme-banner-cover{
 a.theme-banner-cover img{
   max-height:200px;
   border-radius:2px;
+  margin: 0px auto 0 auto;
+  display:block;
 }
 div.theme-banner p{
   width:100%;
