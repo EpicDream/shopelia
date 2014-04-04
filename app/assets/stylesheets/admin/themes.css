@@ -1,7 +1,7 @@
 /*Upload button*/
 
 input[type=file]{
-  width:600px;
+  width:auto;
   height:40px;
   outline:none;
   border:none;
@@ -38,7 +38,8 @@ input[type=file]:hover{
 p.add-flinker-block{
   padding:6px;
 }
-div#looks-index-container{
+div#looks-index-container,
+div#flinkers-index-container{
   display:none;
 }
 input#flinker_id{
@@ -57,7 +58,6 @@ div.themes-content{
   margin:5px 5px 5px 5px;
   font-family: Helvetica;
   width:100%;
-  height:3000px;
 }
 
 /*Collection widget*/
@@ -208,18 +208,15 @@ div.overlay{
 }
 div.theme-edit-overlay{
   display:none;
-  position:absolute;
-  top:10%;
-  left:60px;
   width:90%;
   height:auto;
   background:snow;
   font-family: Palatino;
   opacity:1;
-  z-index:1000;
   padding:10px;
   border-radius:2px;
-  margin:0 0 60px 0;
+  margin:10px auto 60px auto;
+  box-shadow: 1px 1px 1px 1px #BDBDBD; 
 }
 div.theme-looks-images-overlay{
   display:none;
@@ -249,35 +246,66 @@ input[type=text].hashtag-input{
 div.theme-edit-overlay img{
   width:20%;
   max-height:240px;
+  box-shadow: 1px 1px 1px 1px #BDBDBD; 
+}
+div.theme-edit-overlay{
+  position:relative;
 }
 #close-overlay{
   position:absolute;
-  top:2px;
+  top:5px;
   right:5px;
+}
+form #update-button{
+  position:absolute;
+  top:40px;
+  right:5px;
+  padding:10px;
 }
 fieldset.theme-attributes label{
   width:120px;
-  height:30px;
+  height:10px;
   padding:10px;
-  display:inline-block;
-  vertical-align:top;
-  margin-right:20px;
-  color:#5A5A5A;
-}
-fieldset.theme-attributes > label:before{
-  width: 0;
-  height: 0;
-  content:"";
-  display:inline-block;
-	border-top: 6px solid transparent;
-	border-left: 12px solid #961E3F;
-	border-bottom: 6px solid transparent;
+  margin: 0 auto 20px auto;
+  display:block;
+  color:#99284F;
+  font-size:16px;
+  text-align:center;
 }
 fieldset.theme-attributes input{
   display:inline-block;
 }
-fieldset input.position-input{
+fieldset .block-wrapper{
+  width:80%;
+  margin:0 auto 20px auto;
+/*  box-shadow: 1px 1px 1px #BDBDBD; 
+*/  border:thin solid #D3D3D3;
+  border-radius:2px;
+  padding:10px;
+}
+table input.position-input{
   width:20px;
+}
+table select{
+  width:auto;
+}
+form table{
+  position:relative;
+  width:100%;
+  margin:40px 0 100px 0;
+}
+table tr td{
+  border:thin solid #D4D4D4;
+  text-align:center;
+  font-size:12px;
+  padding:5px;
+}
+table tr th{
+  border:thin solid #D4D4D4;
+  text-align:center;
+  font-size:12px;
+  padding:5px;
+  color:#99284F;
 }
 div.theme-edit-overlay input[type=submit]{
   font-size:13px;
@@ -290,12 +318,6 @@ div.theme-edit-overlay input[type=submit]{
   background:#629651;
   width:auto;
 }
-fieldset.theme-attributes textarea{
-  width:50%;
-  height:100px;
-  resize:none;
-  display:inline-block;
-}
 fieldset .title-style-selects,
 fieldset .subtitle-style-selects{
   display:inline-block;
@@ -304,11 +326,12 @@ fieldset .subtitle-style-selects{
 }
 fieldset div[class*='style-selects']{
   display:inline-block;
-  
 }
 fieldset div[class*='style-selects'] select{
   font-family:'Palatino';
   width:165px;
+  height:22px;
+  font-size:12px;
 }
 fieldset #theme_title,
 fieldset #theme_subtitle{
@@ -316,7 +339,7 @@ fieldset #theme_subtitle{
 }
 fieldset p.title-block,
 fieldset p.subtitle-block{
-  width:60%;
+  width:100%;
   display:inline-block;
   height:auto;
   margin-bottom:30px;
@@ -332,16 +355,18 @@ p.subtitle-block span.font-tag{
   display:inline-block;
   width:20%;
   text-align:center;
+  vertical-align:top;
+  height:26px;
 }
 p.title-block input,
 p.subtitle-block input{
-  width:70%;
+  width:60%;
 }
 a.titles-reset,
 a.subtitles-reset{
   display:block;
 }
-input.cover-height-input{
+table input.cover-height-input{
   width:40px;
 }
 fieldset div.hashtags-block{
@@ -364,6 +389,12 @@ fieldset div.hashtags-block label.hashtag-destroy-label{
 }
 fieldset div.hashtags-block label.hashtag-destroy-label:hover{
   color:purple;
+}
+div.theme-edit-overlay input[type=submit].hashtag-submit{
+  border-radius:50px;
+  width:25px;
+  height:25px;
+  padding:2px;
 }
 
 /*Looks Images*/
@@ -390,12 +421,6 @@ a.see-theme-images p:hover{
   display: block;
   margin:auto;
   max-height:300px;
-}
-div.theme-edit-overlay input[type=submit].hashtag-submit{
-  border-radius:50px;
-  width:25px;
-  height:25px;
-  padding:2px;
 }
 
 /*Looks and FLinkers Table*/
