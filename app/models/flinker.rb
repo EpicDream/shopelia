@@ -38,7 +38,7 @@ class Flinker < ActiveRecord::Base
   }
   
   validates :email, :presence => true
-  validates :username, uniqueness:true, allow_nil: true
+  validates :username, uniqueness:{ case_sensitive: false }, allow_nil: true
   validates_format_of :username, with: /^[\w\d\._-]{2,}$/, allow_nil: true
   validates_confirmation_of :password
   validates_attachment :avatar, :content_type => { :not => [:html] }

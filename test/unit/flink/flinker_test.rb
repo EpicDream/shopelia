@@ -103,6 +103,13 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal 0, Blog.where(flinker_id:betty_id).count
   end
   
+  test "username uniqueness case insensitive" do
+    flinker = new_flinker
+    flinker.username = "LiloU"
+
+    assert !flinker.save
+  end
+  
   private
 
   def new_flinker
