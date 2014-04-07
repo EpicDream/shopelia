@@ -5,7 +5,7 @@ class Flinker < ActiveRecord::Base
   
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
-  attr_accessible :country_iso, :universal, :lang_iso, :country_id, :certified
+  attr_accessible :country_iso, :universal, :lang_iso, :country_id, :verified
   attr_accessor :avatar_url, :country_iso
 
   devise :database_authenticatable, :registerable, :recoverable

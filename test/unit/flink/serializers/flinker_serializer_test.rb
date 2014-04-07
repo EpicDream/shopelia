@@ -19,7 +19,7 @@ class FlinkerSerializerTest < ActiveSupport::TestCase
     assert_equal 2, hash[:flinker][:liked_count]
     assert_nil hash[:flinker][:cover_large]
     assert_nil hash[:flinker][:cover_small]
-    assert hash[:flinker].has_key?(:certified)
+    assert hash[:flinker].has_key?(:verified)
   end
   
   test "serialize non publisher without liked count" do
