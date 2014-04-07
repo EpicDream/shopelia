@@ -2,7 +2,7 @@
   .fluid
     .row
       .col-md-6
-        =image_tag(image_path('flink-logo-full.jpg'))
+        =image_tag(image_path('flink-logo-full.png'))
         .spacer50
         %p.password-info= t('app.password.change_info')
         .spacer25
@@ -13,7 +13,7 @@
               .col-lg-10.alert.alert-danger
                 =t("app.invalid_password_or_session_expiration")
           .form-group
-            = f.label :password, t('activerecord.attributes.user.password'), class:"col-lg-4 control-label"
+            = f.label :password, t('app.new_password'), class:"col-lg-4 control-label"
             .col-lg-6
               = f.text_field :password, class:"form-control input-lg", type:"password", placeholder:"#{t('placeholders.user.password')}"
           .form-group

@@ -350,6 +350,7 @@ fr:
 
   app:
     hello: Bonjour
+    new_password: Nouveau mot de passe
     change_password: "Changer mon mot de passe"
     change_password_warn: "Si vous n'avez pas demandé le changement de votre mot de passe, vous pouvez ignorer cet email. Votre mot de passe ne sera changé que si vous cliquez sur le lien ci-dessus et en définissez un nouveau."
     request_change_password: "Vous avez demandé à réinitialiser votre mot de passe. Vous pouvez le faire en cliquant sur le lien ci-dessous :"
