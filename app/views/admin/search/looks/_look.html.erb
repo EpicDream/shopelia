@@ -9,9 +9,7 @@
     <span><%= look.look_products.map(&:code).uniq.join(" ")%></span>
   </p>
   <p>
-    <% unless look.look_images.empty? %>
-      <%= link_to image_tag(look.look_images.first.picture.url(:large)), admin_look_path(look) %>  
-    <% end %>
+    <%= link_to image_tag(look.look_images.first.picture.url(:large)), admin_look_path(look) %>  
   </p>
   <p>
     <%= select_tag 'assign-to-theme', 

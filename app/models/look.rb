@@ -63,8 +63,8 @@ class Look < ActiveRecord::Base
     .uniq
   }
   scope :with_likes_count, -> {
-    joins('left join (select resource_id, count(*) from flinker_likes group by resource_id) likes on likes.resource_id = looks.id')
-    .select('*, coalesce(count, 0) as likes_count')
+    joins("left outer join (select resource_id, count(*) from flinker_likes where resource_type='look' group by resource_id) likes on likes.resource_id = looks.id")
+    .select('looks.*, coalesce(count, 0) as likes_count')
     .order('likes_count desc, flink_published_at desc')
   }
   
