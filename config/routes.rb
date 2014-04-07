@@ -76,6 +76,7 @@ Shopelia::Application.routes.draw do
     resources :images, :only => [:show, :update]
     resources :flinkers
     resources :statistics, only:[:index]
+    resources :csvs, only:[:index, :show]
     resources :themes do
       resources :looks, only:[:index, :create, :destroy], controller:'themes/looks'
       resources :look_images, only:[:index], controller:'themes/look_images'
