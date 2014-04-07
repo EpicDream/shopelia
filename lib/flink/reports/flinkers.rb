@@ -6,7 +6,7 @@ module Reports
     def self.export
       csv = CSV.open(CSV_FILE_PATH, "w+")
       csv << HEADERS
-      Flinker.find_in_batches do |flinkers|
+      Flinker.includes(:flinker_authentications).find_in_batches do |flinkers|
         flinkers.each do |f|
           auth = f.flinker_authentications.first
           fb_auth = f.password.nil?
