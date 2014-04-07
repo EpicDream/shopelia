@@ -1,5 +1,5 @@
 class FlinkerSerializer < ActiveModel::Serializer
-  attributes :id, :name, :url, :email, :username, :avatar, :country, :staff_pick, :rank, :publisher, :certified
+  attributes :id, :name, :url, :email, :username, :avatar, :country, :staff_pick, :rank, :publisher, :verified
   attributes :likes_count, :follows_count, :looks_count, :comments_count, :followed_count
   attributes :liked_count, :cover_small, :cover_large
   
