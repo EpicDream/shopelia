@@ -39,6 +39,7 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( admin/comments.js admin/comments.css )
   config.assets.precompile += %w( admin/search/looks.css admin/search/looks.js )
   config.assets.precompile += %w( admin/themes.js admin/themes.css )
+  config.assets.precompile += %w( admin/csvs.js admin/csvs.css )
   config.assets.precompile += %w( admin/posts.js admin/posts.css )
   config.assets.precompile += %w( admin/looks.js admin/looks.css )
   config.assets.precompile += %w( admin/flinkers.js admin/flinkers.css )
