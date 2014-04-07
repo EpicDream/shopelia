@@ -18,25 +18,28 @@ form#search-form button{
   height:46px;
 }
 div.look-block{
+  position:relative;
   width: 30%;
   display:inline-block;
   padding:10px;
   background:white;
   margin:20px 0 0 0;
-  height:340px;
+  height:380px;
   vertical-align:top;
   box-shadow: 1px 1px 1px 1px #BDBDBD; 
+  font-size:12px;
 }
 div.look-block p.look-infos span{
   display:block;
   color:#7D7D7D;
-  font-size:12px;
 }
 div.look-block p.look-keywords span{
   display:block;
   font-style:italic;
+  font-size:14px;
 }
-div.look-block p.look-infos span:first-child{
+div.look-block p.look-infos span:first-child,
+div.look-block p.look-infos span:nth-child(2){
   color:#992E7D;
 }
 div.look-block img{
@@ -46,6 +49,13 @@ div.look-block img{
   margin-right:auto;
   max-width:90%;
   max-height:200px;
+}
+div.look-block select{
+  position:absolute;
+  bottom:2px;
+  font-size:1em;
+  height:1.8em;
+  width:160px;
 }
 
 /*Pagination links*/
