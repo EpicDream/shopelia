@@ -70,6 +70,7 @@ en:
   app:
     hello: Hello
     change_password: "Change my password"
+    new_password: New password
     change_password_warn: "If you didn't request this, please ignore this email. Your password won't change until you access the link above and create a new one."
     request_change_password: "Someone has requested a link to change your password, and you can do this through the link below."
     confirm_reset: "Change my Password"

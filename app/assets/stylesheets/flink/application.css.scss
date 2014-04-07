@@ -473,6 +473,16 @@ $color: #707070;
 div.password-reset-section{
   padding:5px;
 }
+div.password-reset-section img{
+  width:80%;
+}
+div.password-reset-section input{
+  box-shadow:none;
+}
+div.password-reset-section .password-info{
+  padding-left:15px;
+  margin: -10px 0 10px;
+}
 div.password-reset-section .btn-password-reset{
   background:#419843;
   border:none;
