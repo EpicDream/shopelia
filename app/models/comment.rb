@@ -17,7 +17,7 @@ class Comment < ActiveRecord::Base
   after_create :post_comment_on_blog_async, if: -> { POST_ON_BLOG && can_be_posted_on_blog? && post_to_blog }
   
   scope :posted, -> { where(posted:true) }
-  scope :last_ones, ->(n=10) { order('created_at desc').limit(n) }
+  scope :last_ones, ->(n=10) { where('created_at >= ?', Time.now - 4.days).order('created_at desc').limit(n) }
   scope :timeline, ->(look_id) { where(look_id:look_id) }
   
   def to_html

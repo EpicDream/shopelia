@@ -38,11 +38,10 @@
   <tbody>
     <% @comments.each do |comment| %>
       <tr>
-        <td><%= comment.flinker.username || comment.flinker.name %></td>
+        <td><%= link_to (comment.flinker.username || comment.flinker.name), admin_flinker_path(comment.flinker) %></td>
         <td><%= truncate(comment.body, length: 50) %></td>
         <td><%= link_to 'Voir le post', comment.post.link %></td>
         <td><%= I18n.l(comment.created_at)%></td>
-        
       </tr>
     <% end  %>
   </tbody>

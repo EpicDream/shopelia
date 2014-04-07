@@ -21,7 +21,11 @@ class Look < ActiveRecord::Base
   scope :published, -> { where(is_published:true) }
   scope :published_of_blog, ->(blog) { published.where(id:Post.where(blog_id:blog.id).select('look_id'))}
   scope :top_commented, ->(n=5) { 
-    Look.joins(:comments).group('looks.id').order('count(*) desc').select('looks.id, count(*) as count').limit(n) 
+    Look.flink_published_between(Time.now - 2.days, Time.now)
+    .joins(:comments)
+    .group('looks.id')
+    .order('count(*) desc')
+    .select('looks.id, count(*) as count').limit(n) 
   }
   scope :updated_after, ->(date) {
     where('flink_published_at < ? and updated_at > ?', date, date)
