@@ -56,17 +56,25 @@ class Look < ActiveRecord::Base
   scope :liked_by, ->(flinker) {
     joins('join flinker_likes on flinker_likes.resource_id = looks.id').where('flinker_likes.flinker_id = ?', flinker.id)
   }
-  
   scope :with_keywords, ->(keywords){
     regexp = keywords.join("|")
     Look.joins(:look_products)
     .where('look_products.brand ~* ? or look_products.code ~* ?', regexp, regexp)
     .uniq
   }
+  scope :with_likes_count, -> {
+    joins('left join (select resource_id, count(*) from flinker_likes group by resource_id) likes on likes.resource_id = looks.id')
+    .select('*, coalesce(count, 0) as likes_count')
+    .order('likes_count desc, flink_published_at desc')
+  }
   
   def self.search keywords
-    return where(id:nil) if keywords.blank? || keywords.empty?
-    published.with_keywords(keywords).includes(:flinker).includes(:look_images)
+    return where(id:nil) if keywords.empty?
+    published.with_keywords(keywords)
+    .includes(:flinker)
+    .includes(:look_images)
+    .with_likes_count
+    .where('flink_published_at >= ?', Time.now - 10.days)
   end
   
   def self.random collection=Look

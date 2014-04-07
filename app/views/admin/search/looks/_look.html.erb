@@ -1,6 +1,7 @@
 <div class="look-block">
   <p class="look-infos">
     <span><%= truncate(look.name, length:60) %></span>
+    <span><%= pluralize(look.likes_count, 'likes').upcase %></span>
     <span><%= l(look.flink_published_at) %></span>
   </p>
   <p class="look-keywords">
@@ -8,6 +9,13 @@
     <span><%= look.look_products.map(&:code).uniq.join(" ")%></span>
   </p>
   <p>
-    <%= link_to image_tag(look.look_images.first.picture.url(:large)), admin_look_path(look) %>  
+    <% unless look.look_images.empty? %>
+      <%= link_to image_tag(look.look_images.first.picture.url(:large)), admin_look_path(look) %>  
+    <% end %>
+  </p>
+  <p>
+    <%= select_tag 'assign-to-theme', 
+        options_for_select(themes_for_select(default:"Ajouter à une collection")),
+        "data-look-id" => look.id %>
   </p>
 </div>
