@@ -272,6 +272,13 @@ div.hashtags-block form p{
 div.hashtags-block input[type=checkbox]{
   display:none;
 }
+div.hashtags-block form select{
+  font-size:12px;
+  font-family:Palatino;
+  height:1.8em;
+  width:120px;
+  display:block;
+}
 div.hashtags-block label.hashtag-destroy-label{
   color:red;
   font-family:system;

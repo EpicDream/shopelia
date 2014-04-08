@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140408124836) do
+ActiveRecord::Schema.define(:version => 20140408135833) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -451,6 +451,7 @@ ActiveRecord::Schema.define(:version => 20140408124836) do
     t.string   "description"
     t.datetime "flink_published_at"
     t.string   "bitly_url"
+    t.string   "season"
   end
 
   add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"

@@ -60,6 +60,10 @@ $(document).ready(function() {
     Hashtags.submit();
   });
   
+  $(document).on("change", "div.hashtags-block select", function(){
+    Hashtags.submit();
+  })
+  
 });
 
 function sortable() {
