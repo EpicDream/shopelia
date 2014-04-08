@@ -13,10 +13,10 @@ class Admin::LooksController < Admin::AdminController
     @look.hashtags.build
   end
   
-  def update #NOTE:for now, it's just for hashtags update
+  def update
     if @look.update_attributes(params[:look])
       @look.hashtags.build
-      render partial:'hashtags_form', status: :ok
+      render partial:'form', status: :ok
     else
       render json:{}, status: :error
     end
