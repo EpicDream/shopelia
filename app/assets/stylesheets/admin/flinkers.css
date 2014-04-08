@@ -35,3 +35,13 @@ select.flinker-theme-select{
   font-family:'Hevetica';
   margin:80px 0 0 0;
 }
+table#flinkers{
+  font-size:13px;
+  font-family:Palatino;
+}
+table#flinkers a{
+  color:purple;
+}
+table#flinkers a.flinker-url{
+  font-size:12px;
+}

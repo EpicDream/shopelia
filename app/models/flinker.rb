@@ -21,6 +21,7 @@ class Flinker < ActiveRecord::Base
   has_many :comments, dependent: :destroy
   has_many :flinker_authentications, dependent: :destroy
   has_many :flinker_likes, dependent: :destroy
+  has_many :likes, class_name: 'FlinkerLike', foreign_key: :resource_id
   has_many :facebook_friends, dependent: :destroy
   has_many :devices, dependent: :destroy
   has_many :flinker_follows, include: :following, dependent: :destroy
