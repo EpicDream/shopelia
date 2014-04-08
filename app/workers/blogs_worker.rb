@@ -1,5 +1,3 @@
-require 'timeout'
-
 class BlogsWorker
   include Sidekiq::Worker
   sidekiq_options :queue => :blogs_scraper, retry:false
