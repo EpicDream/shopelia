@@ -261,3 +261,41 @@ section.header td img {
 .pagination a:hover, .pagination a:focus {
   text-decoration: none; 
 }
+
+/*Hashtags form*/
+div.hashtags-block{
+  margin:30px 0 0 0;
+}
+div.hashtags-block form p{
+  display:inline-block;
+}
+div.hashtags-block input[type=checkbox]{
+  display:none;
+}
+div.hashtags-block label.hashtag-destroy-label{
+  color:red;
+  font-family:system;
+  display:inline-block;
+  width:10px;
+  height:10px;
+  text-align:center;
+  padding:2px;
+}
+div.hashtags-block label.hashtag-destroy-label:hover{
+  color:purple;
+}
+input[type=text].hashtag-input{
+  width:100px;
+  height:10px;
+  font-size:12px;
+  outline:none;
+  display:inline-block;
+  font-family: Courier;
+  border:thin dashed red;
+}
+div.hashtags-block input[type=submit].hashtag-submit{
+  border-radius:50px;
+  width:25px;
+  height:25px;
+  padding:2px;
+}
