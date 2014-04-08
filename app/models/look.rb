@@ -75,7 +75,6 @@ class Look < ActiveRecord::Base
     published.with_keywords(keywords)
     .from_country(country_id)
     .with_likes_count
-    .where('flink_published_at >= ?', Time.now - 10.days)
     .includes(:look_images)
     .select('looks.*')
     .order('flikes_count desc, flink_published_at desc')
