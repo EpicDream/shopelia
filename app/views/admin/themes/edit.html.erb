@@ -31,7 +31,7 @@
           <%= f.check_box :dev_publication %>
         </td>
         <td>
-          <%= f.select :country_ids, options_for_select(actual_countries_for_select(include_all_option:true), selected:@theme.countries.first.try(:id)) %>
+          <%= f.select :country_ids, options_for_select(actual_countries_for_select, selected:@theme.countries.first.try(:id)), prompt: "Tous les pays" %>
         </td>
         <td>
           <%= f.fields_for :theme_cover do |ff| %>

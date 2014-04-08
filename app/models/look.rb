@@ -7,7 +7,7 @@ class Look < ActiveRecord::Base
   has_many :look_images, :foreign_key => "resource_id", :dependent => :destroy
   has_many :look_products, :dependent => :destroy
   has_many :products, :through => :look_products
-
+  has_many :flinker_likes, foreign_key:'resource_id'
   validates :uuid, :presence => true, :uniqueness => true, :on => :create
   validates :flinker, :presence => true
   validates :name, :presence => true
@@ -64,17 +64,21 @@ class Look < ActiveRecord::Base
   }
   scope :with_likes_count, -> {
     joins("left outer join (select resource_id, count(*) from flinker_likes where resource_type='look' group by resource_id) likes on likes.resource_id = looks.id")
-    .select('looks.*, coalesce(count, 0) as likes_count')
-    .order('likes_count desc, flink_published_at desc')
+    .select('coalesce(count, 0) as flikes_count')
+  }
+  scope :from_country, -> (country_id) {
+    joins(:flinker).where('flinkers.country_id = ?', country_id) unless country_id.blank?
   }
   
-  def self.search keywords
+  def self.search keywords, country_id=nil
     return where(id:nil) if keywords.empty?
     published.with_keywords(keywords)
-    .includes(:flinker)
-    .includes(:look_images)
+    .from_country(country_id)
     .with_likes_count
     .where('flink_published_at >= ?', Time.now - 10.days)
+    .includes(:look_images)
+    .select('looks.*')
+    .order('flikes_count desc, flink_published_at desc')
   end
   
   def self.random collection=Look
