@@ -28,7 +28,7 @@ class FlinkersDatatable
         number_with_delimiter(flinker.looks.count),
         number_with_delimiter(flinker.followers.count),
         number_with_delimiter(flinker.likes.count),
-        link_to(url, url, class:"flinker-url"),
+        link_to(url || "-", url, class:"flinker-url"),
         flinker.is_publisher? ? "Yes" : "No",
         flinker.staff_pick? ? "Yes" : "No",
         "<button type=\"button\" class=\"btn btn-danger\" data-destroy-url=\"#{admin_flinker_path(flinker)}\" data-username=\"#{flinker.username}\" style=\"visibility:hidden\">Delete</button>"
