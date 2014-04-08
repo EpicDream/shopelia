@@ -2,6 +2,13 @@ div.looks-search-content{
   font-family: Palatino;
   margin:80px 0 20px 5px;
 }
+div.looks-search-content form select{
+  float:right;
+  font-size:12px;
+  height:1.8em;
+  width:120px;
+  margin-right:5px;
+}
 form#search-form{
   width:100%;
   height:100px;

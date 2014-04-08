@@ -25,10 +25,8 @@ module ApplicationHelper
      ['Italie', 'IT'], ['Etats Unis', 'US']]
   end
   
-  def actual_countries_for_select opts={}
-    countries = Country.in_use.map{|c| [c.name, c.id]}
-    countries.insert(0, ["Tous les pays", nil]) if opts[:include_all_option]
-    countries
+  def actual_countries_for_select
+    Country.in_use.map{|c| [c.name, c.id]}
   end
   
   def themes_for_select opts={}

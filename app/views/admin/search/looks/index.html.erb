@@ -1,9 +1,14 @@
 <div class="looks-search-content">
   <%= form_tag [:admin, :search, :looks], method:'get', id:'search-form' do %>
-    <%= text_field_tag :keywords %>
+    <%= search_field_tag :keywords, params[:keywords] %>
     <button type=submit class="btn rounded-btn">
       <i class='icon-search icon-red'></i>
     </button>
+    <%= select_tag :country_id, 
+                    options_for_select(actual_countries_for_select, selected:params[:country_id]),
+                    prompt: "Tous les pays",
+                    onchange: "submit()" %>
+    
   <% end %>
 
   <%= will_paginate @looks %>
