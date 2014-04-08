@@ -1,5 +1,5 @@
 class Admin::LooksController < Admin::AdminController
-  before_filter :retrieve_look, :only => [:show, :publish, :reject, :reinitialize_images]
+  before_filter :retrieve_look, :only => [:show, :publish, :reject, :reinitialize_images, :update]
   before_filter :retrieve_brands, :only => [:show]
   
   def index
@@ -7,6 +7,19 @@ class Admin::LooksController < Admin::AdminController
     @looks = Look.flink_published_between(since, nil)
     .order('flink_published_at desc')
     .paginate(:page => params[:page], :per_page => 40)
+  end
+  
+  def show
+    @look.hashtags.build
+  end
+  
+  def update #NOTE:for now, it's just for hashtags update
+    if @look.update_attributes(params[:look])
+      @look.hashtags.build
+      render partial:'hashtags_form', status: :ok
+    else
+      render json:{}, status: :error
+    end
   end
   
   def reinitialize_images

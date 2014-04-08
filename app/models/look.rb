@@ -1,5 +1,6 @@
 class Look < ActiveRecord::Base
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
+  attr_accessible :hashtags_attributes
   
   belongs_to :flinker
   has_one :post
@@ -8,6 +9,8 @@ class Look < ActiveRecord::Base
   has_many :look_products, :dependent => :destroy
   has_many :products, :through => :look_products
   has_many :flinker_likes, foreign_key:'resource_id'
+  has_and_belongs_to_many :hashtags
+  
   validates :uuid, :presence => true, :uniqueness => true, :on => :create
   validates :flinker, :presence => true
   validates :name, :presence => true
@@ -15,8 +18,11 @@ class Look < ActiveRecord::Base
   validates :published_at, :presence => true
 
   before_validation :generate_uuid
+  before_validation :find_or_create_hashtag
   after_save :update_flinker_looks_count
   before_update :touch_flink_published_at, if: -> { is_published_changed? }
+  
+  accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
   
   scope :published, -> { where(is_published:true) }
   scope :published_of_blog, ->(blog) { published.where(id:Post.where(blog_id:blog.id).select('look_id'))}
@@ -112,6 +118,16 @@ class Look < ActiveRecord::Base
   end
 
   private
+  
+  def find_or_create_hashtag
+    self.hashtags = self.hashtags.map { |hashtag|  
+      if hashtag.new_record?
+        Hashtag.find_by_name(hashtag.name) || hashtag
+      else
+        hashtag
+      end
+    }
+  end
   
   def touch_flink_published_at 
     self.flink_published_at = Time.now

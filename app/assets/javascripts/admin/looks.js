@@ -18,6 +18,21 @@ var Show = {
   }
 }
 
+var Hashtags = {
+  submit: function(){
+    var form = $("form.edit_look");
+    var url = form.attr('action');
+    
+    $.post(url, form.serialize())
+    .success(function(html){
+      $("div.hashtags-block").replaceWith(html);
+    })
+    .error(function(){
+      alert("Erreur");
+    })
+  }
+}
+
 $(document).ready(function() {
   if ($('body.action-show').length > 0) {
     Show.init();
@@ -34,6 +49,15 @@ $(document).ready(function() {
         alert("Erreur");
       });
     }
+  });
+  
+  $(document).on("submit", "form.edit_look", function(e){
+    e.preventDefault();
+    Hashtags.submit();
+  });
+  
+  $(document).on("change", ".hashtag-destroy-checkbox", function(){
+    Hashtags.submit();
   });
   
 });
