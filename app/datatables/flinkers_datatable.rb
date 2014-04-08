@@ -21,13 +21,13 @@ class FlinkersDatatable
     flinkers.map do |flinker|
       [
         image_tag(flinker.avatar.blank? ? "empty.png" : flinker.avatar.url(:thumb), class:"avatar"),
-        link_to(flinker.username, admin_flinker_path(flinker)),
-        link_to(flinker.name, admin_flinker_path(flinker)),
+        link_to(flinker.username || "-", admin_flinker_path(flinker)),
+        link_to(flinker.name || "-", admin_flinker_path(flinker)),
         flinker.email,
         number_with_delimiter(flinker.looks.count),
         number_with_delimiter(flinker.followers.count),
         number_with_delimiter(flinker.likes.count),
-        link_to(flinker.url, flinker.url, class:"flinker-url"),
+        link_to(flinker.url || "-", flinker.url, class:"flinker-url"),
         flinker.is_publisher? ? "Yes" : "No",
         flinker.staff_pick? ? "Yes" : "No",
         "<button type=\"button\" class=\"btn btn-danger\" data-destroy-url=\"#{admin_flinker_path(flinker)}\" data-username=\"#{flinker.username}\" style=\"visibility:hidden\">Delete</button>"
