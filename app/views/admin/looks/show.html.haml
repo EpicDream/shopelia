@@ -1,6 +1,6 @@
 %section.header
   %header
-    %h1= @look.name
+    %h1{class:"look-name-published-#{@look.is_published?}"}= @look.name
     %h2= @look.flinker.name || @look.flinker.url
     %h2= @look.uuid
     

@@ -306,3 +306,10 @@ div.hashtags-block input[type=submit].hashtag-submit{
   height:25px;
   padding:2px;
 }
+h1.look-name-published-true{
+  color:#629651 !important;
+}
+h1.look-name-published-false{
+  color:#96362F !important;
+}
+
