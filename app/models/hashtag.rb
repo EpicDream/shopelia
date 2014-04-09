@@ -5,11 +5,17 @@ class Hashtag < ActiveRecord::Base
   
   attr_accessible :name
   
+  has_and_belongs_to_many :looks
+  
   validates :name, presence:true, uniqueness:true
   before_validation :hashtagify
   
   def hashtagify
     self.name = self.name.gsub(/[^[[:alnum:]]]/, '').unaccent if self.name
+  end
+  
+  def remove_from_algolia_index?
+    self.looks.none?
   end
   
 end
