@@ -79,6 +79,16 @@ class LookProductTest < ActiveSupport::TestCase
     end
   end
   
+  test "create hashtag from brand and code if not exists and assign to look" do
+    assert_difference('Hashtag.count', 3) do
+      2.times { LookProduct.create(code:"handkerchief", brand:"channel", look_id:@look.id)}
+    end
+    @look.reload
+    
+    assert_equal 3, @look.hashtags.count
+    assert_equal ["Handkerchief", "channel", "Pochette"].to_set, @look.hashtags.map(&:name).to_set
+  end
+  
   private
 
   def example_feed

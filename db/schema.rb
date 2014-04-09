@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140408135833) do
+ActiveRecord::Schema.define(:version => 20140409120339) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -382,6 +382,8 @@ ActiveRecord::Schema.define(:version => 20140408135833) do
     t.integer "look_id"
     t.integer "hashtag_id"
   end
+
+  add_index "hashtags_looks", ["look_id", "hashtag_id"], :name => "index_hashtags_looks_on_look_id_and_hashtag_id"
 
   create_table "hashtags_themes", :force => true do |t|
     t.integer "theme_id"

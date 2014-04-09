@@ -15,6 +15,7 @@ class Comment < ActiveRecord::Base
   validate :flinker_can_comment?
   
   after_create :post_comment_on_blog_async, if: -> { POST_ON_BLOG && can_be_posted_on_blog? && post_to_blog }
+  after_create :create_hashtags_and_assign_to_look
   
   scope :posted, -> { where(posted:true) }
   scope :last_ones, ->(n=10) { where('created_at >= ?', Time.now - 4.days).order('created_at desc').limit(n) }
@@ -40,6 +41,13 @@ class Comment < ActiveRecord::Base
   
   def blog
     post.blog
+  end
+  
+  def create_hashtags_and_assign_to_look
+    hashtags = self.body.scan(/#(.*?)\s/).flatten.map { |name| 
+      Hashtag.find_or_create_by_name(name) 
+    }
+    self.look.hashtags << hashtags
   end
 
   private
