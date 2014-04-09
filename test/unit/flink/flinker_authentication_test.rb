@@ -15,16 +15,15 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
       flinker = FlinkerAuthentication.facebook(fanny[:token])
       flinker.reload
     }
-    
     assert auth = flinker.flinker_authentications.first
     assert_equal fanny[:uid], auth.uid
     assert_equal "facebook", auth.provider
     assert_equal fanny[:token], auth.token
-    assert_equal "https://graph.facebook.com/1583562383/picture?width=200&height=200&type=normal", auth.picture
-    assert_equal "fanny.louvel@wanadoo.fr", auth.email
+    assert_equal "https://graph.facebook.com/1375543592/picture?width=200&height=200&type=normal", auth.picture
+    assert_equal "nicolasbigot@me.com", auth.email
     assert_equal auth.email, flinker.email
-    assert_equal 'LOUVEL.F', flinker.username
-    assert_equal 'Fanny Louvel', flinker.name
+    assert_equal 'bigot.nicolas', flinker.username
+    assert_equal 'Nicolas Bigot', flinker.name
     assert_match /images\/flinker\/\d+\/original\/avatar.jpg/, flinker.avatar.url
   end
   
@@ -56,7 +55,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
 
     assert_no_difference("Flinker.count") { FlinkerAuthentication.facebook(token) }
     
-    auth = FlinkerAuthentication.where(uid:"1583562383").first
+    auth = FlinkerAuthentication.where(uid:"1375543592").first
     assert_equal @flinker, auth.flinker
   end
   
@@ -88,7 +87,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
       FollowNotificationWorker.unstub(:perform_in)
       flinkers = Flinker.all
       
-      ["523331154", "524109067", "525274445"].each_with_index { |uid, index|
+      ["697602443", "1077047313", "703507838"].each_with_index { |uid, index|
         FlinkerAuthentication.create!(uid:uid, flinker_id:flinkers[index].id)
       }
     
@@ -106,7 +105,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
 
     flinker = FlinkerAuthentication.facebook(@fanny.token) 
     
-    assert_equal 'Fanny Louvel', @flinker.reload.name
+    assert_equal 'Nicolas Bigot', @flinker.reload.name
   end
   
   test "set facebook friend_flinker_id with same uid" do
@@ -126,7 +125,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     
     flinker = FlinkerAuthentication.facebook(fanny[:token])
     
-    assert_match /^fanny.louvel\d+/, flinker.username
+    assert_match /^nicolasbigot\d+/, flinker.username
   end
   
   test "create flinker from facebook without email, assign default email" do
