@@ -63,6 +63,16 @@ class CommentTest < ActiveSupport::TestCase
       end
     end
   end
+  
+  test "extract hashtags and assign to look" do
+    assert_difference("Hashtag.count", 2) do
+      Comment.create(body: "#tropBelle #top pluie", flinker_id:@flinker.id, look_id:@look.id)
+    end
+    @look.reload
+    
+    assert_equal 2, @look.hashtags.count
+    assert_equal ["tropBelle", "top"].to_set, @look.hashtags.map(&:name).to_set
+  end
    
   private
   

@@ -9,7 +9,7 @@ class Look < ActiveRecord::Base
   has_many :look_products, :dependent => :destroy
   has_many :products, :through => :look_products
   has_many :flinker_likes, foreign_key:'resource_id'
-  has_and_belongs_to_many :hashtags
+  has_and_belongs_to_many :hashtags, uniq:true
   
   validates :uuid, :presence => true, :uniqueness => true, :on => :create
   validates :flinker, :presence => true
@@ -126,7 +126,7 @@ class Look < ActiveRecord::Base
       else
         hashtag
       end
-    }
+    }.uniq
   end
   
   def touch_flink_published_at 

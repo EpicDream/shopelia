@@ -9,7 +9,7 @@ class FacebookFriendTest < ActiveSupport::TestCase
   
   test "create facebook friends from facebook graph and attach flinker if fb user if flinker" do
     FacebookFriend.delete_all
-    FlinkerAuthentication.create!(provider:"facebook", uid:"525274445", flinker_id: flinkers(:boop).id)
+    FlinkerAuthentication.create!(provider:"facebook", uid:"521805306", flinker_id: flinkers(:boop).id)
     @fanny.update_attributes(flinker_id:@flinker.id)
     
     2.times { FacebookFriend.create_or_update_friends(@flinker) }
@@ -17,7 +17,7 @@ class FacebookFriendTest < ActiveSupport::TestCase
     friends = FacebookFriend.of_flinker(@flinker)
     assert_match /graph.facebook.com\/\d+\/picture\?width=200&height=200&type=normal/, friends.last.picture
     assert friends.last.username.length > 2
-    assert friends.count.between?(90, 120)
+    assert friends.count.between?(15, 50)
     assert friends.last.sex
     assert_equal 1, FacebookFriend.of_flinker(@flinker).flinkers.count
     assert_equal friends.count - 1, FacebookFriend.of_flinker(@flinker).not_flinkers.count

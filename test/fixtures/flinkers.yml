@@ -57,7 +57,7 @@ nana:
   looks_count: 1
 
 fanny:
-  email: "fanny.louvel@wanadoo.fr"
+  email: "nicolasbigot@me.com"
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   is_publisher: false
   username: fanny

@@ -16,11 +16,22 @@ class LookProduct < ActiveRecord::Base
   before_validation :build_from_feed, if:Proc.new{ |item| item.feed.present? }
   before_validation :ensure_brand_or_product
 
+  after_save :create_hashtags_and_assign_to_look
+  
   def self.codes
     dic = YAML.load(File.open(CODES))
     dic["codes"].sort
   end
 
+  def create_hashtags_and_assign_to_look
+    hashtags = [Hashtag.find_or_create_by_name(self.brand)]
+    hashtags += [:en, :fr].map { |locale| 
+      name = I18n.t("flink.products.#{self.code}", locale: locale) 
+      Hashtag.find_or_create_by_name(name) 
+    }
+    self.look.hashtags << hashtags
+  end
+  
   private
 
   def check_url_validity
