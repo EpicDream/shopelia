@@ -114,6 +114,10 @@ class Look < ActiveRecord::Base
   def image_for_cover
     look_images.order('display_order asc').limit(1).first
   end
+  
+  def hashtags_as_strings
+    hashtags.map(&:name).map { |hashtag| "##{hashtag}" }
+  end
 
   private
   
