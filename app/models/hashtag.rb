@@ -1,4 +1,8 @@
+require 'flink/algolia'
+
 class Hashtag < ActiveRecord::Base
+  include Algolia::HashtagSearch unless Rails.env.test?
+  
   attr_accessible :name
   
   validates :name, presence:true, uniqueness:true
