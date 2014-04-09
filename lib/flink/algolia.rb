@@ -71,4 +71,33 @@ module Algolia
     end
 
   end
+
+  module HashtagSearch
+  
+    def self.included(klass)
+      klass.class_eval do
+        include AlgoliaSearch
+                
+        algoliasearch auto_index: true, per_environment: true do
+          attribute :name
+    
+          customRanking ['asc(name)']
+          attributesToIndex ['name']
+        end
+        
+        #TEMPORARY ALGOLIA QUICK PATCH
+        private
+        
+        def algolia_perform_index_tasks
+          return if !@algolia_auto_indexing || @algolia_must_reindex == false || @algolia_must_reindex.nil?
+          algolia_index!
+          remove_instance_variable(:@algolia_auto_indexing) if instance_variable_defined?(:@algolia_auto_indexing)
+          remove_instance_variable(:@algolia_synchronous) if instance_variable_defined?(:@algolia_synchronous)
+          remove_instance_variable(:@algolia_must_reindex) if instance_variable_defined?(:@algolia_must_reindex)
+        end
+        
+      end
+    end
+
+  end
 end
