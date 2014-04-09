@@ -14,6 +14,6 @@ LookProduct.find_in_batches { |products|
 }
 
 #create hashtags from comments and assign hashtags to related looks
-Comment.find_in_batches { |comments|  
+Comment.where("body ~ '#'").find_in_batches { |comments|  
   comments.map(&:create_hashtags_and_assign_to_look)
 }

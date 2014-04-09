@@ -62,11 +62,9 @@ class Look < ActiveRecord::Base
   scope :liked_by, ->(flinker) {
     joins('join flinker_likes on flinker_likes.resource_id = looks.id').where('flinker_likes.flinker_id = ?', flinker.id)
   }
-  scope :with_keywords, ->(keywords){
-    regexp = keywords.join("|")
-    Look.joins(:look_products)
-    .where('look_products.brand ~* ? or look_products.code ~* ?', regexp, regexp)
-    .uniq
+  scope :with_hashtags, ->(hashtags){
+    hashtags = Hashtag.where('name ~* ?', hashtags.join("|")).select(:id).uniq
+    Look.joins(:hashtags).where('hashtags_looks.hashtag_id in(?)', hashtags.map(&:id)).uniq
   }
   scope :with_likes_count, -> {
     joins("left outer join (select resource_id, count(*) from flinker_likes where resource_type='look' group by resource_id) likes on likes.resource_id = looks.id")
@@ -78,7 +76,7 @@ class Look < ActiveRecord::Base
   
   def self.search keywords, country_id=nil
     return where(id:nil) if keywords.empty?
-    published.with_keywords(keywords)
+    published.with_hashtags(keywords)
     .from_country(country_id)
     .with_likes_count
     .includes(:look_images)
