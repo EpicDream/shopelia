@@ -21,7 +21,6 @@ class Flinker < ActiveRecord::Base
   has_many :comments, dependent: :destroy
   has_many :flinker_authentications, dependent: :destroy
   has_many :flinker_likes, dependent: :destroy
-  has_many :likes, class_name: 'FlinkerLike', foreign_key: :resource_id
   has_many :facebook_friends, dependent: :destroy
   has_many :devices, dependent: :destroy
   has_many :flinker_follows, include: :following, dependent: :destroy
@@ -59,6 +58,11 @@ class Flinker < ActiveRecord::Base
   scope :with_username_like, ->(username) { where('username like ?', "#{username}%") unless username.blank? }
   scope :with_blog_matching, ->(pattern) {
     publishers.joins(:blog).where('blogs.url ~* ? or blogs.name ~* ?', pattern, pattern) unless pattern.blank?
+  }
+  scope :likes, ->(flinker){
+    where(id:flinker.id)
+    .joins(:looks)
+    .joins('join flinker_likes on flinker_likes.resource_id = looks.id')
   }
   
   def name=name

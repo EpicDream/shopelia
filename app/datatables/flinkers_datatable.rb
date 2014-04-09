@@ -11,7 +11,7 @@ class FlinkersDatatable
       sEcho: params[:sEcho].to_i,
       iTotalRecords: flinkers.count,
       iTotalDisplayRecords: flinkers.total_entries,
-      aaData: data
+      aaData: data,
     }
   end
 
@@ -27,7 +27,7 @@ class FlinkersDatatable
         flinker.email,
         number_with_delimiter(flinker.looks.count),
         number_with_delimiter(flinker.followers.count),
-        number_with_delimiter(flinker.likes.count),
+        number_with_delimiter(Flinker.likes(flinker).count),
         link_to(url || "-", url, class:"flinker-url"),
         flinker.is_publisher? ? "Yes" : "No",
         flinker.staff_pick? ? "Yes" : "No",
