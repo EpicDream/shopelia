@@ -20,7 +20,8 @@ class FlinkerMerge
       FlinkerFollow.where(follow_id:@flinker.id).update_all(follow_id:@target.id)
       Activity.where(target_id:@flinker.id).update_all(target_id:@target.id)
       FacebookFriend.where(friend_flinker_id:@flinker.id).update_all(friend_flinker_id:@target.id)
-      
+      FlinkerFollow.where(flinker_id:@target.id, follow_id:@target.id).destroy_all
+
       @flinker.email += "--"
       @flinker.authentication_token += "--"
       @flinker.save!
