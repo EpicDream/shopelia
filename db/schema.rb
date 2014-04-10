@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140409134513) do
+ActiveRecord::Schema.define(:version => 20140410092236) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -321,6 +321,7 @@ ActiveRecord::Schema.define(:version => 20140409134513) do
   add_index "flinker_likes", ["flinker_id", "resource_type", "resource_id"], :name => "index_flinker_likes_on_all_fields"
   add_index "flinker_likes", ["flinker_id"], :name => "index_flinker_likes_on_flinker_id"
   add_index "flinker_likes", ["resource_type", "resource_id"], :name => "index_flinker_likes_on_resource_type_and_resource_id"
+  add_index "flinker_likes", ["resource_type"], :name => "index_flinker_likes_on_resource_type"
 
   create_table "flinkers", :force => true do |t|
     t.string   "name"

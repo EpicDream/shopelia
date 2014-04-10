@@ -9,7 +9,7 @@ class Api::Flink::Hashtags::LooksController < Api::Flink::BaseController
   private
 
   def looks
-    Look.search([params[:hashtag]].compact).paginate(pagination)
+    Look.search_for_api([params[:hashtag]].compact).paginate(pagination)
   end
 
 end
