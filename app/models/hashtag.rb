@@ -14,8 +14,4 @@ class Hashtag < ActiveRecord::Base
     self.name = self.name.gsub(/[^[[:alnum:]]]/, '').unaccent if self.name
   end
   
-  def remove_from_algolia_index?
-    self.looks.none?
-  end
-  
 end
