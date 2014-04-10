@@ -39,8 +39,15 @@ class FlinkerSerializerTest < ActiveSupport::TestCase
     serializer = FlinkerSerializer.new(@flinker)
     object = serializer.as_json
       
-    assert_equal Rails.configuration.image_host + "/images/ae4/pico/ae4fc89942443f7d5dda587fd1791ee7.jpg", object[:flinker][:cover_small]
-    assert_equal Rails.configuration.image_host + "/images/ae4/large/ae4fc89942443f7d5dda587fd1791ee7.jpg", object[:flinker][:cover_large]
+    assert_equal cover_url('pico'), object[:flinker][:cover_small]
+    assert_equal cover_url('large'), object[:flinker][:cover_large]
+    assert_equal cover_url('small'), object[:flinker][:cover_medium]
+  end
+  
+  private
+  
+  def cover_url format
+    Rails.configuration.image_host + "/images/ae4/#{format}/ae4fc89942443f7d5dda587fd1791ee7.jpg"
   end
   
 end
