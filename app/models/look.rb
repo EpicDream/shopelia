@@ -84,6 +84,13 @@ class Look < ActiveRecord::Base
     .order('flikes_count desc, flink_published_at desc')
   end
   
+  def self.search_for_api keywords
+    return where(id:nil) if keywords.empty?
+    published.with_hashtags(keywords)
+    .order('flink_published_at desc')
+  end
+  
+  
   def self.random collection=Look
     collection.offset(rand(collection.count)).first
   end
