@@ -1,5 +1,6 @@
 class ThemeSerializer < ActiveModel::Serializer
-  attributes :id, :title, :subtitle, :position, :cover_height, :cover_large, :cover_small, :country
+  attributes :id, :title, :subtitle, :position, :cover_height, :country
+  attributes :cover_large, :cover_small, :cover_medium
   attributes :looks_count, :flinkers_count
   attributes :looks, :flinkers
   
@@ -9,6 +10,10 @@ class ThemeSerializer < ActiveModel::Serializer
   
   def cover_small
     cover_with_format(:pico)
+  end
+  
+  def cover_medium
+    cover_with_format(:small)
   end
   
   def looks_count

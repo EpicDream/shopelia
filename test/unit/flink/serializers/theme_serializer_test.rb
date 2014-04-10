@@ -1,7 +1,8 @@
 require 'test_helper'
 
 class ThemeSerializerTest < ActiveSupport::TestCase
-  ATTRIBUTES = [:id, :title, :subtitle, :position, :cover_height, :cover_large, :cover_small, :country, :looks_count, :flinkers_count]
+  ATTRIBUTES = [:id, :title, :subtitle, :position, :cover_height, :cover_large, :cover_small, :country, :looks_count,
+                :flinkers_count, :cover_medium]
   FULL_ATTRIBUTES = ATTRIBUTES + [:looks, :flinkers]
   
   setup do
@@ -17,6 +18,7 @@ class ThemeSerializerTest < ActiveSupport::TestCase
     assert_match "La mode c'est fun", object[:title]
     assert_match /http:\/\/www.flink.io\/images\/ae4\/large\/ae4fc89942443f7d5dda587fd1791ee7.jpg/, object[:cover_large]
     assert_match /http:\/\/www.flink.io\/images\/ae4\/pico\/ae4fc89942443f7d5dda587fd1791ee7.jpg/, object[:cover_small]
+    assert_match /http:\/\/www.flink.io\/images\/ae4\/small\/ae4fc89942443f7d5dda587fd1791ee7.jpg/, object[:cover_medium]
     assert_equal Country.first.iso, object[:country]
     assert_equal @theme.id, object[:id]
   end

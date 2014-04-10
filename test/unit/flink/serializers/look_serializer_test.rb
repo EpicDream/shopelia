@@ -53,9 +53,10 @@ class LookSerializerTest < ActiveSupport::TestCase
   end
 
   test "it should translate codes" do
+    I18n.locale = :fr
     flinker = flinkers(:elarch)
     @look.look_products.destroy_all
-    LookProduct.create!(look_id:@look.id,code:"dress",brand:"test")
+    LookProduct.create!(look_id:@look.id, code:"dress", brand:"test")
     
     look_serializer = LookSerializer.new(@look.reload, scope:{flinker:flinker})
     hash = look_serializer.as_json
