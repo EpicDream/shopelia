@@ -48,6 +48,14 @@ class ThemeSerializer < ActiveModel::Serializer
     (scope && scope[:full] && object.flinkers.any?) || uniq_resource?
   end
   
+  def serializable_hash
+    super if scope && !scope[:use_cache]
+    key = ActiveSupport::Cache.expand_cache_key([self.class.to_s.underscore, object.id], 'serilizable-hash')
+    Rails.cache.fetch(key, expires_in:30.minutes, race_condition_ttl:10) do
+      super
+    end
+  end
+  
   private
   
   def uniq_resource?
