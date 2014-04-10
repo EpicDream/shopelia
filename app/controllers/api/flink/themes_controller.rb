@@ -2,7 +2,7 @@ class Api::Flink::ThemesController < Api::Flink::BaseController
   
   api :GET, "/themes", "Get themes with minimal informations"
   def index
-    render json: { themes: serialize(themes) }
+    render json: { themes: serialize(themes, scope: { use_cache: current_flinker.device.real_user? }) }
   end
   
   api :GET, "/themes/<id>", "Get theme details, looks and/or flinkers"
