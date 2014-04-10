@@ -9,7 +9,7 @@ class Look < ActiveRecord::Base
   has_many :look_products, :dependent => :destroy
   has_many :products, :through => :look_products
   has_many :flinker_likes, foreign_key:'resource_id'
-  has_and_belongs_to_many :hashtags, uniq:true, after_remove: :algolia_refresh
+  has_and_belongs_to_many :hashtags, uniq:true, before_remove: :algolia_refresh
   
   validates :uuid, :presence => true, :uniqueness => true, :on => :create
   validates :flinker, :presence => true
@@ -129,7 +129,7 @@ class Look < ActiveRecord::Base
   private
   
   def algolia_refresh record
-    record.algolia_remove_from_index! if record.remove_from_algolia_index?
+    record.algolia_remove_from_index! if record.looks.count <= 1
   end
   
   def find_or_create_hashtag
