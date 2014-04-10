@@ -1,7 +1,7 @@
 class FlinkerSerializer < ActiveModel::Serializer
   attributes :id, :name, :url, :email, :username, :avatar, :country, :staff_pick, :rank, :publisher, :verified
-  attributes :likes_count, :follows_count, :looks_count, :comments_count, :followed_count
-  attributes :liked_count, :cover_small, :cover_large
+  attributes :likes_count, :follows_count, :looks_count, :comments_count, :followed_count, :liked_count
+  attributes :cover_small, :cover_large, :cover_medium
   
   def publisher
     object.is_publisher? ? 1 : 0
@@ -52,17 +52,26 @@ class FlinkerSerializer < ActiveModel::Serializer
   end
   
   def cover_small
-    return unless image = object.cover_image
-    Rails.configuration.image_host + image.picture.url(:pico)
+    cover_with_format(:pico)
   end
 
   def cover_large
-    return unless image = object.cover_image
-    Rails.configuration.image_host + image.picture.url(:large)
+    cover_with_format(:large)
+  end
+  
+  def cover_medium
+    cover_with_format(:small)
   end
     
   def include_liked_count?
     object.is_publisher?
+  end
+  
+  private
+  
+  def cover_with_format format
+    return unless image = object.cover_image
+    Rails.configuration.image_host + image.picture.url(format)
   end
   
 end
