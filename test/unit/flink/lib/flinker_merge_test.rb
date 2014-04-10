@@ -22,6 +22,15 @@ class FlinkerMergeTest < ActiveSupport::TestCase
     end
   end
   
+  test "merge must remove self follow if old flinker was following target" do
+    follow(flinkers(:betty), flinkers(:fanny))
+    
+    merger = FlinkerMerge.new(@flinker, @target)
+    merger.merge
+    
+    assert !@target.followers.include?(@target), 'Must not follow herself after merge'
+  end
+  
   def assert_associations_moved
     before_counts = associations_counts()
     yield
