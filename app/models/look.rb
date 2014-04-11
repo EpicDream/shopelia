@@ -9,7 +9,7 @@ class Look < ActiveRecord::Base
   has_many :look_products, :dependent => :destroy
   has_many :products, :through => :look_products
   has_many :flinker_likes, foreign_key:'resource_id'
-  has_and_belongs_to_many :hashtags, uniq:true, before_remove: :may_destroy_hashtag
+  has_and_belongs_to_many :hashtags, uniq:true, after_remove: :may_destroy_hashtag
   
   validates :uuid, :presence => true, :uniqueness => true, :on => :create
   validates :flinker, :presence => true
@@ -128,8 +128,8 @@ class Look < ActiveRecord::Base
   private
   
   def may_destroy_hashtag record
-    record.destroy if record.looks.count <= 1
-    true
+    hashtag = Hashtag.find_by_name(record.name) #reload cause id may be nil...
+    hashtag.destroy if hashtag && hashtag.looks.count.zero?
   end
   
   def find_or_create_hashtag

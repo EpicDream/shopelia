@@ -17,16 +17,13 @@ class HashtagTest < ActiveSupport::TestCase
     assert_equal 1, @look.reload.hashtags.count
   end
   
-  test "when a hashtag is removed from a look, if hashtag does not belong to any look, remove it from algolia index" do
+  test "when a hashtag is removed from a look, iff hashtag does not belong to any look, remove it" do
     @look.hashtags << @hashtags
     looks(:quimper).hashtags << @hashtags.last
     
-    @hashtags.first.expects(:algolia_remove_from_index!)
-    @hashtags.last.expects(:algolia_remove_from_index!).never
-    
     @look.hashtags.destroy(@hashtags)
     
-    assert_equal 2, Hashtag.count
+    assert_equal ["fashion"], Hashtag.all.map(&:name)
   end
   
 end
