@@ -9,7 +9,7 @@ class Look < ActiveRecord::Base
   has_many :look_products, :dependent => :destroy
   has_many :products, :through => :look_products
   has_many :flinker_likes, foreign_key:'resource_id'
-  has_and_belongs_to_many :hashtags, uniq:true, before_remove: :algolia_refresh
+  has_and_belongs_to_many :hashtags, uniq:true, before_remove: :may_destroy_hashtag
   
   validates :uuid, :presence => true, :uniqueness => true, :on => :create
   validates :flinker, :presence => true
@@ -90,7 +90,6 @@ class Look < ActiveRecord::Base
     .order('flink_published_at desc')
   end
   
-  
   def self.random collection=Look
     collection.offset(rand(collection.count)).first
   end
@@ -128,8 +127,9 @@ class Look < ActiveRecord::Base
 
   private
   
-  def algolia_refresh record
-    #record.remove_from_index! if record.looks.count <= 1
+  def may_destroy_hashtag record
+    record.destroy if record.looks.count <= 1
+    true
   end
   
   def find_or_create_hashtag
