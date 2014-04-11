@@ -68,8 +68,7 @@ class FlinkerSerializer < ActiveModel::Serializer
   end
   
   def serializable_hash
-    key = ActiveSupport::Cache.expand_cache_key([self.class.to_s.underscore, object.id], 'serilizable-hash')
-    Rails.cache.fetch(key, expires_in:30.minutes, race_condition_ttl:10) do
+    Rails.cache.fetch(object, race_condition_ttl:10) do
       super
     end
   end
