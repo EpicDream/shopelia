@@ -129,7 +129,7 @@ class Look < ActiveRecord::Base
   private
   
   def algolia_refresh record
-    record.remove_from_index! if record.looks.count <= 1
+    #record.remove_from_index! if record.looks.count <= 1
   end
   
   def find_or_create_hashtag

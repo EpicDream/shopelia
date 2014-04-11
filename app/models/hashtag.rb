@@ -11,7 +11,11 @@ class Hashtag < ActiveRecord::Base
   before_validation :hashtagify
   
   def hashtagify
-    self.name = self.name.gsub(/[^[[:alnum:]]]/, '').unaccent if self.name
+    self.name = Hashtag.hashtagify(self.name)
+  end
+  
+  def self.hashtagify string
+    string.gsub(/[^[[:alnum:]]]/, '').unaccent if string
   end
   
 end
