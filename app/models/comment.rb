@@ -44,7 +44,7 @@ class Comment < ActiveRecord::Base
   end
   
   def create_hashtags_and_assign_to_look
-    hashtags = self.body.scan(/#(.*?)\s/).flatten.map { |name| 
+    hashtags = self.body.scan(/#([[[:alnum:]]]+)/).flatten.map { |name| 
       Hashtag.find_or_create_by_name(Hashtag.hashtagify(name)) 
     }
     self.look.hashtags << hashtags
