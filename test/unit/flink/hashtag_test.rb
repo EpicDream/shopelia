@@ -26,4 +26,13 @@ class HashtagTest < ActiveSupport::TestCase
     assert_equal ["fashion"], Hashtag.all.map(&:name)
   end
   
+  test "hashtags must be found case insensitive and hashtagified" do
+    assert_difference('Hashtag.count', 0) do
+      hashtag = Hashtag.find_or_create_by_name('Mode')
+      assert_equal @hashtags.first, hashtag
+    end
+    
+    hashtag = Hashtag.find_or_create_by_name('Mode de Laura é')
+    assert_equal "ModedeLaurae", hashtag.name
+  end
 end

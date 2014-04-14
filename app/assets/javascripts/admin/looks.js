@@ -126,7 +126,10 @@ function showAddCodesModal() {
       url: "/admin/look_products",
       dataType: "script",
       data: {codes:JSON.stringify(codes), look_id:lookId},
-      type: "post"
+      type: "post",
+      success:function(){
+        Hashtags.submit();
+      }
     });     
   });
 }
