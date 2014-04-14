@@ -73,7 +73,7 @@ en:
     change_password: "Change my password"
     new_password: New password
     change_password_warn: "If you didn't request this, please ignore this email. Your password won't change until you access the link above and create a new one."
-    request_change_password: "Someone has requested a link to change your password, and you can do this through the link below."
+    request_change_password: "You have requested to reinitialize your Flink password. You can make the change by clicking on the link below:"
     confirm_reset: "Change my Password"
     wait: "Wait..."
     invalid_password_or_session_expiration: "The new password is not valid or your session has expired"
