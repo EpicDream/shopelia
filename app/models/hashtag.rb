@@ -18,4 +18,9 @@ class Hashtag < ActiveRecord::Base
     string.gsub(/[^[[:alnum:]]]/, '').unaccent if string
   end
   
+  def self.find_or_create_by_name string
+    name = hashtagify(string)
+    Hashtag.where('name ~* ?', "^#{name}$").first || create(name:name)
+  end
+  
 end

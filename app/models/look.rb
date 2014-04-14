@@ -136,7 +136,7 @@ class Look < ActiveRecord::Base
   def find_or_create_hashtag
     self.hashtags = self.hashtags.map { |hashtag|  
       if hashtag.new_record?
-        Hashtag.find_by_name(hashtag.name) || hashtag
+        Hashtag.find_or_create_by_name(hashtag.name)
       else
         hashtag
       end

@@ -25,10 +25,10 @@ class LookProduct < ActiveRecord::Base
 
   def create_hashtags_and_assign_to_look
     return true unless self.code && self.brand
-    hashtags = [Hashtag.find_or_create_by_name(Hashtag.hashtagify(self.brand))]
+    hashtags = [Hashtag.find_or_create_by_name(self.brand)]
     hashtags += [:en, :fr].map { |locale| 
       name = I18n.t("flink.products.#{self.code}", locale: locale) 
-      Hashtag.find_or_create_by_name(Hashtag.hashtagify(name)) 
+      Hashtag.find_or_create_by_name(name) 
     }
     self.look.hashtags << hashtags
   end
