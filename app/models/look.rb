@@ -130,8 +130,9 @@ class Look < ActiveRecord::Base
   private
   
   def may_destroy_hashtag record
-    hashtag = Hashtag.find_by_name(record.name) #reload cause id may be nil...
-    hashtag.destroy if hashtag && hashtag.looks.count.zero?
+    return if record.new_record? #bug rails on callback after_remove, pass here even when add and not remove
+    hashtag = Hashtag.find_by_name(record.name)
+    hashtag.destroy if hashtag && hashtag.reload.looks.count.zero?
   end
   
   def find_or_create_hashtag
