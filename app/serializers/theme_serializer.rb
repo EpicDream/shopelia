@@ -29,7 +29,8 @@ class ThemeSerializer < ActiveModel::Serializer
   end
   
   def looks
-    ActiveModel::ArraySerializer.new(object.looks.includes(:flinker)).as_json
+    looks = object.looks.includes(:flinker).joins(:post).order('posts.published_at desc')
+    ActiveModel::ArraySerializer.new(looks).as_json
   end
   
   def flinkers
