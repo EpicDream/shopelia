@@ -89,6 +89,10 @@ div.blogs{
 .blogs-table tr td{
   padding:10px;
 }
+.blogs-table thead th{
+  border-bottom:thin solid #999;
+  font-family:Palatino;
+}
 .blogs-table .name{
   font-weight:bold;
   font-family:Times;
@@ -110,6 +114,9 @@ div.blogs{
   font-family:Georgia;
   text-align:center;
   color:white;
+}
+.blogs-table tr td span.created-since{
+  font-size:12px;
 }
 .blogs-table tr td span.tag i{
   font-style:normal;
