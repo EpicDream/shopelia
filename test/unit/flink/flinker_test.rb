@@ -110,6 +110,29 @@ class FlinkerTest < ActiveSupport::TestCase
     assert !flinker.save
   end
   
+  test "remove from flinker algolia index if no more looks" do
+    flinker = flinkers(:betty)
+
+    assert_equal 1, flinker.looks.published.count
+    Flinker.any_instance.expects(:remove_from_index!)
+    look = flinker.looks.first
+    
+    look.is_published = false
+    look.save
+  end
+
+  test "algolia index flinker algolia if she become with look published" do
+    Look.update_all(is_published:false)
+    flinker = flinkers(:betty)
+    
+    assert_equal 0, flinker.looks.published.count
+    Flinker.any_instance.expects(:index!)
+    look = flinker.looks.first
+    
+    look.is_published = true
+    look.save
+  end
+  
   private
 
   def new_flinker

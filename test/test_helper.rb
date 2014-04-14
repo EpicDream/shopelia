@@ -18,6 +18,8 @@ class ActiveSupport::TestCase
   setup do
     FollowNotificationWorker.stubs(:perform_in) #cause wait in test env, sidekiq bug?
     ENV["API_KEY"] = developers(:prixing).api_key
+    Flinker.any_instance.stubs(:remove_from_index!)
+    Flinker.any_instance.stubs(:index!)
   end
 
   def json_response
