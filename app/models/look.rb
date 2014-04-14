@@ -20,6 +20,7 @@ class Look < ActiveRecord::Base
   before_validation :generate_uuid
   before_validation :find_or_create_hashtag
   after_save :update_flinker_looks_count
+  after_update :may_reindex_flinker, if: -> { is_published_changed? }
   before_update :touch_flink_published_at, if: -> { is_published_changed? }
   
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
@@ -153,5 +154,14 @@ class Look < ActiveRecord::Base
 
   def update_flinker_looks_count
     self.flinker.update_attribute :looks_count, self.flinker.looks.where(is_published:true).count
+  end
+  
+  def may_reindex_flinker
+    count = self.flinker.looks.published.count
+    if count.zero?
+      self.flinker.remove_from_index!
+    elsif count == 1
+      self.flinker.index!
+    end
   end
 end
