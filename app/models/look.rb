@@ -86,6 +86,7 @@ class Look < ActiveRecord::Base
   
   def self.search_for_api keywords
     return where(id:nil) if keywords.empty?
+    keywords = keywords.compact.map{ |keyword| keyword.delete('#') }
     published.with_hashtags(keywords)
     .order('flink_published_at desc')
   end
