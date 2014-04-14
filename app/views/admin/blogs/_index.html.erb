@@ -1,6 +1,12 @@
 <%= image_tag 'admin/love.png', class:'heart-overlay', id:'heart-overlay'%>
 <%= will_paginate @blogs %>
 <table class="blogs-table">
+  <thead>
+    <th colspan="4">Blog</th>
+    <th colspan="4">Actions</th>
+    <th colspan="2">Looks</th>
+    <th colspan="1">Intégré depuis</th>
+  </thead>
   <tbody>
     <% @blogs.each do |blog| %>
       <tr>
@@ -34,6 +40,8 @@
           <span class="can-comment" title="Des commentaires peuvent être postés sur ce blog">
             <i class="icon-comment icon-white"></i>
           </span>
+          <% else %>
+            &nbsp;
           <% end %>
         </td>
         <td>
@@ -46,6 +54,12 @@
             <i><%= Look.published_of_blog(blog).count %></i>
           </span>
         </td>
+        <td>
+          <span class="created-since" title="Créé depuis">
+            <%= distance_of_time_in_words(blog.created_at.to_date, Date.today)%>
+          </span>
+        </td>
+        
       </tr>
     <% end %>
   </tbody>
