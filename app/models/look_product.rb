@@ -24,7 +24,7 @@ class LookProduct < ActiveRecord::Base
     dic["codes"].sort
   end
 
-  def create_hashtags_and_assign_to_look#TODO:move in Hashtag
+  def create_hashtags_and_assign_to_look
     return true unless self.code && self.brand
     strings = [self.brand]
     strings += [:en, :fr].map { |locale| I18n.t("flink.products.#{self.code}", locale: locale) }
