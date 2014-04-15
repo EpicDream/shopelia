@@ -35,4 +35,11 @@ class Api::Flink::FollowersControllerTest < ActionController::TestCase
     assert_equal [flinkers(:boop).id, @fanny.id], flinkers.map { |f| f["id"] }
   end
   
+  test "get html for iframe followers count on Flink" do
+    get :count, username:'bettyusername'
+    
+    assert_response :success
+    assert_equal flinkers(:betty), assigns(:flinker)
+  end
+  
 end
