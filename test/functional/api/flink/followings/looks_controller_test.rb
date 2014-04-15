@@ -35,7 +35,7 @@ class Api::Flink::Followings::LooksControllerTest < ActionController::TestCase
   test "looks of current flinker followings published between dates" do
     follow flinkers(:betty)
     after = 3.days.ago.to_i
-    before = 1.day.ago.to_i
+    before = 1.day.ago.to_i - 3600
      
     get :index, format: :json, per_page:20, flink_published_after:after, flink_published_before:before
     
