@@ -63,7 +63,10 @@ en:
       skort: "Skort"
       'total look': "Total Look"
       playsuit: "Playsuit"
-      
+      kimono: "Kimono"
+      sneakers: "Sneakers"
+      cluth: "Cluth"
+      body: "Body"
   placeholders:
     user:
       email: "Your email"
