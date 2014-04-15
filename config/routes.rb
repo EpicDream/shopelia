@@ -222,6 +222,7 @@ Shopelia::Application.routes.draw do
         resources :looks, only: :index
       end
       resources :themes, :only => [:index, :show]
+      get 'followers_count' => "followers#count"
     end
   end
 
