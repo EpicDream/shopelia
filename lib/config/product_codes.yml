@@ -44,6 +44,10 @@ codes:
   - cardigan
   - skort
   - total look
+  - kimono
+  - sneakers
+  - cluth
+  - body
 translations:
   pull:
     FR: Pull
@@ -177,3 +181,15 @@ translations:
   'total look':
     FR: Total Look
     UK: Total Look    
+  kimono:
+    FR: Kimono
+    UK: Kimono
+  sneakers:
+    FR: Baskets
+    UK: Sneakers
+  cluth:
+    FR: Pochette
+    UK: Cluth
+  body:
+    FR: Body
+    UK: Body
