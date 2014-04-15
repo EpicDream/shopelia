@@ -100,6 +100,32 @@ class LookProductTest < ActiveSupport::TestCase
     assert_equal ["Handkerchief", "philiplim", "Pochette"].to_set, @look.hashtags.map(&:name).to_set
   end
   
+  test "change brand should update related hashtag name if name not already taken" do
+    product = LookProduct.create(code:"handkerchief", brand:"Magic Brand", look_id:@look.id)
+    hashtag = Hashtag.find_by_name("MagicBrand")
+    
+    assert_no_difference('Hashtag.count') do
+      product.update_attributes(brand:"New Brand")
+    end
+    
+    assert_equal "NewBrand", hashtag.reload.name
+  end
+  
+  test "change brand should assign new hashtag looks, and destroy old hashtag" do
+    hashtag = Hashtag.create!(name:"NewBrand")
+    
+    product = LookProduct.create(code:"handkerchief", brand:"Magic Brand", look_id:@look.id)
+    
+    assert_difference('Hashtag.count', -1) do
+      product.update_attributes(brand:"New Brand")
+    end
+    
+    @look.reload
+    
+    assert_equal 3, @look.hashtags.count
+    assert @look.hashtags.include?(hashtag)
+  end
+  
   private
 
   def example_feed

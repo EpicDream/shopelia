@@ -16,7 +16,8 @@ class LookProduct < ActiveRecord::Base
   before_validation :build_from_feed, if:Proc.new{ |item| item.feed.present? }
   before_validation :ensure_brand_or_product
 
-  after_save :create_hashtags_and_assign_to_look
+  after_create :create_hashtags_and_assign_to_look
+  after_update :update_hashtag, if: -> { brand_changed? }
   
   def self.codes
     dic = YAML.load(File.open(CODES))
@@ -25,12 +26,13 @@ class LookProduct < ActiveRecord::Base
 
   def create_hashtags_and_assign_to_look
     return true unless self.code && self.brand
-    hashtags = [Hashtag.find_or_create_by_name(self.brand)]
-    hashtags += [:en, :fr].map { |locale| 
-      name = I18n.t("flink.products.#{self.code}", locale: locale) 
-      Hashtag.find_or_create_by_name(name) 
-    }
-    self.look.hashtags << hashtags
+    strings = [self.brand]
+    strings += [:en, :fr].map { |locale| I18n.t("flink.products.#{self.code}", locale: locale) }
+    self.look.hashtags << Hashtag.find_or_create_from_strings(strings)
+  end
+  
+  def update_hashtag
+    Hashtag.update_with_name(brand_was, self.brand)
   end
   
   private
