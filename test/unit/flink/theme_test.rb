@@ -24,4 +24,27 @@ class ThemeTest < ActiveSupport::TestCase
     assert_equal [theme_univ.title, theme_it.title].to_set, themes.map(&:title).to_set
   end
   
+  test "titles for display" do
+    theme = themes(:mode)
+
+    assert_equal "La mode c'est fun", theme.title_for_display
+    assert_equal "Carrément", theme.subtitle_for_display
+  end
+  
+  test "english titles for display" do
+    theme = themes(:mode)
+    
+    assert_equal "Fashion is fun", theme.title_for_display(:en)
+    assert_equal "Really!", theme.subtitle_for_display(:en)
+  end
+  
+  test "blank titles for display" do
+    theme = themes(:mode)
+    theme.update_attributes(en_title:"<styles></styles>")
+    theme.update_attributes(en_subtitle:"<styles></styles>")
+    
+    assert theme.title_for_display(:en).blank?
+    assert theme.subtitle_for_display(:en).blank?
+  end
+  
 end

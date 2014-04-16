@@ -54,11 +54,22 @@ class Theme < ActiveRecord::Base
     self.flinkers.destroy(flinker)
   end
   
-  def title_for_display
-    title.scan(/<style\s.*?>(.*?)<\/style>/).flatten.join if title
+  def title_for_display lang=nil
+    attribute = lang ? "#{lang}_title" : :title
+    title_string_for_display(attribute)
+  end
+  
+  def subtitle_for_display lang=nil
+    attribute = lang ? "#{lang}_subtitle" : :subtitle
+    title_string_for_display(attribute)
   end
   
   private
+  
+  def title_string_for_display attribute
+    title = send(attribute)
+    title.scan(/<style\s.*?>(.*?)<\/style>/).flatten.join if title
+  end
   
   def find_or_create_hashtag
     self.hashtags = self.hashtags.map { |hashtag|  

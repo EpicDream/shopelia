@@ -1,15 +1,15 @@
 mode:
-  title: "La mode c'est fun"
-  subtitle: "Carrément"
-  en_title: "Fashion is fun"
-  en_subtitle: "Really!"
+  title: "<styles><style font='HelveticaNeue-Bold' size='24'>La mode c'est fun</style></styles>"
+  subtitle: "<styles><style font='HelveticaNeue-Bold' size='24'>Carrément</style></styles>"
+  en_title: "<styles><style font='HelveticaNeue-Bold' size='24'>Fashion is fun</style></styles>"
+  en_subtitle: "<styles><style font='HelveticaNeue-Bold' size='24'>Really!</style></styles>"
   position: 1
   published: true
 sexy:
-  title: "Sexy girls"
-  subtitle: "Hot"
-  en_title: "Sexy girls EN"
-  en_subtitle: "Hot EN"
+  title: "<styles><style font='HelveticaNeue-Bold' size='24'>Sexy girls</style></styles>"
+  subtitle: "<styles><style font='HelveticaNeue-Bold' size='24'>Chaud</style></styles>"
+  en_title: "<styles><style font='HelveticaNeue-Bold' size='24'>Sexy girls yep</style></styles>"
+  en_subtitle: "<styles><style font='HelveticaNeue-Bold' size='24'>Hot</style></styles>"
   position: 2
   published: true
 sacamains:

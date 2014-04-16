@@ -52,9 +52,10 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
   def sign_in_by_email
     flinker = Flinker.find_for_database_authentication(email:params[:email])
     return unauthorized unless flinker && flinker.valid_password?(params[:password])
-    
     sign_in(:flinker, flinker)
     flinker.ensure_authentication_token!
+    update_country_iso
+    update_lang_iso
     json_for(flinker)
   end
   
