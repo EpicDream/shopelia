@@ -5,11 +5,11 @@ class ThemeSerializer < ActiveModel::Serializer
   attributes :looks, :flinkers
 
   def title
-    scope && scope[:en] ? object.en_title : object.title
+    scope && scope[:en] && !object.en_title.blank? ? object.en_title : object.title
   end
   
   def subtitle
-    scope && scope[:en] ? object.en_subtitle : object.subtitle
+    scope && scope[:en] && !object.en_subtitle.blank? ? object.en_subtitle : object.subtitle
   end
   
   def cover_large
