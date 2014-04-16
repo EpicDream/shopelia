@@ -17,4 +17,8 @@ class Country < ActiveRecord::Base
     where(iso:'GB').first
   end
   
+  def self.fr
+    where(iso:'FR').first
+  end
+  
 end

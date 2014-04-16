@@ -46,4 +46,11 @@ class ThemeSerializerTest < ActiveSupport::TestCase
     assert_equal 2, object[:flinkers_count]
   end
   
+  test "title and subtitle function of user iso lang" do
+    object = ThemeSerializer.new(@theme, scope:{ en:true }).as_json[:theme]
+
+    assert_equal "Fashion is fun", object[:title]
+    assert_equal "Really!", object[:subtitle]
+  end
+  
 end

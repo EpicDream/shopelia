@@ -5,7 +5,7 @@ class Flinker < ActiveRecord::Base
   
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
-  attr_accessible :country_iso, :universal, :lang_iso, :country_id, :verified
+  attr_accessible :country_iso, :universal, :lang_iso, :verified
   attr_accessor :avatar_url, :country_iso
 
   devise :database_authenticatable, :registerable, :recoverable
@@ -103,6 +103,10 @@ class Flinker < ActiveRecord::Base
   def cover_image
     look = self.looks.published.order('flink_published_at desc').limit(1).first
     look && look.image_for_cover
+  end
+  
+  def english_language?
+    lang_iso != "fr_FR"
   end
   
   private

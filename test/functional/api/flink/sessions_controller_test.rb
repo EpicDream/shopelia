@@ -110,15 +110,15 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
   
   test "update lang iso code" do
     fanny = flinkers(:fanny)
-    @request.env["X-Flink-User-Language"] = "fr-FR"
+    @request.env["X-Flink-User-Language"] = "de-DE"
     sign_in fanny
     
-    assert_equal 'en-GB', fanny.lang_iso
+    assert_equal 'fr_FR', fanny.lang_iso
     
     put :update, format: :json
     
     assert_response :success
-    assert_equal 'fr-FR', fanny.reload.lang_iso
+    assert_equal 'de-DE', fanny.reload.lang_iso
   end
   
   test "destroy flinker devices after sign out" do
