@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140410092236) do
+ActiveRecord::Schema.define(:version => 20140416090307) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -773,6 +773,8 @@ ActiveRecord::Schema.define(:version => 20140410092236) do
     t.text     "subtitle"
     t.integer  "cover_height",    :default => 100
     t.boolean  "dev_publication", :default => false
+    t.text     "en_title"
+    t.text     "en_subtitle"
   end
 
   create_table "traces", :force => true do |t|

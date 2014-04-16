@@ -1,7 +1,8 @@
 class Theme < ActiveRecord::Base
   acts_as_list
   
-  attr_accessible :title, :rank, :published, :position, :subtitle, :cover_height, :dev_publication
+  attr_accessible :rank, :published, :position, :cover_height, :dev_publication
+  attr_accessible :title, :en_title, :subtitle, :en_subtitle
   attr_accessible :theme_cover_attributes, :hashtags_attributes, :country_ids
   attr_accessor :theme_cover_attributes
   

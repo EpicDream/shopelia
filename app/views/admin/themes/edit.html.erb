@@ -58,6 +58,22 @@
         <%= link_to 'Effacer', '#', id:'title-reset', class:'titles-reset' %>
       </div>
     </div>
+    
+    <div class="block-wrapper">
+      <%= f.label :en_title, 'Titre Anglais' %>
+      <p class="en-title-block">
+        <% if @theme.en_title.blank? %>
+          <span class="font-tag">HelveticaNeue</span>
+          <%= text_field_tag nil, '', class:'en-title-part', 'data-font' => 'HelveticaNeue' %>
+        <% end %>
+      </p>
+      <%= f.text_area :en_title %>
+      <div class="en-title-style-selects">
+        <%= select_tag nil, options_for_select(fonts_for_select, selected:'HelveticaNeue'), id:'en-title-font-select' %>
+        <%= select_tag nil, options_for_select(fonts_sizes_for_select, selected:20), id:'en-title-fontsize-select' %>
+        <%= link_to 'Effacer', '#', id:'en-title-reset', class:'titles-reset' %>
+      </div>
+    </div>
 
     <div class="block-wrapper">
       <%= f.label :subtitle, 'Sous titre' %>
@@ -75,20 +91,21 @@
       </div>
     </div>
     
-    <!-- <div class="block-wrapper">
-      <%= f.label :hashtags, ' Hashtags' %>
-      <div class="hashtags-block">
-        <%= f.fields_for :hashtags do |ff| %>
-          <p>
-            <%= ff.text_field :name, class: "hashtag-input" %>
-            <%= ff.label :_destroy, 'x', class:'hashtag-destroy-label' %>
-            <%= ff.check_box :_destroy, class:'hashtag-destroy-checkbox' %>
-          </p>
+    <div class="block-wrapper">
+      <%= f.label :en_subtitle, 'Sous titre anglais' %>
+      <p class="en-subtitle-block">
+        <% if @theme.en_subtitle.blank? %>
+          <span class="font-tag">HelveticaNeue-Thin</span>
+          <%= text_field_tag nil, '', class:'en-subtitle-part', 'data-font' => 'HelveticaNeue-Thin' %>
         <% end %>
-        <br/>
-        <%= f.submit '+', class:"btn hashtag-submit" %>
+      </p>
+      <%= f.text_area :en_subtitle %>
+      <div class="en-subtitle-style-selects">
+        <%= select_tag nil, options_for_select(fonts_for_select, selected:'HelveticaNeue-Thin'), id:'en-subtitle-font-select' %>
+        <%= select_tag nil, options_for_select(fonts_sizes_for_select, selected:14), id:'en-subtitle-fontsize-select' %>
+        <%= link_to 'Effacer', '#', id:'en-subtitle-reset', class:'en-subtitles-reset' %>
       </div>
-    </div> -->
+    </div>
     
     <div class="block-wrapper">
       <%= f.label :looks, 'Looks', id:'looks-label' %>
