@@ -33,21 +33,21 @@ class FlinkerMerge
   def self.merge_from_csv csv_path, col_sep=";"
     CSV.foreach(csv_path, col_sep:col_sep) do |row|
       next unless row[0] && row[1]
-      url, email = row[0].gsub!(/\/$/, '').strip, row[1].strip
+      url, email = row[0].gsub(/\/$/, '').strip, row[1].strip
       host = URI.parse(url).host
       
-      targets = Flinker.where('url ~* ? or url ~*', host, host.gsub(/www\./, ''))
+      targets = Flinker.where('url ~* ? or url ~* ?', host, host.gsub(/www\./, ''))
       flinkers = Flinker.where(email:email)
       
       unless targets.count == 1
-        puts "Many flinker with url #{url}, SKIPPED" if flinkers.count > 1
-        puts "Flinker with url #{url} not found, SKIPPED" if flinkers.count == 0
+        puts "Many flinker with url #{url}, SKIPPED" if targets.count > 1
+        puts "Flinker with url #{url} not found, SKIPPED" if targets.count == 0
         next
       end
       
       unless flinkers.count == 1
-        puts "Many flinkers with email : #{email}, SKIPPED" if targets.count > 1
-        puts "Flinker with email : #{email} not found, SKIPPED" if targets.count == 0
+        puts "Many flinkers with email : #{email}, SKIPPED" if flinkers.count > 1
+        puts "Flinker with email : #{email} not found, SKIPPED" if flinkers.count == 0
         next
       end
       
@@ -59,6 +59,7 @@ class FlinkerMerge
         next
       end
       
+      puts "#{flinker.email} => #{target.url}\n\n"
       new(flinker, target).merge
     end
     
