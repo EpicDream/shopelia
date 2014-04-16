@@ -1,11 +1,15 @@
 mode:
   title: "La mode c'est fun"
   subtitle: "Carrément"
+  en_title: "Fashion is fun"
+  en_subtitle: "Really!"
   position: 1
   published: true
 sexy:
   title: "Sexy girls"
   subtitle: "Hot"
+  en_title: "Sexy girls EN"
+  en_subtitle: "Hot EN"
   position: 2
   published: true
 sacamains:

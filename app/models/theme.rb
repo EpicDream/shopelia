@@ -22,7 +22,12 @@ class Theme < ActiveRecord::Base
     where(published:published, dev_publication:false)
   }
   scope :pre_published, -> { where(dev_publication:true) }
-  scope :pre_published_or_published, -> {where('dev_publication = ? or published = ?', true, true)}
+  scope :pre_published_or_published, -> { where('dev_publication = ? or published = ?', true, true) }
+  scope :for_country, -> (country) {
+    return unless country
+    joins('left outer join countries_themes on countries_themes.theme_id = themes.id').
+    where("not exists(select id from countries_themes where theme_id = themes.id) or countries_themes.country_id = #{country.id}")
+  }
   
   #NOTE:uniq => true seems not work on many to many with rails 3, so we use uniq index
   def append_look look

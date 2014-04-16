@@ -3,6 +3,14 @@ class ThemeSerializer < ActiveModel::Serializer
   attributes :cover_large, :cover_small, :cover_medium
   attributes :looks_count, :flinkers_count
   attributes :looks, :flinkers
+
+  def title
+    scope && scope[:en] ? object.en_title : object.title
+  end
+  
+  def subtitle
+    scope && scope[:en] ? object.en_subtitle : object.subtitle
+  end
   
   def cover_large
     cover_with_format(:large)

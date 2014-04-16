@@ -69,5 +69,18 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
     assert_equal 1, themes.count
     assert_equal theme.title, themes.first["title"]
   end
+  
+  test "get theme with titles in english if flinker is not french lang" do
+    @fanny.update_attributes(lang_iso:'de_DE')
+    
+    get :index, format: :json
+    
+    assert_response :success
+    
+    themes = json_response["themes"]
+    
+    assert_equal 2, themes.count
+    assert_equal ["Fashion is fun", "Sexy girls EN"].to_set, themes.map{ |t| t["title"] }.to_set
+  end
 
 end
