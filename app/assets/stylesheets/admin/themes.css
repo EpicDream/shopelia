@@ -318,7 +318,9 @@ div.theme-edit-overlay input[type=submit]{
   width:auto;
 }
 fieldset .title-style-selects,
-fieldset .subtitle-style-selects{
+fieldset .en-title-style-selects,
+fieldset .subtitle-style-selects,
+fieldset .en-subtitle-style-selects{
   display:inline-block;
   vertical-align:top;
   width:20%;
@@ -333,18 +335,24 @@ fieldset div[class*='style-selects'] select{
   font-size:12px;
 }
 fieldset #theme_title,
-fieldset #theme_subtitle{
+fieldset #theme_en_title,
+fieldset #theme_subtitle,
+fieldset #theme_en_subtitle{
   display:none;
 }
 fieldset p.title-block,
-fieldset p.subtitle-block{
+fieldset p.en-title-block,
+fieldset p.subtitle-block,
+fieldset p.en-subtitle-block{
   width:100%;
   display:inline-block;
   height:auto;
   margin-bottom:30px;
 }
 p.title-block span.font-tag,
-p.subtitle-block span.font-tag{
+p.en-title-block span.font-tag,
+p.subtitle-block span.font-tag,
+p.en-subtitle-block span.font-tag{
   background:#961E3F;
   font-size:12px;
   padding:2px;
@@ -358,11 +366,15 @@ p.subtitle-block span.font-tag{
   height:26px;
 }
 p.title-block input,
-p.subtitle-block input{
+p.en-title-block input,
+p.subtitle-block input,
+p.en-subtitle-block input{
   width:60%;
 }
 a.titles-reset,
-a.subtitles-reset{
+a.subtitles-reset,
+a.en-titles-reset,
+a.en-subtitles-reset{
   display:block;
 }
 table input.cover-height-input{

@@ -1,7 +1,7 @@
 var Theme = {
   
   titleWithFontBlock:function(fontName, type, title){
-    var title = title || '';
+    var title = title ? title.replace("'", "&rsquo;") : '';
     var type = type || 'title-part';
     var span = "<span class='font-tag'>" + fontName + "</span>";
     var input = "<input class='" + type + "' data-font='" + fontName + "' type='text' value='" + title +"'>";
@@ -37,7 +37,7 @@ var Theme = {
     var size = sizeRegexp.exec(title);
     var match = fontRegexp.exec(title);
     var i = 0;
-    
+
     while (match != null) {
       fonts[i] = match[1];
       values[i] = valueRegexp.exec(title)[1];
@@ -56,7 +56,9 @@ var Theme = {
   
   rebuildTitlesBlocks:function() {
     Theme.nodesFromTitle($("#theme_title").val(), 'title');
+    Theme.nodesFromTitle($("#theme_en_title").val(), 'en-title');
     Theme.nodesFromTitle($("#theme_subtitle").val(), 'subtitle');
+    Theme.nodesFromTitle($("#theme_en_subtitle").val(), 'en-subtitle');
   },
   
   refreshEditView:function() {
@@ -147,7 +149,11 @@ $(document).ready(function() {
     var form = $(this);
     
     $("#theme_title").val(Theme.markupForTitle('title'));
+    $("#theme_en_title").val(Theme.markupForTitle('en-title'));
+    
     $("#theme_subtitle").val(Theme.markupForTitle('subtitle'));
+    $("#theme_en_subtitle").val(Theme.markupForTitle('en-subtitle'));
+    
     $("#update-button").css("color", "#66A9FF");
     
     $.ajax({
@@ -172,6 +178,7 @@ $(document).ready(function() {
     });
   });
   
+  // Titles
   $(document).on("change", "#title-font-select", function(){
     $("p.title-block").append(Theme.titleWithFontBlock($(this).val()));
   });
@@ -187,6 +194,25 @@ $(document).ready(function() {
   $(document).on("click", "#subtitle-reset", function(){
     $("p.subtitle-block").children().remove();
   });
+  
+  // EN Titles
+  
+  $(document).on("change", "#en-title-font-select", function(){
+    $("p.en-title-block").append(Theme.titleWithFontBlock($(this).val()));
+  });
+  
+  $(document).on("change", "#en-subtitle-font-select", function(){
+    $("p.en-subtitle-block").append(Theme.titleWithFontBlock($(this).val(), 'en-subtitle-part'));
+  });  
+  
+  $(document).on("click", "#en-title-reset", function(){
+    $("p.en-title-block").children().remove();
+  });
+  
+  $(document).on("click", "#en-subtitle-reset", function(){
+    $("p.en-subtitle-block").children().remove();
+  });
+  
   
   $(document).on("change", ".hashtag-destroy-checkbox", function(){
     $(this).parents('p').hide();

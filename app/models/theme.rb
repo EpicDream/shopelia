@@ -1,7 +1,8 @@
 class Theme < ActiveRecord::Base
   acts_as_list
   
-  attr_accessible :title, :rank, :published, :position, :subtitle, :cover_height, :dev_publication
+  attr_accessible :rank, :published, :position, :cover_height, :dev_publication
+  attr_accessible :title, :en_title, :subtitle, :en_subtitle
   attr_accessible :theme_cover_attributes, :hashtags_attributes, :country_ids
   attr_accessor :theme_cover_attributes
   
@@ -17,7 +18,9 @@ class Theme < ActiveRecord::Base
   accepts_nested_attributes_for :theme_cover
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
   
-  scope :published, ->(published) { where(published:published, dev_publication:false) }
+  scope :published, ->(published) { 
+    where(published:published, dev_publication:false)
+  }
   scope :pre_published, -> { where(dev_publication:true) }
   scope :pre_published_or_published, -> {where('dev_publication = ? or published = ?', true, true)}
   
