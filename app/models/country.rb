@@ -13,4 +13,8 @@ class Country < ActiveRecord::Base
     where(iso:ALL_IN_USE)
   end
   
+  def self.en
+    where(iso:'GB').first
+  end
+  
 end

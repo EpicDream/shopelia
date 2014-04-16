@@ -2,27 +2,30 @@ class Api::Flink::ThemesController < Api::Flink::BaseController
   
   api :GET, "/themes", "Get themes with minimal informations"
   def index
-    render json: { themes: serialize(themes, scope: { use_cache: use_cache? }) }
+    render json: { themes: serialize(themes) }
   end
   
   api :GET, "/themes/<id>", "Get theme details, looks and/or flinkers"
   def show
-    render json: ThemeSerializer.new(Theme.find(params[:id]), scope:{ full:true, use_cache: use_cache? })
+    render json: ThemeSerializer.new(Theme.find(params[:id]), scope:{ full:true })
   end
   
   private
   
   def themes
-    unless use_cache?
+    if development?
       Theme.pre_published_or_published
     else
-      Theme.published(true)
+      themes = Theme.published(true)
+      country_id = current_flinker.country.try(:id) || Country.en.id
+      themes.delete_if { |theme|
+        theme.country_ids.any? && !theme.country_ids.include?(country_id) 
+      }
     end
   end
   
-  #TOFIX:How can we get a current flinker without device !!??
-  def use_cache?
-    current_flinker.device && current_flinker.device.real_user? 
+  def development?
+    current_flinker.device && !current_flinker.device.real_user? 
   end
 
 end

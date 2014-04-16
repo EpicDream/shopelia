@@ -17,7 +17,9 @@ class Theme < ActiveRecord::Base
   accepts_nested_attributes_for :theme_cover
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
   
-  scope :published, ->(published) { where(published:published, dev_publication:false) }
+  scope :published, ->(published) { 
+    where(published:published, dev_publication:false)
+  }
   scope :pre_published, -> { where(dev_publication:true) }
   scope :pre_published_or_published, -> {where('dev_publication = ? or published = ?', true, true)}
   
