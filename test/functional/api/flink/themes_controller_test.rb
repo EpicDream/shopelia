@@ -19,7 +19,7 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
     themes = json_response["themes"]
     
     assert_equal 2, themes.count
-    assert_equal ["La mode c'est fun", "Sexy girls"].to_set, themes.map{ |t| t["title"] }.to_set
+    assert_equal [themes(:mode).title, themes(:sexy).title].to_set, themes.map{ |t| t["title"] }.to_set
   end
   
   test "get theme detail" do
@@ -47,7 +47,7 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
     themes = json_response["themes"]
     
     assert_equal 3, themes.count
-    assert_equal ["La mode c'est fun", "Sexy girls", "Sacs à mains"].to_set, themes.map{ |t| t["title"] }.to_set
+    assert_equal Theme.all.map(&:title).to_set, themes.map{ |t| t["title"] }.to_set
   end
   
   test "get theme for specific country" do
@@ -80,7 +80,7 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
     themes = json_response["themes"]
     
     assert_equal 2, themes.count
-    assert_equal ["Fashion is fun", "Sexy girls EN"].to_set, themes.map{ |t| t["title"] }.to_set
+    assert_equal [themes(:mode).en_title, themes(:sexy).en_title].to_set, themes.map{ |t| t["title"] }.to_set
   end
 
 end

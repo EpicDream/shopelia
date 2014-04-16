@@ -49,8 +49,18 @@ class ThemeSerializerTest < ActiveSupport::TestCase
   test "title and subtitle function of user iso lang" do
     object = ThemeSerializer.new(@theme, scope:{ en:true }).as_json[:theme]
 
-    assert_equal "Fashion is fun", object[:title]
-    assert_equal "Really!", object[:subtitle]
+    assert_equal @theme.en_title, object[:title]
+    assert_equal @theme.en_subtitle, object[:subtitle]
+  end
+  
+  test "default lang (fr) if titles for display blanks" do
+    @theme.update_attributes(en_title:"<styles></styles>")
+    @theme.update_attributes(en_subtitle:"<styles></styles>")
+    
+    object = ThemeSerializer.new(@theme, scope:{ en:true }).as_json[:theme]
+
+    assert_equal @theme.title, object[:title]
+    assert_equal @theme.subtitle, object[:subtitle]
   end
   
 end
