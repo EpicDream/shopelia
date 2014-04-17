@@ -17,9 +17,9 @@ class Api::Flink::ThemesController < Api::Flink::BaseController
   
   def themes
     if development?
-      Theme.pre_published_or_published.for_country(current_flinker.country).order(THEME_ORDER)
+      Theme.pre_published_or_published.for_country(current_flinker.country)
     else
-      Theme.published(true).for_country(current_flinker.country).order(THEME_ORDER)
+      Theme.published(true).for_country(current_flinker.country)
     end
   end
   
