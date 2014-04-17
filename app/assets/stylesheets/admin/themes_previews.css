@@ -8,13 +8,17 @@
 }
 div.iphone-container{
   margin:40px auto 0 auto;
-  width:300px;
+  width:400px;
   border:1px solid #A3A3A3;
   border-radius:8px;
   padding:20px;
   background:white;
   max-height:500px;
   overflow-y:auto;
+}
+div.filters{
+  margin:80px;
+  float:left;
 }
 img{
   width:100%;
