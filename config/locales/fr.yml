@@ -410,6 +410,7 @@ fr:
       change: "Changement du mot de passe"
       send_instructions: "Recevoir les instructions"
       change_info: Entrez un nouveau mot de passe comportant au moins 5 caractères.
+      success_changed: Votre mot de passe a été mis à jour.
       instructions_sent: "Les informations pour réinitialiser votre mot de passe vous ont été envoyées par email. Nous vous invitons à consulter votre boite email (pensez à vérifier votre dossier SPAM)."
       instructions_fail: "Erreur dans l'email. Merci de vérifier et recommencer."
     cart_items:

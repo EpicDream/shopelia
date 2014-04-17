@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
-    home_index_path
+    home_index_path(:from_signin => true)
   end
 
   def after_sign_out_path_for(resource)
