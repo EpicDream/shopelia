@@ -3,7 +3,6 @@ class DeviseOverride::RegistrationsController < Devise::RegistrationsController
 
   def create
     build_resource
-
     if resource.save
       set_flash_message :notice, :signed_up if is_navigational_format?
       sign_up(resource_name, resource)
@@ -21,10 +20,6 @@ class DeviseOverride::RegistrationsController < Devise::RegistrationsController
   end
 
   protected
-
-  def after_update_path_for(resource)
-    root_path
-  end
 
   def after_sign_up_path_for(resource)
     session[:return_to] || home_index_path
@@ -47,4 +42,5 @@ class DeviseOverride::RegistrationsController < Devise::RegistrationsController
   def sign_up_params
     devise_parameter_sanitizer.sanitize(:sign_up)
   end
+    
 end

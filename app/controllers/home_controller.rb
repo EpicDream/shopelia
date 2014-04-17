@@ -2,8 +2,12 @@ class HomeController < ApplicationController
   layout 'about', :only => [:about]
 
   def index
-    logger.error request.original_url
-    redirect_to :root
+    if params[:from_signin]
+      render 'after_signin', layout:'flink'
+    else
+      logger.error request.original_url
+      redirect_to :root
+    end
   end
 
   def download

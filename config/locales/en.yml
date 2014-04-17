@@ -82,6 +82,7 @@ en:
     invalid_password_or_session_expiration: "The new password is not valid or your session has expired"
     password:
       change_info: Enter a new password of at least 5 characters.
+      success_changed: Your password has been updated.
       reset: "Initialize my password"
       change: "Password Change"
     
