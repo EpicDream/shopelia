@@ -1,0 +1,44 @@
+::-webkit-scrollbar{
+  background:transparent;
+  width: 8px;
+}
+::-webkit-scrollbar-thumb{
+  background: #D8D8D8;
+  border-radius:5px;
+}
+div.iphone-container{
+  margin:40px auto 0 auto;
+  width:300px;
+  border:1px solid #A3A3A3;
+  border-radius:8px;
+  padding:20px;
+  background:white;
+  max-height:500px;
+  overflow-y:auto;
+}
+img{
+  width:100%;
+}
+div.cover-wrapper{
+  position:relative;
+  color:snow;
+  font-family:Helvetica;
+  margin-bottom:1px;
+}
+div.titles{
+  width:100%;
+  position:absolute;
+  top:40%;
+  background:transparent;
+}
+p.title{
+  width:100%;
+  font-size:22px;
+  text-align:center;
+}
+p.subtitle{
+  font-size:18px;
+  text-align:center;
+}
+
+
