@@ -3,6 +3,7 @@ class HomeController < ApplicationController
 
   def index
     if params[:from_signin]
+      sign_out(current_flinker) if current_flinker
       render 'after_signin', layout:'flink'
     else
       logger.error request.original_url
