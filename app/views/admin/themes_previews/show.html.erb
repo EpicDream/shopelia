@@ -1,10 +1,17 @@
+<div class="filters">
+  <% unless params[:lang] == 'en' %>
+    <%= link_to 'Anglais', admin_themes_preview_path(lang:'en') %>
+  <% else %>
+    <%= link_to 'Français', admin_themes_preview_path %>
+  <% end %>
+</div>
 <div class="iphone-container">
   <% @themes.each do |theme| %>
     <div class="cover-wrapper">
       <%= image_tag theme.theme_cover.picture.url(:large) %>
       <div class="titles">
-        <p class="title"><%= theme.title_for_display %></p>
-        <p class="subtitle"><%= theme.subtitle_for_display %></p>
+        <p class="title"><%= theme.title_for_display(params[:lang]) %></p>
+        <p class="subtitle"><%= theme.subtitle_for_display(params[:lang]) %></p>
       </div>
     </div>
   <% end %>  
