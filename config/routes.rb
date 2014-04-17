@@ -82,6 +82,7 @@ Shopelia::Application.routes.draw do
       resources :look_images, only:[:index], controller:'themes/look_images'
       resources :flinkers, only:[:index, :create, :destroy], controller:'themes/flinkers'
     end
+    resource :themes_preview, only: :show
     resources :looks do
       get :publish, :on => :member
       get :reject, :on => :member

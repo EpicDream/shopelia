@@ -1,4 +1,5 @@
 class Api::Flink::ThemesController < Api::Flink::BaseController
+  THEME_ORDER = 'rank asc'
   
   api :GET, "/themes", "Get themes with minimal informations"
   def index
@@ -16,9 +17,9 @@ class Api::Flink::ThemesController < Api::Flink::BaseController
   
   def themes
     if development?
-      Theme.pre_published_or_published.for_country(current_flinker.country)
+      Theme.pre_published_or_published.for_country(current_flinker.country).order(THEME_ORDER)
     else
-      Theme.published(true).for_country(current_flinker.country)
+      Theme.published(true).for_country(current_flinker.country).order(THEME_ORDER)
     end
   end
   
