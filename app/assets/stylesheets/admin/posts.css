@@ -34,9 +34,10 @@ section.header table td{
   padding:10px;
   background:white;
   margin:20px 0 0 0;
-  height:300px;
+  height:340px;
   vertical-align:top;
   box-shadow:1px 1px 1px #999;
+  position:relative;
 }
 .column a div img {
   margin: 20px auto 2px auto;
@@ -67,14 +68,24 @@ section.header table td{
   opacity:0.7;
 }
 .column button.look-direct-reject{
-  margin-bottom:5px;
-  width:30px;
-  padding:0;
-  float:right;
+  position:absolute;
+  top:4px;
+  right:4px;
+  padding:2px;
+  background:#96362F;
+  border-radius:1px;
 }
 .column span.look-published-at{
-  display:inline-block;
+  display:block;
   font-size:10px;
+  color:#787878;
+  margin-right:5px;
+  font-style:italic;
+}
+.column span.look-username{
+  display:block;
+  font-size:12px;
+  max-width:80%;
   color:#992E7D;
   margin-right:5px;
 }
