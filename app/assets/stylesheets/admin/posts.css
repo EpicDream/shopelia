@@ -29,17 +29,20 @@ section.header table td{
   padding:5px;
 }
 .column {
-  width: 30%;
+  width: 20%;
   display:inline-block;
   padding:10px;
   background:white;
   margin:20px 0 0 0;
   height:300px;
   vertical-align:top;
+  box-shadow:1px 1px 1px #999;
 }
 .column a div img {
-  margin: 0 auto;
-  max-height:280px;
+  margin: 20px auto 2px auto;
+  display:block;
+  max-height:260px;
+  border-radius:2px;
 }
 .column a div{
   position:relative;
@@ -72,9 +75,8 @@ section.header table td{
 .column span.look-published-at{
   display:inline-block;
   font-size:10px;
-  color:#838383;
+  color:#992E7D;
   margin-right:5px;
-  font-style:italic;
 }
 .filters{
   float:right;
