@@ -5,10 +5,10 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
   
   setup do
     @fanny = flinkers(:fanny)
-    sign_in @fanny
     Theme.all.each { |theme| 
       theme.send(:assign_default_cover)
     }
+    @request.env["X-Flink-User-Language"] = "fr_FR"
   end
 
   test "get themes published with minimal informations" do
@@ -23,6 +23,8 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
   end
   
   test "get theme detail" do
+    sign_in @fanny
+    
     theme = Theme.first
     theme.looks << Look.first(3)
     theme.flinkers << Flinker.first(2)
@@ -38,6 +40,7 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
   end
   
   test "get themes pre published only if current flinker device is dev" do
+    sign_in @fanny
     @fanny.device.update_attributes(is_dev:true)
     
     get :index, format: :json
@@ -51,6 +54,9 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
   end
   
   test "get theme for specific country" do
+    sign_in @fanny
+    @request.env["X-Flink-Country-Iso"] = "IT"
+    
     Theme.all.each { |theme| 
       theme.countries << countries(:france)
     }
@@ -58,8 +64,6 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
     theme = Theme.first
     theme.countries << countries(:italy)
     theme.save!
-    @fanny.country = countries(:italy)
-    @fanny.save!
     
     get :index, format: :json
     
@@ -71,7 +75,7 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
   end
   
   test "get theme with titles in english if flinker is not french lang" do
-    @fanny.update_attributes(lang_iso:'de_DE')
+    @request.env["X-Flink-User-Language"] = "de_DE"
     
     get :index, format: :json
     
