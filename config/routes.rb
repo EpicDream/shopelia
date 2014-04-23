@@ -224,6 +224,10 @@ Shopelia::Application.routes.draw do
       end
       resources :themes, :only => [:index, :show]
       get 'followers_count' => "followers#count"
+      
+      scope '/ws' do
+        get 'followers_count' => "web_services/followers#count"
+      end
     end
   end
 
