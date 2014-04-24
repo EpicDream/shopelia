@@ -9,7 +9,7 @@ class WebService::FlinkerSerializer < ActiveModel::Serializer
   end
 
   def serializable_hash
-    Rails.cache.fetch(object, race_condition_ttl:10) do
+    Rails.cache.fetch([:ws, :flinker, :serializer, object.uuid], race_condition_ttl:10, expires_in:30.minutes) do
       super
     end
   end
