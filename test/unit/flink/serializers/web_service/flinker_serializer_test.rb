@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class WS::FlinkerSerializerTest < ActiveSupport::TestCase
+class WebService::FlinkerSerializerTest < ActiveSupport::TestCase
   
   setup do
     @flinker = flinkers(:betty)
@@ -8,7 +8,7 @@ class WS::FlinkerSerializerTest < ActiveSupport::TestCase
   end
   
   test "serialize flinker" do
-    serializer = WS::FlinkerSerializer.new(@flinker)
+    serializer = WebService::FlinkerSerializer.new(@flinker)
     flinker = serializer.as_json
     
     assert_equal 8, flinker[:uuid].size
