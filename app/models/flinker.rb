@@ -29,6 +29,7 @@ class Flinker < ActiveRecord::Base
 
   before_save :ensure_authentication_token
   before_create :country_from_iso_code, unless: -> { self.country_iso.blank? }
+  before_create :assign_uuid
   after_create :follow_staff_picked
   before_validation :set_avatar
   before_destroy ->(record) {
@@ -110,6 +111,10 @@ class Flinker < ActiveRecord::Base
   end
   
   private
+  
+  def assign_uuid
+    self.uuid = SecureRandom.hex(4)
+  end
   
   def set_avatar
     self.avatar = URI.parse(self.avatar_url) if self.avatar_url.present?
