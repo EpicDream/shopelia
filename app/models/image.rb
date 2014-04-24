@@ -1,7 +1,7 @@
 require 'paper_clip_patch'
 
 class Image < ActiveRecord::Base
-  SIZES = { pico:["50x50>", :jpg], small:["200x200>", :jpg], large:["1200x1200>", :jpg]}
+  SIZES = { pico:["50x50>", :jpg], small:["320x", :jpg], large:["1200x1200>", :jpg]}
   
   attr_accessible :url, :display_order, :picture
   alias_attribute :sizes, :picture_sizes
