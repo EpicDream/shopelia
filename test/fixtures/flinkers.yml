@@ -20,6 +20,7 @@ betty:
   staff_pick: true
   looks_count: 1
   lang_iso: 'fr_FR'
+  uuid: "z3t459o0"
 
 lilou:
   name: LilouName
