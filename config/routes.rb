@@ -226,7 +226,7 @@ Shopelia::Application.routes.draw do
       get 'followers_count' => "followers#count"
       
       scope '/ws' do
-        get 'followers_count' => "web_services/followers#count"
+        get 'flinkers' => "web_services/flinkers#show"
       end
     end
   end

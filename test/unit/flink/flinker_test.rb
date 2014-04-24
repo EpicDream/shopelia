@@ -133,6 +133,13 @@ class FlinkerTest < ActiveSupport::TestCase
     look.save
   end
   
+  test "assign uuid on create" do
+    flinker = new_flinker
+    
+    assert flinker.save
+    assert flinker.uuid && flinker.uuid.size == 8
+  end
+  
   private
 
   def new_flinker
