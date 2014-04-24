@@ -5,7 +5,7 @@ class Api::Flink::WebServices::FlinkersController < Api::Flink::BaseController
     flinker = Flinker.find_by_uuid params[:uuid]
 
     if flinker
-      render json:WS::FlinkerSerializer.new(flinker), status:200
+      render json:WebService::FlinkerSerializer.new(flinker), status:200
     else
       render json:{}, status: 404
     end
