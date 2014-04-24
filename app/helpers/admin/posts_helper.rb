@@ -10,7 +10,9 @@ module Admin::PostsHelper
   
   def look_preview post
     link_to content_tag(:div) { 
-      image_tag(post.look.look_images.first.picture(:large)) + 
+      url = post.look.look_images.first.picture(:large) if post.look.look_images.first
+      url ||= post.images.first
+      image_tag(url) + 
       content_tag(:p, post.title, class:"post-title")
     }, admin_post_path(post)
   end
