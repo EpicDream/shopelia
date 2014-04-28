@@ -50,7 +50,8 @@ class FlinkerTest < ActiveSupport::TestCase
   
   test "it should auto follow french staff picked flinkers if none of its country" do 
     @flinker.country_id = countries(:morocco).id
-
+    FollowNotificationWorker.expects(:perform_in).never
+        
     assert_difference "FlinkerFollow.count", 3 do
       @flinker.save
     end

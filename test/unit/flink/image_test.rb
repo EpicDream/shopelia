@@ -18,7 +18,7 @@ class ImageTest < ActiveSupport::TestCase
   
   test "build images sizes as json field" do
     image = @image.reload
-    sizes = {pico:"33x50",small:"133x200",large:"650x975"}
+    sizes = {pico:"33x50",small:"320x480",large:"650x975"}
     assert_equal sizes.to_json, @image.picture_sizes
   end
 

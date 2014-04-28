@@ -125,7 +125,7 @@ class Flinker < ActiveRecord::Base
     country = Country::FRANCE if !country || Flinker.publishers.staff_pick.of_country(country).count.zero?
     flinkers = Flinker.publishers.staff_pick.of_country_or_universal(country).limit(25)
     flinkers.each do |flinker|
-      FlinkerFollow.create(flinker_id:self.id, follow_id:flinker.id)
+      FlinkerFollow.create(flinker_id:self.id, follow_id:flinker.id, skip_notification:true)
     end
   end
 
