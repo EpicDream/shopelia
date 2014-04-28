@@ -13,7 +13,7 @@ class WebService::FlinkerSerializerTest < ActiveSupport::TestCase
     
     assert_equal 8, flinker[:uuid].size
     assert_equal "bettyusername", flinker[:username]
-    assert_equal 1, flinker[:counters][:looks]
+    assert_equal 2, flinker[:counters][:looks]
     assert_equal 1, flinker[:counters][:followers]
     assert_equal 2, flinker[:counters][:likes]
   end

@@ -23,7 +23,7 @@ class Api::Flink::WebServices::FlinkersControllerTest < ActionController::TestCa
     
     assert_equal 'z3t459o0', flinker["uuid"]
     assert_equal "bettyusername", flinker["username"]
-    assert_equal 1, flinker["counters"]["looks"]
+    assert_equal 2, flinker["counters"]["looks"]
     assert_equal 1, flinker["counters"]["followers"]
     assert_equal 2, flinker["counters"]["likes"]
   end

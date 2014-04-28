@@ -110,6 +110,11 @@ class Flinker < ActiveRecord::Base
     lang_iso != "fr_FR"
   end
   
+  def self.similar_to flinker
+    ids = connection.execute(FlinkerSql.similarities(flinker)).map { |h| h["id"] }
+    Flinker.where(id:ids)
+  end
+  
   private
   
   def assign_uuid

@@ -36,6 +36,12 @@ class ActiveSupport::TestCase
   def follow publisher, flinker=@flinker
     FlinkerFollow.create!(flinker_id:flinker.id, follow_id:publisher.id)
   end
+  
+  def like flinker, looks
+    looks.each do |look|
+      FlinkerLike.create(flinker_id:flinker.id, resource_type:FlinkerLike::LOOK, resource_id:look.id)
+    end
+  end
 
   def populate_looks_for publishers
     Look.destroy_all

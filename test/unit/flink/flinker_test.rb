@@ -72,7 +72,7 @@ class FlinkerTest < ActiveSupport::TestCase
     flinker = flinkers(:betty)
     flinker.looks.first.update_attributes(is_published:false)
     
-    assert_equal 0, flinker.activities_counts["looks"]
+    assert_equal 1, flinker.activities_counts["looks"]
   end
   
   test "username must only contain (. or letter or digit or - or _)" do
@@ -112,7 +112,7 @@ class FlinkerTest < ActiveSupport::TestCase
   end
   
   test "remove from flinker algolia index if no more looks" do
-    flinker = flinkers(:betty)
+    flinker = flinkers(:lilou)
 
     assert_equal 1, flinker.looks.published.count
     Flinker.any_instance.expects(:remove_from_index!)
@@ -139,6 +139,21 @@ class FlinkerTest < ActiveSupport::TestCase
     
     assert flinker.save
     assert flinker.uuid && flinker.uuid.size == 8
+  end
+  
+  test "similars flinkers, who likes looks of same publishers" do
+    FlinkerLike.destroy_all
+    
+    nana = flinkers(:nana)
+    fanny = flinkers(:fanny)
+    boop = flinkers(:boop)
+    like(nana, [looks(:agadir), looks(:quimper)])
+    like(fanny, [looks(:thaiti)])
+    like(boop, [looks(:thaiti), looks(:quimper)])
+
+    flinkers = Flinker.similar_to(nana)
+     
+    assert_equal [fanny, boop].to_set, flinkers.to_set
   end
   
   private
