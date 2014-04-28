@@ -22,7 +22,7 @@ class Blog < ActiveRecord::Base
   scope :without_posts_since, ->(date) { 
     where("not exists (select id from posts where posts.blog_id = blogs.id and posts.published_at >= '#{date}')") 
   }
-  scope :without_posts_since_15_days, -> { without_posts_since(Date.today - 15.days)}
+  scope :without_posts_since_one_month, -> { without_posts_since(Date.today - 1.month)}
   scope :scraped, ->(scraped=true) { where(scraped:scraped) }
   scope :not_scraped, -> { scraped(false) }
   scope :skipped, ->(skipped=true) { where(skipped:skipped) }
@@ -33,6 +33,9 @@ class Blog < ActiveRecord::Base
   scope :without_look_published, -> { 
     where('not exists(select posts.id from posts join looks on looks.id = posts.look_id 
     and looks.is_published = ? and posts.blog_id = blogs.id)', true)
+  }
+  scope :recent, -> {
+    where('created_at >= ?', Date.today - 1.month)
   }
   
   def fetch
