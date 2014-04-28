@@ -29,3 +29,4 @@ public/images
 dump.rdb
 .ruby-version
 app/mailers/tmp
+public/flinkers.csv
