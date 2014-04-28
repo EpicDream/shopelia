@@ -34,6 +34,9 @@ class Blog < ActiveRecord::Base
     where('not exists(select posts.id from posts join looks on looks.id = posts.look_id 
     and looks.is_published = ? and posts.blog_id = blogs.id)', true)
   }
+  scope :recent, -> {
+    where('created_at >= ?', Date.today - 1.month)
+  }
   
   def fetch
     self.update_attributes(scraped:true) unless self.scraped

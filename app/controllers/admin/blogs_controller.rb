@@ -44,7 +44,7 @@ class Admin::BlogsController < Admin::AdminController
   
   def validates_scope
     @scopes = params[:scope] ? params[:scope].split('.') : [:scraped]
-    valid = ['scraped', 'scraped.without_posts_since_one_month', 'scraped.without_look_published', 'skipped', nil].include?(params[:scope])
+    valid = ['scraped', 'scraped.recent', 'scraped.without_posts_since_one_month', 'scraped.without_look_published', 'skipped', nil].include?(params[:scope])
     redirect_to :root unless valid
   end
   

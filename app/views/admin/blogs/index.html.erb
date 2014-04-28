@@ -11,9 +11,12 @@
   </div>
 
   <div class="radio-filters">
-    <input type='radio' name='scope' value='scraped' checked=checked>
+      <input type='radio' name='scope' value='scraped' checked=checked>
       <span>Scrapés</span>
       <span>(<%= Blog.scraped.count %>)</span>
+      <input type='radio' name='scope' value='scraped.recent'>
+      <span>Intégrés récemment</span>
+      <span>(<%= Blog.recent.count %>)</span>
       <input type='radio' name='scope' value='scraped.without_posts_since_one_month'>
       <span>Sans articles depuis 1 mois</span>
       <span>(<%= Blog.scraped.without_posts_since_one_month.count %>)</span>
