@@ -30,7 +30,8 @@ class FlinkerSerializerTest < ActiveSupport::TestCase
   end
   
   test "flinker with cover image" do
-    look = @flinker.looks.first
+    looks(:thaiti).destroy
+    look = looks(:agadir)
     image = LookImage.new(url:"http://flink.io")
     image.look = look
     image.picture = File.new("#{Rails.root}/app/assets/images/admin/default-cover.png")
