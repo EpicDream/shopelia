@@ -10,7 +10,7 @@ class Image < ActiveRecord::Base
   
   has_attached_file :picture, 
                     :styles => SIZES,
-                    :convert_options => { :pico => "-quality 0", :small => "-quality 20", :large => "-quality 80" },
+                    :convert_options => { :pico => "-quality 0", :small => "-quality 80", :large => "-quality 80" },
                     :url  => "/images/:fmd5/:style/:md5.jpg",
                     :path => ":rails_root/public/images/:fmd5/:style/:md5.jpg"
                                         
