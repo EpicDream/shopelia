@@ -30,7 +30,10 @@ module ApplicationHelper
   end
   
   def themes_for_select opts={}
-    [[opts[:default], nil]] + Theme.all.map { |theme| [theme.title_for_display, theme.id] }
+    [[opts[:default], nil]] + 
+    Theme.order(:created_at).map { |theme| 
+      ["#{theme.title_for_display} - #{l(theme.created_at, format: '%d-%m-%Y')}", theme.id] 
+    }
   end
   
   def fonts_for_select
