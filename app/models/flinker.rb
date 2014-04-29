@@ -111,11 +111,10 @@ class Flinker < ActiveRecord::Base
   end
   
   def self.similar_to flinker
-    flinkers = Flinker.find_by_sql(FlinkerSql.similarities(flinker, 10))
-    if (total = flinkers.count) < 10
-      flinkers += Flinker.find_by_sql(FlinkerSql.flinker_last_registered_order_by_likes(20 - total))
-    end
-    flinkers
+    similars = Flinker.find_by_sql(FlinkerSql.similarities(flinker, 10))
+    offset = 10 - similars.count
+    last = Flinker.find_by_sql(FlinkerSql.flinker_last_registered_order_by_likes(10 + offset))
+    similars + last
   end
   
   private
