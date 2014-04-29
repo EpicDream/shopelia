@@ -15,7 +15,7 @@ class Api::Flink::TopFlinkersControllerTest < ActionController::TestCase
     get :index, format: :json
 
     assert_response :success
-    assert_equal 2, json_response["flinkers"].count
+    assert_equal 6, json_response["flinkers"].count
   end
   
 end
