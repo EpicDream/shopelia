@@ -1,4 +1,24 @@
 <article class="coolbox">
+  <h3>Les looks les plus aimés depuis une semaine</h3>
+  <table class="tops">
+    <thead>
+      <th>Flinker</th>
+      <th>Look</th>
+      <th>Nombre de likes</th>
+    </thead>
+    <tbody>
+      <% @likes.each do |like| %>
+        <% look = Look.where(id:like.look_id).includes(:flinker).first%>
+        <tr>
+          <td><%= link_to look.flinker.username, admin_flinker_path(look.flinker) %></td>
+          <td><%= link_to look.name, admin_look_path(look) %></td>
+          <td><%= like.count %></td>
+        </tr>
+      <% end %>    
+    </tbody>
+  </table>
+</article>
+<article class="coolbox">
   <h3>Les looks les plus aimés hier</h3>
   <table class="tops">
     <thead>
