@@ -142,6 +142,7 @@ class FlinkerTest < ActiveSupport::TestCase
   end
   
   test "similars flinkers, who likes looks of same publishers" do
+    ActiveRecord::Base.connection.execute("CREATE EXTENSION intarray;")
     FlinkerLike.destroy_all
     
     nana = flinkers(:nana)
@@ -153,7 +154,7 @@ class FlinkerTest < ActiveSupport::TestCase
 
     flinkers = Flinker.similar_to(nana)
      
-    assert_equal [fanny, boop].to_set, flinkers.to_set
+    assert_equal [boop, fanny], flinkers
   end
   
   private

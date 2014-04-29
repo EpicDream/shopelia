@@ -21,4 +21,10 @@ class Country < ActiveRecord::Base
     where(iso:'FR').first
   end
   
+  def self.ids
+    Rails.cache.fetch([:country, :ids], expires_in: 1.month) {
+      Country.pluck(:id)
+    }
+  end
+  
 end

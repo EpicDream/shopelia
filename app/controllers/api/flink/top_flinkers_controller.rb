@@ -7,7 +7,7 @@ class Api::Flink::TopFlinkersController < Api::Flink::BaseController
   private
   
   def flinkers
-    flinkers = FlinkerLike.top_likers.map(&:flinker)
+    flinkers = Flinker.similar_to(current_flinker)
     ActiveModel::ArraySerializer.new(flinkers)
   end
   

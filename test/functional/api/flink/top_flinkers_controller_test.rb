@@ -7,11 +7,15 @@ class Api::Flink::TopFlinkersControllerTest < ActionController::TestCase
     sign_in flinkers(:fanny)
   end
 
-  test "it should get publishing flinkers" do
+  test "get suggestions for current flinker friends" do
+    like(flinkers(:nana), [looks(:agadir), looks(:quimper)])
+    like(flinkers(:fanny), [looks(:thaiti)])
+    like(flinkers(:boop), [looks(:thaiti), looks(:quimper)])
+    
     get :index, format: :json
 
     assert_response :success
-    assert_equal 3, json_response["flinkers"].count
+    assert_equal 2, json_response["flinkers"].count
   end
   
 end

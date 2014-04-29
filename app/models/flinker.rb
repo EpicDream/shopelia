@@ -111,8 +111,7 @@ class Flinker < ActiveRecord::Base
   end
   
   def self.similar_to flinker
-    ids = connection.execute(FlinkerSql.similarities(flinker)).map { |h| h["id"] }
-    Flinker.where(id:ids)
+    Flinker.find_by_sql(FlinkerSql.similarities(flinker))
   end
   
   private
