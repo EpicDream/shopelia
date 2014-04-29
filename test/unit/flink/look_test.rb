@@ -22,7 +22,7 @@ class LookTest < ActiveSupport::TestCase
     @look.is_published = true
     @look.save
 
-    assert_equal 1, @flinker.reload.looks_count
+    assert_equal 2, @flinker.reload.looks_count
   end
 
   test "it should set liked_by" do
@@ -46,7 +46,7 @@ class LookTest < ActiveSupport::TestCase
     
     looks = Look.of_flinker_followings(flinker)
     
-    assert_equal 2, looks.count
-    assert_equal ["Agadir", "Quimper"].to_set, looks.map(&:name).to_set
+    assert_equal 3, looks.count
+    assert_equal ["Agadir", "Quimper", "Thaiti"].to_set, looks.map(&:name).to_set
   end
 end

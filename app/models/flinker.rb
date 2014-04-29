@@ -110,6 +110,13 @@ class Flinker < ActiveRecord::Base
     lang_iso != "fr_FR"
   end
   
+  def self.similar_to flinker
+    similars = Flinker.find_by_sql(FlinkerSql.similarities(flinker, 10))
+    offset = 10 - similars.count
+    last = Flinker.find_by_sql(FlinkerSql.flinker_last_registered_order_by_likes(10 + offset))
+    similars + last
+  end
+  
   private
   
   def assign_uuid

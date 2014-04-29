@@ -20,6 +20,7 @@ class ActiveSupport::TestCase
     ENV["API_KEY"] = developers(:prixing).api_key
     Flinker.any_instance.stubs(:remove_from_index!)
     Flinker.any_instance.stubs(:index!)
+    ActiveRecord::Base.connection.execute("CREATE EXTENSION intarray;")
   end
 
   def json_response
@@ -35,6 +36,12 @@ class ActiveSupport::TestCase
   
   def follow publisher, flinker=@flinker
     FlinkerFollow.create!(flinker_id:flinker.id, follow_id:publisher.id)
+  end
+  
+  def like flinker, looks
+    looks.each do |look|
+      FlinkerLike.create(flinker_id:flinker.id, resource_type:FlinkerLike::LOOK, resource_id:look.id)
+    end
   end
 
   def populate_looks_for publishers
