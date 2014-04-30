@@ -1,3 +1,5 @@
+require 'gibbon'
+
 class Mailchimper
   API_KEY = "7b99b1f5e7477e1423c78cd74827363a-us3"
   
