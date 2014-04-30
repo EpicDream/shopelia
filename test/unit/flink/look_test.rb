@@ -50,20 +50,4 @@ class LookTest < ActiveSupport::TestCase
     assert_equal ["Agadir", "Quimper", "Thaiti"].to_set, looks.map(&:name).to_set
   end
   
-  test "send push notification when a new look is published to publisher followers" do
-    look = looks(:brest)
-    fanny = flinkers(:fanny)
-    lilou = flinkers(:lilou)
-    boop = flinkers(:boop)
-    
-    follow(boop, fanny)
-    follow(boop, lilou)
-
-    assert !look.published?
-    
-    NewLooksNotificationWorker.expects(:perform_async).with([fanny.id, lilou.id], boop.id)
-
-    look.publish
-  end
-  
 end

@@ -21,7 +21,6 @@ class Look < ActiveRecord::Base
   before_validation :find_or_create_hashtag
   after_save :update_flinker_looks_count
   after_update :may_reindex_flinker, if: -> { is_published_changed? }
-  after_update :send_new_look_published_notification, if: -> { is_published_changed? && is_published? }
   before_update :touch_flink_published_at, if: -> { is_published_changed? }
   
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
@@ -140,10 +139,6 @@ class Look < ActiveRecord::Base
   end
 
   private
-  
-  def send_new_look_published_notification
-    NewLooksNotificationWorker.perform_async self.flinker.followers.pluck(:id), self.flinker.id
-  end
   
   def may_destroy_hashtag record
     return if record.new_record? #bug rails on callback after_remove, pass here even when add and not remove
