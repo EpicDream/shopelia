@@ -117,6 +117,10 @@ class Flinker < ActiveRecord::Base
     similars + last
   end
   
+  def self.top_likers_of_publisher_of_look look
+    Flinker.find_by_sql FlinkerSql.top_likers_of_publisher_of_look(look)
+  end
+  
   private
   
   def assign_uuid

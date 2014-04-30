@@ -1,6 +1,7 @@
 class Api::Flink::FollowingsController < Api::Flink::BaseController
   FLINKERS_ORDER = "username asc"
-
+  before_filter :touch_session_open, only: :index
+  
   def index
     flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
     render json: {
@@ -22,4 +23,9 @@ class Api::Flink::FollowingsController < Api::Flink::BaseController
     head :no_content
   end
   
+  private
+  
+  def touch_session_open
+    current_flinker && current_flinker.touch(:last_session_open_at)
+  end
 end
