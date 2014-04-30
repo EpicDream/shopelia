@@ -61,3 +61,20 @@ class Flink::SignupNotification < Flink::Notification
   end
   
 end
+
+class Flink::NewLooksNotification < Flink::Notification
+  
+  def initialize flinker, publisher
+    @flinker = flinker
+    @publisher = publisher
+  end
+  
+  def message
+    begin
+      I18n.translate!("flink.notification.new_looks", username:@publisher.name, :locale => @flinker.lang_iso, raise:true)
+    rescue I18n::MissingTranslationData
+      I18n.translate!("flink.notification.new_looks", username:@publisher.name, :locale => "en_GB", raise:true)
+    end
+  end
+  
+end
