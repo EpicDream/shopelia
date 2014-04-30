@@ -4,3 +4,4 @@ en_GB:
       follow: "@%{username} is following you!"
       mention: "You were mentioned by @%{username}"
       signup: "Your facebook friend %{username} has joined Flink"
+      new_looks: "@%{username} has released a new look : %{look_name}"

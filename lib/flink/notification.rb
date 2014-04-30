@@ -64,16 +64,29 @@ end
 
 class Flink::NewLooksNotification < Flink::Notification
   
-  def initialize flinker, publisher
+  def initialize flinker, look
     @flinker = flinker
-    @publisher = publisher
+    @look = look
+    @publisher = look.flinker
   end
   
   def message
     begin
-      I18n.translate!("flink.notification.new_looks", username:@publisher.name, :locale => @flinker.lang_iso, raise:true)
+      I18n.translate!(
+        "flink.notification.new_looks", 
+        username: @publisher.name,
+        look_name: @look.name,
+        locale: @flinker.lang_iso, 
+        raise:true
+      )
     rescue I18n::MissingTranslationData
-      I18n.translate!("flink.notification.new_looks", username:@publisher.name, :locale => "en_GB", raise:true)
+      I18n.translate!(
+        "flink.notification.new_looks", 
+        username: @publisher.name, 
+        look_name: @look.name,
+        locale: "en_GB", 
+        raise:true
+      )
     end
   end
   

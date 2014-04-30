@@ -4,3 +4,4 @@ de_DE:
       follow: "@%{username} folgt Ihnen!"
       mention: "Sie wurden von @%{username} erwähnt"
       signup: "Ihr Facebook-Freund %{username} hat Flink beigetreten"    
+      new_looks: "@%{username} hat einen neuen Look veröffentlicht : %{look_name}"

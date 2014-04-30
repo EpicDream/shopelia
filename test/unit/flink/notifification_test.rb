@@ -62,15 +62,14 @@ class Flink::NotificationTest < ActiveSupport::TestCase
   
   test "new looks notification" do
     flinker = flinkers(:lilou)
-    publisher = flinkers(:betty)
+    look = looks(:agadir)
     
     ["fr_FR", "en_US", "en_GB", "it_IT", "de_DE", "es_ES"].each do |lang|
       flinker.update_attributes!(lang_iso:lang)
-      notif = Flink::NewLooksNotification.new(flinker, publisher)
+      notif = Flink::NewLooksNotification.new(flinker, look)
       
       assert_equal new_looks_message_for(flinker), notif.message, "Failure for #{lang}"
     end
-    
   end
   
   private
@@ -110,12 +109,12 @@ class Flink::NotificationTest < ActiveSupport::TestCase
   
   def new_looks_message_for flinker
     case flinker.lang_iso
-    when 'fr_FR' then return "@Betty a publié un nouveau look"
-    when 'es_ES' then return "Usted fue mencionado por @Lilou"
-    when 'it_IT' then return "Lei è stato citato da @Lilou"
-    when 'de_DE' then return "Sie wurden von @Lilou erwähnt"
-    when 'en_US' then return "You were mentioned by @Lilou"
-    when 'en_GB' then return "You were mentioned by @Lilou"
+    when 'fr_FR' then return "@Betty a publié un nouveau look : Agadir"
+    when 'es_ES' then return "@Betty ha lanzado una nueva mirada : Agadir"
+    when 'it_IT' then return "@Betty ha rilasciato un nuovo look : Agadir"
+    when 'de_DE' then return "@Betty hat einen neuen Look veröffentlicht : Agadir"
+    when 'en_US' then return "@Betty has released a new look : Agadir"
+    when 'en_GB' then return "@Betty has released a new look : Agadir"
     end  
   end
   
