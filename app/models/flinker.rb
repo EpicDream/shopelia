@@ -114,7 +114,7 @@ class Flinker < ActiveRecord::Base
     similars = Flinker.find_by_sql(FlinkerSql.similarities(flinker, 10))
     offset = 10 - similars.count
     last = Flinker.find_by_sql(FlinkerSql.flinker_last_registered_order_by_likes(10 + offset))
-    similars + last
+    similars.shuffle + last.shuffle
   end
   
   private
