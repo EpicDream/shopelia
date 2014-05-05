@@ -22,6 +22,7 @@ class Look < ActiveRecord::Base
   after_save :update_flinker_looks_count
   after_update :may_reindex_flinker, if: -> { is_published_changed? }
   before_update :touch_flink_published_at, if: -> { is_published_changed? }
+  after_update :revive_flinkers, if: -> { is_published_changed? && is_published? }
   
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
   
@@ -176,4 +177,10 @@ class Look < ActiveRecord::Base
       self.flinker.index!
     end
   end
+  
+  def revive_flinkers
+    flinkers = Flinker.top_likers_of_publisher_of_look(self)
+    Revival.revive!(flinkers, self)
+  end
+  
 end
