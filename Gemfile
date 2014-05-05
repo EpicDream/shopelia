@@ -61,9 +61,8 @@ gem 'bitly'
 gem 'geocoder', require:false
 gem 'rmagick', require:'RMagick'
 gem 'acts_as_list'
+gem 'gibbon', require:false
 
-# Gems used only for assets and not required
-# in production environments by default.
 group :assets do
   gem 'bootstrap-sass', '~> 2.3.1.0'
   gem 'sass-rails', '~> 3.2.3'
