@@ -152,8 +152,8 @@ class FlinkerTest < ActiveSupport::TestCase
     like(boop, [looks(:thaiti), looks(:quimper)])
 
     flinkers = Flinker.similar_to(nana)
-     
-    assert_equal [boop, fanny], flinkers.take(2)
+
+    assert_equal [boop, fanny].to_set, flinkers.take(2).to_set
     assert_equal Flinker.count - 1, flinkers.count
   end
   
