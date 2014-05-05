@@ -64,5 +64,6 @@ fanny:
   username: fanny
   name: "Fanny"
   lang_iso: 'fr_FR'
+  timezone: 'America/New_York'
   
   
