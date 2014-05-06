@@ -179,8 +179,9 @@ class Look < ActiveRecord::Base
   end
   
   def revive_flinkers
-    flinkers = Flinker.top_likers_of_publisher_of_look(self)
-    Revival.revive!(flinkers, self)
+    #WAIT NEW RELEASE
+    #flinkers = Flinker.top_likers_of_publisher_of_look(self)
+    #Revival.revive!(flinkers, self)
   end
   
 end
