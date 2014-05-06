@@ -9,6 +9,7 @@ class Api::ApiController < ActionController::Base
   before_filter :retrieve_country_iso
   before_filter :retrieve_user_language
   before_filter :complete_flinker_params
+  before_filter :retrieve_user_timezone
   
   rescue_from ActiveRecord::RecordNotFound do |e|
     render :json => {:error => "Object not found"}, :status => :not_found
@@ -59,6 +60,10 @@ class Api::ApiController < ActionController::Base
   
   def retrieve_user_language
     params[:"x-user-language"] = request.headers["X-Flink-User-Language"]
+  end
+  
+  def retrieve_user_timezone
+    params[:"x-user-timezone"] = request.headers["X-Flink-User-Timezone"]
   end
   
   def complete_flinker_params

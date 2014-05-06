@@ -1,11 +1,11 @@
 require 'flink/algolia'
 
 class Flinker < ActiveRecord::Base
-  include Algolia::FlinkerSearch unless Rails.env.test? #algolia webmock does not mock http request at all.
+  include Algolia::FlinkerSearch unless Rails.env.test?
   
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :username
-  attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick
-  attr_accessible :country_iso, :universal, :lang_iso, :verified, :can_comment
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :can_comment
+  attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick, :timezone
+  attr_accessible :country_iso, :universal, :lang_iso, :verified, :last_session_open_at, :last_revival_at
   attr_accessor :avatar_url, :country_iso
 
   devise :database_authenticatable, :registerable, :recoverable
@@ -115,6 +115,10 @@ class Flinker < ActiveRecord::Base
     offset = 10 - similars.count
     last = Flinker.find_by_sql(FlinkerSql.flinker_last_registered_order_by_likes(10 + offset))
     similars.shuffle + last.shuffle
+  end
+  
+  def self.top_likers_of_publisher_of_look look
+    Flinker.find_by_sql FlinkerSql.top_likers_of_publisher_of_look(look)
   end
   
   private

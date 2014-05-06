@@ -4,3 +4,4 @@ fr_FR:
       follow: "@%{username} te suit!"
       mention: "Tu as été mentionnée par @%{username}"
       signup: "Ton amie facebook %{username} a rejoint Flink"
+      new_looks: "@%{username} a publié un nouveau look : %{look_name}"

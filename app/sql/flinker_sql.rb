@@ -33,5 +33,23 @@ module FlinkerSql
     }
   end
   
+  def self.top_likers_of_publisher_of_look look
+    %Q{
+      select flinkrs.* from flinkers as flinkrs
+      join flinker_likes as fl on fl.flinker_id=flinkrs.id and fl.resource_id=#{look.id}
+      join looks on looks.id = fl.resource_id
+      join flinker_follows on flinker_follows.follow_id = looks.flinker_id and flinker_follows.flinker_id=flinkrs.id
+      where looks.flinker_id in(
+        select fliks.id from flinker_likes
+        join looks on looks.id = flinker_likes.resource_id
+        join flinkers as fliks on fliks.id = looks.flinker_id
+        where flinker_likes.flinker_id = flinkrs.id
+        group by fliks.id
+        order by count(*) desc
+        limit 3
+      );
+    }
+  end
+  
 end
 

@@ -10,8 +10,7 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     flinker = FlinkerAuthentication.facebook(params[:token])
     sign_in(:flinker, flinker)
     flinker.ensure_authentication_token!
-    update_country_iso
-    update_lang_iso
+    update_attributes_from_headers
     render json_for(flinker)
   rescue => e
     render unauthorized("Facebook token is invalid", e) and return if e.respond_to?(:code) && [400, 401].include?(e.code)
@@ -32,21 +31,18 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
   
   def update
     render unauthorized and return unless current_flinker
-    update_country_iso
-    update_lang_iso
+    update_attributes_from_headers
     FlinkerAuthentication.facebook(params[:token]) if params[:token]
     render json_for(current_flinker)
   end
   
   private
   
-  def update_country_iso
+  def update_attributes_from_headers
     current_flinker.country_iso = params[:"x-country-iso"]
     current_flinker.country_from_iso_code and current_flinker.save
-  end
-  
-  def update_lang_iso
     current_flinker.update_attributes(lang_iso:params[:"x-user-language"])
+    current_flinker.update_attributes(timezone:params[:"x-user-timezone"])
   end
   
   def sign_in_by_email
@@ -54,8 +50,7 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     return unauthorized unless flinker && flinker.valid_password?(params[:password])
     sign_in(:flinker, flinker)
     flinker.ensure_authentication_token!
-    update_country_iso
-    update_lang_iso
+    update_attributes_from_headers
     json_for(flinker)
   end
   

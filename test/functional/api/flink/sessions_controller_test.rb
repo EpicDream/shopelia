@@ -132,6 +132,19 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal 0, Device.of_flinker(fanny).count
   end
+  
+  test "update time zone" do
+    fanny = flinkers(:fanny)
+    @request.env["X-Flink-User-Timezone"] = "Europe/Paris"
+    sign_in fanny
+    
+    assert_equal 'America/New_York', fanny.timezone
+    
+    put :update, format: :json
+    
+    assert_response :success
+    assert_equal 'Europe/Paris', fanny.reload.timezone
+  end
 
 end
 

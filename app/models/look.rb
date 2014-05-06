@@ -22,6 +22,7 @@ class Look < ActiveRecord::Base
   after_save :update_flinker_looks_count
   after_update :may_reindex_flinker, if: -> { is_published_changed? }
   before_update :touch_flink_published_at, if: -> { is_published_changed? }
+  after_update :revive_flinkers, if: -> { is_published_changed? && is_published? }
   
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
   
@@ -80,6 +81,8 @@ class Look < ActiveRecord::Base
     joins(:flinker).where('flinkers.country_id = ?', country_id) unless country_id.blank?
   }
   
+  alias_attribute :published, :is_published
+  
   def self.search keywords, country_id=nil
     return where(id:nil) if keywords.empty?
     published.with_hashtags_strict(keywords)
@@ -131,6 +134,10 @@ class Look < ActiveRecord::Base
   def hashtags_as_strings
     hashtags.map(&:name).map { |hashtag| "##{hashtag}" }
   end
+  
+  def publish
+    update_attributes(is_published: true)
+  end
 
   private
   
@@ -170,4 +177,11 @@ class Look < ActiveRecord::Base
       self.flinker.index!
     end
   end
+  
+  def revive_flinkers
+    #WAIT NEW RELEASE
+    #flinkers = Flinker.top_likers_of_publisher_of_look(self)
+    #Revival.revive!(flinkers, self)
+  end
+  
 end

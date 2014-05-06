@@ -49,4 +49,11 @@ class Api::Flink::FollowingsControllerTest < ActionController::TestCase
     assert_equal flinkers(:betty).id, flinkers.first["id"]
   end
   
+  test "touch flinker last_session_open_at timestamp" do
+    get :index, format: :json
+    
+    @flinker.reload
+    assert @flinker.last_session_open_at.between?(Time.now - 10.seconds, Time.now)
+  end
+  
 end

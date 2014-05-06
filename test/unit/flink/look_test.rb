@@ -49,4 +49,17 @@ class LookTest < ActiveSupport::TestCase
     assert_equal 3, looks.count
     assert_equal ["Agadir", "Quimper", "Thaiti"].to_set, looks.map(&:name).to_set
   end
+  
+  test "send revivals after look published" do
+    @look.update_attributes(is_published:false)
+    @fanny = flinkers(:fanny)
+    follow(flinkers(:betty), @fanny)
+    like(@fanny, [@look])
+    
+    flinkers = Flinker.top_likers_of_publisher_of_look(@look)
+#WAIT NEW RELEASE    Revival.expects(:revive!).with(flinkers, @look)
+    
+    @look.update_attributes(is_published:true)
+  end
+  
 end

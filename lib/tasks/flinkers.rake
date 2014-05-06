@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-namespace :shopelia do
+namespace :flink do
   namespace :flinkers do
     
     desc "Reindex algolia flinkers index, by batch of 10000"
@@ -24,6 +24,15 @@ namespace :shopelia do
         flinker.avatar_url = blog.avatar_url
         flinker.country_id = Country.find_by_iso(blog.country).id
         flinker.save rescue nil
+      end
+    end
+    
+    desc "Bootstrap flinkers timezone from mixpanel csv"
+    task :bootstrap_timezones => :environment do
+      CSV.foreach("#{Rails.root}/db/timezones.csv") do |row|
+        next if row[1].blank?
+        next unless flinker = Flinker.find_by_id(row[0])
+        flinker.update_attributes(timezone:row[1])
       end
     end
   end

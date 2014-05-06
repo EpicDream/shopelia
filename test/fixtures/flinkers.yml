@@ -62,6 +62,8 @@ fanny:
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   is_publisher: false
   username: fanny
+  name: "Fanny"
   lang_iso: 'fr_FR'
+  timezone: 'America/New_York'
   
   
