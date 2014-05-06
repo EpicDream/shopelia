@@ -4,13 +4,13 @@ class RevivalTest < ActiveSupport::TestCase
   
   setup do
     @fanny = flinkers(:fanny)
-    @fanny.update_attributes(last_session_open_at: Time.now - 4.days, last_revival_at: Time.now - 2.weeks)
     @look = looks(:agadir)
   end
   
   test "revive!" do
     now = Time.at(1399274401)
     Time.stubs(:now).returns(now)
+    @fanny.update_attributes(last_session_open_at: Time.now - 4.days, last_revival_at: Time.now - 2.weeks)
     
     follow(flinkers(:betty), @fanny)
     like(@fanny, [@look])
@@ -19,13 +19,13 @@ class RevivalTest < ActiveSupport::TestCase
     NewLooksNotificationWorker.expects(:perform_in).with(23999, @fanny.id, @look.id)
     
     Revival.revive!(flinkers, @look)
-    
-    assert @fanny.reload.last_revival_at.between?(Time.now - 2, Time.now)
+    assert @fanny.reload.last_revival_at.between?(now - 4, now)
   end
   
   test "revive! at 10am local zone time today if before 10" do
     now = Time.at(1399274401)
     Time.stubs(:now).returns(now)
+    @fanny.update_attributes(last_session_open_at: Time.now - 4.days, last_revival_at: Time.now - 2.weeks)
     
     [["Europe/Paris", 2399], ["America/New_York", 23999]].each do |zone, offset|
       @fanny.timezone = zone
