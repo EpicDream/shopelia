@@ -45,3 +45,10 @@ table#flinkers a{
 table#flinkers a.flinker-url{
   font-size:12px;
 }
+form.edit_flinker label{
+  display:inline-block;
+  margin-right:20px;
+}
+form.edit_flinker input[type="checkbox"]{
+  display:inline-block;
+}

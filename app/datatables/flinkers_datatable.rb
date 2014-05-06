@@ -21,6 +21,7 @@ class FlinkersDatatable
     flinkers.map do |flinker|
       url = flinker.url || flinker.blog.try(:url)
       [
+        flinker.id,
         image_tag(flinker.avatar.blank? ? "empty.png" : flinker.avatar.url(:thumb), class:"avatar"),
         link_to(flinker.username || "-", admin_flinker_path(flinker)),
         link_to(flinker.name || "-", admin_flinker_path(flinker)),
