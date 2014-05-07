@@ -1,7 +1,7 @@
 class Admin::ThemesController < Admin::AdminController
 
   def index
-    @themes = Theme.order('position asc')
+    @themes = Theme.of_series(params[:series]).order('series desc, position asc')
   end
   
   def edit

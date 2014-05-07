@@ -47,4 +47,12 @@ class ThemeTest < ActiveSupport::TestCase
     assert theme.subtitle_for_display(:en).blank?
   end
   
+  test "on create theme series must be last series number" do
+    assert_equal 0, themes(:mode).series
+    themes(:mode).update_attributes(series:2)
+    
+    theme = Theme.create!(title:"Fashion")
+    assert_equal 2, theme.series
+  end
+  
 end

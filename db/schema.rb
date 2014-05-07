@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140505113651) do
+ActiveRecord::Schema.define(:version => 20140507094847) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -780,6 +780,7 @@ ActiveRecord::Schema.define(:version => 20140505113651) do
     t.boolean  "dev_publication", :default => false
     t.text     "en_title"
     t.text     "en_subtitle"
+    t.integer  "series",          :default => 0
   end
 
   create_table "traces", :force => true do |t|
