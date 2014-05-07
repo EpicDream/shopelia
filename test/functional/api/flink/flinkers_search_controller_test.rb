@@ -26,7 +26,7 @@ class Api::Flink::FlinkersSearchControllerTest < ActionController::TestCase
     get :index, username:nil, format: :json
 
     assert_response :success
-    assert_equal 6, json_response["flinkers"].count
+    assert_equal 7, json_response["flinkers"].count
   end
   
 end

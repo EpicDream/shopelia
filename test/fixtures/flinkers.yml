@@ -66,4 +66,11 @@ fanny:
   lang_iso: 'fr_FR'
   timezone: 'America/New_York'
   
+flinkhq:
+  email: "flinkhq@flink.io"
+  encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
+  is_publisher: false
+  username: flinkhq
+  name: "flinkhq"
+  
   

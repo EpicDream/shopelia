@@ -5,4 +5,9 @@ class Emailer < ActionMailer::Base
   		   :subject => "Reset Password",
   	     :from => "Flink Fashion Link <hello@flink.io>")
   end
+  
+  def after_signup flinker
+    @flinker = flinker
+  end
+  
 end

@@ -14,5 +14,4 @@ class MailPreview
     Emailer.password_reset(@resource).deliver
   end
   
-  
 end

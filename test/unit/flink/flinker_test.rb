@@ -154,7 +154,14 @@ class FlinkerTest < ActiveSupport::TestCase
     flinkers = Flinker.similar_to(nana)
 
     assert_equal [boop, fanny].to_set, flinkers.take(2).to_set
-    assert_equal Flinker.count - 1, flinkers.count
+    assert_equal Flinker.count - 2, flinkers.count
+  end
+  
+  test "send welcome email and autofollowed by @flinkHQ 3 days after account creation" do
+    flinker = new_flinker
+    
+    SignupWelcomeWorker.expects(:perform_in).with(3.days, Flinker.last.id + 1)
+    flinker.save!
   end
   
   private
