@@ -1,4 +1,24 @@
 <article class="coolbox">
+  <h3>Les utilisatrices les plus actives cette semaine</h3>
+  <table class="tops">
+    <thead>
+      <th>Avatar</th>
+      <th>Username</th>
+      <th>Nombre de likes</th>
+    </thead>
+    <tbody>
+      <% @top_active.each do |like| %>
+        <tr>
+          <td><img src="<%= like.flinker.avatar %>" class="avatar"></img></td>
+          <td><%= link_to like.flinker.username, admin_flinker_path(like.flinker) %></td>
+          <td><%= like.count %></td>
+        </tr>
+      <% end %>    
+    </tbody>
+  </table>
+</article>
+
+<article class="coolbox">
   <h3>Les looks les plus aimés depuis une semaine</h3>
   <table class="tops">
     <thead>
