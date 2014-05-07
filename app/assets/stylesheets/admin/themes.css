@@ -71,7 +71,12 @@ a.themes-preview-link{
   background:#695796;
   color:snow;
   text-align:center;
-  
+}
+a.series-link{
+  border:thin solid blue;
+  width:20px;
+  height:40px;
+  border-radius:60px;
 }
 
 /*Collection widget*/
