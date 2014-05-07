@@ -1,7 +1,7 @@
 it_IT:
   flink:
     notification:
-      follow: "@%{username} ti segue!"
-      mention: "Lei è stato citato da @%{username}"
-      signup: "Il tuo amico facebook %{username} ha aderito Flink"
-      new_looks: "@%{username} ha rilasciato un nuovo look : %{look_name}"          
+      follow: "@%{username} is following you!"
+      mention: "You were mentioned by @%{username}"
+      signup: "Your facebook friend %{username} has joined Flink"
+      new_looks: "@%{username} has released a new look : %{look_name}"

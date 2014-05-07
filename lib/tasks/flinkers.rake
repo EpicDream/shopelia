@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 namespace :flink do
   namespace :flinkers do
     
@@ -15,7 +13,7 @@ namespace :flink do
         blog.update_attribute :flinker_id, flinker.id
       end
     end
-
+    
     desc "Import data from blog objects"
     task :populate => :environment do
       Flinker.where(is_publisher:true).each do |flinker|
