@@ -28,6 +28,15 @@ class Statistic
     .limit(5)
   end
   
+  def self.top_active_flinkers from, to=nil, limit=20
+    to ||= from + 1.day
+    FlinkerLike.where('created_at::DATE >= ? and created_at::DATE < ?', from, to)
+    .group('flinker_id')
+    .select('flinker_id, count(*)')
+    .order('count desc')
+    .limit(limit)
+  end
+  
   private
   
   def to_ruby_date date
