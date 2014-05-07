@@ -49,7 +49,7 @@ class Flink::SignupNotification < Flink::Notification
   def initialize flinker, signed_up
     @flinker = flinker
     @signed_up = signed_up
-    @fb_signed_up = FacebookFriend.where(friend_flinker_id:@signed_up.id).first
+    @fb_signed_up = FacebookFriend.where(flinker_id:@signed_up.id).first
   end
   
   def message
