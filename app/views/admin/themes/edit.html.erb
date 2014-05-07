@@ -9,6 +9,7 @@
   
   <table>
     <thead>
+      <th>Série</th>
       <th>Hauteur</th>
       <th>Position</th>
       <th>Publication</th>
@@ -18,6 +19,9 @@
     </thead>
     <tbody>
       <tr>
+        <td>
+          <%= f.text_field :series, class:'series-input' %>
+        </td>
         <td>
           <%= f.text_field :cover_height, class:'cover-height-input' %>
         </td>

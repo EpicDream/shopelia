@@ -1,7 +1,7 @@
 class Theme < ActiveRecord::Base
   acts_as_list
   
-  attr_accessible :rank, :published, :position, :cover_height, :dev_publication
+  attr_accessible :rank, :published, :position, :cover_height, :dev_publication, :series
   attr_accessible :title, :en_title, :subtitle, :en_subtitle
   attr_accessible :theme_cover_attributes, :hashtags_attributes, :country_ids
   attr_accessor :theme_cover_attributes
@@ -13,6 +13,7 @@ class Theme < ActiveRecord::Base
   has_one :theme_cover, foreign_key: :resource_id, dependent: :destroy
   
   before_create :assign_default_cover, unless: -> { self.theme_cover }
+  before_create :assign_series
   before_validation :find_or_create_hashtag
   
   accepts_nested_attributes_for :theme_cover
@@ -20,6 +21,10 @@ class Theme < ActiveRecord::Base
   
   scope :published, ->(published) { 
     where(published:published, dev_publication:false)
+  }
+  scope :of_series, ->(series) {
+    series ||= Theme.last_series
+    where(series:series)
   }
   scope :pre_published, -> { where(dev_publication:true) }
   scope :pre_published_or_published, -> { where('dev_publication = ? or published = ?', true, true) }
@@ -64,7 +69,16 @@ class Theme < ActiveRecord::Base
     title_string_for_display(attribute)
   end
   
+  def self.last_series
+    theme = Theme.order('series desc').first
+    theme ? theme.series : 0
+  end
+  
   private
+  
+  def assign_series
+    self.series = Theme.last_series 
+  end
   
   def title_string_for_display attribute
     title = send(attribute)
