@@ -12,7 +12,8 @@ class Admin::FlinkersController < Admin::AdminController
   def show
     blog = Blog.find_by_flinker_id(@flinker.id)
     @stats = [
-      { name:"looks", value:@flinker.looks.where(is_published:true).count, type: :number }
+      { name:"looks", value:@flinker.looks.where(is_published:true).count, type: :number },
+      { name:"followers", value:@flinker.followers.count, type: :number }
     ]
     @stats << { name:"posts", value:blog.posts.count, type: :number } unless blog.nil?
   end

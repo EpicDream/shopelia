@@ -27,4 +27,12 @@
               %select.look-theme-select{id:"assign-look-to-theme", "data-look-id" => look.id}
                 =options_for_select(themes_for_select(default:"Ajouter à une collection"))
             = link_to image_tag(look.look_images.first.picture.url(:large), class:"thumb"), admin_look_path(look)
+  .row-fluid
+    .span12
+      %article.coolbox
+        %h3 Last liked looks
+        - @flinker.flinker_likes.order('created_at desc').limit(6).map(&:look).each do |look|
+          .img-block
+            %div.actions
+            = link_to image_tag(look.look_images.first.picture.url(:large), class:"thumb"), admin_look_path(look)
               
