@@ -1,3 +1,9 @@
 twitter:
   name: "twitter"
+facebook:
+  name: "facebook"
+mail:
+  name: "mail"
+openpost:
+  name: "openpost"
   

@@ -38,5 +38,9 @@ class ActiveRecord::Base
   def flink_destroy_follow_activities
     FollowActivity.destroy_related_to!(self)
   end
-
+  
+  def flink_create_share_activity
+    ShareActivity.create!(self)
+  end
+  
 end
