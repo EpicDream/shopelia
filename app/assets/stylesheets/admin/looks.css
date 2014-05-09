@@ -205,7 +205,12 @@ select.theme-select{
   top:5px;
   right:5px;
 }
-
+.highlight{
+  background:#FF58B4;
+  color:black;
+  border-radius:2px;
+  padding:2px;
+}
 /*Looks published index*/
 
 section.header table{

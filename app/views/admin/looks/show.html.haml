@@ -14,7 +14,7 @@
         = link_to @look.name, @look.url, target: "blank"
         - if @look.post.present?
           %br
-          = @look.post.content.html_safe
+          =highlighted_brands(@look.post.content, @brands).html_safe
       %article.coolbox
         %h3 Links
         - @look.post.links.each do |link|
