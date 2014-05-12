@@ -8,15 +8,17 @@ class CommentActivityTest < ActiveSupport::TestCase
   end
   
   test "create comment activity for followers of commenter only" do
-    follow(@commenter, flinkers(:elarch))
-    follow(@commenter, flinkers(:fanny))
+    Sidekiq::Testing.inline! do
+      follow(@commenter, flinkers(:elarch))
+      follow(@commenter, flinkers(:fanny))
     
-    assert_difference("CommentActivity.count", 2) do
-      Comment.create(body:"Yes!", look_id:looks(:agadir).id, flinker_id:@commenter.id)
+      assert_difference("CommentActivity.count", 2) do
+        Comment.create(body:"Yes!", look_id:looks(:agadir).id, flinker_id:@commenter.id)
+      end
+    
+      assert_equal 2, CommentActivity.count
+      assert_equal @commenter.followers.to_set, CommentActivity.all.map(&:target).to_set
     end
-    
-    assert_equal 2, CommentActivity.count
-    assert_equal @commenter.followers.to_set, CommentActivity.all.map(&:target).to_set
   end
   
   test "dont create comment activity if related timeline activity exists" do
