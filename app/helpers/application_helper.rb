@@ -31,7 +31,7 @@ module ApplicationHelper
   
   def themes_for_select opts={}
     [[opts[:default], nil]] + 
-    Theme.order(:created_at).map { |theme| 
+    Theme.where('created_at > ?', Time.now - 2.weeks).order(:created_at).map { |theme| 
       ["#{theme.title_for_display} - #{l(theme.created_at, format: '%d-%m-%Y')}", theme.id] 
     }
   end
