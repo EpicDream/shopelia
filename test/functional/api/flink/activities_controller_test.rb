@@ -41,20 +41,22 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
   end
   
   test "get comments activities related to current flinker" do
-    follow(flinkers(:boop), @fanny)
+    Sidekiq::Testing.inline! do
+      follow(flinkers(:boop), @fanny)
     
-    CommentActivity.create!(comments(:agadir)) #boop comment
+      CommentActivity.create!(comments(:agadir)) #boop comment
     
-    get :index, format: :json
+      get :index, format: :json
     
-    activity = json_response["activities"].first
+      activity = json_response["activities"].first
 
-    assert_response :success
-    assert_equal 1, json_response["activities"].count
-    assert_equal comments(:agadir).id, activity["comment_id"]
-    assert_equal comments(:agadir).look.uuid, activity["look_uuid"]
-    assert_equal "CommentActivity", activity["type"]
-    assert_equal flinkers(:boop).id, activity["flinker_id"]
+      assert_response :success
+      assert_equal 1, json_response["activities"].count
+      assert_equal comments(:agadir).id, activity["comment_id"]
+      assert_equal comments(:agadir).look.uuid, activity["look_uuid"]
+      assert_equal "CommentActivity", activity["type"]
+      assert_equal flinkers(:boop).id, activity["flinker_id"]
+    end
   end
   
   test "get likes activities related to current flinker" do
@@ -125,23 +127,26 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
   end
   
   test "get all different activities related to current flinker" do
-    follow(flinkers(:boop), @fanny)
-    
-    MentionActivity.create!(comments(:agadir))
-    FlinkerFollow.create(flinker_id:flinkers(:boop).id, follow_id:@fanny.id)
-    CommentActivity.create!(comments(:agadir))
-    LikeActivity.create!(flinker_likes(:boop_like))
-    FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
-    Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:fanny).id) #fanny comment
-    Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:nana).id) 
-    LookSharing.on("twitter").for(look_id:looks(:agadir).id, flinker_id:flinkers(:boop).id)
-    LookSharing.on("facebook").for(look_id:looks(:agadir).id, flinker_id:flinkers(:boop).id)
-    
-    get :index, format: :json
-    
-    activities = json_response["activities"]
+    Sidekiq::Testing.inline! do
 
-    assert_response :success
-    assert_equal 7, activities.map{ |activity| activity["type"] }.uniq.count
+      follow(flinkers(:boop), @fanny)
+    
+      MentionActivity.create!(comments(:agadir))
+      FlinkerFollow.create(flinker_id:flinkers(:boop).id, follow_id:@fanny.id)
+      CommentActivity.create!(comments(:agadir))
+      LikeActivity.create!(flinker_likes(:boop_like))
+      FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
+      Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:fanny).id) #fanny comment
+      Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:nana).id) 
+      LookSharing.on("twitter").for(look_id:looks(:agadir).id, flinker_id:flinkers(:boop).id)
+      LookSharing.on("facebook").for(look_id:looks(:agadir).id, flinker_id:flinkers(:boop).id)
+
+      get :index, format: :json
+    
+      activities = json_response["activities"]
+
+      assert_response :success
+      assert_equal 7, activities.map{ |activity| activity["type"] }.uniq.count
+    end
   end
 end

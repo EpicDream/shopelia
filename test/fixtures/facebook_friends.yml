@@ -29,10 +29,10 @@ bibi:
   sex: "female"
   flinker: fanny
 
-zoe:
+lilou:
   identifier: "9090909"
   picture: "http://zoe.jpg"
-  name: "Zoe"
+  name: "LilouName"
   sex: "female"
 
 nana:

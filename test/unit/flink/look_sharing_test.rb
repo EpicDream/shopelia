@@ -37,4 +37,15 @@ class LookSharingTest < ActiveSupport::TestCase
       LookSharing.on("mail").for(look_id:@look.id, flinker_id:@flinker.id)
     end
   end
+  
+  test "dont create share activity if device build <= 26 " do
+    follow(@flinker, flinkers(:fanny))
+    follow(@flinker, flinkers(:boop))
+    flinkers(:fanny).device.update_attributes(build:26)
+    
+    assert_no_difference('ShareActivity.count', 2) do
+      LookSharing.on("mail").for(look_id:@look.id, flinker_id:@flinker.id)
+    end
+  end
+  
 end

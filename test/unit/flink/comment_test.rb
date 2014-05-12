@@ -24,18 +24,21 @@ class CommentTest < ActiveSupport::TestCase
   end
   
   test "create comment should create comment activity for flinker followers" do
-    flinker = flinkers(:boop)
-    follow(flinker, flinkers(:elarch))
-    follow(flinker, flinkers(:fanny))
+    Sidekiq::Testing.inline! do
     
-    assert_difference('CommentActivity.count', 2) do
-      Comment.create(flinker_id:flinker.id, body:"comment", look_id:@look.id)
+      flinker = flinkers(:boop)
+      follow(flinker, flinkers(:elarch))
+      follow(flinker, flinkers(:fanny))
+    
+      assert_difference('CommentActivity.count', 2) do
+        Comment.create(flinker_id:flinker.id, body:"comment", look_id:@look.id)
+      end
+    
+      activity = CommentActivity.last
+      assert_equal flinker, activity.flinker
+      assert flinker.friends.include?(activity.target)
+      assert_equal Comment.last, activity.resource
     end
-    
-    activity = CommentActivity.last
-    assert_equal flinker, activity.flinker
-    assert flinker.friends.include?(activity.target)
-    assert_equal Comment.last, activity.resource
   end
   
   test "create comment should create mention activity for flinker if a flinker username is mentionned in comment" do

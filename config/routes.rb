@@ -5,6 +5,9 @@ Shopelia::Application.routes.draw do
 
   match "/terms" => "flink#terms"
   get "/flinkers/:id", to: redirect('/')
+  get "/themes/:id", to: redirect('/')
+  get "/themes", to: redirect('/')
+  
   get "comments/index"
 
   get "comments/create"
