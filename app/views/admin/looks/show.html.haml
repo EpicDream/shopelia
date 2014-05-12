@@ -42,8 +42,7 @@
           %i.icon-trash.icon-white
           Reject look
         = link_to 'Rénitialiser les images', reinitialize_images_admin_look_path(@look), id:"reinitialize-images", method:"put", confirm:"Confirmez"
-        %select.theme-select{id:"assign-to-theme", "data-look-id" => @look.id}
-          =options_for_select(themes_for_select(default:"Ajouter à une collection"))
+        = grouped_themes_for_select(@look)
         %hr  
         =render partial:'form'  
         %hr  

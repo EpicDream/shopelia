@@ -11,8 +11,6 @@
     <%= link_to image_tag(look.look_images.first.picture.url(:large)), admin_look_path(look) %>  
   </p>
   <p>
-    <%= select_tag 'assign-to-theme', 
-        options_for_select(themes_for_select(default:"Ajouter à une collection")),
-        "data-look-id" => look.id %>
+    <%= grouped_themes_for_select(look) %>
   </p>
 </div>

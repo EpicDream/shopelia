@@ -31,9 +31,21 @@ module ApplicationHelper
   
   def themes_for_select opts={}
     [[opts[:default], nil]] + 
-    Theme.where('created_at > ?', Time.now - 2.weeks).order(:created_at).map { |theme| 
+    Theme.where('series >= ?', Theme.last_series - 1).order(:created_at).map { |theme| 
       ["#{theme.title_for_display} - #{l(theme.created_at, format: '%d-%m-%Y')}", theme.id] 
     }
+  end
+  
+  def grouped_themes_for_select look
+    themes = Theme.where('series >= ?', Theme.last_series - 1).order(:created_at)
+    content_tag(:select, id:"assign-to-theme", "data-look-id" => look.id, class:"theme-select") do
+      content_tag(:option, "Ajouter à une collection") +
+      themes.group_by {|theme| theme.series }.map do |series, themes|
+        content_tag(:optgroup, label:"Série #{series}") do
+          options_for_select(themes.map{|t| ["#{t.title_for_display}", t.id] })
+        end
+      end.join.html_safe
+    end
   end
   
   def fonts_for_select
