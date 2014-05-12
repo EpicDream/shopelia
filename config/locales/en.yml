@@ -67,6 +67,9 @@ en:
       sneakers: "Sneakers"
       clutch: "Cluth"
       body: "Body"
+      bra: "Bra"
+      jumpsuit: "Jumpsuit"
+      jewelry: "Jewelry"
   placeholders:
     user:
       email: "Your email"
