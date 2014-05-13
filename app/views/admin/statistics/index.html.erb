@@ -2,13 +2,15 @@
   <h3>Les utilisatrices les plus actives cette semaine</h3>
   <table class="tops">
     <thead>
+      <th>Classement</th>
       <th>Avatar</th>
       <th>Username</th>
       <th>Nombre de likes</th>
     </thead>
     <tbody>
-      <% @top_active.each do |like| %>
+      <% @top_active.each_with_index do |like, index| %>
         <tr>
+          <td><%= index + 1 %></td>
           <td><img src="<%= like.flinker.avatar %>" class="avatar"></img></td>
           <td><%= link_to like.flinker.username, admin_flinker_path(like.flinker) %></td>
           <td><%= like.count %></td>

@@ -29,9 +29,13 @@ table thead th{
 }
 table.tops{
   width:100%;
+  display:block;
+  max-height:600px;
+  overflow-y:auto;
 }
 table.tops td{
   text-align:center;
+  min-width:200px;
 }
 .avatar{
   width:40px;
