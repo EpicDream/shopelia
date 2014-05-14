@@ -47,7 +47,7 @@ class FlinkersDatatable
     flinkers = flinkers.where("staff_pick = ?", @filters[:staff_pick] == 'yes') unless @filters[:staff_pick].blank?
     flinkers = flinkers.of_country(@filters[:country]) unless @filters[:country].blank?
     flinkers = flinkers.universals if @filters[:universal] && @filters[:universal] == 'yes'
-    flinkers = flinkers.where("name like :search or url like :search", search: "%#{params[:sSearch]}%") if params[:sSearch].present?
+    flinkers = flinkers.where("name like :search or url like :search or username like :search", search: "%#{params[:sSearch]}%") if params[:sSearch].present?
     flinkers.page(page).per_page(per_page)
   end
 
