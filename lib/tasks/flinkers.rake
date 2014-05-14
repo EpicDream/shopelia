@@ -33,5 +33,15 @@ namespace :flink do
         flinker.update_attributes(timezone:row[1])
       end
     end
+    
+    desc "Bootstrap flinkers cities from mixpanel csv"
+    task :bootstrap_timezones => :environment do
+      CSV.foreach("#{Rails.root}/db/flinkers_city.csv") do |row|
+        next if row[1].blank?
+        next unless flinker = Flinker.find_by_id(row[0])
+        # flinker.update_attributes(city:row[1])
+      end
+    end
+    
   end
 end
