@@ -41,5 +41,11 @@ table.tops td{
   width:40px;
   border-radius:20px;
 }
-
+.no-avatar{
+  display:inline-block;
+  width:40px;
+  height:40px;
+  border-radius:20px;
+  background:pink;
+}
 
