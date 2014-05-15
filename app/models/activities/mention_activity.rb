@@ -14,7 +14,7 @@ class MentionActivity < Activity
     text = comment.body
     usernames = text.scan(/@([\w\d\._-]+)/i).flatten
     if usernames.any? { |username| username =~ /flinkhq/i  }
-      Emailer.flinkhq_mention(comment)
+      Emailer.flinkhq_mention(comment).deliver
     end
     Flinker.where(username:usernames)
   end

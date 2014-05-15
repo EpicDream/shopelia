@@ -24,9 +24,9 @@ class MentionActivityTest < ActiveSupport::TestCase
   
   test "send admin mail if flinkHQ is mentionned in comment" do
     comment = comments(:agadir)
-    comment.update_attributes(body:"Hey @flinkHQ regarde!")
+    comment.update_attributes(body:"Super appli @flinkhq")
     
-    Emailer.expects(:flinkhq_mention).with(comment)
+    Emailer.expects(:flinkhq_mention).with(comment).returns(stub(deliver:true))
 
     MentionActivity.create!(comment)
   end
