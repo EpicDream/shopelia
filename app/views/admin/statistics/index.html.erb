@@ -5,20 +5,25 @@
       <th>Classement</th>
       <th>Avatar</th>
       <th>Username</th>
+      <th>Ville</th>
+      <th>Région</th>
       <th>Nombre de likes</th>
     </thead>
     <tbody>
       <% @top_active.each_with_index do |like, index| %>
+        <% flinker = like.flinker %>
         <tr>
           <td><%= index + 1 %></td>
           <td>
-            <% if like.flinker.avatar.url !~ /missing/ %>
-              <img src="<%= like.flinker.avatar.url %>" class="avatar"></img>
+            <% if flinker.avatar.url !~ /missing/ %>
+              <img src="<%= flinker.avatar.url %>" class="avatar"></img>
             <% else %>
               <span class="no-avatar"></span>
             <% end %>
           </td>
-          <td><%= link_to like.flinker.username, admin_flinker_path(like.flinker) %></td>
+          <td><%= link_to flinker.username, admin_flinker_path(flinker) %></td>
+          <td><%= flinker.city %></td>
+          <td><%= flinker.area %></td>
           <td><%= like.count %></td>
         </tr>
       <% end %>    
