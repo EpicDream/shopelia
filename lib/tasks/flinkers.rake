@@ -1,11 +1,6 @@
 namespace :flink do
   namespace :flinkers do
     
-    desc "Reindex algolia flinkers index, by batch of 10000"
-    task :algolia_reindex => :environment do
-      Flinker.reindex!(10000)
-    end
-    
     desc "Generate flinkers from blogs objects"
     task :seed => :environment do
       Blog.where(flinker_id:nil).each do |blog|
@@ -25,21 +20,13 @@ namespace :flink do
       end
     end
     
-    desc "Bootstrap flinkers timezone from mixpanel csv"
-    task :bootstrap_timezones => :environment do
-      CSV.foreach("#{Rails.root}/db/timezones.csv") do |row|
-        next if row[1].blank?
-        next unless flinker = Flinker.find_by_id(row[0])
-        flinker.update_attributes(timezone:row[1])
-      end
-    end
-    
     desc "Bootstrap flinkers cities from mixpanel csv"
-    task :bootstrap_timezones => :environment do
-      CSV.foreach("#{Rails.root}/db/flinkers_city.csv") do |row|
-        next if row[1].blank?
+    task :bootstrap_cities => :environment do
+      CSV.foreach("#{Rails.root}/db/cities.csv") do |row|
+        next if row[1].blank? && row[2].blank?
         next unless flinker = Flinker.find_by_id(row[0])
-        # flinker.update_attributes(city:row[1])
+        p [row[0], row[1], row[2]]
+        flinker.update_attributes(city:row[1])
       end
     end
     
