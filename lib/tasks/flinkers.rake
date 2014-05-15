@@ -25,8 +25,7 @@ namespace :flink do
       CSV.foreach("#{Rails.root}/db/cities.csv") do |row|
         next if row[1].blank? && row[2].blank?
         next unless flinker = Flinker.find_by_id(row[0])
-        p [row[0], row[1], row[2]]
-        flinker.update_attributes(city:row[1])
+        flinker.update_attributes(city:row[1], area:row[2])
       end
     end
     
