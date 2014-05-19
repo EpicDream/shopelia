@@ -14,7 +14,7 @@ class Admin::NewslettersController < Admin::AdminController
   def test
     EMAILS_TEST.each { |email| 
       flinker = Flinker.where(email:email).first
-      Emailer.newsletter(flinker).deliver if flinker 
+      Emailer.newsletter(flinker, true).deliver if flinker 
     }
     redirect_to new_admin_newsletter_path
   end
