@@ -131,7 +131,7 @@ class Flinker < ActiveRecord::Base
   def self.recommendations_for flinker, total=3
     similars = similar_to(flinker)
     likes = similars.map { |f| FlinkerLike.where(resource_type:FlinkerLike::LOOK, flinker_id:f.id).last }
-    flinkers = likes.map(&:look).map(&:flinker)
+    flinkers = likes.map(&:look).map(&:flinker).uniq
     flinkers.first(total)
   end
   
