@@ -1,12 +1,19 @@
 <%= form_for([:admin, @newsletter]) do |f| %>
+
+  <%= f.label :subject_fr, 'Subject FR' %>
+  <%= f.text_field :subject_fr %>
+
+  <%= f.label :subject_en, 'Subject EN' %>
+  <%= f.text_field :subject_en %>
+
   <%= f.label :header_img_url, 'Header image url' %>
   <%= f.text_field :header_img_url %>
 
-  <%= f.label :footer_img_url, 'Footer image url' %>
-  <%= f.text_field :footer_img_url %>
-  
   <%= f.label :favorites_ids, 'Ids séparés par des virgules des favoris' %>
   <%= f.text_field :favorites_ids %>
+
+  <%= f.label :footer_img_url, 'Footer image url' %>
+  <%= f.text_field :footer_img_url %>
 
   <%= f.label :look_uuid, 'Look UUID' %>
   <%= f.text_field :look_uuid %>
