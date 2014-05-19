@@ -14,7 +14,7 @@ class Emailer < ActionMailer::Base
   	     :from => 'The genius at backend <genius@flink.io>')
   end
   
-  def newsletter flinker
+  def newsletter flinker, test=false
     I18n.locale = flinker.lang_iso == "fr_FR" ? :fr : :en
     newsletter = Newsletter.last
 
@@ -27,7 +27,7 @@ class Emailer < ActionMailer::Base
     @footer_look_uuid = newsletter.look_uuid
     @trendsetters = Flinker.recommendations_for(flinker)
     
-    headers['X-Mailjet-Campaign'] = 'Weekly Newsletter'
+    headers['X-Mailjet-Campaign'] = test ? "Weekly Newsletter Test" : "Weekly Newsletter #{Date.today}"
     headers['X-Mailjet-DeduplicateCampaign'] = 'n'
     
     mail(:to => flinker.email,
