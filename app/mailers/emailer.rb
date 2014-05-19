@@ -17,7 +17,8 @@ class Emailer < ActionMailer::Base
   def newsletter flinker
     I18n.locale = flinker.lang_iso == "fr_FR" ? :fr : :en
     newsletter = Newsletter.last
-    
+
+    @subject = newsletter.send("subject_#{I18n.locale}")
     @header_logo_img = Newsletter::HEADER_LOGO_URL
     @header_img = newsletter.header_img_url
     @footer_img = newsletter.footer_img_url
@@ -30,7 +31,7 @@ class Emailer < ActionMailer::Base
     headers['X-Mailjet-DeduplicateCampaign'] = 'n'
     
     mail(:to => flinker.email,
-  		   :subject => I18n.t('newsletter.title'),
+  		   :subject => @subject,
   	     :from => 'Flink<newsletter@flink.io>')
   end
   
