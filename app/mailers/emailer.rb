@@ -16,18 +16,21 @@ class Emailer < ActionMailer::Base
   
   def newsletter flinker
     I18n.locale = flinker.lang_iso == "fr_FR" ? :fr : :en
-    @header_logo_img = "http://gallery.mailchimp.com/5c443bc89621ee4e4ce814912/images/aaf3c612-4db0-4664-af20-1c2daf139c28.jpg"
-    @header_img = "http://gallery.mailchimp.com/5c443bc89621ee4e4ce814912/images/f2df3ad8-b596-44a1-a09d-1f64eeb0c309.jpg"
-    @footer_img = "http://gallery.mailchimp.com/5c443bc89621ee4e4ce814912/images/8428e696-b7df-43a5-81d9-61e34882bdc5.jpg"
-    @favorites = Flinker.publishers.last(3) #TODO CHANGE
-    @footer_look_uuid = "491c7408" #TODO CHANGE
-    @trendsetters = [Flinker.find(5), Flinker.find(3), Flinker.find(2)] #TODO CHANGE
+    newsletter = Newsletter.last
     
-    headers['X-Mailjet-Campaign'] = 'newsletter2'
+    @header_logo_img = Newsletter::HEADER_LOGO_URL
+    @header_img = newsletter.header_img_url
+    @footer_img = newsletter.footer_img_url
+    
+    @favorites = newsletter.favorites
+    @footer_look_uuid = newsletter.look_uuid
+    @trendsetters = Flinker.recommendations_for(flinker)
+    
+    headers['X-Mailjet-Campaign'] = 'Weekly Newsletter'
     headers['X-Mailjet-DeduplicateCampaign'] = 'n'
     
     mail(:to => flinker.email,
-  		   :subject => 'Tendances fashion de la semaine',
+  		   :subject => I18n.t('newsletter.title'),
   	     :from => 'Flink<newsletter@flink.io>')
   end
   

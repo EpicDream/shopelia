@@ -52,6 +52,8 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( home.js errors.js cart_items.js carts.js send_download_link.js )
   config.assets.precompile += %w( send_download_link.css html_app.js collections.js collections.css )
   config.assets.precompile += %w( admin/statistics.css admin/statistics.js )
+  config.assets.precompile += %w( admin/newsletters.js admin/newsletters.css )
+  
 
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH

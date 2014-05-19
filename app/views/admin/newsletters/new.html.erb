@@ -1,0 +1,17 @@
+<%= form_for([:admin, @newsletter]) do |f| %>
+  <%= f.label :header_img_url, 'Header image url' %>
+  <%= f.text_field :header_img_url %>
+
+  <%= f.label :footer_img_url, 'Footer image url' %>
+  <%= f.text_field :footer_img_url %>
+  
+  <%= f.label :favorites_ids, 'Ids séparés par des virgules des favoris' %>
+  <%= f.text_field :favorites_ids %>
+
+  <%= f.label :look_uuid, 'Look UUID' %>
+  <%= f.text_field :look_uuid %>
+  
+  <br/>
+  <%= f.submit "OK" %>
+  
+<% end %>

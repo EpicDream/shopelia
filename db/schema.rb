@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140516160654) do
+ActiveRecord::Schema.define(:version => 20140519123113) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -571,6 +571,15 @@ ActiveRecord::Schema.define(:version => 20140516160654) do
     t.integer  "payment_card_id"
     t.integer  "mangopay_wallet_id"
     t.string   "billing_solution"
+  end
+
+  create_table "newsletters", :force => true do |t|
+    t.string   "header_img_url"
+    t.string   "footer_img_url"
+    t.string   "favorites_ids"
+    t.string   "look_uuid"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
   create_table "order_items", :force => true do |t|

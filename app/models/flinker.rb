@@ -128,6 +128,13 @@ class Flinker < ActiveRecord::Base
     Flinker.find_by_sql FlinkerSql.top_likers_of_publisher_of_look(look)
   end
   
+  def self.recommendations_for flinker, total=3
+    similars = similar_to(flinker)
+    likes = similars.map { |f| FlinkerLike.where(resource_type:FlinkerLike::LOOK, flinker_id:f.id).last }
+    flinkers = likes.map(&:look).map(&:flinker)
+    flinkers.first(total)
+  end
+  
   private
   
   def assign_uuid
