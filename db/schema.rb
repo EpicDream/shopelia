@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140515091246) do
+ActiveRecord::Schema.define(:version => 20140516160654) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -363,6 +363,7 @@ ActiveRecord::Schema.define(:version => 20140515091246) do
     t.string   "timezone"
     t.string   "city"
     t.string   "area"
+    t.boolean  "newsletter",             :default => true
   end
 
   add_index "flinkers", ["authentication_token"], :name => "index_flinkers_on_authentication_token", :unique => true

@@ -24,7 +24,7 @@ class Emailer < ActionMailer::Base
     @trendsetters = [Flinker.find(5), Flinker.find(3), Flinker.find(2)] #TODO CHANGE
     
     headers['X-Mailjet-Campaign'] = 'newsletter2'
-    headers['X-Mailjet-DeduplicateCampaign'] = 'y'
+    headers['X-Mailjet-DeduplicateCampaign'] = 'n'
     
     mail(:to => flinker.email,
   		   :subject => 'Tendances fashion de la semaine',
