@@ -10,10 +10,10 @@
                   <tbody>
                     <tr>
                       <td height="80" rowspan="3" style="text-align: center;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;" width="100">
-                        <img align="none" alt="" height="80" src="<%= Rails.configuration.image_host + flinker.avatar.url %>" style="width: 80px;height: 80px;margin: 0px;border: 0;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;" width="80">
+                        <img align="none" alt="" height="80" src="<%= Rails.configuration.image_host + flinker.avatar.url %>" style="border-radius:40px;width: 80px;height: 80px;margin: 0px;border: 0;outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;" width="80">
                       </td>
                       <td style="font-family: Helvetica;font-style: normal;font-weight: bold;line-height: 125%;letter-spacing: 0px;text-align: left;mso-table-lspace: 0pt;mso-table-rspace: 0pt;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;">
-                        <%= CGI.escapeHTML(flinker.name) %>
+                        <%= CGI.escapeHTML(flinker.name).html_safe %>
                       </td>
                     </tr>
                     <tr>
