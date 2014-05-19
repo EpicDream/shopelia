@@ -110,6 +110,13 @@ class Flinker < ActiveRecord::Base
     lang_iso != "fr_FR"
   end
   
+  def cover_images n=3
+    looks = self.looks.published.order('flink_published_at desc').limit(n)
+    looks.map { |look|  
+      look.image_for_cover.picture.url(:large)
+    }
+  end
+  
   def self.similar_to flinker
     similars = Flinker.find_by_sql(FlinkerSql.similarities(flinker, 10))
     offset = 10 - similars.count
