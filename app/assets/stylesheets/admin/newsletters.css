@@ -5,3 +5,7 @@ form{
 form input{
   width:600px;
 }
+.test-email-link{
+  display:block;
+  margin:20px 0 0 20px;
+}
