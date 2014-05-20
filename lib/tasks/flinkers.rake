@@ -20,16 +20,5 @@ namespace :flink do
       end
     end
     
-    desc "Bootstrap unsubscribed from mailchimp csv"
-    task :bootstrap_unsubscribed => :environment do
-      CSV.foreach("#{Rails.root}/db/unsubscribed.csv") do |row|
-        unless flinker = Flinker.find_by_email(row[0])
-          p "Not found #{row[0]}"
-          next
-        end
-        flinker.update_attributes(newsletter:false)
-      end
-    end
-    
   end
 end
