@@ -20,12 +20,14 @@ namespace :flink do
       end
     end
     
-    desc "Bootstrap flinkers cities from mixpanel csv"
-    task :bootstrap_cities => :environment do
-      CSV.foreach("#{Rails.root}/db/cities.csv") do |row|
-        next if row[1].blank? && row[2].blank?
-        next unless flinker = Flinker.find_by_id(row[0])
-        flinker.update_attributes(city:row[1], area:row[2])
+    desc "Bootstrap unsubscribed from mailchimp csv"
+    task :bootstrap_unsubscribed => :environment do
+      CSV.foreach("#{Rails.root}/db/unsubscribed.csv") do |row|
+        unless flinker = Flinker.find_by_email(row[0])
+          p "Not found #{row[0]}"
+          next
+        end
+        flinker.update_attributes(newsletter:false)
       end
     end
     
