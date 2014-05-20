@@ -6,6 +6,7 @@ Shopelia::Application.configure do
   
   config.action_mailer.asset_host = "http://127.0.0.1:3000"
   config.avatar_host = 'http://shopelia.fr:3440'
+  config.image_host = 'http://localhost:3000'
 
 
   # In the development environment your application's code is reloaded on

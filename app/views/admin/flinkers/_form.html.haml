@@ -1,4 +1,6 @@
 = simple_form_for [:admin, @flinker] do |f|
+  = f.input :city, readonly:true
+  = f.input :area, readonly:true
   = f.input :name
   = f.input :username
   = f.input :url

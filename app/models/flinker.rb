@@ -3,8 +3,8 @@ require 'flink/algolia'
 class Flinker < ActiveRecord::Base
   include Algolia::FlinkerSearch unless Rails.env.test?
   
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :can_comment
-  attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick, :timezone
+  attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :can_comment, :city, :area
+  attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick, :timezone, :newsletter
   attr_accessible :country_iso, :universal, :lang_iso, :verified, :last_session_open_at, :last_revival_at
   attr_accessor :avatar_url, :country_iso
 
@@ -112,6 +112,13 @@ class Flinker < ActiveRecord::Base
     lang_iso != "fr_FR"
   end
   
+  def cover_images n=3
+    looks = self.looks.published.order('flink_published_at desc').limit(n)
+    looks.map { |look|  
+      look.image_for_cover.picture.url(:large)
+    }
+  end
+  
   def self.similar_to flinker
     similars = Flinker.find_by_sql(FlinkerSql.similarities(flinker, 10))
     offset = 10 - similars.count
@@ -121,6 +128,13 @@ class Flinker < ActiveRecord::Base
   
   def self.top_likers_of_publisher_of_look look
     Flinker.find_by_sql FlinkerSql.top_likers_of_publisher_of_look(look)
+  end
+  
+  def self.recommendations_for flinker, total=3
+    similars = similar_to(flinker)
+    likes = similars.map { |f| FlinkerLike.where(resource_type:FlinkerLike::LOOK, flinker_id:f.id).last }
+    flinkers = likes.map(&:look).map(&:flinker).uniq
+    flinkers.first(total)
   end
   
   private

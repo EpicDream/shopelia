@@ -100,6 +100,9 @@ Shopelia::Application.routes.draw do
       get :retry, :on => :member
       get :mute, :on => :member
     end
+    resources :newsletters do
+      get :test
+    end
   end
 
   constraints DomainConstraints.new('developers') do
@@ -225,12 +228,17 @@ Shopelia::Application.routes.draw do
       namespace :hashtags do
         resources :looks, only: :index
       end
+      namespace :mailjet do
+        resources :unsubscribes, only: :create
+      end
+      
       resources :themes, :only => [:index, :show]
       get 'followers_count' => "followers#count"
       
       scope '/ws' do
         get 'flinkers' => "web_services/flinkers#show"
       end
+      
     end
   end
 

@@ -1,5 +1,14 @@
 en:
-
+  newsletter:
+    title: "Trends fashion of the week"
+    first_header: "YOUR FAVORITES LOOKS OF THE WEEK"
+    trendsetters: "TRENDSETTERS"
+    followed_by: "Followed by %{count} people"
+    follow: "Follow"
+    footer_title: "DARE TO WEAR"
+    unsubscribe_notice: "You are receiving this email because you signed up at Flink"
+    unsubscribe: "Unsubscribe"
+    
   developers:
     unauthorized: "Invalid api key"
     

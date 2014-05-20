@@ -1,4 +1,14 @@
 fr:
+  newsletter:
+    title: "Tendances fashion de la semaine"
+    first_header: "LES LOOKS QUE VOUS AVEZ ADORE CETTE SEMAINE"
+    trendsetters: "TRENDSETTERS"
+    followed_by: "Suivie par %{count} personnes"
+    follow: "Suivre"
+    footer_title: "ORIGINAL - ON ADORE !"
+    unsubscribe_notice: "Vous recevez cet email car vous êtes utilisatrice Flink."
+    unsubscribe: "Se désinscrire"
+  
   will_paginate:
     previous_label: "<"
     next_label: ">"
