@@ -7,7 +7,7 @@ module Admin::LooksHelper
       matches += html.scan(regexp)
     end
     matches.flatten.uniq.compact.each do |brand|
-      html =~ /(^|\W)(#{brand})(\W|$)/i
+      html =~ /(^|\W)(#{Regexp.escape(brand)})(\W|$)/i
       html.gsub!($2, "<span class='highlight'>#{brand}</span>") if $2
     end
     html
