@@ -2,6 +2,7 @@ require 'flink/algolia'
 
 class Flinker < ActiveRecord::Base
   include Algolia::FlinkerSearch unless Rails.env.test?
+  FLINK_HQ_USERNAME = "flinkhq"
   
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :can_comment, :city, :area
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick, :timezone, :newsletter
@@ -133,6 +134,10 @@ class Flinker < ActiveRecord::Base
     likes = similars.map { |f| FlinkerLike.where(resource_type:FlinkerLike::LOOK, flinker_id:f.id).last }
     flinkers = likes.map(&:look).map(&:flinker).uniq
     flinkers.first(total)
+  end
+  
+  def self.flinkHQ
+    Flinker.where(username:FLINK_HQ_USERNAME).first
   end
   
   private

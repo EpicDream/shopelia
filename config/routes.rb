@@ -74,7 +74,9 @@ Shopelia::Application.routes.draw do
     resources :users, :only => [:index, :show, :destroy]
     resources :viking, :only => :index
     resources :blogs
-    resources :comments, :only => [:index, :show]
+    resources :comments, :only => [:index, :show] do
+      post :reply
+    end
     resources :posts
     resources :images, :only => [:show, :update]
     resources :flinkers

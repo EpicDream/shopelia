@@ -1,3 +1,11 @@
+<div id="reply">
+  <span id="close-reply">X</span>
+  <%= form_for [:admin, Comment.new], url:admin_comment_reply_path(0) do |f| %>
+    <%= f.text_area :body %>
+    <br/>
+    <%= f.submit "Envoyer", class:"btn"%>
+  <% end %>
+</div>
 <table class="comments-top-five">
   <thead>
     <th colspan="4">Top Ten</th>
@@ -39,9 +47,14 @@
     <% @comments.each do |comment| %>
       <tr>
         <td><%= link_to (comment.flinker.username || comment.flinker.name), admin_flinker_path(comment.flinker) %></td>
-        <td><%= truncate(comment.body, length: 50) %></td>
+        <td><%= truncate(comment.body, length: 100) %></td>
         <td><%= link_to 'Voir le post', comment.post.link %></td>
         <td><%= I18n.l(comment.created_at)%></td>
+        <td><%= link_to 'Répondre', "#reply", 
+                        class:"reply-link", 
+                        'data-username' => comment.flinker.username,
+                        'data-comment-id' => comment.id %>
+        </td>
       </tr>
     <% end  %>
   </tbody>
