@@ -157,8 +157,7 @@ class Flinker < ActiveRecord::Base
   end
   
   def signup_welcome
-    #WAIT NEW RELEASE
-    #SignupWelcomeWorker.perform_in(3.days, self.id)
+    SignupWelcomeWorker.perform_in(3.days, self.id)
   end
 
 end

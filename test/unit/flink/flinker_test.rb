@@ -158,9 +158,11 @@ class FlinkerTest < ActiveSupport::TestCase
   end
   
   test "send welcome email and autofollowed by @flinkHQ 3 days after account creation" do
+    Flinker.destroy_all
     flinker = new_flinker
     
-    SignupWelcomeWorker.expects(:perform_in).with(3.days, Flinker.last.id + 1)
+    SignupWelcomeWorker.expects(:perform_in).with(3.days, 1)
+    flinker.id = 1
     flinker.save!
   end
   
