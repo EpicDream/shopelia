@@ -32,6 +32,8 @@ class Flinker < ActiveRecord::Base
   before_create :country_from_iso_code, unless: -> { self.country_iso.blank? }
   before_create :assign_uuid
   after_create :follow_staff_picked
+  after_create :signup_welcome
+  
   before_validation :set_avatar
   before_destroy ->(record) {
     Activity.where(target_id:record.id).destroy_all
@@ -157,6 +159,10 @@ class Flinker < ActiveRecord::Base
     flinkers.each do |flinker|
       FlinkerFollow.create(flinker_id:self.id, follow_id:flinker.id, skip_notification:true)
     end
+  end
+  
+  def signup_welcome
+    SignupWelcomeWorker.perform_in(3.days, self.id)
   end
 
 end

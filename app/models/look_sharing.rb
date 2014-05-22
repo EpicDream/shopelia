@@ -1,4 +1,5 @@
 class LookSharing < ActiveRecord::Base
+  act_as_flink_activity :share
   attr_accessible :look_id, :flinker_id, :social_network_id
   
   belongs_to :look

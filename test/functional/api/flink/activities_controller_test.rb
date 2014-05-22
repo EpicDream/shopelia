@@ -106,6 +106,26 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
     assert_equal flinkers(:nana).id, activity["flinker_id"]
   end
   
+  test "get share activities related to current flinker" do
+    look = looks(:agadir)
+    flinker = flinkers(:lilou)
+    follow(flinker, flinkers(:fanny))
+    LookSharing.on("twitter").for(look_id:look.id, flinker_id:flinker.id)
+    LookSharing.on("facebook").for(look_id:look.id, flinker_id:flinker.id)
+    
+    get :index, format: :json
+    
+    activities = json_response["activities"]
+    activity = activities.first
+
+    assert_response :success
+    assert_equal 2, activities.count
+    assert_equal ["twitter","facebook"].to_set, activities.map{ |act| act["social_network"] }.to_set
+    assert_equal looks(:agadir).uuid, activity["look_uuid"]
+    assert_equal "ShareActivity", activity["type"]
+    assert_equal flinker.id, activity["flinker_id"]
+  end
+  
   test "get all different activities related to current flinker" do
     Sidekiq::Testing.inline! do
 
@@ -118,13 +138,15 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
       FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
       Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:fanny).id) #fanny comment
       Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:nana).id) 
-    
+      LookSharing.on("twitter").for(look_id:looks(:agadir).id, flinker_id:flinkers(:boop).id)
+      LookSharing.on("facebook").for(look_id:looks(:agadir).id, flinker_id:flinkers(:boop).id)
+
       get :index, format: :json
     
       activities = json_response["activities"]
 
       assert_response :success
-      assert_equal 6, activities.map{ |activity| activity["type"] }.uniq.count
+      assert_equal 7, activities.map{ |activity| activity["type"] }.uniq.count
     end
   end
 end

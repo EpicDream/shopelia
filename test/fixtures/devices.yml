@@ -1,23 +1,26 @@
 web:
   uuid: "uuid"
   user_agent: "web"
-
 mobile:
   uuid: "uuid2"
   user_agent: "mobile"
   push_token: "token"
-
 samsung:
   uuid: "uuid3"
   user_agent: "samsung"
   user: elarch
-
 iphone:
   uuid: "uuid4"
   user_agent: "iphone"
   flinker: fanny
-
+  build: 27
 ipad:
   uuid: "uuid5"
   user_agent: "ipad"
   flinker: fanny
+boop:
+  uuid: "uuid6"
+  user_agent: "ipad"
+  flinker: boop
+  build: 27
+  

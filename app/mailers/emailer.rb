@@ -7,6 +7,10 @@ class Emailer < ActionMailer::Base
   	     :from => "Flink Fashion Link <hello@flink.io>")
   end
   
+  def after_signup flinker
+    @flinker = flinker
+  end
+  
   def flinkhq_mention comment
     @comment = comment
     mail(:to => 'staff@flink.io',

@@ -34,7 +34,6 @@ lilou:
   picture: "http://zoe.jpg"
   name: "LilouName"
   sex: "female"
-  flinker: lilou
 
 nana:
   identifier: "9091090"
@@ -57,3 +56,10 @@ titi:
   name: "Titi"
   sex: "female"
   flinker: boop
+
+lilou:
+  identifier: "697602344332443"
+  picture: "http://nana.jpg"
+  name: "LilouName"
+  sex: "female"
+  flinker: lilou

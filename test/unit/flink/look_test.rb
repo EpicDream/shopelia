@@ -57,7 +57,7 @@ class LookTest < ActiveSupport::TestCase
     like(@fanny, [@look])
     
     flinkers = Flinker.top_likers_of_publisher_of_look(@look)
-#WAIT NEW RELEASE    Revival.expects(:revive!).with(flinkers, @look)
+    Revival.expects(:revive!).with(flinkers, @look)
     
     @look.update_attributes(is_published:true)
   end
