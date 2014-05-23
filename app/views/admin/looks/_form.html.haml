@@ -1,5 +1,8 @@
 %div.hashtags-block
   =form_for([:admin, @look]) do |f|
+    %div.form
+      =f.label :staff_pick, 'Staff pick'
+      =f.check_box :staff_pick
     =f.fields_for :hashtags do |ff|
       %p
         =ff.text_field :name, class: "hashtag-input"
