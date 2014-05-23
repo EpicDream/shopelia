@@ -1,4 +1,6 @@
 class Look < ActiveRecord::Base
+  MIN_DATE = Date.parse("2014-02-01")
+  
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
   attr_accessible :hashtags_attributes, :season, :staff_pick
   
@@ -81,7 +83,13 @@ class Look < ActiveRecord::Base
     joins(:flinker).where('flinkers.country_id = ?', country_id) unless country_id.blank?
   }
   scope :popular, ->(published_before, published_after) {
-    Look.find_by_sql LookSql.popular(published_before, published_after)
+    published_before ||= Date.today
+    published_after ||= MIN_DATE
+
+    published.where("flink_published_at::DATE <= '#{published_before}'")
+    .where("flink_published_at::DATE >= '#{published_after}'")
+    .joins("join (select resource_id, count(*) from flinker_likes group by resource_id having count(*) >= 0) likes
+            on looks.id = likes.resource_id")
   }
   
   alias_attribute :published, :is_published

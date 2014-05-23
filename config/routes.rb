@@ -210,6 +210,7 @@ Shopelia::Application.routes.draw do
       resources :follows, :only => [:index, :create, :destroy]
       resources :followings, :only => [:index, :create, :destroy]
       resources :followers, :only => :index
+      resources :popular_looks, :only => :index
       resources :looks, :only => :index do
         resources :comments, :only => [:index, :create], :controller => "looks/comments"
         resources :sharings, :only => :create, :controller => "looks/sharings"
