@@ -196,6 +196,15 @@
   border-radius:2px;
   color:snow;
 }
+div.form{
+  font-family:'Hevetica';
+  position:absolute;
+  top:10px;
+  left:480px;
+}
+div.form #look_staff_pick{
+  display:inline-block;
+}
 div.images{
   margin-top:60px;
 }
