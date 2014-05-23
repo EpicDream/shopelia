@@ -69,6 +69,8 @@ class Flinker < ActiveRecord::Base
     .joins('join flinker_likes on flinker_likes.resource_id = looks.id')
   }
   
+  alias_attribute :publisher, :is_publisher
+  
   def name=name
     write_attribute(:name, name)
     self.blog.update_attributes(name:name) if self.blog
