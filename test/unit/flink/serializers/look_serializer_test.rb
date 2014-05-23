@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 require 'test_helper'
 
 class LookSerializerTest < ActiveSupport::TestCase
@@ -23,7 +22,7 @@ class LookSerializerTest < ActiveSupport::TestCase
   end  
   
   test "serialize look" do
-    @look.update_attributes(flink_published_at:Time.now + 1.day)
+    @look.update_attributes(flink_published_at:Time.now + 1.day, staff_pick:true)
     look_serializer = LookSerializer.new(@look)
     hash = look_serializer.as_json
       
@@ -38,6 +37,7 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert_equal 1, hash[:look][:products].count
     assert_equal 2, hash[:look][:images].count
     assert hash[:look][:liked].nil?
+    assert hash[:look][:staff_pick]
     assert_equal "bla bla bla", hash[:look][:description]
   end
 
