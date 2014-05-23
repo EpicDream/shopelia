@@ -80,6 +80,9 @@ class Look < ActiveRecord::Base
   scope :from_country, -> (country_id) {
     joins(:flinker).where('flinkers.country_id = ?', country_id) unless country_id.blank?
   }
+  scope :popular, ->(published_before, published_after) {
+    Look.find_by_sql LookSql.popular(published_before, published_after)
+  }
   
   alias_attribute :published, :is_published
   
