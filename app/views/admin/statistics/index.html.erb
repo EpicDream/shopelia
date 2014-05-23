@@ -60,7 +60,7 @@
       <th>Nombre de likes</th>
     </thead>
     <tbody>
-      <% Statistic.top_liked_looks_for_day(Date.today - 1.day).each do |like| %>
+      <% Statistic.top_liked_looks_for_period(Date.today - 1.day).each do |like| %>
         <tr>
           <% look = Look.find(like.look_id) %>
           <td><%= link_to look.flinker.username, admin_flinker_path(look.flinker) %></td>

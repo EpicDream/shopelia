@@ -10,7 +10,7 @@ class Statistic
     ActiveRecord::Base.connection.execute(sql)
   end
   
-  def self.top_liked_looks_for_day from, to=nil, limit=5
+  def self.top_liked_looks_for_period from, to=nil, limit=5
     to ||= from + 1.day
     FlinkerLike.where('created_at::DATE >= ? and created_at::DATE < ?', from, to)
     .where(resource_type:FlinkerLike::LOOK)
