@@ -57,6 +57,16 @@ nana:
   universal: true
   looks_count: 1
 
+anne:
+  name: Anne
+  url: http://www.leblogdeAnne.com
+  encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
+  username: Anne
+  email: anne@flink.com
+  country: united-states
+  is_publisher: true
+  staff_pick: true
+  
 fanny:
   email: "nicolasbigot@me.com"
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
