@@ -100,6 +100,11 @@ class Look < ActiveRecord::Base
     published.where("flink_published_at::DATE <= '#{published_before}'")
     .where("flink_published_at::DATE >= '#{published_after}'")
   }
+  scope :best, ->(published_before, published_after) {
+    recent(published_before, published_after)
+    .where(staff_pick:true)
+  }
+  
   
   alias_attribute :published, :is_published
   
