@@ -1,5 +1,6 @@
 class Look < ActiveRecord::Base
   MIN_DATE = Date.parse("2014-02-01")
+  MIN_LIKES_FOR_POPULAR = 150
   
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
   attr_accessible :hashtags_attributes, :season, :staff_pick
@@ -48,11 +49,15 @@ class Look < ActiveRecord::Base
       (flinkers_ids.any? || looks_ids.any?) && published.where('flinker_id in (?) or id in (?)', flinkers_ids, looks_ids)
     end
   }
+  
+  #DEPRECATED- build 22
   scope :published_between, ->(since, before) {
     since ||= Time.at(0)
     before ||= Date.today
     published.where("published_at > ? and published_at < ?", since, before)
   }
+  
+  #DEPRECATED- build 26
   scope :flink_published_between, ->(since, before) {
     case 
     when since then published.where("flink_published_at >= ?", since)
@@ -83,13 +88,17 @@ class Look < ActiveRecord::Base
     joins(:flinker).where('flinkers.country_id = ?', country_id) unless country_id.blank?
   }
   scope :popular, ->(published_before, published_after) {
+    recent(published_before, published_after)
+    .joins("join (select resource_id, count(*) from flinker_likes 
+            group by resource_id having count(*) >= #{MIN_LIKES_FOR_POPULAR}) likes
+            on looks.id = likes.resource_id")
+  }
+  scope :recent, ->(published_before, published_after) {
     published_before ||= Date.today
     published_after ||= MIN_DATE
 
     published.where("flink_published_at::DATE <= '#{published_before}'")
     .where("flink_published_at::DATE >= '#{published_after}'")
-    .joins("join (select resource_id, count(*) from flinker_likes group by resource_id having count(*) >= 0) likes
-            on looks.id = likes.resource_id")
   }
   
   alias_attribute :published, :is_published
