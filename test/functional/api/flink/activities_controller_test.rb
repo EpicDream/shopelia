@@ -126,6 +126,41 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
     assert_equal flinker.id, activity["flinker_id"]
   end
   
+  test "get private messages activities related to current flinker" do
+    flinker = flinkers(:betty)
+    target = flinkers(:fanny)
+    look = looks(:quimper)
+    target.device.update_attributes(build:30)
+    
+    PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id)
+
+    get :index, format: :json
+    
+    activities = json_response["activities"]
+    activity = activities.first
+
+    assert_response :success
+    assert_equal 1, activities.count
+    assert_equal "hello", activity["content"]
+    assert_equal "1991991", activity["look_uuid"]
+    assert_equal "PrivateMessageActivity", activity["type"]
+    assert_equal flinker.id, activity["flinker_id"]
+  end
+  
+  test "dont get private messages activities if targeted flinker device build < 30" do
+    flinker = flinkers(:betty)
+    target = flinkers(:fanny)
+    look = looks(:quimper)
+    target.device.update_attributes(build:29)
+    
+    PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id)
+
+    get :index, format: :json
+    
+    assert_response :success
+    assert_equal 0, json_response["activities"].count
+  end
+  
   test "get all different activities related to current flinker" do
     Sidekiq::Testing.inline! do
 

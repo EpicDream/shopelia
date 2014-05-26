@@ -43,4 +43,8 @@ class ActiveRecord::Base
     ShareActivity.create!(self)
   end
   
+  def flink_create_private_message_activity
+    PrivateMessageActivity.create!(self)
+  end
+  
 end

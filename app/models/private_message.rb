@@ -1,4 +1,6 @@
 class PrivateMessage < ActiveRecord::Base
+  act_as_flink_activity :private_message
+  
   attr_accessible :content, :flinker_id, :target_id, :look_id
   
   belongs_to :look
