@@ -118,7 +118,7 @@ class Flinker < ActiveRecord::Base
   def cover_images n=3
     looks = self.looks.published.order('flink_published_at desc').limit(n)
     looks.map { |look|  
-      look.image_for_cover.picture.url(:large)
+      look.image_for_cover.picture.url(:small)
     }
   end
   
