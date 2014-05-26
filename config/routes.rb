@@ -214,6 +214,7 @@ Shopelia::Application.routes.draw do
       resources :recent_looks, :only => :index
       resources :best_looks, :only => :index
       resources :trend_setters, :only => :index
+      resources :private_messages, :only => :create
       
       resources :looks, :only => :index do
         resources :comments, :only => [:index, :create], :controller => "looks/comments"
