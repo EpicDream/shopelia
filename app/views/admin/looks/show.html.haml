@@ -1,7 +1,7 @@
 %section.header
   %header
     %h1{class:"look-name-published-#{@look.is_published?}"}= @look.name
-    %h2= @look.flinker.name || @look.flinker.url
+    %h2=link_to(@look.flinker.name || @look.flinker.url, admin_flinker_path(@look.flinker))
     %h2= @look.uuid
     
 .container-fluid
