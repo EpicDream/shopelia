@@ -24,3 +24,4 @@
 <% end %>
 
 <%= link_to 'Test', admin_newsletter_test_path(@newsletter), class:'test-email-link' %>
+<%= link_to 'Envoyer !', admin_newsletter_send_to_subscribers_path(@newsletter), class:'test-email-link', confirm:"/!\\Confirmer l'envoi de la newsletter à tous les utilisateurs" %>
