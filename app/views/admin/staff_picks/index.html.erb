@@ -1,0 +1,42 @@
+<h4>Staff Picked Looks</h4>
+<table class="staff-picks-looks">
+  <thead>
+    <th>UUID</th>
+    <th>Publié le</th>
+    <th>Blogueuse</th>
+    <th>Pays</th>
+    <th>Aperçu</th>
+    <th>Unpick</th>
+  </thead>
+  <tbody>
+    <% @looks.each do |look| %>
+      <tr>
+        <td><%= look.uuid %></td>
+        <td><%= l(look.flink_published_at)%></td>
+        <td><%= link_to(look.flinker.username, admin_flinker_path(look.flinker)) %></td>
+        <td><%= look.flinker.country.try(:iso) %></td>
+        <td>
+          <%= link_to image_tag(look.image_for_cover.picture.url(:large)), admin_look_path(look) %></td>
+        <td><%= check_box_tag :staff_pick, "1", true, disabled:true %></td>
+      </tr>
+    <% end %>    
+  </tbody>
+</table>
+
+<h4>Staff Picked Flinkers</h4>
+<table class="staff-picks-flinkers">
+  <thead>
+    <th>Blogueuse</th>
+    <th>Pays</th>
+    <th>Unpick</th>
+  </thead>
+  <tbody>
+    <% @flinkers.each do |flinker| %>
+      <tr>
+        <td><%= link_to(flinker.username, admin_flinker_path(flinker)) %></td>
+        <td><%= flinker.country.try(:iso) %></td>
+        <td><%= check_box_tag :staff_pick, "1", true, disabled:true  %></td>
+      </tr>
+    <% end %>    
+  </tbody>
+</table>
