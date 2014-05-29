@@ -5,7 +5,7 @@ namespace :flink do
     task :send => :environment do
       Rails.logger = Logger.new('log/newsletter.log')
 
-      Flinker.where(newsletter:true).where("email !~ '@flink.*'").find_in_batches { |flinkers|
+      Flinker.where(newsletter:true).where("email !~ '@flink'").find_in_batches { |flinkers|
         flinkers.each { |flinker|
           begin
             Emailer.newsletter(flinker).deliver
