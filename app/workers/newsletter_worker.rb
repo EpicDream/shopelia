@@ -3,7 +3,7 @@ class NewsletterWorker
   sidekiq_options :queue => :newsletter, retry:false
   
   def perform
-    Flinker.where(newsletter:true).where("email !~ '@flink.*.io'").find_in_batches { |flinkers|
+    Flinker.where(newsletter:true).where("email !~ '@flink'").find_in_batches { |flinkers|
       flinkers.each { |flinker|
         begin
           Emailer.newsletter(flinker).deliver
