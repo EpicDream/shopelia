@@ -104,7 +104,9 @@ Shopelia::Application.routes.draw do
     end
     resources :newsletters do
       get :test
+      get :send_to_subscribers
     end
+    resources :staff_picks
   end
 
   constraints DomainConstraints.new('developers') do

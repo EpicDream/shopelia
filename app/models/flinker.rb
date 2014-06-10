@@ -68,6 +68,7 @@ class Flinker < ActiveRecord::Base
     .joins(:looks)
     .joins('join flinker_likes on flinker_likes.resource_id = looks.id')
   }
+  scope :with_location, -> { where('city is not null or area is not null') }
   
   alias_attribute :publisher, :is_publisher
   
@@ -118,7 +119,7 @@ class Flinker < ActiveRecord::Base
   def cover_images n=3
     looks = self.looks.published.order('flink_published_at desc').limit(n)
     looks.map { |look|  
-      look.image_for_cover.picture.url(:large)
+      look.image_for_cover.picture.url(:small)
     }
   end
   

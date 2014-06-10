@@ -19,4 +19,9 @@ class Admin::NewslettersController < Admin::AdminController
     redirect_to new_admin_newsletter_path
   end
   
+  def send_to_subscribers
+    NewsletterWorker.perform_async
+    redirect_to new_admin_newsletter_path
+  end
+  
 end

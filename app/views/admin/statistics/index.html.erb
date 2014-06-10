@@ -10,8 +10,7 @@
       <th>Nombre de likes</th>
     </thead>
     <tbody>
-      <% @top_active.each_with_index do |like, index| %>
-        <% flinker = like.flinker %>
+      <% @top_active.each_with_index do |flinker, index| %>
         <tr>
           <td><%= index + 1 %></td>
           <td>
@@ -24,7 +23,7 @@
           <td><%= link_to flinker.username, admin_flinker_path(flinker) %></td>
           <td><%= flinker.city %></td>
           <td><%= flinker.area %></td>
-          <td><%= like.count %></td>
+          <td><%= flinker.count %></td>
         </tr>
       <% end %>    
     </tbody>

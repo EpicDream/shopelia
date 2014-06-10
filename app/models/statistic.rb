@@ -30,11 +30,13 @@ class Statistic
   
   def self.top_active_flinkers from, to=nil, limit=20
     to ||= from + 1.day
-    FlinkerLike.where('created_at::DATE >= ? and created_at::DATE < ?', from, to)
-    .group('flinker_id')
-    .select('flinker_id, count(*)')
-    .order('count desc')
-    .limit(limit)
+    Flinker.joins("
+      join (select flinker_id, count(*) from flinker_likes
+      where created_at::DATE >= '#{from}' and created_at::DATE <= '#{to}'
+      group by flinker_id) likes on likes.flinker_id = flinkers.id")
+    .order('likes.count desc')
+    .select('flinkers.*, likes.count as count')
+    .limit(limit)  
   end
   
   private
