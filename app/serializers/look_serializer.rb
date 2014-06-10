@@ -1,7 +1,7 @@
 class LookSerializer < ActiveModel::Serializer
   attributes :uuid, :name, :url, :published_at, :flinker, :products, :images, :liked, :description
-  attributes :updated_at, :flink_published_at, :liked_by_friends, :staff_pick
-  
+  attributes :updated_at, :flink_published_at, :liked_by_friends, :hashtags, :staff_pick
+
   def name
     object.name.try(:strip)
   end
@@ -20,6 +20,10 @@ class LookSerializer < ActiveModel::Serializer
 
   def flinker
     FlinkerSerializer.new(object.flinker).as_json[:flinker]
+  end
+  
+  def hashtags
+    object.hashtags.highlighted.map(&:name)
   end
 
   def products

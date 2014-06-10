@@ -3,7 +3,7 @@ require 'flink/algolia'
 class Hashtag < ActiveRecord::Base
   include Algolia::HashtagSearch unless Rails.env.test?
   
-  attr_accessible :name
+  attr_accessible :name, :highlighted
   
   has_and_belongs_to_many :looks
   
@@ -11,6 +11,7 @@ class Hashtag < ActiveRecord::Base
   before_validation :hashtagify
   
   scope :matching, ->(name) { where('name ~* ?', "^#{Hashtag.hashtagify(name)}$").limit(1) }
+  scope :highlighted, -> { where(highlighted:true) }
   
   def hashtagify
     self.name = Hashtag.hashtagify(self.name)

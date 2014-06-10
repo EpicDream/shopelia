@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140526135830) do
+ActiveRecord::Schema.define(:version => 20140610131141) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -383,10 +383,12 @@ ActiveRecord::Schema.define(:version => 20140526135830) do
 
   create_table "hashtags", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+    t.boolean  "highlighted", :default => false
   end
 
+  add_index "hashtags", ["highlighted"], :name => "index_hashtags_on_highlighted"
   add_index "hashtags", ["name"], :name => "index_hashtags_on_name"
 
   create_table "hashtags_looks", :force => true do |t|

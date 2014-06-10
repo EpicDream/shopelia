@@ -64,6 +64,10 @@ $(document).ready(function() {
     Hashtags.submit();
   })
   
+  $(document).on("change", ".hashtag-highlighted-checkbox", function(){
+    Hashtags.submit();
+  });
+
   $(document).on("change", "#look_staff_pick", function(){
     Hashtags.submit();
   })

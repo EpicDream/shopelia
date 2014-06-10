@@ -5,7 +5,8 @@
       =f.check_box :staff_pick
     =f.fields_for :hashtags do |ff|
       %p
-        =ff.text_field :name, class: "hashtag-input"
+        =ff.text_field :name, class: "hashtag-input hashtag-input-highlighted-#{ff.object.highlighted}"
+        =ff.check_box :highlighted, class:'hashtag-highlighted-checkbox'
         =ff.label :_destroy, 'x', class:'hashtag-destroy-label'
         =ff.check_box :_destroy, class:'hashtag-destroy-checkbox'
     =f.submit '+', class:"btn hashtag-submit"
