@@ -1,7 +1,7 @@
 fr:
   newsletter:
     title: "Tendances fashion de la semaine"
-    first_header: "LES LOOKS QUE VOUS AVEZ ADORE CETTE SEMAINE"
+    first_header: "LES LOOKS QUE VOUS AVEZ ADORÉS CETTE SEMAINE"
     trendsetters: "TRENDSETTERS"
     followed_by: "Suivie par %{count} personnes"
     follow: "Suivre"
