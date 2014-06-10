@@ -3,7 +3,7 @@ require 'flink/algolia'
 class Hashtag < ActiveRecord::Base
   include Algolia::HashtagSearch unless Rails.env.test?
   
-  attr_accessible :name
+  attr_accessible :name, :highlighted
   
   has_and_belongs_to_many :looks
   

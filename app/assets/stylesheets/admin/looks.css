@@ -274,8 +274,17 @@ div.hashtags-block{
 div.hashtags-block form p{
   display:inline-block;
 }
-div.hashtags-block input[type=checkbox]{
+div.hashtags-block input.hashtag-destroy-checkbox{
   display:none;
+}
+div.hashtags-block input.hashtag-highlighted-checkbox{
+  margin:-10px 0 0 -20px;
+}
+div.hashtags-block input.hashtag-input-highlighted-true{
+  border:thin solid #667399;
+  background:#667399;
+  color:white;
+  border-radius:0;
 }
 div.hashtags-block form select{
   font-size:12px;
@@ -292,6 +301,7 @@ div.hashtags-block label.hashtag-destroy-label{
   height:10px;
   text-align:center;
   padding:2px;
+  margin-left:5px;
 }
 div.hashtags-block label.hashtag-destroy-label:hover{
   color:purple;

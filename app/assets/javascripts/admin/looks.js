@@ -64,6 +64,10 @@ $(document).ready(function() {
     Hashtags.submit();
   })
   
+  $(document).on("change", ".hashtag-highlighted-checkbox", function(){
+    Hashtags.submit();
+  });
+  
 });
 
 function sortable() {

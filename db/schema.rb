@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140519154221) do
+ActiveRecord::Schema.define(:version => 20140610123455) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -383,8 +383,9 @@ ActiveRecord::Schema.define(:version => 20140519154221) do
 
   create_table "hashtags", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
+    t.boolean  "highlighted", :default => false
   end
 
   add_index "hashtags", ["name"], :name => "index_hashtags_on_name"
@@ -465,6 +466,7 @@ ActiveRecord::Schema.define(:version => 20140519154221) do
     t.datetime "flink_published_at"
     t.string   "bitly_url"
     t.string   "season"
+    t.boolean  "staff_pick",         :default => false
   end
 
   add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"
@@ -667,6 +669,18 @@ ActiveRecord::Schema.define(:version => 20140519154221) do
     t.integer  "look_id"
     t.datetime "processed_at"
   end
+
+  create_table "private_messages", :force => true do |t|
+    t.text     "content"
+    t.integer  "flinker_id"
+    t.integer  "target_id"
+    t.integer  "look_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "private_messages", ["flinker_id"], :name => "index_private_messages_on_flinker_id"
+  add_index "private_messages", ["target_id"], :name => "index_private_messages_on_target_id"
 
   create_table "product_images", :force => true do |t|
     t.text     "url"
