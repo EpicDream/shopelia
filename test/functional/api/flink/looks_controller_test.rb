@@ -101,7 +101,7 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
       look.save
     }
     
-    get :index, format: :json, updated_after:(Time.now + 5.minutes).to_i
+    get :index, format: :json, updated_after:Time.now.to_i
     
     looks = json_response["looks"]
     

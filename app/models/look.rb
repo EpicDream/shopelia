@@ -1,5 +1,5 @@
 class Look < ActiveRecord::Base
-  MIN_DATE = Date.parse("2014-02-01")
+  MIN_DATE = Date.parse("2014-01-01")
   MIN_LIKES_FOR_POPULAR = 150
   
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
@@ -94,11 +94,11 @@ class Look < ActiveRecord::Base
             on looks.id = likes.resource_id")
   }
   scope :recent, ->(published_before, published_after) {
-    published_before ||= Date.today
+    published_before ||= Time.now
     published_after ||= MIN_DATE
 
-    published.where("flink_published_at::DATE <= '#{published_before}'")
-    .where("flink_published_at::DATE >= '#{published_after}'")
+    published.where("flink_published_at <= '#{published_before}'")
+    .where("flink_published_at >= '#{published_after}'")
   }
   scope :best, ->(published_before, published_after) {
     recent(published_before, published_after)
