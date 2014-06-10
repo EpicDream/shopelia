@@ -1,11 +1,12 @@
 class Api::Flink::PopularLooksController < Api::Flink::BaseController
   LOOKS_ORDER = "looks.flink_published_at desc"
+
+  skip_before_filter :authenticate_flinker!
   before_filter { 
     epochs_to_dates [:flink_published_before, :flink_published_after] 
   }
   
   def index
-    render unauthorized and return unless current_flinker
     render json: { looks: serialize(looks, scope:scope()) }
   end
 
