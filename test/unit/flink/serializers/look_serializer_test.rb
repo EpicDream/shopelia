@@ -77,4 +77,15 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert_equal 1, hash[:look][:hashtags].count
     assert_equal ["Top"], hash[:look][:hashtags]
   end
+  
+  test "associated comments and likes count" do
+    Comment.create(body:"Hey", look_id:@look.id, flinker_id:Flinker.last.id)
+    FlinkerLike.create(flinker_id:Flinker.last.id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
+    
+    look_serializer = LookSerializer.new(@look)
+    hash = look_serializer.as_json
+
+    assert_equal 1, hash[:look][:comments_count]
+    assert_equal 1, hash[:look][:likes_count]
+  end
 end
