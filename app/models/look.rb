@@ -1,6 +1,6 @@
 class Look < ActiveRecord::Base
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
-  attr_accessible :hashtags_attributes, :season
+  attr_accessible :hashtags_attributes, :season, :staff_pick
   
   belongs_to :flinker
   has_one :post

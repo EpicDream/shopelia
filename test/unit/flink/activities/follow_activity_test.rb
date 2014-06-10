@@ -4,7 +4,7 @@ class FollowActivityTest < ActiveSupport::TestCase
   
   setup do
     @flinker = flinkers(:lilou)
-    @followed = flinkers(:betty)
+    @followed = flinkers(:fanny)
   end
   
   test "send follow notification to followed flinker when follow activity is created" do
@@ -35,6 +35,16 @@ class FollowActivityTest < ActiveSupport::TestCase
     assert_difference("FollowActivity.count", -1) do
       follow.destroy
     end
+  end
+  
+  test "don't send follow notification to publishers" do
+    @followed = flinkers(:betty)
     
+    Sidekiq::Testing.inline! do 
+      FollowNotificationWorker.unstub(:perform_in)
+      FollowNotificationWorker.expects(:perform_in).never
+
+      FlinkerFollow.create(flinker_id:@flinker.id, follow_id:@followed.id)
+    end
   end
 end

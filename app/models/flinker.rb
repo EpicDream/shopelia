@@ -70,6 +70,8 @@ class Flinker < ActiveRecord::Base
   }
   scope :with_location, -> { where('city is not null or area is not null') }
   
+  alias_attribute :publisher, :is_publisher
+  
   def name=name
     write_attribute(:name, name)
     self.blog.update_attributes(name:name) if self.blog
