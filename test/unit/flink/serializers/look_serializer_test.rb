@@ -39,6 +39,7 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert_equal 2, hash[:look][:images].count
     assert hash[:look][:liked].nil?
     assert_equal "bla bla bla", hash[:look][:description]
+    assert_equal 0, hash[:look][:hashtags].count
   end
 
   test "it should set liked by" do
@@ -63,5 +64,17 @@ class LookSerializerTest < ActiveSupport::TestCase
 
     assert_equal "Robe", hash[:look][:products][0][:code]
     assert_equal "test", hash[:look][:products][0][:brand]
+  end
+  
+  test "associated highlighted hashtags" do
+    hashtags = ["Top", "Canon"].map { |name| Hashtag.find_or_create_by_name(name)  }
+    @look.hashtags << hashtags
+    hashtags.first.update_attributes(highlighted:true)
+    
+    look_serializer = LookSerializer.new(@look)
+    hash = look_serializer.as_json
+
+    assert_equal 1, hash[:look][:hashtags].count
+    assert_equal ["Top"], hash[:look][:hashtags]
   end
 end

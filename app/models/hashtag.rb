@@ -11,6 +11,7 @@ class Hashtag < ActiveRecord::Base
   before_validation :hashtagify
   
   scope :matching, ->(name) { where('name ~* ?', "^#{Hashtag.hashtagify(name)}$").limit(1) }
+  scope :highlighted, -> { where(highlighted:true) }
   
   def hashtagify
     self.name = Hashtag.hashtagify(self.name)
