@@ -12,7 +12,8 @@ class FlinkerAuthentication < ActiveRecord::Base #TODO:Refactoring
   
   def self.facebook token
     user = FbGraph::User.me(token).fetch
-
+    created = false
+    
     auth = where(uid:user.identifier).first 
     picture = "#{user.picture}?width=200&height=200&type=normal"
     auth and auth.update_attributes!(user:user, picture:picture) and auth.after_sign_in
@@ -20,9 +21,10 @@ class FlinkerAuthentication < ActiveRecord::Base #TODO:Refactoring
       auth = create!(uid:user.identifier, email:user.email, token:token, picture:picture, provider:FACEBOOK) 
       auth.user = user
       auth.after_sign_up
+      created = true
     end
     auth.refresh_token!(token)
-    auth.flinker
+    [auth.flinker, created]
   end
   
   def refresh_token! token

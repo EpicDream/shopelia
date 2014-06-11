@@ -1,7 +1,8 @@
 class LookSerializer < ActiveModel::Serializer
   attributes :uuid, :name, :url, :published_at, :flinker, :products, :images, :liked, :description
-  attributes :updated_at, :flink_published_at, :liked_by_friends, :hashtags
-
+  attributes :updated_at, :flink_published_at, :liked_by_friends, :hashtags, :staff_pick
+  attributes :comments_count, :likes_count
+  
   def name
     object.name.try(:strip)
   end
@@ -16,6 +17,14 @@ class LookSerializer < ActiveModel::Serializer
   
   def flink_published_at
     object.flink_published_at.to_i
+  end
+  
+  def comments_count
+    object.comments.count
+  end
+  
+  def likes_count
+    object.flinker_likes.count
   end
 
   def flinker
@@ -55,12 +64,12 @@ class LookSerializer < ActiveModel::Serializer
   end
   
   def include_liked_by_friends?
-    scope && scope[:include_liked_by_friends]
+    scope && scope[:flinker] && scope[:include_liked_by_friends]
   end
   
   def serializable_hash
     key = ActiveSupport::Cache.expand_cache_key([self.class.to_s.underscore, object.id], 'serilizable-hash')
-    Rails.cache.fetch(key, expires_in:30.minutes, race_condition_ttl:10) do
+    Rails.cache.fetch(key, expires_in:5.minutes, race_condition_ttl:10) do
       super
     end
   end

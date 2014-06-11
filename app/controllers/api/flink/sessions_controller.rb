@@ -7,11 +7,11 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
   
   def create
     render sign_in_by_email and return unless params[:provider]
-    flinker = FlinkerAuthentication.facebook(params[:token])
+    flinker, created = FlinkerAuthentication.facebook(params[:token])
     sign_in(:flinker, flinker)
     flinker.ensure_authentication_token!
     update_attributes_from_headers
-    render json_for(flinker)
+    render json_for(flinker, created)
   rescue => e
     render unauthorized("Facebook token is invalid", e) and return if e.respond_to?(:code) && [400, 401].include?(e.code)
     render server_error(e)
@@ -54,8 +54,8 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     json_for(flinker)
   end
   
-  def json_for flinker
-    { json: FlinkerSerializer.new(flinker).as_json.merge({ auth_token:flinker.authentication_token })}
+  def json_for flinker, created=nil
+    { json: FlinkerSerializer.new(flinker).as_json.merge({ auth_token:flinker.authentication_token, creation:created })}
   end
 
 end

@@ -145,6 +145,18 @@ class Flinker < ActiveRecord::Base
     Flinker.where(username:FLINK_HQ_USERNAME).first
   end
   
+  def self.top_liked from, max=20
+    Flinker.find_by_sql FlinkerSql.top_liked(from, max)
+  end
+  
+  def self.trend_setters country
+    country ||= Country.us
+    skope = publishers.staff_pick
+    iso = skope.of_country(country.iso).first.nil? ? Country::US : country.iso 
+    total = skope.of_country(iso).count
+    skope.of_country(iso) + top_liked(Date.today - 1.week, 20 - total)
+  end
+  
   private
   
   def assign_uuid

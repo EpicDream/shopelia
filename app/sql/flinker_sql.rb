@@ -1,4 +1,5 @@
 module FlinkerSql
+  
   def self.similarities flinker, limit=10
     countries_ids = (Country.ids - [flinker.country_id]).join(",")
     country_id = flinker.country_id || Country.fr.id
@@ -48,6 +49,25 @@ module FlinkerSql
         order by count(*) desc
         limit 3
       );
+    }
+  end
+  
+  def self.top_liked from, max=20
+    %Q{
+      select fl.*, vlikes.count from flinkers fl
+
+       inner join (select flinkers.id as fid, count(*) as count from flinker_likes
+        join looks on looks.id = flinker_likes.resource_id
+        join flinkers on flinkers.id = looks.flinker_id
+        where resource_type = 'look'
+        and flinker_likes.updated_at > '#{from}'
+        group by flinkers.id
+        order by count desc) vlikes
+       on vlikes.fid = fl.id 
+       
+      where fl.is_publisher = 't'
+      order by vlikes.count desc
+      limit #{max};
     }
   end
   
