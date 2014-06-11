@@ -3,6 +3,7 @@ require 'flink/algolia'
 class Flinker < ActiveRecord::Base
   include Algolia::FlinkerSearch unless Rails.env.test?
   FLINK_HQ_USERNAME = "flinkhq"
+  MAX_BUILD_FOR_FOLLOW_STAFF_PICK = 30
   
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :can_comment, :city, :area
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick, :timezone, :newsletter
@@ -167,7 +168,9 @@ class Flinker < ActiveRecord::Base
     self.avatar = URI.parse(self.avatar_url) if self.avatar_url.present?
   end
 
-  def follow_staff_picked
+  def follow_staff_picked#TODO:Remove on new release 31
+    device = Device.from_flink_user_agent(ENV['HTTP_USER_AGENT'], self) rescue nil
+    return if device && device.build > MAX_BUILD_FOR_FOLLOW_STAFF_PICK
     country = self.country.try(:iso)
     country = Country::FRANCE if !country || Flinker.publishers.staff_pick.of_country(country).count.zero?
     flinkers = Flinker.publishers.staff_pick.of_country_or_universal(country).limit(25)

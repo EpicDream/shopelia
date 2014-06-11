@@ -193,12 +193,28 @@ class FlinkerTest < ActiveSupport::TestCase
     flinkers = Flinker.trend_setters(nil)
 
     assert flinkers.include?(flinkers(:anne))
-    # assert_equal 20, flinkers.count
   end
   
+  test "assign device on create" do
+    set_env_user_agent
+    @flinker.save
+    
+    assert_equal devices(:mobile).uuid, @flinker.device.uuid
+    assert_equal 1, @flinker.device.build
+  end
   
+  test "stop auto follow staff picked if device build >= 31" do
+    set_env_user_agent(31)
+    FlinkerFollow.any_instance.expects(:create).never
+    
+    @flinker.save
+  end
   
   private
+  
+  def set_env_user_agent build=1
+    ENV['HTTP_USER_AGENT'] = "flink:os[iOS]:build[#{build}]:version[1.0.1]:os_version[4.4]:phone[Samsung Galaxy]:uuid[#{devices(:mobile).uuid}]:dev[2]"
+  end
 
   def new_flinker
     Flinker.new(attributes)
