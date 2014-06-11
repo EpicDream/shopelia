@@ -118,23 +118,6 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     assert_equal 2, json_response["looks"].count
     assert_equal looks.map(&:uuid), json_response["looks"].map { |l| l["uuid"] }
   end
-  
-  test "looks from uuids has comments and likes counts and liked by friends" do
-    looks = Look.first(2)
-    
-    Comment.create(body:"Hey", look_id:looks.last.id, flinker_id:Flinker.last.id)
-    FlinkerLike.create(flinker_id:Flinker.last.id, resource_type:FlinkerLike::LOOK, resource_id:looks.last.id)
-    
-    get :index, format: :json, uuids:looks.map(&:uuid)
-    
-    _looks = json_response["looks"]
-
-    assert_response :success
-    assert_equal 2, _looks.count
-    assert_equal looks.map(&:uuid), _looks.map { |l| l["uuid"] }
-    assert_equal 1, _looks.last["comments_count"]
-    assert_equal 1, _looks.last["likes_count"]
-  end
 
   private
 

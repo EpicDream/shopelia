@@ -227,6 +227,9 @@ Shopelia::Application.routes.draw do
       namespace :likes do
         resources :looks, only: :index
       end
+      namespace :refresh do
+        resources :looks, only: :index
+      end
       namespace :followings do
         resources :looks, only: :index
         resources :updated_looks, only: :index

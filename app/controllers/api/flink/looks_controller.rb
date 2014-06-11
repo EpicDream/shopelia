@@ -9,15 +9,13 @@ class Api::Flink::LooksController < Api::Flink::BaseController
   api :GET, "/looks", "Get looks"
   def index
     render unauthorized and return if params[:liked] && !current_flinker
-    render json: { looks: serialize(looks, scope:scope().merge(include_liked_by_friends:true)) }
+    render json: { looks: serialize(looks, scope:scope()) }
   end
 
   private
 
   def looks
     case
-    when params[:uuids]  #TODO:Keep only this on new versions
-      Look.published.where(uuid:params[:uuids])
     when params[:looks_ids] #CHANGED:remove?
       Look.published.where(uuid:params[:looks_ids])
     when params[:liked] #CHANGED: => /flink/likes/looks
