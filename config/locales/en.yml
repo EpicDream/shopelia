@@ -79,6 +79,7 @@ en:
       bra: "Bra"
       jumpsuit: "Jumpsuit"
       jewelry: "Jewelry"
+      chain: "Chain"
   placeholders:
     user:
       email: "Your email"

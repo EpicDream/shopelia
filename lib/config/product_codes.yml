@@ -49,6 +49,7 @@ codes:
   - jewelry
   - bra
   - jumpsuit
+  - chain
 translations:
   pull:
     FR: Pull
@@ -197,3 +198,7 @@ translations:
   jumpsuit:
     FR: Combinaison
     UK: Jumpsuit
+  chain:
+    FR: Chaîne
+    UK: Chain
+    
