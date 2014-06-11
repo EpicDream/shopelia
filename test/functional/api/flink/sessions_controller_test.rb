@@ -50,6 +50,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     assert json_response["auth_token"].present?
     assert json_response["flinker"].present?
     assert_equal "Nicolas Bigot", json_response["flinker"]["name"]
+    assert_equal true, json_response["creation"]
   end
   
   test "sign existing flinker without creating new one" do
@@ -65,6 +66,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     assert json_response["auth_token"].present?
     assert_equal "nicolasbigot@me.com", json_response["flinker"]["email"]
     assert_equal "Nicolas Bigot", json_response["flinker"]["name"]
+    assert_equal false, json_response["creation"]
   end
   
   test "logout flinker" do

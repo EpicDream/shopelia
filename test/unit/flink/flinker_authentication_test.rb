@@ -12,7 +12,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     flinker = nil
     
     assert_difference("FlinkerAuthentication.count") { 
-      flinker = FlinkerAuthentication.facebook(fanny[:token])
+      flinker, created = FlinkerAuthentication.facebook(fanny[:token])
       flinker.reload
     }
     assert auth = flinker.flinker_authentications.first
@@ -32,7 +32,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     flinker = nil
     
     assert_no_difference("FlinkerAuthentication.count") { 
-      flinker = FlinkerAuthentication.facebook(@fanny.token) 
+      flinker, created = FlinkerAuthentication.facebook(@fanny.token) 
     }
     
     assert_equal @fanny, flinker.flinker_authentications.first
@@ -43,7 +43,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     token  = @fanny.token
     assert @fanny.update_attributes(token:"oldtoken", picture:nil)
 
-    flinker = FlinkerAuthentication.facebook(token) 
+    flinker, created = FlinkerAuthentication.facebook(token) 
     
     auth = flinker.flinker_authentications.first
     assert_equal token, auth.token
@@ -91,7 +91,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
         FlinkerAuthentication.create!(uid:uid, flinker_id:flinkers[index].id)
       }
     
-      flinker = FlinkerAuthentication.facebook(fanny[:token])
+      flinker, created = FlinkerAuthentication.facebook(fanny[:token])
       assert_equal 3, flinker.followings.count
     
       flinkers[0..2].each { |flinkr| 
@@ -103,7 +103,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
   test "update flinker username from facebook if none" do
     @flinker.update_attributes(name:nil)
 
-    flinker = FlinkerAuthentication.facebook(@fanny.token) 
+    flinker, created = FlinkerAuthentication.facebook(@fanny.token) 
     
     assert_equal 'Nicolas Bigot', @flinker.reload.name
   end
@@ -114,7 +114,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy and @flinker.destroy
     
     fb_friend = FacebookFriend.create!(identifier:fanny[:uid], name:"Fanny", flinker_id:flinkers(:boop).id)
-    flinker = FlinkerAuthentication.facebook(fanny[:token])
+    flinker, created = FlinkerAuthentication.facebook(fanny[:token])
     
     assert_equal flinker.id, fb_friend.reload.friend_flinker_id
   end
@@ -123,7 +123,7 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy and @flinker.destroy
     FbGraph::User.any_instance.stubs(username:nil)
     
-    flinker = FlinkerAuthentication.facebook(fanny[:token])
+    flinker, created = FlinkerAuthentication.facebook(fanny[:token])
     
     assert_match /^nicolasbigot\d+/, flinker.username
   end
