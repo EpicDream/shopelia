@@ -1,4 +1,7 @@
 class Theme < ActiveRecord::Base
+  COVER_HEIGHT_HIGH = 200
+  COVER_HEIGHT_LOW = 120
+  
   acts_as_list
   
   attr_accessible :rank, :published, :position, :cover_height, :dev_publication, :series
@@ -15,6 +18,8 @@ class Theme < ActiveRecord::Base
   before_create :assign_default_cover, unless: -> { self.theme_cover }
   before_create :assign_series
   before_validation :find_or_create_hashtag
+  after_update :update_cover_heights, if: -> { self.position_changed? || self.series_changed? }
+  after_create :update_cover_heights
   
   accepts_nested_attributes_for :theme_cover
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
@@ -75,6 +80,12 @@ class Theme < ActiveRecord::Base
   end
   
   private
+  
+  def update_cover_heights
+    themes = Theme.of_series(self.series).order('position asc')
+    themes.update_all(cover_height:COVER_HEIGHT_LOW)
+    themes.first.update_attributes(cover_height:COVER_HEIGHT_HIGH)
+  end
   
   def assign_series
     self.series = Theme.last_series 
