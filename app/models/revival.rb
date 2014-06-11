@@ -1,6 +1,6 @@
 class Revival
   REVIVE_AT = 10 #10:00am local
-  LAST_SESSION_MIN = 72.hours
+  LAST_SESSION_MIN = 24.hours
   LAST_REVIVE_MIN = 1.week
   
   def initialize(flinker, look)
