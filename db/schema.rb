@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140610131141) do
+ActiveRecord::Schema.define(:version => 20140612090652) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -432,6 +432,25 @@ ActiveRecord::Schema.define(:version => 20140610131141) do
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
   end
+
+  create_table "instagram_friendships", :id => false, :force => true do |t|
+    t.integer "instagram_user_id",   :null => false
+    t.integer "instagram_target_id", :null => false
+  end
+
+  add_index "instagram_friendships", ["instagram_target_id"], :name => "index_instagram_friendships_on_instagram_target_id"
+  add_index "instagram_friendships", ["instagram_user_id"], :name => "index_instagram_friendships_on_instagram_user_id"
+
+  create_table "instagram_users", :force => true do |t|
+    t.integer  "flinker_id"
+    t.integer  "instagram_id"
+    t.string   "access_token"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "instagram_users", ["flinker_id"], :name => "index_instagram_users_on_flinker_id"
+  add_index "instagram_users", ["instagram_id"], :name => "index_instagram_users_on_instagram_id"
 
   create_table "look_products", :force => true do |t|
     t.integer  "look_id"
