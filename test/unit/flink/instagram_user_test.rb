@@ -12,6 +12,8 @@ class InstagramUserTest < ActiveSupport::TestCase
     user = InstagramUser.init(fanny, TEST_TOKEN)
 
     assert_equal [@betty], user.friendships
+    assert_equal "pierrepollastri", user.username
+    assert_equal "Pierre Pollastri", user.full_name
   end
   
   test "refresh token and friends only if exists" do

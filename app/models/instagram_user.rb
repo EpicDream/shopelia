@@ -1,7 +1,7 @@
 require 'instagram/instagram_connect'
 
 class InstagramUser < ActiveRecord::Base
-  attr_accessible :access_token, :flinker_id, :instagram_id
+  attr_accessible :access_token, :flinker_id, :instagram_id, :full_name, :username
   
   has_and_belongs_to_many(:friendships,
       class_name: 'InstagramUser', 
@@ -13,7 +13,8 @@ class InstagramUser < ActiveRecord::Base
       
   def self.init flinker, token
     client = InstagramConnect.new(token)
-    user = find_or_create_by_flinker_id(flinker_id:flinker.id, instagram_id:client.me.id)
+    me = client.me
+    user = find_or_create_by_flinker_id(flinker_id:flinker.id, instagram_id:me.id, full_name:me.full_name, username:me.username)
     user.update_attributes(access_token: token)
     user.friends(refresh: true)
     user

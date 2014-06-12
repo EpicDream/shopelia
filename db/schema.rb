@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140612090652) do
+ActiveRecord::Schema.define(:version => 20140612114232) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -447,6 +447,8 @@ ActiveRecord::Schema.define(:version => 20140612090652) do
     t.string   "access_token"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
+    t.string   "username"
+    t.string   "full_name"
   end
 
   add_index "instagram_users", ["flinker_id"], :name => "index_instagram_users_on_flinker_id"
