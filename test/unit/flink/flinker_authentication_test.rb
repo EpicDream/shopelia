@@ -80,26 +80,6 @@ class FlinkerAuthenticationTest < ActiveSupport::TestCase
     FlinkerAuthentication.facebook(@fanny.token)
   end
   
-  test "auto follow flinkers who are facebook friends, reciprocally and send apn to followers" do
-    Sidekiq::Testing.inline! do
-      fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy
-      
-      FollowNotificationWorker.unstub(:perform_in)
-      flinkers = Flinker.all
-      
-      ["697602443", "1077047313", "703507838"].each_with_index { |uid, index|
-        FlinkerAuthentication.create!(uid:uid, flinker_id:flinkers[index].id)
-      }
-    
-      flinker, created = FlinkerAuthentication.facebook(fanny[:token])
-      assert_equal 3, flinker.followings.count
-    
-      flinkers[0..2].each { |flinkr| 
-        assert flinkr.followings.include?(flinker) 
-      }
-    end
-  end
-  
   test "update flinker username from facebook if none" do
     @flinker.update_attributes(name:nil)
 
