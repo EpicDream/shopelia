@@ -66,7 +66,7 @@ module FlinkerSql
        on vlikes.fid = fl.id 
        
       where fl.is_publisher = 't'
-      #{"where fl.id not in (#{exclusion.join(",")})" if exclusion.any? }
+      #{"and fl.id not in (#{exclusion.join(",")})" if exclusion.any? }
       order by vlikes.count desc
       limit #{max};
     }
