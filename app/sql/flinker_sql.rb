@@ -52,7 +52,7 @@ module FlinkerSql
     }
   end
   
-  def self.top_liked from, max=20
+  def self.top_liked from, max=20, exclusion=[]
     %Q{
       select fl.*, vlikes.count from flinkers fl
 
@@ -66,6 +66,7 @@ module FlinkerSql
        on vlikes.fid = fl.id 
        
       where fl.is_publisher = 't'
+      #{"where fl.id not in (#{exclusion.join(",")})" if exclusion.any? }
       order by vlikes.count desc
       limit #{max};
     }

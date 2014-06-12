@@ -146,16 +146,17 @@ class Flinker < ActiveRecord::Base
     Flinker.where(username:FLINK_HQ_USERNAME).first
   end
   
-  def self.top_liked from, max=20
-    Flinker.find_by_sql FlinkerSql.top_liked(from, max)
+  def self.top_liked from, max=20, exclusion=[]
+    Flinker.find_by_sql FlinkerSql.top_liked(from, max, exclusion)
   end
   
-  def self.trend_setters country
+  def self.trend_setters country=nil
     country ||= Country.us
     skope = publishers.staff_pick
     iso = skope.of_country(country.iso).first.nil? ? Country::US : country.iso 
     total = skope.of_country(iso).count
-    skope.of_country(iso) + top_liked(Date.today - 1.week, 20 - total)
+    exclusion = skope.of_country(iso).map(&:id)
+    skope.of_country(iso) + top_liked(Date.today - 1.week, 20 - total, exclusion)
   end
   
   private
