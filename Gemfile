@@ -56,7 +56,7 @@ gem "paperclip", "~> 3.0"
 gem 'fastimage'
 gem 'fb_graph'
 gem 'twitter', require:false
-gem 'instagram', require:false
+gem 'instagram'
 gem 'bitly'
 gem 'geocoder', require:false
 gem 'rmagick', require:'RMagick'
