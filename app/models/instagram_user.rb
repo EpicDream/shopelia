@@ -11,9 +11,10 @@ class InstagramUser < ActiveRecord::Base
   
   validates :flinker_id, presence:true, uniqueness:true
       
-  def self.init flinker, instagram_access_token
-    client = InstagramConnect.new(instagram_access_token)
-    user = create(flinker_id:flinker.id, instagram_id:client.me.id, access_token:instagram_access_token)
+  def self.init flinker, token
+    client = InstagramConnect.new(token)
+    user = find_or_create_by_flinker_id(flinker_id:flinker.id, instagram_id:client.me.id)
+    user.update_attributes(access_token: token)
     user.friends(refresh: true)
     user
   rescue => e
