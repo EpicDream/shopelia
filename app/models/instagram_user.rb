@@ -3,6 +3,7 @@ require 'instagram/instagram_connect'
 class InstagramUser < ActiveRecord::Base
   attr_accessible :access_token, :flinker_id, :instagram_id, :full_name, :username
   
+  belongs_to :flinker
   has_and_belongs_to_many(:friendships,
       class_name: 'InstagramUser', 
       join_table: :instagram_friendships,
@@ -10,7 +11,11 @@ class InstagramUser < ActiveRecord::Base
       association_foreign_key: :instagram_target_id)
   
   validates :flinker_id, presence:true, uniqueness:true
-      
+   
+  scope :friendships_of, ->(user) { 
+    where(flinker_id: user.friends.map(&:flinker_id))
+  }
+  
   def self.init flinker, token
     client = InstagramConnect.new(token)
     me = client.me

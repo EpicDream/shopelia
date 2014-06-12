@@ -8,6 +8,7 @@ class InstagramUserTest < ActiveSupport::TestCase
   end
   
   test "create user from auth token and assign instagram friends who are also flinkers" do
+    skip
     fanny = flinkers(:fanny)
     user = InstagramUser.init(fanny, TEST_TOKEN)
 
@@ -17,6 +18,7 @@ class InstagramUserTest < ActiveSupport::TestCase
   end
   
   test "refresh token and friends only if exists" do
+    skip
     fanny = InstagramUser.create(flinker_id:flinkers(:fanny).id, instagram_id: 60198248, access_token:TEST_TOKEN)
     user = nil
     
