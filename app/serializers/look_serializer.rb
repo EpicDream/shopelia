@@ -67,6 +67,10 @@ class LookSerializer < ActiveModel::Serializer
     scope && scope[:flinker] && scope[:include_liked_by_friends]
   end
   
+  def include_hashtags?
+    false
+  end
+  
   def serializable_hash
     key = ActiveSupport::Cache.expand_cache_key([self.class.to_s.underscore, object.id], 'serializable-hash')
     Rails.cache.fetch(key, expires_in:30.minutes, race_condition_ttl:10) do
