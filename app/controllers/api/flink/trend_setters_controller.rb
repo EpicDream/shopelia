@@ -8,8 +8,11 @@ class Api::Flink::TrendSettersController < Api::Flink::BaseController
   private
   
   def flinkers
-    country = current_flinker ? current_flinker.country : Country.where(iso:params[:iso]).first
     Flinker.trend_setters(country)
+  end
+  
+  def country
+    current_flinker ? current_flinker.country : Country.where(iso: params[:iso]).first
   end
   
 end
