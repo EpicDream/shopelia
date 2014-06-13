@@ -170,9 +170,13 @@ class Flinker < ActiveRecord::Base
   end
 
   def follow_staff_picked#TODO:Remove on new release 31
-    hash = ENV['HTTP_USER_AGENT'].gsub(/^flink:/, "").split(/\:/).map{|e| e.match(/^(.*)\[(.*)\]$/)[1..2]}.map{|e| { e[0] => e[1] }}.inject(:merge)
-    build = hash["build"].to_i
-    return build > MAX_BUILD_FOR_FOLLOW_STAFF_PICK
+    device = Device.from_flink_user_agent(ENV['HTTP_USER_AGENT'], self) rescue nil
+    build = 0
+    if ENV['HTTP_USER_AGENT']
+      hash = ENV['HTTP_USER_AGENT'].gsub(/^flink:/, "").split(/\:/).map{|e| e.match(/^(.*)\[(.*)\]$/)[1..2]}.map{|e| { e[0] => e[1] }}.inject(:merge)
+      build = hash["build"].to_i
+      return if build > MAX_BUILD_FOR_FOLLOW_STAFF_PICK
+    end
     country = self.country.try(:iso)
     country = Country::FRANCE if !country || Flinker.publishers.staff_pick.of_country(country).count.zero?
     flinkers = Flinker.publishers.staff_pick.of_country_or_universal(country).limit(25)
