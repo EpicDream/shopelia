@@ -1,6 +1,6 @@
 class LookSerializer < ActiveModel::Serializer
   attributes :uuid, :name, :url, :published_at, :flinker, :products, :images, :liked, :description
-  attributes :updated_at, :flink_published_at, :liked_by_friends, :hashtags, :staff_pick
+  attributes :updated_at, :flink_published_at, :liked_by_friends, :highlighted_hashtags, :staff_pick
   attributes :comments_count, :likes_count
   
   def name
@@ -31,7 +31,7 @@ class LookSerializer < ActiveModel::Serializer
     FlinkerSerializer.new(object.flinker).as_json[:flinker]
   end
   
-  def hashtags
+  def highlighted_hashtags
     object.hashtags.highlighted.map(&:name)
   end
 
@@ -65,10 +65,6 @@ class LookSerializer < ActiveModel::Serializer
   
   def include_liked_by_friends?
     scope && scope[:flinker] && scope[:include_liked_by_friends]
-  end
-  
-  def include_hashtags?
-    false
   end
   
   def serializable_hash
