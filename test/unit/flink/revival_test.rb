@@ -47,8 +47,8 @@ class RevivalTest < ActiveSupport::TestCase
     end
   end
   
-  test "dont revive if last open session less than 72h" do
-    @fanny.update_attributes(last_session_open_at: Time.now - 2.days, last_revival_at: Time.now - 2.weeks)
+  test "dont revive if last open session less than 24h" do
+    @fanny.update_attributes(last_session_open_at: Time.now - 20.hours, last_revival_at: Time.now - 2.weeks)
     
     NewLooksNotificationWorker.expects(:perform_in).never
     

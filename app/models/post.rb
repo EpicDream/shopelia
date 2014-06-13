@@ -3,7 +3,7 @@ class Post < ActiveRecord::Base
   json_attributes [:images, :products, :categories]
   
   belongs_to :blog
-  belongs_to :look
+  belongs_to :look, dependent: :destroy
   
   validates :blog, presence:true
   validates :link, presence:true
