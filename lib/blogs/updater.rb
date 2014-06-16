@@ -10,8 +10,8 @@ module Blogs
       return unless continue?
       CSV.foreach(@csv_path, col_sep: ';') do |row|
         begin
-          report(row[0], "Missing ID") and next unless blog = Blog.where(id:row[0]).includes(:flinker).first
-          flinker = blog.flinker
+          report(row[0], "Missing ID") and next unless flinker = Flinker.where(id:row[0]).first
+          blog = flinker.blog
           if row[8] =~ /SUPP/
             blog.destroy
             flinker.destroy
