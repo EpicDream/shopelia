@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140612114232) do
+ActiveRecord::Schema.define(:version => 20140613092825) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -298,7 +298,10 @@ ActiveRecord::Schema.define(:version => 20140612114232) do
     t.integer  "flinker_id"
     t.string   "email"
     t.text     "picture"
+    t.string   "type"
   end
+
+  add_index "flinker_authentications", ["type"], :name => "index_flinker_authentications_on_type"
 
   create_table "flinker_follows", :force => true do |t|
     t.integer  "flinker_id"

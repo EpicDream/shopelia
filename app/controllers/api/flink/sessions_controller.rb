@@ -1,13 +1,9 @@
 class Api::Flink::SessionsController < Api::Flink::BaseController
   skip_before_filter :authenticate_flinker!, :only => :create
 
-  api :POST, "/flinkers/sign_in", "Sign in a flinker"
-  param :email, String, "Email of the flinker", :required => true
-  param :password, String, "Password of the flinker", :required => true
-  
   def create
     render sign_in_by_email and return unless params[:provider]
-    flinker, created = FlinkerAuthentication.facebook(params[:token])
+    flinker, created = FacebookAuthentication.facebook(params[:token])
     sign_in(:flinker, flinker)
     flinker.ensure_authentication_token!
     update_attributes_from_headers
@@ -16,9 +12,6 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     render unauthorized("Facebook token is invalid", e) and return if e.respond_to?(:code) && [400, 401].include?(e.code)
     render server_error(e)
   end
-  
-  api :DELETE, "/flinkers/sign_out", "Sign out a flinker"
-  param :email, String, "Email of the flinker", :required => true
   
   def destroy
     flinker = Flinker.find_for_database_authentication(:email => params[:email])
@@ -32,7 +25,7 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
   def update
     render unauthorized and return unless current_flinker
     update_attributes_from_headers
-    FlinkerAuthentication.facebook(params[:token]) if params[:token]
+    FacebookAuthentication.facebook(params[:token]) if params[:token]
     render json_for(current_flinker)
   end
   

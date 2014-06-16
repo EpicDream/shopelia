@@ -76,7 +76,7 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
   end
   
   test "get facebook friend sign up activity related to current flinker" do
-    FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
+    FacebookAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
     
     get :index, format: :json
     
@@ -170,7 +170,7 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
       FlinkerFollow.create(flinker_id:flinkers(:boop).id, follow_id:@fanny.id)
       CommentActivity.create!(comments(:agadir))
       LikeActivity.create!(flinker_likes(:boop_like))
-      FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
+      FacebookAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
       Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:fanny).id) #fanny comment
       Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:nana).id) 
       LookSharing.on("twitter").for(look_id:looks(:agadir).id, flinker_id:flinkers(:boop).id)
