@@ -36,3 +36,21 @@ table.staff-picks-flinkers td{
   border:thin solid #999;
   text-align:center;
 }
+table.staff-picks-hashtags{
+  width:90%;
+  margin:40px 10px 10px 10px;
+  border-collapse:collapse;
+  border:thin solid #999;
+  font-family:'Palatino';
+}
+table.staff-picks-hashtags td{
+  border:thin solid #999;
+  text-align:center;
+}
+ul.navigation{
+  margin-top:80px;
+}
+/*ul.navigation a{
+  display:block;
+}
+*/
