@@ -16,7 +16,7 @@ class Api::Flink::Refresh::LooksControllerTest < ActionController::TestCase
     
     assert_response :success
     assert_equal 2, looks.count
-    assert_equal ["uuid", "liked_by_friends", "hashtags", "comments_count", "likes_count"], look.keys
+    assert_equal ["uuid", "liked_by_friends", "highlighted_hashtags", "comments_count", "likes_count"], look.keys
   end
   
 end

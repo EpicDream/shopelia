@@ -1,11 +1,11 @@
 class LookLightSerializer < ActiveModel::Serializer
-  attributes :uuid, :liked_by_friends, :hashtags, :comments_count, :likes_count
+  attributes :uuid, :liked_by_friends, :highlighted_hashtags, :comments_count, :likes_count
   
   def liked_by_friends
     FlinkerLike.liked_by_friends(scope[:flinker], object).map(&:flinker_id)
   end
   
-  def hashtags
+  def highlighted_hashtags
     object.hashtags.highlighted.map(&:name)
   end
   

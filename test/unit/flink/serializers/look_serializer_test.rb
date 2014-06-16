@@ -39,7 +39,7 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert hash[:look][:liked].nil?
     assert hash[:look][:staff_pick]
     assert_equal "bla bla bla", hash[:look][:description]
-    assert_equal 0, hash[:look][:hashtags].count
+    assert_equal 0, hash[:look][:highlighted_hashtags].count
   end
 
   test "it should set liked by" do
@@ -74,8 +74,8 @@ class LookSerializerTest < ActiveSupport::TestCase
     look_serializer = LookSerializer.new(@look)
     hash = look_serializer.as_json
 
-    assert_equal 1, hash[:look][:hashtags].count
-    assert_equal ["Top"], hash[:look][:hashtags]
+    assert_equal 1, hash[:look][:highlighted_hashtags].count
+    assert_equal ["Top"], hash[:look][:highlighted_hashtags]
   end
   
   test "associated comments and likes count" do
