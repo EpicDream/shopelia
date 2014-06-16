@@ -27,7 +27,7 @@ module Blogs
     end
     
     def continue?
-      puts "WARNING: La première colonne(0) doit être l'ID du blog. Continuer ? (y/n)"
+      puts "WARNING: La première colonne(0) doit être l'ID du flinker. Continuer ? (y/n)"
       gets.chomp == "y"
     end
     
