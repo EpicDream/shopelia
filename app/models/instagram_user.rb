@@ -19,7 +19,7 @@ class InstagramUser < ActiveRecord::Base
   def self.init flinker, token
     client = InstagramConnect.new(token)
     me = client.me
-    user = find_or_create_by_flinker_id(flinker_id:flinker.id, instagram_id:me.id, full_name:me.full_name, username:me.username)
+    user = find_or_create_by_flinker_id(flinker_id:flinker.id, instagram_id:me.id.to_s, full_name:me.full_name, username:me.username)
     user.update_attributes(access_token: token)
     user.friends(refresh: true)
     user
@@ -31,7 +31,7 @@ class InstagramUser < ActiveRecord::Base
   def friends refresh: false
     return friendships unless refresh
     client = InstagramConnect.new(self.access_token)
-    friends = InstagramUser.where(instagram_id: client.followings.map {|user| user.id.to_i })
+    friends = InstagramUser.where(instagram_id: client.followings.map {|user| user.id.to_s })
     self.friendships.destroy_all
     self.friendships << friends
   end

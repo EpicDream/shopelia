@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140613092825) do
+ActiveRecord::Schema.define(:version => 20140616134515) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -446,7 +446,7 @@ ActiveRecord::Schema.define(:version => 20140613092825) do
 
   create_table "instagram_users", :force => true do |t|
     t.integer  "flinker_id"
-    t.integer  "instagram_id"
+    t.string   "instagram_id"
     t.string   "access_token"
     t.datetime "created_at",   :null => false
     t.datetime "updated_at",   :null => false
@@ -849,6 +849,27 @@ ActiveRecord::Schema.define(:version => 20140613092825) do
   end
 
   add_index "traces", ["device_id"], :name => "index_traces_on_device_id"
+
+  create_table "twitter_friendships", :id => false, :force => true do |t|
+    t.integer "twitter_user_id",   :null => false
+    t.integer "twitter_target_id", :null => false
+  end
+
+  add_index "twitter_friendships", ["twitter_target_id"], :name => "index_twitter_friendships_on_twitter_target_id"
+  add_index "twitter_friendships", ["twitter_user_id"], :name => "index_twitter_friendships_on_twitter_user_id"
+
+  create_table "twitter_users", :force => true do |t|
+    t.integer  "flinker_id"
+    t.string   "twitter_id"
+    t.string   "access_token"
+    t.string   "access_token_secret"
+    t.string   "username"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
+
+  add_index "twitter_users", ["flinker_id"], :name => "index_twitter_users_on_flinker_id"
+  add_index "twitter_users", ["twitter_id"], :name => "index_twitter_users_on_twitter_id"
 
   create_table "user_sessions", :force => true do |t|
     t.integer  "user_id"

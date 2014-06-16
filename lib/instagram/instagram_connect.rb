@@ -1,7 +1,7 @@
 require 'instagram'
 
 class InstagramConnect
-  CREDENTIALS = YAML.load_relative_file("accounts.yml")['instagram']
+  CREDENTIALS = YAML.load_relative_file("account.yml")['instagram']
   
   attr_reader :client
   
