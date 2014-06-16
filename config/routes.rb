@@ -233,6 +233,7 @@ Shopelia::Application.routes.draw do
       end
       namespace :connect do
         resources :instagram, only: :create
+        resources :twitter, only: :create
       end
       namespace :followings do
         resources :looks, only: :index
