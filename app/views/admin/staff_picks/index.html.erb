@@ -1,8 +1,30 @@
-<h4>Staff Picked Looks</h4>
+<ul class="navigation">
+  <li><a href="#staff-picks-hashtags">Highlighted Hashtags</a></li>
+  <li><a href="#staff-picks-looks">Staff Picked Looks</a></li>
+  <li><a href="#staff-picks-flinkers">Staff Picked Flinkers </a></li>
+</ul>
+
+<h4 id="staff-picks-hashtags">Highlighted Hashtags (<%= @hashtags.count %>)</h4>
+<table class="staff-picks-hashtags">
+  <thead>
+    <th>Hashtag</th>
+    <th>Nombre de looks</th>
+  </thead>
+  <tbody>
+    <% @hashtags.each do |hashtag| %>
+      <tr>
+        <td>#<%= hashtag.name %></td>
+        <td><%= hashtag.looks.count %></td>
+      </tr>
+    <% end %>    
+  </tbody>
+</table>
+
+<h4 id="staff-picks-looks">Staff Picked Looks (<%= @looks.count %>)</h4>
 <table class="staff-picks-looks">
   <thead>
-    <th>UUID</th>
     <th>Publié le</th>
+    <th>UUID</th>
     <th>Blogueuse</th>
     <th>Pays</th>
     <th>Aperçu</th>
@@ -23,7 +45,7 @@
   </tbody>
 </table>
 
-<h4>Staff Picked Flinkers</h4>
+<h4 id="staff-picks-flinkers">Staff Picked Flinkers (<%= @flinkers.count %>)</h4>
 <table class="staff-picks-flinkers">
   <thead>
     <th>Blogueuse</th>
