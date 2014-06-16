@@ -7,6 +7,8 @@ Shopelia::Application.routes.draw do
   get "/flinkers/:id", to: redirect('/')
   get "/themes/:id", to: redirect('/')
   get "/themes", to: redirect('/')
+  get "/hashtags", to: redirect('/')
+  get "/hashtags/:id", to: redirect('/')
   
   get "comments/index"
 

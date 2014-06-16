@@ -9,12 +9,20 @@
   <thead>
     <th>Hashtag</th>
     <th>Nombre de looks</th>
+    <th>Looks</th>
   </thead>
   <tbody>
     <% @hashtags.each do |hashtag| %>
       <tr>
         <td>#<%= hashtag.name %></td>
-        <td><%= hashtag.looks.count %></td>
+        <td><%= hashtag.looks.uniq.count %></td>
+        <td>
+          <ul>
+            <% hashtag.looks.uniq.each do |look| %>
+              <li><%= link_to look.name, admin_look_path(look), target:'_blank' %></li>
+            <% end %>
+          </ul>
+        </td>
       </tr>
     <% end %>    
   </tbody>
@@ -23,8 +31,8 @@
 <h4 id="staff-picks-looks">Staff Picked Looks (<%= @looks.count %>)</h4>
 <table class="staff-picks-looks">
   <thead>
-    <th>Publié le</th>
     <th>UUID</th>
+    <th>Publié le</th>
     <th>Blogueuse</th>
     <th>Pays</th>
     <th>Aperçu</th>
