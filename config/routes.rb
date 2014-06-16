@@ -208,6 +208,7 @@ Shopelia::Application.routes.draw do
       resources :activities, :only => :index
       resources :facebook_friends, :only => :index
       resources :instagram_friends, :only => :index
+      resources :twitter_friends, :only => :index
       resources :top_flinkers, :only => :index
       resources :avatars, :only => :create
       resources :follows, :only => [:index, :create, :destroy]

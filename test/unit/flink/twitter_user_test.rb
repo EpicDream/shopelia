@@ -19,6 +19,7 @@ class TwitterUserTest < ActiveSupport::TestCase
   
   test "refresh token and friends only if exists" do
     skip
+    sleep(5) #too avoid rate limit
     fanny = TwitterUser.create(flinker_id:flinkers(:fanny).id, twitter_id: "2227040976", access_token:ACCESS_TOKEN, access_token_secret: ACCESS_TOKEN_SECRET)
     user = nil
     
