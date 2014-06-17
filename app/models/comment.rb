@@ -4,7 +4,7 @@ class Comment < ActiveRecord::Base
   act_as_flink_activity :comment
   act_as_flink_activity :mention
   
-  attr_accessible :body , :flinker_id, :look_id , :posted
+  attr_accessible :body , :flinker_id, :look_id , :posted, :admin_read
   attr_accessor :post_to_blog
   
   belongs_to :look
@@ -18,8 +18,13 @@ class Comment < ActiveRecord::Base
   after_create :create_hashtags_and_assign_to_look
   
   scope :posted, -> { where(posted:true) }
-  scope :last_ones, ->(n=10) { where('created_at >= ?', Time.now - 4.days).order('created_at desc').limit(n) }
+  scope :last_ones, ->(n=10) { 
+    where('created_at >= ?', Time.now - 4.days)
+    .order('created_at desc, look_id desc')
+    .limit(n) 
+  }
   scope :timeline, ->(look_id) { where(look_id:look_id) }
+  scope :admin_unread, -> { where(admin_read:false) }
   
   def to_html
     "#{self.body} <br/> sent via  <a href='http://flink.io'>Flink app</a>"
