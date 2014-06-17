@@ -49,7 +49,7 @@
     <tbody>
       <% @flinkers.each do |flinker| %>
         <tr>
-          <td><%= image_tag("http://flink.io/images/flinker/64713/thumb/avatar.jpg", class:'avatar') %></td>
+          <td><%= image_tag(flinker.avatar.url, class:'avatar') %></td>
           <td><%= link_to(flinker.username, admin_flinker_path(flinker)) %></td>
           <td><%= flinker.name %></td>
           
