@@ -1,60 +1,70 @@
+div.staff-picks{
+  font-family:Times;
+}
 h4{
   margin:60px 0 0 20px;
-  color:#AB100F;
-  background:#E4E4E4;
-  padding:2px;
-  font-family:'Palatino';
+  color:#880F55;
+  padding:4px;
+  border-left:20px solid #710B46;
 }
 table.staff-picks-looks{
-  width:90%;
+  min-width:80%;
   margin:40px 10px 10px 10px;
-  border-collapse:collapse;
-  border:thin solid #999;
-  font-family:'Palatino';
 }
 table.staff-picks-looks td{
-  border:thin solid #999;
-  text-align:center;
+  border-bottom:thin solid #DEDEDE;
+  text-align:left;
+  color:#575757;
+}
+table.staff-picks-looks td a{
+  color:#994677;
+}
+table.staff-picks-looks td input[type=checkbox]{
+  margin:20px 20px 0 0;
 }
 table.staff-picks-looks img{
   display:block;
-  margin-top:2px;
-  margin-left:auto;
-  margin-right:auto;
+  margin:5px auto 5px auto;
   max-width:90%;
   max-height:120px;
   border-radius:2px;
 }
 table.staff-picks-flinkers{
-  width:90%;
-  margin:40px 10px 10px 10px;
-  border-collapse:collapse;
-  border:thin solid #999;
-  font-family:'Palatino';
+  min-width:40%;
+  margin:40px 10px 100px 10px;
 }
 table.staff-picks-flinkers td{
-  border:thin solid #999;
-  text-align:center;
+  border-bottom:thin solid #DEDEDE;
+  text-align:left;
+  color:#575757;
+  padding:10px;
+}
+table.staff-picks-flinkers td a{
+  color:#994677;
 }
 table.staff-picks-hashtags{
-  width:90%;
+  min-width:40%;
   margin:40px 10px 10px 10px;
-  border-collapse:collapse;
-  border:thin solid #999;
-  font-family:'Palatino';
+}
+span.hashtag-name{
+  border-radius:2px;
+  background:#D47BAA;
+  padding:5px;
+}
+a.look-link{
+  color:#575757;
 }
 table.staff-picks-hashtags td{
-  border:thin solid #999;
-  text-align:center;
+  border-bottom:thin solid #DEDEDE;
+  text-align:left;
+  padding:20px;
 }
 table.staff-picks-hashtags td ul{
-  font-size:10px;
+  font-size:11px;
   text-align:left;
+  list-style-type: square;
 }
-ul.navigation{
-  margin-top:80px;
+.avatar{
+  width:40px;
+  border-radius:20px;
 }
-/*ul.navigation a{
-  display:block;
-}
-*/
