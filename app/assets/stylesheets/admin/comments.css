@@ -20,77 +20,41 @@ span#close-reply{
   font-size:20px;
   cursor:pointer;
 }
-/*Top five table*/
-table.comments-top-five{
-  background:#992E7D;
-  color:white;
-  font-family:'Hevetica Neue';
-  font-size:14px;
-  opacity:0.9;
-  width:20%;
-  display:inline-block;
-  position:absolute;
-  top:60px;
-  left:2px;
-  border-radius:10px;
-  transition:opacity .2s ease-in-out;
+
+/* Counts block */
+div.counts{
+  margin:60px 0 0px 10px;
+  font-family:Times;
 }
-table.comments-top-five:hover{
-  opacity:1;
-}
-table.comments-top-five img.avatar{
-  width:40px;
-  border-radius:30px;
-}
-table.comments-top-five a{
-  color:white;
-  text-decoration:underline;
-}
-table.comments-top-five thead th{
-  font-size:22px;
-  padding:50px;
-}
-table.comments-top-five tr td{
-  padding:10px;
-}
-table.comments-top-five tr {
-  border-bottom:thin solid #FFF;
-}
-table.comments-top-five tr:last-child {
-  border-bottom:none;
+div.counts p{
+  color:#880F55;
+  padding:4px;
+  border-left:20px solid #710B46;
 }
 
 /*Comments list*/
 
+p.comment-body{
+  max-width:300px;
+}
 table.comments-list{
-  font-family:'Palatino';
+  font-family:Times;
   font-size:14px;
-  width:75%;
-  position:absolute;
-  right:10px;
-  top:140px;
-}
-table.comments-list th{
-  color:black;
-  text-align:left;
-}
-table thead p.comment-total-count{
-  padding:2px;
-}
-table thead p.comment-posted-count{
-  padding:2px;
-}
-table.comments-list tbody{
+  width:98%;
+  margin:60px 0 60px 10px;
 }
 table.comments-list tbody tr td{
-  padding:5px;
+  padding:20px;
   text-align:left;
-  border:thin solid #992E7D;  
+  border-bottom:thin solid #E0E0E0;  
 }
 table.comments-list tbody tr{
-  color:#858585;
 }
-table.comments-list tbody tr td:first-child{
-  color:#B94681;
+table.comments-list tbody tr td:first-child a{
+  color:#710B46;
+}
+table.comments-list tbody tr td a{
+  color:#715D6F;
+  
 }
 

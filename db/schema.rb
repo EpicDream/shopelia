@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140610131141) do
+ActiveRecord::Schema.define(:version => 20140617134000) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -175,6 +175,7 @@ ActiveRecord::Schema.define(:version => 20140610131141) do
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
     t.boolean  "posted",     :default => false
+    t.boolean  "admin_read", :default => false
   end
 
   add_index "comments", ["body"], :name => "index_comments_on_body"
@@ -298,7 +299,10 @@ ActiveRecord::Schema.define(:version => 20140610131141) do
     t.integer  "flinker_id"
     t.string   "email"
     t.text     "picture"
+    t.string   "type"
   end
+
+  add_index "flinker_authentications", ["type"], :name => "index_flinker_authentications_on_type"
 
   create_table "flinker_follows", :force => true do |t|
     t.integer  "flinker_id"
@@ -432,6 +436,27 @@ ActiveRecord::Schema.define(:version => 20140610131141) do
     t.datetime "created_at",                       :null => false
     t.datetime "updated_at",                       :null => false
   end
+
+  create_table "instagram_friendships", :id => false, :force => true do |t|
+    t.integer "instagram_user_id",   :null => false
+    t.integer "instagram_target_id", :null => false
+  end
+
+  add_index "instagram_friendships", ["instagram_target_id"], :name => "index_instagram_friendships_on_instagram_target_id"
+  add_index "instagram_friendships", ["instagram_user_id"], :name => "index_instagram_friendships_on_instagram_user_id"
+
+  create_table "instagram_users", :force => true do |t|
+    t.integer  "flinker_id"
+    t.string   "instagram_id"
+    t.string   "access_token"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+    t.string   "username"
+    t.string   "full_name"
+  end
+
+  add_index "instagram_users", ["flinker_id"], :name => "index_instagram_users_on_flinker_id"
+  add_index "instagram_users", ["instagram_id"], :name => "index_instagram_users_on_instagram_id"
 
   create_table "look_products", :force => true do |t|
     t.integer  "look_id"
@@ -825,6 +850,27 @@ ActiveRecord::Schema.define(:version => 20140610131141) do
   end
 
   add_index "traces", ["device_id"], :name => "index_traces_on_device_id"
+
+  create_table "twitter_friendships", :id => false, :force => true do |t|
+    t.integer "twitter_user_id",   :null => false
+    t.integer "twitter_target_id", :null => false
+  end
+
+  add_index "twitter_friendships", ["twitter_target_id"], :name => "index_twitter_friendships_on_twitter_target_id"
+  add_index "twitter_friendships", ["twitter_user_id"], :name => "index_twitter_friendships_on_twitter_user_id"
+
+  create_table "twitter_users", :force => true do |t|
+    t.integer  "flinker_id"
+    t.string   "twitter_id"
+    t.string   "access_token"
+    t.string   "access_token_secret"
+    t.string   "username"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
+
+  add_index "twitter_users", ["flinker_id"], :name => "index_twitter_users_on_flinker_id"
+  add_index "twitter_users", ["twitter_id"], :name => "index_twitter_users_on_twitter_id"
 
   create_table "user_sessions", :force => true do |t|
     t.integer  "user_id"
