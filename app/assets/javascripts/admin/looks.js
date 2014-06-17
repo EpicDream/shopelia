@@ -29,7 +29,7 @@ var Hashtags = {
     })
     .error(function(){
       alert("Erreur");
-    })
+    });
   }
 }
 
