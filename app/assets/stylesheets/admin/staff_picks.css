@@ -1,15 +1,36 @@
 div.staff-picks{
   font-family:Times;
 }
+span.items-counter{
+  display:inline-block;
+  border:2px solid #880F55;
+  border-radius:20px;
+  width:20px;
+  height:20px;
+  text-align:center;
+  margin:0 0 0 60px;
+}
 h4{
   margin:60px 0 0 20px;
   color:#880F55;
   padding:4px;
   border-left:20px solid #710B46;
 }
+div.block{
+  border-left:2px solid #710B46;
+  margin:0px 0 10px 10px; 
+}
 table.staff-picks-looks{
   min-width:80%;
   margin:40px 10px 10px 10px;
+}
+ul.looks-countries-counts,
+ul.flinkers-countries-counts
+{
+  margin:10px 0 0 20px;
+  font-size:16px;
+  list-style-type: none;
+  color:#880F55;
 }
 table.staff-picks-looks td{
   border-bottom:thin solid #DEDEDE;
