@@ -80,7 +80,14 @@ class Look < ActiveRecord::Base
   scope :from_country, -> (country_id) {
     joins(:flinker).where('flinkers.country_id = ?', country_id) unless country_id.blank?
   }
-  
+  scope :staff_picked, -> { where(staff_pick:true) }
+  scope :staff_picked_countries, -> {
+    staff_picked
+    .joins(:flinker)
+    .joins('join countries on flinkers.country_id = countries.id')
+    .group('countries.name')
+    .select('countries.name, count(*)')
+  }
   alias_attribute :published, :is_published
   
   def self.search keywords, country_id=nil
