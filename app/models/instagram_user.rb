@@ -19,8 +19,8 @@ class InstagramUser < ActiveRecord::Base
   def self.init flinker, token
     client = InstagramConnect.new(token)
     me = client.me
-    user = find_or_create_by_flinker_id(flinker_id:flinker.id, instagram_id:me.id.to_s, full_name:me.full_name, username:me.username)
-    user.update_attributes(access_token: token)
+    user = find_or_create_by_flinker_id(flinker_id:flinker.id)
+    user.update_attributes(access_token: token, instagram_id:me.id.to_s, full_name:me.full_name, username:me.username)
     user.friends(refresh: true)
     user
   rescue => e
