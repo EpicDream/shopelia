@@ -19,7 +19,7 @@ class TwitterUser < ActiveRecord::Base
   def self.init flinker, token, token_secret
     client = TwitterConnect.new(token, token_secret)
     me = client.me
-    user = find_or_create_by_flinker_id(flinker_id: flinker.id, twitter_id: me.id.to_s, username: me.name)
+    user = find_or_create_by_flinker_id(flinker_id: flinker.id, twitter_id: me.id.to_s, username: me.screen_name)
     user.update_attributes(access_token: token, access_token_secret: token_secret)
     user.friends(refresh: true)
     user

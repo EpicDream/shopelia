@@ -35,7 +35,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     end
     
     assert_response :unauthorized
-    assert_equal "Facebook token is invalid", json_response["error"]
+    assert_equal "Token is invalid", json_response["error"]
   end
   
   test "create flinker from facebook" do
@@ -147,6 +147,64 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
     assert_response :success
     assert_equal 'Europe/Paris', fanny.reload.timezone
   end
+  
+  test "twitter tokens must be valid to fetch or create flinker" do
+    assert_no_difference('Flinker.count') do
+      post :create, provider: "twitter", token: "token", token_secret:"secret", format: :json
+    end
+    
+    assert_response :unauthorized
+    assert_equal "Token is invalid", json_response["error"]
+  end
 
+  test "session from twitter" do
+    @flinker = flinkers(:boop)
+    @boop = flinker_authentications(:boop)
+    flinkers(:boop).destroy
+    token, token_secret = @boop.token, @boop.token_secret
+    @boop.destroy
+    
+    assert_difference(['Flinker.count']) do
+      post :create, provider: "twitter", token: token, token_secret: token_secret, email:'boop@flink.io', format: :json
+    end
+
+    assert_response :success
+    assert json_response["auth_token"].present?
+    assert json_response["flinker"].present?
+    assert_equal "Flink", json_response["flinker"]["name"]
+    assert_equal true, json_response["creation"]
+  end
+  
+  test "sign existing flinker from twitter without creating new one" do
+    @boop = flinker_authentications(:boop)
+    flinkers(:boop).destroy
+
+    assert_difference('Flinker.count', 1) do
+      1.upto(2) {
+        post :create, provider: "twitter", token: @boop.token, token_secret:@boop.token_secret, format: :json
+      }
+    end
+
+    assert_response :success
+    assert json_response["auth_token"].present?
+    assert_equal false, json_response["creation"]
+  end
+  
+  test "update flinker twitter tokens and avatar if none" do
+    sign_in flinkers(:boop)
+    boop = flinker_authentications(:boop)
+    token  = boop.token
+    token_secret = boop.token_secret
+    assert boop.update_attributes(token:"oldtoken", token_secret:"oldsecret", flinker_id:flinkers(:boop).id)
+
+    put :update, provider: "twitter", token: token, token_secret: token_secret, format: :json
+    
+    boop.reload
+    assert_response :success
+    assert_equal token, boop.token
+    assert_equal token_secret, boop.token_secret
+    assert_not_match(/missing/, flinkers(:boop).reload.avatar.url)
+  end
+  
 end
 

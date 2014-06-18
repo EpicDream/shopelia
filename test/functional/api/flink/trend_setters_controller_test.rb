@@ -23,8 +23,7 @@ class Api::Flink::TrendSettersControllerTest < ActionController::TestCase
 
     assert_response :success
     assert_equal 2, json_response["flinkers"].count
-    assert_equal ["bettyusername", "boop"], json_response["flinkers"].map { |f| f["username"] }
+    assert_equal ["bettyusername", "boop"].to_set, json_response["flinkers"].map { |f| f["username"] }.to_set
   end
-  
   
 end

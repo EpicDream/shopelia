@@ -5,3 +5,12 @@ fanny:
   email: "nicolasbigot@me.com"
   picture: "https://graph.facebook.com/1375543592/picture?width=200&height=200&type=normal"
   type: "FacebookAuthentication"
+boop:
+  provider: "twitter"
+  uid: "2227040976"
+  token: "2227040976-Jkc5ECH9w6KCqkdie80Ky0aEcY1WEBKRmS9vbrP"
+  token_secret: "kM2QfGJu7Y6f1BfttO9rlapmoVPtpVeWifMTggLkS8ZZm"
+  email: "boop@flink.com"
+  picture: "http://pbs.twimg.com/profile_images/427788089512062976/XWGe-vtB.png"
+  type: "TwitterAuthentication"
+

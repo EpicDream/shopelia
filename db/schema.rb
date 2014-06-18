@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140616134515) do
+ActiveRecord::Schema.define(:version => 20140618105207) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -175,6 +175,7 @@ ActiveRecord::Schema.define(:version => 20140616134515) do
     t.datetime "created_at",                    :null => false
     t.datetime "updated_at",                    :null => false
     t.boolean  "posted",     :default => false
+    t.boolean  "admin_read", :default => false
   end
 
   add_index "comments", ["body"], :name => "index_comments_on_body"
@@ -293,12 +294,13 @@ ActiveRecord::Schema.define(:version => 20140616134515) do
     t.string   "provider"
     t.string   "uid"
     t.string   "token"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
     t.integer  "flinker_id"
     t.string   "email"
     t.text     "picture"
     t.string   "type"
+    t.string   "token_secret"
   end
 
   add_index "flinker_authentications", ["type"], :name => "index_flinker_authentications_on_type"
