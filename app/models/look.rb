@@ -46,7 +46,6 @@ class Look < ActiveRecord::Base
       flinkers_ids = flinker.followings.map(&:id)
       looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
     
-      (flinkers_ids.any? || looks_ids.any?) && 
       published.where('flinker_id in (?) or id in (?) or staff_pick = ?', flinkers_ids, looks_ids, true)
     end
   }
