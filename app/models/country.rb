@@ -1,5 +1,6 @@
 class Country < ActiveRecord::Base
   FRANCE = :FR
+  US = :US
   ALL_IN_USE = ['FR', 'DE', 'GB', 'IT', 'US']
   
   has_many :addresses
@@ -15,6 +16,10 @@ class Country < ActiveRecord::Base
   
   def self.en
     where(iso:'GB').first
+  end
+  
+  def self.us
+    where(iso:'US').first
   end
   
   def self.fr

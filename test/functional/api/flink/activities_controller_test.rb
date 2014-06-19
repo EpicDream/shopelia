@@ -76,7 +76,7 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
   end
   
   test "get facebook friend sign up activity related to current flinker" do
-    FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
+    FacebookAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
     
     get :index, format: :json
     
@@ -126,6 +126,63 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
     assert_equal flinker.id, activity["flinker_id"]
   end
   
+  test "get private messages activities related to current flinker" do
+    flinker = flinkers(:betty)
+    target = flinkers(:fanny)
+    look = looks(:quimper)
+    target.device.update_attributes(build:31)
+    
+    PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id)
+
+    get :index, format: :json
+    
+    activities = json_response["activities"]
+    activity = activities.first
+
+    assert_response :success
+    assert_equal 1, activities.count
+    assert_equal "hello", activity["content"]
+    assert_equal "1991991", activity["look_uuid"]
+    assert_equal "PrivateMessageActivity", activity["type"]
+    assert_equal flinker.id, activity["flinker_id"]
+  end
+  
+  test "get private messages answer activities related to current flinker" do
+    flinker = flinkers(:betty)
+    target = flinkers(:fanny)
+    look = looks(:quimper)
+    target.device.update_attributes(build:31)
+    
+    PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
+
+    get :index, format: :json
+    
+    activities = json_response["activities"]
+    activity = activities.first
+    
+    assert_response :success
+    assert_equal 1, activities.count
+    assert_equal "hello", activity["content"]
+    assert_equal "1991991", activity["look_uuid"]
+    assert_equal "PrivateMessageAnswerActivity", activity["type"]
+    assert_equal flinker.id, activity["flinker_id"]
+  end
+  
+  
+  test "dont get private messages activities if targeted flinker device build < 30" do
+    flinker = flinkers(:betty)
+    target = flinkers(:fanny)
+    look = looks(:quimper)
+    target.device.update_attributes(build:29)
+    
+    PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
+
+    get :index, format: :json
+    
+    assert_response :success
+    assert_equal 0, json_response["activities"].count
+  end
+  
   test "get all different activities related to current flinker" do
     Sidekiq::Testing.inline! do
 
@@ -135,7 +192,7 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
       FlinkerFollow.create(flinker_id:flinkers(:boop).id, follow_id:@fanny.id)
       CommentActivity.create!(comments(:agadir))
       LikeActivity.create!(flinker_likes(:boop_like))
-      FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
+      FacebookAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinkers(:boop).id)
       Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:fanny).id) #fanny comment
       Comment.create!(body:"Cool!", look_id:looks(:agadir).id, flinker_id:flinkers(:nana).id) 
       LookSharing.on("twitter").for(look_id:looks(:agadir).id, flinker_id:flinkers(:boop).id)

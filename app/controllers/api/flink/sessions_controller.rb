@@ -1,24 +1,22 @@
-class Api::Flink::SessionsController < Api::Flink::BaseController
+class Api::Flink::SessionsController < Api::Flink::BaseController#TODO:Refactor this shit
   skip_before_filter :authenticate_flinker!, :only => :create
 
-  api :POST, "/flinkers/sign_in", "Sign in a flinker"
-  param :email, String, "Email of the flinker", :required => true
-  param :password, String, "Password of the flinker", :required => true
-  
   def create
     render sign_in_by_email and return unless params[:provider]
-    flinker = FlinkerAuthentication.facebook(params[:token])
+    case params[:provider]
+    when FacebookAuthentication::FACEBOOK
+      flinker, created = FacebookAuthentication.facebook(params[:token])
+    when TwitterAuthentication::TWITTER
+      flinker, created = TwitterAuthentication.authenticate(params[:token], params[:token_secret], params[:email])
+    end
     sign_in(:flinker, flinker)
     flinker.ensure_authentication_token!
     update_attributes_from_headers
-    render json_for(flinker)
+    render json_for(flinker, created)
   rescue => e
-    render unauthorized("Facebook token is invalid", e) and return if e.respond_to?(:code) && [400, 401].include?(e.code)
+    render unauthorized("Token is invalid", e) and return if e.respond_to?(:code) && [400, 401, 89].include?(e.code)
     render server_error(e)
   end
-  
-  api :DELETE, "/flinkers/sign_out", "Sign out a flinker"
-  param :email, String, "Email of the flinker", :required => true
   
   def destroy
     flinker = Flinker.find_for_database_authentication(:email => params[:email])
@@ -32,7 +30,12 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
   def update
     render unauthorized and return unless current_flinker
     update_attributes_from_headers
-    FlinkerAuthentication.facebook(params[:token]) if params[:token]
+    case params[:provider]
+    when FacebookAuthentication::FACEBOOK
+      FacebookAuthentication.facebook(params[:token])
+    when TwitterAuthentication::TWITTER
+      TwitterAuthentication.authenticate(params[:token], params[:token_secret], params[:email])
+    end
     render json_for(current_flinker)
   end
   
@@ -54,8 +57,8 @@ class Api::Flink::SessionsController < Api::Flink::BaseController
     json_for(flinker)
   end
   
-  def json_for flinker
-    { json: FlinkerSerializer.new(flinker).as_json.merge({ auth_token:flinker.authentication_token })}
+  def json_for flinker, created=false
+    { json: FlinkerSerializer.new(flinker).as_json.merge({ auth_token:flinker.authentication_token, creation:created })}
   end
 
 end

@@ -1,5 +1,5 @@
 class FacebookFriendSignedUpActivity < Activity
-  belongs_to :resource, foreign_key: :resource_id, class_name:'FlinkerAuthentication'
+  belongs_to :resource, foreign_key: :resource_id, class_name:'FacebookAuthentication'
   
   def self.create! auth
     return unless auth.flinker_id

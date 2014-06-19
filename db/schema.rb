@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140617134000) do
+ActiveRecord::Schema.define(:version => 20140619130055) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -294,12 +294,13 @@ ActiveRecord::Schema.define(:version => 20140617134000) do
     t.string   "provider"
     t.string   "uid"
     t.string   "token"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
     t.integer  "flinker_id"
     t.string   "email"
     t.text     "picture"
     t.string   "type"
+    t.string   "token_secret"
   end
 
   add_index "flinker_authentications", ["type"], :name => "index_flinker_authentications_on_type"
@@ -701,8 +702,9 @@ ActiveRecord::Schema.define(:version => 20140617134000) do
     t.integer  "flinker_id"
     t.integer  "target_id"
     t.integer  "look_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+    t.boolean  "answer",     :default => false
   end
 
   add_index "private_messages", ["flinker_id"], :name => "index_private_messages_on_flinker_id"

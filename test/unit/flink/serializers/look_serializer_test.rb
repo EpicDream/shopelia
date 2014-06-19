@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 require 'test_helper'
 
 class LookSerializerTest < ActiveSupport::TestCase
@@ -23,7 +22,7 @@ class LookSerializerTest < ActiveSupport::TestCase
   end  
   
   test "serialize look" do
-    @look.update_attributes(flink_published_at:Time.now + 1.day)
+    @look.update_attributes(flink_published_at:Time.now + 1.day, staff_pick:true)
     look_serializer = LookSerializer.new(@look)
     hash = look_serializer.as_json
       
@@ -38,8 +37,9 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert_equal 1, hash[:look][:products].count
     assert_equal 2, hash[:look][:images].count
     assert hash[:look][:liked].nil?
+    assert hash[:look][:staff_pick]
     assert_equal "bla bla bla", hash[:look][:description]
-    assert_equal 0, hash[:look][:hashtags].count
+    assert_equal 0, hash[:look][:highlighted_hashtags].count
   end
 
   test "it should set liked by" do
@@ -74,7 +74,18 @@ class LookSerializerTest < ActiveSupport::TestCase
     look_serializer = LookSerializer.new(@look)
     hash = look_serializer.as_json
 
-    assert_equal 1, hash[:look][:hashtags].count
-    assert_equal ["Top"], hash[:look][:hashtags]
+    assert_equal 1, hash[:look][:highlighted_hashtags].count
+    assert_equal ["Top"], hash[:look][:highlighted_hashtags]
+  end
+  
+  test "associated comments and likes count" do
+    Comment.create(body:"Hey", look_id:@look.id, flinker_id:Flinker.last.id)
+    FlinkerLike.create(flinker_id:Flinker.last.id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
+    
+    look_serializer = LookSerializer.new(@look)
+    hash = look_serializer.as_json
+
+    assert_equal 1, hash[:look][:comments_count]
+    assert_equal 1, hash[:look][:likes_count]
   end
 end

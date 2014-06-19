@@ -19,6 +19,8 @@ module Blogs
             next
           end
           blog.update_attributes!(name: row[2].strip, url: row[5].strip, country: row[7].strip)
+          country_id = Country.where(iso:row[7].strip).first.try(:id)
+          flinker.update_attributes(name: row[2].strip, url: row[5].strip, country_id: country_id)
           flinker.update_attributes!(username: row[4].strip)
         rescue => e
           report(row[0], e.inspect)

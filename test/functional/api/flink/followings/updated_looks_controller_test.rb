@@ -27,7 +27,7 @@ class Api::Flink::Followings::UpdatedLooksControllerTest < ActionController::Tes
   private
   
   def update_looks n
-    Look.limit(n).each_with_index { |look, idx| look.updated_at = (n - idx).minutes.ago; look.save! }
+    Look.limit(n).each_with_index { |look, idx| look.updated_at = (n - idx).minutes.ago + 1; look.save! }
   end
   
 end

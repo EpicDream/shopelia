@@ -14,7 +14,7 @@ class FacebookFriendSignedUpActivityTest < ActiveSupport::TestCase
     end
     
     assert_difference("FacebookFriendSignedUpActivity.count", 2) do
-      auth = FlinkerAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinker.id)
+      auth = FacebookAuthentication.create!(provider:"facebook", uid:"9090909", flinker_id:flinker.id)
     end
     
     activities = FacebookFriendSignedUpActivity.all
