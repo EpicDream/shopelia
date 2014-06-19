@@ -59,6 +59,13 @@ class Flinker < ActiveRecord::Base
   }
   scope :with_looks, where("looks_count > 0")
   scope :staff_pick, ->(staff_pick=true) { where(staff_pick:staff_pick)}
+  scope :staff_picked_countries, -> {
+    staff_pick
+    .joins(:country)
+    .group('countries.name')
+    .select('countries.name, count(*)')
+  }
+  
   scope :universals, where(universal:true)
   scope :with_username_like, ->(username) { where('username like ?', "#{username}%") unless username.blank? }
   scope :with_blog_matching, ->(pattern) {

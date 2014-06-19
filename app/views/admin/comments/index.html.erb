@@ -6,50 +6,20 @@
     <%= f.submit "Envoyer", class:"btn"%>
   <% end %>
 </div>
-<table class="comments-top-five">
-  <thead>
-    <th colspan="4">Top Ten</th>
-  </thead>
-  <tbody>
-    <% Look.top_commented(10).each do |look| %>
-      <% post = look.post %>
-      <% blog = post.blog %>
-      <tr>
-        <td><img src="<%= Look.find(look.id).flinker.avatar %>" class="avatar"></img></td>
-        <td><%= blog.name %></td>
-        <td><%= link_to 'Voir le post', post.link %></td>
-        <td><span class="small-bubble"><span><%= look.count %></span></span></td>
-      </tr>
-      <% end %>
-  </tbody>
-</table>
-
+<div class="counts">
+  <p><%= Comment.count %> Commentaires</p>
+  <p><%= Comment.posted.count %> Commentaires postés</p>
+</div>
 <table class="comments-list">
   <thead>
-    <tr>
-      <th colspan="4">
-        <p class="comment-total-count">
-          <span><%= Comment.count %></span>
-          <span>Commentaires</span>
-        </p>
-      </th>
-    </tr>
-    <tr>
-      <th colspan="4">
-        <p class="comment-posted-count">
-          <span><%= Comment.posted.count %></span>
-          <span>Commentaires postés</span>
-        </p>
-      </th>
-    </tr>
   </thead>
   <tbody>
     <% @comments.each do |comment| %>
       <tr>
         <td><%= link_to (comment.flinker.username || comment.flinker.name), admin_flinker_path(comment.flinker) %></td>
-        <td><%= truncate(comment.body, length: 100) %></td>
-        <td><%= link_to 'Voir le post', comment.post.link %></td>
-        <td><%= I18n.l(comment.created_at)%></td>
+        <td><p class="comment-body"><%= truncate(comment.body, length: 150) %></p></td>
+        <td><%= link_to comment.look.name, admin_look_path(comment.look) %></td>
+        <td><%= I18n.l(comment.created_at, format: :short)%></td>
         <td><%= link_to 'Répondre', "#reply", 
                         class:"reply-link", 
                         'data-username' => comment.flinker.username,

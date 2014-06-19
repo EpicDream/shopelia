@@ -60,7 +60,7 @@
               <li><%= link_to("Flinkers", admin_flinkers_path) %></li>
               <li><%= link_to("Collections", admin_themes_path) %></li>
               <li><%= link_to("Staff Picks", admin_staff_picks_path) %></li>
-              <li><%= link_to("Comments", admin_comments_path) %></li>
+              <li><%= link_to("Comments (#{Comment.admin_unread.count})", admin_comments_path) %></li>
               <li><%= link_to("Statistics", admin_statistics_path) %></li>
               <li><%= link_to("Looks Search", admin_search_looks_path) %></li>
               <li><%= link_to("News Letter", new_admin_newsletter_path) %></li>

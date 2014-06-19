@@ -2,6 +2,7 @@ class Admin::CommentsController < Admin::AdminController
   
   def index
     @comments = Comment.last_ones(50)
+    Comment.admin_unread.update_all(admin_read:true)
   end
   
   def reply

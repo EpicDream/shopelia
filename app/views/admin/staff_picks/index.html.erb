@@ -1,72 +1,79 @@
-<ul class="navigation">
-  <li><a href="#staff-picks-hashtags">Highlighted Hashtags</a></li>
-  <li><a href="#staff-picks-looks">Staff Picked Looks</a></li>
-  <li><a href="#staff-picks-flinkers">Staff Picked Flinkers </a></li>
-</ul>
+<div class="staff-picks">
+  
+  <div class="block">
+    <h4 id="staff-picks-hashtags">Highlighted Hashtags <span class="items-counter"><%= @hashtags.count %></span></h4>
+    <table class="staff-picks-hashtags">
+      <thead>
+      </thead>
+      <tbody>
+        <% @hashtags.each do |hashtag| %>
+          <tr>
+            <td><span class="hashtag-name">#<%= hashtag.name %></span></td>
+            <td><%= hashtag.looks.uniq.count %></td>
+            <td>
+              <ul>
+                <% hashtag.looks.uniq.each do |look| %>
+                  <li><%= link_to look.name, admin_look_path(look), target:'_blank', class:'look-link' %></li>
+                <% end %>
+              </ul>
+            </td>
+          </tr>
+        <% end %>    
+      </tbody>
+    </table>
+  </div>
 
-<h4 id="staff-picks-hashtags">Highlighted Hashtags (<%= @hashtags.count %>)</h4>
-<table class="staff-picks-hashtags">
-  <thead>
-    <th>Hashtag</th>
-    <th>Nombre de looks</th>
-    <th>Looks</th>
-  </thead>
-  <tbody>
-    <% @hashtags.each do |hashtag| %>
-      <tr>
-        <td>#<%= hashtag.name %></td>
-        <td><%= hashtag.looks.uniq.count %></td>
-        <td>
-          <ul>
-            <% hashtag.looks.uniq.each do |look| %>
-              <li><%= link_to look.name, admin_look_path(look), target:'_blank' %></li>
-            <% end %>
-          </ul>
-        </td>
-      </tr>
-    <% end %>    
-  </tbody>
-</table>
+  <div class="block">
+    <h4 id="staff-picks-looks">Staff Picked Looks <span class="items-counter"><%= @looks.count %></span></h4>
+    <ul class="looks-countries-counts">
+      <% Look.staff_picked_countries.each do |record| %>
+        <li><%= record.name %> : <%= record.count %></li>
+      <% end %>
+    </ul>
+    <table class="staff-picks-looks">
+      <thead>
+      </thead>
+      <tbody>
+        <% @looks.each_with_index do |look, index| %>
+          <tr>
+            <td>
+              <%= form_for([:admin, look]) do |f| %>
+                <%= f.check_box :staff_pick, id: "staff-pick-#{index}", class: "staff-pick-unpick", :title => "Unpick" %>
+              <% end %>
+            </td>
+            <td>Publié le <%= l(look.flink_published_at, format: :short)%></td>
+            <td><%= link_to(look.flinker.username, admin_flinker_path(look.flinker)) %></td>
+            <td><%= look.flinker.country.try(:name) %></td>
+            <td>
+              <%= link_to image_tag(look.image_for_cover.picture.url(:large)), admin_look_path(look) %></td>
+          </tr>
+        <% end %>    
+      </tbody>
+    </table>
+  </div>
 
-<h4 id="staff-picks-looks">Staff Picked Looks (<%= @looks.count %>)</h4>
-<table class="staff-picks-looks">
-  <thead>
-    <th>UUID</th>
-    <th>Publié le</th>
-    <th>Blogueuse</th>
-    <th>Pays</th>
-    <th>Aperçu</th>
-    <th>Unpick</th>
-  </thead>
-  <tbody>
-    <% @looks.each do |look| %>
-      <tr>
-        <td><%= look.uuid %></td>
-        <td><%= l(look.flink_published_at)%></td>
-        <td><%= link_to(look.flinker.username, admin_flinker_path(look.flinker)) %></td>
-        <td><%= look.flinker.country.try(:iso) %></td>
-        <td>
-          <%= link_to image_tag(look.image_for_cover.picture.url(:large)), admin_look_path(look) %></td>
-        <td><%= check_box_tag :staff_pick, "1", true, disabled:true %></td>
-      </tr>
-    <% end %>    
-  </tbody>
-</table>
-
-<h4 id="staff-picks-flinkers">Staff Picked Flinkers (<%= @flinkers.count %>)</h4>
-<table class="staff-picks-flinkers">
-  <thead>
-    <th>Blogueuse</th>
-    <th>Pays</th>
-    <th>Unpick</th>
-  </thead>
-  <tbody>
-    <% @flinkers.each do |flinker| %>
-      <tr>
-        <td><%= link_to(flinker.username, admin_flinker_path(flinker)) %></td>
-        <td><%= flinker.country.try(:iso) %></td>
-        <td><%= check_box_tag :staff_pick, "1", true, disabled:true  %></td>
-      </tr>
-    <% end %>    
-  </tbody>
-</table>
+  <div class="block">
+    <h4 id="staff-picks-flinkers">Staff Picked Flinkers <span class="items-counter"><%= @flinkers.count %></span></h4>
+    <ul class="flinkers-countries-counts">
+      <% Flinker.staff_picked_countries.each do |record| %>
+        <li><%= record.name %> : <%= record.count %></li>
+      <% end %>
+    </ul>
+    
+    <table class="staff-picks-flinkers">
+      <thead>
+      </thead>
+      <tbody>
+        <% @flinkers.each do |flinker| %>
+          <tr>
+            <td><%= image_tag(flinker.avatar.url, class:'avatar') %></td>
+            <td><%= link_to(flinker.username, admin_flinker_path(flinker)) %></td>
+            <td><%= flinker.name %></td>
+          
+            <td><%= flinker.country.try(:name) %></td>
+          </tr>
+        <% end %>    
+      </tbody>
+    </table>
+  </div>
+</div>

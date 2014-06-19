@@ -105,8 +105,15 @@ class Look < ActiveRecord::Base
     recent(published_before, published_after)
     .where(staff_pick:true)
   }
-  
-  
+  scope :staff_picked, -> { where(staff_pick:true) }
+  scope :staff_picked_countries, -> {
+    staff_picked
+    .joins(:flinker)
+    .joins('join countries on flinkers.country_id = countries.id')
+    .group('countries.name')
+    .select('countries.name, count(*)')
+  }
+
   alias_attribute :published, :is_published
   
   def self.search keywords, country_id=nil
