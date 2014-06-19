@@ -5,10 +5,10 @@ class FacebookAuthentication < FlinkerAuthentication
   scope :facebook_of, ->(flinker) { where(flinker_id:flinker.id, provider:FACEBOOK).limit(1) }
   scope :with_uid, ->(uid) { where(uid:uid).limit(1) }
   
+  attr_accessor :creation
+  
   def self.facebook token
     user = FbGraph::User.me(token).fetch
-    created = false
-    
     auth = where(uid:user.identifier).first 
     picture = "#{user.picture}?width=200&height=200&type=normal"
     auth and auth.update_attributes!(user:user, picture:picture) and auth.after_sign_in
@@ -16,10 +16,9 @@ class FacebookAuthentication < FlinkerAuthentication
       auth = create!(uid:user.identifier, email:user.email, token:token, picture:picture, provider:FACEBOOK) 
       auth.user = user
       auth.after_sign_up
-      created = true
     end
     auth.refresh_token!(token)
-    [auth.flinker, created]
+    [auth.flinker, auth.creation]
   end
   
   def refresh_token! token
@@ -65,6 +64,7 @@ class FacebookAuthentication < FlinkerAuthentication
     self.update_attributes!(flinker_id:flinker.id)
     FacebookFriend.create_or_update_friends(flinker)
     FacebookFriendSignedUpActivity.create!(self)
+    self.creation = true
     flinker
   end
   

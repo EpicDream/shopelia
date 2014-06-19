@@ -10,6 +10,7 @@ class FacebookAuthenticationTest < ActiveSupport::TestCase
   test "create new fb auth and new flinker" do
     fanny = { token:@fanny.token, uid:@fanny.uid } and @fanny.destroy and @flinker.destroy
     flinker = nil
+    created = false
     
     assert_difference("FacebookAuthentication.count") { 
       flinker, created = FacebookAuthentication.facebook(fanny[:token])
@@ -25,6 +26,7 @@ class FacebookAuthenticationTest < ActiveSupport::TestCase
     assert_equal 'bigot.nicolas', flinker.username
     assert_equal 'Nicolas Bigot', flinker.name
     assert_match /images\/flinker\/\d+\/original\/avatar.jpg/, flinker.avatar.url
+    assert created
   end
   
   test "retrieve fb auth if exists with same uid" do
@@ -52,11 +54,15 @@ class FacebookAuthenticationTest < ActiveSupport::TestCase
   
   test "if flinker with same email as facebook one exists attach auth to it" do
     token  = @fanny.token and @fanny.destroy
-
-    assert_no_difference("Flinker.count") { FacebookAuthentication.facebook(token) }
+    created = true
+    
+    assert_no_difference("Flinker.count") { 
+      flinker, created = FacebookAuthentication.facebook(token) 
+    }
     
     auth = FacebookAuthentication.where(uid:"1375543592").first
     assert_equal @flinker, auth.flinker
+    assert !created
   end
   
   test "refresh token" do
