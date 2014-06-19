@@ -57,7 +57,7 @@ class Api::Flink::SessionsController < Api::Flink::BaseController#TODO:Refactor 
     json_for(flinker)
   end
   
-  def json_for flinker, created=nil
+  def json_for flinker, created=false
     { json: FlinkerSerializer.new(flinker).as_json.merge({ auth_token:flinker.authentication_token, creation:created })}
   end
 

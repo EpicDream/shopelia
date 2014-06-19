@@ -9,7 +9,7 @@ class FacebookAuthentication < FlinkerAuthentication
   
   def self.facebook token
     user = FbGraph::User.me(token).fetch
-    auth = where(uid:user.identifier).first 
+    auth = where(uid:user.identifier).first
     picture = "#{user.picture}?width=200&height=200&type=normal"
     auth and auth.update_attributes!(user:user, picture:picture) and auth.after_sign_in
     unless auth
@@ -18,7 +18,7 @@ class FacebookAuthentication < FlinkerAuthentication
       auth.after_sign_up
     end
     auth.refresh_token!(token)
-    [auth.flinker, auth.creation]
+    [auth.flinker, !!auth.creation]
   end
   
   def refresh_token! token
