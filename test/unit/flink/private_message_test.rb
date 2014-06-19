@@ -13,11 +13,32 @@ class PrivateMessageTest < ActiveSupport::TestCase
     look = looks(:quimper)
     
     assert_difference 'PrivateMessageActivity.count' do
-      PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id)
+      assert_no_difference 'PrivateMessageAnswerActivity.count' do
+        PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:false)
+      end
     end
   
     message = PrivateMessage.last
     activity = PrivateMessageActivity.last
+
+    assert_equal flinker.id, activity.flinker_id
+    assert_equal target.id, activity.target_id
+    assert_equal message, activity.resource
+  end
+  
+  test "if message is an answer, create PrivateMessageAnswerActivity for target" do
+    flinker = flinkers(:betty)
+    target = flinkers(:nana)
+    look = looks(:quimper)
+    
+    assert_difference 'PrivateMessageActivity.count' do
+      assert_difference 'PrivateMessageAnswerActivity.count' do
+        PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
+      end
+    end
+  
+    activity = PrivateMessageAnswerActivity.last
+    message = PrivateMessage.last
 
     assert_equal flinker.id, activity.flinker_id
     assert_equal target.id, activity.target_id

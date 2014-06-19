@@ -13,4 +13,8 @@ class ActivitySerializer < ActiveModel::Serializer
     object.created_at.to_i
   end
   
+  def include_comment_id?
+    object.respond_to?(:comment_id)
+  end
+  
 end

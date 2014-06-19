@@ -147,13 +147,35 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
     assert_equal flinker.id, activity["flinker_id"]
   end
   
+  test "get private messages answer activities related to current flinker" do
+    flinker = flinkers(:betty)
+    target = flinkers(:fanny)
+    look = looks(:quimper)
+    target.device.update_attributes(build:30)
+    
+    PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
+
+    get :index, format: :json
+    
+    activities = json_response["activities"]
+    activity = activities.detect { |activity| activity["type"] == "PrivateMessageAnswerActivity" }
+    
+    assert_response :success
+    assert_equal 2, activities.count
+    assert_equal "hello", activity["content"]
+    assert_equal "1991991", activity["look_uuid"]
+    assert_equal "PrivateMessageAnswerActivity", activity["type"]
+    assert_equal flinker.id, activity["flinker_id"]
+  end
+  
+  
   test "dont get private messages activities if targeted flinker device build < 30" do
     flinker = flinkers(:betty)
     target = flinkers(:fanny)
     look = looks(:quimper)
     target.device.update_attributes(build:29)
     
-    PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id)
+    PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
 
     get :index, format: :json
     

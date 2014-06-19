@@ -67,15 +67,6 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     assert_equal Look.first.uuid, json_response["looks"].first["uuid"]
   end 
 
-  test "it should get only looks you are following (1)" do
-    sign_in flinkers(:elarch)
-    FlinkerFollow.create!(flinker_id:flinkers(:elarch).id, follow_id:flinkers(:elarch).id)
-
-    get :index, format: :json
-    
-    assert_equal 0, json_response["looks"].count
-  end
-
   test "it should get only looks you are following (2)" do
     sign_in flinkers(:elarch)
 
@@ -104,7 +95,8 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     get :index, format: :json, updated_after:Time.now.to_i
     
     looks = json_response["looks"]
-    
+
+    assert_response :success
     assert_equal 2, looks.count
     assert looks[0]["updated_at"] < looks[1]["updated_at"]
   end
@@ -129,13 +121,14 @@ class Api::Flink::LooksControllerTest < ActionController::TestCase
     end
   end
 
-  def build_look published_at
+  def build_look published_at, staff_pick=true
     Look.create!(
       name:"Article",
       flinker_id:@flinker.id,
       published_at:published_at,
       flink_published_at:published_at + 1.minute,
       is_published:true,
+      staff_pick:staff_pick,
       url:"http://www.leblogdebetty.com/article")
   end
 end

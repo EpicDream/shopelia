@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140618105207) do
+ActiveRecord::Schema.define(:version => 20140619130055) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -702,8 +702,9 @@ ActiveRecord::Schema.define(:version => 20140618105207) do
     t.integer  "flinker_id"
     t.integer  "target_id"
     t.integer  "look_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+    t.boolean  "answer",     :default => false
   end
 
   add_index "private_messages", ["flinker_id"], :name => "index_private_messages_on_flinker_id"

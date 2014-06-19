@@ -9,7 +9,7 @@ class Activity < ActiveRecord::Base
   scope :for_flinker, ->(flinker, since=1.week) { 
     query = where(target_id:flinker.id).where('created_at >= ?', Time.now - since) 
     if flinker.device && flinker.device.build < MIN_BUILD_FOR_PRIVATE_MESSAGES
-      query.where("type <> 'PrivateMessageActivity'")
+      query.where("type <> 'PrivateMessageActivity' and type <> 'PrivateMessageAnswerActivity'")
     else
       query
     end
