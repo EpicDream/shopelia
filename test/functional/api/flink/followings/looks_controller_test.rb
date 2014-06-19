@@ -67,6 +67,7 @@ class Api::Flink::Followings::LooksControllerTest < ActionController::TestCase
     follow flinkers(:betty)
     look = flinkers(:lilou).looks.last
     look.update_attributes(staff_pick:true)
+    @flinker.device.update_attributes(build:31)
     
     get :index, format: :json, per_page:100
     

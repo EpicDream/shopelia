@@ -173,7 +173,7 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
     flinker = flinkers(:betty)
     target = flinkers(:fanny)
     look = looks(:quimper)
-    target.device.update_attributes(build:29)
+    target.device.update_attributes(build:30)
     
     PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
 

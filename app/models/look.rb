@@ -1,6 +1,7 @@
 class Look < ActiveRecord::Base
   MIN_DATE = Date.parse("2014-01-01")
   MIN_LIKES_FOR_POPULAR = 150
+  MIN_BUILD_FOR_STAFF_PICKS = 31
   
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
   attr_accessible :hashtags_attributes, :season, :staff_pick
@@ -45,8 +46,13 @@ class Look < ActiveRecord::Base
     if flinker
       flinkers_ids = flinker.followings.map(&:id)
       looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
-    
-      published.where('flinker_id in (?) or id in (?) or staff_pick = ?', flinkers_ids, looks_ids, true)
+      
+      if flinker.device && flinker.device.build < MIN_BUILD_FOR_STAFF_PICKS
+        (flinkers_ids.any? || looks_ids.any?) && 
+        published.where('flinker_id in (?) or id in (?)', flinkers_ids, looks_ids)
+      else
+        published.where('flinker_id in (?) or id in (?) or staff_pick = ?', flinkers_ids, looks_ids, true)
+      end
     end
   }
   
