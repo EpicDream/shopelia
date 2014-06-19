@@ -31,10 +31,8 @@ class PrivateMessageTest < ActiveSupport::TestCase
     target = flinkers(:nana)
     look = looks(:quimper)
     
-    assert_difference 'PrivateMessageActivity.count' do
-      assert_difference 'PrivateMessageAnswerActivity.count' do
-        PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
-      end
+    assert_difference 'PrivateMessageAnswerActivity.count' do
+      PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
     end
   
     activity = PrivateMessageAnswerActivity.last

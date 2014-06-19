@@ -130,7 +130,7 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
     flinker = flinkers(:betty)
     target = flinkers(:fanny)
     look = looks(:quimper)
-    target.device.update_attributes(build:30)
+    target.device.update_attributes(build:31)
     
     PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id)
 
@@ -151,17 +151,17 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
     flinker = flinkers(:betty)
     target = flinkers(:fanny)
     look = looks(:quimper)
-    target.device.update_attributes(build:30)
+    target.device.update_attributes(build:31)
     
     PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
 
     get :index, format: :json
     
     activities = json_response["activities"]
-    activity = activities.detect { |activity| activity["type"] == "PrivateMessageAnswerActivity" }
+    activity = activities.first
     
     assert_response :success
-    assert_equal 2, activities.count
+    assert_equal 1, activities.count
     assert_equal "hello", activity["content"]
     assert_equal "1991991", activity["look_uuid"]
     assert_equal "PrivateMessageAnswerActivity", activity["type"]

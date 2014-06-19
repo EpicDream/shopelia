@@ -1,5 +1,5 @@
 class Activity < ActiveRecord::Base
-  MIN_BUILD_FOR_PRIVATE_MESSAGES = 30
+  MIN_BUILD_FOR_PRIVATE_MESSAGES = 31
   
   attr_accessible :flinker_id, :resource_id, :target_id
   
