@@ -57,7 +57,7 @@ class Api::Flink::BaseController < Api::ApiController
     ActiveModel::ArraySerializer.new(collection, opts)
   end
   
-  def api_log key, exception=nil
+  def api_log key, exception=nil#TODO:Create FlinkLogger class and assign to rails logger
     return unless exception
     trace = exception.backtrace.select { |line| line =~ /\/shopelia\// }.join("\n")
     log = ["[API #{key}]", exception.inspect, trace].join("\n")
