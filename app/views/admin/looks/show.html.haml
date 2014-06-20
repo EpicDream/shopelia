@@ -41,6 +41,9 @@
         %a{href: "#{reject_admin_look_path(@look)}", id:"reject-look"}
           %i.icon-trash.icon-white
           Reject look
+        %a{href: "#{reject_quality_admin_look_path(@look)}", id:"reject-quality-look"}
+          %i.icon-trash.icon-white
+          Reject Quality
         = link_to 'Rénitialiser les images', reinitialize_images_admin_look_path(@look), id:"reinitialize-images", method:"put", confirm:"Confirmez"
         = grouped_themes_for_select(@look)
         %hr  

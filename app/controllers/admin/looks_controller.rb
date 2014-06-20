@@ -1,5 +1,5 @@
 class Admin::LooksController < Admin::AdminController
-  before_filter :retrieve_look, :only => [:show, :publish, :reject, :reinitialize_images, :update]
+  before_filter :retrieve_look, :except => [:index]
   before_filter :retrieve_brands, :only => [:show]
   
   def index
@@ -34,11 +34,15 @@ class Admin::LooksController < Admin::AdminController
   def reject
     set_published(false)
   end
+  
+  def reject_quality
+    set_published(false, true)
+  end
 
   private
 
-  def set_published is_published
-    if @look.update_attributes(is_published: is_published) && @look.mark_post_as_processed
+  def set_published is_published, quality_rejected=false
+    if @look.update_attributes(is_published: is_published, quality_rejected: quality_rejected) && @look.mark_post_as_processed
       look = Post.where("processed_at is null and look_id is not null").order("published_at desc").first.try(:look)
       redirect_to look ? admin_look_path(look) : admin_posts_path
     else
