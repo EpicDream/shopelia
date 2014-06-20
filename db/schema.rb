@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140619130055) do
+ActiveRecord::Schema.define(:version => 20140620101426) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -494,6 +494,7 @@ ActiveRecord::Schema.define(:version => 20140619130055) do
     t.string   "bitly_url"
     t.string   "season"
     t.boolean  "staff_pick",         :default => false
+    t.boolean  "quality_rejected",   :default => false
   end
 
   add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"

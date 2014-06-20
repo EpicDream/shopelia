@@ -4,7 +4,7 @@ class Look < ActiveRecord::Base
   MIN_BUILD_FOR_STAFF_PICKS = 31
   
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
-  attr_accessible :hashtags_attributes, :season, :staff_pick
+  attr_accessible :hashtags_attributes, :season, :staff_pick, :quality_rejected
   
   belongs_to :flinker
   has_one :post

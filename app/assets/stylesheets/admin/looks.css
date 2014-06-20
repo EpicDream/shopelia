@@ -168,7 +168,7 @@
   font-family:'Hevetica';
   font-size:13px;
   top:10px;
-  left:300px;
+  left:360px;
   padding:6px;
   background:#474747;
   border-radius:2px;
@@ -177,7 +177,7 @@
 #publish-look{
   position:absolute;
   top:10px;
-  left:100px;
+  left:5px;
   font-family:'Hevetica';
   font-size:13px;
   padding:6px;
@@ -188,7 +188,7 @@
 #reject-look{
   position:absolute;
   top:10px;
-  left:200px;
+  left:120px;
   font-family:'Hevetica';
   font-size:13px;
   padding:6px;
@@ -196,11 +196,22 @@
   border-radius:2px;
   color:snow;
 }
+#reject-quality-look{
+  position:absolute;
+  top:10px;
+  left:230px;
+  font-family:'Hevetica';
+  font-size:13px;
+  padding:6px;
+  background:#2A2A2A;
+  border-radius:2px;
+  color:snow;
+}
 div.form{
   font-family:'Hevetica';
   position:absolute;
   top:10px;
-  left:480px;
+  left:550px;
 }
 div.form #look_staff_pick{
   display:inline-block;

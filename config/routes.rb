@@ -93,6 +93,7 @@ Shopelia::Application.routes.draw do
     resources :looks do
       get :publish, :on => :member
       get :reject, :on => :member
+      get :reject_quality, :on => :member
       put :reinitialize_images, :on => :member
     end
     namespace :search do
