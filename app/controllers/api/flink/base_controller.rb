@@ -30,12 +30,12 @@ class Api::Flink::BaseController < Api::ApiController
   protected
   
   def unauthorized error=I18n.t('devise.failure.invalid'), exception=nil
-    api_log("#unauthorized", exception)
+    api_log("[UNAUTHORIZED]", exception)
     { json: { error:error }, status: :unauthorized }
   end
   
   def server_error exception=nil
-    api_log("#server_error", exception)
+    api_log("[SERVER ERROR]", exception)
     { json: { error:"Server Error" }, status: 500 }
   end
   
@@ -59,7 +59,9 @@ class Api::Flink::BaseController < Api::ApiController
   
   def api_log key, exception=nil
     return unless exception
-    Rails.logger.error(%Q{[API #{key}] #{exception.inspect} \n #{exception.backtrace.join("\n")}})
+    trace = exception.backtrace.select { |line| line =~ /\/shopelia\// }.join("\n")
+    log = ["[API #{key}]", exception.inspect, trace].join("\n")
+    Rails.logger.error(log)
   end
   
   def scope
