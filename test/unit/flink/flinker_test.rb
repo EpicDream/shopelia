@@ -154,7 +154,7 @@ class FlinkerTest < ActiveSupport::TestCase
     flinkers = Flinker.similar_to(nana)
 
     assert_equal [boop, fanny].to_set, flinkers.take(2).to_set
-    assert_equal Flinker.count - 2, flinkers.count
+    assert_equal Flinker.count - 3, flinkers.count
   end
   
   test "send welcome email and autofollowed by @flinkHQ 3 days after account creation" do
@@ -166,7 +166,55 @@ class FlinkerTest < ActiveSupport::TestCase
     flinker.save!
   end
   
+  test "trend setters, staff picked of flinker country plus most liked publishers to complete to 20" do
+    Flinker.stubs(:top_liked).returns((1..18).map{stub})
+
+    flinkers = Flinker.trend_setters(Country.fr)
+    assert_equal 2, (flinkers & [flinkers(:betty), flinkers(:boop)]).count
+    assert_equal 20, flinkers.count
+  end
+  
+  test "trend setters for uk" do
+    Flinker.stubs(:top_liked).returns((1..18).map{stub})
+    
+    flinkers = Flinker.trend_setters(Country.en)
+
+    assert flinkers.include?(flinkers(:nana))
+    assert !flinkers.include?(flinkers(:betty))
+  end
+  
+  test "trend setters, staff picked of US if no staff picked in its country" do
+    flinkers = Flinker.trend_setters(countries(:spain))
+
+    assert flinkers.include?(flinkers(:anne))
+  end
+  
+  test "trend setters, staff picked of US if no country set" do
+    flinkers = Flinker.trend_setters(nil)
+
+    assert flinkers.include?(flinkers(:anne))
+  end
+  
+  test "assign device on create" do
+    set_env_user_agent
+    @flinker.save
+    
+    assert_equal devices(:mobile).uuid, @flinker.device.uuid
+    assert_equal 1, @flinker.device.build
+  end
+  
+  test "stop auto follow staff picked if device build >= 31" do
+    set_env_user_agent(31)
+    FlinkerFollow.any_instance.expects(:create).never
+    
+    @flinker.save
+  end
+  
   private
+  
+  def set_env_user_agent build=1
+    ENV['HTTP_USER_AGENT'] = "flink:os[iOS]:build[#{build}]:version[1.0.1]:os_version[4.4]:phone[Samsung Galaxy]:uuid[#{devices(:mobile).uuid}]:dev[2]"
+  end
 
   def new_flinker
     Flinker.new(attributes)

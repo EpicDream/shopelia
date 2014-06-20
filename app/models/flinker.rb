@@ -3,6 +3,7 @@ require 'flink/algolia'
 class Flinker < ActiveRecord::Base
   include Algolia::FlinkerSearch unless Rails.env.test?
   FLINK_HQ_USERNAME = "flinkhq"
+  MAX_BUILD_FOR_FOLLOW_STAFF_PICK = 30
   
   attr_accessible :email, :password, :password_confirmation, :remember_me, :username, :can_comment, :city, :area
   attr_accessible :name, :url, :is_publisher, :avatar_url, :country_id, :staff_pick, :timezone, :newsletter
@@ -152,6 +153,19 @@ class Flinker < ActiveRecord::Base
     Flinker.where(username:FLINK_HQ_USERNAME).first
   end
   
+  def self.top_liked from, max=20, exclusion=[]
+    Flinker.find_by_sql FlinkerSql.top_liked(from, max, exclusion)
+  end
+  
+  def self.trend_setters country=nil
+    country ||= Country.us
+    skope = publishers.staff_pick
+    iso = skope.of_country(country.iso).first.nil? ? Country::US : country.iso 
+    total = skope.of_country(iso).count
+    exclusion = skope.of_country(iso).map(&:id)
+    skope.of_country(iso) + top_liked(Date.today - 1.week, 20 - total, exclusion)
+  end
+  
   private
   
   def assign_uuid
@@ -162,7 +176,14 @@ class Flinker < ActiveRecord::Base
     self.avatar = URI.parse(self.avatar_url) if self.avatar_url.present?
   end
 
-  def follow_staff_picked
+  def follow_staff_picked#TODO:Remove on new release 31
+    device = Device.from_flink_user_agent(ENV['HTTP_USER_AGENT'], self) rescue nil
+    build = 0
+    if ENV['HTTP_USER_AGENT'] =~ /flink:/
+      hash = ENV['HTTP_USER_AGENT'].gsub(/^flink:/, "").split(/\:/).map{|e| e.match(/^(.*)\[(.*)\]$/)[1..2]}.map{|e| { e[0] => e[1] }}.inject(:merge)
+      build = hash["build"].to_i
+    end
+    return if build > MAX_BUILD_FOR_FOLLOW_STAFF_PICK
     country = self.country.try(:iso)
     country = Country::FRANCE if !country || Flinker.publishers.staff_pick.of_country(country).count.zero?
     flinkers = Flinker.publishers.staff_pick.of_country_or_universal(country).limit(25)

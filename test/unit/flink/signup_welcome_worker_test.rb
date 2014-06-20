@@ -5,6 +5,7 @@ class SignupWelcomeWorkerTest < ActiveSupport::TestCase
   test "send welcome email and autofollowed from flinkHQ" do
     flinker = flinkers(:fanny)
     flinkhq = flinkers(:flinkhq)
+    flinkhq.update_attributes(username:'flinkhq')
     
     Emailer.expects(:after_signup).with(flinker)
     

@@ -63,4 +63,16 @@ class Api::Flink::Followings::LooksControllerTest < ActionController::TestCase
     end
   end
   
+  test "contains staff picked looks" do
+    follow flinkers(:betty)
+    look = flinkers(:lilou).looks.last
+    look.update_attributes(staff_pick:true)
+    @flinker.device.update_attributes(build:31)
+    
+    get :index, format: :json, per_page:100
+    
+    assert_response :success
+    assert_equal 11, json_response["looks"].count
+  end
+  
 end

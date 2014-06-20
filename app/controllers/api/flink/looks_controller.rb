@@ -16,7 +16,7 @@ class Api::Flink::LooksController < Api::Flink::BaseController
 
   def looks
     case
-    when params[:looks_ids]  #TODO:Keep only this on new versions
+    when params[:looks_ids] #CHANGED:remove?
       Look.published.where(uuid:params[:looks_ids])
     when params[:liked] #CHANGED: => /flink/likes/looks
       flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker

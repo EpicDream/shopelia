@@ -68,7 +68,7 @@ class Api::Flink::BaseController < Api::ApiController
   
   def epochs_to_dates keys
     keys.each { |key|  
-      date = params[key] && Time.at(params[key].to_i)
+      date = params[key] && Time.at(params[key].to_i).utc
       params[key] = date
     }
   end

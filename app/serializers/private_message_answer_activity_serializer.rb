@@ -1,0 +1,2 @@
+class PrivateMessageAnswerActivitySerializer < PrivateMessageActivitySerializer
+end

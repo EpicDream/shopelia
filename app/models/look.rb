@@ -1,4 +1,8 @@
 class Look < ActiveRecord::Base
+  MIN_DATE = Date.parse("2014-01-01")
+  MIN_LIKES_FOR_POPULAR = 150
+  MIN_BUILD_FOR_STAFF_PICKS = 31
+  
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
   attr_accessible :hashtags_attributes, :season, :staff_pick, :quality_rejected
   
@@ -42,15 +46,24 @@ class Look < ActiveRecord::Base
     if flinker
       flinkers_ids = flinker.followings.map(&:id)
       looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
-    
-      (flinkers_ids.any? || looks_ids.any?) && published.where('flinker_id in (?) or id in (?)', flinkers_ids, looks_ids)
+      
+      if flinker.device && flinker.device.build < MIN_BUILD_FOR_STAFF_PICKS
+        (flinkers_ids.any? || looks_ids.any?) && 
+        published.where('flinker_id in (?) or id in (?)', flinkers_ids, looks_ids)
+      else
+        published.where('flinker_id in (?) or id in (?) or staff_pick = ?', flinkers_ids, looks_ids, true)
+      end
     end
   }
+  
+  #DEPRECATED- build 22
   scope :published_between, ->(since, before) {
     since ||= Time.at(0)
     before ||= Date.today
     published.where("published_at > ? and published_at < ?", since, before)
   }
+  
+  #DEPRECATED- build 26
   scope :flink_published_between, ->(since, before) {
     case 
     when since then published.where("flink_published_at >= ?", since)
@@ -80,6 +93,23 @@ class Look < ActiveRecord::Base
   scope :from_country, -> (country_id) {
     joins(:flinker).where('flinkers.country_id = ?', country_id) unless country_id.blank?
   }
+  scope :popular, ->(published_before, published_after) {
+    recent(published_before, published_after)
+    .joins("join (select resource_id, count(*) from flinker_likes 
+            group by resource_id having count(*) >= #{MIN_LIKES_FOR_POPULAR}) likes
+            on looks.id = likes.resource_id")
+  }
+  scope :recent, ->(published_before, published_after) {
+    published_before ||= Time.now
+    published_after ||= MIN_DATE
+
+    published.where("flink_published_at <= '#{published_before}'")
+    .where("flink_published_at >= '#{published_after}'")
+  }
+  scope :best, ->(published_before, published_after) {
+    recent(published_before, published_after)
+    .where(staff_pick:true)
+  }
   scope :staff_picked, -> { where(staff_pick:true) }
   scope :staff_picked_countries, -> {
     staff_picked
@@ -88,6 +118,7 @@ class Look < ActiveRecord::Base
     .group('countries.name')
     .select('countries.name, count(*)')
   }
+
   alias_attribute :published, :is_published
   
   def self.search keywords, country_id=nil

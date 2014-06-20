@@ -210,11 +210,18 @@ Shopelia::Application.routes.draw do
       resources :staff_picks, :only => :index
       resources :activities, :only => :index
       resources :facebook_friends, :only => :index
+      resources :instagram_friends, :only => :index
+      resources :twitter_friends, :only => :index
       resources :top_flinkers, :only => :index
       resources :avatars, :only => :create
       resources :follows, :only => [:index, :create, :destroy]
       resources :followings, :only => [:index, :create, :destroy]
       resources :followers, :only => :index
+      resources :popular_looks, :only => :index
+      resources :recent_looks, :only => :index
+      resources :best_looks, :only => :index
+      resources :trend_setters, :only => :index
+      resources :private_messages, :only => :create
       resources :looks, :only => :index do
         resources :comments, :only => [:index, :create], :controller => "looks/comments"
         resources :sharings, :only => :create, :controller => "looks/sharings"
@@ -223,6 +230,13 @@ Shopelia::Application.routes.draw do
       end
       namespace :likes do
         resources :looks, only: :index
+      end
+      namespace :refresh do
+        resources :looks, only: :index
+      end
+      namespace :connect do
+        resources :instagram, only: :create
+        resources :twitter, only: :create
       end
       namespace :followings do
         resources :looks, only: :index
