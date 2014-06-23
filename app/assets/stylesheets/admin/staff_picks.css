@@ -8,6 +8,18 @@ span.items-counter{
   margin:0 0 0 60px;
   padding:4px;
 }
+ul.anchors{
+  border-radius:6px;
+  padding:10px;
+  background:#EEE;
+  position:fixed;
+  top :80px;
+  right:10px;
+  list-style:none;
+}
+ul.anchors a{
+  color:#993769;
+}
 h4{
   margin:60px 0 0 20px;
   color:#880F55;
