@@ -128,7 +128,7 @@ class Look < ActiveRecord::Base
     .with_likes_count
     .includes(:look_images)
     .select('looks.*')
-    .order('flikes_count desc, flink_published_at desc')
+    .order('flink_published_at desc, flikes_count desc')
   end
   
   def self.search_for_api keywords
