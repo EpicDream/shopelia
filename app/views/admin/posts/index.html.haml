@@ -6,6 +6,8 @@
     %select.country-select{}
       =options_for_select(countries_for_select, selected:params[:country_code])
     %input#blog-name-filter{placeholder:"Filtrer par le nom du blog", 'data-blogs-names' => Blog.names }
+    %button#reject-checked-looks{class:'btn btn-danger'}="Rejeter les looks selectionnés"
+    
   %div.statistics  
     %h4="Publications : #{ Look.published.count }"
     %hr 
