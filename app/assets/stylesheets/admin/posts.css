@@ -99,3 +99,11 @@ section.header table td{
   display:block;
   margin-top:10px;
 }
+input[type=checkbox].look-reject-checkbox{
+  position:absolute;
+  top:4px;
+  right:40px;
+}
+#reject-checked-looks{
+  margin:10px 0 0 0;
+}
