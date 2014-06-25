@@ -31,7 +31,7 @@ class Emailer < ActionMailer::Base
     @footer_look_uuid = newsletter.look_uuid
     @trendsetters = Flinker.recommendations_for(flinker)
     
-    headers['X-Mailjet-Campaign'] = test ? "Weekly Newsletter Test" : "Weekly Newsletter #{date}"
+    headers['X-Mailjet-Campaign'] = test ? "Weekly Newsletter Test - #{I18n.locale}" : "Weekly Newsletter #{date} - #{I18n.locale}"
     headers['X-Mailjet-DeduplicateCampaign'] = 'n'
     
     mail(:to => flinker.email,
