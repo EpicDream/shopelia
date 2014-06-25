@@ -32,7 +32,7 @@ class Emailer < ActionMailer::Base
     @trendsetters = Flinker.recommendations_for(flinker)
     
     headers['X-Mailjet-Campaign'] = test ? "Weekly Newsletter Test - #{I18n.locale}" : "Weekly Newsletter #{date} - #{I18n.locale}"
-    headers['X-Mailjet-DeduplicateCampaign'] = 'n'
+    headers['X-Mailjet-DeduplicateCampaign'] = 'y'
     
     mail(:to => flinker.email,
   		   :subject => @subject,
