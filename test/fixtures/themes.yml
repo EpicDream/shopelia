@@ -13,8 +13,10 @@ sexy:
   position: 2
   published: true
 sacamains:
-  title: "Sacs à mains"
-  subtitle: "Pratiques"
+  title: "<styles><style font='CooperBlackStd' size='24'>Sexy girls</style><style font='PlantagenetCherokee' size='12'> and Boys</style></styles>"
+  subtitle: "<styles><style font='CooperBlackStd' size='24'>Chaud</style></styles>"
+  en_title: "<styles><style font='CooperBlackStd' size='24'>Sexy girls</style><style font='PlantagenetCherokee' size='12'> and Boys</style></styles>"
+  en_subtitle: "<styles><style font='CooperBlackStd' size='24'>Hot</style></styles>"
   position: 3
   published: false
   dev_publication: true

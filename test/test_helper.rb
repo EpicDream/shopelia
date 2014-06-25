@@ -65,6 +65,12 @@ class ActiveSupport::TestCase
     look.save!
   end
   
+  def set_env_user_agent build=1
+    value = "flink:os[iOS]:build[#{build}]:version[1.0.1]:os_version[4.4]:phone[Samsung Galaxy]:uuid[#{devices(:mobile).uuid}]:dev[2]"
+    ENV['HTTP_USER_AGENT'] = value
+    @request.env["HTTP_USER_AGENT"] = value if @request
+  end
+  
 end
 
 require 'mocha/setup'
