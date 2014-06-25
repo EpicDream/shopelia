@@ -93,7 +93,7 @@ class Theme < ActiveRecord::Base
   
   def title_string_for_display attribute
     title = send(attribute)
-    title.scan(/<style\s.*?>(.*?)<\/style>/).flatten.join if title
+    title.scan(/<style\s.*?>(.*?)<\/style>/).flatten.join.gsub(/!\[CDATA\[|\]\]/, '') if title
   end
   
   def find_or_create_hashtag
