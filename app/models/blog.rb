@@ -96,8 +96,11 @@ class Blog < ActiveRecord::Base
       is_publisher:true, 
       country_id:country.id, 
       avatar_url:self.avatar_url)
-    self.errors.add(:flinker, "Can't create flinker") unless flinker.valid? 
-    self.flinker = flinker
+    unless flinker.valid? 
+      self.errors.add(:flinker, "Can't create flinker") 
+    else 
+      self.flinker = flinker
+    end
   end
   
   def update_flinker_avatar
