@@ -50,6 +50,7 @@ class Post < ActiveRecord::Base
   end
   
   def reinitialize_images
+    self.look.look_images.desroy_all
     self.images.each do |url|
       self.look.look_images << LookImage.create(url:url)
     end
