@@ -25,7 +25,8 @@ class FlinkerMerge
       @flinker.email += "--"
       @flinker.authentication_token += "--"
       @flinker.save!
-      
+
+      @target.verified = true
       @target.save!
     end
   end
