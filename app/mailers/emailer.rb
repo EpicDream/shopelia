@@ -15,7 +15,7 @@ class Emailer < ActionMailer::Base
     @comment = comment
     mail(:to => 'staff@flink.io',
   		   :subject => 'flinkHQ mentionné dans un commentaire',
-  	     :from => 'The genius at backend <genius@flink.io>')
+  	     :from => '2130 after JC<apocalypse@flink.io>')
   end
   
   def newsletter flinker, test=false, date=Date.today
