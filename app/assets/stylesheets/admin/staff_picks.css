@@ -95,6 +95,11 @@ table.staff-picks-hashtags td ul{
   text-align:left;
   list-style-type: square;
 }
+table.staff-picks-hashtags ul li{
+  display:inline-block;
+  padding:5px;
+  text-decoration:underline;
+}
 .avatar{
   width:40px;
   border-radius:20px;
