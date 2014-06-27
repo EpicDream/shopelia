@@ -138,8 +138,8 @@ class Flinker < ActiveRecord::Base
     similars.shuffle + last.shuffle
   end
   
-  def self.top_likers_of_publisher_of_look look, max=3
-    Flinker.find_by_sql FlinkerSql.top_likers_of_publisher_of_look(look, max)
+  def self.top_likers_of_publisher_of_look look
+    Flinker.find_by_sql FlinkerSql.top_likers_of_publisher_of_look(look)
   end
   
   def self.recommendations_for flinker, total=3
