@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140627130724) do
+ActiveRecord::Schema.define(:version => 20140627134045) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -799,6 +799,12 @@ ActiveRecord::Schema.define(:version => 20140627130724) do
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true
+
+  create_table "revival_logs", :force => true do |t|
+    t.integer  "count"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "scan_logs", :force => true do |t|
     t.string   "ean"
