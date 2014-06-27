@@ -1,15 +1,15 @@
 class LookProduct < ActiveRecord::Base
+  CODES = "#{Rails.root}/lib/config/product_codes.yml"
+
+  attr_accessible :look_id, :product_id, :code, :brand, :url, :feed
+  attr_accessor :url, :feed
+  
   belongs_to :look, touch:true
   belongs_to :product
-
-  CODES = "#{Rails.root}/lib/config/product_codes.yml"
 
   validates :look_id, :presence => true
   validates :product_id, :uniqueness => { :scope => :look_id }, :allow_nil => true
   validates :code, :uniqueness => { :scope => [:brand, :look_id] }
-
-  attr_accessible :look_id, :product_id, :code, :brand, :url, :feed
-  attr_accessor :url, :feed
 
   before_validation :check_url_validity, if:Proc.new{ |item| item.url.present? }
   before_validation :find_or_create_product, if:Proc.new{ |item| item.url.present? && item.errors.empty? }
@@ -18,6 +18,7 @@ class LookProduct < ActiveRecord::Base
 
   after_create :create_hashtags_and_assign_to_look
   after_update :update_hashtag, if: -> { brand_changed? }
+  before_create :assign_uuid
   
   def self.codes
     dic = YAML.load(File.open(CODES))
@@ -37,6 +38,10 @@ class LookProduct < ActiveRecord::Base
   
   private
 
+  def assign_uuid
+    self.uuid = SecureRandom.hex(4)
+  end
+  
   def check_url_validity
     raise if self.url !~ /^http/
     URI.parse(self.url)

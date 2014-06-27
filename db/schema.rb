@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140627092410) do
+ActiveRecord::Schema.define(:version => 20140627130724) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -474,6 +474,7 @@ ActiveRecord::Schema.define(:version => 20140627092410) do
     t.datetime "updated_at", :null => false
     t.string   "code"
     t.string   "brand"
+    t.string   "uuid"
   end
 
   add_index "look_products", ["look_id"], :name => "index_look_products_on_look_id"
