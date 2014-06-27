@@ -12,12 +12,13 @@
       </thead>
       <tbody>
         <% @hashtags.each do |hashtag| %>
+          <% looks = HighlightedLook.looks_of_hashtag(hashtag) %>
           <tr>
             <td><span class="hashtag-name">#<%= hashtag.name %></span></td>
-            <td><%= hashtag.looks.uniq.count %></td>
+            <td><%= looks.uniq.count %></td>
             <td>
               <ul>
-                <% hashtag.looks.uniq.each do |look| %>
+                <% looks.uniq.each do |look| %>
                   <li><%= link_to look.name, admin_look_path(look), target:'_blank', class:'look-link' %></li>
                 <% end %>
               </ul>

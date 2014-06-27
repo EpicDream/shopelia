@@ -32,7 +32,7 @@ class LookSerializer < ActiveModel::Serializer
   end
 
   def highlighted_hashtags
-    object.hashtags.highlighted.map(&:name)
+    object.highlighted_hashtags.map(&:name)
   end
 
   def products

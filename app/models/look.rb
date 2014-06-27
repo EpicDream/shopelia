@@ -176,6 +176,10 @@ class Look < ActiveRecord::Base
   def publish
     update_attributes(is_published: true)
   end
+  
+  def highlighted_hashtags
+    HighlightedLook.hashtags_of_look(self)
+  end
 
   private
   

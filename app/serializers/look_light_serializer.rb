@@ -6,9 +6,9 @@ class LookLightSerializer < ActiveModel::Serializer
   end
   
   def highlighted_hashtags
-    object.hashtags.highlighted.map(&:name)
+    object.highlighted_hashtags.map(&:name)
   end
-  
+
   def comments_count
     object.comments.count
   end
