@@ -19,8 +19,8 @@ class Revival
   end
   
   def revive!
-    Rails.logger.error("[REVIVAL]FLINKER_ID:#{@flinker.id} LOOK_ID:#{@look.id} REVIVE:#{revive?}")
     return unless revive?
+    RevivalLog.increment(Date.today)
     NewLooksNotificationWorker.perform_in(revive_in, @flinker.id, @look.id)
     after_revive
   end
