@@ -69,7 +69,7 @@ class LookSerializerTest < ActiveSupport::TestCase
   test "associated highlighted hashtags" do
     hashtags = ["Top", "Canon"].map { |name| Hashtag.find_or_create_by_name(name)  }
     @look.hashtags << hashtags
-    hashtags.first.update_attributes(highlighted:true)
+    HighlightedLook.create(look_id:@look.id, hashtag_id:hashtags.first.id)
     
     look_serializer = LookSerializer.new(@look)
     hash = look_serializer.as_json
