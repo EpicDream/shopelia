@@ -38,6 +38,7 @@ class LookSerializerTest < ActiveSupport::TestCase
     assert_equal 2, hash[:look][:images].count
     assert hash[:look][:liked].nil?
     assert hash[:look][:staff_pick]
+    
     assert_equal "bla bla bla", hash[:look][:description]
     assert_equal 0, hash[:look][:highlighted_hashtags].count
   end
@@ -57,7 +58,7 @@ class LookSerializerTest < ActiveSupport::TestCase
     I18n.locale = :fr
     flinker = flinkers(:elarch)
     @look.look_products.destroy_all
-    LookProduct.create!(look_id:@look.id, code:"dress", brand:"test")
+    product = LookProduct.create!(look_id:@look.id, code:"dress", brand:"test")
     
     look_serializer = LookSerializer.new(@look.reload, scope:{flinker:flinker})
     hash = look_serializer.as_json
@@ -87,5 +88,15 @@ class LookSerializerTest < ActiveSupport::TestCase
 
     assert_equal 1, hash[:look][:comments_count]
     assert_equal 1, hash[:look][:likes_count]
+  end
+  
+  test "include look product uuid" do
+    @look.look_products.destroy_all
+    product = LookProduct.create!(look_id:@look.id, code:"dress", brand:"test")
+    
+    look_serializer = LookSerializer.new(@look.reload, scope:{flinker:Flinker.last})
+    hash = look_serializer.as_json
+
+    assert_equal product.uuid, hash[:look][:products][0][:uuid]
   end
 end
