@@ -34,6 +34,13 @@ class Revival
   end
   
   def self.revive! flinkers, look
+    flinkers = FlinkerFollow.where(follow_id:look.flinker.id)\
+    .includes(:flinker)\
+    .where('flinkers.timezone is not null')\
+    .where('flinkers.last_revival_at <= ?', Time.now - LAST_REVIVE_MIN)\
+    .where('flinkers.last_session_open_at <= ? ', Time.now - LAST_SESSION_MIN)\
+    .map(&:flinker)
+    
     flinkers.each { |flinker| Revival.new(flinker, look).revive! }
   end
   
