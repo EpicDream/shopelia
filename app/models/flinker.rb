@@ -138,8 +138,8 @@ class Flinker < ActiveRecord::Base
     similars.shuffle + last.shuffle
   end
   
-  def self.top_likers_of_publisher_of_look look
-    Flinker.find_by_sql FlinkerSql.top_likers_of_publisher_of_look(look)
+  def self.top_likers_of_publisher_of_look look, max=3
+    Flinker.find_by_sql FlinkerSql.top_likers_of_publisher_of_look(look, max)
   end
   
   def self.recommendations_for flinker, total=3
@@ -193,6 +193,7 @@ class Flinker < ActiveRecord::Base
   end
   
   def signup_welcome
+    self.touch(:last_revival_at)
     SignupWelcomeWorker.perform_in(3.days, self.id)
   end
 
