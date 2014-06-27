@@ -40,7 +40,7 @@ class Admin::LooksController < Admin::AdminController
   end
   
   def highlight_with_tag
-    if params[:highlight]
+    if params[:highlight] == "true"
       HighlightedLook.create(look_id: @look.id, hashtag_id:params[:hashtag_id])
     else
       HighlightedLook.where(look_id: @look.id, hashtag_id:params[:hashtag_id]).destroy_all
