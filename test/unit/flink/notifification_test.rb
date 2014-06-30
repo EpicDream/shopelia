@@ -151,7 +151,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
   
   def private_message_answer_message_for flinker
     case flinker.lang_iso
-    when 'fr_FR' then return "@fanny à répondu à votre message"
+    when 'fr_FR' then return "@fanny a répondu à votre message"
     else return "@fanny answered your message"
     end
   end
