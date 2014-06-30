@@ -11,13 +11,17 @@ class PrivateMessageTest < ActiveSupport::TestCase
     flinker = flinkers(:betty)
     target = flinkers(:nana)
     look = looks(:quimper)
+
+    Flink::PrivateMessageNotification.expects(:new).with(target, flinker).returns(stub(deliver: true))
     
-    assert_difference 'PrivateMessageActivity.count' do
-      assert_no_difference 'PrivateMessageAnswerActivity.count' do
-        PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:false)
+    Sidekiq::Testing.inline! do
+      assert_difference 'PrivateMessageActivity.count' do
+        assert_no_difference 'PrivateMessageAnswerActivity.count' do
+          PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:false)
+        end
       end
     end
-  
+
     message = PrivateMessage.last
     activity = PrivateMessageActivity.last
 
@@ -31,10 +35,14 @@ class PrivateMessageTest < ActiveSupport::TestCase
     target = flinkers(:nana)
     look = looks(:quimper)
     
-    assert_difference 'PrivateMessageAnswerActivity.count' do
-      PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
+    Flink::PrivateMessageAnswerNotification.expects(:new).with(target, flinker).returns(stub(deliver: true))
+    
+    Sidekiq::Testing.inline! do
+      assert_difference 'PrivateMessageAnswerActivity.count' do
+        PrivateMessage.create(content:"hello", flinker_id:flinker.id, target_id:target.id, look_id:look.id, answer:true)
+      end
     end
-  
+    
     activity = PrivateMessageAnswerActivity.last
     message = PrivateMessage.last
 

@@ -5,3 +5,5 @@ fr_FR:
       mention: "Tu as été mentionnée par @%{username}"
       signup: "Ton amie facebook %{username} a rejoint Flink"
       new_looks: "@%{username} a publié un nouveau look : %{look_name}"
+      private_message: "@%{username} vous a envoyé un look"
+      private_message_answer: "@%{username} à répondu à votre message"

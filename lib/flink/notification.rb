@@ -91,3 +91,37 @@ class Flink::NewLooksNotification < Flink::Notification
   end
   
 end
+
+class Flink::PrivateMessageNotification < Flink::Notification
+  
+  def initialize flinker, sender
+    @flinker = flinker
+    @sender = sender
+  end
+  
+  def message
+    begin
+      I18n.translate!("flink.notification.private_message", username:@sender.username, :locale => @flinker.lang_iso, raise:true)
+    rescue I18n::MissingTranslationData
+      I18n.translate!("flink.notification.private_message", username:@sender.username, :locale => "en_GB", raise:true)
+    end
+  end
+  
+end
+
+class Flink::PrivateMessageAnswerNotification < Flink::Notification
+  
+  def initialize flinker, sender
+    @flinker = flinker
+    @sender = sender
+  end
+  
+  def message
+    begin
+      I18n.translate!("flink.notification.private_message_answer", username:@sender.username, :locale => @flinker.lang_iso, raise:true)
+    rescue I18n::MissingTranslationData
+      I18n.translate!("flink.notification.private_message_answer", username:@sender.username, :locale => "en_GB", raise:true)
+    end
+  end
+  
+end
