@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140627134045) do
+ActiveRecord::Schema.define(:version => 20140630155155) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -319,12 +319,14 @@ ActiveRecord::Schema.define(:version => 20140627134045) do
     t.integer  "flinker_id"
     t.string   "resource_type"
     t.integer  "resource_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+    t.boolean  "on",            :default => true
   end
 
   add_index "flinker_likes", ["flinker_id", "resource_type", "resource_id"], :name => "index_flinker_likes_on_all_fields"
   add_index "flinker_likes", ["flinker_id"], :name => "index_flinker_likes_on_flinker_id"
+  add_index "flinker_likes", ["on"], :name => "index_flinker_likes_on_on"
   add_index "flinker_likes", ["resource_type", "resource_id"], :name => "index_flinker_likes_on_resource_type_and_resource_id"
   add_index "flinker_likes", ["resource_type"], :name => "index_flinker_likes_on_resource_type"
 

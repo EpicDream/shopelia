@@ -1,5 +1,6 @@
 one:
   flinker: betty
+  resource_type: 'look'
 two:
   flinker: betty
   look: brest
@@ -13,8 +14,10 @@ four:
   resource_type: 'look'
 five:
   flinker: fanny
+  resource_type: 'look'
 six:
   flinker: boop
+  resource_type: 'look'
 boop_like:
   flinker: boop
   resource_type: "look"

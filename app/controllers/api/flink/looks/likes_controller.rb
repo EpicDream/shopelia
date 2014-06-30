@@ -15,7 +15,7 @@ class Api::Flink::Looks::LikesController < Api::Flink::BaseController
   end
 
   def destroy
-    FlinkerLike.where("flinker_id=? and resource_type=? and resource_id=?", current_flinker.id, FlinkerLike::LOOK, @look.id).destroy_all
+    FlinkerLike.of_flinker(current_flinker).of_look(@look).first.toggle
     head :no_content
   end
 
