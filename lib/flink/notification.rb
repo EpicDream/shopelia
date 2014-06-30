@@ -93,7 +93,7 @@ class Flink::NewLooksNotification < Flink::Notification
 end
 
 class Flink::PrivateMessageNotification < Flink::Notification
-  
+
   def initialize flinker, sender
     @flinker = flinker
     @sender = sender
