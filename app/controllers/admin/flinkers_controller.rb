@@ -46,7 +46,8 @@ class Admin::FlinkersController < Admin::AdminController
       :publisher => params[:publisher],
       :staff_pick => params[:staff_pick],
       :country => params[:country],
-      :universal => params[:universal]
+      :universal => params[:universal],
+      :verified => params[:verified],
     }
   end  
 end

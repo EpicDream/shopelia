@@ -21,7 +21,7 @@ class FlinkersDatatable
     flinkers.map do |flinker|
       url = flinker.url || flinker.blog.try(:url)
       [
-        flinker.id,
+        "<span class='verified-#{flinker.verified}'>#{flinker.verified ? 'Yes' : 'No'}</span>".html_safe,
         image_tag(flinker.avatar.blank? ? "empty.png" : flinker.avatar.url(:thumb), class:"avatar"),
         link_to(flinker.username || "-", admin_flinker_path(flinker)),
         link_to(flinker.name || "-", admin_flinker_path(flinker)),
@@ -47,6 +47,7 @@ class FlinkersDatatable
     flinkers = flinkers.where("staff_pick = ?", @filters[:staff_pick] == 'yes') unless @filters[:staff_pick].blank?
     flinkers = flinkers.of_country(@filters[:country]) unless @filters[:country].blank?
     flinkers = flinkers.universals if @filters[:universal] && @filters[:universal] == 'yes'
+    flinkers = flinkers.where("verified = ?", true) if @filters[:verified] && @filters[:verified] == 'yes'
     flinkers = flinkers.where("name ~* :search or url ~* :search or username ~* :search or email ~* :search", search: params[:sSearch]) if params[:sSearch].present?
     flinkers.page(page).per_page(per_page)
   end

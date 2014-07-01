@@ -52,3 +52,9 @@ form.edit_flinker label{
 form.edit_flinker input[type="checkbox"]{
   display:inline-block;
 }
+span.verified-true{
+  color:green;
+}
+span.verified-false{
+  color:black;
+}

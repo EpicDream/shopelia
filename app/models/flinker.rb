@@ -77,7 +77,7 @@ class Flinker < ActiveRecord::Base
     .joins('join flinker_likes on flinker_likes.resource_id = looks.id')
   }
   scope :with_location, -> { where('city is not null or area is not null') }
-  
+
   alias_attribute :publisher, :is_publisher
   
   def name=name
