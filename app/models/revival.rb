@@ -36,7 +36,13 @@ class Revival
   def self.revive! flinkers, look
     flinkers = Flinker.top_likers_of_publisher_of_look(look)
     
-    flinkers.each { |flinker| Revival.new(flinker, look).revive! }
+    flinkers.each { |flinker| 
+      begin
+        Revival.new(flinker, look).revive! 
+      rescue => e
+        Rails.logger.error("[REVIVAL] #{e.inspect}")
+      end
+    }
   end
   
 end

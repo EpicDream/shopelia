@@ -221,7 +221,7 @@ class Look < ActiveRecord::Base
   end
   
   def revive_flinkers
-    Revival.revive!([], self)
+    Revival.revive!([], self) 
   end
   
 end
