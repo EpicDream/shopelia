@@ -27,7 +27,7 @@ class FlinkerLike < ActiveRecord::Base
     likes_for(flinker.friends).where(resource_id:look.id)
   }
   
-  scope :of_look, ->(look) { where(look_id: look.id, resource_type: LOOK) }
+  scope :of_look, ->(look) { where(resource_id: look.id, resource_type: LOOK) }
   scope :of_flinker, ->(flinker) { where(flinker_id: flinker.id) }
   
   def product?
@@ -38,8 +38,13 @@ class FlinkerLike < ActiveRecord::Base
     resource_type == LOOK
   end
   
-  def toggle
-    update_attributes(on: !self.on)
+  def self.toggle_or_create flinker, look
+    like = self.unscoped { of_flinker(flinker).of_look(look).first }
+    if like
+      like.update_attributes(on: !like.on)
+    else
+      create(flinker_id:flinker.id, resource_type:LOOK, resource_id:look.id)
+    end
   end
   
 end

@@ -2,12 +2,7 @@ class Api::Flink::Looks::LikesController < Api::Flink::BaseController
   before_filter :retrieve_look
   
   def create
-    like = FlinkerLike.new(
-      flinker_id:current_flinker.id,
-      resource_type:FlinkerLike::LOOK,
-      resource_id:@look.id)
-
-    if like.save
+    if like = FlinkerLike.toggle_or_create(current_flinker, @look)
       head :no_content
     else
       render json: like.errors, status: :unprocessable_entity
@@ -15,7 +10,7 @@ class Api::Flink::Looks::LikesController < Api::Flink::BaseController
   end
 
   def destroy
-    FlinkerLike.of_flinker(current_flinker).of_look(@look).first.toggle
+    FlinkerLike.toggle_or_create(current_flinker, @look)
     head :no_content
   end
 

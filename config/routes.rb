@@ -234,6 +234,7 @@ Shopelia::Application.routes.draw do
       end
       namespace :refresh do
         resources :looks, only: :index
+        resources :likes, only: :index
       end
       namespace :connect do
         resources :instagram, only: :create

@@ -74,8 +74,22 @@ class Look < ActiveRecord::Base
   scope :with_comment_matching, ->(pattern) {
     joins(:comments).where('comments.body ~* ?', pattern)
   }
+  scope :likes_of_flinker, ->(flinker){
+    joins(:flinker_likes).where('flinker_likes.flinker_id = ?', flinker.id) 
+  }
+  scope :likes_with_status, ->(on) {
+    joins(:flinker_likes).where('flinker_likes.on = ?', on)
+  }
   scope :liked_by, ->(flinker) {
-    joins('join flinker_likes on flinker_likes.resource_id = looks.id').where('flinker_likes.flinker_id = ?', flinker.id)
+    likes_of_flinker(flinker).likes_with_status(true)
+  }
+  scope :unliked_by, ->(flinker) {
+    likes_of_flinker(flinker).likes_with_status(false)
+  }
+  scope :likes_between, ->(from, to){
+    from ||= MIN_DATE
+    to ||= Time.now
+    joins(:flinker_likes).where('flinker_likes.updated_at >= ? and flinker_likes.updated_at <= ?', from, to)
   }
   scope :with_hashtags, ->(hashtags){
     hashtags = Hashtag.where('name ~* ?', hashtags.join("|")).select(:id).uniq
