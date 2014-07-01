@@ -24,6 +24,7 @@ class StatisticSql
         join flinkers on flinkers.id = looks.flinker_id
         where resource_type = 'look'
         and flinker_likes.updated_at > '#{from}'
+        and flinker_likes.on = 't'
         group by flinkers.id
         order by count desc) vlikes
        on vlikes.fid = fl.id 
