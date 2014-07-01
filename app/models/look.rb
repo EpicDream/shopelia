@@ -128,7 +128,7 @@ class Look < ActiveRecord::Base
     .with_likes_count
     .includes(:look_images)
     .select('looks.*')
-    .order('flikes_count desc, flink_published_at desc')
+    .order('flink_published_at desc, flikes_count desc')
   end
   
   def self.search_for_api keywords
@@ -176,6 +176,10 @@ class Look < ActiveRecord::Base
   def publish
     update_attributes(is_published: true)
   end
+  
+  def highlighted_hashtags
+    HighlightedLook.hashtags_of_look(self)
+  end
 
   private
   
@@ -217,8 +221,7 @@ class Look < ActiveRecord::Base
   end
   
   def revive_flinkers
-    flinkers = Flinker.top_likers_of_publisher_of_look(self)
-    Revival.revive!(flinkers, self)
+    Revival.revive!([], self)
   end
   
 end

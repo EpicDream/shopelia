@@ -126,6 +126,11 @@ class LookProductTest < ActiveSupport::TestCase
     assert @look.hashtags.include?(hashtag)
   end
   
+  test "generate uuid before create" do
+    product = LookProduct.create(code:"handkerchief", brand:"Magic Brand", look_id:@look.id)
+    assert product.reload.uuid.length == 8
+  end
+  
   private
 
   def example_feed

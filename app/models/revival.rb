@@ -20,6 +20,7 @@ class Revival
   
   def revive!
     return unless revive?
+    RevivalLog.increment(Date.today)
     NewLooksNotificationWorker.perform_in(revive_in, @flinker.id, @look.id)
     after_revive
   end
@@ -33,6 +34,8 @@ class Revival
   end
   
   def self.revive! flinkers, look
+    flinkers = Flinker.top_likers_of_publisher_of_look(look)
+    
     flinkers.each { |flinker| Revival.new(flinker, look).revive! }
   end
   

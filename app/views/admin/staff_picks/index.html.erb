@@ -1,4 +1,9 @@
 <div class="staff-picks">
+  <ul class="anchors">
+    <li><a href="#staff-picks-hashtags">Staff picked hashtags</a></li>
+    <li><a href="#staff-picks-looks">Staff picked looks</a></li>
+    <li><a href="#staff-picks-flinkers">Staff picked flinkers</a></li>
+  </ul>
   
   <div class="block">
     <h4 id="staff-picks-hashtags">Highlighted Hashtags <span class="items-counter"><%= @hashtags.count %></span></h4>
@@ -7,12 +12,13 @@
       </thead>
       <tbody>
         <% @hashtags.each do |hashtag| %>
+          <% looks = HighlightedLook.looks_of_hashtag(hashtag) %>
           <tr>
             <td><span class="hashtag-name">#<%= hashtag.name %></span></td>
-            <td><%= hashtag.looks.uniq.count %></td>
+            <td><%= looks.uniq.count %></td>
             <td>
               <ul>
-                <% hashtag.looks.uniq.each do |look| %>
+                <% looks.uniq.each do |look| %>
                   <li><%= link_to look.name, admin_look_path(look), target:'_blank', class:'look-link' %></li>
                 <% end %>
               </ul>

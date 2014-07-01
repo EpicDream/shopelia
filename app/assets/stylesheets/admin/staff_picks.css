@@ -3,12 +3,22 @@ div.staff-picks{
 }
 span.items-counter{
   display:inline-block;
-  border:2px solid #880F55;
-  border-radius:20px;
-  width:20px;
-  height:20px;
+  border:1px solid #880F55;
   text-align:center;
   margin:0 0 0 60px;
+  padding:4px;
+}
+ul.anchors{
+  border-radius:6px;
+  padding:10px;
+  background:#EEE;
+  position:fixed;
+  top :80px;
+  right:10px;
+  list-style:none;
+}
+ul.anchors a{
+  color:#993769;
 }
 h4{
   margin:60px 0 0 20px;
@@ -84,6 +94,11 @@ table.staff-picks-hashtags td ul{
   font-size:11px;
   text-align:left;
   list-style-type: square;
+}
+table.staff-picks-hashtags ul li{
+  display:inline-block;
+  padding:5px;
+  text-decoration:underline;
 }
 .avatar{
   width:40px;

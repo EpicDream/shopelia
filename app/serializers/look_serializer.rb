@@ -32,7 +32,7 @@ class LookSerializer < ActiveModel::Serializer
   end
 
   def highlighted_hashtags
-    object.hashtags.highlighted.map(&:name)
+    object.highlighted_hashtags.map(&:name)
   end
 
   def products
@@ -42,7 +42,9 @@ class LookSerializer < ActiveModel::Serializer
           product: ProductSerializer.new(lp.product, scope:scope).as_json[:product] }
       elsif lp.brand.present?
         { code: lp.code.blank? ? "" : I18n.t("flink.products." + lp.code),
-          brand: lp.brand }
+          brand: lp.brand,
+          uuid: lp.uuid
+         }
       end
     end.compact
   end

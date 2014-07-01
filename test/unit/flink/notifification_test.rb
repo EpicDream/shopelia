@@ -72,6 +72,30 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     end
   end
   
+  test "private message notification" do
+    flinker = flinkers(:lilou)
+    sender = flinkers(:fanny)
+    
+    ["fr_FR", "en_US", "en_GB", "it_IT", "de_DE", "es_ES"].each do |lang|
+      flinker.update_attributes!(lang_iso:lang)
+      notif = Flink::PrivateMessageNotification.new(flinker, sender)
+      
+      assert_equal private_message_message_for(flinker), notif.message, "Failure for #{lang}"
+    end
+  end
+  
+  test "private message answer notification" do
+    flinker = flinkers(:lilou)
+    sender = flinkers(:fanny)
+    
+    ["fr_FR", "en_US", "en_GB", "it_IT", "de_DE", "es_ES"].each do |lang|
+      flinker.update_attributes!(lang_iso:lang)
+      notif = Flink::PrivateMessageAnswerNotification.new(flinker, sender)
+      
+      assert_equal private_message_answer_message_for(flinker), notif.message, "Failure for #{lang}"
+    end
+  end
+  
   private
   
   def follow_message_for flinker
@@ -117,5 +141,20 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     when 'en_GB' then return "@Betty has released a new look : Agadir"
     end  
   end
+  
+  def private_message_message_for flinker
+    case flinker.lang_iso
+    when 'fr_FR' then return "@fanny vous a envoyé un look"
+    else return "@fanny sent you a look"
+    end
+  end
+  
+  def private_message_answer_message_for flinker
+    case flinker.lang_iso
+    when 'fr_FR' then return "@fanny a répondu à votre message"
+    else return "@fanny answered your message"
+    end
+  end
+  
   
 end

@@ -1,7 +1,7 @@
 var Theme = {
   
   titleWithFontBlock:function(fontName, type, title){
-    var title = title ? title.replace("'", "&rsquo;") : '';
+    var title = title ? title.replace("'", "&rsquo;").replace("<![CDATA[", '').replace("]]>", "") : '';
     var type = type || 'title-part';
     var span = "<span class='font-tag'>" + fontName + "</span>";
     var input = "<input class='" + type + "' data-font='" + fontName + "' type='text' value='" + title +"'>";
@@ -22,7 +22,7 @@ var Theme = {
         value = $.trim(value) + " ";
       }
       
-      markup += "<style font='" + fontName +"' size='" + fontSize + "'>" + value + "</style>";
+      markup += "<style font='" + fontName +"' size='" + fontSize + "'><![CDATA[" + value + "]]></style>";
     });
     
     return "<styles>" + markup + "</styles>";

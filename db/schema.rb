@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140620101426) do
+ActiveRecord::Schema.define(:version => 20140627134045) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -388,12 +388,10 @@ ActiveRecord::Schema.define(:version => 20140620101426) do
 
   create_table "hashtags", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",                     :null => false
-    t.datetime "updated_at",                     :null => false
-    t.boolean  "highlighted", :default => false
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
   end
 
-  add_index "hashtags", ["highlighted"], :name => "index_hashtags_on_highlighted"
   add_index "hashtags", ["name"], :name => "index_hashtags_on_name"
 
   create_table "hashtags_looks", :force => true do |t|
@@ -409,6 +407,16 @@ ActiveRecord::Schema.define(:version => 20140620101426) do
   end
 
   add_index "hashtags_themes", ["hashtag_id", "theme_id"], :name => "index_hashtags_themes_on_hashtag_id_and_theme_id"
+
+  create_table "highlighted_looks", :force => true do |t|
+    t.integer  "look_id"
+    t.integer  "hashtag_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "highlighted_looks", ["hashtag_id"], :name => "index_highlighted_looks_on_hashtag_id"
+  add_index "highlighted_looks", ["look_id"], :name => "index_highlighted_looks_on_look_id"
 
   create_table "images", :force => true do |t|
     t.text     "url"
@@ -466,6 +474,7 @@ ActiveRecord::Schema.define(:version => 20140620101426) do
     t.datetime "updated_at", :null => false
     t.string   "code"
     t.string   "brand"
+    t.string   "uuid"
   end
 
   add_index "look_products", ["look_id"], :name => "index_look_products_on_look_id"
@@ -790,6 +799,12 @@ ActiveRecord::Schema.define(:version => 20140620101426) do
   end
 
   add_index "products", ["url"], :name => "index_products_on_url", :unique => true
+
+  create_table "revival_logs", :force => true do |t|
+    t.integer  "count"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
 
   create_table "scan_logs", :force => true do |t|
     t.string   "ean"

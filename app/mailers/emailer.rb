@@ -15,7 +15,7 @@ class Emailer < ActionMailer::Base
     @comment = comment
     mail(:to => 'staff@flink.io',
   		   :subject => 'flinkHQ mentionné dans un commentaire',
-  	     :from => 'The genius at backend <genius@flink.io>')
+  	     :from => '2130 after JC<apocalypse@flink.io>')
   end
   
   def newsletter flinker, test=false, date=Date.today
@@ -31,8 +31,8 @@ class Emailer < ActionMailer::Base
     @footer_look_uuid = newsletter.look_uuid
     @trendsetters = Flinker.recommendations_for(flinker)
     
-    headers['X-Mailjet-Campaign'] = test ? "Weekly Newsletter Test" : "Weekly Newsletter #{date}"
-    headers['X-Mailjet-DeduplicateCampaign'] = 'n' unless test
+    headers['X-Mailjet-Campaign'] = test ? "Weekly Newsletter Test - #{I18n.locale}" : "Weekly Newsletter #{date} - #{I18n.locale}"
+    headers['X-Mailjet-DeduplicateCampaign'] = 'y' unless test
     
     mail(:to => flinker.email,
   		   :subject => @subject,

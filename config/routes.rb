@@ -95,6 +95,7 @@ Shopelia::Application.routes.draw do
       get :reject, :on => :member
       get :reject_quality, :on => :member
       put :reinitialize_images, :on => :member
+      put :highlight_with_tag, :on => :member
     end
     namespace :search do
       resources :looks, only:[:index]#, controller:'search/looks'

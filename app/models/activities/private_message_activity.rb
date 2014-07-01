@@ -6,6 +6,7 @@ class PrivateMessageActivity < Activity
       PrivateMessageAnswerActivity.create!(message)
     else
       super(flinker_id:message.flinker_id, target_id:message.target_id, resource_id:message.id)
+      PrivateMessageWorker.perform_async(message.target_id, message.flinker_id)
     end
   end
   

@@ -328,7 +328,7 @@ div.hashtags-block label.hashtag-destroy-label:hover{
 }
 input[type=text].hashtag-input{
   width:100px;
-  height:10px;
+  height:14px;
   font-size:12px;
   outline:none;
   display:inline-block;

@@ -30,6 +30,20 @@ var Hashtags = {
     .error(function(){
       alert("Erreur");
     });
+  },
+  
+  highlight: function(checkbox){
+    var lookId = $("div.hashtags-block").data("look-id");
+    var hashtagId = checkbox.data("hashtag_id");
+    var isHighlighted = checkbox.is(":checked");
+
+    $.post("/admin/looks/" + lookId + "/highlight_with_tag", {_method : 'put', hashtag_id: hashtagId, highlight:isHighlighted})
+    .success(function(html){
+      $("div.hashtags-block").replaceWith(html);
+    })
+    .error(function(){
+      alert("Erreur");
+    });
   }
 }
 
@@ -65,7 +79,7 @@ $(document).ready(function() {
   })
   
   $(document).on("change", ".hashtag-highlighted-checkbox", function(){
-    Hashtags.submit();
+    Hashtags.highlight($(this));
   });
 
   $(document).on("change", "#look_staff_pick", function(){
@@ -110,12 +124,10 @@ function showAddUrlsModal() {
     $('#look-add-urls-form').submit();
   });
 }
-
 function autocompleteBrands(selector) {
   var brands = $("#look-add-codes-modal").data("brands");
 	$(selector).autocomplete({ source:brands});
 }
-
 function showAddCodesModal() {
   autocompleteBrands("input[id^='brand-']");
   $("#look-add-codes-modal").removeClass('hidden');

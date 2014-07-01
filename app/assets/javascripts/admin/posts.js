@@ -19,6 +19,30 @@ $(document).ready(function() {
 
   });
   
+  $(document).on("click", "button#reject-checked-looks", function() {
+    
+    if (!confirm("Rejeter ces looks ?")) {
+      return;
+    }
+
+    $(".look-reject-checkbox:checked").each(function(){
+      var link = $(this);
+      var block = link.parents("section.column");
+      var lookId = link.data('look-id');
+      var url = "/admin/looks/" + lookId + "/reject";
+      
+      $.get(url)
+      .success(function() {
+        block.remove();
+      })
+      .error(function(){
+        alert("Une erreur s'est produite avec le look : " + lookId);
+      });
+      
+    });
+
+  });
+  
   $(document).on("change", "select.country-select", function(){
     var countryCode = $(this).val();
     window.location = "/admin/posts?country_code=" + countryCode;
