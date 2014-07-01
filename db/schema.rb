@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140630155155) do
+ActiveRecord::Schema.define(:version => 20140701125619) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -308,12 +308,14 @@ ActiveRecord::Schema.define(:version => 20140630155155) do
   create_table "flinker_follows", :force => true do |t|
     t.integer  "flinker_id"
     t.integer  "follow_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+    t.boolean  "on",         :default => true
   end
 
   add_index "flinker_follows", ["flinker_id"], :name => "index_flinker_follows_on_flinker_id"
   add_index "flinker_follows", ["follow_id"], :name => "index_flinker_follows_on_follow_id"
+  add_index "flinker_follows", ["on"], :name => "index_flinker_follows_on_on"
 
   create_table "flinker_likes", :force => true do |t|
     t.integer  "flinker_id"
