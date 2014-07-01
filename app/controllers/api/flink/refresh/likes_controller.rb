@@ -9,7 +9,7 @@ class Api::Flink::Refresh::LikesController < Api::Flink::BaseController
     @flinker = (params[:flinker_id] && Flinker.find_by_id(params[:flinker_id])) || current_flinker
     render json: { 
       liked_looks: serialize(looks(liked: true), scope:scope()),
-      unliked_looks:  serialize(looks(liked: false), scope:scope())
+      unliked_looks: serialize(looks(liked: false), scope:scope())
     }
   end
 

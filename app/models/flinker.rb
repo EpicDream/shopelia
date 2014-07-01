@@ -75,8 +75,15 @@ class Flinker < ActiveRecord::Base
     where(id:flinker.id)
     .joins(:looks)
     .joins('join flinker_likes on flinker_likes.resource_id = looks.id')
+    .where('flinker_likes.on = ?', true)
   }
   scope :with_location, -> { where('city is not null or area is not null') }
+  scope :followings_between, ->(from, to) {
+    from ||= FlinkerFollow::MIN_DATE
+    to ||= Time.now
+    
+    where('flinker_follows.updated_at >= ? and flinker_follows.updated_at <= ?', from, to)
+  }
   
   alias_attribute :publisher, :is_publisher
   
@@ -87,12 +94,17 @@ class Flinker < ActiveRecord::Base
   
   def followings
     Flinker.joins('join flinker_follows on flinkers.id = flinker_follows.follow_id')
-    .where('flinker_follows.flinker_id = ?', self.id)
+    .where('flinker_follows.flinker_id = ? and flinker_follows.on = ?', self.id, true)
+  end
+  
+  def unfollowings
+    Flinker.joins('join flinker_follows on flinkers.id = flinker_follows.follow_id')
+    .where('flinker_follows.flinker_id = ? and flinker_follows.on = ?', self.id, false)
   end
   
   def followers
     Flinker.joins('join flinker_follows on flinkers.id = flinker_follows.flinker_id')
-    .where('flinker_follows.follow_id = ?', self.id)
+    .where('flinker_follows.follow_id = ? and flinker_follows.on = ?', self.id, true)
   end
   
   def device

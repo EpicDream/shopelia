@@ -19,7 +19,10 @@ class FlinkerFollowTest < ActiveSupport::TestCase
     populate
     count = FlinkerFollow.count
     follow = FlinkerFollow.last
-    assert follow.update_attributes(on:false)
+    
+    assert_difference("@flinker.reload.followings.count", - 1) do
+      assert follow.update_attributes(on:false)
+    end
     
     assert_equal count - 1, FlinkerFollow.count
   end

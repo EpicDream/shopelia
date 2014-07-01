@@ -1,4 +1,6 @@
 class FlinkerFollow < ActiveRecord::Base
+  MIN_DATE = Date.parse("2014-01-01")
+  
   act_as_flink_activity :follow
   default_scope where(on:true)
   
@@ -17,5 +19,15 @@ class FlinkerFollow < ActiveRecord::Base
       create(follow_id:flinker.id, flinker_id:flinkr.id, skip_notification:true)
     end
   end
+  
+  def self.toggle_or_create flinker_id, follow_id
+    follow = self.unscoped { where(flinker_id: flinker_id, follow_id: follow_id).first }
+    if follow
+      follow.update_attributes(on: !follow.on)
+    else
+      create(flinker_id:flinker_id, follow_id: follow_id)
+    end
+  end
+  
   
 end
