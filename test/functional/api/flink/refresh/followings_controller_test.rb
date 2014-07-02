@@ -24,7 +24,6 @@ class Api::Flink::Refresh::FollowingsControllerTest < ActionController::TestCase
     
     assert_equal f1.updated_at.to_i, follows["min_timestamp"]
     assert_equal f2.updated_at.to_i, follows["max_timestamp"]
-    
     assert_equal 2, follows["flinkers"].count
     assert_equal 1, unfollows["flinkers"].count
   end

@@ -75,7 +75,9 @@ class Look < ActiveRecord::Base
     joins(:comments).where('comments.body ~* ?', pattern)
   }
   scope :likes_of_flinker, ->(flinker){
-    joins(:flinker_likes).where('flinker_likes.flinker_id = ?', flinker.id) 
+    joins(:flinker_likes)
+    .where('flinker_likes.flinker_id = ?', flinker.id) 
+    .select('looks.*, EXTRACT(EPOCH FROM flinker_likes.updated_at) as like_updated_at')
   }
   scope :likes_with_status, ->(on) {
     joins(:flinker_likes).where('flinker_likes.on = ?', on)

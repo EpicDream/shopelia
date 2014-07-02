@@ -39,7 +39,7 @@ class ActiveSupport::TestCase
   end
   
   def like flinker, looks
-    looks.each do |look|
+    looks.map do |look|
       FlinkerLike.create(flinker_id:flinker.id, resource_type:FlinkerLike::LOOK, resource_id:look.id)
     end
   end
