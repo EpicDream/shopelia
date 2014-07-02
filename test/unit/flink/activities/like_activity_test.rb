@@ -9,27 +9,31 @@ class LikeActivityTest < ActiveSupport::TestCase
   end
   
   test "create like activity for followers of liker only" do
-    
-    assert_difference("LikeActivity.count", 2) do
-      LikeActivity.create!(flinker_likes(:boop_like)) #boop likes
+    Sidekiq::Testing.inline! do
+      assert_difference("LikeActivity.count", 2) do
+        LikeActivity.create!(flinker_likes(:boop_like)) #boop likes
+      end
     end
-    
     assert @liker.friends.count > 0
     assert_equal @liker.followers.to_set, LikeActivity.all.map(&:target).to_set
   end
   
   test "dont create like activity if resource is product" do
-    assert_no_difference("LikeActivity.count") do
-      LikeActivity.create!(flinker_likes(:three))
+    Sidekiq::Testing.inline! do
+      assert_no_difference("LikeActivity.count") do
+        LikeActivity.create!(flinker_likes(:three))
+      end
     end
   end
   
   test "when flinker like is destroyed, the activities for this resource must be destroyed too" do
-    LikeActivity.create!(flinker_likes(:boop_like))
-    LikeActivity.create!(flinker_likes(:boop_like_two))
+    Sidekiq::Testing.inline! do
+      LikeActivity.create!(flinker_likes(:boop_like))
+      LikeActivity.create!(flinker_likes(:boop_like_two))
     
-    assert_difference("LikeActivity.count", -2) do
-      flinker_likes(:boop_like).destroy
+      assert_difference("LikeActivity.count", -2) do
+        flinker_likes(:boop_like).destroy
+      end
     end
   end
   
