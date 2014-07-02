@@ -9,10 +9,11 @@ class Api::Flink::Refresh::FollowingsControllerTest < ActionController::TestCase
   end
   
   test "get followings and unfollowings flinkers of current flinker" do
-    follow flinkers(:fanny)
-    following = follow flinkers(:betty)
-    
-    assert following.update_attributes(on:false)
+    f1 = follow flinkers(:fanny)
+    f2 = follow flinkers(:lilou)
+    f3 = follow flinkers(:betty)
+    assert f1.update_attributes(updated_at: Time.now - 1.hour)
+    assert f3.update_attributes(on:false)
 
     get :index, format: :json
 
@@ -21,8 +22,11 @@ class Api::Flink::Refresh::FollowingsControllerTest < ActionController::TestCase
     follows = json_response["followings"]
     unfollows = json_response["unfollowings"]
     
-    assert_equal 1, follows.count
-    assert_equal 1, unfollows.count
+    assert_equal f1.updated_at.to_i, follows["min_timestamp"]
+    assert_equal f2.updated_at.to_i, follows["max_timestamp"]
+    
+    assert_equal 2, follows["flinkers"].count
+    assert_equal 1, unfollows["flinkers"].count
   end
   
   test "get followings and unfollowings flinkers of current flinker updated after date" do
@@ -39,8 +43,8 @@ class Api::Flink::Refresh::FollowingsControllerTest < ActionController::TestCase
     follows = json_response["followings"]
     unfollows = json_response["unfollowings"]
     
-    assert_equal 0, follows.count
-    assert_equal 1, unfollows.count
+    assert_equal 0, follows["flinkers"].count
+    assert_equal 1, unfollows["flinkers"].count
   end
   
 end

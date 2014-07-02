@@ -95,11 +95,13 @@ class Flinker < ActiveRecord::Base
   def followings
     Flinker.joins('join flinker_follows on flinkers.id = flinker_follows.follow_id')
     .where('flinker_follows.flinker_id = ? and flinker_follows.on = ?', self.id, true)
+    .select('flinkers.*, EXTRACT(EPOCH FROM flinker_follows.updated_at) as follow_updated_at')
   end
   
   def unfollowings
     Flinker.joins('join flinker_follows on flinkers.id = flinker_follows.follow_id')
     .where('flinker_follows.flinker_id = ? and flinker_follows.on = ?', self.id, false)
+    .select('flinkers.*, EXTRACT(EPOCH FROM flinker_follows.updated_at) as follow_updated_at')
   end
   
   def followers

@@ -4,7 +4,7 @@ class FlinkerFollow < ActiveRecord::Base
   act_as_flink_activity :follow
   default_scope where(on:true)
   
-  attr_accessible :flinker_id, :follow_id, :skip_notification, :on
+  attr_accessible :flinker_id, :follow_id, :skip_notification, :on, :updated_at
   attr_accessor :skip_notification
   
   belongs_to :flinker, include: :country
