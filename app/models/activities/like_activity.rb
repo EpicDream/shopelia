@@ -13,7 +13,7 @@ class LikeActivity < Activity
   end
   
   def look_uuid
-    resource.look.uuid
+    resource.look.uuid if resource
   end
   
 end
