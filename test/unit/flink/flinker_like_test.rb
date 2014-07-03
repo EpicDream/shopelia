@@ -38,4 +38,20 @@ class FlinkerLikeTest < ActiveSupport::TestCase
     FlinkerLike.create!(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
   end
   
+  test "destroy like cascade destroy like activities" do
+    FlinkerLike.destroy_all
+    @flinker = flinkers(:boop)
+    follow(@flinker, flinkers(:fanny))
+    like = nil
+    
+    Sidekiq::Testing.inline! do
+      assert_difference('LikeActivity.count') do
+        like = FlinkerLike.create!(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
+      end
+    end
+    assert_difference('LikeActivity.count', -1) do
+      like.destroy
+    end
+  end
+  
 end
