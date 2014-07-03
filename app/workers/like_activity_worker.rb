@@ -1,5 +1,6 @@
 class LikeActivityWorker
   include Sidekiq::Worker
+  sidekiq_options :queue => :activities, retry:false
   
   def perform flinker_like_id
     flinker_like = FlinkerLike.find(flinker_like_id)
