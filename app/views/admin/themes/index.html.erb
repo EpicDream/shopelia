@@ -1,11 +1,14 @@
 <div class="themes-content">
+  <% current_series = params[:series] || Theme.last_series %>
+  
   <%= link_to 'Nouvelle collection', '/admin/themes', method:'post', id:"create-theme-link" %>
   <%= link_to 'Preview', '/admin/themes_preview', target:'blank', class:"themes-preview-link" %>
+  <%= button_tag 'Dépublier toute les collections de cette série', id:"unpublish-series-button", class:'btn' %>
+  
   <br/>
   <div>
-    <% current = params[:series] || Theme.last_series %>
     <% Theme.last_series.downto(0) do |series| %>
-      <% selected = series == current.to_i %>
+      <% selected = series == current_series.to_i %>
       <%= link_to "S#{series}", admin_themes_path(series:series), class:"series-link series-selected-#{selected}"%>
     <% end %>
   </div>
