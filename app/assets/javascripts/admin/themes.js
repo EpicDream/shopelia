@@ -243,6 +243,23 @@ $(document).ready(function() {
   $(document).on("click", "#blogeuz-label", function(){
     $("#flinkers-index-container").toggle();
   });
+  $(document).on("click", "#unpublish-series-button", function(){
+
+    if (confirm("Confirmer")) {
+      $("div.theme-banner").each(function() {
+        var themeID = $(this).data("theme-id");
+        
+        $.post("/admin/themes/" + themeID, {_method: 'put', theme:{published:"0"}})
+        .success(function(){
+        })
+        .error(function(){
+          alert("Error");
+        });
+        
+      });
+    }
+  });
+  
   
   
 });

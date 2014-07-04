@@ -54,6 +54,20 @@ input[type=text]{
 
 /*Content*/
 
+button#unpublish-series-button{
+  float:right;
+  margin:10px;
+  display:block;
+  width:160px;
+  font-family:'Hevetica';
+  font-size:13px;
+  padding:6px;
+  margin:0px 20px 0 0;
+  background:#96293A;
+  color:snow;
+  text-align:center;
+}
+
 div.themes-content{
   margin:5px 5px 5px 5px;
   font-family: Helvetica;
