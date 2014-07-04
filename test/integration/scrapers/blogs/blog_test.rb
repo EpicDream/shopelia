@@ -53,9 +53,9 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     end
   end
   
-  test "new entry for images" do
+  test "new entry for images src" do
     skip
-    @blog.url = "http://dorisknowsfashion.com/"
+    @blog.url = "http://anisasojka.com"
     posts = @blog.posts
     posts.each do |post|
       assert post.images.count >= 2
