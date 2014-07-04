@@ -35,8 +35,8 @@ class Image < ActiveRecord::Base
   end
   
   def real_sizes
-    original_size = Paperclip::Geometry.from_file(picture) rescue
-    JSON.parse(picture_sizes).merge({ original: original_size })
+    original_size = Paperclip::Geometry.from_file(picture) rescue nil
+    JSON.parse(picture_sizes).merge({ "original" => original_size })
   end
   
   private
