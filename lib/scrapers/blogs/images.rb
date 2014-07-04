@@ -20,7 +20,8 @@ module Scrapers
       
       def self.src(base_url)
         Proc.new { |img|
-          src = img.attribute('src').value rescue nil #img without src, we dont mind
+          src = img.attribute('src').value if img.attribute('src') rescue nil
+          src ||= img.attribute('data-original').value if img.attribute('data-original') rescue nil
           if src =~ /^http/
             src
           else
