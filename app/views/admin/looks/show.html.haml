@@ -56,6 +56,10 @@
               .img-delete
                 = link_to "X", admin_look_image_path(image), method:"delete", remote: true
               .img-sizes
+                %span="Original : "
+                %span=image.real_sizes["original"]
+                %br
+                %span="Large : "
                 %span=image.real_sizes["large"]
               .img-tools
                 %a.crop-image{ href: "#{admin_image_path(image)}"}
