@@ -143,10 +143,13 @@ class Flinker < ActiveRecord::Base
   end
   
   def self.recommendations_for flinker, total=3
-    similars = similar_to(flinker)
-    likes = similars.map { |f| FlinkerLike.where(resource_type:FlinkerLike::LOOK, flinker_id:f.id).last }
-    flinkers = likes.map(&:look).map(&:flinker).uniq
-    flinkers.first(total)
+    key = ActiveSupport::Cache.expand_cache_key([:flinker, :recommendations_for, flinker.id])
+    Rails.cache.fetch(key, expires_in: 7.days) do
+      similars = similar_to(flinker)
+      likes = similars.map { |f| FlinkerLike.where(resource_type:FlinkerLike::LOOK, flinker_id:f.id).last }
+      flinkers = likes.map(&:look).map(&:flinker).uniq
+      flinkers.first(total)
+    end
   end
   
   def self.flinkHQ
