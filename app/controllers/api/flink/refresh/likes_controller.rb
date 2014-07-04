@@ -1,5 +1,4 @@
 class Api::Flink::Refresh::LikesController < Api::Flink::BaseController
-  LOOKS_ORDER = "looks.flink_published_at desc"
   
   before_filter { 
     epochs_to_dates [:updated_before, :updated_after] 
@@ -9,7 +8,7 @@ class Api::Flink::Refresh::LikesController < Api::Flink::BaseController
     @flinker = (params[:flinker_id] && Flinker.find_by_id(params[:flinker_id])) || current_flinker
     @likes = looks(liked: true)
     @unlikes = looks(liked: false)
-
+    
     render json: {
       likes: {
         looks: serialize(@likes, scope:scope()) 
@@ -32,7 +31,7 @@ class Api::Flink::Refresh::LikesController < Api::Flink::BaseController
     skop = liked ? :liked_by : :unliked_by
     Look.send(skop, @flinker)
     .likes_between(params[:updated_after], params[:updated_before])
-    .order(LOOKS_ORDER)
+    .order("flinker_likes.updated_at asc")
     .paginate(pagination)
   end
 

@@ -13,7 +13,7 @@ class Api::Flink::Refresh::LikesControllerTest < ActionController::TestCase
     likes = like(@flinker, Look.all) #4 likes
     
     likes[0..2].each_with_index { |like, i| like.updated_at = Time.now - i.hours; like.save! }
-
+    
     unlike = likes[3]
     assert unlike.update_attributes(on:false)
 
@@ -23,9 +23,9 @@ class Api::Flink::Refresh::LikesControllerTest < ActionController::TestCase
     
     liked_looks = json_response["likes"]
     unliked_looks = json_response["unlikes"]
-    
-    assert_equal likes[0].updated_at.to_i, liked_looks["min_timestamp"]
-    assert_equal likes[2].updated_at.to_i, liked_looks["max_timestamp"]
+
+    assert_equal likes[2].updated_at.to_i, liked_looks["min_timestamp"]
+    assert_equal likes[0].updated_at.to_i, liked_looks["max_timestamp"]
     assert_equal 3, liked_looks["looks"].count
     assert_equal 1, unliked_looks["looks"].count
   end
