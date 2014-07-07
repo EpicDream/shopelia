@@ -18,10 +18,8 @@ class Comment < ActiveRecord::Base
   after_create :create_hashtags_and_assign_to_look
   
   scope :posted, -> { where(posted:true) }
-  scope :last_ones, ->(n=10) { 
-    where('created_at >= ?', Time.now - 4.days)
-    .order('created_at desc, look_id desc')
-    .limit(n) 
+  scope :last_ones, -> { 
+    Comment.order('created_at desc, look_id desc')
   }
   scope :timeline, ->(look_id) { where(look_id:look_id) }
   scope :admin_unread, -> { where(admin_read:false) }
