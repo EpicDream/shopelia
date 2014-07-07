@@ -1,11 +1,17 @@
-<div class="image-container">
-  <%= image_tag @image.picture.url(:original), id:"image-to-crop" %>  
+<% width = @image.real_sizes["original"].width %>
+<% height = @image.real_sizes["original"].height %>
+
+<div class="image-container" data-width>
+  <%= image_tag @image.picture.url(:original), id:"image-to-crop", "data-width" => width, "data-height" => height %>  
 </div>
 
 <div class="crop-form">
-  <label for="crop-width">Largeur(px) :</label>
+  <label for="real-size">Taille réelle :</label>
+  <span id="real-size"><%= width %> x <%= height %></span>
+  
+  <label for="crop-width">Largeur cropée(px) :</label>
   <span id="crop-width">0</span>
-  <label for="crop-height">Hauteur(px) :</label>
+  <label for="crop-height">Hauteur cropée (px) :</label>
   <span id="crop-height">0</span>
   <br/>
   <%= form_for([:admin, @image.becomes(Image)]) do |f| %>
