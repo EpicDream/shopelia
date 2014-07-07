@@ -11,12 +11,16 @@ class Api::Flink::FollowingsController < Api::Flink::BaseController
   end
 
   def create
-    toggle_follow_status
+    params[:followings_ids].each { |following_id| 
+      FlinkerFollow.follow(@flinker.id, following_id) 
+    }
     head :no_content
   end
 
   def destroy
-    toggle_follow_status
+    params[:followings_ids].each { |following_id| 
+      FlinkerFollow.unfollow(@flinker.id, following_id) 
+    }
     head :no_content
   end
   
@@ -24,10 +28,6 @@ class Api::Flink::FollowingsController < Api::Flink::BaseController
   
   def retrieve_flinker
     @flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
-  end
-  
-  def toggle_follow_status
-    params[:followings_ids].each { |following_id| FlinkerFollow.toggle_or_create(@flinker.id, following_id) }
   end
   
   def touch_session_open

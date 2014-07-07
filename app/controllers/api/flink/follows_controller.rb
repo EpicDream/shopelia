@@ -6,12 +6,14 @@ class Api::Flink::FollowsController < Api::Flink::BaseController
   end
 
   def create
-    params[:follows].each { |following_id| FlinkerFollow.toggle_or_create(@flinker.id, following_id) }
+    params[:follows].each { |following_id| 
+      FlinkerFollow.follow(@flinker.id, following_id) 
+    }
     head :no_content
   end
 
   def destroy
-    FlinkerFollow.toggle_or_create(@flinker.id, params[:id])
+    FlinkerFollow.unfollow(@flinker.id, params[:id]) 
     head :no_content
   end
   

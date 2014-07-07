@@ -13,6 +13,10 @@ class FlinkerFollow < ActiveRecord::Base
   validates :flinker_id, :presence => true
   validates :follow_id, :presence => true, :uniqueness => { :scope => :flinker_id }
   
+  scope :of_flinker_following, ->(flinker_id, follow_id) {
+    where(flinker_id: flinker_id, follow_id: follow_id).limit(1)
+  }
+  
   def self.mutual_following flinker, flinkers
     flinkers.each do |flinkr|
       create(follow_id:flinkr.id, flinker_id:flinker.id, skip_notification:true)
@@ -20,13 +24,18 @@ class FlinkerFollow < ActiveRecord::Base
     end
   end
   
-  def self.toggle_or_create flinker_id, follow_id
-    follow = self.unscoped { where(flinker_id: flinker_id, follow_id: follow_id).first }
+  def self.follow flinker_id, follow_id 
+    follow = self.unscoped { of_flinker_following(flinker_id, follow_id).first }
     if follow
-      follow.update_attributes(on: !follow.on)
+      follow.update_attributes(on: true)
     else
       create(flinker_id:flinker_id, follow_id: follow_id)
     end
+  end
+  
+  def self.unfollow flinker_id, follow_id
+    follow = self.unscoped { of_flinker_following(flinker_id, follow_id).first }
+    follow.update_attributes(on: false)
   end
   
   
