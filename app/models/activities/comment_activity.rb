@@ -2,7 +2,7 @@ class CommentActivity < Activity
   belongs_to :resource, foreign_key: :resource_id, class_name:'Comment'
   
   def self.create! comment
-    CommentActivityWorker.perform_async(comment.id)
+    CommentActivityWorker.perform_in(1.minute, comment.id)
   end
   
   def comment_id
