@@ -10,7 +10,7 @@ module Shopelia
   class Application < Rails::Application
   
     # Base host
-    config.host = 'https://shopelia.fr'
+    config.host = 'http://www.flink.io'
     config.image_host = 'http://www.flink.io'
     config.avatar_host = 'http://www.flink.io' #cause, need another base url for avatars in dev.
     
