@@ -1,13 +1,12 @@
 Shopelia::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
-  config.action_mailer.default_url_options = { :host => '127.0.0.1:3000' }
+  config.action_mailer.default_url_options = { :host => '127.0.0.1:4044' }
   config.action_mailer.delivery_method = :letter_opener
   
-  config.action_mailer.asset_host = "http://127.0.0.1:3000"
-  config.avatar_host = 'http://shopelia.fr:3440'
-  config.image_host = 'http://localhost:3000'
-
+  config.action_mailer.asset_host = "http://127.0.0.1:4044"
+  config.avatar_host = 'http://www.flink.io'
+  config.image_host = 'http://www.flink.io'
 
   # In the development environment your application's code is reloaded on
   # every request.  This slows down response time but is perfect for development
