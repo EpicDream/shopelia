@@ -11,17 +11,22 @@
   margin:10px;
 }
 .crop-form{
-  display:inline-block;
-  vertical-align:top;
-  margin-left:60px;
+  position:fixed;
+  top:10px;
+  right:10px;
   padding:10px;
   width:300px;
+  background:#9D9D9D;
+  opacity:0.8;
   border:thin solid #BEBEBE;
+  border-radius:5px;
+  z-index:3000;
 }
 label{
-  color:#6E6E6E;
-  font-size:14px;
+  color:#1E206A;
+  font-size:16px;
   font-family:'Hevetica';
+  font-weight:bold;
 }
 input[type=submit]{
   margin-top:100px;

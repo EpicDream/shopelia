@@ -5,10 +5,13 @@ function showCoords(c)
 
 $(function(){
   var coordinates = {};
+  var realWidth = $('#image-to-crop').data("width");
+  var realHeight = $('#image-to-crop').data("height");
   
 	$('#image-to-crop').Jcrop({
 		onChange: updateCoordinates,
-		onSelect: updateCoordinates
+		onSelect: updateCoordinates,
+    trueSize: [realWidth, realHeight] 
 	});
   
   function updateCoordinates(c){
