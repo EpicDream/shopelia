@@ -197,7 +197,6 @@ class Flinker < ActiveRecord::Base
   
   def signup_welcome
     self.touch(:last_revival_at)
-    SignupWelcomeWorker.perform_in(3.days, self.id)
   end
 
 end

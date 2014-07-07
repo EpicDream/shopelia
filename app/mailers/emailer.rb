@@ -9,6 +9,7 @@ class Emailer < ActionMailer::Base
   
   def after_signup flinker
     @flinker = flinker
+    #WAITING for email welcome template...
   end
   
   def flinkhq_mention comment
