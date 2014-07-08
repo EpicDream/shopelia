@@ -58,6 +58,14 @@ $(document).ready(function() {
     $("#blogs-list").load(url);
   });
   
+  $(document).on("change", "select[name='country']", function() {
+    var scope = $("#filtered-blogs").data("current-scope");
+    var country = $(this).val();
+    var url = "/admin/blogs?partial=true&scope=" + scope + "&country=" + country;
+    
+    $("#blogs-list").load(url);
+  });
+  
   $(document).on("click", ".fetch-post-link", function(event) {
     event.preventDefault();
     $.get($(this)[0].href);

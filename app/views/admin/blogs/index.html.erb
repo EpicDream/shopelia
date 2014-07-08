@@ -32,7 +32,7 @@
     <%= button_tag "Filtre", class:'btn rounded-btn', id:"name-filter" do %>
       <i class="icon-search icon-red"></i>
     <% end  %>
-    
+    <%= select_tag :country, options_for_select(countries_for_select, selected:params[:country_code]) %>
   </div>
   
   <div id="blogs-list">
