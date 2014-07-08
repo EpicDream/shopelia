@@ -111,6 +111,7 @@ Shopelia::Application.routes.draw do
       get :send_to_subscribers
     end
     resources :staff_picks
+    resources :flinker_merges, only: [:new, :show, :create]
   end
 
   constraints DomainConstraints.new('developers') do

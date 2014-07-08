@@ -1,0 +1,12 @@
+<% attributes = [:username, :name, :email, :url, :is_publisher, :lang_iso, :uuid, :city, :area, :timezone] %>
+
+<% if @target  %>
+  <div class="flinker-merges-show">
+    <div class="target-infos">
+      <p class="target-title">Utilisatrice blogueuse fusionnée avec son compte personnel</p>
+      <% attributes.each do |attribute| %>
+        <p><span><%= attribute.to_s %> : </span><span><%= @target.send(attribute) %></span></p>
+      <% end %>
+    </div>
+  </div>
+<% end %>

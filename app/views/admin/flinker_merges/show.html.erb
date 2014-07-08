@@ -1,0 +1,28 @@
+<% attributes = [:username, :name, :email, :url, :is_publisher, :lang_iso, :uuid, :city, :area, :timezone] %>
+<div class="flinker-merges-show">
+
+  <% unless @flinker && @target %>
+    <p class="error"><%= "Aucun flinker avec l'email #{params[:flinker_email]} n'a été trouvé"  unless @flinker %></p>
+    <p class="error"><%= "Aucun flinker avec l'url #{params[:target_url]} n'a été trouvé"  unless @target %></p>
+  <% else %>
+    <div class="flinker-infos">
+      <p class="source-title">Utilisatrice non blogueuse</p>
+      <% attributes.each do |attribute| %>
+        <p><span><%= attribute.to_s %> : </span><span><%= @flinker.send(attribute) %></span></p>
+      <% end %>
+    </div>
+    <span class="triangle-right"></span>
+    <div class="target-infos">
+      <p class="target-title">Utilisatrice blogueuse</p>
+      <% attributes.each do |attribute| %>
+        <p><span><%= attribute.to_s %> : </span><span><%= @target.send(attribute) %></span></p>
+      <% end %>
+    </div>
+    <%= button_to "Procéder à la fusion à froid",  
+      { action: :create, params:{ flinker_id: @flinker.id, target_id: @target.id } }, 
+      class: 'merge-button', data: { confirm: "Sure, really ? If you're in a bad day, wait, don't do it. Think of it." } 
+    %>
+    
+  <% end %>
+
+</div>
