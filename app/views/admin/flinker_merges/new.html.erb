@@ -1,0 +1,15 @@
+<div class="flinker-merges-form">
+  <%= form_tag('/admin/flinker_merges/0', method: :get) do %>
+    <%= label_tag :flinker_email, "Email"%>
+    <%= text_field_tag :flinker_email %>
+    <%= label_tag :target_url, "URL"%>
+    <%= text_field_tag :target_url %>
+    <p>
+      L'email est l'email de la flinkeuse qu'il faut merger dans le compte bloggueuse.
+    </p>
+    <p>
+      L'url est l'url du compte de la flinkeuse cible dans lequel on va faire le merge.
+    </p>
+    <%= submit_tag "Suivant" %>
+  <% end %>  
+</div>
