@@ -195,7 +195,14 @@ div.blogs{
   background:#2a7936;
   border-radius:2px;
 }
-
+select[name=country]{
+  float:right;
+}
+span.blogs-count{
+  background:#627053;
+  color:black;
+  padding:10px;
+}
 /*Pagination links*/
 
 .pagination {
