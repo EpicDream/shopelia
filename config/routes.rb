@@ -262,7 +262,6 @@ Shopelia::Application.routes.draw do
         get 'flinkers' => "web_services/flinkers#show"
       end
       namespace :analytics do
-        resources :testbenches, :only => [:index]
       end
     end
   end
