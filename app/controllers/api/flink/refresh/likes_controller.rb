@@ -23,15 +23,15 @@ class Api::Flink::Refresh::LikesController < Api::Flink::BaseController
   
   def timestamps collection
     return {} unless collection.first
-    { min_timestamp: collection.first.like_updated_at.to_i, 
-      max_timestamp: collection.last.like_updated_at.to_i}
+    { min_timestamp: collection.last.like_updated_at.to_i, 
+      max_timestamp: collection.first.like_updated_at.to_i}
   end
   
   def looks liked: true
     skop = liked ? :liked_by : :unliked_by
     Look.send(skop, @flinker)
     .likes_between(params[:updated_after], params[:updated_before])
-    .order("flinker_likes.updated_at asc")
+    .order("flinker_likes.updated_at desc")
     .paginate(pagination)
   end
 

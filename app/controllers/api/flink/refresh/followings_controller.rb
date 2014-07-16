@@ -23,15 +23,15 @@ class Api::Flink::Refresh::FollowingsController < Api::Flink::BaseController
   
   def timestamps collection
     return {} unless collection.first
-    { min_timestamp: collection.first.follow_updated_at.to_i, 
-      max_timestamp: collection.last.follow_updated_at.to_i}
+    { min_timestamp: collection.last.follow_updated_at.to_i, 
+      max_timestamp: collection.first.follow_updated_at.to_i}
   end
   
   def flinkers follow: true
     skop = follow ? :followings : :unfollowings
     @flinker.send(skop)
     .followings_between(params[:updated_after], params[:updated_before])
-    .order("flinker_follows.updated_at asc")
+    .order("flinker_follows.updated_at desc")
     .paginate(pagination)
   end
 end
