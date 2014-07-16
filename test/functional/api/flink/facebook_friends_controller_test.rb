@@ -18,7 +18,7 @@ class Api::Flink::FacebookFriendsControllerTest < ActionController::TestCase
     assert !json_response["has_next"]
     assert_equal 2, json_response["flinkers"]["facebook"].count
     assert_equal 2, json_response["flinkers"]["flink"].count
-    assert_equal "nicolasbigot@me.com", json_response["flinkers"]["flink"].first["email"]
+    assert_equal "nicolasbigot@icloud.com", json_response["flinkers"]["flink"].first["email"]
   end
   
   test "has next flag" do

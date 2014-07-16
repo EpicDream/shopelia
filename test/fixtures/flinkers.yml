@@ -68,7 +68,7 @@ anne:
   staff_pick: true
   
 fanny:
-  email: "nicolasbigot@me.com"
+  email: "nicolasbigot@icloud.com"
   encrypted_password: <%= Flinker.new.send(:password_digest, 'tototo') %>
   is_publisher: false
   username: fanny

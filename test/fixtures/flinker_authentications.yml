@@ -1,8 +1,8 @@
 fanny:
   provider: "facebook"
   uid: "1375543592"
-  token: "CAAKcj4ETCX4BAAlcz81WNxpGoNVFmf1FounAcUOa1pW2wNBSUpv0MWA7LJN23ZCCMBcb9H1CAgfQS9B3RVnEtZBYnAkDho3Ylku7Ocx99eWZBq2L6rvbR9DiVU0xumIeLephDnCIJ6ZAQHTAZCQIhqxaaFOm0ipMn9atjPwJykkn3O2YbuIy19pg4PZBqslVyAS7i9uTZA1dFaoiogBs1aG"
-  email: "nicolasbigot@me.com"
+  token: "CAAKcj4ETCX4BAKvV9HMVpGLDPpPkCVLRqDdnFyVeUImWb0wL2fKIA9EEsmEZCxo9XVtt9DK8yGPl8CbZAm72ZBDCU5JzYzthHQ9N2sSC3lRyYzVOIQ58m0UhcExOjZB1ZB6emQ7ZBHG74G2w2l54mPDxHoZBihx5vL3WpP4ZCvyno6NHWVkKah2OeA2fZBOM8Y8h3n0JI9IiRHg6BKbQBh36kZAPHhOALBLhkZD"
+  email: "nicolasbigot@icloud.com"
   picture: "https://graph.facebook.com/1375543592/picture?width=200&height=200&type=normal"
   type: "FacebookAuthentication"
 boop:
