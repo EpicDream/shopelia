@@ -79,7 +79,7 @@ class Api::ApiController < ActionController::Base
     user_agent = request.env['HTTP_USER_AGENT']
     hash = user_agent.gsub(/^flink:/, "").split(/\:/).map{|e| e.match(/^(.*)\[(.*)\]$/)[1..2]}.map{|e| { e[0] => e[1] }}.inject(:merge)
     { os: hash["os"], os_version: hash["os_version"], version: hash["version"], 
-      build: hash["build"].to_i, phone: hash["phone"], uuid: hash["uuid"], country_iso: params[:"x-country-iso"],
+      build: hash["build"].to_i, phone: hash["phone"], device_uuid: hash["uuid"], country_iso: params[:"x-country-iso"],
       lang_iso: params[:"x-user-language"], timezone: params[:"x-user-timezone"]
     }
   rescue
