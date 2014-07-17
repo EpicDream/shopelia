@@ -16,7 +16,7 @@ working_directory "/home/shopelia/shopelia" # available in 0.94.0+
 # we use a shorter backlog for quicker failover when busy
 # listen "/var/run/unicorn/unicorn.sock", :backlog => 64
 # listen "api.shopelia.fr:8000", :backlog => 2048
-listen "/var/run/shopelia-unicorn/unicorn_master.sock", :backlog => 8
+listen "/var/run/shopelia-unicorn/unicorn_master.sock", :backlog => 1024
 
 user("shopelia","shopelia")
 
