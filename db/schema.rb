@@ -11,7 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20140701125619) do
+=======
+ActiveRecord::Schema.define(:version => 20140717100810) do
+>>>>>>> analytics
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -872,6 +876,29 @@ ActiveRecord::Schema.define(:version => 20140701125619) do
   end
 
   add_index "traces", ["device_id"], :name => "index_traces_on_device_id"
+
+  create_table "trackings", :force => true do |t|
+    t.string   "look_uuid"
+    t.integer  "publisher_id"
+    t.string   "event"
+    t.integer  "flinker_id"
+    t.string   "device_uuid"
+    t.string   "country_iso"
+    t.string   "lang_iso"
+    t.string   "timezone"
+    t.string   "os"
+    t.string   "os_version"
+    t.string   "version"
+    t.string   "build"
+    t.string   "phone"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "trackings", ["event"], :name => "index_trackings_on_event"
+  add_index "trackings", ["look_uuid"], :name => "index_trackings_on_look_uuid"
+  add_index "trackings", ["publisher_id", "event"], :name => "index_trackings_on_publisher_id_and_event"
+  add_index "trackings", ["publisher_id"], :name => "index_trackings_on_publisher_id"
 
   create_table "twitter_friendships", :id => false, :force => true do |t|
     t.integer "twitter_user_id",   :null => false

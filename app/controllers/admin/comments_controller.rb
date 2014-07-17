@@ -1,7 +1,7 @@
 class Admin::CommentsController < Admin::AdminController
   
   def index
-    @comments = Comment.last_ones(50)
+    @comments = Comment.last_ones.paginate(page:params[:page], per_page: 50)
     Comment.admin_unread.update_all(admin_read:true)
   end
   

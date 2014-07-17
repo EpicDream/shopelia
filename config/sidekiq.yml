@@ -1,4 +1,4 @@
-:concurrency: 25
+:concurrency: 30
 :logfile: /var/log/sidekiq/sidekiq.log
 :queues:
   - [default, 5]
@@ -6,3 +6,4 @@
   - [notifications, 10]
   - [emails, 10]
   - [newsletter, 5]
+  - [activities, 10]

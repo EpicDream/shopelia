@@ -1,0 +1,56 @@
+div.flinker-merges-form{
+  width:80%;
+  margin:80px auto 0 auto;
+}
+div.flinker-merges-show{
+  font-family:"Helvetica";
+  width:90%;
+  margin:80px auto 0 auto;
+}
+p.error{
+  font-size:20px;
+  font-weight:bold;
+}
+div.flinker-infos{
+  display:inline-block;
+  padding:30px;
+  border-radius:5px;
+  border: 2px dashed #99967B;
+}
+div.target-infos{
+  display:inline-block;
+  padding:30px;
+  border-radius:5px;
+  border: 2px dashed #7E4799;
+}
+p.source-title, p.target-title{
+  font-size:22px;
+  font-weight:bold;
+  margin:0 0 20px 0;
+  border-bottom:thin solid #A7A7A7;
+}
+.triangle-right {
+  display:inline-block;
+  margin:100px 0 0 0px;
+	width: 0;
+	height: 0;
+	border-top: 50px solid transparent;
+	border-left: 100px solid #992D36;
+	border-bottom: 50px solid transparent;
+}
+input[type=submit]{
+  margin:100px 0 100px 0 !important;
+  display:block;
+  width:400px;
+  font-size:16px;
+  padding:10px;
+  margin:20px 0 0 0;
+  text-align:center;
+  background:#900013;
+  border:none;
+  color:snow;
+}
+input[type=submit]:hover{
+  background:#AA0015;
+}
+	

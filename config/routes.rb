@@ -111,6 +111,7 @@ Shopelia::Application.routes.draw do
       get :send_to_subscribers
     end
     resources :staff_picks
+    resources :flinker_merges, only: [:new, :show, :create]
   end
 
   constraints DomainConstraints.new('developers') do
@@ -262,7 +263,9 @@ Shopelia::Application.routes.draw do
       scope '/ws' do
         get 'flinkers' => "web_services/flinkers#show"
       end
-      
+      namespace :analytics do
+        resources :events, only: [:create]
+      end
     end
   end
 

@@ -1,5 +1,6 @@
 class CommentActivityWorker
   include Sidekiq::Worker
+  sidekiq_options :queue => :activities, retry:false
   
   def perform comment_id
     comment = Comment.find(comment_id)

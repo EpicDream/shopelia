@@ -78,6 +78,7 @@ class Flinker < ActiveRecord::Base
     .where('flinker_likes.on = ?', true)
   }
   scope :with_location, -> { where('city is not null or area is not null') }
+
   scope :followings_between, ->(from, to) {
     from ||= FlinkerFollow::MIN_DATE
     to ||= Time.now
@@ -157,10 +158,13 @@ class Flinker < ActiveRecord::Base
   end
   
   def self.recommendations_for flinker, total=3
-    similars = similar_to(flinker)
-    likes = similars.map { |f| FlinkerLike.where(resource_type:FlinkerLike::LOOK, flinker_id:f.id).last }
-    flinkers = likes.map(&:look).map(&:flinker).uniq
-    flinkers.first(total)
+    key = ActiveSupport::Cache.expand_cache_key([:flinker, :recommendations_for, flinker.id])
+    Rails.cache.fetch(key, expires_in: 3.days) do
+      similars = similar_to(flinker)
+      likes = similars.map { |f| FlinkerLike.where(resource_type:FlinkerLike::LOOK, flinker_id:f.id).last }
+      flinkers = likes.map(&:look).map(&:flinker).uniq
+      flinkers.first(total)
+    end
   end
   
   def self.flinkHQ
@@ -208,7 +212,6 @@ class Flinker < ActiveRecord::Base
   
   def signup_welcome
     self.touch(:last_revival_at)
-    SignupWelcomeWorker.perform_in(3.days, self.id)
   end
 
 end

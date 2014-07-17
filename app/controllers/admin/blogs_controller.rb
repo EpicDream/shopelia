@@ -3,8 +3,10 @@ class Admin::BlogsController < Admin::AdminController
   
   def index
     pagination = Blog.paginate(:page => params[:page], :per_page => 10)
-    @blogs = @scopes.inject(pagination){ |acc, scope| acc.send(scope) }.order(:url)
+    @blogs = @scopes.inject(pagination){ |acc, scope| acc.send(scope) }
     @blogs = @blogs.with_name_like(params[:pattern])
+    @blogs = @blogs.of_country(params[:country])
+    @blogs = @blogs.order('url desc')
     render partial:'index' if params[:partial]
   end
   

@@ -1,7 +1,7 @@
 %section.header
   %header
     %h1 Flinkers
-    %h2 Fashionistas
+    %h2="#{Flinker.where(verified: true).count} Certifiées"
 
 .container-fluid
   .row-fluid
@@ -22,14 +22,17 @@
           %option{value:''} Universelle
           %option{value:'yes'} Yes
           %option{value:'no'} No
-        
+        %select.input-medium.filter-option#verified-filter
+          %option{value:''} Certifiées
+          %option{value:'yes'} Yes
+          %option{value:'no'} No
     .span10
       %article.coolbox
         %h3 Flinkers list
         %table.table.table-striped#flinkers{data:{source:"#{admin_flinkers_url(format: 'json')}"}}
           %thead
             %tr
-              %th ID
+              %th Certifiée
               %th Avatar
               %th Username
               %th Name

@@ -30,12 +30,23 @@ class Blog < ActiveRecord::Base
   scope :with_name_like, ->(pattern) { 
     where('url ~* :pattern or name ~* :pattern', pattern:pattern) unless pattern.blank?
   }
-  scope :without_look_published, -> { 
-    where('not exists(select posts.id from posts join looks on looks.id = posts.look_id 
-    and looks.is_published = ? and posts.blog_id = blogs.id)', true)
+  scope :without_look_published, ->(interval=30.days) {
+    joins("join looks on looks.flinker_id=blogs.flinker_id")
+    .where("looks.is_published = 't'")
+    .where("flink_published_at is not null")
+    .where("not exists(
+      select id from looks
+      where looks.flinker_id=blogs.flinker_id
+      and looks.flink_published_at::DATE >= '#{Time.now - interval}'
+      )")
+    .uniq
   }
+  
   scope :recent, -> {
     where('created_at >= ?', Date.today - 1.month)
+  }
+  scope :of_country, -> (code) {
+    where(country: code) unless code.blank?
   }
   
   def fetch
@@ -78,6 +89,10 @@ class Blog < ActiveRecord::Base
   
   def self.names
     connection.execute("select name from blogs where name <> '' and name is not null").map { |r| r["name"]  }
+  end
+  
+  def self.last_published_look_of blog
+    Look.published.where(flinker_id: blog.flinker_id).order('flink_published_at asc').last
   end
   
   private

@@ -1,11 +1,13 @@
 <%= image_tag 'admin/love.png', class:'heart-overlay', id:'heart-overlay'%>
 <%= will_paginate @blogs %>
-<table class="blogs-table">
+<span class="blogs-count"><%= @blogs.count %> Blogs</span>
+<table class="blogs-table" id="filtered-blogs" data-current-scope="<%=params[:scope] || 'scraped' %>">
   <thead>
     <th colspan="4">Blog</th>
     <th colspan="4">Actions</th>
     <th colspan="2">Looks</th>
     <th colspan="1">Intégré depuis</th>
+    <th colspan="1">Dernier look publié le</th>
   </thead>
   <tbody>
     <% @blogs.each do |blog| %>
@@ -59,7 +61,12 @@
             <%= distance_of_time_in_words(blog.created_at.to_date, Date.today)%>
           </span>
         </td>
-        
+        <td>
+          <span class="created-since" title="Dernier look publié le">
+            <% date = Blog.last_published_look_of(blog).try(:flink_published_at) %>
+            <%= l(date) if date %>
+          </span>
+        </td>
       </tr>
     <% end %>
   </tbody>
