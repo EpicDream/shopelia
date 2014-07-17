@@ -1,7 +1,6 @@
 class LookSql
-  MIN_DATE = Date.parse("2014-02-01")
   
-  def self.popular published_before=Date.today, published_after=MIN_DATE, min_likes=150
+  def self.popular published_before=Date.today, published_after=Rails.configuration.min_date, min_likes=150
     %Q{
       select looks.id from looks
       join (select resource_id, count(*) from flinker_likes group by resource_id having count(*) >= #{min_likes}) likes

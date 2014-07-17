@@ -1,6 +1,4 @@
 class FlinkerFollow < ActiveRecord::Base
-  MIN_DATE = Date.parse("2014-01-01")
-  
   act_as_flink_activity :follow
   default_scope where(on:true)
   

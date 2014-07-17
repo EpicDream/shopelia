@@ -80,7 +80,7 @@ class Flinker < ActiveRecord::Base
   scope :with_location, -> { where('city is not null or area is not null') }
 
   scope :followings_between, ->(from, to) {
-    from ||= FlinkerFollow::MIN_DATE
+    from ||= Rails.configuration.min_date
     to ||= Time.now
     
     where('flinker_follows.updated_at >= ? and flinker_follows.updated_at <= ?', from, to)

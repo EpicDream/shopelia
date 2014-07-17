@@ -1,5 +1,4 @@
 class Look < ActiveRecord::Base
-  MIN_DATE = Date.parse("2014-01-01")
   MIN_LIKES_FOR_POPULAR = 150
   MIN_BUILD_FOR_STAFF_PICKS = 31
   
@@ -89,7 +88,7 @@ class Look < ActiveRecord::Base
     likes_of_flinker(flinker).likes_with_status(false)
   }
   scope :likes_between, ->(from, to){
-    from ||= MIN_DATE
+    from ||= Rails.configuration.min_date
     to ||= Time.now
     joins(:flinker_likes).where('flinker_likes.updated_at >= ? and flinker_likes.updated_at <= ?', from, to)
   }
@@ -117,7 +116,7 @@ class Look < ActiveRecord::Base
   }
   scope :recent, ->(published_before, published_after) {
     published_before ||= Time.now
-    published_after ||= MIN_DATE
+    published_after ||= Rails.configuration.min_date
 
     published.where("flink_published_at <= '#{published_before}'")
     .where("flink_published_at >= '#{published_after}'")
