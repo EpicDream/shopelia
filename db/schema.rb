@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140627134045) do
+ActiveRecord::Schema.define(:version => 20140717100810) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -308,23 +308,27 @@ ActiveRecord::Schema.define(:version => 20140627134045) do
   create_table "flinker_follows", :force => true do |t|
     t.integer  "flinker_id"
     t.integer  "follow_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
+    t.boolean  "on",         :default => true
   end
 
   add_index "flinker_follows", ["flinker_id"], :name => "index_flinker_follows_on_flinker_id"
   add_index "flinker_follows", ["follow_id"], :name => "index_flinker_follows_on_follow_id"
+  add_index "flinker_follows", ["on"], :name => "index_flinker_follows_on_on"
 
   create_table "flinker_likes", :force => true do |t|
     t.integer  "flinker_id"
     t.string   "resource_type"
     t.integer  "resource_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+    t.boolean  "on",            :default => true
   end
 
   add_index "flinker_likes", ["flinker_id", "resource_type", "resource_id"], :name => "index_flinker_likes_on_all_fields"
   add_index "flinker_likes", ["flinker_id"], :name => "index_flinker_likes_on_flinker_id"
+  add_index "flinker_likes", ["on"], :name => "index_flinker_likes_on_on"
   add_index "flinker_likes", ["resource_type", "resource_id"], :name => "index_flinker_likes_on_resource_type_and_resource_id"
   add_index "flinker_likes", ["resource_type"], :name => "index_flinker_likes_on_resource_type"
 
@@ -868,6 +872,29 @@ ActiveRecord::Schema.define(:version => 20140627134045) do
   end
 
   add_index "traces", ["device_id"], :name => "index_traces_on_device_id"
+
+  create_table "trackings", :force => true do |t|
+    t.string   "look_uuid"
+    t.integer  "publisher_id"
+    t.string   "event"
+    t.integer  "flinker_id"
+    t.string   "device_uuid"
+    t.string   "country_iso"
+    t.string   "lang_iso"
+    t.string   "timezone"
+    t.string   "os"
+    t.string   "os_version"
+    t.string   "version"
+    t.string   "build"
+    t.string   "phone"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "trackings", ["event"], :name => "index_trackings_on_event"
+  add_index "trackings", ["look_uuid"], :name => "index_trackings_on_look_uuid"
+  add_index "trackings", ["publisher_id", "event"], :name => "index_trackings_on_publisher_id_and_event"
+  add_index "trackings", ["publisher_id"], :name => "index_trackings_on_publisher_id"
 
   create_table "twitter_friendships", :id => false, :force => true do |t|
     t.integer "twitter_user_id",   :null => false
