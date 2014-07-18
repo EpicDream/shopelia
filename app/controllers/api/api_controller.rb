@@ -69,7 +69,7 @@ class Api::ApiController < ActionController::Base
   def complete_flinker_params
     params[:flinker] ||= {}
     params[:flinker].merge!({ 
-      developer_id: @developer.id, 
+      developer_id: @developer.try(:id), 
       country_iso: params[:"x-country-iso"],
       lang_iso: params[:"x-user-language"],
       timezone: params[:"x-user-timezone"],

@@ -157,15 +157,6 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal Flinker.count - 3, flinkers.count
   end
   
-  test "send welcome email and autofollowed by @flinkHQ 3 days after account creation" do
-    Flinker.destroy_all
-    flinker = new_flinker
-    
-    SignupWelcomeWorker.expects(:perform_in).with(3.days, 1)
-    flinker.id = 1
-    flinker.save!
-  end
-  
   test "trend setters, staff picked of flinker country plus most liked publishers to complete to 20" do
     Flinker.stubs(:top_liked).returns((1..18).map{stub})
 

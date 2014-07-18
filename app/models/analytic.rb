@@ -17,7 +17,6 @@ module Analytic
     end
   
     def looks
-      p Look.published.where(flinker_id: @publisher.id).map(&:flink_published_at)
       Look.published.where(flinker_id: @publisher.id, flink_published_at: @start_date..@end_date).count
     end
   

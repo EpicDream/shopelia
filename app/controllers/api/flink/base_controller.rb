@@ -8,9 +8,9 @@ class Api::Flink::BaseController < Api::ApiController
   before_filter :set_navigator_properties
   before_filter :retrieve_device
   
-  rescue_from Exception do |e|
-    render server_error(e)
-  end
+  # rescue_from Exception do |e|
+  #   render server_error(e)
+  # end
 
   def set_locale
     available = %w{fr en}

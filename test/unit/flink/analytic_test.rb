@@ -4,6 +4,7 @@ class AnalyticTest < ActiveSupport::TestCase
   
   setup do
     @publisher = flinkers(:betty)
+    @publisher.looks.update_all(flink_published_at: Time.now)
     @look = @publisher.looks.first
     populate @look.uuid
   end

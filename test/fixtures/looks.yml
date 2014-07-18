@@ -5,7 +5,6 @@ agadir:
   flinker: betty
   is_published: true
   published_at: <%= Time.now %>
-  flink_published_at: <%= Time.now %>
 thaiti:
   uuid: "12u3"
   name: "Thaiti"
@@ -13,7 +12,6 @@ thaiti:
   flinker: betty
   is_published: true
   published_at: <%= Time.now %>
-  flink_published_at: <%= Time.now %>
 quimper:
   uuid: "1991991"
   name: "Quimper"

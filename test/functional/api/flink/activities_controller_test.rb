@@ -61,18 +61,21 @@ class Api::Flink::ActivitiesControllerTest < ActionController::TestCase
   
   test "get likes activities related to current flinker" do
     follow(flinkers(:boop), @fanny)
-    LikeActivity.create!(flinker_likes(:boop_like))
+    Sidekiq::Testing.inline! do
     
-    get :index, format: :json
+      LikeActivity.create!(flinker_likes(:boop_like))
     
-    activity = json_response["activities"].first
+      get :index, format: :json
+    
+      activity = json_response["activities"].first
 
-    assert_response :success
-    assert_equal 1, json_response["activities"].count
-    assert_equal nil, activity["comment_id"]
-    assert_equal flinker_likes(:boop_like).look.uuid, activity["look_uuid"]
-    assert_equal "LikeActivity", activity["type"]
-    assert_equal flinkers(:boop).id, activity["flinker_id"]
+      assert_response :success
+      assert_equal 1, json_response["activities"].count
+      assert_equal nil, activity["comment_id"]
+      assert_equal flinker_likes(:boop_like).look.uuid, activity["look_uuid"]
+      assert_equal "LikeActivity", activity["type"]
+      assert_equal flinkers(:boop).id, activity["flinker_id"]
+    end
   end
   
   test "get facebook friend sign up activity related to current flinker" do
