@@ -265,6 +265,7 @@ Shopelia::Application.routes.draw do
       end
       namespace :analytics do
         resources :events, only: [:create]
+        resources :publishers, only: [:index]
       end
     end
   end

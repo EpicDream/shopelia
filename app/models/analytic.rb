@@ -6,10 +6,20 @@ module Analytic
       @end_date = end_date || Time.now
     end
     
+    def self.statistics publisher, weeks=5
+      current_year = Date.today.year
+      current_week = Date.today.cweek
+      
+      (0..(weeks - 1)).inject([]) { |stats, week_offset|
+        start_date, end_date = [1, 7].map { |day| Date.commercial(current_year, current_week - week_offset, day) }.map(&:to_time)
+        stats << Publisher.new(publisher, start_date, end_date).statistics
+      }
+    end
+    
     def statistics
       [:followers, :looks, :likes, :comments, :looks_seen, :blog_clicks, :see_all].inject({}) { |h, key|
         h.merge({ key => send(key)})
-      }
+      }.merge({ start_date: @start_date.to_i, end_date: @end_date.to_i})
     end
   
     def followers
