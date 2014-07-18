@@ -45,6 +45,8 @@ class Look < ActiveRecord::Base
     if flinker
       flinkers_ids = flinker.followings.map(&:id)
       looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
+      looks_ids += Look.liked_by(flinker).map(&:id)
+      looks_ids.uniq!
       
       if flinker.device && flinker.device.build < MIN_BUILD_FOR_STAFF_PICKS
         (flinkers_ids.any? || looks_ids.any?) && 
