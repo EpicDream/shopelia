@@ -11,8 +11,8 @@ module Analytic
       current_week = Date.today.cweek
       
       (0..(weeks - 1)).inject([]) { |stats, week_offset|
-        start_date, end_date = [1, 7].map { |day| Date.commercial(current_year, current_week - week_offset, day) }.map(&:to_time)
-        stats << Publisher.new(publisher, start_date, end_date).statistics
+        end_date = Date.commercial(current_year, current_week - week_offset, 7).to_time
+        stats << Publisher.new(publisher, Rails.configuration.min_date, end_date).statistics
       }
     end
     
