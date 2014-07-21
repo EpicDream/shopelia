@@ -27,6 +27,25 @@ class AnalyticTest < ActiveSupport::TestCase
     assert_equal 3, stats.first[:looks_seen]
   end
   
+  test "analytic for look" do
+    start_date = Time.now - 2.days
+    end_date = Time.now
+    stats = {views:3, likes:2, comments:1, blog_clicks:1, see_all:2, start_date:start_date.to_i, end_date:end_date.to_i}
+    
+    analytic = Analytic::Look.new(@look, start_date, end_date)
+
+    assert_equal stats, analytic.statistics
+  end
+  
+  test "look stats for n last weeks" do
+    stats = Analytic::Look.statistics(@look)
+    
+    assert_equal 5, stats.count
+    assert_equal 3, stats.first[:views]
+    assert_equal 2, stats.first[:see_all]
+  end
+  
+  
   private
   
   def populate look_uuid
