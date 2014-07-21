@@ -11,11 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD
-ActiveRecord::Schema.define(:version => 20140701125619) do
-=======
 ActiveRecord::Schema.define(:version => 20140717100810) do
->>>>>>> analytics
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"

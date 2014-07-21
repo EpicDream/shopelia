@@ -135,6 +135,9 @@ class Look < ActiveRecord::Base
     .group('countries.name')
     .select('countries.name, count(*)')
   }
+  scope :with_uuid, ->(uuid) {
+    where(uuid: uuid.scan(/^[^\-]+/))
+  }
 
   alias_attribute :published, :is_published
   
