@@ -41,7 +41,7 @@ class Look < ActiveRecord::Base
   scope :updated_after, ->(date) {
     where('flink_published_at < ? and updated_at > ?', date, date)
    }
-  scope :of_flinker_followings, ->(flinker){#TODO:refactor using jointure
+  scope :of_flinker_followings, ->(flinker){#TODO:refactor using UNION
     if flinker
       flinkers_ids = flinker.followings.map(&:id)
       looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
