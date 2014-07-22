@@ -16,12 +16,14 @@ class Api::Flink::FollowingsControllerTest < ActionController::TestCase
   end   
 
   test "unfollow flinker" do
-    FlinkerFollow.create!(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
+    follow = FlinkerFollow.create!(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
     
     assert_difference "@flinker.reload.followings.count", -1 do
-      post :destroy, id:flinkers(:betty).id, format: :json
-      assert_response :success
+      delete :destroy, followings_ids:[flinkers(:betty).id], format: :json
     end    
+    
+    assert_response :success
+    assert !follow.reload.on
   end
 
   test "followings of current flinker order by username asc" do
@@ -44,6 +46,7 @@ class Api::Flink::FollowingsControllerTest < ActionController::TestCase
     get :index, format: :json, flinker_id:boop.id
     
     flinkers = json_response["flinkers"]
+
     assert_response :success
     assert_equal 1, flinkers.count
     assert_equal flinkers(:betty).id, flinkers.first["id"]

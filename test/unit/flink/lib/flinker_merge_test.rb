@@ -17,7 +17,7 @@ class FlinkerMergeTest < ActiveSupport::TestCase
       merger = FlinkerMerge.new(@flinker, @target)
       merger.merge
     
-      assert_equal "nicolasbigot@me.com", @target.email
+      assert_equal "nicolasbigot@icloud.com", @target.email
       assert_equal @flinker.encrypted_password, @target.encrypted_password
     end
   end

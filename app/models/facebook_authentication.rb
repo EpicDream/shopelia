@@ -11,7 +11,7 @@ class FacebookAuthentication < FlinkerAuthentication
     user = FbGraph::User.me(token).fetch
     auth = where(uid:user.identifier).first
     picture = "#{user.picture}?width=200&height=200&type=normal"
-    auth and auth.update_attributes!(user:user, picture:picture) and auth.after_sign_in
+    auth and auth.update_attributes!(user: user, picture: picture, token: token) and auth.after_sign_in
     unless auth
       auth = create!(uid:user.identifier, email:user.email, token:token, picture:picture, provider:FACEBOOK) 
       auth.user = user

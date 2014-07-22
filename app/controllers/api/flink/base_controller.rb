@@ -8,9 +8,9 @@ class Api::Flink::BaseController < Api::ApiController
   before_filter :set_navigator_properties
   before_filter :retrieve_device
   
-  rescue_from Exception do |e|
-    render server_error(e)
-  end
+  # rescue_from Exception do |e|
+  #   render server_error(e)
+  # end
 
   def set_locale
     available = %w{fr en}
@@ -65,7 +65,7 @@ class Api::Flink::BaseController < Api::ApiController
   end
   
   def scope
-    { developer:@developer, device:@device, flinker:current_flinker, short:true }
+    { developer:@developer, device:@device, flinker:current_flinker, short:true, build: ios_mobile_app_build() }
   end
   
   def epochs_to_dates keys
@@ -73,6 +73,15 @@ class Api::Flink::BaseController < Api::ApiController
       date = params[key] && Time.at(params[key].to_i).utc
       params[key] = date
     }
+  end
+  
+  def ios_mobile_app_build
+    build = nil
+    if ENV['HTTP_USER_AGENT'] =~ /flink:/
+      hash = ENV['HTTP_USER_AGENT'].gsub(/^flink:/, "").split(/\:/).map{|e| e.match(/^(.*)\[(.*)\]$/)[1..2]}.map{|e| { e[0] => e[1] }}.inject(:merge)
+      build = hash["build"].to_i
+    end
+    build
   end
   
 end

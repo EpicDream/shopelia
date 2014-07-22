@@ -12,7 +12,7 @@ class Api::Flink::FlinkersSearchControllerTest < ActionController::TestCase
     
     assert_response :success
     assert_equal 1, json_response["flinkers"].count
-    assert_equal "nicolasbigot@me.com", json_response["flinkers"].first["email"]
+    assert_equal "nicolasbigot@icloud.com", json_response["flinkers"].first["email"]
   end
   
   test "search flinkers by username with username not matching" do

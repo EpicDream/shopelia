@@ -4,13 +4,13 @@ class Api::Flink::ThemesController < Api::Flink::BaseController
   
   api :GET, "/themes", "Get themes with minimal informations"
   def index
-    render json: { themes: serialize(themes, scope:{ en:en? }) }
+    render json: { themes: serialize(themes, scope: scope().merge({ lang: lang() })) }
   end
   
   api :GET, "/themes/<id>", "Get theme details, looks and/or flinkers"
   def show
     render json: ThemeSerializer.new(
-      Theme.find(params[:id]), scope:{ full:true, en:en? }
+      Theme.find(params[:id]), scope: scope().merge({ full:true, lang: lang() })
     )
   end
   
@@ -30,8 +30,8 @@ class Api::Flink::ThemesController < Api::Flink::BaseController
     !current_flinker.device.real_user? 
   end
   
-  def en?
-    params[:"x-user-language"] != 'fr_FR'
+  def lang
+    params[:"x-user-language"] != 'fr_FR' ? :en : :fr
   end
   
   def country

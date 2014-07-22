@@ -1,23 +1,25 @@
 class Api::Flink::FollowsController < Api::Flink::BaseController
-
+  before_filter :retrieve_flinker
+  
   def index
-    flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
-    render json:ActiveModel::ArraySerializer.new(flinker.followings)
+    render json:ActiveModel::ArraySerializer.new(@flinker.followings)
   end
 
   def create
-    (params[:follows] || []).each do |id|
-      FlinkerFollow.create(
-       flinker_id:current_flinker.id,
-       follow_id:id.to_i)
-    end
-
+    params[:follows].each { |following_id| 
+      FlinkerFollow.follow(@flinker.id, following_id) 
+    }
     head :no_content
   end
 
   def destroy
-    FlinkerFollow.where("flinker_id=? and follow_id=?", current_flinker.id, params[:id]).destroy_all
+    FlinkerFollow.unfollow(@flinker.id, params[:id]) 
     head :no_content
   end
   
+  private
+  
+  def retrieve_flinker
+    @flinker = Flinker.where(id:params[:flinker_id]).first || current_flinker
+  end
 end

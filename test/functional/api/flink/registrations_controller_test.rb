@@ -34,14 +34,6 @@ class Api::Flink::RegistrationsControllerTest < ActionController::TestCase
     end
   end
   
-  test "iso country code from accept language header" do
-    @request.env["HTTP_ACCEPT_LANGUAGE"] = "fr;q=1, en;q=0.9, de;q=0.8, ja;q=0.7, nl;q=0.6, it;q=0.5"
-    
-    assert_difference "FlinkerFollow.count", 3 do
-      post :create, params, format: :json
-    end
-  end
-  
   test "assign lang iso code to flinker" do
     @request.env["X-Flink-User-Language"] = "fr-FR"
     

@@ -39,7 +39,7 @@ class ActiveSupport::TestCase
   end
   
   def like flinker, looks
-    looks.each do |look|
+    looks.map do |look|
       FlinkerLike.create(flinker_id:flinker.id, resource_type:FlinkerLike::LOOK, resource_id:look.id)
     end
   end
@@ -63,6 +63,12 @@ class ActiveSupport::TestCase
     look.created_at =  at - 4.days
     look.updated_at =  at - 4.days
     look.save!
+  end
+  
+  def set_env_user_agent build=1
+    value = "flink:os[iOS]:build[#{build}]:version[1.0.1]:os_version[4.4]:phone[Samsung Galaxy]:uuid[#{devices(:mobile).uuid}]:dev[2]"
+    ENV['HTTP_USER_AGENT'] = value
+    @request.env["HTTP_USER_AGENT"] = value if @request
   end
   
 end

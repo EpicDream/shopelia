@@ -11,7 +11,9 @@ module FlinkerSql
           join looks on looks.flinker_id = flinkers.id
           and looks.id in (select resource_id from flinker_likes where flinker_id = #{flinker.id})
         )
-        join flinker_likes on flinker_likes.flinker_id = flinkers.id and resource_id = looks.id
+        join flinker_likes on flinker_likes.flinker_id = flinkers.id 
+          and flinker_likes.resource_id = looks.id 
+          and flinker_likes.on = 't'
         and flinkers.id <> #{flinker.id}
         and flinkers.id not in(
           select follow_id from flinker_follows
@@ -45,6 +47,7 @@ module FlinkerSql
       and exists(
         select id from flinker_likes
         where flinker_likes.flinker_id = flinkrs.id
+        and flinker_likes.on = 't'
         and flinker_likes.resource_id in (
           select id from looks 
           where flinker_id = #{look.flinker_id}
@@ -63,6 +66,7 @@ module FlinkerSql
         join flinkers on flinkers.id = looks.flinker_id
         where resource_type = 'look'
         and flinker_likes.updated_at > '#{from}'
+        and flinker_likes.on = 't'
         group by flinkers.id
         order by count desc) vlikes
        on vlikes.fid = fl.id 

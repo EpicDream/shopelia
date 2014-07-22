@@ -64,7 +64,7 @@ class Api::Flink::SessionsControllerTest < ActionController::TestCase
 
     assert_response :success
     assert json_response["auth_token"].present?
-    assert_equal "nicolasbigot@me.com", json_response["flinker"]["email"]
+    assert_equal "nicolasbigot@icloud.com", json_response["flinker"]["email"]
     assert_equal "Nicolas Bigot", json_response["flinker"]["name"]
     assert_equal false, json_response["creation"]
   end

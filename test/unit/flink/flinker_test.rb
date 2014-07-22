@@ -157,15 +157,6 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal Flinker.count - 3, flinkers.count
   end
   
-  test "send welcome email and autofollowed by @flinkHQ 3 days after account creation" do
-    Flinker.destroy_all
-    flinker = new_flinker
-    
-    SignupWelcomeWorker.expects(:perform_in).with(3.days, 1)
-    flinker.id = 1
-    flinker.save!
-  end
-  
   test "trend setters, staff picked of flinker country plus most liked publishers to complete to 20" do
     Flinker.stubs(:top_liked).returns((1..18).map{stub})
 
@@ -211,10 +202,6 @@ class FlinkerTest < ActiveSupport::TestCase
   end
   
   private
-  
-  def set_env_user_agent build=1
-    ENV['HTTP_USER_AGENT'] = "flink:os[iOS]:build[#{build}]:version[1.0.1]:os_version[4.4]:phone[Samsung Galaxy]:uuid[#{devices(:mobile).uuid}]:dev[2]"
-  end
 
   def new_flinker
     Flinker.new(attributes)

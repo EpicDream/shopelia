@@ -19,9 +19,9 @@ class Api::Flink::FollowsControllerTest < ActionController::TestCase
     FlinkerFollow.create!(flinker_id:@flinker.id, follow_id:flinkers(:betty).id)
     
     assert_difference "FlinkerFollow.count", -1 do
-      post :destroy, id:flinkers(:betty).id, format: :json
+      delete :destroy, id:flinkers(:betty).id, format: :json
       assert_response :success
-    end    
+    end
   end
 
   test "flinker follows of current flinker" do

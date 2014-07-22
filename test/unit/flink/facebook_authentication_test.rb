@@ -21,7 +21,7 @@ class FacebookAuthenticationTest < ActiveSupport::TestCase
     assert_equal "facebook", auth.provider
     assert_equal fanny[:token], auth.token
     assert_equal "https://graph.facebook.com/1375543592/picture?width=200&height=200&type=normal", auth.picture
-    assert_equal "nicolasbigot@me.com", auth.email
+    assert_equal "nicolasbigot@icloud.com", auth.email
     assert_equal auth.email, flinker.email
     assert_equal 'bigot.nicolas', flinker.username
     assert_equal 'Nicolas Bigot', flinker.name

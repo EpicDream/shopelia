@@ -38,6 +38,14 @@ class FlinkerLikeTest < ActiveSupport::TestCase
     FlinkerLike.create!(flinker_id:@flinker.id, resource_type:FlinkerLike::LOOK, resource_id:@look.id)
   end
   
+  test "default scope returns only likes with :on true" do
+    count = FlinkerLike.count
+    like = flinker_likes(:boop_like)
+    assert like.update_attributes(on:false)
+    
+    assert_equal count - 1, FlinkerLike.count
+  end
+  
   test "destroy like cascade destroy like activities" do
     FlinkerLike.destroy_all
     @flinker = flinkers(:boop)

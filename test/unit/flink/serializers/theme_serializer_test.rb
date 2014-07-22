@@ -4,6 +4,7 @@ class ThemeSerializerTest < ActiveSupport::TestCase
   ATTRIBUTES = [:id, :title, :subtitle, :position, :cover_height, :cover_large, :cover_small, :country, :looks_count,
                 :flinkers_count, :cover_medium]
   FULL_ATTRIBUTES = ATTRIBUTES + [:looks, :flinkers]
+  SCOPE = { lang: :fr, build: 36 }
   
   setup do
     @theme = themes(:mode)
@@ -12,7 +13,7 @@ class ThemeSerializerTest < ActiveSupport::TestCase
   end
   
   test "minimal serialization" do
-    object = ThemeSerializer.new(@theme).as_json[:theme]
+    object = ThemeSerializer.new(@theme, scope: SCOPE).as_json[:theme]
 
     assert_equal ATTRIBUTES.to_set, object.keys.to_set
     assert_match "La mode c'est fun", object[:title]
@@ -25,7 +26,7 @@ class ThemeSerializerTest < ActiveSupport::TestCase
   
   test "include look or flinker iff only one" do
     @theme.flinkers << Flinker.first(1)
-    object = ThemeSerializer.new(@theme).as_json[:theme]
+    object = ThemeSerializer.new(@theme, scope: SCOPE).as_json[:theme]
     
     assert_equal (FULL_ATTRIBUTES + [:flinkers, :looks]).to_set, object.keys.to_set
     assert_equal 1, object[:flinkers].count
@@ -37,7 +38,7 @@ class ThemeSerializerTest < ActiveSupport::TestCase
   test "maximal serialization, with hashtags, looks, flinkers" do
     @theme.looks << Look.first(3)
     @theme.flinkers << Flinker.first(2)
-    object = ThemeSerializer.new(@theme, scope:{full:true}).as_json[:theme]
+    object = ThemeSerializer.new(@theme, scope: SCOPE.merge({ full: true })).as_json[:theme]
     
     assert_equal FULL_ATTRIBUTES.to_set, object.keys.to_set
     assert_equal 3, object[:looks].count
@@ -47,7 +48,7 @@ class ThemeSerializerTest < ActiveSupport::TestCase
   end
   
   test "title and subtitle function of user iso lang" do
-    object = ThemeSerializer.new(@theme, scope:{ en:true }).as_json[:theme]
+    object = ThemeSerializer.new(@theme, scope: SCOPE.merge({ lang: :en })).as_json[:theme]
 
     assert_equal @theme.en_title, object[:title]
     assert_equal @theme.en_subtitle, object[:subtitle]
@@ -57,10 +58,20 @@ class ThemeSerializerTest < ActiveSupport::TestCase
     @theme.update_attributes(en_title:"<styles></styles>")
     @theme.update_attributes(en_subtitle:"<styles></styles>")
     
-    object = ThemeSerializer.new(@theme, scope:{ en:true }).as_json[:theme]
+    object = ThemeSerializer.new(@theme, scope: SCOPE.merge({ lang: :en })).as_json[:theme]
 
     assert_equal @theme.title, object[:title]
     assert_equal @theme.subtitle, object[:subtitle]
+  end
+  
+  test "if build < 36 and font not HelveticaNeue like replace with Helvetica" do
+    theme = themes(:sacamains)
+    theme.send(:assign_default_cover)
+    expected_title = "<styles><style font='HelveticaNeue' size='24'>Sexy girls</style><style font='HelveticaNeue' size='12'> and Boys</style></styles>"
+    
+    object = ThemeSerializer.new(theme, scope:{ lang: :fr, build: 35 }).as_json[:theme]
+    
+    assert_equal expected_title, object[:title]
   end
   
 end

@@ -1,5 +1,4 @@
 class Look < ActiveRecord::Base
-  MIN_DATE = Date.parse("2014-01-01")
   MIN_LIKES_FOR_POPULAR = 150
   MIN_BUILD_FOR_STAFF_PICKS = 31
   
@@ -42,10 +41,12 @@ class Look < ActiveRecord::Base
   scope :updated_after, ->(date) {
     where('flink_published_at < ? and updated_at > ?', date, date)
    }
-  scope :of_flinker_followings, ->(flinker){#TODO:refactor using jointure
+  scope :of_flinker_followings, ->(flinker){#TODO:refactor using UNION
     if flinker
       flinkers_ids = flinker.followings.map(&:id)
       looks_ids = FlinkerLike.likes_for(flinker.friends).map(&:resource_id)
+      looks_ids += Look.liked_by(flinker).map(&:id)
+      looks_ids.uniq!
       
       if flinker.device && flinker.device.build < MIN_BUILD_FOR_STAFF_PICKS
         (flinkers_ids.any? || looks_ids.any?) && 
@@ -74,8 +75,24 @@ class Look < ActiveRecord::Base
   scope :with_comment_matching, ->(pattern) {
     joins(:comments).where('comments.body ~* ?', pattern)
   }
+  scope :likes_of_flinker, ->(flinker){
+    joins(:flinker_likes)
+    .where('flinker_likes.flinker_id = ?', flinker.id) 
+    .select('looks.*, EXTRACT(EPOCH FROM flinker_likes.updated_at) as like_updated_at')
+  }
+  scope :likes_with_status, ->(on) {
+    joins(:flinker_likes).where('flinker_likes.on = ?', on)
+  }
   scope :liked_by, ->(flinker) {
-    joins('join flinker_likes on flinker_likes.resource_id = looks.id').where('flinker_likes.flinker_id = ?', flinker.id)
+    likes_of_flinker(flinker).likes_with_status(true)
+  }
+  scope :unliked_by, ->(flinker) {
+    likes_of_flinker(flinker).likes_with_status(false)
+  }
+  scope :likes_between, ->(from, to){
+    from ||= Rails.configuration.min_date
+    to ||= Time.now
+    joins(:flinker_likes).where('flinker_likes.updated_at >= ? and flinker_likes.updated_at <= ?', from, to)
   }
   scope :with_hashtags, ->(hashtags){
     hashtags = Hashtag.where('name ~* ?', hashtags.join("|")).select(:id).uniq
@@ -101,7 +118,7 @@ class Look < ActiveRecord::Base
   }
   scope :recent, ->(published_before, published_after) {
     published_before ||= Time.now
-    published_after ||= MIN_DATE
+    published_after ||= Rails.configuration.min_date
 
     published.where("flink_published_at <= '#{published_before}'")
     .where("flink_published_at >= '#{published_after}'")
@@ -117,6 +134,9 @@ class Look < ActiveRecord::Base
     .joins('join countries on flinkers.country_id = countries.id')
     .group('countries.name')
     .select('countries.name, count(*)')
+  }
+  scope :with_uuid, ->(uuid) {
+    where(uuid: uuid.scan(/^[^\-]+/))
   }
 
   alias_attribute :published, :is_published

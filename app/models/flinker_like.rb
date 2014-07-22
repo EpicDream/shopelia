@@ -1,10 +1,11 @@
 class FlinkerLike < ActiveRecord::Base
   PRODUCT = "product"
   LOOK = "look"
+  default_scope where(on:true)
   
   act_as_flink_activity :like
-
-  attr_accessible :flinker_id, :resource_id, :resource_type
+  
+  attr_accessible :flinker_id, :resource_id, :resource_type, :on
 
   belongs_to :flinker
   belongs_to :look, foreign_key: :resource_id, class_name: 'Look'
@@ -26,12 +27,24 @@ class FlinkerLike < ActiveRecord::Base
     likes_for(flinker.friends).where(resource_id:look.id)
   }
   
+  scope :of_look, ->(look) { where(resource_id: look.id, resource_type: LOOK) }
+  scope :of_flinker, ->(flinker) { where(flinker_id: flinker.id) }
+  
   def product?
     resource_type == PRODUCT
   end
   
   def look?
     resource_type == LOOK
+  end
+  
+  def self.toggle_or_create flinker, look
+    like = self.unscoped { of_flinker(flinker).of_look(look).first }
+    if like
+      like.update_attributes(on: !like.on)
+    else
+      create(flinker_id:flinker.id, resource_type:LOOK, resource_id:look.id)
+    end
   end
   
 end

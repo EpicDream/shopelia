@@ -235,6 +235,8 @@ Shopelia::Application.routes.draw do
       end
       namespace :refresh do
         resources :looks, only: :index
+        resources :likes, only: :index
+        resources :followings, only: :index
       end
       namespace :connect do
         resources :instagram, only: :create
@@ -262,7 +264,9 @@ Shopelia::Application.routes.draw do
         get 'flinkers' => "web_services/flinkers#show"
       end
       namespace :analytics do
-        resources :testbenches, :only => [:index]
+        resources :events, only: [:create]
+        resources :publishers, only: [:show]
+        resources :looks, only: [:show]
       end
     end
   end

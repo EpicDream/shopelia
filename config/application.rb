@@ -16,7 +16,7 @@ module Shopelia
     
     # Maximum number of times the order is allowed to retry a new account creation
     config.max_retry = 3
-  
+    
     config.autoload_paths += %W(#{config.root}/lib #{config.root}/lib/merchants #{config.root}/app/models/activities)
     config.action_mailer.default_url_options = { :host => 'lipstick.flink.io', :protocol => 'https' }
     config.action_mailer.asset_host = "http://www.flink.io"
@@ -107,6 +107,8 @@ module Shopelia
     config.to_prepare do
       Devise::PasswordsController.layout "flink"
     end
+    
+    config.min_date = Date.parse("2014-01-01").to_time
   end
   
 end

@@ -86,7 +86,7 @@ end
 after_fork do |server, worker|
 #    addr = "descartes.epicdream.fr:#{8000 + worker.nr}"
     addr = "/var/run/shopelia-unicorn/unicorn_worker_#{worker.nr}"
-    server.listen(addr, :tries => 0, :delay => 0, :backlog => 8)
+    server.listen(addr, :tries => 0, :delay => 0, :backlog => 1024)
   # per-process listener ports for debugging/admin/migrations
   # addr = "127.0.0.1:#{9293 + worker.nr}"
   # server.listen(addr, :tries => -1, :delay => 5, :tcp_nopush => true)

@@ -16,6 +16,7 @@ class FacebookFriend < ActiveRecord::Base
     return unless auth = FacebookAuthentication.facebook_of(flinker).first
 
     query = "SELECT uid, name, username, sex, devices FROM user WHERE uid in (SELECT uid2 FROM friend WHERE uid1='#{auth.uid}')"
+
     friends = FbGraph::Query.new(query).fetch(access_token: auth.token)
     friends.each do |friend|
       next unless has_ios_device?(friend)

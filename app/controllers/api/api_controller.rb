@@ -8,8 +8,8 @@ class Api::ApiController < ActionController::Base
   before_filter :retrieve_device
   before_filter :retrieve_country_iso
   before_filter :retrieve_user_language
-  before_filter :complete_flinker_params
   before_filter :retrieve_user_timezone
+  before_filter :complete_flinker_params
   
   rescue_from ActiveRecord::RecordNotFound do |e|
     render :json => {:error => "Object not found"}, :status => :not_found
@@ -55,7 +55,7 @@ class Api::ApiController < ActionController::Base
   
   def retrieve_country_iso
     params[:"x-country-iso"] = request.headers["X-Flink-Country-Iso"]
-    params[:"x-country-iso"] ||= iso_from_accept_language_header
+    params[:"x-country-iso"] ||= 'GB'
   end
   
   def retrieve_user_language
@@ -67,27 +67,24 @@ class Api::ApiController < ActionController::Base
   end
   
   def complete_flinker_params
-    return unless params[:flinker]
-    
+    params[:flinker] ||= {}
     params[:flinker].merge!({ 
-      developer_id:@developer.id, 
-      country_iso:params[:"x-country-iso"],
-      lang_iso:params[:"x-user-language"],
+      developer_id: @developer.try(:id), 
+      country_iso: params[:"x-country-iso"],
+      lang_iso: params[:"x-user-language"],
+      timezone: params[:"x-user-timezone"],
     })
   end
   
-  def iso_from_accept_language_header #TODO temp, to remove when new features released
-    lang = request.env["HTTP_ACCEPT_LANGUAGE"].split(",").first
-    case lang
-    when /fr/ then return 'FR'
-    when /en/ then return 'GB'
-    when /es/ then return 'ES'
-    when /it/ then return 'IT'
-    when /de/ then return 'DE'
-    else 'FR'
-    end
+  def device_attributes
+    user_agent = request.env['HTTP_USER_AGENT']
+    hash = user_agent.gsub(/^flink:/, "").split(/\:/).map{|e| e.match(/^(.*)\[(.*)\]$/)[1..2]}.map{|e| { e[0] => e[1] }}.inject(:merge)
+    { os: hash["os"], os_version: hash["os_version"], version: hash["version"], 
+      build: hash["build"].to_i, phone: hash["phone"], device_uuid: hash["uuid"], country_iso: params[:"x-country-iso"],
+      lang_iso: params[:"x-user-language"], timezone: params[:"x-user-timezone"]
+    }
   rescue
-    'FR'
+    {}
   end
   
 end
