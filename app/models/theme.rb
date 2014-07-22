@@ -95,7 +95,7 @@ class Theme < ActiveRecord::Base
   private
   
   def convert_font title
-    non_helvetica_fonts = title.scan(/font='(.*?)'/).select { |font| font !~ /HelveticaNeue/ }.flatten
+    non_helvetica_fonts = title.scan(/font='(.*?)'/).flatten.select { |font| font !~ /HelveticaNeue/ }
     non_helvetica_fonts.inject(title) { |new_title, font| 
       new_title = new_title.gsub(/#{font}/, DEFAULT_FONT)
     }
