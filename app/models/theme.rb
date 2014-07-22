@@ -1,6 +1,9 @@
 class Theme < ActiveRecord::Base
   COVER_HEIGHT_HIGH = 200
   COVER_HEIGHT_LOW = 120
+  FONTS = YAML.load_file("db/ios-fonts.yml")
+  SIZES = (10..30).step(2).to_a
+  DEFAULT_FONT = 'HelveticaNeue'
   
   acts_as_list
   
@@ -74,12 +77,29 @@ class Theme < ActiveRecord::Base
     title_string_for_display(attribute)
   end
   
+  def title_for_ios lang=nil, default_font=false
+    title = (lang == :en && !title_for_display(:en).blank?) ? self.en_title : self.title
+    default_font ? convert_font(title) : title
+  end
+  
+  def subtitle_for_ios lang=nil, default_font=false
+    title = (lang == :en && !subtitle_for_display(:en).blank?) ? self.en_subtitle : self.subtitle
+    default_font ? convert_font(title) : title
+  end
+  
   def self.last_series
     theme = Theme.order('series desc').first
     theme ? theme.series : 0
   end
   
   private
+  
+  def convert_font title
+    non_helvetica_fonts = title.scan(/font='(.*?)'/).select { |font| font !~ /HelveticaNeue/ }.flatten
+    non_helvetica_fonts.inject(title) { |new_title, font| 
+      new_title = new_title.gsub(/#{font}/, DEFAULT_FONT)
+    }
+  end
   
   def update_cover_heights
     themes = Theme.of_series(self.series).order('position asc')

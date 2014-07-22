@@ -1,15 +1,17 @@
 class ThemeSerializer < ActiveModel::Serializer
+  MIN_BUILD_FOR_NEW_FONTS = 36 # >=
+  
   attributes :id, :title, :subtitle, :position, :cover_height, :country
   attributes :cover_large, :cover_small, :cover_medium
   attributes :looks_count, :flinkers_count
   attributes :looks, :flinkers
-
+  
   def title
-    scope && scope[:en] && !object.title_for_display(:en).blank? ? object.en_title : object.title
+    object.title_for_ios(scope[:lang], scope[:build] < MIN_BUILD_FOR_NEW_FONTS)
   end
   
   def subtitle
-    scope && scope[:en] && !object.subtitle_for_display(:en).blank? ? object.en_subtitle : object.subtitle
+    object.subtitle_for_ios(scope[:lang])
   end
   
   def cover_large
@@ -50,11 +52,11 @@ class ThemeSerializer < ActiveModel::Serializer
   end
   
   def include_looks?
-    (scope && scope[:full] && object.looks.any?) || uniq_resource?
+    (scope[:full] && object.looks.any?) || uniq_resource?
   end
 
   def include_flinkers?
-    (scope && scope[:full] && object.flinkers.any?) || uniq_resource?
+    (scope[:full] && object.flinkers.any?) || uniq_resource?
   end
   
   private

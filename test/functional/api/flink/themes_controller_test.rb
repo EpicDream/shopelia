@@ -9,6 +9,7 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
       theme.send(:assign_default_cover)
     }
     @request.env["X-Flink-User-Language"] = "fr_FR"
+    set_env_user_agent(36)
   end
 
   test "get themes published with minimal informations" do
@@ -85,6 +86,21 @@ class Api::Flink::ThemesControllerTest < ActionController::TestCase
     
     assert_equal 2, themes.count
     assert_equal [themes(:mode).en_title, themes(:sexy).en_title].to_set, themes.map{ |t| t["title"] }.to_set
+  end
+  
+  test "convert fonts if build < 36" do
+    set_env_user_agent(35)
+    themes(:sexy).destroy
+    themes(:mode).update_attributes(title: "<styles><style font='CooperBlackStd' size='24'>Sexy girls</style><style font='PlantagenetCherokee' size='12'> and Boys</style></styles>")
+
+    get :index, format: :json
+    
+    assert_response :success
+    
+    expected_title = "<styles><style font='HelveticaNeue' size='24'>Sexy girls</style><style font='HelveticaNeue' size='12'> and Boys</style></styles>"
+    themes = json_response["themes"]
+
+    assert_equal expected_title, themes.first["title"]
   end
 
 end

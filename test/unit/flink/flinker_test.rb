@@ -202,10 +202,6 @@ class FlinkerTest < ActiveSupport::TestCase
   end
   
   private
-  
-  def set_env_user_agent build=1
-    ENV['HTTP_USER_AGENT'] = "flink:os[iOS]:build[#{build}]:version[1.0.1]:os_version[4.4]:phone[Samsung Galaxy]:uuid[#{devices(:mobile).uuid}]:dev[2]"
-  end
 
   def new_flinker
     Flinker.new(attributes)
