@@ -11,15 +11,15 @@ module Analytic
       current_week = Date.today.cweek
       
       (0..(weeks - 1)).inject([]) { |stats, week_offset|
-        end_date = Date.commercial(current_year, current_week - week_offset, 7).to_time
-        stats << Publisher.new(publisher, Rails.configuration.min_date, end_date).statistics
+        end_date, start_at = [7, 1].map { |day| Date.commercial(current_year, current_week - week_offset, day).to_time }
+        stats << Publisher.new(publisher, Rails.configuration.min_date, end_date).statistics(start_at)
       }
     end
     
-    def statistics
+    def statistics start_at=@start_date
       [:followers, :looks, :likes, :comments, :looks_seen, :blog_clicks, :see_all].inject({}) { |h, key|
         h.merge({ key => send(key)})
-      }.merge({ start_date: @start_date.to_i, end_date: @end_date.to_i})
+      }.merge({ start_date: start_at.to_i, end_date: @end_date.to_i})
     end
   
     def followers
@@ -69,15 +69,15 @@ module Analytic
       current_week = Date.today.cweek
       
       (0..(weeks - 1)).inject([]) { |stats, week_offset|
-        end_date = Date.commercial(current_year, current_week - week_offset, 7).to_time
-        stats << Look.new(look, Rails.configuration.min_date, end_date).statistics
+        end_date, start_at = [7, 1].map { |day| Date.commercial(current_year, current_week - week_offset, day).to_time }
+        stats << Look.new(look, Rails.configuration.min_date, end_date).statistics(start_at)
       }
     end
     
-    def statistics
+    def statistics start_at=@start_date
       [:views, :likes, :blog_clicks, :see_all, :comments].inject({}) { |h, key|
         h.merge({ key => send(key)})
-      }.merge({ start_date: @start_date.to_i, end_date: @end_date.to_i})
+      }.merge({ start_date: start_at.to_i, end_date: @end_date.to_i})
     end
     
     def views
