@@ -33,7 +33,7 @@ class FlinkerFollow < ActiveRecord::Base
   
   def self.unfollow flinker_id, follow_id
     follow = self.unscoped { of_flinker_following(flinker_id, follow_id).first }
-    follow.update_attributes(on: false)
+    follow.update_attributes(on: false) if follow
   end
   
   
