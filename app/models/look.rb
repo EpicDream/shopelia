@@ -11,7 +11,7 @@ class Look < ActiveRecord::Base
   has_many :look_images, :foreign_key => "resource_id", :dependent => :destroy
   has_many :look_products, :dependent => :destroy
   has_many :products, :through => :look_products
-  has_many :flinker_likes, foreign_key:'resource_id'
+  has_many :flinker_likes, foreign_key:'resource_id', :dependent => :destroy
   has_and_belongs_to_many :hashtags, uniq:true, after_remove: :may_destroy_hashtag
   
   validates :uuid, :presence => true, :uniqueness => true, :on => :create
