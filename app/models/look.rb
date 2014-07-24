@@ -190,7 +190,7 @@ class Look < ActiveRecord::Base
     look_images.order('display_order asc').limit(1).first
   end
   
-  def self.covers total=20
+  def self.covers total=30
     Look.published
     .order('flink_published_at desc')
     .includes(:look_covers)

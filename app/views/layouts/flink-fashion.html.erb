@@ -12,6 +12,8 @@
     
     <%= stylesheet_link_tag "flink/flink-fashion.css" %>
     <%= javascript_include_tag "flink/flink-fashion.js" %>
+    <%= javascript_include_tag params[:controller] %>
+    <%= stylesheet_link_tag params[:controller] %>
     
     <%=  yield :head %>
   </head>
