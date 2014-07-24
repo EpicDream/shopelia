@@ -1,0 +1,3 @@
+<% Look.covers.each do |look| %>
+  <%= image_tag Rails.configuration.image_host + look.look_covers.first.picture.url(:small) %>
+<% end %>
