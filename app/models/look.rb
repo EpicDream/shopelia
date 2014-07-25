@@ -168,6 +168,13 @@ class Look < ActiveRecord::Base
     flink_published_at >= '#{from.to_s(:db)}' group by flink_published_at::DATE order by flink_published_at desc"
     connection.execute(sql)
   end
+  
+  def self.covers
+    Look.published
+    .order('flink_published_at desc')
+    .includes(:look_covers)
+    .includes(:flinker)
+  end
 
   def mark_post_as_processed
     self.post.update_attributes(processed_at:Time.now)
@@ -190,11 +197,8 @@ class Look < ActiveRecord::Base
     look_images.order('display_order asc').limit(1).first
   end
   
-  def self.covers
-    Look.published
-    .order('flink_published_at desc')
-    .includes(:look_covers)
-    .includes(:flinker)
+  def cover_url
+    Rails.configuration.image_host + look_covers.first.picture.url(:small)
   end
   
   def hashtags_as_strings
