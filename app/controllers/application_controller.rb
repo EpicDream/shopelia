@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
 
   def render_error(e)
     respond_to do |format| 
-      format.html { render template: "errors/error_500", layout: 'layouts/application', status: 500 }
+      format.html { render template: "errors/error_500", layout: 'layouts/flink', status: 500 }
       format.json { render json:{}, :status => 500 }
       format.all { render nothing: true, status: 500 }
     end
@@ -41,7 +41,7 @@ class ApplicationController < ActionController::Base
 
   def render_not_found(e)
     respond_to do |format| 
-      format.html { render template: "errors/error_404", layout: 'layouts/application', status: 404 }
+      format.html { render template: "errors/error_404", layout: 'layouts/flink', status: 404 }
       format.json { render json:{}, :status => 404 }
       format.all { render nothing: true, status: 404 }
     end

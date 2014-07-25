@@ -2,13 +2,11 @@
 
 $(document).ready(function() {
   $(document).infiniteScroll({
-    itemSelector: "div.covr",
+    itemSelector: "a.cover",
     dataPath: "/explorer",
     onDataLoaded: function(page){
-      console.log("Loaded - " + page);
     },
     onDataLoading: function(page){
-      console.log("Loading - " + page);
     }
   });
 });
