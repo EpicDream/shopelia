@@ -11,9 +11,8 @@ class Flink::ExplorerController < ApplicationController
   private
   
   def category
-    category = params[:category].to_sym
+    category = (params[:category] || :flink_loves).to_sym
     return :flink_loves unless CATEGORY_FILTERS.include?(category)
-    p category
     category
   end
 
