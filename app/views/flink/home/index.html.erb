@@ -28,12 +28,12 @@
     <div class="text-aligned-center padding-top-50">
       <div>
         <%= link_to image_tag("flink/common/appstore_badge.png", :alt => "Flink"), flink_appstore_url %>
-        <%= link_to "Explore trendy looks", flink_appstore_url, class: "rounded-button-pink margin-left-20" %>
+        <%= link_to "Explore trendy looks", explorer_path, class: "rounded-button-pink margin-left-20" %>
       </div>
       <ul class="padding-top-20">
         <li>©2014 Flink</li>
-        <li><%= link_to "Contact", "#" %></li>
-        <li><%= link_to "Terms", "#" %></li>
+        <li><%= link_to "Contact", contact_path %></li>
+        <li><%= link_to "Terms", terms_path %></li>
         <li><%= link_to icon('instagram fa-2x'), flink_instagram_url %></li>
         <li><%= link_to icon('facebook fa-2x'), flink_facebook_url %></li>
         <li><%= link_to icon('twitter fa-2x'), flink_twitter_url %></li>
