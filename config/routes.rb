@@ -276,6 +276,6 @@ Shopelia::Application.routes.draw do
   # get "errors/error_404", format: false
   # get "errors/error_500"
 
-  root to: 'flink#index'
+  root to: 'flink/home#index'
   match '*unmatched_route', :to => 'application#raise_not_found!'
 end
