@@ -2,7 +2,7 @@
 
 $(document).ready(function() {
   $(document).infiniteScroll({
-        itemSelector: "img.covr",
+        itemSelector: "div.covr",
         dataPath: "/",
         onDataLoaded: function(page){
           console.log("Loaded - " + page);

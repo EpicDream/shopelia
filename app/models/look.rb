@@ -190,12 +190,11 @@ class Look < ActiveRecord::Base
     look_images.order('display_order asc').limit(1).first
   end
   
-  def self.covers total=30
+  def self.covers
     Look.published
     .order('flink_published_at desc')
     .includes(:look_covers)
     .includes(:flinker)
-    .first(total)
   end
   
   def hashtags_as_strings
