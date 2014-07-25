@@ -4,15 +4,17 @@
       <div class="float-left iphone-top">
         <%= image_tag("flink/home/iphone_top.png", :alt => "Flink") %>
       </div>
-      <div class="red">
-        <div class="text-aligned-center">
+      <div>
+        <div class="text-aligned-center padding-top-20">
           <%= image_tag("flink/common/logo.png", :alt => "Flink") %>
         </div>
-        <div class="text-aligned-center">
+        <div class="text-aligned-center margin-top-30">
           <span class="large-title">Discover, get inspired and share trendy<br/>street style looks from top fashion bloggers.</span>
         </div>
-        <div class="text-aligned-center">
-
+        <div class="text-aligned-center margin-top-50">
+          <%= link_to flink_appstore_url, class: "medium-title" do %>
+           Get the app now &nbsp;<%= icon('arrow-circle-down') %>
+          <% end %>
         </div>
       </div>
     </div>
@@ -23,8 +25,19 @@
     <div class="float-left">
       <%= image_tag("flink/home/iphone_bottom.png", :alt => "Flink") %>
     </div>
-    <div class="blue">
-      fwefwe
+    <div class="text-aligned-center padding-top-50">
+      <div>
+        <%= link_to image_tag("flink/common/appstore_badge.png", :alt => "Flink"), flink_appstore_url %>
+        <%= link_to "Explore trendy looks", flink_appstore_url, class: "rounded-button-pink margin-left-20" %>
+      </div>
+      <ul class="padding-top-20">
+        <li>©2014 Flink</li>
+        <li><%= link_to "Contact", "#" %></li>
+        <li><%= link_to "Terms", "#" %></li>
+        <li><%= link_to icon('instagram fa-2x'), flink_instagram_url %></li>
+        <li><%= link_to icon('facebook fa-2x'), flink_facebook_url %></li>
+        <li><%= link_to icon('twitter fa-2x'), flink_twitter_url %></li>
+      </ul>
     </div>
   </div>
 </div>

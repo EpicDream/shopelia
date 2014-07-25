@@ -63,6 +63,8 @@ gem 'rmagick', require:'RMagick'
 gem 'acts_as_list'
 gem 'gibbon', require:false
 gem 'hirb'
+gem 'font-awesome-less'
+gem 'rubyntlm'
 
 group :assets do
   gem 'bootstrap-sass', '~> 2.3.1.0'

@@ -1,3 +1,5 @@
+@import "constants.css.less";
+
 .height-60 {
   height: 60%;
 }
@@ -10,6 +12,30 @@
   height: 100%;
 }
 
+.margin-top-30 {
+  margin-top: 30px;
+}
+
+.margin-top-50 {
+  margin-top: 50px;
+}
+
+.margin-left-20 {
+  margin-left: 20px;
+}
+
+.padding-top-20 {
+  padding-top: 20px;
+}
+
+.padding-top-50 {
+  padding-top: 50px;
+}
+
+.padding-top-60 {
+  padding-top: 60px;
+}
+
 .blurred-background-picture {
   background-image: image-url("flink/home/background.jpg");
   background-repeat: no-repeat;
@@ -17,7 +43,7 @@
 }
 
 .row-container {
-  width: 1000px;
+  width: 1100px;
   margin: auto;
 }
 
@@ -34,4 +60,45 @@
 .iphone-top {
   width: 258px;
   height: 371px;
+}
+
+.large-title {
+  color: @color-white;
+  font-family: @font-thin;
+  font-size: 36px;
+}
+
+.medium-title {
+  color: @color-white;
+  font-family: @font-light;
+  font-size: 30px;
+}
+
+.medium-title:hover {
+  color: @color-light-grey;
+}
+
+li {
+  display: inline-block;
+  color: @color-dark-grey;
+  font-size: 14px;
+  padding: 15px 20px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
+li a {
+  color: @color-dark-grey;
+}
+
+li a:hover {
+  color: @color-black;
+}
+
+li a i {
+  color: @color-light-grey;
+}
+
+li a i:hover {
+  color: darken(@color-light-grey, 20%)
 }

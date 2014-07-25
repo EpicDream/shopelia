@@ -10,19 +10,8 @@
  *
  */
 
-// fonts
-@font-fallback: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-@font-thin: "HelveticaNeue-Thin", "Helvetica Neue Thin", @font-fallback;
-@font-light: "HelveticaNeue-Light", "Helvetica Neue Light", @font-fallback;
-@font-regular: "HelveticaNeue-Regular", "Helvetica Neue Regular", @font-fallback;
-@font-medium: "HelveticaNeue-Medium", "Helvetica Neue Medium", @font-fallback;
-@font-bold: "HelveticaNeue-Bold", "Helvetica Neue Bold", @font-fallback;
-
-// colors
-@color-red: #ff0000;
-@color-blue: #0000ff;
-@color-white: #ffffff;
-@color-black: #000000;
+@import "font-awesome";
+@import "constants.css.less";
 
 // default tags
 *{
@@ -38,7 +27,7 @@ body {
   font-style: normal !important;
 }
 
-html, body, ul, ol, .container, .row, img, a {
+html, body, ul, ol, li, .container, .row, img, a {
   margin: 0;
   padding: 0;
 }
@@ -46,6 +35,10 @@ html, body, ul, ol, .container, .row, img, a {
 html, body, .container {
   height: 100%;
   width: 100%;
+}
+
+a {
+  text-decoration: none;
 }
 
 .row {
@@ -85,13 +78,6 @@ html, body, .container {
   text-align: center;
 }
 
-// text styles
-.large-title {
-  color: @color-white;
-  font-family: @font-thin;
-  font-size: 36px;
-}
-
 // div float
 .float-left {
   float: left;
@@ -103,4 +89,26 @@ html, body, .container {
 
 .clear {
   clear: both;
+}
+
+// buttons
+.rounded-button (@color: @color-black) {
+  border:2px solid;
+  border-radius: 10px;
+  border-color: @color;
+  color: @color;
+  font-family: @font-medium;
+  font-size: 18px;
+  text-transform: uppercase;
+  display: inline-block;
+  vertical-align:top;
+  padding: 12px 15px;
+}
+
+.rounded-button-pink {
+  .rounded-button(@color-pink)
+}
+
+.rounded-button-pink:hover {
+  .rounded-button(darken(@color-pink, 10%))
 }
