@@ -111,13 +111,13 @@ class Look < ActiveRecord::Base
   scope :from_country, -> (country_id) {
     joins(:flinker).where('flinkers.country_id = ?', country_id) unless country_id.blank?
   }
-  scope :popular, ->(published_before, published_after) {
+  scope :popular, ->(published_before=nil, published_after=nil) {
     recent(published_before, published_after)
     .joins("join (select resource_id, count(*) from flinker_likes 
             group by resource_id having count(*) >= #{MIN_LIKES_FOR_POPULAR}) likes
             on looks.id = likes.resource_id")
   }
-  scope :recent, ->(published_before, published_after) {
+  scope :recent, ->(published_before=nil, published_after=nil) {
     published_before ||= Time.now
     published_after ||= Rails.configuration.min_date
 
@@ -129,6 +129,7 @@ class Look < ActiveRecord::Base
     .where(staff_pick:true)
   }
   scope :staff_picked, -> { where(staff_pick:true) }
+  scope :flink_loves, -> { staff_picked }
   scope :staff_picked_countries, -> {
     staff_picked
     .joins(:flinker)
