@@ -1,0 +1,102 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ */
+
+// fonts
+@font-fallback: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+@font-thin: "HelveticaNeue-Thin", "Helvetica Neue Thin", @font-fallback;
+@font-light: "HelveticaNeue-Light", "Helvetica Neue Light", @font-fallback;
+@font-regular: "HelveticaNeue-Regular", "Helvetica Neue Regular", @font-fallback;
+@font-medium: "HelveticaNeue-Medium", "Helvetica Neue Medium", @font-fallback;
+@font-bold: "HelveticaNeue-Bold", "Helvetica Neue Bold", @font-fallback;
+
+// colors
+@color-red: #ff0000;
+@color-blue: #0000ff;
+@color-white: #ffffff;
+@color-black: #000000;
+
+// default tags
+body {
+  font-family: @font-light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -moz-font-smoothing: antialiased;
+  font-weight: normal !important;
+  font-style: normal !important;
+}
+
+html, body, ul, ol, .container, .row, img, a {
+  margin: 0;
+  padding: 0;
+}
+
+html, body, .container {
+  height: 100%;
+  width: 100%;
+}
+
+.row {
+  [class*="col"] {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+}
+
+// color classes
+.red {
+  background-color: @color-red;
+}
+
+.blue {
+  background-color: @color-blue;
+}
+
+.white {
+  background-color: @color-white;
+}
+
+.black {
+  background-color: @color-black;
+}
+
+// text alignments
+.text-aligned-right {
+  text-align: right;
+}
+
+.text-aligned-left {
+  text-align: left;
+}
+
+.text-aligned-center {
+  text-align: center;
+}
+
+// text styles
+.large-title {
+  color: @color-white;
+  font-family: @font-thin;
+  font-size: 36px;
+}
+
+// div float
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+.clear {
+  clear: both;
+}

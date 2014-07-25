@@ -1,3 +1,4 @@
+.idea/
 *.swp
 /.bundle
 /db/*.sqlite3*
