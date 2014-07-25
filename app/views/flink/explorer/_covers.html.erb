@@ -1,0 +1,13 @@
+<% @covers.each do |look| %>
+  <% url = Rails.configuration.image_host + look.look_covers.first.picture.url(:small) %>
+  <a style="background-image:url(<%= url %>);" class="cover" href="<%= flink_publisher_path(look.flinker)%>">
+    <div class="cover-footer">
+      <span>
+        <%= look.name.strip %>
+      </span>
+      <span>
+        <%= look.flinker.name %>
+      </span>
+    </div>
+  </a>
+<% end %>

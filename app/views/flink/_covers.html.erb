@@ -1,6 +1,0 @@
-<% @covers.each do |look| %>
-  <% url = Rails.configuration.image_host + look.look_covers.first.picture.url(:small) %>
-  <div style="background-image:url(<%= url %>);" class="covr">
-  </div>
-  <!-- <%= image_tag Rails.configuration.image_host + look.look_covers.first.picture.url(:small), width:200, height:320, class:'covr' %> -->
-<% end %>

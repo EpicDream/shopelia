@@ -272,10 +272,10 @@ Shopelia::Application.routes.draw do
   match "about" => "home#about"
   put "api/flink/flinkers/session_touch", to: "api/flink/sessions#update"
 
-  # match '*not_found', to: 'errors#error_404', format: false
-  # get "errors/error_404", format: false
-  # get "errors/error_500"
-
+  # Flink web site
   root to: 'flink/home#index'
+  get "explorer", to: "flink/explorer#index"
+  get "publishers/:id", to: "flink/publishers#show", as: :flink_publisher
+  
   match '*unmatched_route', :to => 'application#raise_not_found!'
 end
