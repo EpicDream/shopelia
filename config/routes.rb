@@ -2,8 +2,6 @@ require 'api_constraints'
 
 Shopelia::Application.routes.draw do
 
-
-  match "/terms" => "frontend/flink/terms#index"
   get "/flinkers/:id", to: redirect('/')
   get "/themes/:id", to: redirect('/')
   get "/themes", to: redirect('/')
@@ -278,6 +276,6 @@ Shopelia::Application.routes.draw do
   # get "errors/error_404", format: false
   # get "errors/error_500"
 
-  root to: 'frontend/flink/home#index'
+  root to: 'flink#index'
   match '*unmatched_route', :to => 'application#raise_not_found!'
 end
