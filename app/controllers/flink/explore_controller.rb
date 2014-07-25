@@ -1,4 +1,4 @@
-class Flink::ExplorerController < ApplicationController
+class Flink::ExploreController < ApplicationController
   CATEGORY_FILTERS = [:flink_loves, :recent, :popular]
   layout "flink"
 

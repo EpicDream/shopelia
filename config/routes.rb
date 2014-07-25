@@ -274,8 +274,8 @@ Shopelia::Application.routes.draw do
 
   # Flink web site
   root to: 'flink/home#index'
-  get "explorer", to: "flink/explorer#show", as: :flink_explore
-  get "explorer/:category", to: "flink/explorer#show"
+  get "explore", to: "flink/explore#show", as: :flink_explore
+  get "explore/:category", to: "flink/explore#show"
   get "publishers/:id", to: "flink/publishers#show", as: :flink_publisher
   
   match '*unmatched_route', :to => 'application#raise_not_found!'

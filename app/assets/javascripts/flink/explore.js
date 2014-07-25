@@ -5,7 +5,7 @@ $(document).ready(function() {
 
   $(document).infiniteScroll({
     itemSelector: "a.cover",
-    dataPath: "/explorer/" + category,
+    dataPath: "/explore/" + category,
     onDataLoaded: function(page){
     },
     onDataLoading: function(page){
