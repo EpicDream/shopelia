@@ -1,6 +1,9 @@
 class Look < ActiveRecord::Base
+  extend FriendlyId
   MIN_LIKES_FOR_POPULAR = 150
   MIN_BUILD_FOR_STAFF_PICKS = 31
+  
+  friendly_id :publisher_and_look_name, use: :slugged
   
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
   attr_accessible :hashtags_attributes, :season, :staff_pick, :quality_rejected
@@ -175,6 +178,14 @@ class Look < ActiveRecord::Base
     .order('flink_published_at desc')
     .includes(:look_covers)
     .includes(:flinker)
+  end
+  
+  def publisher_and_look_name
+    ["#{flinker.name}", "#{name}"]
+  end
+  
+  def should_generate_new_friendly_id?
+    new_record? || slug.blank?
   end
 
   def mark_post_as_processed

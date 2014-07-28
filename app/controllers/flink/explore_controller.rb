@@ -3,7 +3,7 @@ class Flink::ExploreController < ApplicationController
   layout "flink"
 
   def show
-    @covers = Look.covers.send(category).paginate(per_page:20, page:params[:page])
+    @covers = Look.covers.send(category).paginate(per_page: 20, page: params[:page])
     
     render partial: 'covers' if request.xhr?
   end
