@@ -278,7 +278,7 @@ Shopelia::Application.routes.draw do
   get "contact", to: "flink/contact#index"
   get "explore", to: "flink/explore#show", as: :flink_explore
   get "explore/:category", to: "flink/explore#show"
-  get "publishers/:id", to: "flink/publishers#show", as: :flink_publisher
+  get "/publishers-looks/:id", to: "flink/publishers_looks#show", as: :flink_looks
   
   match '*unmatched_route', :to => 'application#raise_not_found!'
 end
