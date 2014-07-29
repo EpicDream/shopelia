@@ -212,6 +212,10 @@ class Look < ActiveRecord::Base
   def cover_url
     Rails.configuration.image_host + look_covers.first.picture.url(:small)
   end
+
+  def large_cover_url
+    Rails.configuration.image_host + look_covers.first.picture.url(:large)
+  end
   
   def hashtags_as_strings
     hashtags.map(&:name).map { |hashtag| "##{hashtag}" }

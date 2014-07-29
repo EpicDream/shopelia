@@ -1,1 +1,14 @@
-<%= @look.name %>
+<%= render 'flink/menu'%>
+<div class="detail-container">
+  <div class="container">
+    <div class="detail-column">
+      <div class="look-container" style="background-image: url(<%= @look.large_cover_url %>);"></div>
+    </div>
+    <div class="detail-column padding-left-60">
+      <div class="look-title"><%= @look.name %></div>
+      <div class="look-publisher"><%= @look.flinker.name %></div>
+      <div class="look-publication-date"><%= @look.published_at.strftime("%B, %d %Y") %></div>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>

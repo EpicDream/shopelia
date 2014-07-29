@@ -24,6 +24,7 @@ body {
   -moz-font-smoothing: antialiased;
   font-weight: normal !important;
   font-style: normal !important;
+  background-color: @color-background;
 }
 html, body, ul, ol, li, .container, .row, img, a {
   margin: 0;
@@ -38,12 +39,6 @@ a {
 }
 image {
   border: 0;
-}
-.row {
-  [class*="col"] {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
 }
 
 // color classes
@@ -82,16 +77,12 @@ image {
   clear: both;
 }
 
-// MENU
-
-div.flink-menu{
-  background:white;
-  width:100%;
-  height:180px;
-  z-index:1000;
-  position:fixed;
-  top:0;
-  opacity:0.9;
+// menu
+.flink-menu{
+  background: white;
+  width: 100%;
+  height: 150px;
+  border-bottom: @color-separator 1px solid;
 }
 
 // buttons
@@ -108,11 +99,9 @@ div.flink-menu{
   vertical-align:top;
   padding: 12px 15px;
 }
-
 .rounded-button-pink {
   .rounded-button(@color-pink)
 }
-
 .rounded-button-pink:hover {
   .rounded-button(darken(@color-pink, 10%))
 }
