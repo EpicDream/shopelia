@@ -143,6 +143,12 @@ class Look < ActiveRecord::Base
   scope :with_uuid, ->(uuid) {
     where(uuid: uuid.scan(/^[^\-]+/).flatten.first)
   }
+  scope :random, ->(publisher=nil, except=nil, max=3) {
+    looks = published.order('random()').limit(max)
+    looks = looks.where('id != ?', except.id) if except
+    looks = looks.where(flinker_id: publisher.id) if publisher
+    looks
+  }
 
   alias_attribute :published, :is_published
   
@@ -161,10 +167,6 @@ class Look < ActiveRecord::Base
     keywords = keywords.compact.map{ |keyword| keyword.delete('#') }
     published.with_hashtags(keywords)
     .order('flink_published_at desc')
-  end
-  
-  def self.random collection=Look
-    collection.offset(rand(collection.count)).first
   end
   
   def self.publications_counts_per_day from=(Date.today - 7.days)
