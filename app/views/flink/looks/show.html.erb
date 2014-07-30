@@ -1,14 +1,59 @@
 <%= render 'flink/menu'%>
+<%= @look.uuid %>
 <div class="detail-container">
-  <div class="container">
+  <div class="centered-container">
     <div class="detail-column">
       <div class="look-container" style="background-image: url(<%= @look.large_cover_url %>);"></div>
     </div>
-    <div class="detail-column padding-left-60">
+    <div class="detail-column">
       <div class="look-title"><%= @look.name %></div>
       <div class="look-publisher"><%= @look.flinker.name %></div>
       <div class="look-publication-date"><%= @look.published_at.strftime("%B, %d %Y") %></div>
+      <% if @look.highlighted_hashtags.count > 0 %>
+      <div class="look-hashtags">
+        <% for hashtag in @look.highlighted_hashtags %>
+        <div class="hashtag">#<%= hashtag.name %></div>
+        <% end %>
+      </div>
+      <% end %>
+      <% if @look.look_products.count > 0 %>
+        <div class="look-products">
+          <div class="separator"></div>
+          <div class="section-title">Product list</div>
+          <div class="look-products-container">
+            <% for product in @look.look_products %>
+            <div class="look-product">
+              <div class="look-product-name"><%= I18n.t :"flink.products.#{product.code}", :locale => :en %>/<%= I18n.t :"flink.products.#{product.code}", :locale => :fr %></div>
+              <div class="look-product-brand"><%= product.brand %></div>
+            </div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+      <div class="stick-to-bottom-container">
+        <div class="look-social">
+          <div class="section-title float-left">Share this look</div>
+          <div class="look-social-items float-right">
+            <ul>
+              <li><%= link_to icon('instagram fa-2x'), '#' %></li>
+              <li><%= link_to icon('facebook fa-2x'), '#' %></li>
+              <li><%= link_to icon('twitter fa-2x'), '#' %></li>
+            </ul>
+          </div>
+          <div class="clear"></div>
+        </div>
+        <div class="separator"></div>
+        <div class="look-buttons">
+          <%= link_to @look.url, {target: "_blank"} do %>
+            <div class="rounded-button-grey-tiny">See original article</div>
+          <% end %>
+          <%= link_to flink_deeplink_for_look(@look), {target: "_blank"} do %>
+            <div class="rounded-button-pink-tiny">View on flink app</div>
+          <% end %>
+        </div>
+      </div>
     </div>
     <div class="clear"></div>
   </div>
 </div>
+hello
