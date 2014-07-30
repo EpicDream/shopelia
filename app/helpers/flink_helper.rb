@@ -16,4 +16,8 @@ module FlinkHelper
     "http://twitter.com/flinkhq"
   end
 
+  def flink_deeplink_for_look look
+    "http://deeplink.me/#{Rails.configuration.deeplink_host}/looks/#{look.uuid}"
+  end
+
 end

@@ -13,6 +13,7 @@ module Shopelia
     config.host = 'http://www.flink.io'
     config.image_host = 'http://www.flink.io'
     config.avatar_host = 'http://www.flink.io' #cause, need another base url for avatars in dev.
+    config.deeplink_host = 'flink.io'
     
     # Maximum number of times the order is allowed to retry a new account creation
     config.max_retry = 3

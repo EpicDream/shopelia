@@ -4,45 +4,129 @@ body {
   background-color: @color-white;
 }
 
-.container {
+// utils
+.separator {
+  width: 100%;
+  height: 0;
+  border-bottom: @color-light-separator 1px solid;
+  margin-bottom: @metric-content-padding;
+}
+.padding-top-10 {
+  padding-top: 10px;
+}
+
+// containers
+.centered-container {
   width: 1000px;
   margin: auto;
 }
-
 .detail-container {
   background-color: @color-background;
-  padding: 60px;
+  padding: @metric-default-padding;
   border-bottom: @color-separator 1px solid;
+  height: 690px + @metric-default-padding * 2;
 }
-
+.detail-container .centered-container {
+  height: 100%;
+}
 .detail-column {
   width: 50%;
+  height: 100%;
   float: left;
+  position: relative;
 }
-
+.detail-column:nth-child(2) {
+  padding: 0 @metric-content-padding;
+}
+.detail-column .stick-to-bottom-container {
+  width: 100% - 16px;
+}
 .look-container {
   width: 460px;
-  height: 690px;
-  float: right;
+  height: 100%;
   background-position: center center;
   background-size: cover;
 }
+.stick-to-bottom-container {
+  position: absolute;
+  bottom: 0;
+}
 
+// metadata
 .look-title {
   font-size: 22px;
 }
-
 .look-publisher {
   font-size: 22px;
   font-family: @font-regular;
   padding-top: 6px;
 }
-
 .look-publication-date {
   font-size: 16px;
   padding-top: 10px;
+  color: @color-dark-grey;
 }
 
-.padding-left-60 {
-  padding-left: 60px;
+// hashtags
+.look-hashtags {
+  padding-top: @metric-content-padding;
+}
+
+// products
+.look-products {
+  padding-top: @metric-content-padding;
+}
+.look-product {
+  width: 100%;
+  height: 32px;
+  padding-top: 6px;
+  font-size: 16px;
+}
+.look-product:first-of-type {
+  margin-top: 10px;
+}
+.look-product-name {
+  float: left;
+}
+.look-product-brand {
+  float: right;
+  color: @color-dark-grey;
+}
+
+// social
+.look-social {
+  margin-bottom: @metric-content-padding - 10px;
+}
+.look-social-items li {
+  display: inline;
+  color: @color-dark-grey;
+  font-size: 14px;
+  padding: 0px 15px;
+  text-transform: uppercase;
+  vertical-align: middle;
+  list-style-type: none;
+}
+.look-social-items li a {
+  color: @color-dark-grey;
+}
+.look-social-items li a:hover {
+  color: @color-black;
+}
+.look-social-items li a i {
+  color: @color-light-grey;
+}
+.look-social-items li a i:hover {
+  color: darken(@color-light-grey, 20%)
+}
+
+// buttons
+.look-buttons .rounded-button-pink-tiny {
+  margin-left: 20px;
+}
+
+// sections
+.section-title {
+  text-transform: uppercase;
+  font-size: 14px;
+  color: @color-dark-grey;
 }
