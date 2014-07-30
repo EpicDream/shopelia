@@ -143,7 +143,7 @@ class Look < ActiveRecord::Base
   scope :with_uuid, ->(uuid) {
     where(uuid: uuid.scan(/^[^\-]+/).flatten.first)
   }
-  scope :random, ->(publisher=nil, except=nil, max=3) {
+  scope :random, ->(max=3, publisher=nil, except=nil) {
     looks = published.order('random()').limit(max)
     looks = looks.where('id != ?', except.id) if except
     looks = looks.where(flinker_id: publisher.id) if publisher
