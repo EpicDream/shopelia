@@ -183,7 +183,14 @@ class Flinker < ActiveRecord::Base
     exclusion = skope.of_country(iso).map(&:id)
     skope.of_country(iso) + top_liked(Date.today - 1.week, 20 - total, exclusion)
   end
-  
+
+  def trackable_url
+    uri = Addressable::URI.parse(self.url)
+    uri.query_values ||= {}
+    uri.query_values = uri.query_values.merge({utm_source:'flink-web', utm_medium:'website'})
+    uri.to_s
+  end
+
   private
   
   def assign_uuid

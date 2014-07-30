@@ -1,13 +1,12 @@
 <%= render 'flink/menu'%>
-<%= @look.uuid %>
 <div class="detail-container">
   <div class="centered-container">
     <div class="detail-column">
       <div class="look-container" style="background-image: url(<%= @look.large_cover_url %>);"></div>
     </div>
     <div class="detail-column">
-      <div class="look-title"><%= @look.name %></div>
-      <div class="look-publisher"><%= @look.flinker.name %></div>
+      <div class="look-title"><%= link_to @look.name, @look.trackable_url, :target => "_blank" %></div>
+      <div class="look-publisher"><%= link_to @look.flinker.name, @look.flinker.trackable_url, :target => "_blank" %></div>
       <div class="look-publication-date"><%= @look.published_at.strftime("%B, %d %Y") %></div>
       <% if @look.highlighted_hashtags.count > 0 %>
       <div class="look-hashtags">
@@ -37,7 +36,6 @@
           <div class="section-title float-left">Share this look</div>
           <div class="look-social-items float-right">
             <ul>
-              <li><%= link_to icon('instagram fa-2x'), '#' %></li>
               <li><%= link_to icon('facebook fa-2x'), '#' %></li>
               <li><%= link_to icon('twitter fa-2x'), '#' %></li>
             </ul>
@@ -46,10 +44,10 @@
         </div>
         <div class="separator"></div>
         <div class="look-buttons">
-          <%= link_to @look.url, {target: "_blank"} do %>
+          <%= link_to @look.trackable_url, {target: "_blank"} do %>
             <div class="rounded-button-grey-tiny">See original article</div>
           <% end %>
-          <%= link_to flink_deeplink_for_look(@look), {target: "_blank"} do %>
+          <%= link_to @look.deeplink_url, {target: "_blank"} do %>
             <div class="rounded-button-pink-tiny">View on flink app</div>
           <% end %>
         </div>
@@ -58,4 +56,24 @@
     <div class="clear"></div>
   </div>
 </div>
-hello
+<div class="suggestions-container">
+  <div class="centered-container">
+    <div class="suggestions-column">
+      <div class="section-title">More from this blogger</div>
+      <% for look in Look.random(4, @look.flinker, @look) %>
+        <%= link_to flink_looks_path(look.friendly_id) do %>
+          <div class="suggestions-look" style="background-image: url(<%= look.cover_url %>);"></div>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="suggestions-column">
+      <div class="section-title">Also hot on Flink App</div>
+      <% for look in Look.random(4, nil, @look) %>
+        <%= link_to flink_looks_path(look.friendly_id) do %>
+          <div class="suggestions-look" style="background-image: url(<%= look.cover_url %>);"></div>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="clear"></div>
+  </div>
+</div>

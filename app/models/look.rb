@@ -231,6 +231,17 @@ class Look < ActiveRecord::Base
     HighlightedLook.hashtags_of_look(self)
   end
 
+  def trackable_url
+    uri = Addressable::URI.parse(self.url)
+    uri.query_values ||= {}
+    uri.query_values = uri.query_values.merge({utm_source:'flink-web', utm_medium:'website'})
+    uri.to_s
+  end
+
+  def deeplink_url
+    "http://deeplink.me/#{Rails.configuration.deeplink_host}/looks/#{self.uuid}"
+  end
+
   private
   
   def may_destroy_hashtag record
@@ -273,5 +284,5 @@ class Look < ActiveRecord::Base
   def revive_flinkers
     Revival.revive!([], self) 
   end
-  
+
 end
