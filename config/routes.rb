@@ -49,7 +49,6 @@ Shopelia::Application.routes.draw do
   end
   resources :catalogue, :only => :index
   resources :collections
-  resources :looks, :only => [:show]
   resources :collection_items, :only => [:show, :create]
   resources :orders, :only => [:show, :update] do
     get :confirm, :on => :member
@@ -278,7 +277,7 @@ Shopelia::Application.routes.draw do
   get "contact", to: "flink/contact#index"
   get "explore", to: "flink/explore#show", as: :flink_explore
   get "explore/:category", to: "flink/explore#show"
-  get "/publishers-looks/:id", to: "flink/publishers_looks#show", as: :flink_looks
+  get "looks/:id", to: "flink/looks#show", as: :flink_looks
   
   match '*unmatched_route', :to => 'application#raise_not_found!'
 end
