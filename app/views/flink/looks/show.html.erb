@@ -22,10 +22,12 @@
           <div class="section-title">Product list</div>
           <div class="look-products-container">
             <% for product in @look.look_products %>
-            <div class="look-product">
-              <div class="look-product-name"><%= I18n.t :"flink.products.#{product.code}", :locale => :en %>/<%= I18n.t :"flink.products.#{product.code}", :locale => :fr %></div>
-              <div class="look-product-brand"><%= product.brand %></div>
-            </div>
+              <div class="look-product">
+                <div class="look-product-name">
+                  <%= [:en, :fr].map { |locale| t("flink.products.#{product.code}", :locale => locale) }.join("/") %>
+                </div>
+                <div class="look-product-brand"><%= product.brand %></div>
+              </div>
             <% end %>
           </div>
         </div>
