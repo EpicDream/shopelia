@@ -19,6 +19,7 @@ class Revival
   end
   
   def revive!
+    @flinker.touch(:last_session_open_at) unless @flinker.last_session_open_at
     return unless revive?
     RevivalLog.increment(Date.today)
     NewLooksNotificationWorker.perform_in(revive_in, @flinker.id, @look.id)
