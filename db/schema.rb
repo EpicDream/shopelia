@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140728123900) do
+ActiveRecord::Schema.define(:version => 20140731120150) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -889,8 +889,9 @@ ActiveRecord::Schema.define(:version => 20140728123900) do
     t.string   "version"
     t.string   "build"
     t.string   "phone"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+    t.boolean  "mixpanel",     :default => false
   end
 
   add_index "trackings", ["event"], :name => "index_trackings_on_event"
