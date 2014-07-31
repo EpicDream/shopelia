@@ -5,7 +5,7 @@
       <div class="look-container" style="background-image: url(<%= @look.large_cover_url %>);"></div>
     </div>
     <div class="detail-column">
-      <div class="look-title"><%= link_to @look.name, @look.trackable_url, :target => "_blank" %></div>
+      <div class="look-title"><%= @look.name %></div>
       <div class="look-publisher"><%= link_to @look.flinker.name, @look.flinker.trackable_url, :target => "_blank" %></div>
       <div class="look-publication-date"><%= l(@look.published_at.to_date, format: :short) %></div>
       <% if @look.highlighted_hashtags.count > 0 %>
