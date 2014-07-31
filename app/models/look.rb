@@ -201,7 +201,7 @@ class Look < ActiveRecord::Base
   def bitly_url
     @bitly_url = read_attribute(:bitly_url)
     unless @bitly_url
-      @bitly_url = Bitly.client.shorten("http://www.flink.io/looks/#{self.uuid}").short_url
+      @bitly_url = Bitly.client.shorten(self.sharable_url).short_url
       self.update_attributes(bitly_url: @bitly_url)
     end
     @bitly_url
@@ -240,6 +240,14 @@ class Look < ActiveRecord::Base
 
   def deeplink_url
     "http://deeplink.me/#{Rails.configuration.deeplink_host}/looks/#{self.uuid}"
+  end
+
+  def sharable_title
+    "#{self.name} by #{self.flinker.name} @flinkhq #ootd #fashion #love #fashionblogger #flinkhq"
+  end
+
+  def sharable_url
+    "#{Rails.configuration.host}/looks/#{self.friendly_id}"
   end
 
   private

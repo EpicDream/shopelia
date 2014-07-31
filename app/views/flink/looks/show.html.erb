@@ -1,4 +1,5 @@
 <%= render 'flink/menu'%>
+<%= render 'flink/facebook_sdk' %>
 <div class="detail-container">
   <div class="centered-container">
     <div class="detail-column">
@@ -36,8 +37,8 @@
           <div class="section-title float-left">Share this look</div>
           <div class="look-social-items float-right">
             <ul>
-              <li><%= link_to icon('facebook fa-2x'), '#' %></li>
-              <li><%= link_to icon('twitter fa-2x'), '#' %></li>
+              <li><%= link_to icon('facebook fa-2x'), '#', onclick: "FB.ui({method: 'share', href: '#{ URI::encode(@look.sharable_url) }' }, function(response){});" %></li>
+              <li><%= link_to icon('twitter fa-2x'), "https://twitter.com/share?url=#{ URI::encode(@look.bitly_url) }&text=#{ URI::encode(@look.sharable_title) }", target: '_blank' %></li>
             </ul>
           </div>
           <div class="clear"></div>

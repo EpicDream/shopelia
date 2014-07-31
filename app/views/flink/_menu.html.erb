@@ -1,5 +1,20 @@
-<div class='flink-menu' data-category="<%= params[:category] %>">
-  <%= link_to 'flink loves', '/explore/flinkloves'%>
-  <%= link_to 'popular', '/explore/popular'%>
-  <%= link_to 'recent', '/explore/recent'%>
+<div class="flink-menu" data-category="<%= params[:category] %>">
+  <div class="flink-menu-logo">
+    <%= link_to image_tag("flink/common/logo_pink.png", :alt => "Flink"), flink_explore_path %>
+  </div>
+  <div class="flink-menu-categories">
+    <%= link_to '/explore/flinkloves' do %>
+    <div class="flink-menu-category-loves<%= '-selected' if @category == :flink_loves %>">Flink loves</div>
+    <% end %>
+    <%= link_to '/explore/popular' do %>
+      <div class="flink-menu-category-popular<%= '-selected' if @category == :popular %>">Popular</div>
+    <% end %>
+    <%= link_to '/explore/recent' do %>
+      <div class="flink-menu-category-recent<%= '-selected' if @category == :recent %>">Recent</div>
+    <% end %>
+  </div>
+  <div class="flink-menu-links">
+    <%= link_to image_tag("flink/common/appstore_badge.png", :alt => "Flink"), flink_appstore_url, target: '_blank' %>
+  </div>
+  <div class="clear"></div>
 </div>
