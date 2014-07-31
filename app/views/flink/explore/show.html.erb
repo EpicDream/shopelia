@@ -1,3 +1,6 @@
+<%= content_for :head do %>
+  <meta name="keywords" content="fashion,mode,flink,looks,trendy,paris,<%= @covers.map(&:hashtags).flatten.map(&:name).uniq.join(",") %>">
+<% end %>
 <%= render 'flink/menu'%>
 <div class="looks-covers">
   <%= render 'covers' %>

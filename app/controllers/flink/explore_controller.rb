@@ -4,7 +4,7 @@ class Flink::ExploreController < ApplicationController
 
   def show
     @category = category
-    @covers = Look.covers.send(@category).paginate(per_page: 20, page: params[:page])
+    @covers = Look.covers.includes(:hashtags).send(@category).paginate(per_page: 20, page: params[:page])
     render partial: 'covers' if request.xhr?
   end
   

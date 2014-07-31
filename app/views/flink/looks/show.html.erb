@@ -1,3 +1,7 @@
+<%= content_for :head do %>
+  <meta name="keywords" content="<%= @look.hashtags.map(&:name).uniq.join(",") %>">
+<% end %>
+
 <%= render 'flink/menu'%>
 <%= render 'flink/facebook_sdk' %>
 <div class="detail-container">

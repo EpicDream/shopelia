@@ -7,6 +7,9 @@
       <span>
         <%= look.flinker.name %>
       </span>
+      <p class="hidden">
+        <%= look.hashtags.map(&:name).uniq.join(",") %>
+      </p>
     </div>
   </a>
 <% end %>
