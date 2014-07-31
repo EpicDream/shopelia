@@ -210,7 +210,7 @@ class Look < ActiveRecord::Base
   def image_for_cover
     look_images.order('display_order asc').limit(1).first
   end
-  
+
   def cover_url
     Rails.configuration.image_host + look_covers.first.picture.url(:small)
   end

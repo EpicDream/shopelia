@@ -84,7 +84,7 @@ image {
 .flink-menu{
   background: white;
   width: 100%;
-  padding: @metric-content-padding;
+  padding: @metric-default-padding;
   border-bottom: @color-separator 1px solid;
   text-align: center;
 }
@@ -128,6 +128,32 @@ image {
   display: inline-block;
   float: right;
   padding-top: 8px;
+}
+.flink-menu-links ul {
+  display: inline-block;
+  vertical-align: top;
+  margin-top: 14px;
+  margin-right: 20px;
+}
+.flink-menu-links li {
+  display: inline;
+  color: @color-dark-grey;
+  font-size: 14px;
+  padding: 0 20px;
+  text-transform: uppercase;
+  list-style-type: none;
+}
+.flink-menu-links li a {
+  color: @color-dark-grey;
+}
+.flink-menu-links li a:hover {
+  color: @color-black;
+}
+.flink-menu-links li a i {
+  color: @color-light-grey;
+}
+.flink-menu-links li a i:hover {
+  color: darken(@color-light-grey, 20%)
 }
 
 // buttons

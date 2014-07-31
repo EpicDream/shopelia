@@ -1,5 +1,5 @@
 <% @covers.each do |look| %>
-  <a style="background-image:url(<%= look.cover_url %>);" class="cover" href="<%= flink_looks_path(look)%>">
+  <a style="background-image:url(<%= look.cover_url %>);" class="cover" href="<%= flink_looks_path(look) %>">
     <div class="cover-footer">
       <span>
         <%= look.name.strip %>
