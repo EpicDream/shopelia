@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140717100810) do
+ActiveRecord::Schema.define(:version => 20140731120150) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -508,10 +508,12 @@ ActiveRecord::Schema.define(:version => 20140717100810) do
     t.string   "season"
     t.boolean  "staff_pick",         :default => false
     t.boolean  "quality_rejected",   :default => false
+    t.string   "slug"
   end
 
   add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"
   add_index "looks", ["is_published"], :name => "index_looks_on_is_published"
+  add_index "looks", ["slug"], :name => "index_looks_on_slug", :unique => true
   add_index "looks", ["uuid"], :name => "index_looks_on_uuid"
 
   create_table "looks_themes", :force => true do |t|
@@ -887,8 +889,9 @@ ActiveRecord::Schema.define(:version => 20140717100810) do
     t.string   "version"
     t.string   "build"
     t.string   "phone"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+    t.boolean  "mixpanel",     :default => false
   end
 
   add_index "trackings", ["event"], :name => "index_trackings_on_event"
