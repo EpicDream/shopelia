@@ -35,7 +35,7 @@ class PostTest < ActiveSupport::TestCase
     look = @post.look
     assert_equal "test", look.name
     assert_equal "http://www.toto.fr", look.url
-    assert_equal 2, look.look_images.count
+    assert_equal 1, look.look_images.count
     assert_equal "bla bla bla", look.description
     assert_not_nil look.published_at 
   end

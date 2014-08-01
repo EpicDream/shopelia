@@ -55,7 +55,13 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( admin/newsletters.js admin/newsletters.css )
   config.assets.precompile += %w( admin/staff_picks.js admin/staff_picks.css )
   config.assets.precompile += %w( admin/flinker_merges.js admin/flinker_merges.css )
-
+  config.assets.precompile += %w( flink/explore.js flink/explore.css )
+  config.assets.precompile += %w( flink/home.js flink/home.css )
+  config.assets.precompile += %w( flink/looks.js flink/looks.css )
+  config.assets.precompile += %w( flink/application.js flink/application.css )
+  config.assets.precompile += %w( flink/terms.js flink/terms.css )
+  config.assets.precompile += %w( flink/contact.js flink/contact.css )
+  
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH
 

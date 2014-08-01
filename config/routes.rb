@@ -2,8 +2,6 @@ require 'api_constraints'
 
 Shopelia::Application.routes.draw do
 
-
-  match "/terms" => "flink#terms"
   get "/flinkers/:id", to: redirect('/')
   get "/themes/:id", to: redirect('/')
   get "/themes", to: redirect('/')
@@ -51,7 +49,6 @@ Shopelia::Application.routes.draw do
   end
   resources :catalogue, :only => :index
   resources :collections
-  resources :looks, :only => [:show]
   resources :collection_items, :only => [:show, :create]
   resources :orders, :only => [:show, :update] do
     get :confirm, :on => :member
@@ -274,10 +271,13 @@ Shopelia::Application.routes.draw do
   match "about" => "home#about"
   put "api/flink/flinkers/session_touch", to: "api/flink/sessions#update"
 
-  # match '*not_found', to: 'errors#error_404', format: false
-  # get "errors/error_404", format: false
-  # get "errors/error_500"
-
-  root to: 'flink#index'
+  # Flink web site
+  root to: 'flink/home#index'
+  get "terms", to: "flink/terms#index"
+  get "contact", to: "flink/contact#index"
+  get "explore", to: "flink/explore#show", as: :flink_explore
+  get "explore/:category", to: "flink/explore#show"
+  get "looks/:id", to: "flink/looks#show", as: :flink_looks
+  
   match '*unmatched_route', :to => 'application#raise_not_found!'
 end
