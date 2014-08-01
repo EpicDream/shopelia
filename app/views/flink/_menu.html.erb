@@ -4,19 +4,19 @@
   </div>
   <div class="flink-menu-categories">
     <%= link_to '/explore/flinkloves' do %>
-    <div class="flink-menu-category-loves<%= '-selected' if @category == :flink_loves %>">Flink loves</div>
+    <div class="flink-menu-category-loves<%= '-selected' if @category == :flink_loves %>"><%= t('flink.flink_loves') %></div>
     <% end %>
     <%= link_to '/explore/popular' do %>
-      <div class="flink-menu-category-popular<%= '-selected' if @category == :popular %>">Popular</div>
+      <div class="flink-menu-category-popular<%= '-selected' if @category == :popular %>"><%= t('flink.popular') %></div>
     <% end %>
     <%= link_to '/explore/recent' do %>
-      <div class="flink-menu-category-recent<%= '-selected' if @category == :recent %>">Recent</div>
+      <div class="flink-menu-category-recent<%= '-selected' if @category == :recent %>"><%= t('flink.recent') %></div>
     <% end %>
   </div>
   <div class="flink-menu-links">
     <ul>
-      <li><%= link_to "Contact", contact_path %></li>
-      <li><%= link_to "Terms", terms_path %></li>
+      <li><%= link_to t('flink.contact'), contact_path %></li>
+      <li><%= link_to t('flink.terms'), terms_path %></li>
     </ul>
     <%= link_to image_tag("flink/common/appstore_badge.png", :alt => "Flink"), flink_appstore_url, target: '_blank' %>
   </div>
