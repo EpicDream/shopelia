@@ -242,6 +242,10 @@ class Look < ActiveRecord::Base
     "http://deeplink.me/#{Rails.configuration.deeplink_host}/looks/#{self.uuid}"
   end
 
+  def app_deeplink_url
+    "flink://looks/#{self.uuid}"
+  end
+
   def sharable_title
     "#{self.name} by #{self.flinker.name} @flinkhq #ootd #fashion #love #fashionblogger #flinkhq"
   end
