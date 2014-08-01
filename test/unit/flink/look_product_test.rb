@@ -8,7 +8,7 @@ class LookProductTest < ActiveSupport::TestCase
   end
 
   test "it should create look product item" do
-    item = LookProduct.new(look_id:@look.id, product_id:products(:headphones).id)
+    item = LookProduct.new(look_id:@look.id, product_id:products(:headphones).id, code:"bag")
     assert item.save
   end
 
@@ -26,6 +26,7 @@ class LookProductTest < ActiveSupport::TestCase
     assert_difference ["Product.count", "Product.count"] do
       item = LookProduct.new(
         look_id:@look.id, 
+        code:"bag",
         url:"http://www.amazon.fr/gp/product/1")
 
       assert item.save
@@ -44,7 +45,7 @@ class LookProductTest < ActiveSupport::TestCase
   test "it should create item from feed data" do
     feed = example_feed
 
-    item = LookProduct.new(look_id:@look.id, feed:feed)
+    item = LookProduct.new(look_id:@look.id, feed:feed, code:"bag")
     assert item.save
 
     product = Product.fetch("http://www.amazon.fr/dp/2821201710")
@@ -66,7 +67,7 @@ class LookProductTest < ActiveSupport::TestCase
   
   test "when look product is updated, look must be touched(for api updated looks since)" do
     assert_change(@look, :updated_at, :>) { 
-      @look.look_products << LookProduct.new(look_id:@look.id, feed:example_feed)
+      @look.look_products << LookProduct.new(look_id:@look.id, feed:example_feed, code:"bag")
     }
     assert_change(@look, :updated_at, :>) { 
       @look.look_products.first.update_attributes(brand:"toto")
