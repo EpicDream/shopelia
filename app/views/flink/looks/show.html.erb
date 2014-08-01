@@ -10,7 +10,7 @@
   <meta name="keywords" content="<%=flinkwebsite_common_keywords.join(',')%>,<%= @look.hashtags.map(&:name).uniq.join(",")%>,<%= @look.look_products.map(&:brand).join(",")%>">
 <% end %>
 <%= content_for :title do %>
-  <%= "#{@look.flinker.name} - #{@look.name}"%>
+  <%= "#{@look.name} by #{@look.flinker.name}"%>
 <% end %>
 
 <%= render 'flink/menu'%>
@@ -34,7 +34,7 @@
       <% if @look.look_products.count > 0 %>
         <div class="look-products">
           <div class="separator"></div>
-          <div class="section-title">Product list</div>
+          <div class="section-title"><%= t('flink.product_list')%></div>
           <div class="look-products-container">
             <% for product in @look.look_products %>
               <div class="look-product">
@@ -61,10 +61,10 @@
         <div class="separator"></div>
         <div class="look-buttons">
           <%= link_to @look.trackable_url, {target: "_blank"} do %>
-            <div class="rounded-button-grey-tiny">See original article</div>
+            <div class="rounded-button-grey-tiny"><%= t('flink.see_original_article')%></div>
           <% end %>
           <%= link_to @look.app_deeplink_url, {target: "_blank"} do %>
-            <div class="rounded-button-pink-tiny">View on flink app</div>
+            <div class="rounded-button-pink-tiny"><%= t('flink.view_on_flink_app')%></div>
           <% end %>
         </div>
       </div>
