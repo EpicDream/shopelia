@@ -1,15 +1,5 @@
 - content_for :head do
   %meta{content: @look.description, name: "description"}/
-  %meta{content: "735090113186174", property: "fb:app_id"}/
-  %meta{content: @look.flinker.name, property: "og:title"}/
-  %meta{content: "Flink, a beautiful app to discover and share trendy fashion looks from top bloggers.", property: "og:description"}/
-  %meta{content: "http://www.flink.io/looks/" + @look.uuid, property: "og:url"}/
-  %meta{content: "http://www.flink.io" + @look.look_images.order(:display_order).first.picture.url(:small), property: "og:image"}/
-  %meta{content: "photo", name: "twitter:card"}/
-  %meta{content: "@FlinkHQ", name: "twitter:site"}/
-  %meta{content: "flink.io", name: "twitter:domain"}/
-  %meta{content: @look.name, name: "twitter:title"}/
-  %meta{content: "http://www.flink.io" + @look.look_images.order(:display_order).first.picture.url(:large) , name: "twitter:image:src"}/
 
 #background
 #pane
