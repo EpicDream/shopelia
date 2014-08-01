@@ -50,7 +50,8 @@ class LookSerializer < ActiveModel::Serializer
   end
 
   def images
-    ActiveModel::ArraySerializer.new(object.look_images.order(:display_order)).as_json
+    look_images = LookImage.where(resource_id:object.id)
+    ActiveModel::ArraySerializer.new(look_images.order(:display_order)).as_json
   end
   
   def liked_by_friends
