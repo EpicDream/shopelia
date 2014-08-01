@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <meta name="description" content="<%= t('flink.description') %>">
+  <meta name="og:description" content="<%= t('flink.description') %>">
+  <meta name="google-site-verification" content="ksV4TOKBXP-aC68eKvJATSA9gTvXbz-NNvZwV56IoiY">
+  <meta name="apple-itunes-app" content="app-id=798552697">
+  <meta name="robots" content="follow,index">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="twitter:site" content="@flinkHQ">
+  <meta name="twitter:card" content="photo">
+  <meta name="twitter:domain" content="flink.io">
+  <meta name="fb:app_id" content="<%= Rails.configuration.facebook_app_id %>">
+
+  <%= content_for :keywords %>
+
+  <title><%= content_for?(:title) ? yield(:title) : "Flink" %></title>
+  <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+  <!--[if lt IE 9]>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6.1/html5shiv.js" type="text/javascript"></script>
+  <![endif]-->
+
+  <%= stylesheet_link_tag "flink/application.css" %>
+  <%= javascript_include_tag "flink/application.js" %>
+  <%= javascript_include_tag params[:controller] %>
+  <%= stylesheet_link_tag params[:controller] %>
+
+  <%= favicon_link_tag %>
+  
+  <%=  yield :head %>
+  
+  <%= csrf_meta_tags %>
+</head>
+<body>
+  <%= yield %>
+  <%= render 'flink/flink_ga'%>
+</body>
+</html>
