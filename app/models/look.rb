@@ -11,7 +11,7 @@ class Look < ActiveRecord::Base
   belongs_to :flinker
   has_one :post
   has_many :comments
-  has_many :look_images, :foreign_key => "resource_id", :dependent => :destroy, order: 'display_order asc', limit:1
+  has_many :look_images, :foreign_key => "resource_id", :dependent => :destroy
   has_many :look_covers, :foreign_key => "resource_id", class_name:"LookImage", order: 'display_order asc', limit:1
   has_many :look_products, :dependent => :destroy
   has_many :products, :through => :look_products
