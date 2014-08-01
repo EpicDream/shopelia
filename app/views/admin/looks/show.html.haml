@@ -50,7 +50,7 @@
         =render partial:'form'  
         %hr  
         %div.images
-          - @look.look_images.order(:display_order).each do |image|
+          - LookImage.where(resource_id:@look.id).order(:display_order).each do |image|
             .img-block.sort{"data-id" => "#{image.id}"}
               = image_tag image.picture.url, class:"thumb"
               .img-delete
