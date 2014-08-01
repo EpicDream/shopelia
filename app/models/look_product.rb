@@ -9,7 +9,7 @@ class LookProduct < ActiveRecord::Base
 
   validates :look_id, :presence => true
   validates :product_id, :uniqueness => { :scope => :look_id }, :allow_nil => true
-  validates :code, :uniqueness => { :scope => [:brand, :look_id] }
+  validates :code, presence:true, :uniqueness => { :scope => [:brand, :look_id] }
 
   before_validation :check_url_validity, if:Proc.new{ |item| item.url.present? }
   before_validation :find_or_create_product, if:Proc.new{ |item| item.url.present? && item.errors.empty? }
