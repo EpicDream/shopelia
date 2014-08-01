@@ -1,5 +1,8 @@
 <%= content_for :head do %>
-  <meta name="keywords" content="<%= @look.hashtags.map(&:name).uniq.join(",") %>">
+  <meta name="keywords" content="<%=flinkwebsite_common_keywords.join(',')%>, <%= @look.hashtags.map(&:name).uniq.join(",") %>">
+<% end %>
+<%= content_for :title do %>
+  <%= "#{@look.flinker.name} - #{@look.name}"%>
 <% end %>
 
 <%= render 'flink/menu'%>
