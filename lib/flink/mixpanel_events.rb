@@ -11,7 +11,7 @@ class MixpanelEvents
       begin
         next if row[4].nil?
         next unless look = Look.with_uuid(row[4]).includes(:flinker).first
-        flinker = Flinker.find(row[1])
+        flinker = Flinker.find_by_id(row[1])
         time = Time.at(row[5].to_i)
         tracking = build_tracking_from look, flinker, time
         tracking.mixpanel = true
