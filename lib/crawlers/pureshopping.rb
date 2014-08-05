@@ -25,9 +25,10 @@ module Crawlers
         response = @agent.post(PRODUCTS_URL, query(page), {"X-Requested-With" => "XMLHttpRequest"})
         body = JSON.parse(response.body)
         data = body["data"]
-        created = PureShoppingProduct.create!(data)
+        PureShoppingProduct.create!(data)
         page += 1
-        sleep 1
+        sleep 5
+        @agent.agent.http.tap { |http| http.reset http.connection_for(response.uri) }
       end until data.empty?
     rescue => e
       Rails.logger.error("[Pureshopping]#{e}")
