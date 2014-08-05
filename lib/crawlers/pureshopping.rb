@@ -20,7 +20,7 @@ module Crawlers
     end
   
     def products
-      page = 51
+      page = 0
       begin
         response = @agent.post(PRODUCTS_URL, query(page), {"X-Requested-With" => "XMLHttpRequest"})
         body = JSON.parse(response.body)
