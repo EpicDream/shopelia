@@ -27,7 +27,7 @@ module Crawlers
         data = body["data"]
         created = PureShoppingProduct.create!(data)
         page += 1
-        sleep 1
+        sleep 5
       end until data.empty?
     rescue => e
       Rails.logger.error("[Pureshopping]#{e}")
