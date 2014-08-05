@@ -12,6 +12,8 @@ module Crawlers
     def initialize
       @agent = Mechanize.new
       @agent.idle_timeout = 0.9
+      @agent.max_history = 0
+      @agent.agent.http.retry_change_requests = true
     end
   
     def run
@@ -28,7 +30,6 @@ module Crawlers
         PureShoppingProduct.create!(data)
         page += 1
         sleep 5
-        @agent.agent.http.tap { |http| http.reset http.connection_for(response.uri) }
       end until data.empty?
     rescue => e
       Rails.logger.error("[Pureshopping]#{e}")
