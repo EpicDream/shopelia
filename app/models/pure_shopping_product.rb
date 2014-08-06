@@ -5,7 +5,7 @@ class PureShoppingProduct
   PureShoppingProduct.create_index('_brand_name')
   
   def self.similar_to look_product
-    brand_pattern = look_product.brand.gsub(/\s+/, '|')
+    brand_pattern = Regexp.escape(look_product.brand)
     where(:_brand_name => /#{brand_pattern}/)
   end
   
