@@ -6,7 +6,7 @@ class PureShoppingProduct
   
   def self.similar_to look_product
     brand_pattern = Regexp.escape(look_product.brand)
-    where(:_brand_name => /#{brand_pattern}/)
+    where(:_brand_name => /#{brand_pattern}|#{brand_pattern.gsub(/\s+/, '')}/i)
   end
   
   def redirect_url
