@@ -61,6 +61,8 @@ Shopelia::Application.configure do
   config.assets.precompile += %w( flink/application.js flink/application.css )
   config.assets.precompile += %w( flink/terms.js flink/terms.css )
   config.assets.precompile += %w( flink/contact.js flink/contact.css )
+  config.assets.precompile += %w( admin/vendor_products.js admin/vendor_products.css )
+  config.assets.precompile += %w( admin/pure_shopping_products.js admin/pure_shopping_products.css )
   
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH
