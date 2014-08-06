@@ -145,6 +145,16 @@ en:
       jumpsuit: "Jumpsuit"
       jewelry: "Jewelry"
       chain: "Chain"
+      sliders: "Sliders"
+      platforms: "Platforms"
+      gladiator: "Gladiator"
+      mule: "Mule"
+      heels: "Heels"
+      boots: "Boots"
+      flats: "Flats"
+      spartiats: "Spartiats"
+      plastic: "Plastic"
+      trench: "Trench"
   placeholders:
     user:
       email: "Your email"

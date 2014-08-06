@@ -50,6 +50,16 @@ codes:
   - bra
   - jumpsuit
   - chain
+  - sliders
+  - platforms
+  - gladiator
+  - mule
+  - heels
+  - boots
+  - flats
+  - spartiats
+  - plastic
+  - trench
 translations:
   pull:
     FR: Pull
