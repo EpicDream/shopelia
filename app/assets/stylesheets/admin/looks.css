@@ -259,7 +259,7 @@ table.pure-shopping-table th{
   font-weight:normal;
 }
 table.pure-shopping-table img{
-  width:100px;
+  min-width:160px;
 }
 table.pure-shopping-table td.description{
   font-size:10px;
