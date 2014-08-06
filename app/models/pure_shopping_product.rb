@@ -5,8 +5,12 @@ class PureShoppingProduct
   PureShoppingProduct.create_index('_brand_name')
   
   def self.similar_to look_product
-    brand_pattern = Regexp.escape(look_product.brand)
-    where(:_brand_name => /#{brand_pattern}|#{brand_pattern.gsub(/\s+/, '')}/i)
+    pattern_1 = Regexp.escape(look_product.brand)
+    pattern_2 = Regexp.escape(look_product.brand.gsub(/\s+/, ''))
+    where(:_brand_name => /#{pattern_1}|#{pattern_2}/i)
+  rescue => e
+    Rails.logger.error("[PureShoppingProduct#similar_to][#{look_product.brand}] #{e}")
+    []
   end
   
   def redirect_url
