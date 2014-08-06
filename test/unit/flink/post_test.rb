@@ -26,7 +26,7 @@ class PostTest < ActiveSupport::TestCase
     @post.products = {"Amazon"=>"http://www.amazon.fr/dp/B00BIXXTCY","Other"=>"http://www.other.com"}.to_json
     @post.images = ["http://farm4.staticflickr.com/3681/10980880355_0a0151fbd1_o.jpg", "http://4.bp.blogspot.com/-GGA8yv0lU8U/UPuvNd5LAlI/AAAAAAAAJmk/DSvdiYMmbYI/s1600/signature.png"].to_json
     
-    assert_difference ["Look.count","Product.count", "LookProduct.count"] do
+    assert_difference ["Look.count","Product.count"] do
       @post.save
     end
 
@@ -35,7 +35,7 @@ class PostTest < ActiveSupport::TestCase
     look = @post.look
     assert_equal "test", look.name
     assert_equal "http://www.toto.fr", look.url
-    assert_equal 1, look.look_images.count
+    assert_equal 2, look.look_images.count
     assert_equal "bla bla bla", look.description
     assert_not_nil look.published_at 
   end
