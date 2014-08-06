@@ -6,7 +6,8 @@
     <span class="brand"><%= look_product.brand %></span>
   </p>
   <button class="pure-shopping-refresh">Produits PureShopping</button>
-  <div id="pure-shopping-products-<%= look_product.id %>" class="modal fade hidden">
+  <span>(<%= PureShoppingProduct.similar_to(look_product).count %>)</span>
+  <div id="pure-shopping-products-<%= look_product.id %>" class="pure-shopping-products modal fade hidden">
   </div>
   <h5>Liens Produits</h5>
   <div class="similar-products" id="similar-products-<%= look_product.id %>">
