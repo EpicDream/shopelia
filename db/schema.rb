@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140731120150) do
+ActiveRecord::Schema.define(:version => 20140806092913) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -970,6 +970,19 @@ ActiveRecord::Schema.define(:version => 20140731120150) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "vendor_products", :force => true do |t|
+    t.string   "url"
+    t.string   "image_url"
+    t.string   "vendor"
+    t.boolean  "similar",         :default => false
+    t.integer  "product_id"
+    t.integer  "look_product_id"
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+  end
+
+  add_index "vendor_products", ["look_product_id"], :name => "index_vendor_products_on_look_product_id"
 
   create_table "virtual_cards", :force => true do |t|
     t.string   "provider"

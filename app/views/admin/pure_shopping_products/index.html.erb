@@ -1,0 +1,29 @@
+<% if @products.any?  %>
+  <table class="pure-shopping-table">
+    <thead>
+      <th>Aperçu produit</th>
+      <th>Nom</th>
+      <th>Marque</th>
+      <th>Description</th>
+      <th>Statut</th>
+      <th>Similaire</th>
+    </thead>
+    <tbody>
+      <% @products.each do |product| %>
+        <tr data-look-product-id="<%= @look_product.id %>" data-pure-shopping-id="<%= product.id %>">
+          <td><%= link_to(image_tag(product.image_url), product.redirect_url, target:'_blank') %></td>
+          <td><%= product.name %></td>
+          <td><%= product.brand %></td>
+          <td class="description"><%= product.description %></td>
+          <td><%= product.status %></td>
+          <td><%= check_box_tag :similar , '1', false, id: "similar-#{product.id}" %></td>
+          <td>
+            <button class="add-pure-shopping-product">
+              Ajouter
+            </button>
+          </td>
+        </tr>
+      <% end %>  
+    </tbody>
+  </table>
+<% end %>

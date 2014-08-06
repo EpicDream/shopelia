@@ -47,6 +47,25 @@ var Hashtags = {
   }
 }
 
+var PureShopping = {
+  load: function(lookProductId){
+    var box = $("#pure-shopping-products-" + lookProductId);
+
+    box.load("/admin/pure_shopping_products?look_product_id=" + lookProductId);
+  },
+  create: function(lookProductId, pureShoppingProductId, isSimilar, callback){
+    var params = { product_id: pureShoppingProductId, look_product_id: lookProductId, similar: isSimilar };
+    
+    $.post("/admin/pure_shopping_products", params)
+    .success(function(){
+      callback(true);
+    })
+    .error(function(){
+      callback(false);
+    })
+  }
+}
+
 $(document).ready(function() {
   if ($('body.action-show').length > 0) {
     Show.init();
@@ -84,7 +103,44 @@ $(document).ready(function() {
 
   $(document).on("change", "#look_staff_pick", function(){
     Hashtags.submit();
-  })
+  });
+  
+  $(document).on('DOMNodeInserted', '#look-products', function(e) {
+    var object = $(e.target);
+    if (object.attr("class") === "look-product") {
+      var lookProductId = object.data('look-product-id');
+
+      PureShopping.load(lookProductId);
+    }
+  });
+
+  $(document).on('click', '.pure-shopping-refresh', function() {
+    var lookProductId = $(this).parents("div.look-product").data('look-product-id');
+    
+    $("#pure-shopping-products-" + lookProductId).removeClass('hidden');
+    $("#pure-shopping-products-" + lookProductId).modal('show');
+    
+    PureShopping.load(lookProductId);
+  });
+
+  $(document).on('click', '.add-pure-shopping-product', function() {
+    var line = $(this).parents("tr");
+    var lookProductId = line.data("look-product-id");
+    var pureShoppingProductId = line.data("pure-shopping-id");
+    var isSimilar = $("#similar-" + pureShoppingProductId).is(":checked");
+    var productsBox = $("#similar-products-" + lookProductId);
+    
+    PureShopping.create(lookProductId, pureShoppingProductId, isSimilar, function(success){
+      if (success) {
+        line.css({"background" : "#C7EECE"});
+        productsBox.load("/admin/vendor_products?look_product_id=" + lookProductId);
+      }
+      else{
+        line.css({"background" : "red"});
+      }
+    });
+  });
+  
   
 });
 

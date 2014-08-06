@@ -109,6 +109,8 @@ Shopelia::Application.routes.draw do
     end
     resources :staff_picks
     resources :flinker_merges, only: [:new, :show, :create]
+    resources :pure_shopping_products, only: [:index, :create]
+    resources :vendor_products, only: [:index, :destroy]
   end
 
   constraints DomainConstraints.new('developers') do
