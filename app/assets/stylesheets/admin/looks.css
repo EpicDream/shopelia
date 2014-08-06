@@ -250,6 +250,10 @@ div.look-product span.brand{
   font-size:20px;
   font-style:italic;
 }
+.pure-shopping-products.modal{
+  min-width:90% !important;
+  left:25%;
+}
 table.pure-shopping-table td{
   border:thin solid #AFAFAF;
   padding:6px;
