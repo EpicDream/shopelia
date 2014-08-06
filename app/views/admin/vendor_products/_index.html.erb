@@ -1,0 +1,14 @@
+<% vendor_products.each do |product| %>
+  <div class="similar-product">
+    <%= link_to(image_tag(product.image_url), product.url, target:'_blank') %>
+    <p>
+      <% if product.original %>
+        <span class="brand"><%= product.original.brand %></span>
+        <span class="similar-<%= product.similar %>"><%= product.similar ? "Similaire" : "Original" %></span>
+        <span class="name"><%= truncate(product.original.name, length:40) %></span>
+      <% else %>
+        <span class="similar-product-cancelled">N'existe plus</span>
+      <% end %>
+    </p>
+  </div>
+<% end %>

@@ -6,7 +6,8 @@ class LookProduct < ActiveRecord::Base
   
   belongs_to :look, touch:true
   belongs_to :product
-
+  has_many :vendor_products, dependent: :destroy
+  
   validates :look_id, :presence => true
   validates :product_id, :uniqueness => { :scope => :look_id }, :allow_nil => true
   validates :code, presence:true, :uniqueness => { :scope => [:brand, :look_id] }
