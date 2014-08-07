@@ -20,9 +20,9 @@ class PureShoppingProduct
     
     unless category_id.blank?
       if keyword.blank?
-        similar_to(look_product).where(category_id: category_id.to_i)
+        similar_to(look_product).where(all_categories: /_#{category_id}_/ )
       else
-        where(:$or => [ {name: pattern}, {_brand_name: pattern} ], :$and => [category_id: category_id.to_i])
+        where(:$or => [ {name: pattern}, {_brand_name: pattern} ], :$and => [all_categories: /_#{category_id}_/])
       end
     else
       where(:$or => [ {name: pattern}, {_brand_name: pattern} ])
