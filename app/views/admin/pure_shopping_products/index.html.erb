@@ -17,7 +17,11 @@
     <tbody>
       <% @products.each do |product| %>
         <tr data-look-product-id="<%= @look_product.id %>" data-pure-shopping-id="<%= product.id %>">
-          <td><%= link_to(image_tag(product.image_url), product.redirect_url, target:'_blank') %></td>
+          <% if product.image_url.blank? %>
+            <td><%= link_to("Link", product.redirect_url, target:'_blank') %></td>
+          <% else %>
+            <td><%= link_to(image_tag(product.image_url), product.redirect_url, target:'_blank') %></td>
+          <% end %>
           <td><%= product.name %></td>
           <td><%= product.brand %></td>
           <td class="description"><%= product.description %></td>
