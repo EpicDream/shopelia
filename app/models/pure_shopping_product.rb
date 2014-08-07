@@ -15,11 +15,15 @@ class PureShoppingProduct
     []
   end
   
-  def self.filter_on category_id=nil, keyword=nil
+  def self.filter_on look_product, category_id=nil, keyword=nil
     pattern = Regexp.new(keyword || '', true)
     
     unless category_id.blank?
-      where(:$or => [ {name: pattern}, {_brand_name: pattern} ], :$and => [category_id: category_id.to_i])
+      if keyword.blank?
+        similar_to(look_product).where(category_id: category_id.to_i)
+      else
+        where(:$or => [ {name: pattern}, {_brand_name: pattern} ], :$and => [category_id: category_id.to_i])
+      end
     else
       where(:$or => [ {name: pattern}, {_brand_name: pattern} ])
     end

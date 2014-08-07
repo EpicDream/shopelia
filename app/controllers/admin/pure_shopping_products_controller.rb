@@ -6,7 +6,7 @@ class Admin::PureShoppingProductsController < Admin::AdminController
     @products = if params[:category_id].blank? && params[:keyword].blank?
       PureShoppingProduct.similar_to @look_product
     else
-      PureShoppingProduct.filter_on params[:category_id], params[:keyword]
+      PureShoppingProduct.filter_on @look_product, params[:category_id], params[:keyword]
     end
   end
   
