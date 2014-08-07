@@ -240,6 +240,7 @@ div.look-product{
   padding:6px;
   margin:6px auto;
   border-radius:2px;
+  position:relative;
 }
 div.look-product span.code{
   font-size:18px;
@@ -310,6 +311,11 @@ div[id^="pure-shopping-products"]{
   width:60% !important;
   padding:10px;
   overflow-y:scroll;
+}
+div.edit-look-product{
+  position:absolute;
+  top:2px;
+  right:2px;
 }
 
 

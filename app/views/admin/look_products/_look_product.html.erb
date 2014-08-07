@@ -13,4 +13,9 @@
   <div class="similar-products" id="similar-products-<%= look_product.id %>">
     <%= render partial: 'admin/vendor_products/index', locals: { vendor_products: look_product.vendor_products } %>
   </div>
+  <div class="edit-look-product">
+    <button class="btn btn-danger look-product-delete" data-lpid="<%= look_product.id %>">
+      <span class="icon-trash icon-white"></span>
+    </button>
+  </div>
 </div>
