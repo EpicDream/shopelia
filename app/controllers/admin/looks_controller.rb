@@ -52,7 +52,7 @@ class Admin::LooksController < Admin::AdminController
 
   def set_published is_published, quality_rejected=false
     if @look.update_attributes(is_published: is_published, quality_rejected: quality_rejected) && @look.mark_post_as_processed
-      look = Post.where("processed_at is null and look_id is not null").order("published_at desc").first.try(:look)
+      look = Post.where("processed_at is null and look_id is not null").order("published_at asc").first.try(:look)
       redirect_to look ? admin_look_path(look) : admin_posts_path
     else
       flash[:error] = "La publication a échoué"
