@@ -300,7 +300,8 @@ div.similar-product span.similar-true{
 div.similar-product span.similar-false{
   color:#5F6099;
 }
-button.pure-shopping-refresh{
+button.pure-shopping-refresh,
+button#ps_filter_button{
   border:none;
   text-decoration:underline;
 }

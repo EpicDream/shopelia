@@ -2,7 +2,11 @@ class Admin::PureShoppingProductsController < Admin::AdminController
   before_filter :retrieve_look_product, only: [:index, :create]
   
   def index
-    @products = PureShoppingProduct.similar_to @look_product
+    @products = if params[:category_id].blank? && params[:keyword].blank?
+      PureShoppingProduct.similar_to @look_product
+    else
+      PureShoppingProduct.filter_on params[:category_id], params[:keyword]
+    end
   end
   
   def create

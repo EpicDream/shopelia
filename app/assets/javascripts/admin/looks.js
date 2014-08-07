@@ -48,10 +48,13 @@ var Hashtags = {
 }
 
 var PureShopping = {
-  load: function(lookProductId){
+  load: function(lookProductId, categoryId, keyword){
     var box = $("#pure-shopping-products-" + lookProductId);
-
-    box.load("/admin/pure_shopping_products?look_product_id=" + lookProductId);
+    categoryId = categoryId || '';
+    keyword = keyword || '';
+    var query = "?look_product_id=" + lookProductId + "&category_id=" + categoryId + "&keyword=" + keyword
+    debugger;
+    box.load("/admin/pure_shopping_products" + query);
   },
   create: function(lookProductId, pureShoppingProductId, isSimilar, callback){
     var params = { product_id: pureShoppingProductId, look_product_id: lookProductId, similar: isSimilar };
@@ -139,6 +142,15 @@ $(document).ready(function() {
         line.css({"background" : "red"});
       }
     });
+  });
+  
+  $(document).on('click', '#ps_filter_button', function() {
+    var lookProductId = $(this).data('look-product-id');
+    var categoryId = $("#ps_category_filter").val();
+    var keyword = $("#ps_keyword").val();
+    
+    
+    PureShopping.load(lookProductId, categoryId, keyword);
   });
   
   
