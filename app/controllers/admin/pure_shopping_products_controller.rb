@@ -1,5 +1,6 @@
 class Admin::PureShoppingProductsController < Admin::AdminController
   before_filter :retrieve_look_product, only: [:index, :create]
+  layout false
   
   def index
     @products = if params[:category_id].blank? && params[:keyword].blank?
