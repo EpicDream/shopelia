@@ -1,4 +1,9 @@
-Filtre catégorie :
+<div class="pure-shopping-filters">
+  <%= select_tag :ps_category_filter, options_for_select(PureShoppingProduct::CATEGORIES.to_a, selected: params[:category_id] ), prompt: "Toutes"%>
+  <%= text_field_tag :ps_keyword, params[:keyword], placeholder: "Mot clé" %>
+  <%= button_tag "Search", id: :ps_filter_button, 'data-look-product-id' => @look_product.id %>
+  <span><%= @products.count %> Produits</span>
+</div>
 <% if @products.any?  %>
   <table class="pure-shopping-table">
     <thead>

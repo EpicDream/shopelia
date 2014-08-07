@@ -1,4 +1,6 @@
 class PureShoppingProduct
+  CATEGORIES = YAML.load_file("#{Rails.root}/lib/crawlers/pureshopping/categories.yml").invert
+  
   include MongoMapper::Document
   timestamps!
   PureShoppingProduct.create_index('name')
@@ -15,12 +17,12 @@ class PureShoppingProduct
   
   def self.filter_on category_id=nil, keyword=nil
     pattern = Regexp.new(keyword || '', true)
-    query = where(:$or => [ {name: pattern}, {_brand_name: pattern} ])
     
     unless category_id.blank?
-      query = where(category_id: category_id.to_i)
+      where(:$or => [ {name: pattern}, {_brand_name: pattern} ], :$and => [category_id: category_id.to_i])
+    else
+      where(:$or => [ {name: pattern}, {_brand_name: pattern} ])
     end
-    query
   end
   
   def redirect_url
