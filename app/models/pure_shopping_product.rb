@@ -13,6 +13,16 @@ class PureShoppingProduct
     []
   end
   
+  def self.filter_on category_id=nil, keyword=nil
+    pattern = Regexp.new(keyword || '', true)
+    query = where(:$or => [ {name: pattern}, {_brand_name: pattern} ])
+    
+    unless category_id.blank?
+      query = where(category_id: category_id.to_i)
+    end
+    query
+  end
+  
   def redirect_url
     _redirect.gsub(/\/sg\/10/, '/ns/541')
   end
