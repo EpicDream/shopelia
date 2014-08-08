@@ -13,7 +13,11 @@ class ApnsNotification < ActiveRecord::Base
   
   def send_to_all_flinkers
     Flinker.where("email !~ '@flink'").find_each { |flinker|
-      Flink::Push.deliver(self.text_for(flinker), flinker.device)
+      begin
+        Flink::Push.deliver(self.text_for(flinker), flinker.device)
+      rescue => e
+        Rails.logger.error("[APNS_NOTIFICATION_NOT_SENT] #{flinker.id}")
+      end
     }
   end
   
