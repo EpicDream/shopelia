@@ -1,15 +1,12 @@
 class Admin::VendorProductsController < Admin::AdminController
-  before_filter :retrieve_look_product, only: [:index, :destroy]
+  before_filter :retrieve_look_product, only: [:index]
   
   def index
   end
   
   def destroy
-    # if VendorProduct.create_from_pure_shopping(params[:product_id].to_i, @look_product, params[:similar])
-    #   render json:{}, status: 200
-    # else
-    #   render json:{}, status: 500
-    # end
+    @product = VendorProduct.find(params[:id])
+    @product.destroy
   end
   
   private

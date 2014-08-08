@@ -1,5 +1,5 @@
 <% vendor_products.each do |product| %>
-  <div class="similar-product">
+  <div class="similar-product" id="similar-product-<%= product.id %>">
     <%= link_to(image_tag(product.image_url), product.url, target:'_blank') %>
     <p>
       <% if product.original %>
@@ -9,6 +9,7 @@
       <% else %>
         <span class="similar-product-cancelled">N'existe plus</span>
       <% end %>
+      <%= link_to 'Supprimer', admin_vendor_product_path(product), { remote:true, method: 'delete', format: 'js' }%>
     </p>
   </div>
 <% end %>
