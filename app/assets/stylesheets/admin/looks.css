@@ -317,3 +317,8 @@ div.edit-look-product{
   top:2px;
   right:2px;
 }
+div.css-spinner{
+  width:50%;
+  margin:20px auto;
+  display:none;
+}

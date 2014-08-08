@@ -53,8 +53,10 @@ var PureShopping = {
     categoryId = categoryId || '';
     keyword = escape(keyword || '');
     var query = "?look_product_id=" + lookProductId + "&category_id=" + categoryId + "&keyword=" + keyword
-   
+    
+    $(".css-spinner").show();
     box.load("/admin/pure_shopping_products" + query, function(text, status, xhr){
+      $(".css-spinner").hide();
     });
   },
   create: function(lookProductId, pureShoppingProductId, isSimilar, callback){
