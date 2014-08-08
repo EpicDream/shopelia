@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140806092913) do
+ActiveRecord::Schema.define(:version => 20140808103023) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -49,6 +49,13 @@ ActiveRecord::Schema.define(:version => 20140806092913) do
     t.string   "name"
     t.string   "kind"
     t.integer  "count"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "apns_notifications", :force => true do |t|
+    t.text     "text_en"
+    t.text     "text_fr"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

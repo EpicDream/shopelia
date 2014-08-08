@@ -111,6 +111,10 @@ Shopelia::Application.routes.draw do
     resources :flinker_merges, only: [:new, :show, :create]
     resources :pure_shopping_products, only: [:index, :create]
     resources :vendor_products, only: [:index, :destroy]
+    resources :apns_notifications, only: [:new, :update] do
+      get :test
+      get :send_to_flinkers
+    end
   end
 
   constraints DomainConstraints.new('developers') do
