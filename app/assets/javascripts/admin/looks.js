@@ -51,10 +51,11 @@ var PureShopping = {
   load: function(lookProductId, categoryId, keyword){
     var box = $("#pure-shopping-products-" + lookProductId);
     categoryId = categoryId || '';
-    keyword = keyword || '';
+    keyword = escape(keyword || '');
     var query = "?look_product_id=" + lookProductId + "&category_id=" + categoryId + "&keyword=" + keyword
-    debugger;
-    box.load("/admin/pure_shopping_products" + query);
+   
+    box.load("/admin/pure_shopping_products" + query, function(text, status, xhr){
+    });
   },
   create: function(lookProductId, pureShoppingProductId, isSimilar, callback){
     var params = { product_id: pureShoppingProductId, look_product_id: lookProductId, similar: isSimilar };
