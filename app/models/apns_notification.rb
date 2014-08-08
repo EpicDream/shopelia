@@ -19,7 +19,6 @@ class ApnsNotification < ActiveRecord::Base
   
   def text_for flinker
     flinker.lang_iso == 'fr_FR' ? text_fr : text_en
-    text_en
   end
   
 end
