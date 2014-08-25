@@ -1,0 +1,61 @@
+h4{
+  padding:10px 0;
+}
+div.new-staff-hashtag-form{
+  width:50%;
+  margin:60px;
+  border-left:thin solid #9DA3D0;
+  padding:20px;
+}
+div.new-staff-hashtag-form form{
+  margin: 0 0 0 50px;
+}
+div.new-staff-hashtag-form span.new-hashtag-title{
+  display:inline-block;
+  margin:20px 0 10px -10px;
+  padding:10px;
+  font-weight:bold;
+  border-bottom:thin solid #445799;
+  -webkit-transform:rotate(-45deg) translateY(-30px);
+}
+div.new-staff-hashtag-form label{
+  display:inline-block;
+}
+div.new-staff-hashtag-form input[type=checkbox]{
+  margin:-3px 0 0 10px ;
+}
+div.new-staff-hashtag-form input[type=submit]{
+  display:block;
+  margin:20px 0 0;
+  border:thin solid #445799;
+  border-radius:2px;
+  padding:10px;
+  text-align:center;
+  background:none;
+}
+div.new-staff-hashtag-form input[type=submit]:hover{
+  color:#589946;
+}
+div.staff-hashtags-block{
+  margin:60px 60px;
+  display:inline-block;
+}
+table.staff-hashtags td{
+  border:thin solid #B0B0B0;
+  padding:6px;
+}
+table.staff-hashtags td.table-section{
+  text-align:center;
+  background:#E0E0E0;
+  color:#992849;
+  font-weight:bold;
+}
+table.staff-hashtags td.staff-hashtag-delete{
+  color:#AC0F25;
+  font-size:12px;
+  text-decoration:underline;
+  cursor:pointer;
+}
+table.staff-hashtags td.staff-hashtag-delete:hover{
+  color:red;
+}

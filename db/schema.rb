@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140808103023) do
+ActiveRecord::Schema.define(:version => 20140825100128) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -831,6 +831,15 @@ ActiveRecord::Schema.define(:version => 20140808103023) do
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+  end
+
+  create_table "staff_hashtags", :force => true do |t|
+    t.string   "name_fr"
+    t.string   "name_en"
+    t.string   "category"
+    t.boolean  "visible",    :default => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
   end
 
   create_table "states", :force => true do |t|

@@ -115,6 +115,7 @@ Shopelia::Application.routes.draw do
       get :test
       get :send_to_flinkers
     end
+    resources :staff_hashtags
   end
 
   constraints DomainConstraints.new('developers') do
