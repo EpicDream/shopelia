@@ -35,6 +35,8 @@ module Scrapers
           end
         end
         images
+      rescue
+        []
       end
       
       def content block
