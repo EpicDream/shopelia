@@ -156,6 +156,25 @@ $(document).ready(function() {
     PureShopping.load(lookProductId, categoryId, keyword);
   });
   
+  $(document).on('click', 'button#staff-hashtags-button', function() {
+    $(".staff-hashtags-popup").removeClass('hidden');
+    $(".staff-hashtags-popup").modal('show');
+  });
+
+  $(document).on('click', 'span.staff-hashtag', function() {
+    var checked = $(this).attr("data-checked") === "1";
+
+    if (checked) {
+      $(this).css({color: "black", 'font-size': "12px"});
+      $(this).attr("data-checked", "0");
+    }
+    else{
+      $(this).css({color: "#991754", 'font-size': "14px"});
+      $(this).attr("data-checked", "1");
+    }
+    // console.log($("span.staff-hashtag[data-checked='1']").length);
+  });
+  
   
 });
 

@@ -4,8 +4,8 @@ class StaffHashtag < ActiveRecord::Base
   validates :name_en, presence:true, uniqueness:true
   validates :name_fr, presence:true, uniqueness:true
   
-  scope :visible, -> { where(visible:true) }
-  scope :invisible, -> { where(visible:false) }
+  scope :visible, -> { where(visible:true).order('name_en asc') }
+  scope :invisible, -> { where(visible:false).order('name_en asc') }
   
   def self.grouped_by_category
     invisible.group_by(&:category)

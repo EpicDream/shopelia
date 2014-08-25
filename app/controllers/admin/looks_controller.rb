@@ -5,8 +5,8 @@ class Admin::LooksController < Admin::AdminController
   def index
     since = params[:since] || Time.now - 1.week
     @looks = Look.flink_published_between(since, nil)
-    .order('flink_published_at desc')
-    .paginate(:page => params[:page], :per_page => 40)
+            .order('flink_published_at desc')
+            .paginate(:page => params[:page], :per_page => 40)
   end
   
   def show
