@@ -38,4 +38,16 @@ class Hashtag < ActiveRecord::Base
     strings.map { |string| find_or_create_by_name(string)}
   end
   
+  def self.create_hashtags_from_staff_hashtags look, staff_hashtags_ids
+    hashtags = StaffHashtag.find(staff_hashtags_ids).map { |tag|
+      [tag.name_en, tag.name_fr].map {|name| 
+        hashtag = Hashtag.find_or_create_by_name(name)
+        HighlightedLook.create(look_id: look.id, hashtag_id:hashtag.id) if tag.visible?
+        hashtag
+      }.uniq
+    }.flatten
+    
+    look.hashtags << hashtags
+  end
+  
 end

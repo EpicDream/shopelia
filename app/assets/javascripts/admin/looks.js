@@ -32,6 +32,20 @@ var Hashtags = {
     });
   },
   
+  add_from_staff_hashtags: function(ids){
+    var lookId = $("div.hashtags-block").data("look-id");
+    
+    $.post("/admin/looks/" + lookId + "/add_hashtags_from_staff_hashtags", {_method : 'post', staff_hashtag_ids: ids})
+    .success(function(html){
+      $(".staff-hashtags-popup").modal('hide');
+      $("div.hashtags-block").replaceWith(html);
+    })
+    .error(function(){
+      alert("Erreur");
+    });
+    
+  },
+  
   highlight: function(checkbox){
     var lookId = $("div.hashtags-block").data("look-id");
     var hashtagId = checkbox.data("hashtag_id");
@@ -88,11 +102,6 @@ $(document).ready(function() {
         alert("Erreur");
       });
     }
-  });
-  
-  $(document).on("submit", "form.edit_look", function(e){
-    e.preventDefault();
-    Hashtags.submit();
   });
   
   $(document).on("change", ".hashtag-destroy-checkbox", function(){
@@ -172,9 +181,19 @@ $(document).ready(function() {
       $(this).css({color: "#991754", 'font-size': "14px"});
       $(this).attr("data-checked", "1");
     }
-    // console.log($("span.staff-hashtag[data-checked='1']").length);
   });
   
+  $(document).on('click', 'button#staff-hashtags-submit', function(){
+    var selectedHashtagsIds = [];
+    
+    $.map($("span.staff-hashtag[data-checked='1']"), function(hashtag){
+      var id = hashtag.getAttribute('data-id');
+
+      selectedHashtagsIds.push(id);
+    });
+    
+    Hashtags.add_from_staff_hashtags(selectedHashtagsIds);
+  });
   
 });
 

@@ -2,7 +2,7 @@
   <div class="staff-hashtags-block">
     <h5>Hashtags visibles</h5>
     <% StaffHashtag.visible.each do |hashtag| %>
-      <span class="staff-hashtag" data-checked="0">#<%= hashtag.name_en %></span>
+      <span class="staff-hashtag" data-checked="0" data-id="<%= hashtag.id %>">#<%= hashtag.name_en %></span>
     <% end %>
   </div>
 
@@ -11,9 +11,10 @@
     <% StaffHashtag.grouped_by_category.each do |category, hashtags| %>
       <p class="staff-hashtags-category"><%= category %></p>
       <% hashtags.each do |hashtag| %>
-        <span class="staff-hashtag" data-checked="0">#<%= hashtag.name_en %></span>
+        <span class="staff-hashtag" data-checked="0" data-id="<%= hashtag.id %>">#<%= hashtag.name_en %></span>
       <% end %>
     <% end %>
   </div>
   
+  <%= button_tag 'Ajouter ces hashtags', class:'btn hashtag-submit', id:"staff-hashtags-submit" %>
 </div>
