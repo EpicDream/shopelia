@@ -1,7 +1,7 @@
 @import "constants.css.less";
 
 @metrics-default-look-height: 810px;
-@metrics-default-look-width: 460px;
+@metrics-default-look-width: 450px;
 
 @metrics-default-suggestion-height: 178px;
 @metrics-default-suggestion-width: 100px;
@@ -23,8 +23,13 @@ body {
 
 // containers
 .centered-container {
-  width: 1000px;
   margin: auto;
+}
+.centered-container.mobile-sized {
+  width: 100%;
+}
+.centered-container.desktop-sized {
+  width: 1024px;
 }
 .stick-to-bottom-container {
   position: absolute;
@@ -51,14 +56,30 @@ body {
   padding-left: @metric-content-padding;
   padding-bottom: 130px + @metric-content-padding * 2;
 }
+.detail-column.mobile-sized {
+  width: 100%;
+  float: none;
+  min-height: 0;
+}
+.detail-column.mobile-sized:nth-child(2) {
+  margin-top: @metric-content-padding;
+  padding-left: 0;
+}
 .detail-column .stick-to-bottom-container {
   width: 100% - 8px;
+}
+.detail-column.mobile-sized .stick-to-bottom-container {
+  width: 100%;
 }
 .look-container {
   width: @metrics-default-look-width;
   height: @metrics-default-look-height;
   background-position: center center;
   background-size: cover;
+  background-color: @color-light-separator;
+}
+.look-container.mobile-sized {
+  margin: 0 auto;
 }
 
 // look metadata
@@ -162,7 +183,15 @@ body {
   float: left;
 }
 .suggestions-column:nth-child(2) {
-  padding-left: @metric-content-padding;
+  text-align: right;
+}
+.suggestions-column.mobile-sized {
+  width: 100%;
+  float: none;
+}
+.suggestions-column.mobile-sized:nth-child(2) {
+  text-align: left;
+  margin-top: @metric-content-padding;
 }
 .suggestions-look {
   width: @metrics-default-suggestion-width;
@@ -170,7 +199,7 @@ body {
   background-color: @color-light-separator;
   display: inline-block;
   margin-top: @metric-content-padding;
-  margin-right: 10px;
+  margin-right: 5px;
   background-position: center center;
   background-size: cover;
 }

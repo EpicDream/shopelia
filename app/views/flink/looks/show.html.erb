@@ -16,7 +16,7 @@
 <%= render 'flink/menu'%>
 <%= render 'flink/facebook_sdk' %>
 <div class="detail-container">
-  <div class="centered-container">
+  <div class="centered-container desktop-sized">
     <div class="detail-column">
       <div class="look-container" style="background-image: url(<%= @look.large_cover_url %>);"></div>
     </div>
@@ -73,7 +73,7 @@
   </div>
 </div>
 <div class="suggestions-container">
-  <div class="centered-container">
+  <div class="centered-container desktop-sized">
     <div class="suggestions-column">
       <div class="section-title"><%= t('flink.more_from_this_blogger')%></div>
       <% for look in Look.random(4, @look.flinker, @look) %>

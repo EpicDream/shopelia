@@ -13,12 +13,9 @@
       <div class="flink-menu-category-recent<%= '-selected' if @category == :recent %>"><%= t('flink.recent') %></div>
     <% end %>
   </div>
-  <div class="flink-menu-links">
-    <ul>
-      <li><%= link_to t('flink.contact'), contact_path %></li>
-      <li><%= link_to t('flink.terms'), terms_path %></li>
-    </ul>
+  <div class="flink-menu-links" data-min-width-769='
     <%= link_to image_tag("flink/common/appstore_badge.png", :alt => "Flink"), flink_appstore_url, target: '_blank' %>
-  </div>
+    <ul><li><%= link_to t('flink.contact'), contact_path %></li><li><%= link_to t('flink.terms'), terms_path %></li></ul>
+  '></div>
   <div class="clear"></div>
 </div>

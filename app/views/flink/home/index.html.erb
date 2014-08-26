@@ -3,11 +3,9 @@
 <% end %>
 <div class="blurred-background-picture height-60 relative-block">
   <div class="stick-to-bottom">
-    <div class="row-container">
-      <div class="float-left iphone-top">
-        <%= image_tag("flink/home/iphone_top.png", :alt => "Flink") %>
-      </div>
-      <div>
+    <div class="row-container width-1024">
+      <div data-min-width-1025='<div class="float-left iphone-top" id="iphone-top"><%= image_tag("flink/home/iphone_top.png", :alt => "Flink") %></div>'></div>
+      <div class="min-height-371 padding-bottom-60">
         <div class="text-aligned-center padding-top-20">
           <%= image_tag("flink/common/logo.png", :alt => "Flink") %>
         </div>
@@ -24,10 +22,8 @@
   </div>
 </div>
 <div class="white height-40">
-  <div class="row-container">
-    <div class="float-left">
-      <%= image_tag("flink/home/iphone_bottom.png", :alt => "Flink") %>
-    </div>
+  <div class="row-container width-1024">
+    <div data-min-width-1025='<div class="float-left"><%= image_tag("flink/home/iphone_bottom.png", :alt => "Flink") %></div>'></div>
     <div class="text-aligned-center padding-top-50">
       <div>
         <%= link_to image_tag("flink/common/appstore_badge.png", :alt => "Flink"), flink_appstore_url, target: '_blank' %>
