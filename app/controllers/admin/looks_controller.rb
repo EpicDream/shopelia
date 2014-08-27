@@ -5,17 +5,15 @@ class Admin::LooksController < Admin::AdminController
   def index
     since = params[:since] || Time.now - 1.week
     @looks = Look.flink_published_between(since, nil)
-    .order('flink_published_at desc')
-    .paginate(:page => params[:page], :per_page => 40)
+            .order('flink_published_at desc')
+            .paginate(:page => params[:page], :per_page => 40)
   end
   
   def show
-    @look.hashtags.build
   end
   
   def update
     if @look.update_attributes(params[:look])
-      @look.hashtags.build
       render partial:'form', status: :ok
     else
       render json:{}, status: :error
@@ -45,6 +43,11 @@ class Admin::LooksController < Admin::AdminController
     else
       HighlightedLook.where(look_id: @look.id, hashtag_id:params[:hashtag_id]).destroy_all
     end
+    render partial:'form', status: :ok
+  end
+  
+  def add_hashtags_from_staff_hashtags
+    Hashtag.create_hashtags_from_staff_hashtags(@look, params[:staff_hashtag_ids])
     render partial:'form', status: :ok
   end
 

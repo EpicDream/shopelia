@@ -47,7 +47,9 @@
         = link_to 'Rénitialiser les images', reinitialize_images_admin_look_path(@look), id:"reinitialize-images", method:"put", confirm:"Confirmez"
         = grouped_themes_for_select(@look)
         %hr  
-        =render partial:'form'  
+        =button_tag 'Hashtags', {id:"staff-hashtags-button", class:"btn hashtag-submit"}
+        =render partial:'form'
+        =render partial:'staff_hashtags'
         %hr  
         %div.images
           - LookImage.where(resource_id:@look.id).order(:display_order).each do |image|

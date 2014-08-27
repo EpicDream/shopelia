@@ -1,5 +1,7 @@
 %div.hashtags-block{:"data-look-id" => @look.id}
   =form_for([:admin, @look]) do |f|
+    =f.select :season, [:chaud, :froid], selected:@look.season, include_blank:"Chaud/Froid"
+    %br
     %div.form
       =f.label :staff_pick, 'Staff pick'
       =f.check_box :staff_pick
@@ -9,6 +11,4 @@
         =check_box_tag :highlighted, "1", HighlightedLook.highlight?(@look, ff.object),  class:'hashtag-highlighted-checkbox', :"data-hashtag_id" => ff.object.id
         =ff.label :_destroy, 'x', class:'hashtag-destroy-label'
         =ff.check_box :_destroy, class:'hashtag-destroy-checkbox'
-    =f.submit '+', class:"btn hashtag-submit"
-    =f.select :season, [:chaud, :froid], selected:@look.season, include_blank:"Chaud/Froid"
     

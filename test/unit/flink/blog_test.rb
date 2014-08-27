@@ -6,7 +6,7 @@ class BlogTest < ActiveSupport::TestCase
     blog = Blog.create(url:"http://fashion.fr", name:"Betty Boop ", country:"FR", avatar_url:"http://odysseedupixel.fr/wp-content/uploads/Link.jpg")
 
     assert blog.flinker
-    assert_equal "BettyBoop", blog.flinker.username
+    assert_match /Betty\w+/, blog.flinker.username 
     assert blog.flinker.is_publisher?
     assert_equal countries(:france).id, blog.flinker.country_id
     assert blog.flinker.avatar_file_name.present?
