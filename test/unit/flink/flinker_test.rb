@@ -11,21 +11,6 @@ class FlinkerTest < ActiveSupport::TestCase
 
     assert_equal 0, ActionMailer::Base.deliveries.count, "a confirmation email shouldn't have been sent"
   end
-
-  test "it should auto follow staff picked flinkers of same country or universal" do 
-    assert_difference "FlinkerFollow.count", 3 do
-      @flinker.save
-    end
-  end
-  
-  test "it should auto follow staff picked flinkers of same country more universal flinkers if ones" do 
-    flinker = Flinker.new(attributes.merge({email:"univ@me.com", name:"Universal", universal:true, country_iso:'GB', staff_pick:true}))
-    assert flinker.save!
-
-    assert_difference "FlinkerFollow.count", 4 do
-      @flinker.save
-    end
-  end
   
   test "when name change, it should be changed on blog" do
     flinker = flinkers(:elarch)
@@ -48,24 +33,14 @@ class FlinkerTest < ActiveSupport::TestCase
     assert_equal Flinker.of_country("fr"), Flinker.of_country("FR") 
   end
   
-  test "it should auto follow french staff picked flinkers if none of its country" do 
-    @flinker.country_id = countries(:morocco).id
-    FollowNotificationWorker.expects(:perform_in).never
-        
-    assert_difference "FlinkerFollow.count", 3 do
-      @flinker.save
-    end
-  end
-  
   test "friends of flinkers : flinkers facebook friends U followings" do
-    #3 followings friends + 1 from facebook + 1 (followings + facebook)
     flinker = flinkers(:fanny)
-    flinker.send(:follow_staff_picked) 
+    follow(flinkers(:nana), flinker)
 
     friends = flinker.friends
 
-    assert_equal 4, friends.count
-    assert_equal ["boop", "bettyusername", "nanausername", "Lilou"].to_set, friends.map(&:username).to_set
+    assert_equal 3, friends.count
+    assert_equal ["bettyusername", "nanausername", "Lilou"].to_set, friends.map(&:username).to_set
   end
   
   test "activities counts only looks published" do
@@ -184,14 +159,6 @@ class FlinkerTest < ActiveSupport::TestCase
     flinkers = Flinker.trend_setters(nil)
 
     assert flinkers.include?(flinkers(:anne))
-  end
-  
-  test "assign device on create" do
-    set_env_user_agent
-    @flinker.save
-    
-    assert_equal devices(:mobile).uuid, @flinker.device.uuid
-    assert_equal 1, @flinker.device.build
   end
   
   test "stop auto follow staff picked if device build >= 31" do

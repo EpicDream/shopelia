@@ -26,14 +26,6 @@ class Api::Flink::RegistrationsControllerTest < ActionController::TestCase
     assert_equal countries(:france), Flinker.last.country
   end
   
-  test "assign country to autofollow top blogs of the flinker country or universals" do
-    @request.env["X-Flink-Country-Iso"] = "FR"
-    
-    assert_difference "FlinkerFollow.count", 3 do
-      post :create, params, format: :json
-    end
-  end
-  
   test "assign lang iso code to flinker" do
     @request.env["X-Flink-User-Language"] = "fr-FR"
     
