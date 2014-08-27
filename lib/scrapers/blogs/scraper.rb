@@ -99,6 +99,13 @@ module Scrapers
         @base_url = URI.parse(url).base_url if url
       end
       
+      def posts_urls max=20 #for blogs with items entries on home page
+        page = @agent.get(@url)
+        page.search(".//a[@class='item']").map { |node| 
+          node.attribute('href').value
+        }.uniq[0...max]
+      end
+      
       private
       
       def from_blogspot_frame page
