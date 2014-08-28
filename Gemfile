@@ -68,6 +68,7 @@ gem 'rubyntlm'
 gem "friendly_id", "~> 4.0.10"
 gem "mongo_mapper"
 gem "bson_ext"
+gem "mobile-fu"
 
 group :assets do
   gem 'bootstrap-sass', '~> 2.3.1.0'
