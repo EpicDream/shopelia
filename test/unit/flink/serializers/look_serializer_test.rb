@@ -10,11 +10,11 @@ class LookSerializerTest < ActiveSupport::TestCase
       title:"test", 
       published_at:Time.now, 
       blog_id: blogs(:betty).id,
-      content: "bla bla bla",
+      content: "Stairway to heaven",
       products:{"Amazon"=>"http://www.amazon.fr/dp/B00BIXXTCY"}.to_json,
       images:["http://farm4.staticflickr.com/3681/10980880355_0a0151fbd1_o.jpg","http://mytrendymarket.com/wp-content/uploads/2013/11/pull-maiami-1.png"].to_json)
     @look = post.look
-    LookProduct.create(look_id:@look.id,brand:"Zara",code:"Jean")
+    @look_product = LookProduct.create(look_id:@look.id,brand:"Zara",code:"jean")
   end
 
   teardown do
@@ -25,7 +25,7 @@ class LookSerializerTest < ActiveSupport::TestCase
     @look.update_attributes(flink_published_at:Time.now + 1.day, staff_pick:true)
     look_serializer = LookSerializer.new(@look)
     hash = look_serializer.as_json
-      
+
     assert_equal @look.uuid, hash[:look][:uuid]
     assert_equal @look.name, hash[:look][:name]
     assert_equal @look.url, hash[:look][:url]
@@ -35,11 +35,15 @@ class LookSerializerTest < ActiveSupport::TestCase
     
     assert hash[:look][:flinker].present?
     assert_equal 1, hash[:look][:products].count
+    assert_equal "Jean", hash[:look][:products].first[:code]
+    assert_equal "Zara", hash[:look][:products].first[:brand]
+    assert_equal @look_product.uuid, hash[:look][:products].first[:uuid]
+    
     assert_equal 2, hash[:look][:images].count
     assert hash[:look][:liked].nil?
     assert hash[:look][:staff_pick]
     
-    assert_equal "bla bla bla", hash[:look][:description]
+    assert_equal "Stairway to heaven", hash[:look][:description]
     assert_equal 0, hash[:look][:highlighted_hashtags].count
   end
 

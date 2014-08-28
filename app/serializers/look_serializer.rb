@@ -36,17 +36,7 @@ class LookSerializer < ActiveModel::Serializer
   end
 
   def products
-    object.look_products.map do |lp|
-      if lp.product.present? && lp.product.available?
-        { code: lp.code.blank? ? "" : I18n.t("flink.products." + lp.code),
-          product: ProductSerializer.new(lp.product, scope:scope).as_json[:product] }
-      elsif lp.brand.present?
-        { code: lp.code.blank? ? "" : I18n.t("flink.products." + lp.code),
-          brand: lp.brand,
-          uuid: lp.uuid
-         }
-      end
-    end.compact
+    ActiveModel::ArraySerializer.new(object.look_products).as_json
   end
 
   def images
