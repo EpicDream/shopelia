@@ -105,6 +105,8 @@ module Scrapers
         page.search(".//a[@class='item']").map { |node| 
           node.attribute('href').value
         }.uniq[0...max]
+      rescue Mechanize::ResponseCodeError
+        []
       end
       
       private
