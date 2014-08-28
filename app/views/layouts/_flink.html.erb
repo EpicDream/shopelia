@@ -7,9 +7,9 @@
   <%= favicon_link_tag %>
   <%= render 'layouts/ie_support.html'%>
   <%= stylesheet_link_tag "flink/application#{device_suffix}.css" %>
-  <%= stylesheet_link_tag "#{params[:controller]}#{device_suffix}" %>
+  <%= stylesheet_link_tag "#{params[:controller]}#{device_suffix}.css" %>
   <%= javascript_include_tag "flink/application#{device_suffix}.js" %>
-  <%= javascript_include_tag "#{params[:controller]}#{device_suffix}" %>
+  <%= javascript_include_tag "#{params[:controller]}#{device_suffix}.js" %>
   <%=  yield :head %>
   <%= csrf_meta_tags %>
 </head>
