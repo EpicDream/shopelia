@@ -1,6 +1,0 @@
-    <form data-persist="garlic" data-validate="parsley" accept-charset="UTF-8" class="clearfix">
-         <div id="user-fields"></div>
-         <div id="address-fields"></div>
-        <button id="btn-register-user" class="custom-btn btn-block">CONTINUER</button>
-    </form>
-

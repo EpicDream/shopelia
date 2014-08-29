@@ -1,8 +1,0 @@
-<div id='modal-header'>
-</div>
-<div class="container-fluid">
-    <div id="modal-top" class="top-bottom-margin" ></div>
-    <div id='modal-content' class="top-bottom-margin">
-    </div>
-</div>
-<a id="close">x</a>

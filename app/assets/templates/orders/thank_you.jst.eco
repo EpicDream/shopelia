@@ -1,9 +1,0 @@
-<div class="thank-you box">
-<img class="present clearfix" src="/assets/html_app/shopelia-present.png">
-<span class="green bold clearfix">Merci !</span>
-<span class="bold clearfix">Merci pour votre commande !</span>
-<p class="clearfix"> Nous vous ferons parvenir <br> une confirmation sous peu </p>
-<img src="/assets/html_app/shopelia-logo-transparent.png">
-</div>
-<div class="spacer25"></div>
-<div id="thank-you-bottom"></div>
