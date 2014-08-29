@@ -4,16 +4,9 @@
 // It's not advisable to add code directly here, but if you do, it'll appear at the bottom of the
 // the compiled file.
 //
-//= require fastclick
 //= require jquery
 //= require jquery_ujs
 //= require twitter/bootstrap
-//= require lib/spin
-//= require lib/pusher.min
-//= require lib/algoliasearch.min
-//= require lib/bootstrap-paginator.min
-//= require monitor
-//= require products-feed
 
 $(document).ready(function() {
   $(".modal-button").on('click', function(event) {
