@@ -1,4 +1,4 @@
-//= require ../jquery.infiniteScroll
+//= require ../lib/jquery.infiniteScroll
 
 $(document).ready(function() {
   var category = $("div.flink-menu").data("category");
