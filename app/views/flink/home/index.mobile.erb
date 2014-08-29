@@ -1,0 +1,24 @@
+<div class="top-container">
+  <div class="content-container">
+    <div class="logo">
+      <%= image_tag("flink/mobile/logo_big.png", :alt => "Flink", :width => 160, :height => 50) %>
+    </div>
+    <div class="baseline">
+      <span class="large-title">Discover, get inspired and share trendy street style looks from top fashion bloggers.</span>
+    </div>
+    <div class="links">
+      <%= link_to image_tag("flink/mobile/appstore_button_big.png", :alt => "Flink", :width => 137, :height => 45), flink_appstore_url, target: '_blank' %>
+    </div>
+  </div>
+</div>
+<div class="bottom-container">
+  <div class="content-container">
+    <div class="explore">
+      <%= link_to "Explore trendy looks", flink_explore_path, class: "rounded-button-pink" %>
+    </div>
+    <div class="credits">
+      <%= render 'flink/inline_navigator.html.erb' %>
+      <%= render 'flink/social_list.html.erb' %>
+    </div>
+  </div>
+</div>

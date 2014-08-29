@@ -1,0 +1,15 @@
+<%= content_for :head do %>
+  <meta name="keywords" content="<%= @look.hashtags.map(&:name).uniq.join(",") %>">
+  <meta name="og:title" content="<%= "#{@look.name} by #{@look.flinker.name}" %>">
+  <meta name="og:url" content="<%= Rails.configuration.host %>/looks/<%= @look.friendly_id %>">
+  <meta name="og:image" content="<%= Rails.configuration.host + @look.look_images.order(:display_order).first.picture.url(:small) %>">
+  <meta name="twitter:title" content="<%= "#{@look.name} by #{@look.flinker.name}" %>">
+  <meta name="twitter:image:src" content="<%= Rails.configuration.host + @look.look_images.order(:display_order).first.picture.url(:small) %>">
+<% end %>
+<%= content_for :keywords do %>
+  <meta name="keywords" content="<%=flinkwebsite_common_keywords.join(',')%>,<%= @look.hashtags.map(&:name).uniq.join(",")%>,<%= @look.look_products.map(&:brand).join(",")%>">
+<% end %>
+<%= content_for :title do %>
+  <%= "#{@look.name} by #{@look.flinker.name}"%>
+<% end %>
+<%= render 'flink/facebook_sdk.html.erb' %>

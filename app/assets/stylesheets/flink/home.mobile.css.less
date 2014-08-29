@@ -1,0 +1,46 @@
+@import "common/constants.css.less";
+
+// containers
+.container {
+  display: table;
+  width: 100%;
+}
+.top-container {
+  .container;
+  height: 66%;
+  background: image-url("flink/common/background.jpg") no-repeat center center;
+  background-size: cover;
+  filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/flink/common/background.jpg', sizingMethod='scale');
+  -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='/assets/flink/common/background.jpg', sizingMethod='scale')";
+  text-align: center;
+  padding: @metric-content-padding @metric-section-padding;
+}
+.bottom-container {
+  .container;
+  height: 34%;
+  background-color: @color-white;
+  text-align: center;
+  padding: @metric-content-padding @metric-section-padding;
+}
+.content-container {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+// items
+.baseline {
+  margin: @metric-section-padding 0;
+}
+.links {
+  margin-top: @metric-content-padding;
+}
+.explore {
+  margin-bottom: 30px;
+}
+
+// text
+.large-title {
+  color: @color-white;
+  font-size: 20px;
+  font-family: @font-thin;
+}
