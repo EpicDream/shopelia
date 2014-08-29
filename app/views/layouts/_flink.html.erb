@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="<%= I18n.locale %>">
 <head>
-  <title><%= content_for?(:title) ? yield(:title) : "Flink" %></title>
+  <title><%= content_for?(:title) ? "Flink | #{yield(:title)}" : "Flink" %></title>
   <%= render 'layouts/flink_meta_tags.html'%>
   <%= yield :keywords %>
   <%= favicon_link_tag %>
