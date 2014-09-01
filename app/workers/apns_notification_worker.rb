@@ -5,7 +5,7 @@ class ApnsNotificationWorker
   sidekiq_options queue: :apns_notifications, retry:false
   
   def perform message, lang
-    Rails.logger.info("ApnsNotificationWorker START #{lang}: #{Time.now}")
+    Sidekiq.logger.info("ApnsNotificationWorker START #{lang}: #{Time.now}")
     
     if lang.to_sym == :fr
       deliver_push(message, Device.frenches)
@@ -13,7 +13,7 @@ class ApnsNotificationWorker
       deliver_push(message, Device.not_frenches)
     end
     
-    Rails.logger.info("ApnsNotificationWorker END #{lang} : #{Time.now}")
+    Sidekiq.logger.info("ApnsNotificationWorker END #{lang} : #{Time.now}")
   end
   
   private
