@@ -42,7 +42,7 @@ class Image < ActiveRecord::Base
   private
   
   def create_files
-    self.picture = URI.parse self.url if self.url && self.picture_file_name.blank? rescue nil
+    self.picture = URI.parse(URI.escape(self.url)) if self.url && self.picture_file_name.blank? rescue nil
   end
   
   def formats
