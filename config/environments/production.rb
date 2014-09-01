@@ -1,6 +1,4 @@
 Shopelia::Application.configure do
-  # Settings specified here will take precedence over those in config/application.rb
-  config.logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
 
   # Code is not reloaded between requests
   config.cache_classes = true
@@ -38,10 +36,10 @@ Shopelia::Application.configure do
   # config.force_ssl = true
 
   # See everything in the log (default is :info)
-  # config.log_level = :debug
+  config.log_level = :error
 
   # Use a different logger for distributed setups
-  # config.logger = SyslogLogger.new
+  config.logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
 
   # Use a different cache store in production
   config.cache_store = :redis_store, Shopelia::Application.config.redis_config
