@@ -1,6 +1,4 @@
 class LookProduct < ActiveRecord::Base
-  CODES = "#{Rails.root}/lib/config/product_codes.yml"
-
   attr_accessible :look_id, :product_id, :code, :brand, :url, :feed
   attr_accessor :url, :feed
   
@@ -22,8 +20,7 @@ class LookProduct < ActiveRecord::Base
   before_create :assign_uuid
   
   def self.codes
-    dic = YAML.load(File.open(CODES))
-    dic["codes"].sort
+    I18n.t('flink.products').keys.sort
   end
 
   def create_hashtags_and_assign_to_look
