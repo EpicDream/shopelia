@@ -10,13 +10,22 @@ class Device < ActiveRecord::Base
   validates :uuid, :presence => true, :uniqueness => true
   
   before_validation :generate_uuid
-  after_update :notify_georges_lobby
 
   attr_accessible :push_token, :os, :os_version, :version, :build
   attr_accessible :referrer, :phone, :user_agent, :email, :uuid
   attr_accessible :pending_answer, :is_dev, :is_beta, :rating, :flinker_id
   
   scope :of_flinker, ->(flinker) { where(flinker_id:flinker.id) }
+  scope :with_push_token, -> { 
+    Device.where('push_token is not null and flinker_id is not null')
+  }
+  scope :frenches, -> { 
+    with_push_token.joins(:flinker).where('flinkers.lang_iso = ?', 'fr_FR')
+  }
+  scope :not_frenches, -> { 
+    with_push_token.joins(:flinker).where('flinkers.lang_iso <> ?', 'fr_FR')
+  }
+  
   
   def self.fetch uuid, ua
     Device.find_by_uuid(uuid) || Device.create(uuid:uuid,user_agent:ua)
@@ -79,10 +88,6 @@ class Device < ActiveRecord::Base
 
   private
   
-  def notify_georges_lobby    
-    Pusher.trigger("georges-lobby", "refresh", {}) if self.pending_answer_changed?
-  end
-
   def generate_uuid
     self.uuid = SecureRandom.hex(16) if self.uuid.nil?
   end
