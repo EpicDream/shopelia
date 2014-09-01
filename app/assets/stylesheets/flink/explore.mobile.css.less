@@ -8,20 +8,52 @@
   to   { opacity: 1; }
 }
 
-// container
-.container {
-  text-align: center;
-}
-
 // cover
 a.cover {
   width: @look-width;
   height: @look-height;
   display: inline-block;
-  position: relative;
-  margin: 4px;
+  float: left;
+  margin-right: 10px;
   background-position: center center;
   background-size: cover;
   -webkit-animation: fadein .5s;
   background-color: @color-light-separator;
+}
+a.cover:last-child {
+  margin-right: 0px;
+}
+
+// titles
+.category-title {
+  font-family: @font-regular;
+  color: @color-dark-grey;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.covers-carousel-container {
+  overflow: hidden;
+  margin-bottom: @metric-section-padding;
+}
+.covers-carousel-container:last-child {
+  margin-bottom: 0;
+}
+.covers-carousel-viewport {
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  -ms-scroll-chaining: chained;
+  -webkit-transform: translateZ(0);
+}
+.covers-carousel {
+  overflow-x: visible;
+  margin-bottom: 10px;
+  width: 110 * 20px - 10px;
+}
+
+::-webkit-scrollbar {
+  display: none;
 }
