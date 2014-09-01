@@ -24,7 +24,7 @@
             <% for product in @look.look_products %>
               <div class="look-product">
                 <div class="look-product-name">
-                  <%= [:en, :fr].map { |locale| t("flink.products.#{product.code}", :locale => locale) }.join("/") %>
+                  <%= t("flink.products.#{product.code}") %>
                 </div>
                 <div class="look-product-brand"><%= product.brand %></div>
               </div>
