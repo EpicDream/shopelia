@@ -16,7 +16,7 @@ class Admin::ApnsNotificationsController < Admin::AdminController
   end
   
   def send_to_flinkers
-    ApnsNotificationWorker.perform_async(ApnsNotification.last.id)
+    ApnsNotification.last.send_to_all_flinkers
     redirect_to new_admin_apns_notification_path
   end
   
