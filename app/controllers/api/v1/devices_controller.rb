@@ -14,7 +14,6 @@ class Api::V1::DevicesController < Api::V1::BaseController
     end
   end
 
-  api :PUT, "/merchants/:uuid", "Update device"
   param_group :device
   def update
     if @device.update_attributes(params[:device])
