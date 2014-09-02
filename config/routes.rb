@@ -233,6 +233,7 @@ Shopelia::Application.routes.draw do
         resources :comments, :only => [:index, :create], :controller => "looks/comments"
         resources :sharings, :only => :create, :controller => "looks/sharings"
         resources :likes, :only => :create, :controller => "looks/likes"
+        resources :products, :only => :index, :controller => "looks/products"
         delete "likes" => "looks/likes#destroy"
       end
       namespace :likes do
