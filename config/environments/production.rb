@@ -39,7 +39,9 @@ Shopelia::Application.configure do
   config.log_level = :error
 
   # Use a different logger for distributed setups
-  config.logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
+  logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
+  logger.level = 3
+  config.logger = logger
 
   # Use a different cache store in production
   config.cache_store = :redis_store, Shopelia::Application.config.redis_config
