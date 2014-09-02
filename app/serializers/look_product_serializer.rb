@@ -10,7 +10,7 @@ class LookProductSerializer < ActiveModel::Serializer
   
   def products
     object.vendor_products.map { |product|
-      { url: product.url, similar: product.similar, id: product.id }
+      { url: product.url, similar: product.similar, hot: product.staff_pick, id: product.id }
     }
   end
 end
