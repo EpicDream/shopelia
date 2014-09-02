@@ -195,6 +195,12 @@ $(document).ready(function() {
     Hashtags.add_from_staff_hashtags(selectedHashtagsIds);
   });
   
+  $(document).on('click', '.similar-product-form-element', function() {
+    console.log($(this));
+    $(this).parents('form').submit();
+  });
+  
+  
 });
 
 function sortable() {

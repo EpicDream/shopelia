@@ -1,5 +1,6 @@
 class VendorProduct < ActiveRecord::Base
   PURE_SHOPPING = "pureshopping"
+  attr_accessible :similar, :staff_pick
   
   belongs_to :look_product
   
