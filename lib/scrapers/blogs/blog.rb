@@ -44,7 +44,7 @@ module Scrapers
         @posts
       rescue => e
         Rails.logger.error(%Q{[#{Time.now}] [Blog#posts] #{e.backtrace.join("\n")}})
-        message = @posts && @posts.none? ? "No posts - #{@url}" : "Exception - #{@url} #{e.message}"
+        message = "Exception - #{@url} #{e.message}"
         Incident.report("Scrapers::Blogs::Blog", :posts, message)
         []
       end
