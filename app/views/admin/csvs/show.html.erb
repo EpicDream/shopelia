@@ -1,0 +1,7 @@
+<p style="margin:100px 0 0 20px">
+  <% if params[:export] %>
+    Le fichier est cours de génération. Attendez environ 1mn et cliquez sur ce lien : <%= link_to "CSV", admin_csv_path(1)%>
+  <% else %>
+    Le fichier n'existe pas. <%= link_to "Génération du fichier", admin_csv_path(1, export: true)%>
+  <% end %>
+</p>
