@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140825100128) do
+ActiveRecord::Schema.define(:version => 20140902115259) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -996,6 +996,7 @@ ActiveRecord::Schema.define(:version => 20140825100128) do
     t.integer  "look_product_id"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
+    t.boolean  "staff_pick",      :default => false
   end
 
   add_index "vendor_products", ["look_product_id"], :name => "index_vendor_products_on_look_product_id"
