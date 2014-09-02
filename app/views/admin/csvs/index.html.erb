@@ -1,3 +1,5 @@
 <p style="margin:100px 0 0 20px">
-  <%= link_to 'flinkers', admin_csv_path(1) %>  
+  <%= link_to 'Télécharger le CSV Flinkers', admin_csv_path(1) %>  
+  <br/>
+  <%= link_to "Regénérer le fichier", admin_csv_path(1, export: true)%>
 </p>
