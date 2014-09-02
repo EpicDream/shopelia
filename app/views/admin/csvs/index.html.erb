@@ -1,4 +1,9 @@
 <p style="margin:100px 0 0 20px">
+  <% if File.exists?(Reports::Flinkers::CSV_FILE_PATH) %>
+    Le dernier fichier généré date du : <%= File.stat(Reports::Flinkers::CSV_FILE_PATH).atime %>
+  <% end %>
+  <br/>
+  <br/>
   <%= link_to 'Télécharger le CSV Flinkers', admin_csv_path(1) %>  
   <br/>
   <%= link_to "Regénérer le fichier", admin_csv_path(1, export: true)%>
