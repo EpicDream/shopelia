@@ -1,6 +1,6 @@
 <div class="flink-menu" data-category="<%= params[:category] %>">
   <div class="flink-menu-logo">
-    <%= link_to image_tag("flink/common/logo_pink.png", :alt => "Flink"), flink_explore_path %>
+    <%= link_to image_tag("flink/desktop/logo_small.png", :alt => "Flink", width: 167, height: 50), flink_explore_path %>
   </div>
   <div class="flink-menu-categories">
     <%= link_to '/explore/flinkloves' do %>
@@ -14,7 +14,7 @@
     <% end %>
   </div>
   <div class="flink-menu-links" data-min-width-769='
-    <%= link_to image_tag("flink/common/appstore_badge.png", :alt => "Flink"), flink_appstore_url, target: '_blank' %>
+    <%= link_to image_tag("flink/desktop/appstore_button.png", :alt => "Flink", width: 148, height: 49), flink_appstore_url, target: '_blank' %>
     <ul><li><%= link_to t('flink.contact'), contact_path %></li><li><%= link_to t('flink.terms'), terms_path %></li></ul>
   '></div>
   <div class="clear"></div>

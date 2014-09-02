@@ -68,4 +68,10 @@ module ApplicationHelper
     ["fashion", "mode", "flink", "looks", "trendy", "paris", "look à la mode", "trendy looks", "fashion looks"] + 
     ["comment m'habiller", "what to wear today"]
   end
+  
+  def device_suffix
+    return '.mobile' if in_mobile_view?
+    return '.tablet' if in_tablet_view?
+    nil
+  end
 end

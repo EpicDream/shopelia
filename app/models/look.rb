@@ -247,11 +247,15 @@ class Look < ActiveRecord::Base
   end
 
   def sharable_title
-    "#{self.name} by #{self.flinker.name} @flinkhq #ootd #fashion #love #fashionblogger #flinkhq"
+    "#{self.name} by #{self.flinker.name} #{products_as_hashtags} @flinkhq #ootd #fashion #love #fashionblogger #flinkhq"
   end
 
   def sharable_url
     "#{Rails.configuration.host}/looks/#{self.friendly_id}"
+  end
+
+  def products_as_hashtags
+    look_products.map { |product| "##{ product.brand.gsub(/[^0-9a-zA-Z]/i, '') }"}.join(' ')
   end
 
   private

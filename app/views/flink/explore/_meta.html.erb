@@ -1,0 +1,6 @@
+<%= content_for :keywords do %>
+  <meta name="keywords" content="<%=flinkwebsite_common_keywords.join(',')%>,<%= @covers.map(&:hashtags).flatten.map(&:name).uniq.join(",") %>">
+<% end %>
+<%= content_for :title do %>
+  Explore
+<% end %>

@@ -1,0 +1,7 @@
+<% covers.each_with_index do |look, index| %>
+  <a style="background-image:url(<%= look.cover_url %>);" class="cover" href="<%= flink_looks_path(look) %>">
+    <p class="hidden">
+      <%= look.hashtags.map(&:name).uniq.join(",") %>
+    </p>
+  </a>
+<% end %>

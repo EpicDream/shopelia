@@ -1,0 +1,5 @@
+<ul>
+  <li><%= link_to icon('facebook fa-2x'), '#', onclick: "FB.ui({method: 'share', href: '#{ URI::encode(@look.sharable_url) }' }, function(response){});" %></li>
+  <li><%= link_to icon('twitter fa-2x'), "https://twitter.com/share?url=#{ URI::encode(@look.bitly_url) }&text=#{ URI::encode(@look.sharable_title) }", target: '_blank' %></li>
+  <li><%= link_to icon('pinterest fa-2x'), "http://www.pinterest.com/pin/create/button/?url=#{ URI::encode(@look.sharable_url) }&media=#{ URI::encode(@look.large_cover_url) }&description=#{ URI::encode(@look.sharable_title) }", target: '_blank' %></li>
+</ul>
