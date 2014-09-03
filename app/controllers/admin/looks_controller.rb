@@ -34,7 +34,7 @@ class Admin::LooksController < Admin::AdminController
   end
 
   def reject
-    next_look
+    @look.reject and next_look
   end
   
   def reject_quality
@@ -62,13 +62,13 @@ class Admin::LooksController < Admin::AdminController
       flash[:error] = "La publication a échoué"
       redirect_to admin_look_path(@look) and return 
     end
-    
+
     look = if @look.prepublished && @look.published
       Look.next_for_publication.first
     else
       Post.next_post.first.try(:look)
     end
-    
+
     redirect_to look ? admin_look_path(look) : admin_posts_path
   end
 

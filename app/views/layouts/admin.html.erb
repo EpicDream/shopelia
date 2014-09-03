@@ -56,7 +56,10 @@
             </p>
             <ul class="nav">
               <li><%= link_to("Blogs", admin_blogs_path) %></li>
-              <li><%= link_to(raw("Posts" + posts_count),admin_posts_path, id:"postsMenu") %></li>
+              <li><%= link_to(raw("Posts" + posts_count), admin_posts_path, id:"postsMenu") %></li>
+              <% if (count = Look.for_publication.count) > 0 %>
+                <li><%= link_to("Prepublications (#{count})", admin_look_path(Look.next_for_publication.first)) %></li>
+              <% end %>
               <li><%= link_to("Flinkers", admin_flinkers_path) %></li>
               <li><%= link_to("Collections", admin_themes_path) %></li>
               <li><%= link_to("Staff Picks", admin_staff_picks_path) %></li>
