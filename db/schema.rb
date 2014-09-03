@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140902115259) do
+ActiveRecord::Schema.define(:version => 20140903100523) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -516,6 +516,8 @@ ActiveRecord::Schema.define(:version => 20140902115259) do
     t.boolean  "staff_pick",         :default => false
     t.boolean  "quality_rejected",   :default => false
     t.string   "slug"
+    t.boolean  "prepublished",       :default => false
+    t.datetime "prepublished_at"
   end
 
   add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"

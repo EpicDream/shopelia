@@ -47,66 +47,47 @@
   left:5px;
 }
 #reinitialize-images{
-  position:absolute;
-  font-family:'Hevetica';
-  font-size:13px;
-  top:10px;
-  left:360px;
-  padding:6px;
   background:#474747;
-  border-radius:2px;
-  color:snow;
-}
-#publish-look{
-  position:absolute;
-  top:10px;
-  left:5px;
-  font-family:'Hevetica';
-  font-size:13px;
-  padding:6px;
-  background:#629651;
-  border-radius:2px;
-  color:snow;
 }
 #reject-look{
-  position:absolute;
-  top:10px;
-  left:120px;
-  font-family:'Hevetica';
-  font-size:13px;
-  padding:6px;
   background:#96362F;
-  border-radius:2px;
-  color:snow;
 }
 #reject-quality-look{
-  position:absolute;
-  top:10px;
-  left:230px;
+  background:#2A2A2A;
+}
+#prepublish-look{
+  background:#FF5E23;
+}
+#publish-look{
+  background:#629651;
+  float:right;
+}
+a.publish-actions-button{
   font-family:'Hevetica';
   font-size:13px;
   padding:6px;
-  background:#2A2A2A;
   border-radius:2px;
   color:snow;
+  margin:0 4px;
 }
 div.form{
   font-family:'Hevetica';
-  position:absolute;
-  top:10px;
-  left:550px;
 }
-div.form #look_staff_pick{
+div.form label[for=look_staff_pick]{
   display:inline-block;
+  margin:0 0 40px 0;
+  text-decoration:underline;
 }
+div.form input[type=checkbox]{
+  margin:-4px 0 0 10px;
+}
+
 div.images{
   margin-top:60px;
 }
 select.theme-select{
   font-family:'Hevetica';
-  position:absolute;
-  top:5px;
-  right:5px;
+  float:right;
 }
 .highlight{
   background:#FFAED2;
@@ -137,6 +118,15 @@ section.header tr td:first-child {
 section.header td img {
   margin: 0 auto;
   max-height:200px;
+}
+span.publication-state-prepublished,
+span.publication-state-published{
+  color:white;
+  border:thin solid white;
+  padding:10px;
+  border-radius:4px;
+  font-weight:normal;
+  margin:10px 10px 0 0;
 }
 
 /*Pagination links*/
@@ -224,11 +214,18 @@ div.hashtags-block input[type=submit].hashtag-submit{
   height:25px;
   padding:2px;
 }
-h1.look-name-published-true{
-  color:#629651 !important;
+h3.look-uuid{
+  color:white;
+  font-weight:normal;
 }
-h1.look-name-published-false{
+h2.look-name-published-false{
   color:#96362F !important;
+}
+h2.look-name-prepublished-true{
+  color:orange !important;
+}
+h2.look-name-published-true{
+  color:#629651 !important;
 }
 
 /*Products*/
