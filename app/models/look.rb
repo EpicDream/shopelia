@@ -242,6 +242,10 @@ class Look < ActiveRecord::Base
     update_attributes(quality_rejected: true, is_published: false)
   end
   
+  def reject
+    update_attributes(is_published: false, prepublished: false)
+  end
+  
   def highlighted_hashtags
     HighlightedLook.hashtags_of_look(self)
   end
