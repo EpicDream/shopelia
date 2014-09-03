@@ -25,6 +25,9 @@ class Post < ActiveRecord::Base
     .joins('left outer join (select follow_id, count(*) as count from flinker_follows group by follow_id) vfollows on vfollows.follow_id = flinkers.id')
     .order('vfollows.count desc')
   }
+  scope :next_post, -> {
+    where("processed_at is null and look_id is not null").order("published_at asc").limit(1)
+  }
   
   def convert
     if self.images.count > 1 && self.look.nil?
