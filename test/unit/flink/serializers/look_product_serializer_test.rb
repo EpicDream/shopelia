@@ -4,7 +4,7 @@ class LookProductSerializerTest < ActiveSupport::TestCase
   
   setup do
     @look = looks(:agadir)
-    @product = VendorProduct.create(url: "http://3suisses.com/jupette", vendor: "pureshopping", similar: true)
+    @product = VendorProduct.create(url: "http://3suisses.com/jupette", vendor: "pureshopping", similar: true, staff_pick: true)
     @look_product = LookProduct.create(look_id: @look.id, brand: "Zara", code: "jean")
   end
   
@@ -17,6 +17,7 @@ class LookProductSerializerTest < ActiveSupport::TestCase
     assert_equal "Jean", product[:code]
     assert_equal "http://3suisses.com/jupette", product[:products].first[:url]
     assert product[:products].first[:similar]
+    assert product[:products].first[:hot]
   end
   
   test "code with nil code" do
