@@ -22,6 +22,8 @@ Shopelia::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
+  config.assets.precompile += ['devise/*.js', 'devise/*.css']
+  config.assets.precompile += ['devise_override/*.js', 'devise_override/*.css']
   config.assets.precompile += ['flink/*.js', 'flink/*.css']
   config.assets.precompile += ['admin/*.js', 'admin/*.css']
   
