@@ -6,16 +6,13 @@ class ApnsNotification < ActiveRecord::Base
   
   def apns_test
     devices = Device.where(flinker_id: Flinker.where(email:EMAILS_FOR_TESTING).map(&:id))
-    Flink::Push.deliver_by_batch(text_for(flinker), devices)
+    Flink::Push.deliver_by_batch(text_fr, devices)
+    Flink::Push.deliver_by_batch(text_en, devices)
   end
   
   def send_to_all_flinkers
     ApnsNotificationWorker.perform_async(text_fr, :fr)
     ApnsNotificationWorker.perform_async(text_en, :en)
-  end
-  
-  def text_for flinker
-    flinker.lang_iso == 'fr_FR' ? text_fr : text_en
   end
   
 end
