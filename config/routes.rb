@@ -118,6 +118,7 @@ Shopelia::Application.routes.draw do
       get :send_to_flinkers
     end
     resources :staff_hashtags
+    resources :publications, only: [:index]
   end
 
   constraints DomainConstraints.new('developers') do

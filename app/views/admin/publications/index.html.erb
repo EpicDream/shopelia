@@ -1,0 +1,16 @@
+<h4>Les 10 derniers looks publiés</h4>
+<table>
+  <thead>
+    <th>Flinker</th>
+    <th>Look</th>
+  </thead>
+  <tbody>
+    <% Look.published.order('flink_published_at desc').limit(10).each do |look| %>
+      <tr>
+        <td><%= look.flinker.username %></td>
+        <td><%= link_to look.name, admin_look_path(look) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+<%= link_to 'Voir plus', admin_looks_path, target:'blank' %>

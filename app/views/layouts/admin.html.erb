@@ -61,6 +61,7 @@
                 <li><%= link_to("Prepublications (#{count})", admin_look_path(Look.next_for_publication.first)) %></li>
               <% end %>
               <li><%= link_to("Flinkers", admin_flinkers_path) %></li>
+              <li><%= link_to("Publications", admin_publications_path) %></li>
               <li><%= link_to("Collections", admin_themes_path) %></li>
               <li><%= link_to("Staff Picks", admin_staff_picks_path) %></li>
               <li><%= link_to("Comments (#{Comment.admin_unread.count})", admin_comments_path) %></li>
