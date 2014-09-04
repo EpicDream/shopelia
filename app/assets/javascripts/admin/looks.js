@@ -32,6 +32,20 @@ var Hashtags = {
     });
   },
   
+  add_from_staff_hashtags: function(ids){
+    var lookId = $("div.hashtags-block").data("look-id");
+    
+    $.post("/admin/looks/" + lookId + "/add_hashtags_from_staff_hashtags", {_method : 'post', staff_hashtag_ids: ids})
+    .success(function(html){
+      $(".staff-hashtags-popup").modal('hide');
+      $("div.hashtags-block").replaceWith(html);
+    })
+    .error(function(){
+      alert("Erreur");
+    });
+    
+  },
+  
   highlight: function(checkbox){
     var lookId = $("div.hashtags-block").data("look-id");
     var hashtagId = checkbox.data("hashtag_id");
@@ -44,6 +58,31 @@ var Hashtags = {
     .error(function(){
       alert("Erreur");
     });
+  }
+}
+
+var PureShopping = {
+  load: function(lookProductId, categoryId, keyword){
+    var box = $("#pure-shopping-products-" + lookProductId);
+    categoryId = categoryId || '';
+    keyword = escape(keyword || '');
+    var query = "?look_product_id=" + lookProductId + "&category_id=" + categoryId + "&keyword=" + keyword
+    
+    $(".css-spinner").show();
+    box.load("/admin/pure_shopping_products" + query, function(text, status, xhr){
+      $(".css-spinner").hide();
+    });
+  },
+  create: function(lookProductId, pureShoppingProductId, isSimilar, callback){
+    var params = { product_id: pureShoppingProductId, look_product_id: lookProductId, similar: isSimilar };
+    
+    $.post("/admin/pure_shopping_products", params)
+    .success(function(){
+      callback(true);
+    })
+    .error(function(){
+      callback(false);
+    })
   }
 }
 
@@ -65,11 +104,6 @@ $(document).ready(function() {
     }
   });
   
-  $(document).on("submit", "form.edit_look", function(e){
-    e.preventDefault();
-    Hashtags.submit();
-  });
-  
   $(document).on("change", ".hashtag-destroy-checkbox", function(){
     Hashtags.submit();
   });
@@ -84,7 +118,88 @@ $(document).ready(function() {
 
   $(document).on("change", "#look_staff_pick", function(){
     Hashtags.submit();
-  })
+  });
+  
+  $(document).on('DOMNodeInserted', '#look-products', function(e) {
+    var object = $(e.target);
+    if (object.attr("class") === "look-product") {
+      var lookProductId = object.data('look-product-id');
+
+      PureShopping.load(lookProductId);
+    }
+  });
+
+  $(document).on('click', '.pure-shopping-refresh', function() {
+    var lookProductId = $(this).parents("div.look-product").data('look-product-id');
+    
+    $("#pure-shopping-products-" + lookProductId).removeClass('hidden');
+    $("#pure-shopping-products-" + lookProductId).modal('show');
+    
+    PureShopping.load(lookProductId);
+  });
+
+  $(document).on('click', '.add-pure-shopping-product', function() {
+    var line = $(this).parents("tr");
+    var lookProductId = line.data("look-product-id");
+    var pureShoppingProductId = line.data("pure-shopping-id");
+    var isSimilar = $("#similar-" + pureShoppingProductId).is(":checked");
+    var productsBox = $("#similar-products-" + lookProductId);
+    
+    PureShopping.create(lookProductId, pureShoppingProductId, isSimilar, function(success){
+      if (success) {
+        line.css({"background" : "#C7EECE"});
+        productsBox.load("/admin/vendor_products?look_product_id=" + lookProductId);
+      }
+      else{
+        line.css({"background" : "red"});
+      }
+    });
+  });
+  
+  $(document).on('click', '#ps_filter_button', function() {
+    var lookProductId = $(this).data('look-product-id');
+    var categoryId = $("#ps_category_filter").val();
+    var keyword = $("#ps_keyword").val();
+    
+    
+    PureShopping.load(lookProductId, categoryId, keyword);
+  });
+  
+  $(document).on('click', 'button#staff-hashtags-button', function() {
+    $(".staff-hashtags-popup").removeClass('hidden');
+    $(".staff-hashtags-popup").modal('show');
+  });
+
+  $(document).on('click', 'span.staff-hashtag', function() {
+    var checked = $(this).attr("data-checked") === "1";
+
+    if (checked) {
+      $(this).css({color: "black", 'font-size': "12px"});
+      $(this).attr("data-checked", "0");
+    }
+    else{
+      $(this).css({color: "#991754", 'font-size': "14px"});
+      $(this).attr("data-checked", "1");
+    }
+  });
+  
+  $(document).on('click', 'button#staff-hashtags-submit', function(){
+    var selectedHashtagsIds = [];
+    
+    $.map($("span.staff-hashtag[data-checked='1']"), function(hashtag){
+      var id = hashtag.getAttribute('data-id');
+
+      selectedHashtagsIds.push(id);
+    });
+    
+    Hashtags.add_from_staff_hashtags(selectedHashtagsIds);
+  });
+  
+  $(document).on('click', '.similar-product-form-element', function() {
+    console.log($(this));
+    $(this).parents('form').submit();
+  });
+  
   
 });
 

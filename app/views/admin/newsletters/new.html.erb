@@ -1,9 +1,9 @@
 <%= form_for([:admin, @newsletter]) do |f| %>
 
-  <%= f.label :subject_fr, 'Subject FR' %>
+  <%= f.label :subject_fr, 'Subject (Français)' %>
   <%= f.text_field :subject_fr %>
 
-  <%= f.label :subject_en, 'Subject EN' %>
+  <%= f.label :subject_en, 'Subject (Anglais)' %>
   <%= f.text_field :subject_en %>
 
   <%= f.label :header_img_url, 'Header image url' %>
@@ -19,9 +19,13 @@
   <%= f.text_field :look_uuid %>
   
   <br/>
-  <%= f.submit "OK" %>
+  <%= f.submit "Créer cette newsletter" %>
   
 <% end %>
 
-<%= link_to 'Test', admin_newsletter_test_path(@newsletter), class:'test-email-link' %>
-<%= link_to 'Envoyer !', admin_newsletter_send_to_subscribers_path(@newsletter), class:'test-email-link', confirm:"/!\\Confirmer l'envoi de la newsletter à tous les utilisateurs" %>
+<div class="send-links">
+  <%= link_to 'Tester', admin_newsletter_test_path(@newsletter), class:'test-email-link' %>
+  <%= link_to 'Envoyer !', admin_newsletter_send_to_subscribers_path(@newsletter), 
+      class:'test-email-link', 
+      confirm:"/!\\Confirmer l'envoi de la newsletter à tous les utilisateurs" %>
+</div>

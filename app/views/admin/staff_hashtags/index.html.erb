@@ -1,0 +1,51 @@
+<div class="new-staff-hashtag-form">
+  <span class="new-hashtag-title">New Hashtag</span>
+  <%= form_for [:admin, StaffHashtag.new] do |f| %>
+    <%= f.text_field :name_fr, placeholder:'Nom français' %>
+    <%= f.text_field :name_en, placeholder:'Nom anglais' %>
+    <%= f.select :category, options_for_select(StaffHashtag.categories)%>
+    <br/>
+    <%= f.label :visible, 'Visible' %>
+    <%= f.check_box :visible %>
+    <%= f.submit 'Créer ce hashtag' %>
+  <% end %>
+</div>
+
+<div class="staff-hashtags-block">
+  <h4>Hashtags visibles</h4>
+  <table class='staff-hashtags'>
+    <thead>
+    </thead>
+    <tbody>
+      <% StaffHashtag.visible.each do |hashtag| %>
+        <tr>
+          <td>#<%= hashtag.name_fr %></td>
+          <td>#<%= hashtag.name_en %></td>
+          <td class="staff-hashtag-delete" data-id="<%= hashtag.id %>">Supprimer</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<div class="staff-hashtags-block">
+  <h4>Hashtags invisibles</h4>
+  <table class='staff-hashtags'>
+    <thead>
+    </thead>
+    <tbody>
+      <% StaffHashtag.grouped_by_category.each do |category, hashtags| %>
+        <tr>
+          <td colspan=3 class="table-section"><%= category %></td>
+        </tr>
+        <% hashtags.each do |hashtag| %>
+          <tr>
+            <td>#<%= hashtag.name_fr %></td>
+            <td>#<%= hashtag.name_en %></td>
+            <td class="staff-hashtag-delete" data-id="<%= hashtag.id %>">Supprimer</td>
+          </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+</div>

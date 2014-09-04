@@ -1,0 +1,205 @@
+@import "common/constants.css.less";
+
+@metrics-default-look-height: 810px;
+@metrics-default-look-width: 450px;
+
+@metrics-default-suggestion-height: 178px;
+@metrics-default-suggestion-width: 100px;
+
+body {
+  background-color: @color-white;
+}
+
+// utils
+.separator {
+  width: 100%;
+  height: 0;
+  border-bottom: @color-light-separator 1px solid;
+  margin-bottom: @metric-content-padding;
+}
+.padding-top-10 {
+  padding-top: 10px;
+}
+
+// containers
+.centered-container {
+  margin: auto;
+}
+.centered-container.mobile-sized {
+  width: 100%;
+}
+.centered-container.desktop-sized {
+  width: 1024px;
+}
+.stick-to-bottom-container {
+  position: absolute;
+  bottom: 0;
+}
+
+// detail
+.detail-container {
+  background-color: @color-background;
+  padding: @metric-default-padding;
+  border-bottom: @color-separator 1px solid;
+  min-height: @metrics-default-look-height + @metric-default-padding * 2;
+}
+.detail-container .centered-container {
+  height: 100%;
+}
+.detail-column {
+  width: 50%;
+  min-height: @metrics-default-look-height;
+  float: left;
+  position: relative;
+}
+.detail-column:nth-child(2) {
+  padding-left: @metric-content-padding;
+  padding-bottom: 130px + @metric-content-padding * 2;
+}
+.detail-column.mobile-sized {
+  width: 100%;
+  float: none;
+  min-height: 0;
+}
+.detail-column.mobile-sized:nth-child(2) {
+  margin-top: @metric-content-padding;
+  padding-left: 0;
+}
+.detail-column .stick-to-bottom-container {
+  width: 100% - 8px;
+}
+.detail-column.mobile-sized .stick-to-bottom-container {
+  width: 100%;
+}
+.look-container {
+  width: @metrics-default-look-width;
+  height: @metrics-default-look-height;
+  background-position: center center;
+  background-size: cover;
+  background-color: @color-light-separator;
+}
+.look-container.mobile-sized {
+  margin: 0 auto;
+}
+
+// look metadata
+.look-title {
+  font-size: 22px;
+}
+.look-title a {
+  color: @color-black;
+}
+.look-title a:hover {
+  color: @color-dark-grey;
+}
+.look-publisher {
+  font-size: 22px;
+  font-family: @font-regular;
+  padding-top: 6px;
+}
+.look-publisher a {
+  color: @color-black;
+}
+.look-publisher a:hover {
+  color: @color-dark-grey;
+}
+.look-publication-date {
+  font-size: 16px;
+  padding-top: 10px;
+  color: @color-dark-grey;
+}
+
+// hashtags
+.look-hashtags {
+  padding-top: @metric-content-padding;
+}
+
+// products
+.look-products {
+  padding-top: @metric-content-padding;
+}
+.look-product {
+  width: 100%;
+  height: 32px;
+  padding-top: 6px;
+  font-size: 16px;
+}
+.look-product:first-of-type {
+  margin-top: 10px;
+}
+.look-product-name {
+  float: left;
+}
+.look-product-brand {
+  float: right;
+  color: @color-dark-grey;
+}
+
+// social
+.look-social {
+  margin-bottom: @metric-content-padding - 10px;
+}
+.look-social-items li {
+  display: inline;
+  color: @color-dark-grey;
+  font-size: 14px;
+  padding: 0px 15px;
+  text-transform: uppercase;
+  vertical-align: middle;
+  list-style-type: none;
+}
+.look-social-items li a {
+  color: @color-dark-grey;
+}
+.look-social-items li a:hover {
+  color: @color-black;
+}
+.look-social-items li a i {
+  color: @color-light-grey;
+}
+.look-social-items li a i:hover {
+  color: darken(@color-light-grey, 20%)
+}
+
+// buttons
+.look-buttons .rounded-button-pink-tiny {
+  margin-left: 20px;
+}
+
+// sections
+.section-title {
+  text-transform: uppercase;
+  font-size: 14px;
+  color: @color-dark-grey;
+}
+
+// suggestions
+.suggestions-container {
+  width: 100%;
+  padding: @metric-default-padding;
+}
+.suggestions-column {
+  width: 50%;
+  float: left;
+}
+.suggestions-column:nth-child(2) {
+  text-align: right;
+}
+.suggestions-column.mobile-sized {
+  width: 100%;
+  float: none;
+}
+.suggestions-column.mobile-sized:nth-child(2) {
+  text-align: left;
+  margin-top: @metric-content-padding;
+}
+.suggestions-look {
+  width: @metrics-default-suggestion-width;
+  height: @metrics-default-suggestion-height;
+  background-color: @color-light-separator;
+  display: inline-block;
+  margin-top: @metric-content-padding;
+  margin-right: 5px;
+  background-position: center center;
+  background-size: cover;
+}

@@ -1,17 +1,21 @@
 class Look < ActiveRecord::Base
+  extend FriendlyId
   MIN_LIKES_FOR_POPULAR = 150
   MIN_BUILD_FOR_STAFF_PICKS = 31
   
+  friendly_id :publisher_and_look_name, use: :slugged
+  
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
-  attr_accessible :hashtags_attributes, :season, :staff_pick, :quality_rejected
+  attr_accessible :hashtags_attributes, :season, :staff_pick, :quality_rejected, :prepublished, :prepublished_at
   
   belongs_to :flinker
   has_one :post
   has_many :comments
   has_many :look_images, :foreign_key => "resource_id", :dependent => :destroy
+  has_many :look_covers, :foreign_key => "resource_id", class_name:"LookImage", order: 'display_order asc', limit:1
   has_many :look_products, :dependent => :destroy
   has_many :products, :through => :look_products
-  has_many :flinker_likes, foreign_key:'resource_id'
+  has_many :flinker_likes, foreign_key:'resource_id', :dependent => :destroy
   has_and_belongs_to_many :hashtags, uniq:true, after_remove: :may_destroy_hashtag
   
   validates :uuid, :presence => true, :uniqueness => true, :on => :create
@@ -24,12 +28,19 @@ class Look < ActiveRecord::Base
   before_validation :find_or_create_hashtag
   after_save :update_flinker_looks_count
   after_update :may_reindex_flinker, if: -> { is_published_changed? }
-  before_update :touch_flink_published_at, if: -> { is_published_changed? }
+  before_update { touch(:flink_published_at) if is_published_changed? }
+  before_update { touch(:prepublished_at) if prepublished_changed? }
   after_update :revive_flinkers, if: -> { is_published_changed? && is_published? }
   
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
   
-  scope :published, -> { where(is_published:true) }
+  scope :published, -> { where(is_published: true) }
+  scope :for_publication, -> { 
+    where(is_published: false, prepublished: true) 
+  }
+  scope :next_for_publication, -> {
+    for_publication.order('published_at asc').limit(1)
+  }
   scope :published_of_blog, ->(blog) { published.where(id:Post.where(blog_id:blog.id).select('look_id'))}
   scope :top_commented, ->(n=5) { 
     Look.flink_published_between(Time.now - 5.days, Time.now)
@@ -110,13 +121,13 @@ class Look < ActiveRecord::Base
   scope :from_country, -> (country_id) {
     joins(:flinker).where('flinkers.country_id = ?', country_id) unless country_id.blank?
   }
-  scope :popular, ->(published_before, published_after) {
+  scope :popular, ->(published_before=nil, published_after=nil) {
     recent(published_before, published_after)
     .joins("join (select resource_id, count(*) from flinker_likes 
             group by resource_id having count(*) >= #{MIN_LIKES_FOR_POPULAR}) likes
             on looks.id = likes.resource_id")
   }
-  scope :recent, ->(published_before, published_after) {
+  scope :recent, ->(published_before=nil, published_after=nil) {
     published_before ||= Time.now
     published_after ||= Rails.configuration.min_date
 
@@ -128,6 +139,7 @@ class Look < ActiveRecord::Base
     .where(staff_pick:true)
   }
   scope :staff_picked, -> { where(staff_pick:true) }
+  scope :flink_loves, -> { staff_picked }
   scope :staff_picked_countries, -> {
     staff_picked
     .joins(:flinker)
@@ -136,7 +148,13 @@ class Look < ActiveRecord::Base
     .select('countries.name, count(*)')
   }
   scope :with_uuid, ->(uuid) {
-    where(uuid: uuid.scan(/^[^\-]+/))
+    where(uuid: uuid.scan(/^[^\-]+/).flatten.first)
+  }
+  scope :random, ->(max=3, publisher=nil, except=nil) {
+    looks = published.order('random()').limit(max)
+    looks = looks.where('id != ?', except.id) if except
+    looks = looks.where(flinker_id: publisher.id) if publisher
+    looks
   }
 
   alias_attribute :published, :is_published
@@ -158,14 +176,25 @@ class Look < ActiveRecord::Base
     .order('flink_published_at desc')
   end
   
-  def self.random collection=Look
-    collection.offset(rand(collection.count)).first
-  end
-  
   def self.publications_counts_per_day from=(Date.today - 7.days)
     sql = "select flink_published_at::DATE, count(*) from looks where is_published='t' and 
     flink_published_at >= '#{from.to_s(:db)}' group by flink_published_at::DATE order by flink_published_at desc"
     connection.execute(sql)
+  end
+  
+  def self.covers
+    Look.published
+    .order('flink_published_at desc')
+    .includes(:look_covers)
+    .includes(:flinker)
+  end
+  
+  def publisher_and_look_name
+    ["#{flinker.name}", "#{name}"]
+  end
+  
+  def should_generate_new_friendly_id?
+    new_record? || slug.blank?
   end
 
   def mark_post_as_processed
@@ -179,7 +208,7 @@ class Look < ActiveRecord::Base
   def bitly_url
     @bitly_url = read_attribute(:bitly_url)
     unless @bitly_url
-      @bitly_url = Bitly.client.shorten("http://www.flink.io/looks/#{self.uuid}").short_url
+      @bitly_url = Bitly.client.shorten(self.sharable_url).short_url
       self.update_attributes(bitly_url: @bitly_url)
     end
     @bitly_url
@@ -187,6 +216,14 @@ class Look < ActiveRecord::Base
   
   def image_for_cover
     look_images.order('display_order asc').limit(1).first
+  end
+
+  def cover_url
+    Rails.configuration.image_host + look_covers.first.picture.url(:small)
+  end
+
+  def large_cover_url
+    Rails.configuration.image_host + look_covers.first.picture.url(:large)
   end
   
   def hashtags_as_strings
@@ -197,8 +234,47 @@ class Look < ActiveRecord::Base
     update_attributes(is_published: true)
   end
   
+  def prepublish
+    update_attributes(prepublished: true, is_published: false)
+  end
+  
+  def reject_quality
+    update_attributes(quality_rejected: true, is_published: false)
+  end
+  
+  def reject
+    update_attributes(is_published: false, prepublished: false)
+  end
+  
   def highlighted_hashtags
     HighlightedLook.hashtags_of_look(self)
+  end
+
+  def trackable_url
+    uri = Addressable::URI.parse(self.url)
+    uri.query_values ||= {}
+    uri.query_values = uri.query_values.merge({utm_source:'flink-web', utm_medium:'website'})
+    uri.to_s
+  end
+
+  def deeplink_url
+    "http://deeplink.me/#{Rails.configuration.deeplink_host}/looks/#{self.uuid}"
+  end
+
+  def app_deeplink_url
+    "flink://looks/#{self.uuid}"
+  end
+
+  def sharable_title
+    "#{self.name} by #{self.flinker.name} #{products_as_hashtags} @flinkhq #ootd #fashion #love #fashionblogger #flinkhq"
+  end
+
+  def sharable_url
+    "#{Rails.configuration.host}/looks/#{self.friendly_id}"
+  end
+
+  def products_as_hashtags
+    look_products.map { |product| "##{ product.brand.gsub(/[^0-9a-zA-Z]/i, '') }"}.join(' ')
   end
 
   private
@@ -217,10 +293,6 @@ class Look < ActiveRecord::Base
         hashtag
       end
     }.uniq
-  end
-  
-  def touch_flink_published_at 
-    self.flink_published_at = Time.now
   end
 
   def generate_uuid
@@ -243,5 +315,5 @@ class Look < ActiveRecord::Base
   def revive_flinkers
     Revival.revive!([], self) 
   end
-  
+
 end

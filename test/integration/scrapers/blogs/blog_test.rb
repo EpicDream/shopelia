@@ -62,6 +62,16 @@ class Scrapers::Blogs::BlogTest < ActiveSupport::TestCase
     end
   end
   
+  test "blog with items entries" do
+    skip
+    @blog.url = "http://theflavourstyle.com"
+    posts = @blog.posts
+    posts.each do |post|
+      assert post.images.count >= 2
+      assert post.link =~ /theflavourstyle/
+    end
+  end
+  
 end
 
   

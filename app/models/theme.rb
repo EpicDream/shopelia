@@ -1,7 +1,7 @@
 class Theme < ActiveRecord::Base
   COVER_HEIGHT_HIGH = 200
   COVER_HEIGHT_LOW = 120
-  FONTS = YAML.load_file("db/ios-fonts.yml")
+  FONTS = YAML.load_file("#{Rails.root}/db/ios-fonts.yml")
   SIZES = (10..30).step(2).to_a
   DEFAULT_FONT = 'HelveticaNeue'
   

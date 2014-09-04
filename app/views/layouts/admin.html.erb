@@ -56,8 +56,12 @@
             </p>
             <ul class="nav">
               <li><%= link_to("Blogs", admin_blogs_path) %></li>
-              <li><%= link_to(raw("Posts" + posts_count),admin_posts_path, id:"postsMenu") %></li>
+              <li><%= link_to(raw("Posts" + posts_count), admin_posts_path, id:"postsMenu") %></li>
+              <% if (count = Look.for_publication.count) > 0 %>
+                <li><%= link_to("Prepublications (#{count})", admin_look_path(Look.next_for_publication.first)) %></li>
+              <% end %>
               <li><%= link_to("Flinkers", admin_flinkers_path) %></li>
+              <li><%= link_to("Publications", admin_publications_path) %></li>
               <li><%= link_to("Collections", admin_themes_path) %></li>
               <li><%= link_to("Staff Picks", admin_staff_picks_path) %></li>
               <li><%= link_to("Comments (#{Comment.admin_unread.count})", admin_comments_path) %></li>
@@ -65,6 +69,8 @@
               <li><%= link_to("Looks Search", admin_search_looks_path) %></li>
               <li><%= link_to("News Letter", new_admin_newsletter_path) %></li>
               <li><%= link_to("Merge Flinkers", new_admin_flinker_merge_path) %></li>
+              <li><%= link_to("Notifications", new_admin_apns_notification_path) %></li>
+              <li><%= link_to("Hashtags", admin_staff_hashtags_path) %></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>

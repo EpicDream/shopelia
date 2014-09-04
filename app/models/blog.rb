@@ -103,7 +103,7 @@ class Blog < ActiveRecord::Base
     country = Country.find_by_iso(self.country || 'FR')
     flinker = Flinker.create(
       name:self.name,
-      username:self.username || self.name.gsub(/[^\w\d\._-]/, ''),
+      username:self.username || self.name.gsub(/[^\w\d]/, SecureRandom.hex(1)),
       url:self.url, 
       email:email,
       password:password,

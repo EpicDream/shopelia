@@ -1,15 +1,14 @@
 class LookProduct < ActiveRecord::Base
-  CODES = "#{Rails.root}/lib/config/product_codes.yml"
-
   attr_accessible :look_id, :product_id, :code, :brand, :url, :feed
   attr_accessor :url, :feed
   
   belongs_to :look, touch:true
   belongs_to :product
-
+  has_many :vendor_products, dependent: :destroy
+  
   validates :look_id, :presence => true
   validates :product_id, :uniqueness => { :scope => :look_id }, :allow_nil => true
-  validates :code, :uniqueness => { :scope => [:brand, :look_id] }
+  validates :code, presence:true, :uniqueness => { :scope => [:brand, :look_id] }
 
   before_validation :check_url_validity, if:Proc.new{ |item| item.url.present? }
   before_validation :find_or_create_product, if:Proc.new{ |item| item.url.present? && item.errors.empty? }
@@ -21,8 +20,7 @@ class LookProduct < ActiveRecord::Base
   before_create :assign_uuid
   
   def self.codes
-    dic = YAML.load(File.open(CODES))
-    dic["codes"].sort
+    I18n.t('flink.products').keys.sort
   end
 
   def create_hashtags_and_assign_to_look

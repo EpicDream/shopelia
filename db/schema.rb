@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140717100810) do
+ActiveRecord::Schema.define(:version => 20140903100523) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -49,6 +49,13 @@ ActiveRecord::Schema.define(:version => 20140717100810) do
     t.string   "name"
     t.string   "kind"
     t.integer  "count"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "apns_notifications", :force => true do |t|
+    t.text     "text_en"
+    t.text     "text_fr"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
@@ -508,10 +515,14 @@ ActiveRecord::Schema.define(:version => 20140717100810) do
     t.string   "season"
     t.boolean  "staff_pick",         :default => false
     t.boolean  "quality_rejected",   :default => false
+    t.string   "slug"
+    t.boolean  "prepublished",       :default => false
+    t.datetime "prepublished_at"
   end
 
   add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"
   add_index "looks", ["is_published"], :name => "index_looks_on_is_published"
+  add_index "looks", ["slug"], :name => "index_looks_on_slug", :unique => true
   add_index "looks", ["uuid"], :name => "index_looks_on_uuid"
 
   create_table "looks_themes", :force => true do |t|
@@ -824,6 +835,15 @@ ActiveRecord::Schema.define(:version => 20140717100810) do
     t.datetime "updated_at", :null => false
   end
 
+  create_table "staff_hashtags", :force => true do |t|
+    t.string   "name_fr"
+    t.string   "name_en"
+    t.string   "category"
+    t.boolean  "visible",    :default => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
+
   create_table "states", :force => true do |t|
     t.string   "iso"
     t.string   "name"
@@ -887,8 +907,9 @@ ActiveRecord::Schema.define(:version => 20140717100810) do
     t.string   "version"
     t.string   "build"
     t.string   "phone"
-    t.datetime "created_at",   :null => false
-    t.datetime "updated_at",   :null => false
+    t.datetime "created_at",                      :null => false
+    t.datetime "updated_at",                      :null => false
+    t.boolean  "mixpanel",     :default => false
   end
 
   add_index "trackings", ["event"], :name => "index_trackings_on_event"
@@ -967,6 +988,20 @@ ActiveRecord::Schema.define(:version => 20140717100810) do
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+
+  create_table "vendor_products", :force => true do |t|
+    t.string   "url"
+    t.string   "image_url"
+    t.string   "vendor"
+    t.boolean  "similar",         :default => false
+    t.integer  "product_id"
+    t.integer  "look_product_id"
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+    t.boolean  "staff_pick",      :default => false
+  end
+
+  add_index "vendor_products", ["look_product_id"], :name => "index_vendor_products_on_look_product_id"
 
   create_table "virtual_cards", :force => true do |t|
     t.string   "provider"

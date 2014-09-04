@@ -1,0 +1,24 @@
+<% vendor_products.each do |product| %>
+  <div class="similar-product" id="similar-product-<%= product.id %>">
+    <%= link_to(image_tag(product.image_url), product.url, target:'_blank') %>
+    <p>
+      <% if product.original %>
+        <span class="brand"><%= product.original.brand %></span>
+        <span class="similar-<%= product.similar %>"><%= product.similar ? "Similaire" : "Original" %></span>
+        <span class="name"><%= truncate(product.original.name, length:40) %></span>
+      <% else %>
+        <span class="similar-product-cancelled">N'existe plus</span>
+      <% end %>
+    </p>
+    <%= form_for [:admin, product], method: :put, remote:true do |f| %>
+      <%= f.label :similar, "Similaire" %>
+      <%= f.check_box :similar, class: "similar-product-form-element" %>
+      <br/>
+      <%= f.label :staff_pick, "Hot" %>
+      <%= f.check_box :staff_pick, class: "similar-product-form-element" %>
+    <% end  %>
+    
+    <%= link_to 'Supprimer', admin_vendor_product_path(product), { remote:true, method: 'delete', format: 'js', class:"delete-link" }%>
+    
+  </div>
+<% end %>

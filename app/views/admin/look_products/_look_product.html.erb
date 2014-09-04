@@ -1,0 +1,21 @@
+<div class="look-product" data-look-product-id="<%= look_product.id %>">
+  <p>
+    <span class="code">
+      <%= t("flink.products.#{look_product.code}", locale: :en) %>/<%= t("flink.products.#{look_product.code}", locale: :fr) %>
+    </span>
+    <span class="brand"><%= look_product.brand %></span>
+  </p>
+  <button class="pure-shopping-refresh">Produits PureShopping</button>
+  <span>(<%= PureShoppingProduct.similar_to(look_product).count %>)</span>
+  <div id="pure-shopping-products-<%= look_product.id %>" class="pure-shopping-products modal fade hidden">
+  </div>
+  <h5>Liens Produits</h5>
+  <div class="similar-products" id="similar-products-<%= look_product.id %>">
+    <%= render partial: 'admin/vendor_products/index', locals: { vendor_products: look_product.vendor_products } %>
+  </div>
+  <div class="edit-look-product">
+    <button class="btn btn-danger look-product-delete" data-lpid="<%= look_product.id %>">
+      <span class="icon-trash icon-white"></span>
+    </button>
+  </div>
+</div>

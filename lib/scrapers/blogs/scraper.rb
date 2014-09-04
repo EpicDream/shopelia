@@ -35,6 +35,8 @@ module Scrapers
           end
         end
         images
+      rescue
+        []
       end
       
       def content block
@@ -95,6 +97,16 @@ module Scrapers
         @posts = nil
         @url = url
         @base_url = URI.parse(url).base_url if url
+      end
+      
+      #for blogs with items entries on home page
+      def posts_urls max=10 
+        page = @agent.get(@url)
+        page.search(".//a[@class='item']").map { |node| 
+          node.attribute('href').value
+        }.uniq[0...max]
+      rescue Mechanize::ResponseCodeError
+        []
       end
       
       private

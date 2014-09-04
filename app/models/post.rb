@@ -15,8 +15,9 @@ class Post < ActiveRecord::Base
   before_validation :set_published_at, if: -> { self.published_at.nil? }
   after_create :convert
   
-  #BAD
-  scope :pending_processing, where("processed_at is null and look_id is not null and posts.published_at > ?", 1.month.ago)
+  scope :pending_processing, -> { 
+    where("processed_at is null and look_id is not null and posts.published_at > ?", 1.month.ago)
+  }
   scope :of_country, ->(code) { where("blogs.country = ?", code).joins(:blog) unless code.blank? }
   scope :of_blog_with_name, ->(name) { where("blogs.name = ?", name).joins(:blog) unless name.blank? }
   scope :with_followers_count, -> {
@@ -24,6 +25,9 @@ class Post < ActiveRecord::Base
     .joins('join flinkers on flinkers.id = looks.flinker_id')
     .joins('left outer join (select follow_id, count(*) as count from flinker_follows group by follow_id) vfollows on vfollows.follow_id = flinkers.id')
     .order('vfollows.count desc')
+  }
+  scope :next_post, -> {
+    pending_processing.order("published_at asc").limit(1)
   }
   
   def convert

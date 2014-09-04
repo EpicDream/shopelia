@@ -1,0 +1,75 @@
+@import "font-awesome";
+@import "constants.css.less";
+
+// default tags
+*{
+  box-sizing:border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  font-family: @font-light;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -moz-font-smoothing: antialiased;
+  font-weight: normal !important;
+  font-style: normal !important;
+  background-color: @color-background;
+}
+html, body, ul, ol, li, .container, .row, img, a {
+  margin: 0;
+  padding: 0;
+}
+html, body, .container {
+  height: 100%;
+  width: 100%;
+}
+a {
+  text-decoration: none;
+}
+image {
+  border: 0;
+}
+.hidden{
+  display:none;
+}
+
+// color classes
+.red {
+  background-color: @color-red;
+}
+.blue {
+  background-color: @color-blue;
+}
+.white {
+  background-color: @color-white;
+}
+.black {
+  background-color: @color-black;
+}
+.yellow {
+  background-color: @color-yellow;
+}
+
+// text alignments
+.text-aligned-right {
+  text-align: right;
+}
+.text-aligned-left {
+  text-align: left;
+}
+.text-aligned-center {
+  text-align: center;
+}
+
+// div float
+.float-left {
+  float: left;
+}
+.float-right {
+  float: right;
+}
+.clear {
+  clear: both;
+}

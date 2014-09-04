@@ -1,0 +1,152 @@
+@import "constants.css.less";
+
+// buttons
+.rounded-button (@color: @color-black) {
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 10px;
+  border-color: @color;
+  color: @color;
+  font-family: @font-medium;
+  font-size: 18px;
+  text-transform: uppercase;
+  display: inline-block;
+  vertical-align:top;
+  padding: 12px 15px;
+}
+.rounded-button-pink {
+  .rounded-button(@color-pink)
+}
+.rounded-button-pink:hover {
+  .rounded-button(darken(@color-pink, 10%))
+}
+.rounded-button-pink-tiny {
+  .rounded-button(@color-pink);
+  font-size: 12px;
+}
+.rounded-button-pink-tiny:hover {
+  .rounded-button(darken(@color-pink, 10%));
+  font-size: 12px;
+}
+.rounded-button-grey-tiny {
+  .rounded-button(@color-dark-grey);
+  font-size: 12px;
+}
+.rounded-button-grey-tiny:hover {
+  .rounded-button(darken(@color-dark-grey, 10%));
+  font-size: 12px;
+}
+
+// hashtags
+.hashtag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: @color-very-dark-grey;
+  background-color: fade(@color-black, 5%);
+  margin-right: 4px;
+}
+
+// social list
+.social-list {
+  display: inline-block;
+  vertical-align: middle;
+}
+.social-list li {
+  display: inline;
+  color: @color-dark-grey;
+  font-size: 14px;
+  padding: 0 15px;
+  text-transform: uppercase;
+  list-style-type: none;
+}
+.social-list li a {
+  color: @color-dark-grey;
+}
+.social-list li a:hover {
+  color: @color-black;
+}
+.social-list li a i {
+  color: @color-light-grey;
+}
+.social-list li a i:hover {
+  color: darken(@color-light-grey, 20%)
+}
+
+// menu
+.flink-menu {
+  background: white;
+  width: 100%;
+  padding: @metric-default-padding;
+  border-bottom: @color-separator 1px solid;
+  text-align: center;
+}
+.flink-menu-logo {
+  display: inline-block;
+  padding-top: 8px;
+  position: absolute;
+  left: @metric-default-padding;
+}
+.flink-menu-categories {
+  display: inline-block;
+  text-align: center;
+}
+.flink-menu-category(@background-image, @color: @color-light-grey) {
+  display: inline-block;
+  text-transform: uppercase;
+  font-family: @font-regular;
+  color: @color;
+  width: 140px;
+  font-size: 13px;
+  padding-top: 50px;
+  background: image-url(@background-image) center 0 no-repeat;
+  background-size: 40px 40px;
+}
+.flink-menu-category-loves {
+  .flink-menu-category('flink/desktop/menu_category_flink_loves_normal.png');
+}
+.flink-menu-category-loves:hover, .flink-menu-category-loves-selected {
+  .flink-menu-category('flink/desktop/menu_category_flink_loves_hover.png', @color-pink);
+}
+.flink-menu-category-popular {
+  .flink-menu-category('flink/desktop/menu_category_popular_normal.png');
+}
+.flink-menu-category-popular:hover, .flink-menu-category-popular-selected {
+  .flink-menu-category('flink/desktop/menu_category_popular_hover.png', @color-pink);
+}
+.flink-menu-category-recent {
+  .flink-menu-category('flink/desktop/menu_category_recent_normal.png');
+}
+.flink-menu-category-recent:hover, .flink-menu-category-recent-selected {
+  .flink-menu-category('flink/desktop/menu_category_recent_hover.png', @color-pink);
+}
+.flink-menu-links {
+  display: inline-block;
+  position: absolute;
+  right: @metric-default-padding;
+}
+.flink-menu-links ul {
+  vertical-align: top;
+  margin-top: 10px;
+}
+.flink-menu-links li {
+  display: inline;
+  color: @color-dark-grey;
+  font-size: 14px;
+  padding-left: 20px;
+  text-transform: uppercase;
+  list-style-type: none;
+}
+.flink-menu-links li a {
+  color: @color-dark-grey;
+}
+.flink-menu-links li a:hover {
+  color: @color-black;
+}
+.flink-menu-links li a i {
+  color: @color-light-grey;
+}
+.flink-menu-links li a i:hover {
+  color: darken(@color-light-grey, 20%)
+}

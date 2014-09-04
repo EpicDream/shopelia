@@ -32,10 +32,19 @@ module Scrapers
           @scraper.url = @url
           @posts = @scraper.posts
         end
+
+        if @posts.none? || (@posts.one? && @posts.first.link == @url) #blog with items entries on home page
+          urls = @scraper.posts_urls
+          @posts = urls.map { |url| 
+            @scraper.url = url
+            @scraper.posts.first
+          }
+        end
+        
         @posts
       rescue => e
         Rails.logger.error(%Q{[#{Time.now}] [Blog#posts] #{e.backtrace.join("\n")}})
-        message = @posts && @posts.none? ? "No posts - #{@url}" : "Exception - #{@url} #{e.message}"
+        message = "Exception - #{@url} #{e.message}"
         Incident.report("Scrapers::Blogs::Blog", :posts, message)
         []
       end

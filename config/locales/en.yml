@@ -8,7 +8,60 @@ en:
     footer_title: "DARE TO WEAR"
     unsubscribe_notice: "You are receiving this email because you signed up at Flink"
     unsubscribe: "Unsubscribe"
-    
+  date:
+    abbr_day_names:
+    - Sun
+    - Mon
+    - Tue
+    - Wed
+    - Thu
+    - Fri
+    - Sat
+    abbr_month_names:
+    -
+    - Jan
+    - Feb
+    - Mar
+    - Apr
+    - May
+    - Jun
+    - Jul
+    - Aug
+    - Sep
+    - Oct
+    - Nov
+    - Dec
+    day_names:
+    - Sunday
+    - Monday
+    - Tuesday
+    - Wednesday
+    - Thursday
+    - Friday
+    - Saturday
+    formats:
+      default: '%d-%m-%Y'
+      long: '%d %B, %Y'
+      short: '%b %e %Y'
+    month_names:
+    -
+    - January
+    - February
+    - March
+    - April
+    - May
+    - June
+    - July
+    - August
+    - September
+    - October
+    - November
+    - December
+    order:
+    - :day
+    - :month
+    - :year
+
   developers:
     unauthorized: "Invalid api key"
     
@@ -26,6 +79,18 @@ en:
     cannot_destroy: "Cannot destroy a user with completed orders"
 
   flink:
+    flink_loves: Flink loves
+    popular: Popular
+    recent: Recent
+    contact: Contact
+    terms: Terms
+    product_list: Product list
+    share_this_look: Share this look
+    more_from_this_blogger: More from this blogger
+    also_hot_on_flink: Also hot on Flink App
+    description: "Discover, get inspired and share trendy street style looks from top fashion bloggers"
+    see_original_article: "See original article"
+    view_on_flink_app: "View on Flink app"
     products:
       pull: "Pull"
       dress: "Dress"
@@ -80,6 +145,19 @@ en:
       jumpsuit: "Jumpsuit"
       jewelry: "Jewelry"
       chain: "Chain"
+      sliders: "Sliders"
+      platforms: "Platforms"
+      gladiator: "Gladiator"
+      mule: "Mule"
+      heels: "Heels"
+      boots: "Boots"
+      flats: "Flats"
+      spartiats: "Spartiats"
+      plastic: "Plastic"
+      trench: "Trench"
+      espadrilles: "Espadrilles"
+      earcuff: "Earcuff"
+      culottes: "Culottes"
   placeholders:
     user:
       email: "Your email"

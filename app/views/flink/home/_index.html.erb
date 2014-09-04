@@ -1,0 +1,37 @@
+<div class="blurred-background-picture height-60 relative-block">
+  <div class="stick-to-bottom">
+    <div class="row-container width-1024">
+      <div data-min-width-1025='<div class="float-left iphone-top" id="iphone-top"><%= image_tag("flink/desktop/home/iphone_top.png", :alt => "Flink", width: 258, height: 370) %></div>'></div>
+      <div class="min-height-371 padding-bottom-60">
+        <div class="text-aligned-center padding-top-20">
+          <%= image_tag("flink/desktop/logo_big.png", :alt => "Flink", width: 254, height: 77) %>
+        </div>
+        <div class="text-aligned-center margin-top-30">
+          <span class="large-title">Discover, get inspired and share trendy<br/>street style looks from top fashion bloggers.</span>
+        </div>
+        <div class="text-aligned-center margin-top-50">
+          <%= link_to flink_appstore_url, class: "medium-title" do %>
+           Get the app now &nbsp;<%= icon('arrow-circle-down') %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="white height-40">
+  <div class="row-container width-1024">
+    <div data-min-width-1025='<div class="float-left"><%= image_tag("flink/desktop/home/iphone_bottom.png", :alt => "Flink", width: 258, height: 170) %></div>'></div>
+    <div class="text-aligned-center padding-top-50">
+      <div>
+        <%= link_to image_tag("flink/desktop/appstore_button.png", :alt => "Flink", width: 148, height: 49), flink_appstore_url, target: '_blank' %>
+        <%= link_to "Explore trendy looks", flink_explore_path, class: "rounded-button-pink margin-left-20" %>
+      </div>
+      <ul class="padding-top-20" style="display: inline-block; vertical-align: sub">
+        <li>©2014 Flink</li>
+        <li><%= link_to "Contact", contact_path %></li>
+        <li><%= link_to t('flink.terms'), terms_path %></li>
+      </ul>
+      <%= render 'flink/social_list.html.erb' %>
+    </div>
+  </div>
+</div>

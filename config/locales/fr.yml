@@ -16,7 +16,7 @@ fr:
   date:
     formats:
       default: "%d/%m/%Y"
-      short: "%e %b"
+      short: "%e %b %Y"
       long: "%e %B %Y"
     day_names:
       - dimanche
@@ -438,6 +438,18 @@ fr:
     invalid_password_or_session_expiration: "Le nouveau mot de passe n'est pas valide ou votre session a expiré"
 
   flink:
+    flink_loves: Flink loves
+    popular: Populaires
+    recent: Récents
+    contact: Contact
+    terms: CGU
+    product_list: Liste des produits
+    share_this_look: Partager ce look
+    description: "Découvrez et partagez les looks mode street ootd des meilleures blogueuses fashion."
+    more_from_this_blogger: Autres looks de cette blogueuse
+    also_hot_on_flink: À voir aussi sur Flink
+    see_original_article: "Voir l'article original"
+    view_on_flink_app: "Voir sur l'app Flink"
     products:
       pull: "Pull"
       dress: "Robe"
@@ -492,5 +504,16 @@ fr:
       jumpsuit: "Combinaison"
       jewelry: "Bijouterie"
       chain: "Chaîne"
-      
-      
+      sliders: "Sandales"
+      platforms: "Compensées"
+      gladiator: "Gladiator"
+      mule: "Mule"
+      heels: "Talons aiguilles hauts"
+      boots: "Bottines"
+      flats: "Escarpins"
+      spartiats: "Spartiates"
+      plastic: "Plastiques"
+      trench: "Trench"
+      espadrilles: "Espadrilles"
+      earcuff: "Bijou d'oreilles"
+      culottes: "Culottes"

@@ -8,7 +8,7 @@
 }
 
 #promise {
-  color: $grey ;
+  color: grey ;
   font-size: 30px;
   line-height: 27px;
 }
@@ -38,11 +38,11 @@ input#product-bar,button#btn-order {
 
 .cgu {
   h3 {
-    color: $blue;
+    color: blue;
   }
 
   b {
-   color: $green;
+   color: green;
   }
 
   font-weight: normal;
@@ -59,7 +59,7 @@ input#product-bar,button#btn-order {
 
   li:before {
     content: "\002022 ";
-    color: $blue; /* or whatever color you prefer */
+    color: blue; /* or whatever color you prefer */
   }
 }
 

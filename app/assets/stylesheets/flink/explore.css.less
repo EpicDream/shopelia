@@ -1,0 +1,55 @@
+@import "common/constants.css.less";
+
+@look-width: 260px;
+@look-height: 462px;
+
+@-webkit-keyframes fadein {
+  from { opacity: 0.5; }
+  to   { opacity: 1; }
+}
+
+// container
+div.looks-covers {
+  width: 100%;
+  padding: @metric-default-padding;
+  text-align: center;
+}
+
+// cover
+a.cover {
+  width: @look-width;
+  height: @look-height;
+  display: inline-block;
+  position: relative;
+  margin: 14px;
+  background-position: center center;
+  background-size: cover;
+  -webkit-animation: fadein .5s;
+  background-color: @color-light-separator;
+}
+div.cover-footer{
+  position: absolute;
+  width: 100%;
+  padding: 16px;
+  bottom: 0;
+  color: white;
+  background-image: -webkit-linear-gradient(bottom, #282828 0%, transparent 100%);
+  background-image: -o-linear-gradient(bottom, #282828 0%, transparent 100%);
+  background-image: -moz-linear-gradient(bottom, #282828 0%, transparent 100%);
+  background-image: -ms-linear-gradient(bottom, #282828 0%, transparent 100%);
+  background-image: linear-gradient(from bottom, #282828 0%, transparent 100%);
+  text-align: left;
+}
+div.cover-footer span {
+  display: block;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-family: @font-regular;
+}
+div.cover-footer span:first-of-type {
+  padding-bottom: 4px;
+  padding-top: 10px;
+  font-family: @font-light;
+}

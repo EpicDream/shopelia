@@ -63,6 +63,12 @@ gem 'rmagick', require:'RMagick'
 gem 'acts_as_list'
 gem 'gibbon', require:false
 gem 'hirb'
+gem 'font-awesome-less'
+gem 'rubyntlm'
+gem "friendly_id", "~> 4.0.10"
+gem "mongo_mapper"
+gem "bson_ext"
+gem "mobile-fu"
 
 group :assets do
   gem 'bootstrap-sass', '~> 2.3.1.0'

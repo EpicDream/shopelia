@@ -1,0 +1,18 @@
+<% @covers.each_with_index do |look, index| %>
+  <% if index == 3 && !params[:page] %>
+    <script src="http://ib.3lift.com/ttj?inv_code=flink_main_feed"></script>
+  <% end %>
+  <a style="background-image:url(<%= look.large_cover_url %>);" class="cover" href="<%= flink_looks_path(look) %>">
+    <div class="cover-footer">
+      <span>
+        <%= look.name.strip %>
+      </span>
+      <span>
+        <%= look.flinker.name %>
+      </span>
+      <p class="hidden">
+        <%= look.hashtags.map(&:name).uniq.join(",") %>
+      </p>
+    </div>
+  </a>
+<% end %>

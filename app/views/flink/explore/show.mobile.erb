@@ -1,0 +1,29 @@
+<%= render 'meta.html.erb' %>
+<%= render 'flink/menu.mobile.html.erb' %>
+<div class="container">
+  <div class="category-title"><%= t('flink.flink_loves') %></div>
+  <div class="covers-carousel-container">
+    <div class="covers-carousel-viewport">
+      <div class="covers-carousel" data-category="flink_loves">
+        <%= render :partial => 'covers.mobile.html.erb', :locals => {:covers => @covers_flink_loves} %>
+      </div>
+    </div>
+  </div>
+  <div class="category-title"><%= t('flink.popular') %></div>
+  <div class="covers-carousel-container">
+    <div class="covers-carousel-viewport">
+      <div class="covers-carousel" data-category="popular">
+        <%= render :partial => 'covers.mobile.html.erb', :locals => {:covers => @covers_popular} %>
+      </div>
+    </div>
+  </div>
+  <div class="category-title"><%= t('flink.recent') %></div>
+  <div class="covers-carousel-container">
+    <div class="covers-carousel-viewport">
+      <div class="covers-carousel" data-category="recent">
+        <%= render :partial => 'covers.mobile.html.erb', :locals => {:covers => @covers_recent} %>
+      </div>
+    </div>
+  </div>
+</div>
+<%= render 'flink/footer.mobile.html.erb' %>

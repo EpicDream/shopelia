@@ -1,6 +1,4 @@
 Shopelia::Application.configure do
-  # Settings specified here will take precedence over those in config/application.rb
-  config.logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
 
   # Code is not reloaded between requests
   config.cache_classes = true
@@ -24,38 +22,11 @@ Shopelia::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
-  config.assets.precompile += %w( developers/dashboard.js  developers/tracking.js )
-  config.assets.precompile += %w( addresses.css application.css errors.css orders.css cart_items.css carts.css )
-  config.assets.precompile += %w( admin/users.css admin/orders.css  admin/developers.css admin/incidents.css )
-  config.assets.precompile += %w( admin/users.js  admin/orders.js   admin/developers.js  admin/incidents.js )
-  config.assets.precompile += %w( admin/viking.css admin/dashboard.css admin/events.css admin/merchants.css )
-  config.assets.precompile += %w( admin/viking.js  admin/dashboard.js  admin/events.js  admin/merchants.js  )
-  config.assets.precompile += %w( admin/devices.css admin/collections.css )
-  config.assets.precompile += %w( admin/devices.js  admin/collections.js )
-  config.assets.precompile += %w( admin/georges/messages.js  admin/georges/devices.js  )
-  config.assets.precompile += %w( admin/georges/messages.css admin/georges/devices.css )
-  config.assets.precompile += %w( admin/blogs.js admin/blogs.css )
-  config.assets.precompile += %w( admin/images.js admin/images.css )
-  config.assets.precompile += %w( admin/comments.js admin/comments.css )
-  config.assets.precompile += %w( admin/search/looks.css admin/search/looks.js )
-  config.assets.precompile += %w( admin/themes.js admin/themes.css )
-  config.assets.precompile += %w( admin/themes_previews.js admin/themes_previews.css )
-  config.assets.precompile += %w( admin/csvs.js admin/csvs.css )
-  config.assets.precompile += %w( admin/posts.js admin/posts.css )
-  config.assets.precompile += %w( admin/looks.js admin/looks.css )
-  config.assets.precompile += %w( admin/flinkers.js admin/flinkers.css )
-  config.assets.precompile += %w( devise/passwords.css devise/sessions.css devise_override/sessions.css )
-  config.assets.precompile += %w( devise/passwords.js  devise/sessions.js  devise_override/sessions.js  )
-  config.assets.precompile += %w( devise_override/confirmations.css devise_override/registrations.css )
-  config.assets.precompile += %w( devise_override/confirmations.js  devise_override/registrations.js  )
-  config.assets.precompile += %w( devise_override/passwords.js devise_override/passwords.css  )
-  config.assets.precompile += %w( home.js errors.js cart_items.js carts.js send_download_link.js )
-  config.assets.precompile += %w( send_download_link.css html_app.js collections.js collections.css )
-  config.assets.precompile += %w( admin/statistics.css admin/statistics.js )
-  config.assets.precompile += %w( admin/newsletters.js admin/newsletters.css )
-  config.assets.precompile += %w( admin/staff_picks.js admin/staff_picks.css )
-  config.assets.precompile += %w( admin/flinker_merges.js admin/flinker_merges.css )
-
+  config.assets.precompile += ['devise/*.js', 'devise/*.css']
+  config.assets.precompile += ['devise_override/*.js', 'devise_override/*.css']
+  config.assets.precompile += ['flink/*.js', 'flink/*.css']
+  config.assets.precompile += ['admin/*.js', 'admin/*.css']
+  
   # Defaults to Rails.root.join("public/assets")
   # config.assets.manifest = YOUR_PATH
 
@@ -67,10 +38,12 @@ Shopelia::Application.configure do
   # config.force_ssl = true
 
   # See everything in the log (default is :info)
-  # config.log_level = :debug
+  config.log_level = :error
 
   # Use a different logger for distributed setups
-  # config.logger = SyslogLogger.new
+  logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
+  logger.level = 3
+  config.logger = logger
 
   # Use a different cache store in production
   config.cache_store = :redis_store, Shopelia::Application.config.redis_config

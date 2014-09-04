@@ -1,3 +1,4 @@
+.idea/
 *.swp
 /.bundle
 /db/*.sqlite3*
@@ -13,6 +14,7 @@ gpg/pubring.gpg~
 keys/mango_pay/production
 lib/config/mangopay_test.yml
 lib/config/mangopay_production.yml
+config/environments/development.rb
 
 plugin/*/node_modules/
 plugin/*/build/

@@ -19,6 +19,7 @@ class Revival
   end
   
   def revive!
+    @flinker.touch(:last_session_open_at) unless @flinker.last_session_open_at
     return unless revive?
     RevivalLog.increment(Date.today)
     NewLooksNotificationWorker.perform_in(revive_in, @flinker.id, @look.id)
@@ -28,8 +29,8 @@ class Revival
   def revive_in
     tz = ActiveSupport::TimeZone.new(@flinker.timezone)
     time = tz.utc_to_local(Time.now.utc)
-    day = time.hour < REVIVE_AT ? time.day : time.day + 1
-    target = tz.utc_to_local(tz.local(time.year, time.month, day, REVIVE_AT).utc)
+    time2 =  time.hour >= REVIVE_AT ? time + (60 * 60 * 24) : time
+    target = tz.utc_to_local(tz.local(time2.year, time2.month, time2.day, REVIVE_AT).utc)
     target - time
   end
   
@@ -40,7 +41,7 @@ class Revival
       begin
         Revival.new(flinker, look).revive! 
       rescue => e
-        Rails.logger.error("[REVIVAL] #{e.inspect}")
+        Rails.logger.error("[REVIVAL] #{e.inspect} #{e.backtrace.join("\n")}")
       end
     }
   end

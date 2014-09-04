@@ -1,4 +1,5 @@
 class Api::Flink::Refresh::FollowingsController < Api::Flink::BaseController
+  skip_before_filter :authenticate_flinker!
   
   before_filter { 
     epochs_to_dates [:updated_before, :updated_after] 
@@ -22,7 +23,10 @@ class Api::Flink::Refresh::FollowingsController < Api::Flink::BaseController
   private
   
   def timestamps collection
-    return {} unless collection.first
+    unless collection.first
+      timestamp = Time.now.to_i
+      return { min_timestamp: timestamp, max_timestamp: timestamp } 
+    end
     { min_timestamp: collection.last.follow_updated_at.to_i, 
       max_timestamp: collection.first.follow_updated_at.to_i}
   end

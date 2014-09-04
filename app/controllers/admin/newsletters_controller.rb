@@ -1,5 +1,5 @@
 class Admin::NewslettersController < Admin::AdminController
-  EMAILS_TEST = ["olivierfisch@hotmail.com", "anoiaque@me.com", "pauline.gandolfini@gmail.com"]
+  EMAILS_TEST = ["olivierfisch@hotmail.com", "anoiaque@me.com"]
   
   def new
     @newsletter = Newsletter.last || Newsletter.create

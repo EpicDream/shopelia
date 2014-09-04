@@ -1,9 +1,19 @@
 %section.header
   %header
-    %h1{class:"look-name-published-#{@look.is_published?}"}= @look.name
     %h2=link_to(@look.flinker.name || @look.flinker.url, admin_flinker_path(@look.flinker))
-    %h2= @look.uuid
-    
+    %h2{class:"look-name-published-#{@look.published?} look-name-prepublished-#{@look.prepublished?}"}
+      = @look.name
+    %h3{class:'look-uuid'}
+      = @look.uuid
+    %br
+    - if @look.prepublished?
+      %span{class:"publication-state-prepublished"}
+        Prepublié le 
+        = l(@look.prepublished_at, format: "%d/%m/%Y")
+    - if @look.published?
+      %span{class:"publication-state-published"}
+        Publié le
+        = l(@look.flink_published_at, format: "%d/%m/%Y")
 .container-fluid
   .row-fluid
     .span3
@@ -35,22 +45,27 @@
           Add custom product
     .span9
       %article.coolbox#grid
-        %a{href: "#{publish_admin_look_path(@look)}", id:"publish-look"}
+        %a{href: "#{prepublish_admin_look_path(@look)}", id:"prepublish-look", class:"publish-actions-button"}
           %i.icon-check.icon-white
-          Publish look
-        %a{href: "#{reject_admin_look_path(@look)}", id:"reject-look"}
+          Prepublish look
+        %a{href: "#{reject_admin_look_path(@look)}", id:"reject-look", class:"publish-actions-button"}
           %i.icon-trash.icon-white
           Reject look
-        %a{href: "#{reject_quality_admin_look_path(@look)}", id:"reject-quality-look"}
+        %a{href: "#{reject_quality_admin_look_path(@look)}", id:"reject-quality-look", class:"publish-actions-button"}
           %i.icon-trash.icon-white
           Reject Quality
-        = link_to 'Rénitialiser les images', reinitialize_images_admin_look_path(@look), id:"reinitialize-images", method:"put", confirm:"Confirmez"
+        = link_to 'Rénitialiser les images', reinitialize_images_admin_look_path(@look), id:"reinitialize-images", class:"publish-actions-button", method:"put", confirm:"Confirmez"
+        %a{href: "#{publish_admin_look_path(@look)}", id:"publish-look", class:"publish-actions-button"}
+          %i.icon-check.icon-white
+          Publish look
+        %hr
         = grouped_themes_for_select(@look)
-        %hr  
-        =render partial:'form'  
+        =render partial:'form'
+        =render partial:'staff_hashtags'
+        =button_tag 'Hashtags', {id:"staff-hashtags-button", class:"btn hashtag-submit"}
         %hr  
         %div.images
-          - @look.look_images.order(:display_order).each do |image|
+          - LookImage.where(resource_id:@look.id).order(:display_order).each do |image|
             .img-block.sort{"data-id" => "#{image.id}"}
               = image_tag image.picture.url, class:"thumb"
               .img-delete

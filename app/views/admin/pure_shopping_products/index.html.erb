@@ -1,0 +1,40 @@
+<div class="pure-shopping-filters">
+  <%= select_tag :ps_category_filter, options_for_select(PureShoppingProduct::CATEGORIES.to_a, selected: params[:category_id] ), prompt: "Toutes"%>
+  <%= text_field_tag :ps_keyword, params[:keyword], placeholder: "Mot clé" %>
+  <%= button_tag "Search", id: :ps_filter_button, 'data-look-product-id' => @look_product.id %>
+  <span><%= @products.count %> Produits</span>
+  <%= render 'admin/spinner'%>
+</div>
+<% if @products.any?  %>
+  <table class="pure-shopping-table">
+    <thead>
+      <th>Aperçu produit</th>
+      <th>Nom</th>
+      <th>Marque</th>
+      <th>Description</th>
+      <th>Statut</th>
+      <th>Similaire</th>
+    </thead>
+    <tbody>
+      <% @products.each do |product| %>
+        <tr data-look-product-id="<%= @look_product.id %>" data-pure-shopping-id="<%= product.id %>">
+          <% if product.image_url.blank? %>
+            <td><%= link_to("Link", product.redirect_url, target:'_blank') %></td>
+          <% else %>
+            <td><%= link_to(image_tag(product.image_url), product.redirect_url, target:'_blank') %></td>
+          <% end %>
+          <td><%= product.name %></td>
+          <td><%= product.brand %></td>
+          <td class="description"><%= product.description %></td>
+          <td><%= product.status %></td>
+          <td><%= check_box_tag :similar , '1', false, id: "similar-#{product.id}" %></td>
+          <td>
+            <button class="add-pure-shopping-product">
+              Ajouter
+            </button>
+          </td>
+        </tr>
+      <% end %>  
+    </tbody>
+  </table>
+<% end %>

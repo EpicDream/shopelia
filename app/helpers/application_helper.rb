@@ -63,4 +63,15 @@ module ApplicationHelper
   def autocomplete_publishers_usernames
     Flinker.publishers.select([:id, :username]).map{ |f| { id:f.id, label:f.username } }.to_json
   end
+  
+  def flinkwebsite_common_keywords
+    ["fashion", "mode", "flink", "looks", "trendy", "paris", "look à la mode", "trendy looks", "fashion looks"] + 
+    ["comment m'habiller", "what to wear today"]
+  end
+  
+  def device_suffix
+    return '.mobile' if in_mobile_view?
+    return '.tablet' if in_tablet_view?
+    nil
+  end
 end

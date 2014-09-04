@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  has_mobile_fu
   protect_from_forgery
   before_filter :set_locale
   before_filter :set_navigator_properties
@@ -10,7 +11,7 @@ class ApplicationController < ActionController::Base
   layout :set_layout
 
   rescue_from Exception, :with => :render_error
-  rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found   
+  rescue_from ActiveRecord::RecordNotFound, :with => :render_not_found
   rescue_from ActionController::RoutingError, :with => :render_not_found
 
   def retrieve_cart
@@ -33,7 +34,7 @@ class ApplicationController < ActionController::Base
 
   def render_error(e)
     respond_to do |format| 
-      format.html { render template: "errors/error_500", layout: 'layouts/application', status: 500 }
+      format.html { render template: "errors/error_500", layout: 'layouts/flink', status: 500 }
       format.json { render json:{}, :status => 500 }
       format.all { render nothing: true, status: 500 }
     end
@@ -41,7 +42,7 @@ class ApplicationController < ActionController::Base
 
   def render_not_found(e)
     respond_to do |format| 
-      format.html { render template: "errors/error_404", layout: 'layouts/application', status: 404 }
+      format.html { render template: "errors/error_404", layout: 'layouts/flink', status: 404 }
       format.json { render json:{}, :status => 404 }
       format.all { render nothing: true, status: 404 }
     end
