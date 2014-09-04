@@ -30,7 +30,7 @@ module Flink
             sound: 'default', 
             other: { metadata: metadata }
           )
-        end
+        end.compact
         begin
           APNS.send_notifications(notifications)
         rescue => e
