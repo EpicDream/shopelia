@@ -1,0 +1,14 @@
+h4{
+  color:#AB100F;
+  margin-top:60px;
+  font-family:Palatino;
+}
+table{
+  width:100%;
+  }
+table td{
+  border:thin solid #D4D4D4;
+  text-align:center;
+  font-size:12px;
+  padding:5px;
+}
