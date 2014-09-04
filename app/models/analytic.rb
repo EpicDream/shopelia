@@ -31,11 +31,11 @@ module Analytic
     end
   
     def likes
-      FlinkerLike.likes_for(@publisher).where(updated_at: @start_date..@end_date).count
+      FlinkerLike.liked_for(@publisher).where(updated_at: @start_date..@end_date).count
     end
   
     def comments
-      @publisher.comments.where(created_at: @start_date..@end_date).count
+      Comment.for_publisher(@publisher).where(created_at: @start_date..@end_date).count
     end
   
     def looks_seen

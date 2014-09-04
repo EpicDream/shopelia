@@ -23,7 +23,9 @@ class Comment < ActiveRecord::Base
   }
   scope :timeline, ->(look_id) { where(look_id:look_id) }
   scope :admin_unread, -> { where(admin_read:false) }
-  
+  scope :for_publisher, ->(publisher) {
+    joins(:look).where('looks.flinker_id = ?', publisher.id)
+  }
   def to_html
     "#{self.body} <br/> sent via  <a href='http://flink.io'>Flink app</a>"
   end
