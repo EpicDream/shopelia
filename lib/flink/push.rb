@@ -16,6 +16,9 @@ module Flink
     end
     
     def self.deliver_by_batch message, devices, metadata={}
+      config = Rails.application.config.apns[:production]
+      [:host, :port, :pem, :pass].each { |key| APNS.send("#{key}=", config[key]) }
+      
       devices.find_in_batches do |devices|
         notifications = devices.map do |device|
           next if device.push_token.nil?
