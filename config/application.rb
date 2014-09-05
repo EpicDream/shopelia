@@ -113,6 +113,8 @@ module Shopelia
     end
     
     config.min_date = Date.parse("2014-01-01").to_time
+    
+    config.emails_for_testing = ["olivierfisch@hotmail.com", "anoiaque@gmail.com", "nicolasbigot@icloud.com"]
   end
   
 end

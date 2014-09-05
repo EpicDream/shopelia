@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140903100523) do
+ActiveRecord::Schema.define(:version => 20140905091721) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -56,8 +56,11 @@ ActiveRecord::Schema.define(:version => 20140903100523) do
   create_table "apns_notifications", :force => true do |t|
     t.text     "text_en"
     t.text     "text_fr"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+    t.integer  "resource_id"
+    t.string   "resource_klass_name"
+    t.string   "resource_identifier"
   end
 
   create_table "audits", :force => true do |t|

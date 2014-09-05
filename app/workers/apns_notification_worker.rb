@@ -4,17 +4,12 @@ class ApnsNotificationWorker
   include Sidekiq::Worker
   sidekiq_options queue: :apns_notifications, retry:false
   
-  def perform message, lang
+  def perform message, lang, metadata={}
     if lang.to_sym == :fr
-      deliver_push(message, Device.frenches)
+      Flink::Push.deliver_by_batch(message, Device.frenches, metadata)
     else
-      deliver_push(message, Device.not_frenches)
+      Flink::Push.deliver_by_batch(message, Device.not_frenches, metadata)
     end
   end
   
-  private
-  
-  def deliver_push message, devices
-    Flink::Push.deliver_by_batch(message, devices)
-  end
 end

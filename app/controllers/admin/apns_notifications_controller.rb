@@ -5,9 +5,12 @@ class Admin::ApnsNotificationsController < Admin::AdminController
   end
   
   def update
-    notification = ApnsNotification.last
-    notification.update_attributes(params[:apns_notification])
+    @notification = ApnsNotification.last
+    @notification.update_attributes(params[:apns_notification])
     redirect_to new_admin_apns_notification_path
+  rescue
+    flash[:error] = "Une erreur s'est produite, vérifier si le lien/identifiant est correct"
+    render 'new'
   end
   
   def test
