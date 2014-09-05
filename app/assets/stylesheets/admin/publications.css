@@ -4,11 +4,20 @@ h4{
   font-family:Palatino;
 }
 table{
-  width:100%;
-  }
+  display:inline-block;
+  vertical-align:top;
+  margin:30px 10px;
+}
 table td{
   border:thin solid #D4D4D4;
   text-align:center;
   font-size:12px;
-  padding:5px;
+  padding:10px;
+}
+table th{
+  color:#747474;
+  font-family:'Palatino';
+  padding:10px;
+  background:#F1F1F1;
+  border:thin solid #D4D4D4;
 }
