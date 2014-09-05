@@ -60,6 +60,7 @@ ActiveRecord::Schema.define(:version => 20140905091721) do
     t.datetime "updated_at",          :null => false
     t.integer  "resource_id"
     t.string   "resource_klass_name"
+    t.string   "resource_identifier"
   end
 
   create_table "audits", :force => true do |t|
