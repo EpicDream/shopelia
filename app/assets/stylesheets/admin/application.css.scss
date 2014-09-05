@@ -459,7 +459,28 @@ background-color:#000000;
 
 }
 
-.navbar .nav > li > a{
- font-size:1.1vw;
- padding:4px 6px;  
+//.navbar .nav > li > a{
+// font-size:1.1vw;
+// padding:4px 6px;
+//}
+.navbar-fixed-top, .navbar-fixed-bottom{
+  position:relative;
+  margin-top:-40px;
 }
+ul.nav{
+  padding:16px;
+  border-left:thin solid #4F4F4F;
+  border-radius:2px;
+  height:90px;
+  font-family:'Palatino';
+}
+ul.nav > li{
+  display:block;
+  float:none !important;
+}
+ul.nav > li a{
+  padding:0px !important;
+}
+
+
+
