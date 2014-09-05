@@ -41,6 +41,15 @@ class Look < ActiveRecord::Base
   scope :next_for_publication, -> {
     for_publication.order('published_at asc').limit(1)
   }
+  scope :rejected, -> {
+    where(is_published: false, prepublished: false)
+    .joins(:post)
+    .where('posts.processed_at is not null')
+  }
+  scope :quality_rejected, -> {
+    where(quality_rejected: true)
+  }
+  
   scope :published_of_blog, ->(blog) { published.where(id:Post.where(blog_id:blog.id).select('look_id'))}
   scope :top_commented, ->(n=5) { 
     Look.flink_published_between(Time.now - 5.days, Time.now)
