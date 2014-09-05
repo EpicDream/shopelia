@@ -17,6 +17,7 @@ module Shopelia
 
     # Social config
     config.facebook_app_id = '735090113186174'
+    config.appstore_app_id = '798552697'
     
     # Maximum number of times the order is allowed to retry a new account creation
     config.max_retry = 3

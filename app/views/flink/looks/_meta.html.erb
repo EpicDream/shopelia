@@ -3,6 +3,7 @@
   <meta name="og:title" content="<%= "#{@look.name} by #{@look.flinker.name}" %>">
   <meta name="og:url" content="<%= Rails.configuration.host %>/looks/<%= @look.friendly_id %>">
   <meta name="og:image" content="<%= Rails.configuration.host + @look.look_images.order(:display_order).first.picture.url(:small) %>">
+  <meta name="twitter:card" content="photo">
   <meta name="twitter:title" content="<%= "#{@look.name} by #{@look.flinker.name}" %>">
   <meta name="twitter:image:src" content="<%= Rails.configuration.host + @look.look_images.order(:display_order).first.picture.url(:small) %>">
 <% end %>
