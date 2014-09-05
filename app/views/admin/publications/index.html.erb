@@ -1,16 +1,47 @@
-<h4>Les 10 derniers looks publiés</h4>
 <table>
   <thead>
-    <th>Flinker</th>
-    <th>Look</th>
+    <th colspan="3">Les 10 derniers looks publiés</th>
   </thead>
   <tbody>
     <% Look.published.order('flink_published_at desc').limit(10).each do |look| %>
       <tr>
         <td><%= look.flinker.username %></td>
         <td><%= link_to look.name, admin_look_path(look) %></td>
+        <td>Le <%= l(look.published_at) %></td>
+      </tr>
+    <% end %>
+    <tr>
+      <td colspan="3"><%= link_to 'Voir plus', admin_looks_path, target:'blank' %></td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <th colspan="3">Les 10 derniers looks rejetés</th>
+  </thead>
+  <tbody>
+    <% Look.rejected.order('updated_at desc').limit(10).each do |look| %>
+      <tr>
+        <td><%= look.flinker.username %></td>
+        <td><%= link_to look.name, admin_look_path(look) %></td>
+        <td>Le <%= l(look.updated_at) %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
-<%= link_to 'Voir plus', admin_looks_path, target:'blank' %>
+
+<table>
+  <thead>
+    <th colspan="3">Les 10 derniers looks rejetés qualité</th>
+  </thead>
+  <tbody>
+    <% Look.quality_rejected.order('updated_at desc').limit(10).each do |look| %>
+      <tr>
+        <td><%= look.flinker.username %></td>
+        <td><%= link_to look.name, admin_look_path(look) %></td>
+        <td>Le <%= l(look.updated_at) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
