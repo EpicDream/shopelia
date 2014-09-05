@@ -1,0 +1,29 @@
+<%= form_for([:admin, @notification]) do |f| %>
+
+  <%= f.label :text_en, 'Notification(Anglais)' %>
+  <%= f.text_area :text_en %>
+
+  <%= f.label :text_fr, 'Notification(Français)' %>
+  <%= f.text_area :text_fr %>
+  <br/>
+  <p class="apns-notif-target">
+    <%= f.label :resource_klass_name, "Type de lien" %>
+    <%= f.select :resource_klass_name, options_for_select([nil] + ApnsNotification::TARGETS, f.object.resource_klass_name) %>
+    
+    <%= f.label :resource_identifier, "Identifiant" %>
+    <%= f.text_field :resource_identifier %>
+  </p>
+  <p class="apns-identifiant-help">
+    Pour un look : son uuid<br/>
+    Pour un flinker : son id<br/>
+    Pour un hashtag : le hashtag<br/>
+    Pour un theme : rien, nada<br/>
+  </p>
+  <br/>
+  <% if @notification.new_record? %>
+    <%= f.submit "Créer cette notification" %>
+  <% else %>
+    <%= f.submit "Mettre à jour cette notification" %>
+  <% end %>
+  
+<% end %>
