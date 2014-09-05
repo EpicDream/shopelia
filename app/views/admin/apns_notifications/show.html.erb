@@ -1,0 +1,9 @@
+<%= render 'form' %>
+
+<div class="send-links">
+  <%= link_to 'Tester', admin_apns_notification_test_path(@notification), class:'test-apns-notification-link' %>
+  <%= link_to 'Envoyer à tous les utilisateurs', 
+    admin_apns_notification_send_to_flinkers_path(@notification), 
+    class:'test-apns-notification-link', 
+    confirm:"/!\\Confirmer l'envoi de cette notification à tous les utilisateurs" %>  
+</div>

@@ -11,8 +11,8 @@ class ApnsNotificationWorkerTest < ActiveSupport::TestCase
     notif = ApnsNotification.create!(text_en: "Hello", text_fr: "Bonjour")
     
     Sidekiq::Testing.inline! do
-      Flink::Push.expects(:deliver_by_batch).with("Bonjour", [betty_device], {}).times(1)
-      Flink::Push.expects(:deliver_by_batch).with("Hello", [lilou_device], {}).times(1)
+      Flink::Push.expects(:deliver_by_batch).with("Bonjour", [betty_device], {"notification_id" => notif.id.to_s}).times(1)
+      Flink::Push.expects(:deliver_by_batch).with("Hello", [lilou_device], {"notification_id" => notif.id.to_s}).times(1)
       
       notif.send_to_all_flinkers
     end
@@ -44,10 +44,11 @@ class ApnsNotificationWorkerTest < ActiveSupport::TestCase
     betty_device = Device.create!(push_token: "TOKEN1", flinker_id: flinkers(:betty).id)
     lilou_device = Device.create!(push_token: "TOKEN2", flinker_id: flinkers(:lilou).id)
     notif = ApnsNotification.create!(text_en: "Hello", text_fr: "Bonjour", resource_klass_name: klass_name, resource_id: resource_id)
-    
+
+    metadata = {"link_kind" => link_kind, "identifier" => identifier, "notification_id" => notif.id.to_s }
     Sidekiq::Testing.inline! do
-      Flink::Push.expects(:deliver_by_batch).with("Hello", [lilou_device], {"link_kind" => link_kind, "identifier" => identifier}).times(1)
-      Flink::Push.expects(:deliver_by_batch).with("Bonjour", [betty_device], {"link_kind" => link_kind, "identifier" => identifier}).times(1)
+      Flink::Push.expects(:deliver_by_batch).with("Hello", [lilou_device], metadata).times(1)
+      Flink::Push.expects(:deliver_by_batch).with("Bonjour", [betty_device], metadata).times(1)
       
       notif.send_to_all_flinkers
     end
