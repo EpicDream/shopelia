@@ -20,8 +20,8 @@ class ApnsNotification < ActiveRecord::Base
   private
   
   def metadata
-    return {} if self.resource_klass_name.blank?
-    { "link_kind" => link_kind , "identifier" => identifier }
+    return { "notification_id" => self.id.to_s } if self.resource_klass_name.blank?
+    { "link_kind" => link_kind , "identifier" => identifier, "notification_id" => self.id.to_s }
   end
   
   def link_kind

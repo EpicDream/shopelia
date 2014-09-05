@@ -28,7 +28,7 @@ class AnalyticTest < ActiveSupport::TestCase
   end
   
   test "analytic for look" do
-    start_date = Time.now - 2.days
+    start_date = Time.now - 100.days
     end_date = Time.now
     stats = {views:3, likes:2, comments:1, blog_clicks:1, see_all:2, start_date:start_date.to_i, end_date:end_date.to_i}
     
