@@ -117,6 +117,7 @@ Shopelia::Application.routes.draw do
       get :test
       get :send_to_flinkers
     end
+    resources :in_app_notifications, only: [:new, :create, :show, :update]
     resources :staff_hashtags
     resources :publications, only: [:index]
   end
