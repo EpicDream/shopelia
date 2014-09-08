@@ -1,0 +1,45 @@
+form{
+  width:60%;
+  margin:100px auto;
+}
+form input[type="submit"]{
+  border:thin solid #698066;
+  border-radius:4px;
+  padding:10px;
+  text-align:center;
+  background:none;
+  margin:20px auto;
+}
+form input[type="submit"]:hover{
+  color:#556243;
+}
+form textarea{
+  width:60%;
+  height:60px;
+  resize:none;
+}
+div.send-links{
+  width:60%;
+  margin:100px auto;
+}
+div.send-links a{
+  display:block;
+  width:200px;
+  margin:10px 0 0 0;
+  border:thin solid #B3B3B3;
+  border-radius:4px;
+  padding:10px;
+  text-align:center;
+}
+p.apns-notif-target{
+  display:inline-block;
+}
+p.apns-identifiant-help{
+  font-size:12px;
+  color:#818181;
+  display:inline-block;
+  margin: 0px 0 0px 20px;
+  border:thin solid #BABABA;
+  padding:6px;
+  border-radius:6px;
+}
