@@ -4,7 +4,7 @@ class Api::Flink::Analytics::EventsControllerTest < ActionController::TestCase
   include Devise::TestHelpers
   
   setup do
-    @events = [{ event:"SeeLook", look_uuid:"21234u" }, { event:"SeeBlog", look_uuid:"21234u" }]
+    @events = [{ event:"seelook", look_uuid:"21234u" }, { event:"seeblog", look_uuid:"21234u" }]
   end
   
   test "create events disconnected mode" do
@@ -27,5 +27,14 @@ class Api::Flink::Analytics::EventsControllerTest < ActionController::TestCase
     Tracking.all { |track| assert_equal(@fanny.id, track.flinker_id) }
   end
   
+  test "create notification event" do
+    events = [{ event:"openpush", notification_id: 2, read: true }]
+    
+    assert_difference("Tracking.count") do
+      post :create, events: events, format: :json
+    end
+    
+    assert_response :success
+  end
   
 end
