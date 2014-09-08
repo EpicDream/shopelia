@@ -1,6 +1,6 @@
 form{
   width:60%;
-  margin:100px auto;
+  display:inline-block;
 }
 form input[type="submit"]{
   border:thin solid #698066;
@@ -42,4 +42,39 @@ p.apns-identifiant-help{
   border:thin solid #BABABA;
   padding:6px;
   border-radius:6px;
+}
+div.notification-form-section{
+  border:thin solid #C4C4C4;
+  border-radius:4px;
+  padding:10px;
+  margin:10px;
+  background:white;
+}
+div.notification-form-section img{
+  width:80%;
+  height:auto;
+  display:block;
+  margin: 0 auto 30px auto;
+  border-radius:2px;
+}
+form label{
+  color:#333B53;
+}
+.large-input{
+  width:90%;
+}
+div.notifications-index{
+  max-width:20%;
+  vertical-align:top;
+  display:inline-block;
+  border:thin solid #95A5BA;
+  border-radius:4px;
+  padding:10px;
+  margin:10px 0 0 10px;
+}
+.notif-in-prod-true{
+  color:green;
+}
+.notif-in-prod-false{
+  color:#4249FF;
 }

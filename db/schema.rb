@@ -452,19 +452,26 @@ ActiveRecord::Schema.define(:version => 20140908103159) do
   create_table "in_app_notifications", :force => true do |t|
     t.string   "lang"
     t.string   "title"
+    t.string   "subtitle"
+    t.text     "content"
+    t.string   "button_title"
     t.integer  "resource_id"
     t.string   "resource_klass_name"
     t.string   "resource_identifier"
     t.integer  "image_id"
     t.string   "min_build"
+    t.string   "max_build"
     t.datetime "expire_at"
-    t.datetime "created_at",          :null => false
-    t.datetime "updated_at",          :null => false
+    t.integer  "priority"
+    t.boolean  "production",          :default => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
   end
 
   add_index "in_app_notifications", ["expire_at"], :name => "index_in_app_notifications_on_expire_at"
   add_index "in_app_notifications", ["lang"], :name => "index_in_app_notifications_on_lang"
   add_index "in_app_notifications", ["min_build"], :name => "index_in_app_notifications_on_min_build"
+  add_index "in_app_notifications", ["production"], :name => "index_in_app_notifications_on_production"
 
   create_table "incidents", :force => true do |t|
     t.integer  "severity"

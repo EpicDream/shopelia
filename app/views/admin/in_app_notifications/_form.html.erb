@@ -1,0 +1,77 @@
+<div class="notifications-index">
+  <p>Les cinq dernières notifications</p>
+  <hr/>
+  <ul>
+    <% InAppNotification.last(5).each do |notif| %>
+      <li>
+        <%= link_to truncate(notif.title, length:20), admin_in_app_notification_path(notif), class:"notif-in-prod-#{notif.production}" %>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+<%= form_for([:admin, @notification], html: { oninput: "priority.value = document.getElementById('in_app_notification_priority').valueAsNumber"}) do |f| %>
+
+  <div class="notification-form-section">
+    <%= f.label :lang, 'Langue' %>
+    <%= f.select :lang, [['Français', :fr], ['Anglais', :en]] %>
+
+    <%= f.label :title, 'Titre' %>
+    <%= f.text_field :title, class:'large-input' %>
+
+    <%= f.label :subtitle, 'Sous Titre' %>
+    <%= f.text_field :subtitle, class:'large-input' %>
+
+    <%= f.label :content, 'Contenu' %>
+    <%= f.text_area :content %>
+    
+    <%= f.label :button_title, 'Titre du bouton' %>
+    <%= f.text_field :button_title %>
+
+    <%= f.label :priority, 'Priorité' %>
+    <%= f.range_field :priority, min:1, max:5, step:1 %>
+    <output for="in_app_notification_priority" name="priority"><%= f.object.priority %></output>
+  </div>
+
+  <div class="notification-form-section">
+    <%= f.label :min_build, 'Build Minimale' %>
+    <%= f.text_field :min_build %>
+
+    <%= f.label :max_build, 'Build Maximale' %>
+    <%= f.text_field :max_build %>
+  
+    <%= f.label :expire_at, "Date d'expiration" %>
+    <%= f.date_select :expire_at %>
+  </div>
+  
+  <div class="notification-form-section">
+    <%= image_tag(f.object.image.picture.url) if f.object.image_id.present? %>
+  
+    <%= f.fields_for :image do |ff| %>
+      <%= ff.label :picture, 'Image' %>
+      <%= ff.file_field :picture %>
+    <% end %>
+  </div>
+  
+  <div class="notification-form-section">
+    <p class="apns-notif-target">
+      <%= f.label :resource_klass_name, "Type de lien" %>
+      <%= f.select :resource_klass_name, options_for_select([nil] + InAppNotification::TARGETS, f.object.resource_klass_name) %>
+    
+      <%= f.label :resource_identifier, "Identifiant" %>
+      <%= f.text_field :resource_identifier %>
+    </p>
+  </div>
+
+  <div class="notification-form-section">
+    <%= f.label :production, "Mis en production" %>
+    <%= f.check_box :production %>
+    <br/>
+    <% if @notification.new_record? %>
+      <%= f.submit "Créer cette notification" %>
+    <% else %>
+      <%= f.submit "Mettre à jour cette notification" %>
+    <% end %>
+  </div>
+  
+<% end %>
