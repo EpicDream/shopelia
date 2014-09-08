@@ -61,6 +61,7 @@
               <li><%= link_to("Flinkers", admin_flinkers_path) %></li>
               <li><%= link_to("Collections", admin_themes_path) %></li>
               <li><%= link_to("Comments (#{Comment.admin_unread.count})", admin_comments_path) %></li>
+              <li><%= link_to("Looks Search", admin_search_looks_path) %></li>
             </ul>
             <ul class="nav">
               <li><%= link_to("Staff Picks", admin_staff_picks_path) %></li>
@@ -69,11 +70,11 @@
             </ul>
             <ul class="nav">
               <li><%= link_to("News Letter", new_admin_newsletter_path) %></li>
-              <li><%= link_to("Merge Flinkers", new_admin_flinker_merge_path) %></li>
               <li><%= link_to("Notifications", new_admin_apns_notification_path) %></li>
+              <li><%= link_to("In App Notifications", new_admin_in_app_notification_path) %></li>
             </ul>
             <ul class="nav">
-              <li><%= link_to("Looks Search", admin_search_looks_path) %></li>
+              <li><%= link_to("Merge Flinkers", new_admin_flinker_merge_path) %></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>

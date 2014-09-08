@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140905091721) do
+ActiveRecord::Schema.define(:version => 20140908103159) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -448,6 +448,23 @@ ActiveRecord::Schema.define(:version => 20140905091721) do
   end
 
   add_index "images", ["resource_id", "type"], :name => "index_images_on_resource_id_and_type"
+
+  create_table "in_app_notifications", :force => true do |t|
+    t.string   "lang"
+    t.string   "title"
+    t.integer  "resource_id"
+    t.string   "resource_klass_name"
+    t.string   "resource_identifier"
+    t.integer  "image_id"
+    t.string   "min_build"
+    t.datetime "expire_at"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
+
+  add_index "in_app_notifications", ["expire_at"], :name => "index_in_app_notifications_on_expire_at"
+  add_index "in_app_notifications", ["lang"], :name => "index_in_app_notifications_on_lang"
+  add_index "in_app_notifications", ["min_build"], :name => "index_in_app_notifications_on_min_build"
 
   create_table "incidents", :force => true do |t|
     t.integer  "severity"
@@ -910,9 +927,11 @@ ActiveRecord::Schema.define(:version => 20140905091721) do
     t.string   "version"
     t.string   "build"
     t.string   "phone"
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
-    t.boolean  "mixpanel",     :default => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+    t.boolean  "mixpanel",        :default => false
+    t.integer  "notification_id"
+    t.boolean  "notif_opened"
   end
 
   add_index "trackings", ["event"], :name => "index_trackings_on_event"
