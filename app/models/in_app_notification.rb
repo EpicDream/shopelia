@@ -13,9 +13,6 @@ class InAppNotification < ActiveRecord::Base
   
   accepts_nested_attributes_for :image, allow_destroy: true
   
-  scope :available_notifications_for, ->(flinker) {
-    
-  }
   scope :prepublications, -> { where(preproduction: true)}
   scope :publications, -> { where(production: true)}
   scope :archives, -> { where(production: false, preproduction: false)}

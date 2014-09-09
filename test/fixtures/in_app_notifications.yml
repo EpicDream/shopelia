@@ -1,0 +1,8 @@
+vacances:
+  title: "Vacances"
+  subtitle: "Agadir"
+  content: "Vacances"
+  button_title: "Vacances"
+  lang: 'fr'
+  expire_at: <%= Time.now + 2.days %>
+  production: true
