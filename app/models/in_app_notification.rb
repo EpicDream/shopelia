@@ -3,21 +3,21 @@ class InAppNotification < ActiveRecord::Base
   
   belongs_to :image
   
-  before_save :find_resource_id, unless: -> { self.resource_identifier.blank? }
-  
   validates :title, presence:true
   validates :subtitle, presence:true
   validates :content, presence:true
   validates :button_title, presence:true
+  validates :image, presence:true
+  
+  before_save :find_resource_id, unless: -> { self.resource_identifier.blank? }
   
   accepts_nested_attributes_for :image, allow_destroy: true
   
   scope :available_notifications_for, ->(flinker) {
   }
-  
-  after_initialize ->(notif) {
-    notif.image = Image.new if notif.image_id.nil?
-  }
+  scope :prepublications, -> { where(preproduction: true)}
+  scope :publications, -> { where(production: true)}
+  scope :archives, -> { where(production: false, preproduction: false)}
   
   private
   
