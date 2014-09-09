@@ -2,6 +2,7 @@ class Admin::InAppNotificationsController < Admin::AdminController
   
   def new
     @notification = InAppNotification.new
+    @notification.image = Image.new
   end
   
   def show
@@ -13,7 +14,7 @@ class Admin::InAppNotificationsController < Admin::AdminController
     @notification.update_attributes!(params[:in_app_notification])
     redirect_to admin_in_app_notification_path(@notification)
   rescue
-    flash[:error] = "Une erreur s'est produite, vérifier si le lien/identifiant est correct"
+    flash[:error] = @notification.errors.full_messages
     render 'show'
   end
   
@@ -21,8 +22,9 @@ class Admin::InAppNotificationsController < Admin::AdminController
     @notification = InAppNotification.new(params[:in_app_notification])
     @notification.save!
     redirect_to admin_in_app_notification_path(@notification)
-  rescue
-    flash[:error] = "Une erreur s'est produite, vérifier si le lien/identifiant est correct"
+  rescue => e
+    @notification.image = Image.new
+    flash[:error] = @notification.errors.full_messages
     render 'new'
   end
 end

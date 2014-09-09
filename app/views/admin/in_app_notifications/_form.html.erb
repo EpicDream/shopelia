@@ -1,13 +1,17 @@
-<div class="notifications-index">
-  <p>Les cinq dernières notifications</p>
-  <hr/>
-  <ul>
-    <% InAppNotification.last(5).each do |notif| %>
-      <li>
-        <%= link_to truncate(notif.title, length:20), admin_in_app_notification_path(notif), class:"notif-in-prod-#{notif.production}" %>
-      </li>
-    <% end %>
-  </ul>
+<div class="notifications-indexes">
+  <% [["Archives", :archives], ["Publications", :publications], ["Prépublications", :prepublications]].each do |text, scope| %>
+    <div class="notifications-index">
+      <p class="index-title"><%= text %></p>
+      <ul>
+        <% InAppNotification.send(scope).last(10).each do |notif| %>
+          <li>
+            <%= link_to truncate(notif.title, length:20), admin_in_app_notification_path(notif) %>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+  
+  <% end %>
 </div>
 
 <%= form_for([:admin, @notification], html: { oninput: "priority.value = document.getElementById('in_app_notification_priority').valueAsNumber"}) do |f| %>
@@ -52,7 +56,7 @@
       <%= ff.file_field :picture %>
     <% end %>
   </div>
-  
+
   <div class="notification-form-section">
     <p class="apns-notif-target">
       <%= f.label :resource_klass_name, "Type de lien" %>
@@ -64,8 +68,12 @@
   </div>
 
   <div class="notification-form-section">
-    <%= f.label :production, "Mis en production" %>
+    <%= f.label :production, "Publier" %>
     <%= f.check_box :production %>
+    <br/>
+    <%= f.label :preproduction, "Prépublier" %>
+    <%= f.check_box :preproduction %>
+    
     <br/>
     <% if @notification.new_record? %>
       <%= f.submit "Créer cette notification" %>

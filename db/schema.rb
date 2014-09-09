@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140908103159) do
+ActiveRecord::Schema.define(:version => 20140909102044) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -466,11 +466,13 @@ ActiveRecord::Schema.define(:version => 20140908103159) do
     t.boolean  "production",          :default => false
     t.datetime "created_at",                             :null => false
     t.datetime "updated_at",                             :null => false
+    t.boolean  "preproduction",       :default => false
   end
 
   add_index "in_app_notifications", ["expire_at"], :name => "index_in_app_notifications_on_expire_at"
   add_index "in_app_notifications", ["lang"], :name => "index_in_app_notifications_on_lang"
   add_index "in_app_notifications", ["min_build"], :name => "index_in_app_notifications_on_min_build"
+  add_index "in_app_notifications", ["preproduction"], :name => "index_in_app_notifications_on_preproduction"
   add_index "in_app_notifications", ["production"], :name => "index_in_app_notifications_on_production"
 
   create_table "incidents", :force => true do |t|
