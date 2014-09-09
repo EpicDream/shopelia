@@ -5,7 +5,7 @@ class Image < ActiveRecord::Base
   
   attr_accessible :url, :display_order, :picture
   alias_attribute :sizes, :picture_sizes
-  validates :url, presence:true, unless: ->(record) { record.class == ThemeCover } 
+  validates :url, presence:true, if: ->(record) { record.class == LookImage } 
   validates :picture, presence:true, on: :create
   
   has_attached_file :picture, 
