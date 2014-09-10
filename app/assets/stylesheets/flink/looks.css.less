@@ -124,7 +124,7 @@ body {
   padding-top: 6px;
   font-size: 16px;
 }
-.look-product:first-of-type {
+.look-products-container {
   margin-top: 10px;
 }
 .look-product-name {
@@ -133,6 +133,33 @@ body {
 .look-product-brand {
   float: right;
   color: @color-dark-grey;
+}
+a div.look-product:hover {
+  background-color: fade(@color-black, 2%);
+}
+a div.look-product {
+  color: @color-black;
+}
+.look-products .section-title {
+  margin-top: @metric-content-padding;
+}
+.look-product-hot {
+  background-color: @color-pink;
+  font-family: @font-medium;
+  font-size: 11px;
+  margin-left: 10px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: @color-white;
+}
+.look-product-shop {
+  background-color: @color-dark-grey;
+  font-family: @font-medium;
+  font-size: 11px;
+  margin-left: 10px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  color: @color-white;
 }
 
 // social
