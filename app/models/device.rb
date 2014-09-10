@@ -59,6 +59,12 @@ class Device < ActiveRecord::Base
     device
   end
   
+  def self.developer? user
+    user && 
+    user.device && 
+    !user.device.real_user? 
+  end
+  
   def android?
     self.os == 'Android'
   end
