@@ -13,6 +13,7 @@ class InAppNotification < ActiveRecord::Base
   
   accepts_nested_attributes_for :image, allow_destroy: true
   
+  default_scope order('priority desc, created_at desc')
   scope :prepublications, -> { where(preproduction: true) }
   scope :publications, -> { where(production: true) }
   scope :published_or_prepublished, -> { where('preproduction = ? or production = ?', true, true) }
@@ -27,7 +28,6 @@ class InAppNotification < ActiveRecord::Base
     end
   }
   scope :available, -> { where('expire_at::DATE >= ?', Time.now.utc)}
-  scope :ordered, -> { order('priority desc, created_at desc')}
   
   def self.notifications_for flinker
     if Device.developer?(flinker)
@@ -41,7 +41,6 @@ class InAppNotification < ActiveRecord::Base
     country(flinker.lang_iso)
     .builds(flinker.device.try(:build))
     .available
-    .ordered
   end
   
   private
