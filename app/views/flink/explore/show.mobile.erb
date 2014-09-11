@@ -7,6 +7,7 @@
       <div class="covers-carousel" data-category="flink_loves">
         <%= render :partial => 'covers.mobile.html.erb', :locals => {:covers => @covers_flink_loves} %>
       </div>
+      <%= javascript_include_tag "flink/carousel_resizer" %>
     </div>
   </div>
   <div class="category-title"><%= t('flink.popular') %></div>
@@ -15,6 +16,7 @@
       <div class="covers-carousel" data-category="popular">
         <%= render :partial => 'covers.mobile.html.erb', :locals => {:covers => @covers_popular} %>
       </div>
+      <%= javascript_include_tag "flink/carousel_resizer" %>
     </div>
   </div>
   <div class="category-title"><%= t('flink.recent') %></div>
@@ -23,6 +25,7 @@
       <div class="covers-carousel" data-category="recent">
         <%= render :partial => 'covers.mobile.html.erb', :locals => {:covers => @covers_recent} %>
       </div>
+      <%= javascript_include_tag "flink/carousel_resizer" %>
     </div>
   </div>
 </div>
