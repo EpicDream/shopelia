@@ -14,7 +14,7 @@ class Admin::InAppNotificationsController < Admin::AdminController
     @notification.update_attributes!(params[:in_app_notification])
     redirect_to admin_in_app_notification_path(@notification)
   rescue
-    flash[:error] = @notification.errors.full_messages
+    flash.now[:error] = @notification.errors.full_messages
     render 'show'
   end
   
@@ -24,7 +24,7 @@ class Admin::InAppNotificationsController < Admin::AdminController
     redirect_to admin_in_app_notification_path(@notification)
   rescue => e
     @notification.image = Image.new
-    flash[:error] = @notification.errors.full_messages
+    flash.now[:error] = @notification.errors.full_messages
     render 'new'
   end
 end

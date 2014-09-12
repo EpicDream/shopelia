@@ -17,17 +17,11 @@ class Api::Flink::ThemesController < Api::Flink::BaseController
   private
   
   def themes
-    if development?
+    if Device.developer?(current_flinker)
       Theme.pre_published_or_published.for_country(country()).order(THEME_ORDER)
     else
       Theme.published(true).for_country(country()).order(THEME_ORDER)
     end
-  end
-  
-  def development?
-    current_flinker && 
-    current_flinker.device && 
-    !current_flinker.device.real_user? 
   end
   
   def lang

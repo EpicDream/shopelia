@@ -13,11 +13,35 @@ class InAppNotification < ActiveRecord::Base
   
   accepts_nested_attributes_for :image, allow_destroy: true
   
-  scope :available_notifications_for, ->(flinker) {
-  }
-  scope :prepublications, -> { where(preproduction: true)}
-  scope :publications, -> { where(production: true)}
+  default_scope order('priority desc, created_at desc')
+  scope :prepublications, -> { where(preproduction: true) }
+  scope :publications, -> { where(production: true) }
+  scope :published_or_prepublished, -> { where('preproduction = ? or production = ?', true, true) }
   scope :archives, -> { where(production: false, preproduction: false)}
+  scope :country, -> (lang_iso){
+    lang_iso == 'fr_FR' ? where(lang: 'fr') : where(lang: 'en')
+  }
+  scope :builds, ->(build) { 
+    if build
+      where('(max_build is null and min_build is null) or
+       ((min_build <= :build or min_build is null) and (max_build >= :build or max_build is null))', build: build)
+    end
+  }
+  scope :available, -> { where('expire_at::DATE >= ?', Time.now.utc)}
+  
+  def self.notifications_for flinker
+    if Device.developer?(flinker)
+      published_or_prepublished.filtered(flinker)
+    else
+      publications.filtered(flinker)
+    end
+  end
+  
+  def self.filtered flinker
+    country(flinker.lang_iso)
+    .builds(flinker.device.try(:build))
+    .available
+  end
   
   private
   

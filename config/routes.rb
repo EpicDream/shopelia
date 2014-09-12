@@ -277,6 +277,7 @@ Shopelia::Application.routes.draw do
         resources :publishers, only: [:show]
         resources :looks, only: [:show]
       end
+      resources :in_app_notifications, only: :index
     end
   end
 

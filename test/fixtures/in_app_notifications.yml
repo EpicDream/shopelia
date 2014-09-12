@@ -1,0 +1,17 @@
+vacances:
+  title: "Vacances"
+  subtitle: "Agadir"
+  content: "Vacances"
+  button_title: "Vacances"
+  lang: 'fr'
+  expire_at: <%= Time.now + 2.days %>
+  production: true
+sun:
+  title: "Sun"
+  subtitle: "Sun"
+  content: "Sun"
+  button_title: "Sun"
+  lang: 'fr'
+  expire_at: <%= Time.now + 2.days %>
+  production: false
+  preproduction: true
