@@ -5,7 +5,7 @@ module FlinkHelper
   end
 
   def flink_instagram_url
-    "http://instagram.com/flinkHQ"
+    "http://instagram.com/flinkhq"
   end
 
   def flink_facebook_url
@@ -14,6 +14,10 @@ module FlinkHelper
 
   def flink_twitter_url
     "http://twitter.com/flinkhq"
+  end
+
+  def flink_pinterest_url
+    "http://www.pinterest.com/flinkhq"
   end
 
 end

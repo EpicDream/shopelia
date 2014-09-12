@@ -1,6 +1,5 @@
 class VendorProduct < ActiveRecord::Base
   PURE_SHOPPING = "pureshopping"
-  
   belongs_to :look_product
   
   validates :url, presence: true

@@ -85,6 +85,8 @@ en:
     contact: Contact
     terms: Terms
     product_list: Product list
+    products_of_the_look: Products of the look
+    you_may_also_like: You may also like
     share_this_look: Share this look
     more_from_this_blogger: More from this blogger
     also_hot_on_flink: Also hot on Flink App
@@ -155,6 +157,9 @@ en:
       spartiats: "Spartiats"
       plastic: "Plastic"
       trench: "Trench"
+      espadrilles: "Espadrilles"
+      earcuff: "Earcuff"
+      culottes: "Culottes"
   placeholders:
     user:
       email: "Your email"

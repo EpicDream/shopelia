@@ -444,6 +444,8 @@ fr:
     contact: Contact
     terms: CGU
     product_list: Liste des produits
+    products_of_the_look: Produits du look
+    you_may_also_like: Vous aimerez aussi
     share_this_look: Partager ce look
     description: "Découvrez et partagez les looks mode street ootd des meilleures blogueuses fashion."
     more_from_this_blogger: Autres looks de cette blogueuse
@@ -514,6 +516,6 @@ fr:
       spartiats: "Spartiates"
       plastic: "Plastiques"
       trench: "Trench"
-      
-      
-      
+      espadrilles: "Espadrilles"
+      earcuff: "Bijou d'oreilles"
+      culottes: "Culottes"

@@ -22,6 +22,8 @@ Shopelia::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
+  config.assets.precompile += ['devise/*.js', 'devise/*.css']
+  config.assets.precompile += ['devise_override/*.js', 'devise_override/*.css']
   config.assets.precompile += ['flink/*.js', 'flink/*.css']
   config.assets.precompile += ['admin/*.js', 'admin/*.css']
   
@@ -39,7 +41,9 @@ Shopelia::Application.configure do
   config.log_level = :error
 
   # Use a different logger for distributed setups
-  config.logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
+  logger = Logger::Syslog.new("shopelia", Syslog::LOG_LOCAL5)
+  logger.level = 3
+  config.logger = logger
 
   # Use a different cache store in production
   config.cache_store = :redis_store, Shopelia::Application.config.redis_config

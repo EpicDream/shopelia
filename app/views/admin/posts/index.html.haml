@@ -19,17 +19,5 @@
         %tr
           %td=I18n.l(Date.parse(hash['flink_published_at']))
           %td=hash['count']
-    %h4 Les 10 derniers looks publiés  
-    %hr 
-    %table 
-      %thead
-        %th Flinker
-        %th Look
-      - Look.published.order('flink_published_at desc').limit(10).each do |look|
-        %tr
-          %td=look.flinker.username
-          %td=link_to look.name, admin_look_path(look)
-    =link_to 'Voir plus', admin_looks_path, target:'blank'    
-    
 .wrapper-column
   = render @posts

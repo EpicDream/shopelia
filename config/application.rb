@@ -17,6 +17,7 @@ module Shopelia
 
     # Social config
     config.facebook_app_id = '735090113186174'
+    config.appstore_app_id = '798552697'
     
     # Maximum number of times the order is allowed to retry a new account creation
     config.max_retry = 3
@@ -113,6 +114,8 @@ module Shopelia
     end
     
     config.min_date = Date.parse("2014-01-01").to_time
+    
+    config.emails_for_testing = ["olivierfisch@hotmail.com", "anoiaque@gmail.com", "nicolasbigot@icloud.com"]
   end
   
 end

@@ -12,7 +12,7 @@ class AnalyticTest < ActiveSupport::TestCase
   test "analytic for publisher" do
     start_date = Time.now - 2.days
     end_date = Time.now
-    stats = {followers:0, looks:2, likes:2, comments:0, looks_seen:3, blog_clicks:1, see_all:2, start_date:start_date.to_i, end_date:end_date.to_i}
+    stats = {followers:0, looks:2, likes:2, comments:1, looks_seen:3, blog_clicks:1, see_all:2, start_date:start_date.to_i, end_date:end_date.to_i}
     
     analytic = Analytic::Publisher.new(@publisher, start_date, end_date)
     
@@ -28,7 +28,7 @@ class AnalyticTest < ActiveSupport::TestCase
   end
   
   test "analytic for look" do
-    start_date = Time.now - 2.days
+    start_date = Time.now - 100.days
     end_date = Time.now
     stats = {views:3, likes:2, comments:1, blog_clicks:1, see_all:2, start_date:start_date.to_i, end_date:end_date.to_i}
     

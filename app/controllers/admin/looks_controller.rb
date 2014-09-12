@@ -26,15 +26,19 @@ class Admin::LooksController < Admin::AdminController
   end
   
   def publish
-    set_published(true)
+    @look.publish and next_look
+  end
+  
+  def prepublish
+    @look.prepublish and next_look
   end
 
   def reject
-    set_published(false)
+    @look.reject and next_look
   end
   
   def reject_quality
-    set_published(false, true)
+    @look.reject_quality and next_look
   end
   
   def highlight_with_tag
@@ -52,15 +56,20 @@ class Admin::LooksController < Admin::AdminController
   end
 
   private
-
-  def set_published is_published, quality_rejected=false
-    if @look.update_attributes(is_published: is_published, quality_rejected: quality_rejected) && @look.mark_post_as_processed
-      look = Post.where("processed_at is null and look_id is not null").order("published_at asc").first.try(:look)
-      redirect_to look ? admin_look_path(look) : admin_posts_path
-    else
+  
+  def next_look
+    unless @look.mark_post_as_processed
       flash[:error] = "La publication a échoué"
-      redirect_to admin_look_path(@look)
+      redirect_to admin_look_path(@look) and return 
     end
+
+    look = if @look.prepublished && @look.published
+      Look.next_for_publication.first
+    else
+      Post.next_post.first.try(:look)
+    end
+
+    redirect_to look ? admin_look_path(look) : admin_posts_path
   end
 
   def retrieve_look

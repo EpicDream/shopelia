@@ -20,7 +20,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     follower = flinkers(:lilou)
     devices(:mobile).update_attributes(flinker_id:flinker.id)
     
-    APNS.expects(:send_notification).with(flinker.device.push_token, alert:'@Lilou te suit!', :"content-available" => 1, sound: 'default')
+    APNS.expects(:send_notification).with(flinker.device.push_token, alert:'@Lilou te suit!', :"content-available" => 1, sound: 'default', other: {metadata:{}})
     
     Flink::FollowNotification.new(flinker, follower).deliver
   end
@@ -31,7 +31,7 @@ class Flink::NotificationTest < ActiveSupport::TestCase
     follower = flinkers(:lilou)
     devices(:mobile).update_attributes(flinker_id:flinker.id)
     
-    APNS.expects(:send_notification).with(flinker.device.push_token, alert:'@Lilou is following you!', :"content-available" => 1, sound: 'default')
+    APNS.expects(:send_notification).with(flinker.device.push_token, alert:'@Lilou is following you!', :"content-available" => 1, sound: 'default', other: {metadata:{}})
     
     Flink::FollowNotification.new(flinker, follower).deliver
   end

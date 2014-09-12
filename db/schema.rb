@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140825100128) do
+ActiveRecord::Schema.define(:version => 20140909140333) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -56,8 +56,11 @@ ActiveRecord::Schema.define(:version => 20140825100128) do
   create_table "apns_notifications", :force => true do |t|
     t.text     "text_en"
     t.text     "text_fr"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+    t.integer  "resource_id"
+    t.string   "resource_klass_name"
+    t.string   "resource_identifier"
   end
 
   create_table "audits", :force => true do |t|
@@ -446,6 +449,32 @@ ActiveRecord::Schema.define(:version => 20140825100128) do
 
   add_index "images", ["resource_id", "type"], :name => "index_images_on_resource_id_and_type"
 
+  create_table "in_app_notifications", :force => true do |t|
+    t.string   "lang"
+    t.string   "title"
+    t.string   "subtitle"
+    t.text     "content"
+    t.string   "button_title"
+    t.integer  "resource_id"
+    t.string   "resource_klass_name"
+    t.string   "resource_identifier"
+    t.integer  "image_id"
+    t.integer  "min_build"
+    t.integer  "max_build"
+    t.datetime "expire_at"
+    t.integer  "priority"
+    t.boolean  "production",          :default => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.boolean  "preproduction",       :default => false
+  end
+
+  add_index "in_app_notifications", ["expire_at"], :name => "index_in_app_notifications_on_expire_at"
+  add_index "in_app_notifications", ["lang"], :name => "index_in_app_notifications_on_lang"
+  add_index "in_app_notifications", ["min_build"], :name => "index_in_app_notifications_on_min_build"
+  add_index "in_app_notifications", ["preproduction"], :name => "index_in_app_notifications_on_preproduction"
+  add_index "in_app_notifications", ["production"], :name => "index_in_app_notifications_on_production"
+
   create_table "incidents", :force => true do |t|
     t.integer  "severity"
     t.string   "issue"
@@ -516,6 +545,8 @@ ActiveRecord::Schema.define(:version => 20140825100128) do
     t.boolean  "staff_pick",         :default => false
     t.boolean  "quality_rejected",   :default => false
     t.string   "slug"
+    t.boolean  "prepublished",       :default => false
+    t.datetime "prepublished_at"
   end
 
   add_index "looks", ["flinker_id"], :name => "index_looks_on_flinker_id"
@@ -905,9 +936,11 @@ ActiveRecord::Schema.define(:version => 20140825100128) do
     t.string   "version"
     t.string   "build"
     t.string   "phone"
-    t.datetime "created_at",                      :null => false
-    t.datetime "updated_at",                      :null => false
-    t.boolean  "mixpanel",     :default => false
+    t.datetime "created_at",                         :null => false
+    t.datetime "updated_at",                         :null => false
+    t.boolean  "mixpanel",        :default => false
+    t.integer  "notification_id"
+    t.boolean  "notif_opened"
   end
 
   add_index "trackings", ["event"], :name => "index_trackings_on_event"
@@ -996,6 +1029,7 @@ ActiveRecord::Schema.define(:version => 20140825100128) do
     t.integer  "look_product_id"
     t.datetime "created_at",                         :null => false
     t.datetime "updated_at",                         :null => false
+    t.boolean  "staff_pick",      :default => false
   end
 
   add_index "vendor_products", ["look_product_id"], :name => "index_vendor_products_on_look_product_id"

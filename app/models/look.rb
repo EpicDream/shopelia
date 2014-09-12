@@ -6,7 +6,7 @@ class Look < ActiveRecord::Base
   friendly_id :publisher_and_look_name, use: :slugged
   
   attr_accessible :flinker_id, :name, :url, :published_at, :is_published, :description, :flink_published_at, :bitly_url
-  attr_accessible :hashtags_attributes, :season, :staff_pick, :quality_rejected
+  attr_accessible :hashtags_attributes, :season, :staff_pick, :quality_rejected, :prepublished, :prepublished_at
   
   belongs_to :flinker
   has_one :post
@@ -28,12 +28,28 @@ class Look < ActiveRecord::Base
   before_validation :find_or_create_hashtag
   after_save :update_flinker_looks_count
   after_update :may_reindex_flinker, if: -> { is_published_changed? }
-  before_update :touch_flink_published_at, if: -> { is_published_changed? }
+  before_update { touch(:flink_published_at) if is_published_changed? }
+  before_update { touch(:prepublished_at) if prepublished_changed? }
   after_update :revive_flinkers, if: -> { is_published_changed? && is_published? }
   
   accepts_nested_attributes_for :hashtags, allow_destroy: true, reject_if: ->(attributes) { attributes['name'].blank? }
   
-  scope :published, -> { where(is_published:true) }
+  scope :published, -> { where(is_published: true) }
+  scope :for_publication, -> { 
+    where(is_published: false, prepublished: true) 
+  }
+  scope :next_for_publication, -> {
+    for_publication.order('published_at asc').limit(1)
+  }
+  scope :rejected, -> {
+    where(is_published: false, prepublished: false)
+    .joins(:post)
+    .where('posts.processed_at is not null')
+  }
+  scope :quality_rejected, -> {
+    where(quality_rejected: true)
+  }
+  
   scope :published_of_blog, ->(blog) { published.where(id:Post.where(blog_id:blog.id).select('look_id'))}
   scope :top_commented, ->(n=5) { 
     Look.flink_published_between(Time.now - 5.days, Time.now)
@@ -227,6 +243,18 @@ class Look < ActiveRecord::Base
     update_attributes(is_published: true)
   end
   
+  def prepublish
+    update_attributes(prepublished: true, is_published: false)
+  end
+  
+  def reject_quality
+    update_attributes(quality_rejected: true, is_published: false)
+  end
+  
+  def reject
+    update_attributes(is_published: false, prepublished: false)
+  end
+  
   def highlighted_hashtags
     HighlightedLook.hashtags_of_look(self)
   end
@@ -247,11 +275,15 @@ class Look < ActiveRecord::Base
   end
 
   def sharable_title
-    "#{self.name} by #{self.flinker.name} @flinkhq #ootd #fashion #love #fashionblogger #flinkhq"
+    "#{self.name} by #{self.flinker.name} #{products_as_hashtags} @flinkhq #ootd #fashion #love #fashionblogger #flinkhq"
   end
 
   def sharable_url
     "#{Rails.configuration.host}/looks/#{self.friendly_id}"
+  end
+
+  def products_as_hashtags
+    look_products.map { |product| "##{ product.brand.gsub(/[^0-9a-zA-Z]/i, '') }"}.join(' ')
   end
 
   private
@@ -270,10 +302,6 @@ class Look < ActiveRecord::Base
         hashtag
       end
     }.uniq
-  end
-  
-  def touch_flink_published_at 
-    self.flink_published_at = Time.now
   end
 
   def generate_uuid
