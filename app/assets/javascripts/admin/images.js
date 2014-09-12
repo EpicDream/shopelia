@@ -1,8 +1,3 @@
-function showCoords(c)
-{
-
-};
-
 $(function(){
   var coordinates = {};
   var realWidth = $('#image-to-crop').data("width");
@@ -11,6 +6,7 @@ $(function(){
 	$('#image-to-crop').Jcrop({
 		onChange: updateCoordinates,
 		onSelect: updateCoordinates,
+    aspectRatio: 1 / 1.77,
     trueSize: [realWidth, realHeight] 
 	});
   
