@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140909102044) do
+ActiveRecord::Schema.define(:version => 20140909140333) do
 
   create_table "activities", :force => true do |t|
     t.integer  "flinker_id"
@@ -459,8 +459,8 @@ ActiveRecord::Schema.define(:version => 20140909102044) do
     t.string   "resource_klass_name"
     t.string   "resource_identifier"
     t.integer  "image_id"
-    t.string   "min_build"
-    t.string   "max_build"
+    t.integer  "min_build"
+    t.integer  "max_build"
     t.datetime "expire_at"
     t.integer  "priority"
     t.boolean  "production",          :default => false

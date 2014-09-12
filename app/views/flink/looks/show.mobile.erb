@@ -12,22 +12,7 @@
       <% end %>
     </div>
   <% end %>
-  <% if @look.look_products.count > 0 %>
-    <div class="look-products">
-      <div class="separator"></div>
-      <div class="section-title"><%= t('flink.product_list')%></div>
-      <div class="look-products-container">
-        <% for product in @look.look_products %>
-          <div class="look-product">
-            <div class="look-product-name">
-              <%= t("flink.products.#{product.code}") %>
-            </div>
-            <div class="look-product-brand"><%= product.brand %></div>
-          </div>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
+  <%= render 'product_list.html.erb' %>
   <div class="look-social">
     <div class="section-title float-left"><%= t('flink.share_this_look')%></div>
     <div class="look-social-items float-right">

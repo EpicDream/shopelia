@@ -1,0 +1,41 @@
+<% if @look.look_products.count > 0 %>
+  <div class="look-products">
+    <div class="separator"></div>
+    <div class="section-title"><%= t('flink.products_of_the_look')%></div>
+    <div class="look-products-container">
+      <% for product in @matched_products %>
+        <% if product[:monetized_url].length > 0 %><a href="<%= product[:monetized_url] %>" target="_blank"><% end %>
+        <div class="look-product">
+          <div class="look-product-name">
+            <%= t("flink.products.#{product[:code]}") %>
+            <% if product[:is_hot] %><span class="look-product-hot">HOT</span><% end %>
+          </div>
+          <div class="look-product-brand">
+            <%= product[:brand] %>
+            <% if product[:render_shop_badge] %><span class="look-product-shop" <% if product[:monetized_url].length == 0 %>style="visibility: hidden"<%end%>>SHOP</span><% end %>
+          </div>
+        </div>
+        <% if product[:monetized_url].length > 0 %></a><% end %>
+      <% end %>
+    </div>
+    <% if @similar_products.count > 0 %>
+      <div class="section-title"><%= t('flink.you_may_also_like')%></div>
+      <div class="look-products-container">
+        <% for product in @similar_products %>
+          <% if product[:monetized_url].length > 0 %><a href="<%= product[:monetized_url] %>" target="_blank"><% end %>
+          <div class="look-product">
+            <div class="look-product-name">
+              <%= t("flink.products.#{product[:code]}") %>
+              <% if product[:is_hot] %><span class="look-product-hot">HOT</span><% end %>
+            </div>
+            <div class="look-product-brand">
+              <%= product[:brand] %>
+              <% if product[:render_shop_badge] %><span class="look-product-shop" <% if product[:monetized_url].length == 0 %>style="visibility: hidden"<%end%>>SHOP</span><% end %>
+            </div>
+          </div>
+          <% if product[:monetized_url].length > 0 %></a><% end %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
