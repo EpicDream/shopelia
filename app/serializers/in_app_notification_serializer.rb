@@ -11,6 +11,6 @@ class InAppNotificationSerializer < ActiveModel::Serializer
   end
   
   def link_identifier
-    object.resource_id
+    object.resource_id.to_s
   end
 end
