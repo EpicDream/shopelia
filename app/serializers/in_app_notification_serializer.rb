@@ -7,7 +7,7 @@ class InAppNotificationSerializer < ActiveModel::Serializer
   end
   
   def link_kind
-    object.resource_klass_name
+    "#{object.resource_klass_name.downcase}s"
   end
   
   def link_identifier
