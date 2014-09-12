@@ -27,8 +27,9 @@ class Admin::ApnsNotificationsController < Admin::AdminController
   end
   
   def test
-    ApnsNotification.last.apns_test
-    redirect_to new_admin_apns_notification_path
+    notification = ApnsNotification.last
+    notification.apns_test
+    redirect_to admin_apns_notification_path(notification)
   end
   
   def send_to_flinkers
