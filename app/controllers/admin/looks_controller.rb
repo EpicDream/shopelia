@@ -33,8 +33,9 @@ class Admin::LooksController < Admin::AdminController
     @look.prepublish and next_look
   end
 
-  def reject
-    @look.reject and next_look
+  def reject#TODO: add flag column to look
+    look = Look.next_for_publication.first if @look.prepublished
+    @look.reject and next_look(look)
   end
   
   def reject_quality
@@ -57,13 +58,13 @@ class Admin::LooksController < Admin::AdminController
 
   private
   
-  def next_look
+  def next_look look=nil
     unless @look.mark_post_as_processed
       flash[:error] = "La publication a échoué"
       redirect_to admin_look_path(@look) and return 
     end
 
-    look = if @look.prepublished
+    look ||= if @look.prepublished
       Look.next_for_publication.first
     else
       Post.next_post.first.try(:look)
