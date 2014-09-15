@@ -63,7 +63,7 @@ class Admin::LooksController < Admin::AdminController
       redirect_to admin_look_path(@look) and return 
     end
 
-    look = if @look.prepublished && @look.published
+    look = if @look.prepublished
       Look.next_for_publication.first
     else
       Post.next_post.first.try(:look)
