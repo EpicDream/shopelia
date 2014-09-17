@@ -1,8 +1,0 @@
-.span2.product-box.product-monitor{:data => {:pid => "#{product.id}"}}
-  .product
-    = image_tag product.image_url || "empty.png", class:"product-img"
-    - if product.versions_expired?
-      .product-spinner
-        .spinner
-    .product-title= product.name || product.url
-    .product-price= number_to_currency(product.product_versions.first.price)

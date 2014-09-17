@@ -1,6 +1,0 @@
-$('#products').html("");
-<% @products.each do |product| %>
-  $('#products').append("<%= escape_javascript(render product) %>");
-<% end %>
-monitorProducts();
-showSpinners();

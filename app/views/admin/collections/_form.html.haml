@@ -1,6 +1,0 @@
-= form_for [:admin,@collection], html:{class:'form-inline'}, remote: georges do |f|
-  - if !georges
-    = f.text_field :name, type:"text", placeholder:"Name"
-    = f.select :public, [['Public', true], ['Private', false]]
-    = f.file_field :image
-  = f.submit "#{georges ? 'Attach' : 'Update'}", class:"btn btn-success"

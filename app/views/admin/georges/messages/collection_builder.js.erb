@@ -1,7 +1,0 @@
-$('#chat-feature').empty();
-$('#chat-feature').show();
-$("#live-traces-container").hide();
-var catalogue = $("#catalogue-add-urls-modal");
-catalogue.remove();
-$("<%= escape_javascript(render "admin/collections/builder", georges: true ) %>").appendTo("#chat-feature");
-$("body").append($("<%= escape_javascript(render "admin/collections/modal", collection: @collection) %>"));

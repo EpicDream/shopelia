@@ -1,8 +1,0 @@
-$("#catalogue-add-urls-modal").modal('hide');
-$('#catalogue-add-urls-confirm').button('reset')
-<% @items.each do |item| %>
-  <% item.product.authorize_push_channel %>
-  $("#collection-items").prepend("<%= escape_javascript(render item) %>")
-<% end %>
-showSpinners();
-monitorCollectionItems();

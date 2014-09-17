@@ -1,8 +1,0 @@
-.admin-collection-item-span{style:"margin-left:10px;", data:{ciid:"#{collection_item.id}"}, class:"#{params[:action] == 'show' ? 'span3' : 'span12'}"}
-  .collection-item-box.collection-item-monitor{data:{pid:"#{collection_item.product_id}"}}
-    - if collection_item.product.versions_expired?
-      .collection-item-spinner
-        .spinner
-    .collection-item
-      %img.collection-item-img{src:"#{collection_item.product.image_url}"}
-    .collection-item-price= number_to_currency(collection_item.product.price || 0)

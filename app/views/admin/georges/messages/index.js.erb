@@ -1,6 +1,0 @@
-$('#chat-user').empty();
-$('#chat-feature').empty();
-$('#chat-feature').hide();
-$('#live-traces-container').empty();
-$("<%= escape_javascript(render :partial => "messages", messages: @messages) %>").appendTo("#chat-user");
-$("<%= escape_javascript(render "/admin/georges/devices/live_traces") %>").appendTo("#live-traces-container");
