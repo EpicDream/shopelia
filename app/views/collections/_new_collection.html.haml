@@ -1,6 +1,0 @@
-= form_for @collection || Collection.new, remote: true, url:collections_path, html:{class:'form',id:'collectionForm'} do |f|
-  .form-group.col-xs-8.col-lg-10
-    = f.label :name, class:"sr-only control-label"
-    = f.text_field :name, class:"form-control input-lg", type:"text", placeholder:"#{t('placeholders.collections.name')}", rel:"popover", data:{placement:"bottom",trigger:"manual"}
-  .col-xs-4.col-lg-2
-    = f.submit t("app.collections.submit"), class:"btn btn-success btn-lg", disable_with:t("app.wait")

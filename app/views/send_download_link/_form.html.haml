@@ -1,4 +1,0 @@
-%form.form-inline{role: "form", data:{remote:"true"}, method: "POST", action: "#{send_download_link_index_path}"}
-  .form-group
-    %input#send-link-input.form-control{name: "data", placeholder: "#{t 'app.public.download.placeholder'}"}/
-  %button#send-link-btn.btn.btn-default{type: "submit", "data-loading-text" => "#{t 'app.public.download.wait'}"}= t 'app.public.download.send'

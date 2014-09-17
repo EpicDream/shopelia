@@ -1,7 +1,0 @@
-.row
-= form_for CartItem.new, remote: true, url:cart_items_path, html:{class:'form',id:'cart-item-form'} do |f|
-  .form-group.col-lg-10
-    = f.label :url, class:"sr-only control-label"
-    = f.text_field :url, class:"form-control input-lg", type:"text", placeholder:"#{t('placeholders.cart_items.url')}", rel:"popover", data:{placement:"bottom",trigger:"manual"}
-  .col-lg-2
-    = f.submit t("app.cart_items.submit"), class:"btn btn-success btn-lg", disable_with:t("app.wait")

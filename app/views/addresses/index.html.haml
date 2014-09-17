@@ -1,6 +1,0 @@
-%h1= t('app.my_addresses')
-= render :partial => 'address', :collection => current_user.addresses
-.row
-  %a{:class => "btn btn-success modal-button", :id => "addressButton", "target-modal" => "addressModal", "target-url" => "#{new_address_path}"}
-    %i{:class => "icon-plus icon-white"}
-    = t("users.registration.finalize.add_address")

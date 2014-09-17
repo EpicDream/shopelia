@@ -1,8 +1,0 @@
-.row
-  = form_for @collection.collection_items.build, remote: true, url:collection_items_path, html:{class:'form',id:'collection-item-form'} do |f|
-    = f.hidden_field :collection_id
-    .form-group.col-lg-10
-      = f.label :url, class:"sr-only control-label"
-      = f.text_field :url, class:"form-control input-lg", type:"text", placeholder:"#{t('placeholders.collection_items.url')}", rel:"popover", data:{placement:"bottom",trigger:"manual"}
-    .col-lg-2
-      = f.submit t("app.collection_items.submit"), class:"btn btn-success btn-lg", disable_with:t("app.wait")

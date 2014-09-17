@@ -1,6 +1,0 @@
-%h1= t('app.my_payment_cards')
-= render :partial => 'payment_card', :collection => current_user.payment_cards
-.row
-  %a{:class => "btn btn-success modal-button", :id => "cardButton", "target-modal" => "cardModal", "target-url" => "#{new_payment_card_path}"}
-    %i{:class => "icon-plus icon-white"}
-    = t("users.registration.finalize.add_payment_card")

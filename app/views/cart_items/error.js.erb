@@ -1,6 +1,0 @@
-$("#cart_item_url").data("content", "<%= raw @item.errors.full_messages.first %>")
-$("#cart_item_url").popover('show');
-$("#cart_item_url").focus();
-$("#cart_item_url").on('input', function() {
-  $(this).popover('hide')
-});
