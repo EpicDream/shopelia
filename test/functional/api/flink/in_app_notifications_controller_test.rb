@@ -83,7 +83,7 @@ class Api::Flink::InAppNotificationsControllerTest < ActionController::TestCase
   def prepare
     url = "http://farm8.staticflickr.com/7344/11033879755_6dcd82ed1e_o.jpg"
     image = Image.create!(url:url)
-    InAppNotification.update_all(image_id: image.id)
+    InAppNotification.update_all(image_id: image.id, resource_klass_name: "Theme", resource_id: 2)
   end 
 
 end

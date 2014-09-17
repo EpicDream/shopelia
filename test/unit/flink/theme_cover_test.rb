@@ -6,7 +6,7 @@ class ThemeCoverTest < ActiveSupport::TestCase
     theme = Theme.create!(title:"Fashion")
     
     cover = ThemeCover.new
-    cover.picture = File.new("#{Rails.root}/app/assets/images/amazon-logo.png")
+    cover.picture = File.new("#{Rails.root}/app/assets/images/admin/default-cover.png")
     cover.theme = theme
 
     assert cover.save

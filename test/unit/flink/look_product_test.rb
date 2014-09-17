@@ -42,29 +42,6 @@ class LookProductTest < ActiveSupport::TestCase
     assert_equal I18n.t('app.collections.add.invalid_url'), item.errors.full_messages.first
   end
 
-  test "it should create item from feed data" do
-    feed = example_feed
-
-    item = LookProduct.new(look_id:@look.id, feed:feed, code:"bag")
-    assert item.save
-
-    product = Product.fetch("http://www.amazon.fr/dp/2821201710")
-    assert_equal 1, product.product_versions.available.count
-    assert product.ready?
-    assert product.options_completed?
-    assert product.versions_expires_at.to_i > 29.days.from_now.to_i
-
-    version = product.product_versions.first
-    assert_equal "Barbapapa", version.name
-    assert_equal "Annette Tison", version.brand
-    assert_equal "http://ecx.images-amazon.com/images/I/41VYewm9YrL.jpg", version.image_url
-    assert_equal "<p>Pages: 10, Album, Les Livres du Dragon d'Or</p>", version.description
-    assert_equal 4.28, version.price
-    assert_equal 5.90, version.price_shipping
-    assert_equal "ok", version.shipping_info
-    assert_equal "En stock", version.availability_info
-  end
-  
   test "when look product is updated, look must be touched(for api updated looks since)" do
     assert_change(@look, :updated_at, :>) { 
       @look.look_products << LookProduct.new(look_id:@look.id, feed:example_feed, code:"bag")

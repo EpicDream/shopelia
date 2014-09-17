@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'twitter/twitter_connect'
+require 'social/twitter/twitter_connect'
 
 class TwitterConnectTest < ActiveSupport::TestCase
   ACCESS_TOKEN = "2227040976-Jkc5ECH9w6KCqkdie80Ky0aEcY1WEBKRmS9vbrP"

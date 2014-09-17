@@ -20,7 +20,6 @@ class Product < ActiveRecord::Base
   before_validation :extract_merchant_from_url
   before_validation :create_product_master
   before_save :truncate_name
-  after_save :create_versions
   after_save :clear_failure_if_mute, :if => Proc.new { |product| product.mute? }
   after_update :set_image_size, :if => Proc.new { |product| product.image_url_changed? || (product.image_url.present? && product.image_size.blank?) }
   
@@ -125,72 +124,6 @@ class Product < ActiveRecord::Base
       else
         self.merchant_id = merchant.id
       end
-    end
-  end
-  
-  def create_versions
-    if self.versions.present?
-      self.versions.each do |version|
-        version[:price_text] = version[:price]
-        version[:price_shipping_text] = version[:price_shipping]
-        version[:price_strikeout_text] = version[:price_strikeout]
-        version[:availability_text] = version[:availability]
-        version[:rating_text] = version[:rating]
-        version[:shipping_info] = version[:availability] if version[:shipping_info].blank?
-        [:price, :price_shipping, :price_strikeout, :availability].each { |k| version.delete(k) }
-
-        # Pre-process versions
-        version = MerchantHelper.process_version(self.url, version)
-
-        if version[:option1] || version[:option2] || version[:option3] || version[:option4]
-          v = self.product_versions.where(
-            option1_md5:nil,
-            option2_md5:nil,
-            option3_md5:nil,
-            option4_md5:nil).first
-        end
-
-        v ||= self.product_versions.where(
-          option1_md5:ProductVersion.generate_option_md5(version[:option1]),
-          option2_md5:ProductVersion.generate_option_md5(version[:option2]),
-          option3_md5:ProductVersion.generate_option_md5(version[:option3]),
-          option4_md5:ProductVersion.generate_option_md5(version[:option4])).first
-        if v.nil?
-          v = ProductVersion.create!(version.merge({product_id:self.id}))
-        else
-          # reset values
-          v.update_attributes(
-            :price => nil,
-            :price_shipping => nil,
-            :price_strikeout => nil,
-            :description => nil,
-            :image_url => nil,
-            :images => nil,
-            :available => nil,
-            :rating => nil,
-            :name => nil,
-            :shipping_info => nil)
-          v.update_attributes version
-        end
-      end
-      version = self.reload.product_versions.available.order(:updated_at).first
-      if version.present?
-        old_image_url = self.image_url
-        self.update_column "name", version.name
-        self.update_column "brand", version.brand
-        self.update_column "reference", version.reference
-        self.update_column "image_url", version.image_url
-        self.update_column "description", version.description
-        self.update_column "rating", version.rating
-        set_image_size if version.image_url =~ /\Ahttp/ && self.image_size.blank?
-      end
-      self.update_column "versions_expires_at", Product.versions_expiration_date
-      self.reload
-      self.assess_versions
-      self.reload
-      notify_channel
-    elsif self.product_versions.empty?
-      ProductVersion.create!(product_id:self.id,available:false)
     end
   end
   

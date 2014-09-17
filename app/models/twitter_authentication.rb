@@ -1,4 +1,4 @@
-require 'twitter/twitter_connect'
+require 'social/twitter/twitter_connect'
 
 class TwitterAuthentication < FlinkerAuthentication
   TWITTER = "twitter"

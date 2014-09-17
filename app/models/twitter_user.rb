@@ -1,4 +1,4 @@
-require 'twitter/twitter_connect'
+require 'social/twitter/twitter_connect'
 
 class TwitterUser < ActiveRecord::Base
   attr_accessible :access_token, :access_token_secret, :flinker_id, :twitter_id, :username

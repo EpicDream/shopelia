@@ -1,4 +1,4 @@
-require 'instagram/instagram_connect'
+require 'social/instagram/instagram_connect'
 
 class InstagramUser < ActiveRecord::Base
   attr_accessible :access_token, :flinker_id, :instagram_id, :full_name, :username
