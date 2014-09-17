@@ -1,4 +1,4 @@
-require 'test__helper'
+require 'test_helper'
 
 class ImageTest < ActiveSupport::TestCase
   

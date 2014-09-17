@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <title></title>
+  </head>
+  <body>
+    <a href="http://www.deeplink.me/flink.io/flinkers/<%= @flinker.id if @flinker %>" target='_blank' style="color: white">
+      <div style="width:200px; height:42px; text-align: center; border:1px solid #333333; background: #333333; font-family:Helvetica Neue, Helvetica, Arial, sans-serif; font-weight:300">
+        <img src="http://flink.io/pink_diamond_full.png" width="37" height="32" style="display:block; margin:5px; float: left;" />
+        <div style="height:32px; line-height:32px; display:block;float: left; margin:5px;"> 
+          Follow me on 
+          <span style="color:#f44989;">Flink</span>
+        </div>
+      </div>
+      <div style="width:200px; height:42px; text-align: center; border:1px solid #333333; font-family:Helvetica Neue, Helvetica, Arial, sans-serif; font-weight:300">
+        <div style="height:32px; line-height:32px; display:block; margin:5px; color: black">
+          <span style="color:#e0115f;"><%= @flinker.followers.count if @flinker %></span> followers 
+        </div>
+      </div>
+    </a>
+  </body>
+</html>

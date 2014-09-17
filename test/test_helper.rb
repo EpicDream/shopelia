@@ -7,11 +7,6 @@ require 'sidekiq/testing'
 Dir["#{Rails.root}/test/helper/*.rb"].each {|f| require f}
 Sidekiq::Testing.fake!
 
-class ActionController::TestCase
-  setup do
-  end
-end
-
 class ActiveSupport::TestCase
   fixtures :all
   

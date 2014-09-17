@@ -1,4 +1,0 @@
-cart:
-  user: elarch
-  uuid: "abcdef"
-  kind: <%= Cart::CHECKOUT %>

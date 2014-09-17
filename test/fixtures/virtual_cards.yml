@@ -1,6 +1,0 @@
-card:
-  provider: 'virtualis'
-  number: '41111111111111111'
-  exp_month: '02'
-  exp_year: '2015'
-  cvv: '123'

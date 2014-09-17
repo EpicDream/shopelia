@@ -1,5 +1,5 @@
 # encoding: UTF-8
-require 'test__helper'
+require 'test_helper'
 require 'poster/comment'
 
 class Poster::CommentTest < ActiveSupport::TestCase

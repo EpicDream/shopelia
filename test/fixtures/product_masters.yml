@@ -1,6 +1,0 @@
-usbkey:
-  created_at: <%= 1.day.ago %>   
-
-headphones:
-  created_at: <%= 1.day.ago %>   
-

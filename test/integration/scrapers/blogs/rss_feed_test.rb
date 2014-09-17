@@ -1,6 +1,6 @@
 # encoding: UTF-8
 
-require 'test__helper'
+require 'test_helper'
 require 'scrapers/blogs/blog'
 
 class Scrapers::Blogs::RSSFeedTest < ActiveSupport::TestCase
