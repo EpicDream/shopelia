@@ -1,7 +1,0 @@
-<div class="span2">
-  <img class="pull-left logo" src="/assets/html_app/logo-black.png" id="logo-header">
-</div>
-<div class="span2 small hidden-phone" style="margin-top:30px" id="info-header">
-  simplifie vos achats
-</div>
-<a id="link-header" class="pull-right"></a>
