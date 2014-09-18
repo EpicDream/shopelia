@@ -7,11 +7,6 @@ class LookProductTest < ActiveSupport::TestCase
     LookProduct.any_instance.stubs(:generate_event)
   end
 
-  test "it should create look product item" do
-    item = LookProduct.new(look_id:@look.id, product_id:products(:headphones).id, code:"bag")
-    assert item.save
-  end
-
   test "it should create look product from brand" do
     item = LookProduct.new(look_id:@look.id, brand:"test", code:"code")
     assert item.save
@@ -21,17 +16,6 @@ class LookProductTest < ActiveSupport::TestCase
     item = LookProduct.new(look_id:@look.id)
     assert !item.save
   end    
-
-  test "it should create look product item from url" do
-    assert_difference ["Product.count", "Product.count"] do
-      item = LookProduct.new(
-        look_id:@look.id, 
-        code:"bag",
-        url:"http://www.amazon.fr/gp/product/1")
-
-      assert item.save
-    end
-  end
 
   test "it shouldn't create association from bad url" do
     item = LookProduct.new(
@@ -44,7 +28,7 @@ class LookProductTest < ActiveSupport::TestCase
 
   test "when look product is updated, look must be touched(for api updated looks since)" do
     assert_change(@look, :updated_at, :>) { 
-      @look.look_products << LookProduct.new(look_id:@look.id, feed:example_feed, code:"bag")
+      @look.look_products << LookProduct.new(look_id:@look.id, brand:"chanel", code:"bag")
     }
     assert_change(@look, :updated_at, :>) { 
       @look.look_products.first.update_attributes(brand:"toto")

@@ -5,12 +5,6 @@ class FlinkerLikeTest < ActiveSupport::TestCase
   setup do
     @flinker = flinkers(:betty)
     @look = looks(:agadir)
-    @product = products(:nounours)
-  end
-
-  test "it should create flinker like for product" do
-    like = FlinkerLike.new(flinker_id:@flinker.id, resource_type:FlinkerLike::PRODUCT, resource_id:@product.id)
-    assert like.save
   end
 
   test "it should create flinker like for look" do

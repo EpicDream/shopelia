@@ -40,13 +40,6 @@ class Post < ActiveRecord::Base
         description:truncate(self.content, length: 200, separator: ' '))
       self.update_attribute :look_id, look.id
       developer = Developer.find_by_name!("Flink")
-      self.products.each do |product|
-        text, url = product.to_a.flatten
-        if Merchant.from_url(url, false).present?
-          p = Product.fetch(url)
-          LookProduct.create(product_id:p.id, look_id:self.look_id)
-        end
-      end
       self.images.each do |url|
         self.look.look_images << LookImage.create(url:url)
       end
@@ -64,7 +57,7 @@ class Post < ActiveRecord::Base
     links = []
     self.products.each do |product|
       text, url = product.to_a.flatten
-      links << { text:(text || "Default"), url:url } if Merchant.from_url(url, false).nil?
+      links << { text:(text || "Default"), url:url }
     end
     links
   end

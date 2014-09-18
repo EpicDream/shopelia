@@ -1,4 +1,3 @@
-# -*- encoding : utf-8 -*-
 class User < ActiveRecord::Base
   devise :database_authenticatable, :registerable, :token_authenticatable, :confirmable
   devise :recoverable, :rememberable, :trackable, :validatable

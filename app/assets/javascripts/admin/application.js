@@ -7,3 +7,4 @@
 //= require admin/datatables.reload_ajax
 //= require lib/jquery.sortable.min
 //= require ./lib/jquery.Jcrop.min
+//= require ./monitor.js
