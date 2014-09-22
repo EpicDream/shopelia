@@ -6,7 +6,7 @@
 
 # Use at least one worker per core if you're on a dedicated server,
 # more will usually help for _short_ waits on databases/caches.
-worker_processes 16
+worker_processes 8
 
 # Help ensure your application will always spawn in the symlinked
 # "current" directory that Capistrano sets up.
@@ -23,7 +23,7 @@ user("shopelia","shopelia")
 client_body_buffer_size 67108864
 
 # nuke workers after 30 seconds instead of 60 seconds (the default)
-timeout 60
+timeout 30
 
 # feel free to point this anywhere accessible on the filesystem
 pid "/var/run/shopelia-unicorn/shopelia-unicorn.pid"
@@ -80,7 +80,7 @@ before_fork do |server, worker|
   end
   #
   # # *optionally* throttle the master from forking too quickly by sleeping
-  # sleep 1
+  sleep 0.5
 end
 
 after_fork do |server, worker|
