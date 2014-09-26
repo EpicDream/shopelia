@@ -73,16 +73,16 @@ module Shopelia
       :timeout => 20
     }
 
-    # Pusher App
-    Pusher.url = "http://654ffe989dceb4af5e03:cd54721d7ae7b6fbff42@api.pusherapp.com/apps/54299"
+    # # Pusher App
+    # Pusher.url = "http://654ffe989dceb4af5e03:cd54721d7ae7b6fbff42@api.pusherapp.com/apps/54299"
 
     # Mailjet
     config.action_mailer.delivery_method = :mailjet
 
     # GCM
-    GCM.host = 'https://android.googleapis.com/gcm/send'
-    GCM.format = :json
-    GCM.key = "AIzaSyDGlTm2cS2g1QA7IrsLyL7l63BxioIsJpE"
+    # GCM.host = 'https://android.googleapis.com/gcm/send'
+    # GCM.format = :json
+    # GCM.key = "AIzaSyDGlTm2cS2g1QA7IrsLyL7l63BxioIsJpE"
 
     # APNS
     config.apns = {

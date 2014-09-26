@@ -1,4 +1,4 @@
-require 'flink/push'
+require_relative 'push'
 
 module Flink
   class Notification
